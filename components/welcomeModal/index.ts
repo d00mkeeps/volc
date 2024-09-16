@@ -1,5 +1,5 @@
-export { WelcomeStep } from './WelcomeStep';
-export { UserInfoStep } from './UserInfoStep';
+export { WelcomeStep } from './WelcomeStepContent';
+export { UserInfoStep } from './UserInfoStepContent';
 
 export enum ModalStep {
   Welcome,

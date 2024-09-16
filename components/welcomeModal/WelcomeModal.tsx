@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Modal, StyleSheet, Text, SafeAreaView, ScrollView } from 'react-native';
-import { WelcomeStep } from './WelcomeStep';
-import { UserInfoStep } from './UserInfoStep';
+import { View, Modal, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { WelcomeStep } from './WelcomeStepContent';
+import { UserInfoStep } from './UserInfoStepContent';
 import { Button } from '../public/atoms';
 import { ModalStep, UserInfoData } from './index';
 
@@ -39,17 +39,6 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
     onClose(); // For now, we'll just close the modal. Later, you can add more steps or handle the data as needed.
   };
 
-  const getTitle = () => {
-    switch (currentStep) {
-      case ModalStep.Welcome:
-        return "Welcome";
-      case ModalStep.UserInfo:
-        return "User Information";
-      default:
-        return "";
-    }
-  };
-
   return (
     <Modal
       animationType="slide"
@@ -60,7 +49,6 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       <View style={styles.centeredView}>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{getTitle()}</Text>
           </View>
           <ScrollView contentContainerStyle={styles.contentSection}>
             {currentStep === ModalStep.Welcome && (
@@ -112,10 +100,10 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   titleSection: {
-    paddingVertical: 15,
+    paddingVertical: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     borderBottomColor: '#ccc',
   },
   title: {
@@ -127,7 +115,7 @@ const styles = StyleSheet.create({
   },
   buttonSection: {
     paddingVertical: 15,
-    borderTopWidth: 1,
+    borderTopWidth: 0,
     borderTopColor: '#ccc',
   },
   buttonContainer: {
