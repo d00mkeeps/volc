@@ -48,11 +48,7 @@ export const UserInfoStep: React.FC<UserInfoStepProps> = ({ onNext, initialData 
           onValueChange={(value) => handleChange('isImperial', value)}
         />
       </View>
-      <Button 
-      onPress={handleSubmit} variant='primary' 
-      size='medium'>
-        Next
-        </Button>
+  
     </View>
   );
 };

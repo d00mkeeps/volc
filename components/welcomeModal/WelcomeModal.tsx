@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Modal, StyleSheet } from 'react-native';
+import { View, Modal, StyleSheet, Text, SafeAreaView, ScrollView } from 'react-native';
 import { WelcomeStep } from './WelcomeStep';
 import { UserInfoStep } from './UserInfoStep';
 import { Button } from '../public/atoms';
@@ -20,7 +20,11 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
   });
 
   const handleNext = () => {
-    setCurrentStep(ModalStep.UserInfo);
+    if (currentStep === ModalStep.Welcome) {
+      setCurrentStep(ModalStep.UserInfo);
+    } else {
+      handleUserInfoSubmit(userInfo);
+    }
   };
 
   const handleBack = () => {
@@ -35,6 +39,17 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
     onClose(); // For now, we'll just close the modal. Later, you can add more steps or handle the data as needed.
   };
 
+  const getTitle = () => {
+    switch (currentStep) {
+      case ModalStep.Welcome:
+        return "Welcome";
+      case ModalStep.UserInfo:
+        return "User Information";
+      default:
+        return "";
+    }
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -43,24 +58,33 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       onRequestClose={onClose}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          {currentStep !== ModalStep.Welcome && (
-            <Button
-              onPress={handleBack}
-              variant="tertiary"
-              size="small"
-              style={styles.backButton}
-            >
-              Back
-            </Button>
-          )}
-          {currentStep === ModalStep.Welcome && (
-            <WelcomeStep onNext={handleNext} />
-          )}
-          {currentStep === ModalStep.UserInfo && (
-            <UserInfoStep onNext={handleUserInfoSubmit} initialData={userInfo} />
-          )}
-        </View>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.titleSection}>
+            <Text style={styles.title}>{getTitle()}</Text>
+          </View>
+          <ScrollView contentContainerStyle={styles.contentSection}>
+            {currentStep === ModalStep.Welcome && (
+              <WelcomeStep onNext={handleNext} />
+            )}
+            {currentStep === ModalStep.UserInfo && (
+              <UserInfoStep onNext={handleUserInfoSubmit} initialData={userInfo} />
+            )}
+          </ScrollView>
+          <View style={styles.buttonSection}>
+            <View style={styles.buttonContainer}>
+              {currentStep !== ModalStep.Welcome && (
+                <Button 
+                  onPress={handleBack}                          style={styles.button}
+                >Back</Button>
+              )}
+              <Button 
+                onPress={handleNext} 
+          
+                style={styles.button}
+              >{currentStep === ModalStep.Welcome ? "Next" : "Finish"}</Button>
+            </View>
+          </View>
+        </SafeAreaView>
       </View>
     </Modal>
   );
@@ -71,26 +95,47 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.5)', // semi-transparent background
   },
-  modalView: {
+  modalContainer: {
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    width: '90%',
+    maxHeight: '80%', // Set a maximum height
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 2
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5,
-    width: '80%',
+    elevation: 5
   },
-  backButton: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
+  titleSection: {
+    paddingVertical: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  contentSection: {
+    padding: 20,
+  },
+  buttonSection: {
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+  button: {
+    width: '48%', // Adjust this value to control button width
   },
 });
