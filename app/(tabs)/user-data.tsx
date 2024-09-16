@@ -1,21 +1,14 @@
 import { StyleSheet } from 'react-native';
+
+import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
-import React, {useState} from 'react'
-import {Button} from '@/components/public/atoms'
-import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 
 export default function TabTwoScreen() {
-const [openWelcomeModal, setOpenWelcomeModal] = useState(false)
-
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TrainSmart</Text>
+      <Text style={styles.title}>booooring</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <Button onPress={() => setOpenWelcomeModal(true)}>
-        Open Welcome Modal
-      </Button>
-        <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)}/>
+      <EditScreenInfo path="guess lol" />
     </View>
   );
 }
