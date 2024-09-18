@@ -1,0 +1,41 @@
+// FinishStep.tsx
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export const FinishStep: React.FC = () => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>You're All Set!</Text>
+      <Text style={styles.description}>
+        Thank you for providing your information. We're excited to help you on your fitness journey!
+      </Text>
+      <Text style={styles.instruction}>
+        Tap 'Finish' to get started
+      </Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  instruction: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+});

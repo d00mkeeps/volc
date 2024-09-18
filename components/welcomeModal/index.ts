@@ -1,10 +1,13 @@
-export { WelcomeStep } from './WelcomeStepContent';
-export { UserInfoStep } from './UserInfoStepContent';
+export { WelcomeStep } from './WelcomeStep';
+export { UserInfoStep } from './UserInfoStep';
+export { WorkoutHistoryStep} from './WorkoutHistoryStep'
+export {FinishStep} from './FinishStep'
 
 export enum ModalStep {
   Welcome,
   UserInfo,
-  // Add other steps as needed
+  WorkoutHistory,
+  Finish
 }
 
 export type UserInfoData = {

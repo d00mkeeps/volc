@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { View, Modal, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { WelcomeStep } from './WelcomeStepContent';
-import { UserInfoStep } from './UserInfoStepContent';
+import { WelcomeStep } from './WelcomeStep';
+import { UserInfoStep } from './UserInfoStep';
 import { Button } from '../public/atoms';
-import { ModalStep, UserInfoData } from './index';
+import { ModalStep, UserInfoData, WorkoutHistoryStep, FinishStep } from './index';
+
 
 type WelcomeModalProps = {
   isVisible: boolean;
   onClose: () => void;
 };
+
 
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
   const [currentStep, setCurrentStep] = useState<ModalStep>(ModalStep.Welcome);
@@ -22,21 +24,28 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
   const handleNext = () => {
     if (currentStep === ModalStep.Welcome) {
       setCurrentStep(ModalStep.UserInfo);
+    } else if (currentStep === ModalStep.UserInfo) {
+      setCurrentStep(ModalStep.WorkoutHistory);
+    } else if (currentStep === ModalStep.WorkoutHistory) {
+      setCurrentStep(ModalStep.Finish);
     } else {
-      handleUserInfoSubmit(userInfo);
+      onClose(); // Close the modal when 'Finish' is tapped on the FinishStep
     }
   };
 
   const handleBack = () => {
     if (currentStep === ModalStep.UserInfo) {
       setCurrentStep(ModalStep.Welcome);
+    } else if (currentStep === ModalStep.WorkoutHistory) {
+      setCurrentStep(ModalStep.UserInfo);
+    } else if (currentStep === ModalStep.Finish) {
+      setCurrentStep(ModalStep.WorkoutHistory);
     }
-    // Add more conditions here as you add more steps
   };
 
   const handleUserInfoSubmit = (data: UserInfoData) => {
     setUserInfo(data);
-    onClose(); // For now, we'll just close the modal. Later, you can add more steps or handle the data as needed.
+    setCurrentStep(ModalStep.WorkoutHistory);
   };
 
   return (
@@ -48,28 +57,36 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
     >
       <View style={styles.centeredView}>
         <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.titleSection}>
-          </View>
-          <ScrollView contentContainerStyle={styles.contentSection}>
+          <View style={styles.contentSection}>
             {currentStep === ModalStep.Welcome && (
               <WelcomeStep onNext={handleNext} />
             )}
             {currentStep === ModalStep.UserInfo && (
               <UserInfoStep onNext={handleUserInfoSubmit} initialData={userInfo} />
             )}
-          </ScrollView>
+            {currentStep === ModalStep.WorkoutHistory && (
+              <WorkoutHistoryStep />
+            )}
+            {currentStep === ModalStep.Finish && (
+              <FinishStep />
+            )}
+          </View>
           <View style={styles.buttonSection}>
             <View style={styles.buttonContainer}>
-              {currentStep !== ModalStep.Welcome && (
+              {currentStep !== ModalStep.Welcome && currentStep !== ModalStep.Finish && (
                 <Button 
-                  onPress={handleBack}                          style={styles.button}
-                >Back</Button>
+                  onPress={handleBack}
+                  style={styles.button}
+                >
+                  Back
+                </Button>
               )}
               <Button 
                 onPress={handleNext} 
-          
                 style={styles.button}
-              >{currentStep === ModalStep.Welcome ? "Next" : "Finish"}</Button>
+              >
+                {currentStep === ModalStep.Finish ? "Finish" : "Next"}
+              </Button>
             </View>
           </View>
         </SafeAreaView>
@@ -77,6 +94,8 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
     </Modal>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -111,7 +130,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   contentSection: {
-    padding: 20,
+   flex: 1,
+   width: '100%'
   },
   buttonSection: {
     paddingVertical: 15,
