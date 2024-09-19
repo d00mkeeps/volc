@@ -1,17 +1,30 @@
 import React, { useState, useRef } from 'react';
 import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
-import Wizard from "react-native-wizard";
+import Wizard, {WizardRef} from "react-native-wizard";
 import { WelcomeStep } from './WelcomeStep';
 import { UserInfoStep } from './UserInfoStep';
 import { WorkoutHistoryStep } from './WorkoutHistoryStep';
 import { FinishStep } from './FinishStep';
 import { Button } from '../public/atoms';
 import { UserInfoData } from './index';
+import { showNotification } from '../public/molecules/notifications';
+import Toast from 'react-native-toast-message';
+
+type ActualWizardProps = {
+  ref: React.RefObject<any>;
+  steps: Array<{ content: React.ReactElement }>;
+  isFirstStep: (val: boolean) => void;
+  isLastStep: (val: boolean) => void;
+  onNext: (step: number) => void;
+  onPrev: (step: number) => void;
+  currentStep: (data: { currentStep: number; isLastStep: boolean; isFirstStep: boolean }) => void;
+};
 
 type WelcomeModalProps = {
   isVisible: boolean;
   onClose: () => void;
 };
+
 
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
   const [userInfo, setUserInfo] = useState<UserInfoData>({
@@ -21,13 +34,23 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
     isImperial: false,
   });
 
-  const wizardRef = useRef(null);
+  const wizardRef = useRef<WizardRef>(null);
   const [isFirstStep, setIsFirstStep] = useState(true);
   const [isLastStep, setIsLastStep] = useState(false);
-
+  const [currentStep, setCurrentStep] = useState(0);
+  const showNotification = (message: string) => {
+    Toast.show({
+      type: 'success',
+      text1: 'Success',
+      text2: message,
+    });
+  };
   const stepList = [
     {
-      content: <WelcomeStep />
+      content: <WelcomeStep onNext={() => {
+        showNotification('Successfully started the setup process.');
+        wizardRef.current?.next();
+      } } />
     },
     {
       content: <UserInfoStep onNext={(data: UserInfoData) => setUserInfo(data)} initialData={userInfo} />
@@ -47,23 +70,28 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.modalContainer}>
+     <SafeAreaView style={styles.modalContainer}>
         <View style={styles.wizardContainer}>
-          <Wizard
-            ref={wizardRef}
-            steps={stepList}
-            isFirstStep={(val) => setIsFirstStep(val)}
-            isLastStep={(val) => setIsLastStep(val)}
-            onNext={() => {
-              console.log("Next Step");
-            }}
-            onPrev={() => {
-              console.log("Previous Step");
-            }}
-            currentStep={({ currentStep, isLastStep, isFirstStep }) => {
+          {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
+            ref: wizardRef,
+            steps: stepList,
+            isFirstStep: (val) => setIsFirstStep(val),
+            isLastStep: (val) => setIsLastStep(val),
+            onNext: (step) => {
+              console.log("Next Step", step);
+              if (step === 1) {  // Assuming UserInfoStep is the second step (index 1)
+                const userInfoStep = stepList[step].content as React.ReactElement<{onNext: (data: UserInfoData) => void}>;
+                userInfoStep.props.onNext(userInfo);
+                showNotification("Your profile has been created successfully!");
+              }
+            },
+            onPrev: (step) => {
+              console.log("Previous Step", step);
+            },
+            currentStep: ({ currentStep, isLastStep, isFirstStep }) => {
               console.log("Current step: ", currentStep);
-            }}
-          />
+            }
+          })}
         </View>
         <View style={styles.buttonContainer}>
           {!isFirstStep && (

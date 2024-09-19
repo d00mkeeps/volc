@@ -3,12 +3,14 @@ import { Text, View } from '@/components/Themed';
 import React, {useState} from 'react'
 import {Button} from '@/components/public/atoms'
 import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
+import Toast from 'react-native-toast-message';
 
 export default function TabTwoScreen() {
 const [openWelcomeModal, setOpenWelcomeModal] = useState(false)
 
 
   return (
+    <>
     <View style={styles.container}>
       <Text style={styles.title}>TrainSmart</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
@@ -17,6 +19,8 @@ const [openWelcomeModal, setOpenWelcomeModal] = useState(false)
       </Button>
         <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)}/>
     </View>
+    <Toast/>
+    </>
   );
 }
 
