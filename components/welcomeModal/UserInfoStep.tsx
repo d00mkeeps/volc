@@ -42,7 +42,8 @@ export const UserInfoStep: React.FC<UserInfoStepProps> = ({ onNext, initialData 
         style={styles.input}
       />
       <View style={styles.switchContainer}>
-        <Text>Use freedom units? (lbs, ft, etc)</Text>
+        <Text style={{color: '#8cd884', padding: 3
+}}>Use freedom units? (lbs, ft, etc)</Text>
         <Switch
           value={userInfo.isImperial}
           onValueChange={(value) => handleChange('isImperial', value)}
@@ -58,14 +59,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#8cd884'
+
   },
   input: {
     marginBottom: 10,
+    color: '#8cd884'
+
   },
   switchContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    color: '#8cd884'
+
   },
 });

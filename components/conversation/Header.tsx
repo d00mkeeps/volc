@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle }) => (
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 5,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',

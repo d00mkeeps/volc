@@ -22,20 +22,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    color: '#8cd884'
+
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#8cd884'
+
   },
   description: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 30,
+    color: '#8cd884'
+
+  
   },
   instruction: {
     fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
+    color: '#8cd884'
   },
 });

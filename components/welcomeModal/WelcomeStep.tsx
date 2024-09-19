@@ -18,9 +18,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#8cd884'
+
   },
   stepContent: {
     fontSize: 16,
     marginBottom: 20,
+    color: '#8cd884'
+
   },
 });
