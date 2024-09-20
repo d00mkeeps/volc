@@ -1,64 +1,73 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
-
-import Colors from '@/constants/Colors';
+import { Drawer } from 'expo-router/drawer';
 import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+function CustomDrawerContent(props: DrawerContentComponentProps) {
+  return (
+    <DrawerContentScrollView {...props}>
+      <View style={{ padding: 16 }}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>TrainSmart</Text>
+      </View>
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
 }
 
-export default function TabLayout() {
+export default function AppLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      initialRouteName="home"
+    <Drawer
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: useClientOnlyValue(false, true),
-      }}>
-      <Tabs.Screen
+        headerShown: true,
+        drawerActiveTintColor: '#007AFF',
+        drawerInactiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+      }}
+    >
+      <Drawer.Screen
         name="index"
         options={{
+          drawerLabel: 'Home',
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="manual-data"
-        options={{
-          title: 'Manual data',
-          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="user-data"
+      <Drawer.Screen
+        name="programs"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          drawerLabel: 'Programs',
+          title: 'Programs',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="list-outline" size={size} color={color} />
+          ),
         }}
       />
-    </Tabs>
+      <Drawer.Screen
+        name="workouts"
+        options={{
+          drawerLabel: 'Workouts',
+          title: 'Workouts',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="barbell-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="user-data"
+        options={{
+          drawerLabel: 'Profile',
+          title: 'Profile',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Drawer>
   );
 }

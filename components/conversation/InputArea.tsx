@@ -17,11 +17,10 @@ const InputArea: React.FC = () => {
         onChangeText={setMessage}
         placeholder="Type a message..."
       />
-      <Button title="Send" onPress={handleSend} />
+      <Button title="Send" onPress={handleSend}/>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -32,11 +31,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginRight: 10,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: '#ccc',
     borderRadius: 20,
     paddingHorizontal: 10,
-    backgroundColor: '#171c16',
+    backgroundColor: '#041402',
     color: '#eee',
   },
 });
