@@ -13,7 +13,9 @@ interface MessageItemProps {
 
 const MessageItem: React.FC<MessageItemProps> = ({ message }) => (
   <View style={[styles.container, message.role === 'user' ? styles.userMessage : styles.assistantMessage]}>
-    <Text style={styles.text}>{message.content}</Text>
+    <Text style={[styles.text, message.role === 'user' ? styles.userText : styles.assistantText]}>
+      {message.content}
+    </Text>
   </View>
 );
 
@@ -26,14 +28,20 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#007AFF',
+    backgroundColor: '#b2f7aa',
   },
   assistantMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E5E5EA',
+    backgroundColor: '#041402',
   },
   text: {
-    color: '#000',
+    // Common text styles can be added here
+  },
+  userText: {
+    color: '#041402'
+  },
+  assistantText: {
+    color: '#def7dc',
   },
 });
 
