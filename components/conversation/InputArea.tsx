@@ -1,12 +1,20 @@
+// components/conversation/InputArea.tsx
+
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 
-const InputArea: React.FC = () => {
+interface InputAreaProps {
+  onSendMessage: (message: string) => void;
+}
+
+const InputArea: React.FC<InputAreaProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState('');
 
   const handleSend = () => {
-    console.log('Sending message:', message);
-    setMessage('');
+    if (message.trim()) {
+      onSendMessage(message);
+      setMessage('');
+    }
   };
 
   return (
@@ -16,17 +24,18 @@ const InputArea: React.FC = () => {
         value={message}
         onChangeText={setMessage}
         placeholder="Type a message..."
+        placeholderTextColor="#999"
       />
-      <Button title="Send" onPress={handleSend}/>
+      <Button title="Send" onPress={handleSend} />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 10,
     backgroundColor: '#1f281f',
- 
   },
   input: {
     flex: 1,

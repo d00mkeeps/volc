@@ -8,7 +8,9 @@ export default function TabTwoScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Profile section</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="guess lol" />
+      <Text style={styles.text}>
+        This is intended to display a user's profile information
+      </Text>
     </View>
   );
 }
@@ -27,5 +29,9 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: '80%',
+  },
+  text:{
+    fontSize: 12,
+    fontWeight: 'light',
   },
 });
