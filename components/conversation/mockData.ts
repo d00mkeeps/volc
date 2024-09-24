@@ -1,17 +1,16 @@
-export const mockMessages = [
-    { id: 1, role: 'user' as const, content: "Hello, how are you?" },
-    { id: 2, role: 'assistant' as const, content: "I'm doing well, thank you! How can I assist you today?" },
-    { id: 3, role: 'user' as const, content: "This is not a real message." },
-    { id: 4, role: 'assistant' as const, content: "This isn't a real answer! You need to build a backend." },
-  ];
-
-  // components/conversation/mockData.ts
+// components/conversation/mockData.ts
 
 export interface Conversation {
   id: string;
   title: string;
   lastMessage: string;
   timestamp: string;
+}
+
+export interface Message {
+  id: string ;
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 export const mockConversations: Conversation[] = [
@@ -33,4 +32,11 @@ export const mockConversations: Conversation[] = [
     lastMessage: "Great job! You've made significant progress in the last month.",
     timestamp: '2023-09-19T18:45:00Z',
   },
+];
+
+export const mockMessages: Message[] = [
+  { id: '1', role: 'user', content: "Hello, how are you?" },
+  { id: '2', role: 'assistant', content: "I'm doing well, thank you! How can I assist you today?" },
+  { id: '3', role: 'user', content: "This is not a real message." },
+  { id: '4', role: 'assistant', content: "This isn't a real answer! You need to build a backend." },
 ];

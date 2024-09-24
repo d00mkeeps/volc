@@ -1,18 +1,16 @@
+import 'react-native-gesture-handler';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-
 import { useColorScheme } from '@/components/useColorScheme';
 
-export {
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: '(drawer)',
 };
 
 SplashScreen.preventAutoHideAsync();
@@ -45,10 +43,9 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+      <Drawer>
+        <Drawer.Screen name="(drawer)" options={{ headerShown: false }} />
+      </Drawer>
     </ThemeProvider>
   );
 }

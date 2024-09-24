@@ -1,10 +1,10 @@
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { useColorScheme } from '@/components/useColorScheme';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
@@ -17,34 +17,35 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   );
 }
 
-    export default function AppLayout() {
-      const colorScheme = useColorScheme();
-    
-      return (
-        <Drawer
-          drawerContent={(props) => <CustomDrawerContent {...props} />}
-          screenOptions={({ navigation }) => ({
-            headerShown: true,
-            drawerActiveTintColor: '#007AFF',
-            drawerInactiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
-            headerRight: () => (
-              <View style={styles.headerButtonContainer}>
-                <TouchableOpacity
-                  onPress={() => navigation.setParams({ openWelcomeModal: true })}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>W</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('programs')}
-                  style={styles.headerButton}
-                >
-                  <Text style={styles.headerButtonText}>P</Text>
-                </TouchableOpacity>
-              </View>
-            ),
-          })}
-        >
+export default function DrawerLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+    <Drawer
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={({ navigation }) => ({
+        headerShown: true,
+        drawerActiveTintColor: '#007AFF',
+        drawerInactiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+        headerRight: () => (
+          <View style={styles.headerButtonContainer}>
+            <TouchableOpacity
+              onPress={() => navigation.setParams({ openWelcomeModal: true })}
+              style={styles.headerButton}
+            >
+              <Text style={styles.headerButtonText}>W</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('programs')}
+              style={styles.headerButton}
+            >
+              <Text style={styles.headerButtonText}>P</Text>
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
+    >
       <Drawer.Screen
         name="index"
         options={{
@@ -85,7 +86,18 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           ),
         }}
       />
+      <Drawer.Screen
+        name="conversation"
+        options={{
+          drawerLabel: 'Conversation',
+          title: 'Conversation',
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Drawer>
+    </GestureHandlerRootView>
   );
 }
 

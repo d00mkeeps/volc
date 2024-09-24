@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface Message {
-  id: number;
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }

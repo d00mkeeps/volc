@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import MessageItem from './MessageItem';
 
 interface Message {
-  id: number;
+  id: string;
   role: 'user' | 'assistant';
   content: string;
 }

@@ -1,11 +1,12 @@
+import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
-import ConversationList from '@/components/conversation/ConversationDisplay/ConversationList';
-import InputArea from '@/components/conversation/InputArea';
+import ConversationList from '@/components/conversation/organisms/ConversationList';
+import InputArea from '@/components/conversation/atoms/InputArea';
 import { mockConversations } from '@/components/conversation/mockData';
 
 type RootStackParamList = {
@@ -53,12 +54,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TrainSmart</Text>
-      <View style={styles.separator} />
+      <Text style={styles.title} >Conversations</Text>
       <View style={styles.conversationContainer}>
-        <ConversationList onConversationPress={handleConversationPress} />
+        <ConversationList />
       </View>
-      <InputArea onSendMessage={handleNewMessage} />
+      <InputArea onSendMessage={handleNewMessage} draftMessage={''} onDraftMessageChange={function (draft: string): void {
+        throw new Error('Function not implemented.');
+      } } />
       <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)} />
       <Toast />
     </View>
@@ -70,13 +72,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#1f281f',
+    backgroundColor: '#222',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#8cd884',
+    textAlign: 'left',
+    color: '#ddd',
+    paddingLeft: 18
   },
   separator: {
     marginVertical: 20,

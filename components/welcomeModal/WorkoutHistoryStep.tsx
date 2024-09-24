@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import ConversationUI from '../conversation/ConversationUI';
+import ConversationUI from '../conversation/organisms/ChatUI';
 
 export const WorkoutHistoryStep: React.FC = () => {
   return (
     <View style={styles.container}>
       <ConversationUI 
         title="Workout History"
-        subtitle="Let's chat about your workout history. This will help us tailor your experience."
-      />
+        subtitle="Let's chat about your workout history. This will help us tailor your experience." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
+          throw new Error('Function not implemented.');
+        } } onDraftMessageChange={function (draft: string): void {
+          throw new Error('Function not implemented.');
+        } }      />
     </View>
   );
 };

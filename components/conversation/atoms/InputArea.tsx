@@ -1,19 +1,19 @@
 // components/conversation/InputArea.tsx
 
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 
 interface InputAreaProps {
   onSendMessage: (message: string) => void;
+  draftMessage: string;
+  onDraftMessageChange: (draft: string) => void;
 }
 
-const InputArea: React.FC<InputAreaProps> = ({ onSendMessage }) => {
-  const [message, setMessage] = useState('');
-
+const InputArea: React.FC<InputAreaProps> = ({ onSendMessage, draftMessage, onDraftMessageChange }) => {
   const handleSend = () => {
-    if (message.trim()) {
-      onSendMessage(message);
-      setMessage('');
+    if (draftMessage.trim()) {
+      onSendMessage(draftMessage);
+      onDraftMessageChange('');
     }
   };
 
@@ -21,8 +21,8 @@ const InputArea: React.FC<InputAreaProps> = ({ onSendMessage }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        value={message}
-        onChangeText={setMessage}
+        value={draftMessage}
+        onChangeText={onDraftMessageChange}
         placeholder="Type a message..."
         placeholderTextColor="#999"
       />
@@ -31,11 +31,17 @@ const InputArea: React.FC<InputAreaProps> = ({ onSendMessage }) => {
   );
 };
 
+// ... (styles remain the same)
+
+
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    width: '100%',
+  },
   container: {
     flexDirection: 'row',
-    padding: 10,
-    backgroundColor: '#1f281f',
+    paddingVertical: 16,
+    backgroundColor: '#222',
   },
   input: {
     flex: 1,
