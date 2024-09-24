@@ -1,77 +1,67 @@
-import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
 import { mockConversations } from '@/components/conversation/mockData';
 
-type RootStackParamList = {
-  Home: { openWelcomeModal?: boolean };
-  programs: undefined;
-  // Add other screen names and their params here
-};
-
-// Define the navigation prop type
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-
-type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
-
 export default function HomeScreen() {
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-  const route = useRoute<HomeScreenRouteProp>();
+  const router = useRouter();
+  const { openWelcomeModal: shouldOpenWelcomeModal } = useLocalSearchParams<{ openWelcomeModal?: string }>();
 
   useEffect(() => {
-    if (route.params?.openWelcomeModal) {
+    if (shouldOpenWelcomeModal === 'true') {
       setOpenWelcomeModal(true);
       // Reset the parameter after opening the modal
-      navigation.setParams({ openWelcomeModal: undefined });
+      router.setParams({ openWelcomeModal: undefined });
     }
-  }, [route.params?.openWelcomeModal]);
+  }, [shouldOpenWelcomeModal]);
 
   const handleConversationPress = (id: string) => {
     setSelectedConversationId(id);
-    // Here you would typically navigate to a detailed conversation view
-    // For now, we'll just log the selected conversation
-    console.log('Selected conversation:', mockConversations.find(c => c.id === id));
+    // Navigate to the conversation page
+    router.push(`/conversation/${id}`);
   };
 
   const handleNewMessage = (message: string) => {
     if (selectedConversationId) {
-      // Here you would typically update the selected conversation with the new message
       console.log('New message for conversation', selectedConversationId, ':', message);
     } else {
-      // Create a new conversation with this message
       console.log('Creating new conversation with message:', message);
-      // You would typically add this new conversation to your state or database
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title} >Conversations</Text>
+      <Text style={styles.title}>Conversations</Text>
       <View style={styles.conversationContainer}>
-        <ConversationList />
+        <ConversationList onConversationPress={handleConversationPress} />
       </View>
-      <InputArea onSendMessage={handleNewMessage} draftMessage={''} onDraftMessageChange={function (draft: string): void {
-        throw new Error('Function not implemented.');
-      } } />
+      <InputArea 
+      isHomePage={true}
+        onSendMessage={handleNewMessage} 
+        draftMessage={''} 
+        onDraftMessageChange={(draft: string) => {
+          console.log('Draft message changed:', draft);
+          
+        }} 
+      />
       <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)} />
       <Toast />
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 12,
+    paddingTop: 12,
     backgroundColor: '#222',
   },
   title: {

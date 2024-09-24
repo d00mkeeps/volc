@@ -1,4 +1,3 @@
-// components/conversation/ConversationUI.tsx
 
 import React from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
@@ -9,9 +8,9 @@ interface ConversationUIProps {
   title: string;
   subtitle: string;
   messages: any[]; // Replace 'any' with your message type
-  draftMessage: string;
+  draftMessage?: string;
   onSendMessage: (message: string) => void;
-  onDraftMessageChange: (draft: string) => void;
+  onDraftMessageChange?: (draft: string) => void;
 }
 
 const ConversationUI: React.FC<ConversationUIProps> = ({
