@@ -19,16 +19,18 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPre
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderRadius: 20,
+    backgroundColor: '#559e55',
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#ddd',
+    paddingBottom: 4
   },
   lastMessage: {
     fontSize: 14,
-    color: '#666',
+    color: '#222',
   },
 });
 

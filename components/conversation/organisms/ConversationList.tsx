@@ -1,7 +1,7 @@
 // components/conversation/organisms/ConversationList.tsx
 
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import ConversationItem from '../atoms/ConversationItem';
 import { Conversation, mockConversations } from '../../../assets/mockData';
 
@@ -16,7 +16,8 @@ const ConversationList: React.FC<ConversationListProps> = ({ onConversationPress
       onPress={() => onConversationPress(item.id)} 
     />
   );
-
+  const ItemSeparator = () => <View style={styles.separator} />;
+  
   return (
     <FlatList
       data={mockConversations}
@@ -24,6 +25,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ onConversationPress
       keyExtractor={(item) => item.id}
       style={styles.list}
       contentContainerStyle={styles.contentContainer}
+      ItemSeparatorComponent={ItemSeparator}
     />
   );
 };
@@ -34,6 +36,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingVertical: 12,
+  },
+  separator: {
+    height: 12 , // This creates an 8px gap between items
   },
 });
 

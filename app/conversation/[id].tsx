@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import ConversationUI from '@/components/conversation/organisms/ChatUI';
 import { mockConversations } from '@/assets/mockData';
+import { Stack } from 'expo-router';
 
 export default function ConversationPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,16 +24,24 @@ export default function ConversationPage() {
   }
 
   return (
-    <View style={styles.container}>
-      <ConversationUI
-        title={conversation.title}
-        subtitle={conversation.lastMessage}
-        messages={conversation.messages || []}
-        draftMessage={draftMessage}
-        onSendMessage={handleSendMessage}
-        onDraftMessageChange={undefined}
+    <>
+      <Stack.Screen 
+        options={{
+          headerTitle: conversation.title,
+          headerBackTitle: "Home",
+        }} 
       />
-    </View>
+      <View style={styles.container}>
+        <ConversationUI
+          title={conversation.title}
+          subtitle={conversation.lastMessage}
+          messages={conversation.messages || []}
+          draftMessage={draftMessage}
+          onSendMessage={handleSendMessage}
+          onDraftMessageChange={undefined}
+        />
+      </View>
+    </>
   );
 }
 
@@ -41,6 +50,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1f281f',
     paddingHorizontal: 12,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
 });

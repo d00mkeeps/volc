@@ -37,7 +37,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Conversations</Text>
+      <Text style={styles.title}>Recent Chats</Text>
+      <Text style={styles.subtitle}>Send a message to start a new conversation</Text>
       <View style={styles.conversationContainer}>
         <ConversationList onConversationPress={handleConversationPress} />
       </View>
@@ -69,7 +70,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     color: '#ddd',
-    paddingLeft: 18
+    paddingLeft: 18,
+    paddingBottom: 4
   },
   separator: {
     marginVertical: 20,
@@ -80,4 +82,11 @@ const styles = StyleSheet.create({
   conversationContainer: {
     flex: 1,
   },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "light",
+    paddingLeft: 18,
+    paddingBottom: 10,
+    color: '#ddd'
+  }
 });

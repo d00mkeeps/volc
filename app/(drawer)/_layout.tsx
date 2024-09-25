@@ -98,16 +98,6 @@ export default function DrawerLayout() {
           ),
         }}
       />
-      <Drawer.Screen
-        name="conversation"
-        options={{
-          drawerLabel: 'Conversation',
-          title: 'Conversation',
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-outline" size={size} color={color} />
-          ),
-        }}
-      />
     </Drawer>
     </GestureHandlerRootView>
   );

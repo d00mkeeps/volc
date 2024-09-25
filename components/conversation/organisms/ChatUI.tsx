@@ -1,6 +1,7 @@
+// components/conversation/ChatUI.tsx
 
 import React from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import MessageList from '../molecules/MessageList';
 import InputArea from '../atoms/InputArea';
 
@@ -21,10 +22,7 @@ const ConversationUI: React.FC<ConversationUIProps> = ({
   onSendMessage,
   onDraftMessageChange,
 }) => (
-  <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={styles.container}
-  >
+  <View style={styles.container}>
     <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.subtitle}>{subtitle}</Text>
@@ -37,7 +35,7 @@ const ConversationUI: React.FC<ConversationUIProps> = ({
       draftMessage={draftMessage}
       onDraftMessageChange={onDraftMessageChange}
     />
-  </KeyboardAvoidingView>
+  </View>
 );
 
 const styles = StyleSheet.create({

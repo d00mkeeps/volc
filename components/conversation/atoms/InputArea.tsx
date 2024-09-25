@@ -1,7 +1,7 @@
 // components/conversation/InputArea.tsx
 
 import React from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 
 interface InputAreaProps {
   onSendMessage: (message: string) => void;
@@ -26,23 +26,29 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   return (
-    <View style={[styles.container, isHomePage ? null : styles.nonHomePageContainer]}>
-      <TextInput
-        style={styles.input}
-        value={draftMessage}
-        onChangeText={onDraftMessageChange}
-        placeholder="Type a message..."
-        placeholderTextColor="#999"
-      />
-      <Button title="Send" onPress={handleSend} />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={90}
+    >
+      <View style={[styles.container, isHomePage ? null : styles.nonHomePageContainer]}>
+        <TextInput
+          style={styles.input}
+          value={draftMessage}
+          onChangeText={onDraftMessageChange}
+          placeholder="Type a message..."
+          placeholderTextColor="#999"
+        />
+        <Button title="Send" onPress={handleSend} />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingVertical: 16,
+    paddingBottom: 16,
+    paddingTop: 8,
     backgroundColor: '#222', // Default color for home page
   },
   nonHomePageContainer: {
@@ -53,7 +59,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderWidth: 0,
     borderColor: '#ccc',
-    borderRadius: 20,
+    borderRadius: 15,
     paddingHorizontal: 14,
     backgroundColor: '#041402',
     color: '#eee',
