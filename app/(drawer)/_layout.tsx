@@ -5,13 +5,19 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const router = useRouter();
+
   return (
     <DrawerContentScrollView {...props}>
-      <View style={{ padding: 16 }}>
+      <TouchableOpacity 
+        style={{ padding: 16 }}
+        onPress={() => router.push('/')}
+      >
         <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white'}}>TrainSmart</Text>
-      </View>
+      </TouchableOpacity>
       <DrawerItemList {...props}/>
     </DrawerContentScrollView>
   );
@@ -19,6 +25,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 export default function DrawerLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter()
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -28,6 +35,11 @@ export default function DrawerLayout() {
         headerShown: true,
         drawerActiveTintColor: '#007AFF',
         drawerInactiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+        headerTitle: () => (
+          <TouchableOpacity onPress={() => router.push('/(drawer)')}>
+            <Text style={styles.headerTitle}>TrainSmart</Text>
+          </TouchableOpacity>
+        ),
         headerRight: () => (
           <View style={styles.headerButtonContainer}>
             <TouchableOpacity
@@ -119,5 +131,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#007AFF', // You can adjust this color as needed
   },
 });

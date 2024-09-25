@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import ConversationUI from '@/components/conversation/organisms/ChatUI';
-import { mockConversations } from '@/components/conversation/mockData';
+import { mockConversations } from '@/assets/mockData';
 
 export default function ConversationPage() {
   const { id } = useLocalSearchParams<{ id: string }>();

@@ -1,8 +1,6 @@
-// components/conversation/atoms/ConversationItem.tsx
-
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { Conversation } from '../mockData';
+import { Conversation } from '../../../assets/mockData';
 
 interface ConversationItemProps {
   conversation: Conversation;

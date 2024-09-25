@@ -3,7 +3,7 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import ConversationItem from '../atoms/ConversationItem';
-import { Conversation, mockConversations } from '../mockData';
+import { Conversation, mockConversations } from '../../../assets/mockData';
 
 interface ConversationListProps {
   onConversationPress: (id: string) => void;

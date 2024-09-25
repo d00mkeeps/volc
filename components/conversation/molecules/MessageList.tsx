@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { Message } from '../mockData';
+import { Message } from '../../../assets/mockData';
 import MessageItem from '../atoms/MessageItem';
 
 interface MessageListProps {

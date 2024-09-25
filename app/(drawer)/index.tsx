@@ -5,7 +5,7 @@ import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
-import { mockConversations } from '@/components/conversation/mockData';
+import { mockConversations } from '@/assets/mockData';
 
 export default function HomeScreen() {
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
