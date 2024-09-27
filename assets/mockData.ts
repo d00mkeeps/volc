@@ -51,6 +51,7 @@ export interface Conversation {
   title: string;
   lastMessage: string;
   timestamp: string;
+  lastMessageTime: string;
   messages: Message[];
 }
 
@@ -79,33 +80,36 @@ export const mockConversations: Conversation[] = [
   {
     id: '1',
     title: 'Stress Management',
-    lastMessage: "Thanks, I'll give that a try. It sounds simple but effective.",
+    lastMessage: "Thanks, I'll give that a...",
     timestamp: '2023-09-21T14:30:00Z',
+    lastMessageTime: '3 minutes ago',
     messages: shortConversationMessages
   },
   {
     id: '2',
     title: 'Exercise Routine',
-    lastMessage: "That sounds doable. Should I be concerned about any potential injuries?",
+    lastMessage: "That sounds doable. Should I...",
     timestamp: '2023-09-20T10:15:00Z',
+    lastMessageTime: '6 hours ago',
     messages: mediumConversationMessages
   },
   {
     id: '3',
     title: 'Sleep Improvement',
-    lastMessage: "Got it. This is really helpful, thanks. I'll start implementing these changes tonight.",
+    lastMessage: "Got it. This is really help...",
     timestamp: '2023-09-19T18:45:00Z',
+    lastMessageTime: 'Yesterday',
     messages: longerConversationMessages
   },
   {
     id: '4',
     title: 'Career Development',
-    lastMessage: "That makes sense. Thanks for helping me break this down into manageable steps. I'm feeling more optimistic already!",
+    lastMessage: "That makes sense. Thanks for...",
     timestamp: '2023-09-18T09:00:00Z',
+    lastMessageTime: 'Last week',
     messages: extendedConversationMessages
   }
 ];
-
 // The mockMessages array remains the same as you provided
 export const mockMessages: Message[] = [
   { id: '1', role: 'user', content: "Hello, how are you?" },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { Conversation } from '../../../assets/mockData';
 
 interface ConversationItemProps {
@@ -10,8 +10,16 @@ interface ConversationItemProps {
 const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPress }) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Text style={styles.title}>{conversation.title}</Text>
-      <Text style={styles.lastMessage}>{conversation.lastMessage}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{conversation.title}</Text>
+        <Text style={styles.lastMessageTime}>Last message: {conversation.lastMessageTime}</Text>
+      </View>
+      <View style={styles.contentRow}>
+        <Text style={styles.lastMessage}>{conversation.lastMessage}</Text>
+        <View style={styles.bottomRightComponent}>
+          <Text style={styles.bottomRightText}>attachments placeholder</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -22,15 +30,41 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#559e55',
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#ddd',
-    paddingBottom: 4
+  },
+  lastMessageTime: {
+    fontSize: 13,
+    color: '#222',
+  },
+  contentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   lastMessage: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#222',
+    flex: 1,
+    marginRight: 8,
+  },
+  bottomRightComponent: {
+    // Adjust these styles as needed for your specific component
+    backgroundColor: '#4a854a',
+    borderRadius: 10,
+    padding: 4,
+  },
+  bottomRightText: {
+    color: '#fff',
+    fontSize: 12,
   },
 });
 

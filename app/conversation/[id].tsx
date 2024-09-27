@@ -34,12 +34,10 @@ export default function ConversationPage() {
       <View style={styles.container}>
         <ConversationUI
           title={conversation.title}
-          subtitle={conversation.lastMessage}
           messages={conversation.messages || []}
           draftMessage={draftMessage}
           onSendMessage={handleSendMessage}
-          onDraftMessageChange={undefined}
-        />
+          onDraftMessageChange={undefined} subtitle={'attachments placeholder'}        />
       </View>
     </>
   );
