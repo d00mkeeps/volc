@@ -15,3 +15,26 @@ export type RootStackParamList = {
     onSendMessage: (message: string) => void;
     onDraftMessageChange?: (draft: string) => void;
   }
+
+
+
+export interface Program {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface ProgramCardProps {
+  program: Program;
+  onPress?: (programId: string) => void;
+}
+
+export interface ProgramListProps {
+  programs: Program[];
+  onProgramPress?: (programId: string) => void;
+}
+
+export interface ProgramsScreenProps {
+  navigation: any; // You might want to use a more specific type for navigation
+} 

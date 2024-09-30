@@ -1,3 +1,4 @@
+import { Program } from "@/types";
 
 export const shortConversation = [
   { id: '1', sender: 'user', text: "I've been feeling overwhelmed lately. Any tips?" },
@@ -116,4 +117,32 @@ export const mockMessages: Message[] = [
   { id: '2', role: 'assistant', content: "I'm doing well, thank you! How can I assist you today?" },
   { id: '3', role: 'user', content: "I'm looking for some advice on improving my diet." },
   { id: '4', role: 'assistant', content: "Let's start by discussing your current eating habits and your goals. What specific areas of your diet would you like to improve?" },
+];
+
+
+export const mockPrograms: Program[] = [
+  {
+    id: '1',
+    name: 'Beginner Workout',
+    description: 'A program designed for those new to fitness, focusing on building basic strength and endurance.',
+    createdAt: '2024-09-27T10:00:00Z',
+  },
+  {
+    id: '2',
+    name: 'Advanced Strength Training',
+    description: 'An intensive program for experienced lifters, aimed at maximizing muscle growth and strength gains.',
+    createdAt: '2024-09-26T14:30:00Z',
+  },
+  {
+    id: '3',
+    name: 'Cardio Blast',
+    description: 'High-intensity cardio workouts to improve cardiovascular health and burn calories.',
+    createdAt: '2024-09-25T09:15:00Z',
+  },
+  {
+    id: '4',
+    name: 'Yoga for Flexibility',
+    description: 'A series of yoga sessions focused on improving flexibility and reducing stress.',
+    createdAt: '2024-09-24T16:45:00Z',
+  },
 ];

@@ -15,7 +15,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPre
         <Text style={styles.lastMessageTime}>Last message: {conversation.lastMessageTime}</Text>
       </View>
       <View style={styles.contentRow}>
-        <Text style={styles.lastMessage}>{conversation.lastMessage}</Text>
         <View style={styles.bottomRightComponent}>
           <Text style={styles.bottomRightText}>attachments placeholder</Text>
         </View>
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#ddd',
   },
