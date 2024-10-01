@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
-import { Text } from '@/components/Themed';
+import { Modal, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { Text, View } from '@/components/Themed';
 import { Button } from '@/components/public/atoms';
 import { Program } from '@/types';
 
@@ -28,20 +28,20 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({ isVisi
     >
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>{program.name}</Text>
-          </View>
-          <View style={styles.contentContainer}>
-            {activeTab === 'workouts' ? (
-              <View style={styles.tabContent}>
-                <Text style={styles.contentText}>Workout details will be displayed here.</Text>
-              </View>
-            ) : (
-              <View style={styles.tabContent}>
+          <Text style={styles.headerText}>{program.name}</Text>
+          <ScrollView style={styles.contentContainer}>
+            <View style={styles.tabContent}>
+              {activeTab === 'workouts' ? (
+                <Text style={styles.contentText}>
+                  {program.workouts.map(workout => (
+                    <Text key={workout.id}>{workout.name}{'\n'}</Text>
+                  ))}
+                </Text>
+              ) : (
                 <Text style={styles.contentText}>Program notes will be displayed here.</Text>
-              </View>
-            )}
-          </View>
+              )}
+            </View>
+          </ScrollView>
           <View style={styles.footer}>
             <Button onPress={onClose} style={styles.closeButton}>
               Close
@@ -70,23 +70,18 @@ const styles = StyleSheet.create({
     height: '80%',
     overflow: 'hidden',
   },
-  header: {
-    padding: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#8cd884',
-  },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#8cd884',
+    color: '#ddd',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#559e55',
   },
   contentContainer: {
     flex: 1,
   },
   tabContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
   },
   contentText: {
@@ -97,7 +92,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 20,
-   
+    borderTopWidth: 1,
+    borderTopColor: '#559e55',
   },
   closeButton: {
     paddingHorizontal: 20,

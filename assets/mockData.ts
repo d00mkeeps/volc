@@ -1,4 +1,82 @@
-import { Program } from "@/types";
+import { Program, Workout, Exercise } from "@/types";
+
+const createExercise = (id: string, name: string, description: string, sets?: number, reps?: number, duration?: string): Exercise => ({
+  id,
+  name,
+  description,
+  sets,
+  reps,
+  duration,
+});
+
+const createWorkout = (id: string, name: string, description: string, exercises: Exercise[]): Workout => ({
+  id,
+  name,
+  description,
+  exercises,
+});
+
+export const mockPrograms: Program[] = [
+  {
+    id: '1',
+    name: 'Beginner Fitness Journey',
+    description: 'A program designed for those new to fitness, focusing on building basic strength and endurance.',
+    createdAt: '2024-09-27T10:00:00Z',
+    workouts: [
+      createWorkout('w1', 'Full Body Basics', 'Introduction to fundamental exercises targeting all major muscle groups.', [
+        createExercise('e1', 'Bodyweight Squats', 'Stand with feet shoulder-width apart, lower your body as if sitting back into a chair.', 3, 10),
+        createExercise('e2', 'Push-ups', 'Start in a plank position, lower your body until your chest nearly touches the floor, then push back up.', 3, 5),
+        createExercise('e3', 'Lunges', 'Step forward with one leg, lowering your hips until both knees are bent at about 90-degree angles.', 3, 8),
+        createExercise('e4', 'Plank', 'Hold a push-up position with your forearms on the ground.', 3, undefined, '30 seconds'),
+        createExercise('e5', 'Mountain Climbers', 'Start in a push-up position, bring one knee toward your chest, then quickly switch legs.', 3, undefined, '30 seconds'),
+      ]),
+      createWorkout('w2', 'Cardio Starter', 'Low-impact cardio exercises to improve heart health and stamina.', [
+        createExercise('e6', 'Jumping Jacks', 'Start standing, then jump your feet out while raising your arms overhead.', 3, undefined, '30 seconds'),
+        createExercise('e7', 'High Knees', 'Jog in place, lifting your knees high towards your chest.', 3, undefined, '30 seconds'),
+        createExercise('e8', 'Butt Kicks', 'Jog in place, kicking your heels up towards your buttocks.', 3, undefined, '30 seconds'),
+        createExercise('e9', 'Jump Rope', 'Simulate jumping rope, or use an actual jump rope if available.', 3, undefined, '1 minute'),
+        createExercise('e10', 'Step-Ups', 'Step up onto a sturdy elevated surface, alternating leading legs.', 3, 15),
+      ]),
+      createWorkout('w3', 'Flexibility Focus', 'Simple stretching routine to enhance overall flexibility and reduce muscle tension.', [
+        createExercise('e11', 'Standing Hamstring Stretch', 'Bend forward at the hips, reaching towards your toes.', 3, undefined, '30 seconds per leg'),
+        createExercise('e12', 'Shoulder Rolls', 'Roll your shoulders backwards in a circular motion.', 2, 10),
+        createExercise('e13', 'Cat-Cow Stretch', 'On hands and knees, alternate between arching and rounding your back.', 3, 10),
+        createExercise('e14', 'Seated Twist', 'Sit with legs extended, twist your torso to one side, then the other.', 2, undefined, '30 seconds per side'),
+        createExercise('e15', 'Child\'s Pose', 'Kneel on the floor, sit back on your heels, and stretch your arms forward.', 1, undefined, '1 minute'),
+      ]),
+    ],
+  },
+  {
+    id: '2',
+    name: 'Intermediate Strength Builder',
+    description: 'A program for those with some fitness experience, aimed at building strength and muscle definition.',
+    createdAt: '2024-09-26T14:30:00Z',
+    workouts: [
+      createWorkout('w4', 'Upper Body Power', 'Challenging workout focusing on chest, back, and arms.', [
+        createExercise('e16', 'Push-ups with Rotation', 'Perform a push-up, then rotate to a side plank position.', 3, 10),
+        createExercise('e17', 'Dumbbell Rows', 'Bend over with a dumbbell in each hand, pull them up towards your chest.', 3, 12),
+        createExercise('e18', 'Tricep Dips', 'Using a chair or bench, lower your body by bending your elbows.', 3, 15),
+        createExercise('e19', 'Shoulder Press', 'Press dumbbells overhead from shoulder height.', 3, 10),
+        createExercise('e20', 'Plank to Downward Dog', 'Alternate between plank position and downward dog yoga pose.', 3, 10),
+      ]),
+      createWorkout('w5', 'Lower Body Blast', 'Intense leg and glute exercises for building lower body strength.', [
+        createExercise('e21', 'Goblet Squats', 'Hold a dumbbell or kettlebell close to your chest while performing squats.', 3, 12),
+        createExercise('e22', 'Romanian Deadlifts', 'Hinge at the hips while holding dumbbells, lowering them along your legs.', 3, 10),
+        createExercise('e23', 'Reverse Lunges', 'Step backwards into a lunge, alternating legs.', 3, 12),
+        createExercise('e24', 'Calf Raises', 'Stand on the edge of a step, raise your heels up and down.', 3, 15),
+        createExercise('e25', 'Glute Bridges', 'Lie on your back, lift your hips up towards the ceiling.', 3, 15),
+      ]),
+      createWorkout('w6', 'Core Crusher', 'Targeted ab and core workout for improved stability and definition.', [
+        createExercise('e26', 'Russian Twists', 'Sit with knees bent, feet off the ground, twist torso side to side.', 3, 20),
+        createExercise('e27', 'Bicycle Crunches', 'Lie on your back, alternate bringing opposite elbow to knee.', 3, 20),
+        createExercise('e28', 'Plank Hold', 'Hold a forearm plank position.', 3, undefined, '45 seconds'),
+        createExercise('e29', 'Leg Raises', 'Lie on your back, raise your legs up towards the ceiling.', 3, 12),
+        createExercise('e30', 'Side Plank with Hip Dips', 'In side plank position, lower and raise your hip.', 3, 10),
+      ]),
+    ],
+  },
+];
+
 
 export const shortConversation = [
   { id: '1', sender: 'user', text: "I've been feeling overwhelmed lately. Any tips?" },
@@ -61,7 +139,6 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
-// Convert the conversation arrays to use the Message type
 const convertToMessages = (conversation: any[]): Message[] => {
   return conversation.map(msg => ({
     id: msg.id,
@@ -111,7 +188,7 @@ export const mockConversations: Conversation[] = [
     messages: extendedConversationMessages
   }
 ];
-// The mockMessages array remains the same as you provided
+
 export const mockMessages: Message[] = [
   { id: '1', role: 'user', content: "Hello, how are you?" },
   { id: '2', role: 'assistant', content: "I'm doing well, thank you! How can I assist you today?" },
@@ -119,30 +196,3 @@ export const mockMessages: Message[] = [
   { id: '4', role: 'assistant', content: "Let's start by discussing your current eating habits and your goals. What specific areas of your diet would you like to improve?" },
 ];
 
-
-export const mockPrograms: Program[] = [
-  {
-    id: '1',
-    name: 'Beginner Workout',
-    description: 'A program designed for those new to fitness, focusing on building basic strength and endurance.',
-    createdAt: '2024-09-27T10:00:00Z',
-  },
-  {
-    id: '2',
-    name: 'Advanced Strength Training',
-    description: 'An intensive program for experienced lifters, aimed at maximizing muscle growth and strength gains.',
-    createdAt: '2024-09-26T14:30:00Z',
-  },
-  {
-    id: '3',
-    name: 'Cardio Blast',
-    description: 'High-intensity cardio workouts to improve cardiovascular health and burn calories.',
-    createdAt: '2024-09-25T09:15:00Z',
-  },
-  {
-    id: '4',
-    name: 'Yoga for Flexibility',
-    description: 'A series of yoga sessions focused on improving flexibility and reducing stress.',
-    createdAt: '2024-09-24T16:45:00Z',
-  },
-];

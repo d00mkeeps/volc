@@ -3,7 +3,7 @@ import { StyleSheet, View as RNView } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { Button } from '@/components/public/atoms';
 import { ProgramCreationModal } from '@/components/ProgramCreationModal';
-import { ProgramDetailsModal } from '@/components/program/organisms/ProgramDetailsModal';
+import { ProgramDetailsModal } from '@/components/ProgramDetailsModal/ProgramDetailsModal';
 import ProgramList from '@/components/program/molecules/ProgramList';
 import { mockPrograms } from '@/assets/mockData';
 import { Program } from '@/types';
