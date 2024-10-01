@@ -92,3 +92,9 @@ onProgramPress?: (programId: string) => void;
 
 export interface ProgramsScreenProps {
 navigation: any;}
+
+export interface WorkoutSelectProps {
+  workouts: string[];
+  selectedWorkout: string;
+  onSelectWorkout: (workout: string) => void;
+}

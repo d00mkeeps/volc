@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import MessageList from '../molecules/MessageList';
 import InputArea from '../atoms/InputArea';
 
-interface ConversationUIProps {
+interface ChatUIProps {
   title: string;
   subtitle: string;
   messages: any[]; // Replace 'any' with your message type
@@ -14,7 +14,7 @@ interface ConversationUIProps {
   onDraftMessageChange?: (draft: string) => void;
 }
 
-const ConversationUI: React.FC<ConversationUIProps> = ({
+const ChatUI: React.FC<ChatUIProps> = ({
   title,
   subtitle,
   messages,
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConversationUI;
+export default ChatUI;

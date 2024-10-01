@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import ConversationUI from '@/components/conversation/organisms/ChatUI';
+import ChatUI from '@/components/conversation/organisms/ChatUI';
 import { mockConversations } from '@/assets/mockData';
 import { Stack } from 'expo-router';
 
@@ -32,7 +32,7 @@ export default function ConversationPage() {
         }} 
       />
       <View style={styles.container}>
-        <ConversationUI
+        <ChatUI
           title={conversation.title}
           messages={conversation.messages || []}
           draftMessage={draftMessage}

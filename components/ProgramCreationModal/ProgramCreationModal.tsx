@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
 import Wizard, { WizardRef } from "react-native-wizard";
-import { Button } from './public/atoms';
-import ConversationUI from './conversation/organisms/ChatUI';
+import { Button } from '../public/atoms';
+import ChatUI from '../conversation/organisms/ChatUI';
 import { Text } from '@/components/Themed';
 
 type ProgramCreationModalProps = {
@@ -19,7 +19,7 @@ export const ProgramCreationModal: React.FC<ProgramCreationModalProps> = ({ isVi
   const stepList = [
     {
       content: (
-        <ConversationUI 
+        <ChatUI 
           title="Program Goals"
           subtitle="Let's define your basic goal and create a SMART goal for your program." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
             throw new Error('Function not implemented.');
@@ -30,7 +30,7 @@ export const ProgramCreationModal: React.FC<ProgramCreationModalProps> = ({ isVi
     },
     {
       content: (
-        <ConversationUI 
+        <ChatUI 
           title="Intermediate Goals"
           subtitle="Let's discuss suitable intermediate goals and create your program." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
             throw new Error('Function not implemented.');

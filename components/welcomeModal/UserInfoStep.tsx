@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
-import { Button } from '../public/atoms';
 import { TextInput } from '../public/atoms';
 import { UserInfoData } from './index';
 
