@@ -1,50 +1,43 @@
-// components/ProgramCard.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Dimensions } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { ProgramCardProps } from '@/types';
 
-const windowWidth = Dimensions.get('window').width;
-const cardSize = (windowWidth - 48) / 2; // 48 = 16 * 3 (left padding + right padding + space between cards)
-
 const ProgramCard: React.FC<ProgramCardProps> = ({ program, onPress }) => {
+  const handlePress = () => {
+    if (onPress) {
+      onPress(program.id);
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.container} onPress={() => onPress && onPress(program.id)}>
+    <TouchableOpacity 
+      style={styles.card} 
+      onPress={handlePress}
+    >
       <Text style={styles.title}>{program.name}</Text>
-      <Text style={styles.description} numberOfLines={3} ellipsizeMode="tail">
-        {program.description}
-      </Text>
-      <Text style={styles.createdAt}>
-        Created: {new Date(program.createdAt).toLocaleDateString()}
-      </Text>
+      <Text style={styles.description}>{program.description}</Text>
     </TouchableOpacity>
   );
 };
 
+
 const styles = StyleSheet.create({
-  container: {
-    width: cardSize,
-    height: cardSize,
-    padding: 12,
-    borderRadius: 12,
+  card: {
     backgroundColor: '#559e55',
+    borderRadius: 10,
+    padding: 16,
     margin: 8,
-    justifyContent: 'space-between',
+    width: '47%', // Adjust based on your layout preferences
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#ddd',
+    color: '#fff',
     marginBottom: 8,
   },
   description: {
-    fontSize: 12,
-    color: '#eee',
-    flex: 1,
-  },
-  createdAt: {
-    fontSize: 10,
-    color: '#222',
-    marginTop: 8,
+    fontSize: 14,
+    color: '#ddd',
   },
 });
 

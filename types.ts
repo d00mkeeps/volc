@@ -1,5 +1,3 @@
-// types.ts
-
 export interface Exercise {
   id: string;
   name: string;
@@ -8,6 +6,7 @@ export interface Exercise {
   reps?: number;
   duration?: string;
 }
+
 
 export interface Workout {
   id: string;
@@ -25,7 +24,7 @@ export interface Program {
 }
 
 export interface ProgramDetailSlideProps {
-  program: Program;
+  program: Program ;
   selectedWorkout: Workout | null;
   onWorkoutChange: (workout: Workout | null) => void;
 }
@@ -35,7 +34,9 @@ export interface HeaderProps {
 }
 
 export interface WorkoutDisplayProps {
-  workout: Workout;
+  workout: Workout | null;
+  workouts: Workout[];
+  onWorkoutChange: (workout: Workout) => void;
 }
 
 export interface ExerciseCardProps {
@@ -97,4 +98,10 @@ export interface WorkoutSelectProps {
   workouts: string[];
   selectedWorkout: string;
   onSelectWorkout: (workout: string) => void;
+}
+
+export interface ProgramDetailsModalProps {
+  program: Program;
+  isVisible: boolean;
+  onClose: () => void;
 }

@@ -1,82 +1,127 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, Pressable, FlatList, StyleSheet } from 'react-native';
-import { WorkoutSelectProps } from '@/types';
+import { View, Text, Modal, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
+import { WorkoutSelectProps } from '@/types'; 
 
-const WorkoutSelect: React.FC<WorkoutSelectProps> = ({ workouts, selectedWorkout, onSelectWorkout }) => {
-    const [modalVisible, setModalVisible] = useState(false);
-  
-    const openModal = () => setModalVisible(true);
-    const closeModal = () => setModalVisible(false);
-  
-    const handleSelectWorkout = (workout: string) => {
-      onSelectWorkout(workout);
-      closeModal();
-    };
-  
-    return (
-      <View>
-        <Pressable onPress={openModal} style={styles.selectButton}>
-          <Text>{selectedWorkout || 'Select a workout'}</Text>
-        </Pressable>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <FlatList
-                data={workouts}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                  <Pressable
-                    style={styles.optionItem}
-                    onPress={() => handleSelectWorkout(item)}
-                  >
-                    <Text>{item}</Text>
-                  </Pressable>
-                )}
-              />
-              <Pressable onPress={closeModal} style={styles.closeButton}>
-                <Text>Close</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
+export const WorkoutSelect: React.FC<WorkoutSelectProps> = ({ workouts, selectedWorkout, onSelectWorkout }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredWorkouts = workouts.filter(workout =>
+    workout.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSelect = (workout: string) => {
+    onSelectWorkout(workout);
+    setModalVisible(false);
   };
 
-  const styles = StyleSheet.create({
-    selectButton: {
-      padding: 10,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
+  return (
+    <View>
+      <TouchableOpacity style={styles.selectButton} onPress={() => setModalVisible(true)}>
+        <Text style={styles.selectButtonText}>{selectedWorkout || 'Select a workout'}</Text>
+      </TouchableOpacity>
+      
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TextInput
+              style={styles.searchInput}
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+              placeholder="Search workouts..."
+              placeholderTextColor="#888"
+            />
+            <FlatList
+              data={filteredWorkouts}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.workoutItem} onPress={() => handleSelect(item)}>
+                  <Text style={styles.workoutItemText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  selectButton: {
+    padding: 10,
+    backgroundColor: '#4a854a',
+    borderRadius: 10,
+  },
+  selectButtonText: {
+    color: '#ddd',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#559e55',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-      backgroundColor: 'white',
-      padding: 20,
-      borderRadius: 10,
-      width: '80%',
-    },
-    optionItem: {
-      padding: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-    },
-    closeButton: {
-      marginTop: 20,
-      padding: 10,
-      backgroundColor: '#f0f0f0',
-      borderRadius: 5,
-      alignItems: 'center',
-    },
-  });
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+    maxHeight: '80%',
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#4a854a',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    marginBottom: 10,
+    width: '100%',
+    color: '#ddd',
+    backgroundColor: '#4a854a',
+  },
+  workoutItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#4a854a',
+    width: '100%',
+  },
+  workoutItemText: {
+    color: '#ddd',
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: '#4a854a',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  closeButtonText: {
+    color: '#ddd',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+});

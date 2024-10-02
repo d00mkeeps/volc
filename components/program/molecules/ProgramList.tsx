@@ -1,4 +1,3 @@
-// components/ProgramList.tsx
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { ProgramListProps } from '@/types';
@@ -10,7 +9,10 @@ const ProgramList: React.FC<ProgramListProps> = ({ programs, onProgramPress }) =
       data={programs}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <ProgramCard program={item} onPress={onProgramPress} />
+        <ProgramCard 
+          program={item} 
+          onPress={onProgramPress} 
+        />
       )}
       numColumns={2}
       columnWrapperStyle={styles.row}

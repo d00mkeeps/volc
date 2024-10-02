@@ -1,66 +1,49 @@
 import React, { useState } from 'react';
-import { StyleSheet, View as RNView } from 'react-native';
-import { Text, View } from '@/components/Themed';
-import { Button } from '@/components/public/atoms';
-import { ProgramCreationModal } from '@/components/ProgramCreationModal/ProgramCreationModal';
+import { View, StyleSheet } from 'react-native';
 import ProgramList from '@/components/program/molecules/ProgramList';
-import { mockPrograms } from '@/assets/mockData';
+import { ProgramDetailsModal } from '@/components/ProgramDisplayModal/ProgramDetailsModal';
 import { Program } from '@/types';
+import { mockPrograms } from '@/assets/mockData'; 
 
-export default function ProgramsScreen() {
-  const [isProgramModalVisible, setIsProgramModalVisible] = useState(false);
-  const [isProgramDetailsModalVisible, setIsProgramDetailsModalVisible] = useState(false);
-  const [selectedProgram, setSelectedProgram] = useState<Program | null >(null);
+const ProgramsScreen: React.FC = () => {
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleProgramPress = (programId: string) => {
     const program = mockPrograms.find(p => p.id === programId);
     if (program) {
       setSelectedProgram(program);
-      setIsProgramDetailsModalVisible(true);
+      setModalVisible(true);
     }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedProgram(null);
   };
 
   return (
     <View style={styles.container}>
-      <RNView style={styles.header}>
-        <Text style={styles.title}>Programs</Text>
-        <Button 
-          onPress={() => setIsProgramModalVisible(true)}
-          style={styles.createButton}
-        >
-          Create New Program
-        </Button>
-      </RNView>
       <ProgramList 
         programs={mockPrograms} 
-        onProgramPress={handleProgramPress}
+        onProgramPress={handleProgramPress} 
       />
-      <ProgramCreationModal 
-        isVisible={isProgramModalVisible} 
-        onClose={() => setIsProgramModalVisible(false)} 
-      />
-    
+      {selectedProgram && (
+        <ProgramDetailsModal
+          program={selectedProgram}
+          isVisible={modalVisible}
+          onClose={closeModal}
+        />
+      )}
     </View>
   );
-}
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  createButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: '#f0f0f0',
   },
 });
+
+export default ProgramsScreen;
