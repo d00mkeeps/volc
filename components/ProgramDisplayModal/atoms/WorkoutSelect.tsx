@@ -22,7 +22,7 @@ export const WorkoutSelect: React.FC<WorkoutSelectProps> = ({ workouts, selected
       </TouchableOpacity>
       
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -34,7 +34,7 @@ export const WorkoutSelect: React.FC<WorkoutSelectProps> = ({ workouts, selected
               onChangeText={setSearchQuery}
               value={searchQuery}
               placeholder="Search workouts..."
-              placeholderTextColor="#888"
+              placeholderTextColor="#1f281f"
             />
             <FlatList
               data={filteredWorkouts}
@@ -66,9 +66,11 @@ const styles = StyleSheet.create({
   },
   selectButtonText: {
     color: '#ddd',
-    fontSize: 16,
+    fontSize: 20, // Increased font size
+    fontWeight: 'bold', // Made text bold
     textAlign: 'center',
   },
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',

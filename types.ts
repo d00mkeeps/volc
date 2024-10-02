@@ -31,6 +31,7 @@ export interface ProgramDetailSlideProps {
 
 export interface HeaderProps {
   title: string;
+  onClose: () => void
 }
 
 export interface WorkoutDisplayProps {

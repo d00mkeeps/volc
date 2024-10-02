@@ -15,13 +15,12 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workout, onWorko
 
   return (
     <View style={styles.container}>
-      <WorkoutHeader
-        workouts={workouts}
-        selectedWorkout={workout}
-        onSelectWorkout={onWorkoutChange}
-      />
-      <View style={styles.descriptionContainer}>
-        <Text style={styles.description}>{workout.description}</Text>
+      <View style={styles.headerContainer}>
+        <WorkoutHeader
+          workouts={workouts}
+          selectedWorkout={workout}
+          onSelectWorkout={onWorkoutChange}
+        />
       </View>
       <ExerciseList workout={workout} />
     </View>
@@ -31,18 +30,10 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workout, onWorko
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#559e55',
+    backgroundColor: '#1f281f',
   },
-  descriptionContainer: {
-    padding: 16,
-    backgroundColor: '#4a854a',
-    borderRadius: 10,
-    marginBottom: 16,
-    marginHorizontal: 16,
-  },
-  description: {
-    fontSize: 16,
-    color: '#ddd',
+  headerContainer: {
+    margin: 16,
   },
   noWorkoutText: {
     fontSize: 18,

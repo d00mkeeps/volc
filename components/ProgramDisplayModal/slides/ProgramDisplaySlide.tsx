@@ -7,7 +7,6 @@ import { ProgramDetailSlideProps } from '@/types';
 export const ProgramDisplaySlide: React.FC<ProgramDetailSlideProps> = ({ program, selectedWorkout, onWorkoutChange }) => {
   return (
     <View style={styles.container}>
-      <Header title={program.name} />
       <WorkoutDisplay
         workout={selectedWorkout}
         workouts={program.workouts}
@@ -20,6 +19,6 @@ export const ProgramDisplaySlide: React.FC<ProgramDetailSlideProps> = ({ program
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#559e55',
+    backgroundColor: '#1f281f',
   },
 });

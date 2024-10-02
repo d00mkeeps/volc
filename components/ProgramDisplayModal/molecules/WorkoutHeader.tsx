@@ -12,7 +12,6 @@ interface WorkoutHeaderProps {
 export const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({ workouts, selectedWorkout, onSelectWorkout }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{selectedWorkout ? selectedWorkout.name : 'Select a workout'}</Text>
       <WorkoutSelect
         workouts={workouts.map(w => w.name)}
         selectedWorkout={selectedWorkout ? selectedWorkout.name : ''}
@@ -23,21 +22,22 @@ export const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({ workouts, selected
           }
         }}
       />
+      {selectedWorkout && (
+        <Text style={styles.description}>{selectedWorkout.description}</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#559e55',
+    backgroundColor: '#559e55', // Light green background
     borderRadius: 20,
-    marginBottom: 16,
+    padding: 16,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ddd',
-    marginBottom: 8,
+  description: {
+    fontSize: 16,
+    color: '#1f281f',
+    marginTop: 12,
   },
 });
