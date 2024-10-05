@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-
   centeredView: {
     flex: 1,
     justifyContent: 'center',

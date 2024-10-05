@@ -78,16 +78,16 @@ export default function DrawerLayout() {
           ),
         }}
       />
-      <Drawer.Screen
-        name="insights"
-        options={{
-          drawerLabel: 'Insights',
-          title: 'Insights',
-          drawerIcon: ({ color, size }) => (
-            <Ionicons name="barbell-outline" size={size} color={color} />
-          ),
-        }}
-      />
+    <Drawer.Screen
+          name="insights"
+          options={{
+            drawerLabel: 'Insights',
+            title: 'Insights',
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="stats-chart-outline" size={size} color={color} />
+            ),
+          }}
+        />
       <Drawer.Screen
         name="user-data"
         options={{
