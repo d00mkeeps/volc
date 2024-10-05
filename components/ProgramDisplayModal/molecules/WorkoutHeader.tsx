@@ -31,13 +31,13 @@ export const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({ workouts, selected
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#559e55', // Light green background
+    backgroundColor: '#559e55',
     borderRadius: 20,
     padding: 16,
   },
   description: {
     fontSize: 16,
-    color: '#1f281f',
+    color: '#ddd',
     marginTop: 12,
   },
 });

@@ -17,8 +17,13 @@ export const WorkoutSelect: React.FC<WorkoutSelectProps> = ({ workouts, selected
 
   return (
     <View>
-      <TouchableOpacity style={styles.selectButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.selectButtonText}>{selectedWorkout || 'Select a workout'}</Text>
+        <TouchableOpacity style={styles.selectButton} onPress={() => setModalVisible(true)}>
+        <View style={styles.selectButtonContainer}>
+          <Text style={styles.selectButtonText}>
+            {selectedWorkout || 'Select a workout'}
+          </Text>
+          <Text style={styles.listIcon}>☰</Text>
+        </View>
       </TouchableOpacity>
       
       <Modal
@@ -66,8 +71,8 @@ const styles = StyleSheet.create({
   },
   selectButtonText: {
     color: '#ddd',
-    fontSize: 20, // Increased font size
-    fontWeight: 'bold', // Made text bold
+    fontSize: 24,  
+    fontWeight: 'bold',
     textAlign: 'center',
   },
 
@@ -126,4 +131,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  caret: {
+    fontSize: 18, 
+    color: '#ddd',
+  },
+  selectButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  listIcon: {
+    color: '#eee',
+    fontSize: 24,
+    marginLeft: 5, 
+    paddingRight: 8,
+
+  },
+
+
 });
