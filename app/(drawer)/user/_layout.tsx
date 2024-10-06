@@ -20,18 +20,18 @@ export default function InsightsLayout() {
       }}
     >
       <Tabs.Screen
-        name="visual-data"
+        name="profile"
         options={{
-          title: 'Visual Data',
+          title: 'Profile',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="bar-chart-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="workout-history"
+        name="trophy-room"
         options={{
-          title: 'History',
+          title: 'Trophy Room',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="time-outline" size={size} color={color} />
           ),

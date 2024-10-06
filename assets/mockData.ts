@@ -1,6 +1,6 @@
-import { Program, Workout, Exercise } from "@/types";
+import { Program, Workout, Exercise, Conversation, Message, UserProfile } from "@/types";
 
-const createExercise = (id: string, name: string, description: string, sets?: number, reps?: number, duration?: string): Exercise => ({
+const createPrWoExercise = (id: string, name: string, description: string, sets?: number, reps?: number, duration?: string): Exercise => ({
   id,
   name,
   description,
@@ -9,7 +9,7 @@ const createExercise = (id: string, name: string, description: string, sets?: nu
   duration,
 });
 
-const createWorkout = (id: string, name: string, description: string, exercises: Exercise[]): Workout => ({
+const createPrWorkout = (id: string, name: string, description: string, exercises: Exercise[]): Workout => ({
   id,
   name,
   description,
@@ -23,26 +23,26 @@ export const mockPrograms: Program[] = [
     description: 'A program designed for those new to fitness, focusing on building basic strength and endurance.',
     createdAt: '2024-09-27T10:00:00Z',
     workouts: [
-      createWorkout('w1', 'Full Body Basics', 'Introduction to fundamental exercises targeting all major muscle groups.', [
-        createExercise('e1', 'Bodyweight Squats', 'Stand with feet shoulder-width apart, lower your body as if sitting back into a chair.', 3, 10),
-        createExercise('e2', 'Push-ups', 'Start in a plank position, lower your body until your chest nearly touches the floor, then push back up.', 3, 5),
-        createExercise('e3', 'Lunges', 'Step forward with one leg, lowering your hips until both knees are bent at about 90-degree angles.', 3, 8),
-        createExercise('e4', 'Plank', 'Hold a push-up position with your forearms on the ground.', 3, undefined, '30 seconds'),
-        createExercise('e5', 'Mountain Climbers', 'Start in a push-up position, bring one knee toward your chest, then quickly switch legs.', 3, undefined, '30 seconds'),
+      createPrWorkout('w1', 'Full Body Basics', 'Introduction to fundamental exercises targeting all major muscle groups.', [
+        createPrWoExercise('e1', 'Bodyweight Squats', 'Stand with feet shoulder-width apart, lower your body as if sitting back into a chair.', 3, 10),
+        createPrWoExercise('e2', 'Push-ups', 'Start in a plank position, lower your body until your chest nearly touches the floor, then push back up.', 3, 5),
+        createPrWoExercise('e3', 'Lunges', 'Step forward with one leg, lowering your hips until both knees are bent at about 90-degree angles.', 3, 8),
+        createPrWoExercise('e4', 'Plank', 'Hold a push-up position with your forearms on the ground.', 3, undefined, '30 seconds'),
+        createPrWoExercise('e5', 'Mountain Climbers', 'Start in a push-up position, bring one knee toward your chest, then quickly switch legs.', 3, undefined, '30 seconds'),
       ]),
-      createWorkout('w2', 'Cardio Starter', 'Low-impact cardio exercises to improve heart health and stamina.', [
-        createExercise('e6', 'Jumping Jacks', 'Start standing, then jump your feet out while raising your arms overhead.', 3, undefined, '30 seconds'),
-        createExercise('e7', 'High Knees', 'Jog in place, lifting your knees high towards your chest.', 3, undefined, '30 seconds'),
-        createExercise('e8', 'Butt Kicks', 'Jog in place, kicking your heels up towards your buttocks.', 3, undefined, '30 seconds'),
-        createExercise('e9', 'Jump Rope', 'Simulate jumping rope, or use an actual jump rope if available.', 3, undefined, '1 minute'),
-        createExercise('e10', 'Step-Ups', 'Step up onto a sturdy elevated surface, alternating leading legs.', 3, 15),
+      createPrWorkout('w2', 'Cardio Starter', 'Low-impact cardio exercises to improve heart health and stamina.', [
+        createPrWoExercise('e6', 'Jumping Jacks', 'Start standing, then jump your feet out while raising your arms overhead.', 3, undefined, '30 seconds'),
+        createPrWoExercise('e7', 'High Knees', 'Jog in place, lifting your knees high towards your chest.', 3, undefined, '30 seconds'),
+        createPrWoExercise('e8', 'Butt Kicks', 'Jog in place, kicking your heels up towards your buttocks.', 3, undefined, '30 seconds'),
+        createPrWoExercise('e9', 'Jump Rope', 'Simulate jumping rope, or use an actual jump rope if available.', 3, undefined, '1 minute'),
+        createPrWoExercise('e10', 'Step-Ups', 'Step up onto a sturdy elevated surface, alternating leading legs.', 3, 15),
       ]),
-      createWorkout('w3', 'Flexibility Focus', 'Simple stretching routine to enhance overall flexibility and reduce muscle tension.', [
-        createExercise('e11', 'Standing Hamstring Stretch', 'Bend forward at the hips, reaching towards your toes.', 3, undefined, '30 seconds per leg'),
-        createExercise('e12', 'Shoulder Rolls', 'Roll your shoulders backwards in a circular motion.', 2, 10),
-        createExercise('e13', 'Cat-Cow Stretch', 'On hands and knees, alternate between arching and rounding your back.', 3, 10),
-        createExercise('e14', 'Seated Twist', 'Sit with legs extended, twist your torso to one side, then the other.', 2, undefined, '30 seconds per side'),
-        createExercise('e15', 'Child\'s Pose', 'Kneel on the floor, sit back on your heels, and stretch your arms forward.', 1, undefined, '1 minute'),
+      createPrWorkout('w3', 'Flexibility Focus', 'Simple stretching routine to enhance overall flexibility and reduce muscle tension.', [
+        createPrWoExercise('e11', 'Standing Hamstring Stretch', 'Bend forward at the hips, reaching towards your toes.', 3, undefined, '30 seconds per leg'),
+        createPrWoExercise('e12', 'Shoulder Rolls', 'Roll your shoulders backwards in a circular motion.', 2, 10),
+        createPrWoExercise('e13', 'Cat-Cow Stretch', 'On hands and knees, alternate between arching and rounding your back.', 3, 10),
+        createPrWoExercise('e14', 'Seated Twist', 'Sit with legs extended, twist your torso to one side, then the other.', 2, undefined, '30 seconds per side'),
+        createPrWoExercise('e15', 'Child\'s Pose', 'Kneel on the floor, sit back on your heels, and stretch your arms forward.', 1, undefined, '1 minute'),
       ]),
     ],
   },
@@ -52,26 +52,26 @@ export const mockPrograms: Program[] = [
     description: 'A program for those with some fitness experience, aimed at building strength and muscle definition.',
     createdAt: '2024-09-26T14:30:00Z',
     workouts: [
-      createWorkout('w4', 'Upper Body Power', 'Challenging workout focusing on chest, back, and arms.', [
-        createExercise('e16', 'Push-ups with Rotation', 'Perform a push-up, then rotate to a side plank position.', 3, 10),
-        createExercise('e17', 'Dumbbell Rows', 'Bend over with a dumbbell in each hand, pull them up towards your chest.', 3, 12),
-        createExercise('e18', 'Tricep Dips', 'Using a chair or bench, lower your body by bending your elbows.', 3, 15),
-        createExercise('e19', 'Shoulder Press', 'Press dumbbells overhead from shoulder height.', 3, 10),
-        createExercise('e20', 'Plank to Downward Dog', 'Alternate between plank position and downward dog yoga pose.', 3, 10),
+      createPrWorkout('w4', 'Upper Body Power', 'Challenging workout focusing on chest, back, and arms.', [
+        createPrWoExercise('e16', 'Push-ups with Rotation', 'Perform a push-up, then rotate to a side plank position.', 3, 10),
+        createPrWoExercise('e17', 'Dumbbell Rows', 'Bend over with a dumbbell in each hand, pull them up towards your chest.', 3, 12),
+        createPrWoExercise('e18', 'Tricep Dips', 'Using a chair or bench, lower your body by bending your elbows.', 3, 15),
+        createPrWoExercise('e19', 'Shoulder Press', 'Press dumbbells overhead from shoulder height.', 3, 10),
+        createPrWoExercise('e20', 'Plank to Downward Dog', 'Alternate between plank position and downward dog yoga pose.', 3, 10),
       ]),
-      createWorkout('w5', 'Lower Body Blast', 'Intense leg and glute exercises for building lower body strength.', [
-        createExercise('e21', 'Goblet Squats', 'Hold a dumbbell or kettlebell close to your chest while performing squats.', 3, 12),
-        createExercise('e22', 'Romanian Deadlifts', 'Hinge at the hips while holding dumbbells, lowering them along your legs.', 3, 10),
-        createExercise('e23', 'Reverse Lunges', 'Step backwards into a lunge, alternating legs.', 3, 12),
-        createExercise('e24', 'Calf Raises', 'Stand on the edge of a step, raise your heels up and down.', 3, 15),
-        createExercise('e25', 'Glute Bridges', 'Lie on your back, lift your hips up towards the ceiling.', 3, 15),
+      createPrWorkout('w5', 'Lower Body Blast', 'Intense leg and glute exercises for building lower body strength.', [
+        createPrWoExercise('e21', 'Goblet Squats', 'Hold a dumbbell or kettlebell close to your chest while performing squats.', 3, 12),
+        createPrWoExercise('e22', 'Romanian Deadlifts', 'Hinge at the hips while holding dumbbells, lowering them along your legs.', 3, 10),
+        createPrWoExercise('e23', 'Reverse Lunges', 'Step backwards into a lunge, alternating legs.', 3, 12),
+        createPrWoExercise('e24', 'Calf Raises', 'Stand on the edge of a step, raise your heels up and down.', 3, 15),
+        createPrWoExercise('e25', 'Glute Bridges', 'Lie on your back, lift your hips up towards the ceiling.', 3, 15),
       ]),
-      createWorkout('w6', 'Core Crusher', 'Targeted ab and core workout for improved stability and definition.', [
-        createExercise('e26', 'Russian Twists', 'Sit with knees bent, feet off the ground, twist torso side to side.', 3, 20),
-        createExercise('e27', 'Bicycle Crunches', 'Lie on your back, alternate bringing opposite elbow to knee.', 3, 20),
-        createExercise('e28', 'Plank Hold', 'Hold a forearm plank position.', 3, undefined, '45 seconds'),
-        createExercise('e29', 'Leg Raises', 'Lie on your back, raise your legs up towards the ceiling.', 3, 12),
-        createExercise('e30', 'Side Plank with Hip Dips', 'In side plank position, lower and raise your hip.', 3, 10),
+      createPrWorkout('w6', 'Core Crusher', 'Targeted ab and core workout for improved stability and definition.', [
+        createPrWoExercise('e26', 'Russian Twists', 'Sit with knees bent, feet off the ground, twist torso side to side.', 3, 20),
+        createPrWoExercise('e27', 'Bicycle Crunches', 'Lie on your back, alternate bringing opposite elbow to knee.', 3, 20),
+        createPrWoExercise('e28', 'Plank Hold', 'Hold a forearm plank position.', 3, undefined, '45 seconds'),
+        createPrWoExercise('e29', 'Leg Raises', 'Lie on your back, raise your legs up towards the ceiling.', 3, 12),
+        createPrWoExercise('e30', 'Side Plank with Hip Dips', 'In side plank position, lower and raise your hip.', 3, 10),
       ]),
     ],
   },
@@ -124,21 +124,6 @@ const extendedConversation = [
   { id: '15', sender: 'user', text: "That makes sense. Thanks for helping me break this down into manageable steps. I'm feeling more optimistic already!" },
 ];
 
-
-export interface Conversation {
-  id: string;
-  title: string;
-  lastMessage: string;
-  timestamp: string;
-  lastMessageTime: string;
-  messages: Message[];
-}
-
-export interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
 const convertToMessages = (conversation: any[]): Message[] => {
   return conversation.map(msg => ({
     id: msg.id,
@@ -147,13 +132,11 @@ const convertToMessages = (conversation: any[]): Message[] => {
   }));
 };
 
-// Convert each conversation
 const shortConversationMessages = convertToMessages(shortConversation);
 const mediumConversationMessages = convertToMessages(mediumConversation);
 const longerConversationMessages = convertToMessages(longerConversation);
 const extendedConversationMessages = convertToMessages(extendedConversation);
 
-// Create the mockConversations array
 export const mockConversations: Conversation[] = [
   {
     id: '1',
@@ -188,11 +171,92 @@ export const mockConversations: Conversation[] = [
     messages: extendedConversationMessages
   }
 ];
+export const syntheticUserProfile: UserProfile = {
+  user_id: 2,
+  first_name: "Sam",
+  last_name: "Taylor",
+  is_imperial: false,
+  display_name: "FitSam",
+  auth_user_uuid: "660f9511-f3a2-42d5-b7b7-557655441111",
+  goals: "Build muscle and improve flexibility",
+  training_history: {
+    years_of_experience: 2,
+    preferred_activities: ["weightlifting", "yoga", "swimming"]
+  }
+};
 
-export const mockMessages: Message[] = [
-  { id: '1', role: 'user', content: "Hello, how are you?" },
-  { id: '2', role: 'assistant', content: "I'm doing well, thank you! How can I assist you today?" },
-  { id: '3', role: 'user', content: "I'm looking for some advice on improving my diet." },
-  { id: '4', role: 'assistant', content: "Let's start by discussing your current eating habits and your goals. What specific areas of your diet would you like to improve?" },
+export const syntheticWorkouts: Workout[] = [
+  {
+    id: "w3",
+    name: "Upper Body Power",
+    description: "Focus on building strength in chest, back, and arms",
+    exercises: [
+      {
+        id: "e9",
+        name: "Incline Dumbbell Press",
+        description: "Lie on an incline bench and press dumbbells upward",
+        sets: 3,
+        reps: 10
+      },
+      {
+        id: "e10",
+        name: "Seated Cable Rows",
+        description: "Pull a cable attachment towards your abdomen while seated",
+        sets: 3,
+        reps: 12
+      },
+      {
+        id: "e11",
+        name: "Tricep Pushdowns",
+        description: "Push a cable bar down using your triceps",
+        sets: 3,
+        reps: 15
+      },
+      {
+        id: "e12",
+        name: "Hammer Curls",
+        description: "Curl dumbbells with a neutral grip",
+        sets: 3,
+        reps: 12
+      }
+    ]
+  },
+  {
+    id: "w4",
+    name: "Leg Day Challenge",
+    description: "Intense lower body workout to build strength and endurance",
+    exercises: [
+      {
+        id: "e13",
+        name: "Back Squats",
+        description: "Perform squats with a barbell on your upper back",
+        sets: 4,
+        reps: 8
+      },
+      {
+        id: "e14",
+        name: "Romanian Deadlifts",
+        description: "Hinge at the hips with a barbell to target hamstrings",
+        sets: 3,
+        reps: 10
+      },
+      {
+        id: "e15",
+        name: "Walking Lunges",
+        description: "Take alternating steps forward into a lunge position",
+        sets: 3,
+        reps: 20
+      },
+      {
+        id: "e16",
+        name: "Leg Press",
+        description: "Push a weighted platform away using your legs",
+        sets: 3,
+        reps: 12
+      }
+    ]
+  }
 ];
+
+export { Message, Conversation };
 

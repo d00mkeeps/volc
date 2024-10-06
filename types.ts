@@ -51,7 +51,6 @@ export interface ProgramNoteSlideProps {
 export type RootStackParamList = {
   ConversationList: undefined;
   Conversation: { conversationId: string };
-  // Add other screens here as needed
 };
 export type ConversationListProps = {
   onConversationPress: (id: string) => void;
@@ -60,18 +59,18 @@ export type ConversationListProps = {
 export interface ConversationUIProps {
   title: string;
   subtitle: string;
-  messages: any[]; // Replace 'any' with your message type
+  messages: any[];
   draftMessage?: string;
   onSendMessage: (message: string) => void;
   onDraftMessageChange?: (draft: string) => void;
 }
 
-
-
 export interface Workout {
   id: string;
   name: string;
   description: string;
+  created_at?: string; 
+  user_id?: number; 
 }
 export interface Program {
 id: string;
@@ -105,4 +104,45 @@ export interface ProgramDetailsModalProps {
   program: Program;
   isVisible: boolean;
   onClose: () => void;
+}
+
+
+export interface Conversation {
+  id: string;
+  title: string;
+  lastMessage: string;
+  timestamp: string;
+  lastMessageTime: string;
+  messages: Message[];
+}
+
+export interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
+export interface UserProfile {
+  user_id: number;
+  first_name: string | null;
+  last_name: string | null;
+  is_imperial: boolean;
+  display_name: string | null;
+  auth_user_uuid: string | null;
+  goals: string | null;
+  training_history: any | null;
+}
+
+export interface WorkoutExercise {
+  id: string;
+  workout_id: string;
+  exercise_id: number;
+  exercise_name: string;
+  set_data: SetData[];
+  order_in_workout: number;
+}
+
+export interface SetData {
+  reps?: number;
+  weight?: number;
+  duration?: string;
 }
