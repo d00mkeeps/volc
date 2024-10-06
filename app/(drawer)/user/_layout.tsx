@@ -10,7 +10,7 @@ export default function InsightsLayout() {
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: { 
           backgroundColor: '#222', 
-          paddingTop: 4,
+          paddingTop: 8,
           borderTopColor:'#666' ,
           borderTopWidth: 2,
         },
@@ -24,7 +24,7 @@ export default function InsightsLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bar-chart-outline" size={size} color={color} />
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />
@@ -33,7 +33,7 @@ export default function InsightsLayout() {
         options={{
           title: 'Trophy Room',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time-outline" size={size} color={color} />
+            <Ionicons name="trophy-outline" size={size} color={color} />
           ),
         }}
       />

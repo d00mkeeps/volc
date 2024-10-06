@@ -78,8 +78,14 @@ name: string;
 description: string;
 createdAt: string;
 workouts: Workout[]
-
 }
+
+
+export interface ProfileGroupProps {
+  profile: UserProfile;
+}
+
+
 
 export interface ProgramCardProps {
 program: Program;
