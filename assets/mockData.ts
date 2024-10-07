@@ -14,6 +14,7 @@ const createPrWorkout = (id: string, name: string, description: string, exercise
   name,
   description,
   exercises,
+  createdAt: ""
 });
 
 export const mockPrograms: Program[] = [
@@ -170,7 +171,7 @@ export const mockConversations: Conversation[] = [
     lastMessageTime: 'Last week',
     messages: extendedConversationMessages
   }
-];
+];  
 export const syntheticUserProfile: UserProfile = {
   user_id: 2,
   first_name: "Miles",
@@ -185,78 +186,35 @@ export const syntheticUserProfile: UserProfile = {
   }
 };
 
-export const syntheticWorkouts: Workout[] = [
-  {
-    id: "w3",
-    name: "Upper Body Power",
-    description: "Focus on building strength in chest, back, and arms",
-    exercises: [
-      {
-        id: "e9",
-        name: "Incline Dumbbell Press",
-        description: "Lie on an incline bench and press dumbbells upward",
-        sets: 3,
-        reps: 10
-      },
-      {
-        id: "e10",
-        name: "Seated Cable Rows",
-        description: "Pull a cable attachment towards your abdomen while seated",
-        sets: 3,
-        reps: 12
-      },
-      {
-        id: "e11",
-        name: "Tricep Pushdowns",
-        description: "Push a cable bar down using your triceps",
-        sets: 3,
-        reps: 15
-      },
-      {
-        id: "e12",
-        name: "Hammer Curls",
-        description: "Curl dumbbells with a neutral grip",
-        sets: 3,
-        reps: 12
-      }
-    ]
-  },
-  {
-    id: "w4",
-    name: "Leg Day Challenge",
-    description: "Intense lower body workout to build strength and endurance",
-    exercises: [
-      {
-        id: "e13",
-        name: "Back Squats",
-        description: "Perform squats with a barbell on your upper back",
-        sets: 4,
-        reps: 8
-      },
-      {
-        id: "e14",
-        name: "Romanian Deadlifts",
-        description: "Hinge at the hips with a barbell to target hamstrings",
-        sets: 3,
-        reps: 10
-      },
-      {
-        id: "e15",
-        name: "Walking Lunges",
-        description: "Take alternating steps forward into a lunge position",
-        sets: 3,
-        reps: 20
-      },
-      {
-        id: "e16",
-        name: "Leg Press",
-        description: "Push a weighted platform away using your legs",
-        sets: 3,
-        reps: 12
-      }
-    ]
-  }
-];
+
+export const sampleWorkout: Workout = {
+  id: "2c82488a-b7d4-48c4-8765-a2f7ad669f40",
+  name: "Full Body Workout",
+  description: "Compound movements for overall strength",
+  createdAt: "2024-06-15T14:00:00Z",
+  exercises: [
+    {
+      id: "d383f1b4-90ea-4f1c-be50-f3b770689263",
+      name: "Squat",
+      description: "Compound lower body exercise",
+      setData: [
+        { reps: 5, weight: 150 },
+        { reps: 5, weight: 150 }
+      ],
+      orderInWorkout: 1
+    },
+    {
+      id: "8829d3eb-248f-4a53-87a1-cc04c73ccb8d",
+      name: "Bench",
+      description: "Compound upper body exercise",
+      setData: [
+        { reps: 5, weight: 100 },
+        { reps: 5, weight: 100 }
+      ],
+      orderInWorkout: 2
+    }
+  ]
+};
 
 export { Message, Conversation };
 

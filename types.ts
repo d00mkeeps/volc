@@ -2,11 +2,12 @@ export interface Exercise {
   id: string;
   name: string;
   description: string;
+  setData?: SetData[];
+  orderInWorkout?: number;
   sets?: number;
   reps?: number;
   duration?: string;
 }
-
 
 export interface Workout {
   id: string;
@@ -69,8 +70,9 @@ export interface Workout {
   id: string;
   name: string;
   description: string;
-  created_at?: string; 
+  createdAt: string; 
   user_id?: number; 
+  orderInWorkout?: number
 }
 export interface Program {
 id: string;
