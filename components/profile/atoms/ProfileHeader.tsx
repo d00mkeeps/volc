@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface ProfileHeaderProps {
-    displayName: string | null;
-  }
-  
+  displayName: string | null;
+}
+
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ displayName }) => (
   <View style={styles.container}>
     <Text style={styles.greeting}>Hi, {displayName}!</Text>

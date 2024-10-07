@@ -173,15 +173,15 @@ export const mockConversations: Conversation[] = [
 ];
 export const syntheticUserProfile: UserProfile = {
   user_id: 2,
-  first_name: "Sam",
-  last_name: "Taylor",
+  first_name: "Miles",
+  last_name: "Hillary",
   is_imperial: false,
-  display_name: "FitSam",
+  display_name: "kingmiles",
   auth_user_uuid: "660f9511-f3a2-42d5-b7b7-557655441111",
   goals: "Build muscle and improve flexibility",
   training_history: {
     years_of_experience: 2,
-    preferred_activities: ["weightlifting", "yoga", "swimming"]
+    preferred_activities: ["weightlifting", "running", "powerlifting"]
   }
 };
 
