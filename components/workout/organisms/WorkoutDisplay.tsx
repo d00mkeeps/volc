@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import WorkoutDisplayHeader from '../molecules/WorkoutDisplayHeader';
@@ -8,9 +9,13 @@ interface WorkoutDisplayProps {
   workouts: Workout[];
 }
 
+const ITEMS_PER_PAGE = 20;
+
 const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) => {
   const [searchValue, setSearchValue] = useState('');
   const [filteredWorkouts, setFilteredWorkouts] = useState(workouts);
+  const [displayedWorkouts, setDisplayedWorkouts] = useState<Workout[]>([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const filtered = workouts.filter(workout => 
@@ -18,7 +23,18 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) => {
       workout.description.toLowerCase().includes(searchValue.toLowerCase())
     );
     setFilteredWorkouts(filtered);
+    setPage(1);
   }, [searchValue, workouts]);
+
+  useEffect(() => {
+    setDisplayedWorkouts(filteredWorkouts.slice(0, page * ITEMS_PER_PAGE));
+  }, [filteredWorkouts, page]);
+
+  const loadMore = () => {
+    if (displayedWorkouts.length < filteredWorkouts.length) {
+      setPage(prevPage => prevPage + 1);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,7 +42,11 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) => {
         searchValue={searchValue}
         onSearchChange={setSearchValue}
       />
-      <WorkoutList workouts={filteredWorkouts} />
+      <WorkoutList 
+        workouts={displayedWorkouts} 
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
+      />
     </View>
   );
 };

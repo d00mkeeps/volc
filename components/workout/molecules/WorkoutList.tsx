@@ -5,9 +5,11 @@ import { Workout } from '@/types';
 
 interface WorkoutListProps {
   workouts: Workout[];
+  onEndReached: () => void;
+  onEndReachedThreshold: number;
 }
 
-const WorkoutList: React.FC<WorkoutListProps> = ({ workouts }) => (
+const WorkoutList: React.FC<WorkoutListProps> = ({ workouts, onEndReached, onEndReachedThreshold }) => (
   <FlatList
     data={workouts}
     renderItem={({ item, index }) => (
@@ -18,6 +20,8 @@ const WorkoutList: React.FC<WorkoutListProps> = ({ workouts }) => (
     )}
     keyExtractor={(item) => item.id}
     style={styles.container}
+    onEndReached={onEndReached}
+    onEndReachedThreshold={onEndReachedThreshold}
   />
 );
 
@@ -27,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WorkoutList;
+export default WorkoutList

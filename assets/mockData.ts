@@ -187,34 +187,307 @@ export const syntheticUserProfile: UserProfile = {
 };
 
 
-export const sampleWorkout: Workout = {
-  id: "2c82488a-b7d4-48c4-8765-a2f7ad669f40",
-  name: "Full Body Workout",
-  description: "Compound movements for overall strength",
-  createdAt: "2024-06-15T14:00:00Z",
-  exercises: [
-    {
-      id: "d383f1b4-90ea-4f1c-be50-f3b770689263",
-      name: "Squat",
-      description: "Compound lower body exercise",
-      setData: [
-        { reps: 5, weight: 150 },
-        { reps: 5, weight: 150 }
-      ],
-      orderInWorkout: 1
-    },
-    {
-      id: "8829d3eb-248f-4a53-87a1-cc04c73ccb8d",
-      name: "Bench",
-      description: "Compound upper body exercise",
-      setData: [
-        { reps: 5, weight: 100 },
-        { reps: 5, weight: 100 }
-      ],
-      orderInWorkout: 2
-    }
-  ]
-};
+
+export const sampleWorkouts: Workout[] = [
+  {
+    id: "2c82488a-b7d4-48c4-8765-a2f7ad669f40",
+    name: "Full Body Workout",
+    description: "Compound movements for overall strength",
+    createdAt: "2024-06-15T14:00:00Z",
+    exercises: [
+      {
+        id: "d383f1b4-90ea-4f1c-be50-f3b770689263",
+        name: "Squat",
+        description: "Compound lower body exercise",
+        setData: [
+          { reps: 5, weight: 150 },
+          { reps: 5, weight: 150 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "8829d3eb-248f-4a53-87a1-cc04c73ccb8d",
+        name: "Bench Press",
+        description: "Compound upper body exercise",
+        setData: [
+          { reps: 5, weight: 100 },
+          { reps: 5, weight: 100 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "3d93599c-cd1f-4ca7-9a6c-e4b9c271b236",
+    name: "Upper Body Push",
+    description: "Focus on chest, shoulders, and triceps",
+    createdAt: "2024-06-17T10:30:00Z",
+    exercises: [
+      {
+        id: "f4a7b3c2-1d8e-4f9a-b0c1-6d5e4f3a2b1c",
+        name: "Incline Dumbbell Press",
+        description: "Upper chest focused press",
+        setData: [
+          { reps: 8, weight: 60 },
+          { reps: 8, weight: 60 },
+          { reps: 8, weight: 60 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "a1b2c3d4-e5f6-4a3b-8c7d-9e0f1a2b3c4d",
+        name: "Overhead Press",
+        description: "Shoulder press with barbell",
+        setData: [
+          { reps: 6, weight: 95 },
+          { reps: 6, weight: 95 },
+          { reps: 6, weight: 95 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "5e4d3c2b-1a9b-8c7d-6f5e-4d3c2b1a9b8c",
+    name: "Lower Body Power",
+    description: "Explosive movements for lower body strength",
+    createdAt: "2024-06-19T16:45:00Z",
+    exercises: [
+      {
+        id: "b2c3d4e5-f6a7-5b4c-3d2e-1f9a8b7c6d5e",
+        name: "Deadlift",
+        description: "Compound pull movement",
+        setData: [
+          { reps: 5, weight: 200 },
+          { reps: 5, weight: 200 },
+          { reps: 5, weight: 200 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "c4d5e6f7-a8b9-6c5d-4e3f-2a1b0c9d8e7f",
+        name: "Box Jumps",
+        description: "Explosive jump onto elevated platform",
+        setData: [
+          { reps: 8, weight: 0 },
+          { reps: 8, weight: 0 },
+          { reps: 8, weight: 0 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "7f6e5d4c-3b2a-1c9d-8e7f-6a5b4c3d2e1f",
+    name: "Core and Cardio",
+    description: "High-intensity core workout with cardio intervals",
+    createdAt: "2024-06-21T08:15:00Z",
+    exercises: [
+      {
+        id: "d5e6f7a8-b9c0-7d6e-5f4g-3h2i1j0k9l8",
+        name: "Plank Variations",
+        description: "Series of plank holds and movements",
+        setData: [
+          { reps: 3, weight: 0 },
+          { reps: 3, weight: 0 },
+          { reps: 3, weight: 0 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "e6f7a8b9-c0d1-8e7f-6g5h-4i3j2k1l0m9",
+        name: "Burpees",
+        description: "Full body cardio movement",
+        setData: [
+          { reps: 15, weight: 0 },
+          { reps: 15, weight: 0 },
+          { reps: 15, weight: 0 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "9a8b7c6d-5e4f-3g2h-1i0j-9k8l7m6n5o4p",
+    name: "Back and Biceps",
+    description: "Focus on pulling movements and arm work",
+    createdAt: "2024-06-23T11:00:00Z",
+    exercises: [
+      {
+        id: "f7e6d5c4-b3a2-1m0n-9o8p-7q6r5s4t3u2",
+        name: "Pull-ups",
+        description: "Bodyweight back exercise",
+        setData: [
+          { reps: 8, weight: 0 },
+          { reps: 8, weight: 0 },
+          { reps: 8, weight: 0 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "e5d4c3b2-a1f0-9m8n-7o6p-5q4r3s2t1u0",
+        name: "Barbell Rows",
+        description: "Compound back exercise",
+        setData: [
+          { reps: 8, weight: 135 },
+          { reps: 8, weight: 135 },
+          { reps: 8, weight: 135 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "1b2c3d4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
+    name: "Leg Hypertrophy",
+    description: "High volume leg workout for muscle growth",
+    createdAt: "2024-06-25T15:30:00Z",
+    exercises: [
+      {
+        id: "a9b8c7d6-e5f4-3g2h-1i0j-9k8l7m6n5o4",
+        name: "Leg Press",
+        description: "Machine-based leg exercise",
+        setData: [
+          { reps: 12, weight: 300 },
+          { reps: 12, weight: 300 },
+          { reps: 12, weight: 300 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "b0c1d2e3-f4g5-6h7i-8j9k-0l1m2n3o4p5",
+        name: "Romanian Deadlift",
+        description: "Hamstring-focused deadlift variation",
+        setData: [
+          { reps: 10, weight: 165 },
+          { reps: 10, weight: 165 },
+          { reps: 10, weight: 165 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "2c3d4e5f-6g7h-8i9j-0k1l-2m3n4o5p6q7r",
+    name: "Shoulder Sculpt",
+    description: "Isolation exercises for shoulder development",
+    createdAt: "2024-06-27T09:45:00Z",
+    exercises: [
+      {
+        id: "d1e2f3g4-h5i6-7j8k-9l0m-1n2o3p4q5r6",
+        name: "Lateral Raises",
+        description: "Side deltoid isolation",
+        setData: [
+          { reps: 15, weight: 15 },
+          { reps: 15, weight: 15 },
+          { reps: 15, weight: 15 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "e2f3g4h5-i6j7-8k9l-0m1n-2o3p4q5r6s7",
+        name: "Face Pulls",
+        description: "Rear deltoid and upper back exercise",
+        setData: [
+          { reps: 12, weight: 50 },
+          { reps: 12, weight: 50 },
+          { reps: 12, weight: 50 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "3d4e5f6g-7h8i-9j0k-1l2m-3n4o5p6q7r8s",
+    name: "HIIT Cardio",
+    description: "High-intensity interval training for fat burn",
+    createdAt: "2024-06-29T17:00:00Z",
+    exercises: [
+      {
+        id: "f3g4h5i6-j7k8-9l0m-1n2o-3p4q5r6s7t8",
+        name: "Mountain Climbers",
+        description: "Cardio exercise engaging core and legs",
+        setData: [
+          { reps: 30, weight: 0 },
+          { reps: 30, weight: 0 },
+          { reps: 30, weight: 0 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "g4h5i6j7-k8l9-0m1n-2o3p-4q5r6s7t8u9",
+        name: "Jump Rope",
+        description: "High-intensity cardio exercise",
+        setData: [
+          { reps: 100, weight: 0 },
+          { reps: 100, weight: 0 },
+          { reps: 100, weight: 0 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "4e5f6g7h-8i9j-0k1l-2m3n-4o5p6q7r8s9t",
+    name: "Arm Blast",
+    description: "Focused workout for biceps and triceps",
+    createdAt: "2024-07-01T13:15:00Z",
+    exercises: [
+      {
+        id: "h5i6j7k8-l9m0-1n2o-3p4q-5r6s7t8u9v0",
+        name: "EZ Bar Curls",
+        description: "Bicep isolation exercise",
+        setData: [
+          { reps: 10, weight: 70 },
+          { reps: 10, weight: 70 },
+          { reps: 10, weight: 70 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "i6j7k8l9-m0n1-2o3p-4q5r-6s7t8u9v0w1",
+        name: "Tricep Pushdowns",
+        description: "Tricep isolation using cable machine",
+        setData: [
+          { reps: 12, weight: 60 },
+          { reps: 12, weight: 60 },
+          { reps: 12, weight: 60 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  },
+  {
+    id: "5f6g7h8i-9j0k-1l2m-3n4o-5p6q7r8s9t0u",
+    name: "Functional Fitness",
+    description: "Compound movements for overall fitness and strength",
+    createdAt: "2024-07-03T07:30:00Z",
+    exercises: [
+      {
+        id: "j7k8l9m0-n1o2-3p4q-5r6s-7t8u9v0w1x2",
+        name: "Kettlebell Swings",
+        description: "Full-body exercise with emphasis on hips and core",
+        setData: [
+          { reps: 20, weight: 35 },
+          { reps: 20, weight: 35 },
+          { reps: 20, weight: 35 }
+        ],
+        orderInWorkout: 1
+      },
+      {
+        id: "k8l9m0n1-o2p3-4q5r-6s7t-8u9v0w1x2y3",
+        name: "Turkish Get-ups",
+        description: "Complex full-body movement",
+        setData: [
+          { reps: 5, weight: 25 },
+          { reps: 5, weight: 25 },
+          { reps: 5, weight: 25 }
+        ],
+        orderInWorkout: 2
+      }
+    ]
+  }
+];
 
 export { Message, Conversation };
 
