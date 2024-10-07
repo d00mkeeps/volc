@@ -1,23 +1,18 @@
-
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Make sure you have @expo/vector-icons installed
 
 const CalendarButton: React.FC = () => (
   <TouchableOpacity style={styles.button}>
-    <Text style={styles.buttonText}>Calendar</Text>
+    <Ionicons name="calendar-outline" size={24} color="#fff" />
   </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#333',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    padding: 8,
     borderRadius: 4,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 14,
   },
 });
 
