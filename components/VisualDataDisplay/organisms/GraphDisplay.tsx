@@ -1,16 +1,12 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import Graph from '../molecules/Graph';
-import Legend from '../molecules/Legend';
+import { Graph } from '../molecules/Graph';
+import { Legend } from '../molecules/Legend';
 
-interface GraphDisplayProps {
-  data: number[];
-}
-
-const GraphDisplay: React.FC<GraphDisplayProps> = ({ data }) => {
+export const GraphDisplay: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Graph data={data} />
+      <Graph />
       <Legend />
     </View>
   );
@@ -21,5 +17,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-export default GraphDisplay;

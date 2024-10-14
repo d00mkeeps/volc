@@ -1,23 +1,27 @@
+// ExerciseSelect.tsx
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
+import { useVisualData } from '../context/VisualDataContext';
 
 interface ExerciseSelectProps {
   exercises: string[];
-  selectedExercise: string;
-  onSelectExercise: (exercise: string) => void;
 }
 
-const ExerciseSelect: React.FC<ExerciseSelectProps> = ({ exercises, selectedExercise, onSelectExercise }) => {
+export const ExerciseSelect: React.FC<ExerciseSelectProps> = ({ exercises }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { selectedExercises, setSelectedExercises } = useVisualData();
 
   const filteredExercises = exercises.filter(exercise =>
     exercise.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleSelect = (exercise: string) => {
-    onSelectExercise(exercise);
-    setModalVisible(false);
+    if (selectedExercises.includes(exercise)) {
+      setSelectedExercises(selectedExercises.filter(e => e !== exercise));
+    } else if (selectedExercises.length < 5) {
+      setSelectedExercises([...selectedExercises, exercise]);
+    }
   };
 
   return (
@@ -25,7 +29,7 @@ const ExerciseSelect: React.FC<ExerciseSelectProps> = ({ exercises, selectedExer
       <TouchableOpacity style={styles.selectButton} onPress={() => setModalVisible(true)}>
         <View style={styles.selectButtonContainer}>
           <Text style={styles.selectButtonText}>
-            {selectedExercise || 'Select an exercise'}
+            {selectedExercises.length > 0 ? `${selectedExercises.length} selected` : 'Select exercises'}
           </Text>
           <Text style={styles.listIcon}>☰</Text>
         </View>
@@ -52,6 +56,7 @@ const ExerciseSelect: React.FC<ExerciseSelectProps> = ({ exercises, selectedExer
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.exerciseItem} onPress={() => handleSelect(item)}>
                   <Text style={styles.exerciseItemText}>{item}</Text>
+                  {selectedExercises.includes(item) && <Text style={styles.checkmark}>✓</Text>}
                 </TouchableOpacity>
               )}
             />
@@ -70,15 +75,14 @@ const ExerciseSelect: React.FC<ExerciseSelectProps> = ({ exercises, selectedExer
 
 const styles = StyleSheet.create({
     selectButton: {
-      paddingHorizontal: 6,
-      paddingVertical: 8,
+      padding: 10,
       backgroundColor: '#4a854a',
       borderRadius: 10,
     },
     selectButtonText: {
       color: '#ddd',
-      fontSize: 14,  
-      fontWeight: 'medium',
+      fontSize: 24,  
+      fontWeight: 'bold',
       textAlign: 'center',
     },
     centeredView: {
@@ -114,12 +118,6 @@ const styles = StyleSheet.create({
       color: '#eee',
       backgroundColor: '#4a854a',
     },
-    exerciseItem: {
-      padding: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: '#4a854a',
-      width: '100%',
-    },
     exerciseItemText: {
       color: '#ddd',
       fontSize: 16,
@@ -152,8 +150,17 @@ const styles = StyleSheet.create({
       paddingRight: 8,
   
     },
-  
-  
-  });
-
-export default ExerciseSelect;
+  exerciseItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#4a854a',
+    width: '100%',
+  },
+  checkmark: {
+    color: '#ddd',
+    fontSize: 18,
+  },
+});

@@ -185,7 +185,7 @@ export const syntheticUserProfile: UserProfile = {
     preferred_activities: ["weightlifting", "running", "powerlifting"]
   }
 };
-
+  
 
 
 export const sampleWorkouts: Workout[] = [
@@ -489,5 +489,5 @@ export const sampleWorkouts: Workout[] = [
   }
 ];
 
-export { Message, Conversation };
+export { Message, Conversation, Workout };
 

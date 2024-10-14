@@ -1,17 +1,16 @@
+// TimeframeSelect.tsx
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { useVisualData } from '../context/VisualDataContext';
 
-interface TimeframeSelectProps {
-  timeframes: string[];
-  selectedTimeframe: string;
-  onSelectTimeframe: (timeframe: string) => void;
-}
+const timeframes = ['last week', 'last month', 'last 3 months', 'last 6 months', 'last year'];
 
-const TimeframeSelect: React.FC<TimeframeSelectProps> = ({ timeframes, selectedTimeframe, onSelectTimeframe }) => {
+export const TimeframeSelect: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { timeframe, setTimeframe } = useVisualData();
 
-  const handleSelect = (timeframe: string) => {
-    onSelectTimeframe(timeframe);
+  const handleSelect = (selected: string) => {
+    setTimeframe(selected);
     setModalVisible(false);
   };
 
@@ -19,9 +18,7 @@ const TimeframeSelect: React.FC<TimeframeSelectProps> = ({ timeframes, selectedT
     <View>
       <TouchableOpacity style={styles.selectButton} onPress={() => setModalVisible(true)}>
         <View style={styles.selectButtonContainer}>
-          <Text style={styles.selectButtonText}>
-            {selectedTimeframe || 'Select timeframe'}
-          </Text>
+          <Text style={styles.selectButtonText}>{timeframe}</Text>
           <Text style={styles.listIcon}>☰</Text>
         </View>
       </TouchableOpacity>
@@ -57,90 +54,88 @@ const TimeframeSelect: React.FC<TimeframeSelectProps> = ({ timeframes, selectedT
 };
 
 const styles = StyleSheet.create({
-    selectButton: {
-      paddingHorizontal: 6,
-      paddingVertical: 8,
-      backgroundColor: '#4a854a',
-      borderRadius: 10,
+  selectButton: {
+    padding: 10,
+    backgroundColor: '#4a854a',
+    borderRadius: 10,
+  },
+  selectButtonText: {
+    color: '#ddd',
+    fontSize: 24,  
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: '#559e55',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    selectButtonText: {
-      color: '#ddd',
-      fontSize: 14,  
-      fontWeight: 'medium',
-      textAlign: 'center',
-    },
-    centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalView: {
-      backgroundColor: '#559e55',
-      borderRadius: 20,
-      padding: 35,
-      alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-      width: '80%',
-      maxHeight: '80%',
-    },
-    searchInput: {
-      height: 40,
-      borderColor: '#4a854a',
-      borderWidth: 1,
-      borderRadius: 10,
-      paddingLeft: 10,
-      marginBottom: 10,
-      width: '100%',
-      color: '#eee',
-      backgroundColor: '#4a854a',
-    },
-    timeframeItem: {
-      padding: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: '#4a854a',
-      width: '100%',
-    },
-    timeframeItemText: {
-      color: '#ddd',
-      fontSize: 16,
-    },
-    closeButton: {
-      marginTop: 15,
-      backgroundColor: '#4a854a',
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-    closeButtonText: {
-      color: '#ddd',
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-    caret: {
-      fontSize: 18, 
-      color: '#ddd',
-    },
-    selectButtonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    listIcon: {
-      color: '#eee',
-      fontSize: 24,
-      marginLeft: 5, 
-      paddingRight: 8,
-  
-    },
-  
-  
-  });
-export default TimeframeSelect;
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+    maxHeight: '80%',
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#4a854a',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 10,
+    marginBottom: 10,
+    width: '100%',
+    color: '#eee',
+    backgroundColor: '#4a854a',
+  },
+  timeframeItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#4a854a',
+    width: '100%',
+  },
+  timeframeItemText: {
+    color: '#ddd',
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: '#4a854a',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  closeButtonText: {
+    color: '#ddd',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  caret: {
+    fontSize: 18, 
+    color: '#ddd',
+  },
+  selectButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  listIcon: {
+    color: '#eee',
+    fontSize: 24,
+    marginLeft: 5, 
+    paddingRight: 8,
+
+  },
+
+
+});

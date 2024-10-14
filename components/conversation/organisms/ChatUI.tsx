@@ -1,14 +1,13 @@
-// components/conversation/ChatUI.tsx
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import MessageList from '../molecules/MessageList';
 import InputArea from '../atoms/InputArea';
+import { Message } from '@/types';
 
 interface ChatUIProps {
   title: string;
   subtitle: string;
-  messages: any[]; // Replace 'any' with your message type
+  messages: Message[];
   draftMessage?: string;
   onSendMessage: (message: string) => void;
   onDraftMessageChange?: (draft: string) => void;

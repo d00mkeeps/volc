@@ -1,37 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import VisualDataDisplay from '@/components/VisualDataDisplay/VisualDataDisplay'
+import { View, StyleSheet, Text } from 'react-native';
+import { VisualDataDisplay } from '@/components/VisualDataDisplay/VisualDataDisplay'; // Adjust the import path as needed
+import { Workout } from '@/types'; // Adjust the import path as needed
+import { sampleWorkouts } from '@/assets/mockData'; // Adjust the import path as needed
 
 export default function VisualDataScreen() {
-  const [selectedExercise, setSelectedExercise] = useState('');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('');
-  const [data, setData] = useState<number[]>([]);
-
-  const exercises = ['Squat', 'Bench Press', 'Deadlift', 'Overhead Press'];
-  const timeframes = ['Last Week', 'Last Month', 'Last 3 Months', 'Last 6 Months', 'Last Year'];
+  const [exercises, setExercises] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data fetching when exercise and timeframe are selected
-    if (selectedExercise && selectedTimeframe) {
-      // In a real app, you would fetch data from an API or local database here
-      const dummyData = [50, 60, 70, 80, 90, 100, 110].map(value => 
-        value + Math.random() * 20 - 10
-      );
-      setData(dummyData);
-    }
-  }, [selectedExercise, selectedTimeframe]);
+    // Extract unique exercise names from sampleWorkouts
+    const uniqueExercises = Array.from(new Set(
+      sampleWorkouts.flatMap(workout => 
+        workout.exercises.map(exercise => exercise.exercise_name)
+      )
+    ));
+    setExercises(uniqueExercises);
+    setIsLoading(false);
+  }, []);
+
+  const fetchWorkoutData = async (): Promise<Workout[]> => {
+    // In a real app, this would be an API call
+    // For now, we're returning the mock data
+    return sampleWorkouts;
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <VisualDataDisplay
-        exercises={exercises}
-        selectedExercise={selectedExercise}
-        onSelectExercise={setSelectedExercise}
-        timeframes={timeframes}
-        selectedTimeframe={selectedTimeframe}
-        onSelectTimeframe={setSelectedTimeframe}
-        data={data}
-      />
+      {exercises.length > 0 ? (
+        <VisualDataDisplay 
+          exercises={exercises}
+          fetchWorkoutData={fetchWorkoutData}
+        />
+      ) : (
+        <Text style={styles.text}>No exercises found. Start logging workouts to see your progress!</Text>
+      )}
     </View>
   );
 }
@@ -39,7 +50,11 @@ export default function VisualDataScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 10,
     backgroundColor: '#222', // Adjust this to match your app's background color
+  },
+  text: {
+    color: '#fff', // Adjust this to match your app's text color
+    textAlign: 'center',
   },
 });

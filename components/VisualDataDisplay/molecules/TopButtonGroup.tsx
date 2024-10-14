@@ -1,37 +1,18 @@
+// TopButtonGroup.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import ExerciseSelect from '../atoms/ExerciseSelect';
-import TimeframeSelect from '../atoms/TimeframeSelect';
+import { ExerciseSelect } from '../atoms/ExerciseSelect';
+import { TimeframeSelect } from '../atoms/TimeframeSelect';
 
 interface TopButtonGroupProps {
   exercises: string[];
-  selectedExercise: string;
-  onSelectExercise: (exercise: string) => void;
-  timeframes: string[];
-  selectedTimeframe: string;
-  onSelectTimeframe: (timeframe: string) => void;
 }
 
-const TopButtonGroup: React.FC<TopButtonGroupProps> = ({
-  exercises,
-  selectedExercise,
-  onSelectExercise,
-  timeframes,
-  selectedTimeframe,
-  onSelectTimeframe,
-}) => {
+export const TopButtonGroup: React.FC<TopButtonGroupProps> = ({ exercises }) => {
   return (
     <View style={styles.container}>
-      <ExerciseSelect
-        exercises={exercises}
-        selectedExercise={selectedExercise}
-        onSelectExercise={onSelectExercise}
-      />
-      <TimeframeSelect
-        timeframes={timeframes}
-        selectedTimeframe={selectedTimeframe}
-        onSelectTimeframe={onSelectTimeframe}
-      />
+      <ExerciseSelect exercises={exercises} />
+      <TimeframeSelect />
     </View>
   );
 };
@@ -43,5 +24,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-export default TopButtonGroup;

@@ -1,20 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Message } from '@/types';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
-
-interface MessageItemProps {
-  message: Message;
-}
-
-const MessageItem: React.FC<MessageItemProps> = ({ message }) => (
+const MessageItem: React.FC<{ message: Message }> = ({ message }) => (
   <View style={styles.messageWrapper}>
-    <View style={[styles.container, message.role === 'user' ? styles.userMessage : styles.assistantMessage]}>
-      <Text style={[styles.text, message.role === 'user' ? styles.userText : styles.assistantText]}>
+    <View style={[
+      styles.container, 
+      message.role === 'user' ? styles.userMessage : styles.assistantMessage
+    ]}>
+      <Text style={[
+        styles.text, 
+        message.role === 'user' ? styles.userText : styles.assistantText
+      ]}>
         {message.content}
       </Text>
     </View>

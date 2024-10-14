@@ -1,47 +1,51 @@
+// Legend.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useVisualData } from '../context/VisualDataContext';
 
-const Legend: React.FC = () => {
+export const Legend: React.FC = () => {
+  const { selectedExercises } = useVisualData();
+
+  const getColor = (index: number) => {
+    const colors = ['white', 'green', 'blue'];
+    return colors[index % colors.length];
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Legend</Text>
-      <View style={styles.legendItem}>
-        <View style={[styles.legendColor, { backgroundColor: '#ddd' }]} />
-        <Text style={styles.legendText}>Weight</Text>
-      </View>
-      {/* Add more legend items as needed */}
+      {selectedExercises.map((exercise, index) => (
+        <View key={exercise} style={styles.legendItem}>
+          <View style={[styles.colorBox, { backgroundColor: getColor(index) }]} />
+          <Text style={styles.legendText}>{exercise}</Text>
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     padding: 10,
-    backgroundColor: '#4a854a',
+    backgroundColor: '#559e55',
     borderRadius: 10,
     marginTop: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ddd',
-    marginBottom: 5,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 15,
     marginBottom: 5,
   },
-  legendColor: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 10,
+  colorBox: {
+    width: 15,
+    height: 15,
+    marginRight: 5,
   },
   legendText: {
-    fontSize: 14,
     color: '#ddd',
+    fontSize: 12,
   },
 });
-
-export default Legend;

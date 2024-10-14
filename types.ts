@@ -1,4 +1,4 @@
-export interface Exercise {
+export interface ProgramExercise {
   id: string;
   name: string;
   description: string;
@@ -9,11 +9,11 @@ export interface Exercise {
   duration?: string;
 }
 
-export interface Workout {
+export interface ProgramWorkout {
   id: string;
   name: string;
   description: string;
-  exercises: Exercise[];
+  exercises: ProgramExercise[];
 }
 
 export interface Program {
@@ -42,7 +42,7 @@ export interface WorkoutDisplayProps {
 }
 
 export interface ExerciseCardProps {
-  exercise: Exercise;
+  exercise: ProgramExercise;
 }
 
 export interface ProgramNoteSlideProps {
@@ -73,6 +73,7 @@ export interface Workout {
   createdAt: string; 
   user_id?: number; 
   orderInWorkout?: number
+  exercises: WorkoutExercise[]
 }
 export interface Program {
 id: string;

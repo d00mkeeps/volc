@@ -1,23 +1,31 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import ChatUI from '@/components/conversation/organisms/ChatUI';
-import { mockConversations } from '@/assets/mockData';
 import { Stack } from 'expo-router';
+import { useConversation } from '@/hooks/useConversation';
+import { mockConversations } from '@/assets/mockData';
+
 
 export default function ConversationPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [draftMessage, setDraftMessage] = useState('');
-
-  // Find the conversation in mockData
-  const conversation = mockConversations.find(c => c.id === id);
+  
+  const initialConversation = mockConversations.find(c => c.id === id) || {
+    id: 'new',
+    title: 'New Conversation',
+    lastMessage: '',
+    timestamp: new Date().toISOString(),
+    lastMessageTime: new Date().toISOString(),
+    messages: [],
+  };
+  
+  const { conversation, sendMessage } = useConversation({ initialConversation });
 
   const handleSendMessage = useCallback((message: string) => {
-    // Here you would typically send the message to your backend
-    console.log('Sending message:', message);
-    // Clear the input
-    setDraftMessage('');
-  }, []);
+    sendMessage(message, 'default'); // or any other config name
+    setDraftMessage(''); // Clear draft message after sending
+  }, [sendMessage]);
 
   if (!conversation) {
     return <View style={styles.container}><Text>Conversation not found</Text></View>;
@@ -34,10 +42,12 @@ export default function ConversationPage() {
       <View style={styles.container}>
         <ChatUI
           title={conversation.title}
-          messages={conversation.messages || []}
+          messages={conversation.messages}
           draftMessage={draftMessage}
           onSendMessage={handleSendMessage}
-          onDraftMessageChange={undefined} subtitle={'attachments placeholder'}        />
+          onDraftMessageChange={setDraftMessage}
+          subtitle={'attachments placeholder'}
+        />
       </View>
     </>
   );
