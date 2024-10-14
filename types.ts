@@ -115,14 +115,16 @@ export interface ProgramDetailsModalProps {
   onClose: () => void;
 }
 
-
+export interface UseConversationProps {
+  initialConversation: Conversation;
+}
 export interface Conversation {
   id: string;
   title: string;
-  lastMessage: string;
   timestamp: string;
-  lastMessageTime: string;
   messages: Message[];
+  lastMessage: string | null;
+  lastMessageTime: string | null;
 }
 
 export interface Message {
