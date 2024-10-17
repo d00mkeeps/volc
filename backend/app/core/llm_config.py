@@ -1,5 +1,8 @@
+import logging
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
+
+logger = logging.getLogger(__name__)
 
 class LLMConfig(BaseSettings):
     model: str
@@ -23,11 +26,13 @@ class Settings(BaseSettings):
             "system_prompt": "Welcome scenario system prompt here"
         }
     }
-
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     def get_llm_config(self, config_name: str = "default") -> LLMConfig:
+        logger.info(f"Getting LLM config for: {config_name}")
         config_data = self.LLM_CONFIGS.get(config_name, self.LLM_CONFIGS["default"])
+        logger.debug(f"Config data: {config_data}")
         return LLMConfig(**config_data)
 
 settings = Settings()
+logger.info("Settings initialized")

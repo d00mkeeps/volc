@@ -1,62 +1,39 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MessageList from '../molecules/MessageList';
-import InputArea from '../atoms/InputArea';
+import { useMessage } from '@/context/MessageContext';
 import { Message } from '@/types';
+import { ListRenderItemInfo, View, FlatList, StyleSheet } from 'react-native';
+import InputArea from '../atoms/InputArea';
+import MessageItem from '../atoms/MessageItem';
 
-interface ChatUIProps {
-  title: string;
-  subtitle: string;
-  messages: Message[];
-  draftMessage?: string;
-  onSendMessage: (message: string) => void;
-  onDraftMessageChange?: (draft: string) => void;
-}
+const ChatUI: React.FC = () => {
+  const { messages, isLoading, isStreaming } = useMessage();
 
-const ChatUI: React.FC<ChatUIProps> = ({
-  title,
-  subtitle,
-  messages,
-  draftMessage,
-  onSendMessage,
-  onDraftMessageChange,
-}) => (
-  <View style={styles.container}>
-    <View style={styles.header}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>{subtitle}</Text>
-    </View>
-    <View style={styles.messageListContainer}>
-      <MessageList messages={messages} />
-    </View>
-    <InputArea
-      onSendMessage={onSendMessage}
-      draftMessage={draftMessage}
-      onDraftMessageChange={onDraftMessageChange}
+  const renderItem = ({ item, index }: ListRenderItemInfo<Message>) => (
+    <MessageItem
+      message={item}
+      isStreaming={isStreaming && index === messages.length - 1}
     />
-  </View>
-);
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList<Message>
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContent}
+      />
+      <InputArea />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1f281f',
   },
-  header: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#8cd884',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#8cd884',
-  },
-  messageListContainer: {
-    flex: 1,
+  listContent: {
+    paddingBottom: 20,
   },
 });
 

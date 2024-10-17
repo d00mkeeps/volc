@@ -1,53 +1,21 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import ChatUI from '@/components/conversation/organisms/ChatUI';
+import { useMessage } from '@/context/MessageContext';
 import { Stack } from 'expo-router';
-import { useConversation } from '@/hooks/useConversation';
-import { mockConversations } from '@/assets/mockData';
-
+import { View, StyleSheet } from 'react-native';
 
 export default function ConversationPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [draftMessage, setDraftMessage] = useState('');
-  
-  const initialConversation = mockConversations.find(c => c.id === id) || {
-    id: 'new',
-    title: 'New Conversation',
-    lastMessage: '',
-    timestamp: new Date().toISOString(),
-    lastMessageTime: new Date().toISOString(),
-    messages: [],
-  };
-  
-  const { conversation, sendMessage } = useConversation({ initialConversation });
-
-  const handleSendMessage = useCallback((message: string) => {
-    sendMessage(message, 'default'); // or any other config name
-    setDraftMessage(''); // Clear draft message after sending
-  }, [sendMessage]);
-
-  if (!conversation) {
-    return <View style={styles.container}><Text>Conversation not found</Text></View>;
-  }
+  const { messages, isLoading, isStreaming, sendMessage } = useMessage();
 
   return (
     <>
       <Stack.Screen 
         options={{
-          headerTitle: conversation.title,
+          headerTitle: "Conversation",
           headerBackTitle: "Home",
         }} 
       />
       <View style={styles.container}>
-        <ChatUI
-          title={conversation.title}
-          messages={conversation.messages}
-          draftMessage={draftMessage}
-          onSendMessage={handleSendMessage}
-          onDraftMessageChange={setDraftMessage}
-          subtitle={'attachments placeholder'}
-        />
+        <ChatUI />
       </View>
     </>
   );

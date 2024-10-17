@@ -1,44 +1,32 @@
-// components/conversation/InputArea.tsx
-
 import React from 'react';
-import { View, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { useMessage } from '@/context/MessageContext';
+import { KeyboardAvoidingView, Platform, View, TextInput, Button, StyleSheet } from 'react-native';
 
-interface InputAreaProps {
-  onSendMessage: (message: string) => void;
-  draftMessage?: string;
-  onDraftMessageChange?: (draft: string) => void;
-  isHomePage?: boolean;
-}
+const InputArea: React.FC = () => {
+  const { draftMessage, setDraftMessage, sendMessage, isLoading, isStreaming } = useMessage();
 
-const InputArea: React.FC<InputAreaProps> = ({ 
-  onSendMessage, 
-  draftMessage, 
-  onDraftMessageChange, 
-  isHomePage = false 
-}) => {
   const handleSend = () => {
-    if (draftMessage && draftMessage.trim()) {
-      onSendMessage(draftMessage);
-      if (onDraftMessageChange) {
-        onDraftMessageChange('');
-      }
+    if (draftMessage.trim() && !isLoading && !isStreaming) {
+      sendMessage(draftMessage, 'default');
+      setDraftMessage('');
     }
   };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={90}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
-      <View style={[styles.container, isHomePage ? null : styles.nonHomePageContainer]}>
+      <View style={styles.container}>
         <TextInput
           style={styles.input}
           value={draftMessage}
-          onChangeText={onDraftMessageChange}
+          onChangeText={setDraftMessage}
           placeholder="Type a message..."
           placeholderTextColor="#999"
+          editable={!isLoading && !isStreaming}
         />
-        <Button title="Send" onPress={handleSend} />
+        <Button title="Send" onPress={handleSend} disabled={isLoading || isStreaming} />
       </View>
     </KeyboardAvoidingView>
   );

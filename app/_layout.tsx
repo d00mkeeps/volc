@@ -5,6 +5,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { Slot } from 'expo-router';
+import { MessageProvider } from '@/context/MessageContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,11 +50,13 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
+    <MessageProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </ThemeProvider>
+    </MessageProvider>
   );
 }

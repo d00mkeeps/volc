@@ -7,9 +7,14 @@ import json
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  # Set to DEBUG for more verbose logging
+
 
 async def get_llm_service(config_name: str = "default"):
+    logger.info(f"Creating LLM service with config: {config_name}")
     return LLMServiceFactory.create(config_name)
+
+from fastapi.responses import StreamingResponse
 
 @router.post("/process_stream/{config_name}")
 async def process_message_stream(
@@ -23,14 +28,10 @@ async def process_message_stream(
         try:
             async for event in await llm_service.process_message_stream(messages):
                 if event.type == "content_block_delta":
-                    yield f"data: {json.dumps({'type': 'content', 'content': event.delta.text})}\n\n"
+                    yield f"data: {json.dumps({'content': event.delta.text})}\n\n"
                 elif event.type == "message_stop":
-                    yield f"data: {json.dumps({'type': 'stop'})}\n\n"
-                    break  # Ensure we stop the generator after sending the stop event
+                    yield f"data: [DONE]\n\n"
         except Exception as e:
-            logger.error(f"Streaming error: {str(e)}")
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-        finally:
-            yield "data: [DONE]\n\n"
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")

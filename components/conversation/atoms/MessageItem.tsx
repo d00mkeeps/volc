@@ -1,23 +1,31 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Message } from '@/types';
 
-const MessageItem: React.FC<{ message: Message }> = ({ message }) => (
-  <View style={styles.messageWrapper}>
-    <View style={[
-      styles.container, 
-      message.role === 'user' ? styles.userMessage : styles.assistantMessage
-    ]}>
-      <Text style={[
-        styles.text, 
-        message.role === 'user' ? styles.userText : styles.assistantText
-      ]}>
-        {message.content}
-      </Text>
-    </View>
-  </View>
-);
+interface MessageItemProps {
+  message: Message;
+  isStreaming?: boolean;
+}
 
+const MessageItem: React.FC<MessageItemProps> = memo(({ message, isStreaming = false }) => {
+  return (
+    <View style={styles.messageWrapper}>
+      <View style={[
+        styles.container, 
+        message.role === 'user' ? styles.userMessage : styles.assistantMessage,
+        isStreaming && styles.streamingMessage
+      ]}>
+        <Text style={[
+          styles.text, 
+          message.role === 'user' ? styles.userText : styles.assistantText
+        ]}>
+          {message.content}
+          {isStreaming && '...'}
+        </Text>
+      </View>
+    </View>
+  );
+});
 const styles = StyleSheet.create({
   messageWrapper: {
     paddingHorizontal: 16, // Add horizontal padding to the message wrapper
@@ -47,6 +55,9 @@ const styles = StyleSheet.create({
   assistantText: {
     color: '#def7dc',
   },
+  streamingMessage: {
+    opacity: 0.7
+  },
 });
 
-export default MessageItem;
+export default MessageItem

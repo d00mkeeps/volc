@@ -1,6 +1,4 @@
-# Backend Documentation
-
-# LLM Service Documentation
+# LLM Service Backend Documentation
 
 ## Table of Contents
 
@@ -10,24 +8,23 @@
 4. Usage
    4.1. Backend Usage
    4.2. Frontend Usage
-5. Adding New Configurations
+5. Streaming Functionality
 6. Error Handling
 7. Best Practices
 8. Troubleshooting
 
 ## 1. Introduction
 
-The LLM (Language Model) Service is a flexible and robust system designed to interact with the Anthropic API. It allows for multiple configurations to tailor the LLM's behavior for different use cases within the application.
+The LLM (Language Model) Service is a flexible and robust system designed to interact with the Anthropic API. It allows for multiple configurations to tailor the LLM's behavior for different use cases within the application. The system supports streaming responses, enabling real-time interaction with the LLM.
 
 ## 2. System Architecture
 
 The LLM Service consists of several key components:
 
-- `Settings`: Manages configuration loading and provides access to LLM configurations.
-- `LLMConfig`: Represents a specific configuration for the LLM.
-- `LLMService`: Encapsulates the interaction with the Anthropic API.
-- `LLMServiceFactory`: Creates `LLMService` instances with the correct configuration.
-- `FastAPI Endpoint`: Handles incoming requests and uses the appropriate `LLMService`.
+- `main.py`: The main FastAPI application entry point.
+- `llm_config.py`: Manages configuration loading and provides access to LLM configurations.
+- `llm_service.py`: Encapsulates the interaction with the Anthropic API and handles streaming.
+- `llm.py`: Contains the FastAPI router with endpoints for LLM interactions.
 
 ## 3. Configuration
 
@@ -40,48 +37,52 @@ Configurations are defined in the `Settings` class within `app/core/llm_config.p
 
 Example configuration:
 
-```python
+/_
 LLM_CONFIGS: Dict[str, Dict[str, Any]] = {
-    "default": {
-        "model": "claude-3-5-sonnet-20240620",
-        "max_tokens": 250,
-        "temperature": 0.5,
-        "system_prompt": "Default system prompt here"
-    },
-    # ... other configurations ...
+"default": {
+"model": "claude-3-5-sonnet-20240620",
+"max_tokens": 250,
+"temperature": 0.5,
+"system_prompt": "Default system prompt here"
+},
+"welcome": {
+"model": "claude-3-5-sonnet-20240620",
+"max_tokens": 250,
+"temperature": 0.5,
+"system_prompt": "Welcome scenario system prompt here"
 }
-```
+}
+_/
 
-4. Usage
-   4.1. Backend Usage
+## 4. Usage
+
+### 4.1. Backend Usage
 
 To use the LLM Service in the backend:
 
-    Ensure the necessary configurations are defined in Settings.
-    Use the FastAPI endpoint to handle requests:
+1. Ensure the necessary configurations are defined in Settings.
+2. Use the FastAPI endpoint to handle streaming requests:
 
-python
-
-@router.post("/process/{config_name}")
-async def process_message(
+/_
+@router.post("/process_stream/{config_name}")
+async def process_message_stream(
 request: ConversationRequest,
 config_name: str,
 llm_service: LLMService = Depends(get_llm_service)
 ):
 messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
-response = await llm_service.process_message(messages)
-return {"response": response}
+return StreamingResponse(event_generator(), media_type="text/event-stream")
+_/
 
-4.2. Frontend Usage
+### 4.2. Frontend Usage
 
 To use the LLM Service from the frontend:
 
-    Make a POST request to the appropriate endpoint:
+1. Make a POST request to the streaming endpoint:
 
-typescript
-
-const configName = 'example2';
-const url = `/api/llm/process/${configName}`;
+/\*
+const configName = 'default';
+const url = `/api/llm/process_stream/${configName}`;
 
 const response = await fetch(url, {
 method: 'POST',
@@ -92,59 +93,59 @@ body: JSON.stringify({ messages: conversation }),
 });
 
 if (response.ok) {
-const result = await response.json();
-console.log("LLM Response:", result.response);
+const reader = response.body.getReader();
+// Process the streamed response
 }
+\*/
 
-    Handle the response in your application logic.
+2. Handle the streamed response in your application logic.
 
-5. Adding New Configurations
+## 5. Streaming Functionality
 
-To add a new configuration:
+The streaming functionality is implemented as follows:
 
-    Add the configuration to the LLM_CONFIGS dictionary in Settings:
+1. The LLMService uses Anthropic's AsyncAnthropic client to create a streaming response.
+2. The FastAPI endpoint uses StreamingResponse to send server-sent events (SSE).
+3. The event_generator function yields chunks of data as they are received from the LLM.
 
-python
+Example of streaming implementation in LLMService:
 
-"new_config": {
-"model": "claude-3-5-sonnet-20240620",
-"max_tokens": 300,
-"temperature": 0.7,
-"system_prompt": "New configuration system prompt"
-}
+/_
+async def process_message_stream(self, messages: List[Dict[str, str]]) -> AsyncStream:
+stream = await self.client.messages.create(
+model=self.config.model,
+max_tokens=self.config.max_tokens,
+temperature=self.config.temperature,
+system=self.config.system_prompt,
+messages=messages,
+stream=True
+)
+return stream
+_/
 
-    Use the new configuration by specifying its name in the API endpoint:
+## 6. Error Handling
 
-/api/llm/process/new_config
+The system includes error handling at various levels:
 
-6. Error Handling
+- API level: FastAPI will return appropriate HTTP error codes for invalid requests.
+- Service level: The LLMService catches and logs errors from the Anthropic API.
+- Streaming level: Errors during streaming are caught and sent as error events to the client.
 
-The LLM Service includes error handling at various levels:
+## 7. Best Practices
 
-    API level: FastAPI will return appropriate HTTP error codes for invalid requests.
-    Service level: The LLMService catches and logs errors from the Anthropic API.
-    Application level: Implement appropriate error handling in your frontend code.
+- Keep system prompts clear and concise in the configuration.
+- Use appropriate max_tokens and temperature settings for your use case.
+- Implement proper error handling and user feedback in the frontend.
+- Regularly review and update configurations as needed.
 
-7. Best Practices
-
-   Keep system prompts clear and concise.
-   Use appropriate max_tokens and temperature settings for your use case.
-   Implement proper error handling and user feedback in the frontend.
-   Regularly review and update configurations as needed.
-
-8. Troubleshooting
+## 8. Troubleshooting
 
 Common issues and their solutions:
 
-    "Configuration not found": Ensure the configuration name in the URL matches a defined configuration.
-    API errors: Check the Anthropic API status and your API key.
-    Unexpected responses: Review your system prompt and consider adjusting the temperature or max_tokens.
+- "Configuration not found": Ensure the configuration name in the URL matches a defined configuration.
+- API errors: Check the Anthropic API status and your API key.
+- Streaming issues: Verify that your frontend can handle server-sent events properly.
 
-For further assistance, contact miles (aka d00mkeeps aka andy indigo).
+For further assistance, check the logs or contact the system administrator.
 
-This documentation provides a comprehensive overview of the LLM Service, its architecture, how to use it, and how to extend it. You can expand on each section with more specific details, code examples, and use cases as your system evolves.
-
-Some suggestions when using this documentation:
-
-1. Keep it up-to-date as you make changes to the system.
-2. Include code comments that reference this documentation for key components.
+This documentation provides an overview of the current LLM Service backend system, its architecture, how to use it, and its streaming capabilities. Expand on each section with more specific details and use cases as your system evolves.
