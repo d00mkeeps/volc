@@ -1,37 +1,64 @@
-2024-10-18 00:55:17,505 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'How does alcohol affect gym gains'}, {'role': 'assistant', 'content': 'Alcohol can have several negative effects on gym gains and overall fitness progress:\n\n1. Protein synthesis inhibition:\n- Alcohol consumption can decrease protein synthesis by up to 20%, hampering muscle growth and recovery.\n\n2. Hormonal imbalance:\n- Alcohol can lower testosterone levels and increase cortisol, which can lead to reduced muscle growth and increased fat storage.\n\n3. Dehydration:\n- Alcohol is a diuretic, leading to dehydration, which can negatively impact performance and recovery.\n\n4. Nutrient absorption:\n- Alcohol can interfere with the absorption of essential nutrients needed for muscle growth and recovery.\n\n5. Impaired sleep quality:\n- Alcohol can disrupt sleep patterns, affecting recovery and growth hormone production.\n\n6. Reduced workout quality:\n- Hangovers can lead to missed workouts or lower-quality training sessions.\n\n7. Empty calories:\n- Alcoholic drinks often contain empty calories, which can contribute to weight gain and make it harder to maintain a lean physique.\n\n8. Slower metabolism:\n- The body prioritizes metabolizing alcohol over other nutrients,'}, {'role': 'user', 'content': 'Hi'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
-2024-10-18 00:55:17,507 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-18 00:55:17,583 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1045b6a20>
-2024-10-18 00:55:17,584 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x104586b50> server_hostname='api.anthropic.com' timeout=600
-2024-10-18 00:55:17,609 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1041dc7d0>
-2024-10-18 00:55:17,610 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-18 00:55:17,610 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-18 00:55:17,611 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-18 00:55:17,611 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-18 00:55:17,611 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-18 00:55:18,285 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 17 Oct 2024 23:55:18 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-17T23:55:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'39000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-17T23:55:18Z'), (b'request-id', b'req_01DX5aHY4sSnQjxh74L6jeaA'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d4437fb1c40b36d-MAN')])
-2024-10-18 00:55:18,286 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-18 00:55:18,287 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-18 00:55:18,287 - app.services.llm_service - INFO - Stream created successfully
-2024-10-18 00:55:18,287 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-18 00:55:18,685 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-18 00:55:18,685 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-18 00:55:18,685 - httpcore.http11 - DEBUG - response_closed.complete
-2024-10-18 00:55:37,243 - app.api.endpoints.llm - INFO - Creating LLM service with config: default
-2024-10-18 00:55:37,244 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-18 00:55:37,245 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-18 00:55:37,245 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-18 00:55:37,248 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-18 00:55:37,250 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-18 00:55:37,267 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-18 00:55:37,268 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-18 00:55:37,268 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'How does alcohol affect gym gains'}, {'role': 'assistant', 'content': 'Alcohol can have several negative effects on gym gains and overall fitness progress:\n\n1. Protein synthesis inhibition:\n- Alcohol consumption can decrease protein synthesis by up to 20%, hampering muscle growth and recovery.\n\n2. Hormonal imbalance:\n- Alcohol can lower testosterone levels and increase cortisol, which can lead to reduced muscle growth and increased fat storage.\n\n3. Dehydration:\n- Alcohol is a diuretic, leading to dehydration, which can negatively impact performance and recovery.\n\n4. Nutrient absorption:\n- Alcohol can interfere with the absorption of essential nutrients needed for muscle growth and recovery.\n\n5. Impaired sleep quality:\n- Alcohol can disrupt sleep patterns, affecting recovery and growth hormone production.\n\n6. Reduced workout quality:\n- Hangovers can lead to missed workouts or lower-quality training sessions.\n\n7. Empty calories:\n- Alcoholic drinks often contain empty calories, which can contribute to weight gain and make it harder to maintain a lean physique.\n\n8. Slower metabolism:\n- The body prioritizes metabolizing alcohol over other nutrients,'}, {'role': 'user', 'content': 'Hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.'}, {'role': 'user', 'content': 'List some rave music'}]
-2024-10-18 00:55:37,271 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'How does alcohol affect gym gains'}, {'role': 'assistant', 'content': 'Alcohol can have several negative effects on gym gains and overall fitness progress:\n\n1. Protein synthesis inhibition:\n- Alcohol consumption can decrease protein synthesis by up to 20%, hampering muscle growth and recovery.\n\n2. Hormonal imbalance:\n- Alcohol can lower testosterone levels and increase cortisol, which can lead to reduced muscle growth and increased fat storage.\n\n3. Dehydration:\n- Alcohol is a diuretic, leading to dehydration, which can negatively impact performance and recovery.\n\n4. Nutrient absorption:\n- Alcohol can interfere with the absorption of essential nutrients needed for muscle growth and recovery.\n\n5. Impaired sleep quality:\n- Alcohol can disrupt sleep patterns, affecting recovery and growth hormone production.\n\n6. Reduced workout quality:\n- Hangovers can lead to missed workouts or lower-quality training sessions.\n\n7. Empty calories:\n- Alcoholic drinks often contain empty calories, which can contribute to weight gain and make it harder to maintain a lean physique.\n\n8. Slower metabolism:\n- The body prioritizes metabolizing alcohol over other nutrients,'}, {'role': 'user', 'content': 'Hi'}, {'role': 'assistant', 'content': 'Hello! How can I assist you today? Feel free to ask any questions or let me know if you need help with anything.'}, {'role': 'user', 'content': 'List some rave music'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
-2024-10-18 00:55:37,272 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-18 00:55:37,287 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x104579b80>
-2024-10-18 00:55:37,288 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1045036d0> server_hostname='api.anthropic.com' timeout=600
-2024-10-18 00:55:37,309 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1045bc410>
-2024-10-18 00:55:37,309 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-18 00:55:37,309 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-18 00:55:37,309 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-18 00:55:37,309 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-18 00:55:37,309 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2024-10-20 14:09:36,002 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:09:36,020 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:10:01,272 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-20 14:10:01,273 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-20 14:10:01,273 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-20 14:10:01,274 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-20 14:10:01,275 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:10:01,286 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:10:05,729 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-20 14:10:05,730 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-20 14:10:05,730 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-20 14:10:05,731 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-20 14:10:05,732 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:10:05,748 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:10:08,815 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:10:08,815 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Message'}]
+2024-10-20 14:10:08,824 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
+2024-10-20 14:10:08,826 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
+2024-10-20 14:10:08,970 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e51bef0>
+2024-10-20 14:10:08,971 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x10e51dbd0> server_hostname='api.anthropic.com' timeout=600
+2024-10-20 14:10:09,003 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e51be00>
+2024-10-20 14:10:09,004 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_headers.complete
+2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_body.complete
+2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2024-10-20 14:10:09,498 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sun, 20 Oct 2024 13:10:09 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-20T13:10:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-20T13:10:09Z'), (b'request-id', b'req_01VcAHasxLTz22dN4yXkCCR3'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d593f127d2ab125-MAN')])
+2024-10-20 14:10:09,498 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-10-20 14:10:09,498 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2024-10-20 14:10:09,498 - app.services.llm_service - INFO - Stream created successfully
+2024-10-20 14:10:09,499 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-10-20 14:10:10,320 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-10-20 14:10:10,321 - httpcore.http11 - DEBUG - response_closed.started
+2024-10-20 14:10:10,321 - httpcore.http11 - DEBUG - response_closed.complete
+2024-10-20 14:11:10,887 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-20 14:11:10,889 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-20 14:11:10,889 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-20 14:11:10,892 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-20 14:11:10,893 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:11:10,910 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:11:17,465 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-20 14:11:17,465 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-20 14:11:17,465 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-20 14:11:17,467 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-20 14:11:17,468 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:11:17,486 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:11:29,887 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-20 14:11:29,888 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-20 14:11:29,888 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-20 14:11:29,890 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-20 14:11:29,891 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-20 14:11:29,911 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:11:33,363 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-20 14:11:33,363 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Message'}]
+2024-10-20 14:11:33,371 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
+2024-10-20 14:11:33,373 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
+2024-10-20 14:11:33,392 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x108eeaf00>
+2024-10-20 14:11:33,392 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x10e51e850> server_hostname='api.anthropic.com' timeout=600
+2024-10-20 14:11:33,422 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e5411f0>
+2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_headers.complete
+2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_body.complete
+2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>

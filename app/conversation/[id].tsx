@@ -1,13 +1,12 @@
+import React from 'react';
 import ChatUI from '@/components/conversation/organisms/ChatUI';
-import { useMessage } from '@/context/MessageContext';
+import { MessageProvider } from '@/context/MessageContext';
 import { Stack } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 
 export default function ConversationPage() {
-  const { messages, isLoading, isStreaming, sendMessage } = useMessage();
-
   return (
-    <>
+    <MessageProvider>
       <Stack.Screen 
         options={{
           headerTitle: "Conversation",
@@ -17,7 +16,7 @@ export default function ConversationPage() {
       <View style={styles.container}>
         <ChatUI />
       </View>
-    </>
+    </MessageProvider>
   );
 }
 

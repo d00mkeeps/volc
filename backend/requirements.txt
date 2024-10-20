@@ -2,3 +2,5 @@ fastapi
 uvicorn
 anthropic
 pydantic-settings
+websockets
+'uvicorn[standard]'

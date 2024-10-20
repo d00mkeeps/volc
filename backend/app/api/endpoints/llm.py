@@ -1,37 +1,45 @@
-import logging
-from fastapi import APIRouter, HTTPException, Depends
-from app.schemas.message import ConversationRequest
+from fastapi import APIRouter, WebSocket, Depends, WebSocketDisconnect
 from app.services.llm_service import LLMServiceFactory, LLMService
-from fastapi.responses import StreamingResponse
 import json
 
 router = APIRouter()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)  # Set to DEBUG for more verbose logging
-
 
 async def get_llm_service(config_name: str = "default"):
-    logger.info(f"Creating LLM service with config: {config_name}")
     return LLMServiceFactory.create(config_name)
 
-from fastapi.responses import StreamingResponse
-
-@router.post("/process_stream/{config_name}")
-async def process_message_stream(
-    request: ConversationRequest,
+@router.websocket("/ws/llm_service/{config_name}")
+async def websocket_endpoint(
+    websocket: WebSocket,
     config_name: str,
     llm_service: LLMService = Depends(get_llm_service)
 ):
-    messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
-    
-    async def event_generator():
-        try:
-            async for event in await llm_service.process_message_stream(messages):
-                if event.type == "content_block_delta":
-                    yield f"data: {json.dumps({'content': event.delta.text})}\n\n"
-                elif event.type == "message_stop":
-                    yield f"data: [DONE]\n\n"
-        except Exception as e:
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    print(f"WebSocket connection attempt for config: {config_name}")
+    try:
+        await websocket.accept()
+        print(f"WebSocket connection accepted for config: {config_name}")
+        while True:
+            data = await websocket.receive_json()
+            print(f"Received data: {data}")
+            
+            # Assuming the incoming message is in the format expected by the LLM service
+            messages = [{"role": "user", "content": data['content']}]
+            
+            await llm_service.process_message_stream(websocket, messages)
+    except WebSocketDisconnect:
+        print(f"WebSocket disconnected for config: {config_name}")
+    except Exception as e:
+        print(f"Error in WebSocket: {str(e)}")
+        await websocket.send_json({"type": "error", "data": str(e)})
+    finally:
+        print(f"WebSocket connection closed for config: {config_name}")
+        if not websocket.client_state == WebSocket.DISCONNECTED:
+            await websocket.close()
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+# Keep the test endpoint as is
+@router.websocket("/ws/test")
+async def websocket_test(websocket: WebSocket):
+    print("Test WebSocket connection attempt")
+    await websocket.accept()
+    print("Test WebSocket connection accepted")
+    await websocket.send_json({"message": "Hello, WebSocket!"})
+    await websocket.close()

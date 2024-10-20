@@ -1,144 +1,140 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useCallback, useEffect, ReactNode } from 'react';
 import { Message } from '@/types';
-import axios, { AxiosProgressEvent, CancelTokenSource } from 'axios';
 
 interface MessageContextType {
   messages: Message[];
-  streamingMessage: Message | null;
-  draftMessage: string;
-  isLoading: boolean;
   isStreaming: boolean;
-  sendMessage: (content: string, configName: string) => Promise<void>;
-  setDraftMessage: (draft: string) => void;
+  streamingMessage: Message | null;
+  sendMessage: (content: string) => void;
+  clearMessages: () => void;
+  isLoading: boolean;
+  connectWebSocket: (configName: string) => void;
 }
 
-interface MessageProviderProps {
-  children: ReactNode;
-}
+const MessageContext = createContext<MessageContextType | null>(null);
 
-const MessageContext = createContext<MessageContextType | undefined>(undefined);
-
-export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) => {
+export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
-  const [draftMessage, setDraftMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  
 
-  const sendMessage = useCallback(async (content: string, configName: string) => {
-    console.log('sendMessage function called', { content, configName });
-    setIsLoading(true);
-    setIsStreaming(true);
-  
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content,
-    };
-  
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: '',
-    };
-  
-    setMessages(prev => [...prev, userMessage, assistantMessage]);
-  
-    const baseUrl = "http://192.168.1.110:8000";
-    const url = `${baseUrl}/api/llm/process_stream/${configName}`;
-  
-    let source: CancelTokenSource | null = null;
-  
-    try {
-      source = axios.CancelToken.source();
-      let buffer = '';
-      let lastProcessedLength = 0;
-  
-      const config = {
-        method: 'post',
-        url: url,
-        data: { messages: [...messages, userMessage] },
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        responseType: 'text' as const,
-        cancelToken: source.token,
-        onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
-          const responseText = progressEvent.event?.target?.response as string;
-          if (responseText && responseText.length > lastProcessedLength) {
-            const newData = responseText.slice(lastProcessedLength);
-            buffer += newData;
-            lastProcessedLength = responseText.length;
-  
-            const lines = buffer.split('\n\n');
-            buffer = lines.pop() || '';
-  
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6); // Remove 'data: ' prefix
-  
-                if (data === '[DONE]') {
-                  setIsStreaming(false);
-                  source?.cancel('Stream complete');
-                  return;
-                }
-  
-                try {
-                  const parsed = JSON.parse(data);
-                  if (parsed.content) {
-                    setMessages(prev => {
-                      const updated = [...prev];
-                      const currentContent = updated[updated.length - 1].content || '';
-                      if (!currentContent.endsWith(parsed.content)) {
-                        updated[updated.length - 1] = {
-                          ...updated[updated.length - 1],
-                          content: currentContent + parsed.content
-                        };
-                      }
-                      return updated;
-                    });
-                  } else if (parsed.error) {
-                    console.error('Error from server:', parsed.error);
-                  }
-                } catch (e) {
-                  console.error('Error parsing JSON:', e, 'Raw data:', data);
-                }
-              }
-            }
-          }
-        },
-      };
-  
-      await axios(config);
-  
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log('Request canceled:', error.message);
-      } else {
-        console.error('Error in sendMessage:', error);
-      }
-    } finally {
-      setIsLoading(false);
-      setIsStreaming(false);
+  const connectWebSocket = useCallback((configName: string) => {
+    if (socket) {
+      socket.close();
     }
-  }, [messages]);
 
-  const value = {
-    messages,
-    streamingMessage,
-    draftMessage,
-    isLoading,
-    isStreaming,
-    sendMessage,
-    setDraftMessage,
-  };
+    const ws = new WebSocket(`ws://192.168.99.134:8000/api/llm/ws/llm_service/${configName}`);
 
-  return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>;
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+      setSocket(ws);
+      setIsLoading(false);
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      switch(data.type) {
+        case 'content':
+          setIsStreaming(true);
+          setStreamingMessage(prev => {
+            console.log('Setting streaming message:', prev ? 'updating' : 'new');
+            return ({
+              id: 'streaming',
+              role: 'assistant',
+              content: prev ? prev.content + data.data : data.data
+            });
+          });
+          break;
+        case 'done':
+          setIsStreaming(false);
+          setMessages(prev => [...prev, streamingMessage!]);
+          setStreamingMessage(null);
+          console.log('Cleared streaming message')
+          break;
+        case 'error':
+          console.error('Error from server:', data.data);
+          setIsStreaming(false);
+          setStreamingMessage(null);
+          // Optionally, add an error message to the chat
+          setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            role: 'system',
+            content: `Error: ${data.data}`
+          }]);
+          break;
+      }
+    };
+
+    ws.onclose = (event) => {
+      console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
+      setSocket(null);
+      setIsLoading(false);
+      // Implement reconnection logic if needed
+      if (event.code !== 1000) {
+        console.log("Attempting to reconnect...");
+        setTimeout(() => connectWebSocket(configName), 5000);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error observed:", error);
+      setIsLoading(false);
+    };
+
+    setIsLoading(true);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, [socket]);
+
+  const sendMessage = useCallback((content: string) => {
+    if (content.trim() && socket && socket.readyState === WebSocket.OPEN) {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: content.trim(),
+      };
+      setMessages(prev => [...prev, newMessage]);
+      socket.send(JSON.stringify({ content: content.trim() }));
+      setIsLoading(true);
+    } else if (!socket || socket.readyState !== WebSocket.OPEN) {
+      console.error("WebSocket is not open");
+      // Optionally, attempt to reconnect here
+    }
+  }, [socket]);
+
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    setStreamingMessage(null);
+    setIsStreaming(false);
+  }, []);
+
+  return (
+    <MessageContext.Provider value={{ 
+      messages, 
+      isStreaming, 
+      streamingMessage, 
+      sendMessage, 
+      clearMessages, 
+      isLoading,
+      connectWebSocket 
+    }}>
+      {children}
+    </MessageContext.Provider>
+  );
 };
 
 export const useMessage = () => {
   const context = useContext(MessageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useMessage must be used within a MessageProvider');
   }
   return context;

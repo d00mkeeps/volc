@@ -9,20 +9,13 @@ logger.info("Application starting")
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:**",
-    "http://localhost:8080",
-    "http://localhost:19006", 
-    "exp://localhost:190000",  
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],  # In production, replace with your frontend URL
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"], 
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 app.include_router(llm_router, prefix="/api/llm", tags=["llm"])

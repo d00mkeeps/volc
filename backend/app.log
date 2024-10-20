@@ -1,8 +1,8 @@
-2024-10-18 00:55:38,128 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 17 Oct 2024 23:55:38 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-17T23:56:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'39000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-17T23:55:38Z'), (b'request-id', b'req_018kFXhNYGNYweEdZNfqJp6a'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d4438763a30b32e-MAN')])
-2024-10-18 00:55:38,132 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-18 00:55:38,132 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-18 00:55:38,132 - app.services.llm_service - INFO - Stream created successfully
-2024-10-18 00:55:38,132 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-18 00:55:42,112 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-18 00:55:42,112 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-18 00:55:42,113 - httpcore.http11 - DEBUG - response_closed.complete
+2024-10-20 14:11:33,890 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sun, 20 Oct 2024 13:11:33 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-20T13:12:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-20T13:11:33Z'), (b'request-id', b'req_019pWZL4mUz7r7vQeRhyUsE4'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d5941221f19b314-MAN')])
+2024-10-20 14:11:33,894 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-10-20 14:11:33,895 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2024-10-20 14:11:33,895 - app.services.llm_service - INFO - Stream created successfully
+2024-10-20 14:11:33,895 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-10-20 14:11:35,249 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-10-20 14:11:35,250 - httpcore.http11 - DEBUG - response_closed.started
+2024-10-20 14:11:35,250 - httpcore.http11 - DEBUG - response_closed.complete

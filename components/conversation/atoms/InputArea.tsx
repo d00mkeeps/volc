@@ -1,56 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 import { useMessage } from '@/context/MessageContext';
-import { KeyboardAvoidingView, Platform, View, TextInput, Button, StyleSheet } from 'react-native';
 
 const InputArea: React.FC = () => {
-  const { draftMessage, setDraftMessage, sendMessage, isLoading, isStreaming } = useMessage();
+  const { sendMessage, isStreaming, isLoading, connectWebSocket } = useMessage();
+  const [input, setInput] = useState('');
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const connectSocket = async () => {
+      try {
+        await connectWebSocket('default');
+        setIsConnected(true);
+      } catch (error) {
+        console.error('Failed to connect WebSocket:', error);
+        setIsConnected(false);
+      }
+    };
+
+    connectSocket();
+  }, [connectWebSocket]);
 
   const handleSend = () => {
-    if (draftMessage.trim() && !isLoading && !isStreaming) {
-      sendMessage(draftMessage, 'default');
-      setDraftMessage('');
+    if (input.trim() && !isStreaming && !isLoading && isConnected) {
+      sendMessage(input);
+      setInput('');
+    } else if (!isConnected) {
+      console.error('WebSocket is not connected. Attempting to reconnect...');
+      connectWebSocket('default');
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={draftMessage}
-          onChangeText={setDraftMessage}
-          placeholder="Type a message..."
-          placeholderTextColor="#999"
-          editable={!isLoading && !isStreaming}
-        />
-        <Button title="Send" onPress={handleSend} disabled={isLoading || isStreaming} />
-      </View>
-    </KeyboardAvoidingView>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={input}
+        onChangeText={setInput}
+        placeholder="Type a message..."
+        editable={!isStreaming && !isLoading && isConnected}
+      />
+      <Button 
+        title="Send" 
+        onPress={handleSend} 
+        disabled={isStreaming || isLoading || !isConnected || !input.trim()}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingBottom: 16,
-    paddingTop: 8,
-    backgroundColor: '#222', // Default color for home page
-  },
-  nonHomePageContainer: {
-    backgroundColor: '#1f281f', // Color for non-home pages
+    padding: 10,
+    backgroundColor: '#f0f0f0',
   },
   input: {
     flex: 1,
     marginRight: 10,
-    borderWidth: 0,
-    borderColor: '#ccc',
-    borderRadius: 15,
-    paddingHorizontal: 14,
-    backgroundColor: '#041402',
-    color: '#eee',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
   },
 });
 
