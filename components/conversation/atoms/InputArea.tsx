@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Text } from 'react-native';
 import { useMessage } from '@/context/MessageContext';
 
 const InputArea: React.FC = () => {
@@ -37,36 +37,69 @@ const InputArea: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={input}
-        onChangeText={setInput}
-        placeholder="Type a message..."
-        editable={!isStreaming && !isLoading && isConnected}
-      />
-      <Button
-        title="Send"
-        onPress={handleSend}
-        disabled={isStreaming || isLoading || !isConnected || !input.trim()}
-      />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={90}
+      style={styles.keyboardAvoidingView}
+    >
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          value={input}
+          onChangeText={setInput}
+          placeholder="Type a message..."
+          placeholderTextColor="#999"
+          editable={!isStreaming && !isLoading && isConnected}
+        />
+        <TouchableOpacity
+          style={[
+            styles.sendButton,
+            (isStreaming || isLoading || !isConnected || !input.trim()) && styles.disabledButton
+          ]}
+          onPress={handleSend}
+          disabled={isStreaming || isLoading || !isConnected || !input.trim()}
+        >
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
-
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    width: '100%',
+  },
   container: {
     flexDirection: 'row',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+    backgroundColor: '#1f281f',
   },
   input: {
     flex: 1,
     marginRight: 10,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 5,
+    borderWidth: 0,
+    borderRadius: 15,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    backgroundColor: '#041402',
+    color: '#eee',
+  },
+  sendButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#888',
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 

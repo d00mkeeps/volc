@@ -1,6 +1,4 @@
-// src/components/ChatUI.tsx
-
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useMessage } from '@/context/MessageContext';
 import { Message } from '@/types';
 import { ListRenderItemInfo, View, FlatList, StyleSheet } from 'react-native';
@@ -9,6 +7,7 @@ import MessageItem from '../atoms/MessageItem';
 
 const ChatUI: React.FC = () => {
   const { messages, isStreaming, streamingMessage } = useMessage();
+  const flatListRef = useRef<FlatList<Message>>(null);
 
   useEffect(() => {
     console.log('Messages array:', messages.map(msg => ({
@@ -47,14 +46,22 @@ const ChatUI: React.FC = () => {
     })));
   }, [allMessages]);
 
+  useEffect(() => {
+    if (flatListRef.current && allMessages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [allMessages]);
 
   return (
     <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={allMessages}
         renderItem={renderItem}
         keyExtractor={(item) => item.id || 'fallback-key'}
         contentContainerStyle={styles.listContent}
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+        onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
       <InputArea />
     </View>
