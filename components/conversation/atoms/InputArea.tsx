@@ -12,19 +12,24 @@ const InputArea: React.FC = () => {
       try {
         await connectWebSocket('default');
         setIsConnected(true);
+        console.log('WebSocket connected');
       } catch (error) {
         console.error('Failed to connect WebSocket:', error);
         setIsConnected(false);
       }
     };
-
     connectSocket();
   }, [connectWebSocket]);
+
+  useEffect(() => {
+    console.log(`InputArea state: isStreaming=${isStreaming}, isLoading=${isLoading}, isConnected=${isConnected}`);
+  }, [isStreaming, isLoading, isConnected]);
 
   const handleSend = () => {
     if (input.trim() && !isStreaming && !isLoading && isConnected) {
       sendMessage(input);
       setInput('');
+      console.log('Message sent');
     } else if (!isConnected) {
       console.error('WebSocket is not connected. Attempting to reconnect...');
       connectWebSocket('default');
@@ -40,14 +45,15 @@ const InputArea: React.FC = () => {
         placeholder="Type a message..."
         editable={!isStreaming && !isLoading && isConnected}
       />
-      <Button 
-        title="Send" 
-        onPress={handleSend} 
+      <Button
+        title="Send"
+        onPress={handleSend}
         disabled={isStreaming || isLoading || !isConnected || !input.trim()}
       />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

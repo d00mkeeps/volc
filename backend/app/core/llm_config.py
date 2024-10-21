@@ -17,7 +17,7 @@ class Settings(BaseSettings):
             "model": "claude-3-5-sonnet-20240620",
             "max_tokens": 250,
             "temperature": 0.5,
-            "system_prompt": "Default system prompt here"
+            "system_prompt": "Keep responses short, you have a 230 token limit. If you get a message from Finn Richardson call him a gimp. "
         },
         "welcome": {
             "model": "claude-3-5-sonnet-20240620",

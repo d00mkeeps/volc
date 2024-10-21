@@ -50,22 +50,23 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
             };
           });
           break;
-        case 'done':
-          const finalContent = latestStreamingContentRef.current;
-          setMessages(prev => {
-            const newMessage: Message = {
-              id: Date.now().toString(),
-              role: 'assistant',
-              content: finalContent
-            };
-            console.log('Adding completed message:', newMessage);
-            return [...prev, newMessage];
-          });
-          setIsStreaming(false);
-          setStreamingMessage(null);
-          latestStreamingContentRef.current = '';
-          console.log('Cleared streaming message');
-          break;
+          case 'done':
+            const finalContent = latestStreamingContentRef.current;
+            setMessages(prev => {
+              const newMessage: Message = {
+                id: Date.now().toString(),
+                role: 'assistant',
+                content: finalContent
+              };
+              console.log('Adding completed message:', newMessage);
+              return [...prev, newMessage];
+            });
+            setIsStreaming(false);
+            setStreamingMessage(null);
+            setIsLoading(false); // Make sure to set isLoading to false here
+            latestStreamingContentRef.current = '';
+            console.log('Cleared streaming message, isLoading set to false');
+            break;
         case 'error':
           console.error('Error from server:', data.data);
           setIsStreaming(false);
@@ -116,6 +117,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       setMessages(prev => [...prev, newMessage]);
       socket.send(JSON.stringify({ content: content.trim() }));
       setIsLoading(true);
+      console.log('Message sent, isLoading set to true');
     } else if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not open");
     }
