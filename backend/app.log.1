@@ -1,64 +1,68 @@
-2024-10-20 14:09:36,002 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:09:36,020 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:10:01,272 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-20 14:10:01,273 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-20 14:10:01,273 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-20 14:10:01,274 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-20 14:10:01,275 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:10:01,286 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:10:05,729 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-20 14:10:05,730 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-20 14:10:05,730 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-20 14:10:05,731 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-20 14:10:05,732 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:10:05,748 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:10:08,815 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:10:08,815 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Message'}]
-2024-10-20 14:10:08,824 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
-2024-10-20 14:10:08,826 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-20 14:10:08,970 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e51bef0>
-2024-10-20 14:10:08,971 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x10e51dbd0> server_hostname='api.anthropic.com' timeout=600
-2024-10-20 14:10:09,003 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e51be00>
-2024-10-20 14:10:09,004 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-20 14:10:09,005 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-20 14:10:09,498 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sun, 20 Oct 2024 13:10:09 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-20T13:10:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-20T13:10:09Z'), (b'request-id', b'req_01VcAHasxLTz22dN4yXkCCR3'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d593f127d2ab125-MAN')])
-2024-10-20 14:10:09,498 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-20 14:10:09,498 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-20 14:10:09,498 - app.services.llm_service - INFO - Stream created successfully
-2024-10-20 14:10:09,499 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-20 14:10:10,320 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-20 14:10:10,321 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-20 14:10:10,321 - httpcore.http11 - DEBUG - response_closed.complete
-2024-10-20 14:11:10,887 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-20 14:11:10,889 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-20 14:11:10,889 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-20 14:11:10,892 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-20 14:11:10,893 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:11:10,910 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:11:17,465 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-20 14:11:17,465 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-20 14:11:17,465 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-20 14:11:17,467 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-20 14:11:17,468 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:11:17,486 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:11:29,887 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-20 14:11:29,888 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-20 14:11:29,888 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
-2024-10-20 14:11:29,890 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-20 14:11:29,891 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-20 14:11:29,911 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:11:33,363 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
-2024-10-20 14:11:33,363 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Message'}]
-2024-10-20 14:11:33,371 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
-2024-10-20 14:11:33,373 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-20 14:11:33,392 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x108eeaf00>
-2024-10-20 14:11:33,392 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x10e51e850> server_hostname='api.anthropic.com' timeout=600
-2024-10-20 14:11:33,422 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10e5411f0>
-2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-20 14:11:33,423 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2024-10-21 13:28:11,002 - app.services.llm_service - INFO - Stream created successfully
+2024-10-21 13:28:11,005 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-10-21 13:28:11,866 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-10-21 13:28:11,866 - httpcore.http11 - DEBUG - response_closed.started
+2024-10-21 13:28:11,866 - httpcore.http11 - DEBUG - response_closed.complete
+2024-10-21 13:28:29,348 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:29,348 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:29,348 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:29,350 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:29,351 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:29,359 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:29,360 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:29,360 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:29,360 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:29,361 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:29,361 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:29,369 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:34,340 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:34,340 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:34,340 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:34,341 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:34,341 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:34,351 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:34,353 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:34,353 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:34,353 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:34,354 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:34,354 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:34,362 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:38,487 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:38,488 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:38,488 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:38,489 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:38,490 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:38,499 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:39,863 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:28:39,864 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:28:39,864 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:28:39,865 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:28:39,867 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:28:39,885 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:43,723 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:28:43,724 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Message 1'}]
+2024-10-21 13:28:43,728 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message 1'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Default system prompt here', 'temperature': 0.5}}
+2024-10-21 13:28:43,730 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
+2024-10-21 13:28:43,745 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10b1e4a10>
+2024-10-21 13:28:43,745 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x10b18e250> server_hostname='api.anthropic.com' timeout=600
+2024-10-21 13:28:43,763 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10b1e4aa0>
+2024-10-21 13:28:43,763 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2024-10-21 13:28:43,764 - httpcore.http11 - DEBUG - send_request_headers.complete
+2024-10-21 13:28:43,764 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2024-10-21 13:28:43,764 - httpcore.http11 - DEBUG - send_request_body.complete
+2024-10-21 13:28:43,764 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2024-10-21 13:28:44,150 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 21 Oct 2024 12:28:44 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-21T12:29:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-21T12:28:44Z'), (b'request-id', b'req_017362jBp13MNMKrcijg8Bhq'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d613fc5cf033634-MAN')])
+2024-10-21 13:28:44,151 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-10-21 13:28:44,152 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2024-10-21 13:28:44,152 - app.services.llm_service - INFO - Stream created successfully
+2024-10-21 13:28:44,152 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-10-21 13:28:45,053 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-10-21 13:28:45,054 - httpcore.http11 - DEBUG - response_closed.started
+2024-10-21 13:28:45,055 - httpcore.http11 - DEBUG - response_closed.complete
+2024-10-21 13:30:42,876 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-21 13:30:42,878 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-21 13:30:42,878 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Default system prompt here'}
+2024-10-21 13:30:42,880 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-21 13:30:42,882 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-21 13:30:42,898 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Default system prompt here'
+2024-10-21 13:30:42,900 - app.services.llm_service - INFO - Creating LLMService with config: default

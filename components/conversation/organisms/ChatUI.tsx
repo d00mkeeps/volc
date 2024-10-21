@@ -1,6 +1,6 @@
 // src/components/ChatUI.tsx
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useMessage } from '@/context/MessageContext';
 import { Message } from '@/types';
 import { ListRenderItemInfo, View, FlatList, StyleSheet } from 'react-native';
@@ -10,12 +10,26 @@ import MessageItem from '../atoms/MessageItem';
 const ChatUI: React.FC = () => {
   const { messages, isStreaming, streamingMessage } = useMessage();
 
-  const renderItem = ({ item }: ListRenderItemInfo<Message>) => (
-    <MessageItem
-      message={item}
-      isStreaming={item.id === 'streaming'}
-    />
-  );
+  useEffect(() => {
+    console.log('Messages array:', messages.map(msg => ({
+      id: msg?.id || 'null',
+      role: msg?.role || 'null',
+      content: msg?.content ? msg.content.substring(0, 20) + '...' : 'null'
+    })));
+  }, [messages]);
+
+  const renderItem = ({ item }: ListRenderItemInfo<Message>) => {
+    if (!item) {
+      console.error('Attempting to render null item');
+      return null;
+    }
+    return (
+      <MessageItem
+        message={item}
+        isStreaming={item.id === 'streaming'}
+      />
+    );
+  };
   
   const allMessages = useMemo(() => {
     const validMessages = messages.filter(msg => msg && msg.id);
@@ -24,6 +38,15 @@ const ChatUI: React.FC = () => {
     }
     return validMessages;
   }, [messages, isStreaming, streamingMessage]);
+  
+  useEffect(() => {
+    console.log('All messages:', allMessages.map(msg => ({
+      id: msg?.id || 'null',
+      role: msg?.role || 'null',
+      content: msg?.content ? msg.content.substring(0, 20) + '...' : 'null'
+    })));
+  }, [allMessages]);
+
 
   return (
     <View style={styles.container}>
@@ -42,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1f281f',
-  },
+  }, 
   listContent: {
     paddingBottom: 20,
     paddingHorizontal: 10,

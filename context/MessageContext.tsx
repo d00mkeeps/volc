@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useCallback, useEffect, ReactNode, useRef } from 'react';
 import { Message } from '@/types';
 
 interface MessageContextType {
@@ -19,6 +19,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const latestStreamingContentRef = useRef<string>('');
   
 
   const connectWebSocket = useCallback((configName: string) => {
@@ -26,7 +27,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       socket.close();
     }
 
-    const ws = new WebSocket(`ws://192.168.99.134:8000/api/llm/ws/llm_service/${configName}`);
+    const ws = new WebSocket(`ws://192.168.1.108:8000/api/llm/ws/llm_service/${configName}`);
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
@@ -40,25 +41,35 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
         case 'content':
           setIsStreaming(true);
           setStreamingMessage(prev => {
-            console.log('Setting streaming message:', prev ? 'updating' : 'new');
-            return ({
+            const newContent = prev ? prev.content + data.data : data.data;
+            latestStreamingContentRef.current = newContent;
+            return {
               id: 'streaming',
               role: 'assistant',
-              content: prev ? prev.content + data.data : data.data
-            });
+              content: newContent
+            };
           });
           break;
         case 'done':
+          const finalContent = latestStreamingContentRef.current;
+          setMessages(prev => {
+            const newMessage: Message = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: finalContent
+            };
+            console.log('Adding completed message:', newMessage);
+            return [...prev, newMessage];
+          });
           setIsStreaming(false);
-          setMessages(prev => [...prev, streamingMessage!]);
           setStreamingMessage(null);
-          console.log('Cleared streaming message')
+          latestStreamingContentRef.current = '';
+          console.log('Cleared streaming message');
           break;
         case 'error':
           console.error('Error from server:', data.data);
           setIsStreaming(false);
           setStreamingMessage(null);
-          // Optionally, add an error message to the chat
           setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'system',
@@ -107,7 +118,6 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       setIsLoading(true);
     } else if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not open");
-      // Optionally, attempt to reconnect here
     }
   }, [socket]);
 
