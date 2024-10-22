@@ -27,7 +27,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       socket.close();
     }
 
-    const ws = new WebSocket(`ws://192.168.1.108:8000/api/llm/ws/llm_service/${configName}`);
+    const ws = new WebSocket(`ws://192.168.1.103:8000/api/llm/ws/llm_service/${configName}`);
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
