@@ -1,58 +1,56 @@
-2024-10-22 19:38:24,912 - httpcore.connection - DEBUG - close.complete
-2024-10-22 19:38:24,916 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-22 19:38:24,987 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105d2cce0>
-2024-10-22 19:38:24,987 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x105c74a50> server_hostname='api.anthropic.com' timeout=600
-2024-10-22 19:38:25,056 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105d2c980>
-2024-10-22 19:38:25,056 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-22 19:38:25,057 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-22 19:38:25,057 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-22 19:38:25,058 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-22 19:38:25,058 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-22 19:38:25,835 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 22 Oct 2024 18:38:25 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-22T18:38:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-22T18:38:25Z'), (b'request-id', b'req_019XsjAbvEPvhDsToTDwt5nt'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d6b9aaeb993b3a8-MAN')])
-2024-10-22 19:38:25,836 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-22 19:38:25,836 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-22 19:38:25,837 - app.services.llm_service - INFO - Stream created successfully
-2024-10-22 19:38:25,837 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-22 19:38:27,023 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-22 19:38:27,023 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-22 19:38:27,023 - httpcore.http11 - DEBUG - response_closed.complete
-2024-10-22 19:38:37,244 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
-2024-10-22 19:38:37,244 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'Test passed!'}]
-2024-10-22 19:38:37,246 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Test passed!'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.', 'temperature': 0.5}}
-2024-10-22 19:38:37,247 - httpcore.connection - DEBUG - close.started
-2024-10-22 19:38:37,247 - httpcore.connection - DEBUG - close.complete
-2024-10-22 19:38:37,248 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-22 19:38:37,307 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105d2e810>
-2024-10-22 19:38:37,307 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x105c74a50> server_hostname='api.anthropic.com' timeout=600
-2024-10-22 19:38:37,333 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105d2e6c0>
-2024-10-22 19:38:37,334 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-22 19:38:37,334 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-22 19:38:37,334 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-22 19:38:37,334 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-22 19:38:37,335 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-22 19:38:37,797 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 22 Oct 2024 18:38:37 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-22T18:39:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-22T18:38:37Z'), (b'request-id', b'req_014nNmLsQtNCxc8NU6GPRNSm'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d6b9afb6e36b104-MAN')])
-2024-10-22 19:38:37,798 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-22 19:38:37,798 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-22 19:38:37,799 - app.services.llm_service - INFO - Stream created successfully
-2024-10-22 19:38:37,799 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-22 19:38:38,044 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-22 19:38:38,045 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-22 19:38:38,045 - httpcore.http11 - DEBUG - response_closed.complete
-2024-10-22 19:38:59,582 - app.services.llm_service - INFO - Processing message stream with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
-2024-10-22 19:38:59,583 - app.services.llm_service - DEBUG - Messages: [{'role': 'user', 'content': 'I’m Finn Richardson by the way'}]
-2024-10-22 19:38:59,587 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'I’m Finn Richardson by the way'}], 'model': 'claude-3-5-sonnet-20240620', 'stream': True, 'system': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.', 'temperature': 0.5}}
-2024-10-22 19:38:59,591 - httpcore.connection - DEBUG - close.started
-2024-10-22 19:38:59,592 - httpcore.connection - DEBUG - close.complete
-2024-10-22 19:38:59,592 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-10-22 19:38:59,612 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105d2e1b0>
-2024-10-22 19:38:59,612 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x105c74a50> server_hostname='api.anthropic.com' timeout=600
-2024-10-22 19:38:59,633 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x105c7cfe0>
-2024-10-22 19:38:59,634 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-10-22 19:38:59,634 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-22 19:38:59,634 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-22 19:38:59,634 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-22 19:38:59,634 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-22 19:39:00,283 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 22 Oct 2024 18:39:00 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-22T18:39:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-22T18:39:00Z'), (b'request-id', b'req_01YQ8MptCxwFBK9QFW9T8gk1'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d6b9b86cb0854b7-MAN')])
-2024-10-22 19:39:00,285 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-22 19:39:00,285 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-22 19:39:00,286 - app.services.llm_service - INFO - Stream created successfully
+2024-10-25 18:50:03,299 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 18:50:03,306 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 18:50:03,323 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 18:54:47,206 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 18:54:47,206 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 18:54:47,207 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 18:54:47,210 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 18:54:47,219 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 18:54:47,231 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 18:54:47,609 - httpcore.connection - DEBUG - close.started
+2024-10-25 18:54:47,610 - httpcore.connection - DEBUG - close.started
+2024-10-25 18:54:47,622 - httpcore.connection - DEBUG - close.complete
+2024-10-25 18:54:47,624 - httpcore.connection - DEBUG - close.complete
+2024-10-25 18:54:50,520 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 18:54:50,520 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 18:54:50,520 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 18:54:50,521 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 18:54:50,521 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 18:54:50,532 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 18:54:53,239 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 18:54:53,239 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 18:54:53,239 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 18:54:53,240 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 18:54:53,240 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 18:54:53,251 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 18:54:56,609 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 18:54:56,609 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 18:54:56,609 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 18:54:56,610 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 18:54:56,611 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 18:54:56,619 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:01:41,828 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 19:01:41,829 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:01:41,829 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:01:41,833 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:01:41,842 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:01:41,853 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:01:44,595 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 19:01:44,596 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:01:44,596 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:01:44,596 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:01:44,597 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:01:44,605 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:02:31,008 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 19:02:31,009 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:02:31,009 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:02:31,014 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:02:31,025 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:02:31,041 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:02:33,544 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 19:02:33,545 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:02:33,545 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:02:33,546 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:02:33,547 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:02:33,560 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:04:48,679 - app.services.llm_service - INFO - Creating LLMService with config: default

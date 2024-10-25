@@ -17,7 +17,7 @@ export interface SignInCredentials {
 }
 
 export interface SignUpCredentials extends SignInCredentials {
-  // Add any additional sign-up fields here
+  //validation, referral code, other signup excliusive fields here
 }
 
 // components/auth/atoms/types.ts

@@ -145,11 +145,14 @@ export interface UserProfile {
 
 export interface WorkoutExercise {
   id: string;
+  name?: string;
+  description?: string;
   workout_id: string;
   exercise_id: number;
   exercise_name: string;
   set_data: SetData[];
   order_in_workout: number;
+  createdAt?: any;
 }
 
 export interface SetData {

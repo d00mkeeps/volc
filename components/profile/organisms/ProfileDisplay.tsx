@@ -1,32 +1,55 @@
+// components/profile/organisms/ProfileDisplay.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import ProfileHeader from '../atoms/ProfileHeader';
+import SectionHeader from '../atoms/SectionHeader';
 import ProfileGroup from '../molecules/ProfileGroup';
-import { UserProfile } from '@/types';
+import { useUser } from '@/context/UserContext';
 
-interface ProfileDisplayProps {
-  profile: UserProfile;
-}
+const ProfileDisplay: React.FC = () => {
+  const { userProfile } = useUser();
 
-const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ profile }) => (
-  <View style={styles.container}>
-    <View style={styles.content}>
-      <ProfileHeader displayName={profile.display_name} />
-      <ProfileGroup profile={profile} />
+  if (!userProfile) {
+    return null;
+  }
+
+  const generalInfo = {
+    name: `${userProfile.first_name} ${userProfile.last_name}`.trim(),
+    display_name: userProfile.display_name,
+    measurement_system: userProfile.is_imperial ? 'Imperial' : 'Metric',
+  };
+
+  const progressInfo = {
+    experience: `${userProfile.training_history.years_of_experience} years`,
+    preferred_activities: userProfile.training_history.preferred_activities,
+    goals: userProfile.goals,
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <SectionHeader title="General Information" />
+        <ProfileGroup data={generalInfo} />
+      </View>
+      
+      <View style={styles.section}>
+        <SectionHeader title="Progress & Goals" />
+        <ProfileGroup data={progressInfo} />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#222',
     flex: 1,
+    backgroundColor: '#222',
     padding: 16,
   },
-  content: {
+  section: {
     backgroundColor: '#111',
     borderRadius: 8,
     overflow: 'hidden',
+    marginBottom: 16,
   },
 });
 

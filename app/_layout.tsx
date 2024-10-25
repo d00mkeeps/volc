@@ -8,6 +8,7 @@ import { Slot } from 'expo-router';
 import { MessageProvider } from '@/context/MessageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/AuthGate';
+import { UserProvider } from '@/context/UserContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,6 +51,7 @@ function RootLayoutNav() {
 
   return (
     <AuthProvider>
+      <UserProvider>
       <MessageProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AuthGate>
@@ -60,6 +62,7 @@ function RootLayoutNav() {
           </AuthGate>
         </ThemeProvider>
       </MessageProvider>
+      </UserProvider>
     </AuthProvider>
   );
 }

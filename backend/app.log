@@ -1,28 +1,11 @@
-2024-10-22 19:39:00,286 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-10-22 19:39:00,675 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-10-22 19:39:00,676 - httpcore.http11 - DEBUG - response_closed.started
-2024-10-22 19:39:00,681 - httpcore.http11 - DEBUG - response_closed.complete
-2024-10-22 19:42:05,524 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-22 19:42:05,524 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-22 19:42:05,525 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
-2024-10-22 19:42:05,529 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-22 19:42:05,538 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-22 19:42:05,550 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
-2024-10-22 19:45:22,598 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-22 19:45:22,599 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-22 19:45:22,600 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
-2024-10-22 19:45:22,604 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-22 19:45:22,613 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-22 19:45:22,623 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
-2024-10-22 19:46:18,530 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-22 19:46:18,531 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-22 19:46:18,531 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
-2024-10-22 19:46:18,533 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-22 19:46:18,535 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-22 19:46:18,545 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
-2024-10-22 20:02:57,792 - app.services.llm_service - INFO - Creating LLMService with config: default
-2024-10-22 20:02:57,795 - app.core.llm_config - INFO - Getting LLM config for: default
-2024-10-22 20:02:57,796 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
-2024-10-22 20:02:57,806 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-10-22 20:02:57,823 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-10-22 20:02:57,842 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:04:48,680 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:04:48,684 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:04:48,688 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:04:48,700 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:04:48,712 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'
+2024-10-25 19:04:51,499 - app.services.llm_service - INFO - Creating LLMService with config: default
+2024-10-25 19:04:51,499 - app.core.llm_config - INFO - Getting LLM config for: default
+2024-10-25 19:04:51,499 - app.core.llm_config - DEBUG - Config data: {'model': 'claude-3-5-sonnet-20240620', 'max_tokens': 250, 'temperature': 0.5, 'system_prompt': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'}
+2024-10-25 19:04:51,500 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-10-25 19:04:51,502 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-10-25 19:04:51,519 - app.services.llm_service - INFO - LLMService initialized with config: model='claude-3-5-sonnet-20240620' max_tokens=250 temperature=0.5 system_prompt='Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.'

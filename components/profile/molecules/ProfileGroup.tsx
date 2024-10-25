@@ -1,31 +1,38 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ProfileItem from '../atoms/ProfileItem';
-import { UserProfile } from '@/types';
 
 interface ProfileGroupProps {
-  profile: UserProfile;
+  data: Record<string, any>;
 }
 
-const ProfileGroup: React.FC<ProfileGroupProps> = ({ profile }) => {
-  const profileItems = [
-    { label: "First Name", value: profile.first_name },
-    { label: "Last Name", value: profile.last_name },
-    { label: "Display Name", value: profile.display_name },
-    { label: "Goals", value: profile.goals },
-    { label: "Experience", value: `${profile.training_history.years_of_experience} years` },
-    { label: "Preferred Activities", value: profile.training_history.preferred_activities.join(', ') },
-    { label: "Measurement System", value: profile.is_imperial ? 'Imperial' : 'Metric' },
-  ];
+const ProfileGroup: React.FC<ProfileGroupProps> = ({ data }) => {
+  const formatValue = (key: string, value: any): string => {
+    if (Array.isArray(value)) {
+      return value.join(', ');
+    }
+    if (typeof value === 'object' && value !== null) {
+      // Future-proofing for complex goal structure
+      return JSON.stringify(value);
+    }
+    return String(value);
+  };
+
+  const formatLabel = (key: string): string => {
+    return key
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   return (
     <View style={styles.container}>
-      {profileItems.map((item, index) => (
+      {Object.entries(data).map(([key, value], index) => (
         <ProfileItem
-          key={item.label}
-          label={item.label}
-          value={item.value}
-          isLastItem={index === profileItems.length - 1}
+          key={key}
+          label={formatLabel(key)}
+          value={formatValue(key, value)}
+          isLastItem={index === Object.entries(data).length - 1}
         />
       ))}
     </View>

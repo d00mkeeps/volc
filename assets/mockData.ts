@@ -1,4 +1,4 @@
-import { Program, Workout, Exercise, Conversation, Message, UserProfile } from "@/types";
+import { Program, Workout, Exercise, Conversation, Message, UserProfile, WorkoutExercise } from "@/types";
 
 const createPrWoExercise = (id: string, name: string, description: string, sets?: number, reps?: number, duration?: string): Exercise => ({
   id,
@@ -188,7 +188,7 @@ export const syntheticUserProfile: UserProfile = {
   
 
 
-export const sampleWorkouts: Workout[] = [
+export const sampleWorkouts: WorkoutExercise[] = [
   {
     id: "2c82488a-b7d4-48c4-8765-a2f7ad669f40",
     name: "Full Body Workout",
@@ -199,7 +199,7 @@ export const sampleWorkouts: Workout[] = [
         id: "d383f1b4-90ea-4f1c-be50-f3b770689263",
         name: "Squat",
         description: "Compound lower body exercise",
-        setData: [
+        set_data: [
           { reps: 5, weight: 150 },
           { reps: 5, weight: 150 }
         ],
