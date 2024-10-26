@@ -20,9 +20,8 @@ async def websocket_endpoint(
         while True:
             data = await websocket.receive_json()
             print(f"Received data: {data}")
-            
-            # Assuming the incoming message is in the format expected by the LLM service
-            messages = [{"role": "user", "content": data['content']}]
+
+            messages = data.get('messages', [])
             
             await llm_service.process_message_stream(websocket, messages)
     except WebSocketDisconnect:
@@ -34,12 +33,3 @@ async def websocket_endpoint(
         print(f"WebSocket connection closed for config: {config_name}")
         if not websocket.client_state == WebSocket.DISCONNECTED:
             await websocket.close()
-
-# Keep the test endpoint as is
-@router.websocket("/ws/test")
-async def websocket_test(websocket: WebSocket):
-    print("Test WebSocket connection attempt")
-    await websocket.accept()
-    print("Test WebSocket connection accepted")
-    await websocket.send_json({"message": "Hello, WebSocket!"})
-    await websocket.close()

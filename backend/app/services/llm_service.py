@@ -28,16 +28,34 @@ class LLMService:
             
             logger.info("Stream created successfully")
             
+            # Buffer to accumulate the last message
+            current_message = ""
+            
             async for chunk in stream:
                 if chunk.type == "content_block_delta":
-                    await websocket.send_json({
-                        "type": "content",
-                        "data": chunk.delta.text
-                    })
+                    current_message += chunk.delta.text
+                    
+                    # Check if this chunk completes "DAVEGROHL"
+                    if current_message.strip() == "DAVEGROHL":
+                        # Send completion signal instead of the text
+                        await websocket.send_json({
+                            "type": "workout_history_complete"
+                        })
+                        # Don't continue processing this message
+                        break
+                    else:
+                        # Send normal content
+                        await websocket.send_json({
+                            "type": "content",
+                            "data": chunk.delta.text
+                        })
+                        
                 elif chunk.type == "message_stop":
-                    await websocket.send_json({
-                        "type": "done"
-                    })
+                    # Only send done if we haven't sent workout_history_complete
+                    if current_message.strip() != "DAVEGROHL":
+                        await websocket.send_json({
+                            "type": "done"
+                        })
                     
         except Exception as e:
             logger.error(f"Error in LLM service: {str(e)}")

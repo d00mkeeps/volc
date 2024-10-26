@@ -16,7 +16,7 @@ export function ProfileSkeleton() {
           }),
           Animated.timing(shimmerValue, {
             toValue: 0,
-            duration: ,
+            duration: 500,
             useNativeDriver: true,
           }),
         ])

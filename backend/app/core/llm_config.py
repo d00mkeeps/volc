@@ -1,6 +1,7 @@
 import logging
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
+from lib.prompts.workout_history import WORKOUT_HISTORY_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -14,16 +15,16 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str
     LLM_CONFIGS: Dict[str, Dict[str, Any]] = {
         "default": {
-            "model": "claude-3-5-sonnet-20240620",
+            "model": "claude-3-5-sonnet-latest",
             "max_tokens": 250,
             "temperature": 0.5,
             "system_prompt": "Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising."
         },
-        "welcome": {
-            "model": "claude-3-5-sonnet-20240620",
-            "max_tokens": 250,
-            "temperature": 0.5,
-            "system_prompt": "Welcome scenario system prompt here"
+        "workout-history": {
+            "model": "claude-3-5-sonnet-latest",
+            "max_tokens": 300,
+            "temperature": 0.7,
+            "system_prompt": WORKOUT_HISTORY_PROMPT
         }
     }
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

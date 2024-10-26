@@ -14,7 +14,9 @@ export default function ConversationPage() {
         }} 
       />
       <View style={styles.container}>
-        <ChatUI />
+        <ChatUI 
+                  configName="default" 
+                  />
       </View>
     </MessageProvider>
   );

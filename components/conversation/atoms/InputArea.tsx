@@ -1,38 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Text } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  KeyboardAvoidingView, 
+  Platform, 
+  Text 
+} from 'react-native';
 import { useMessage } from '@/context/MessageContext';
 
 const InputArea: React.FC = () => {
-  const { sendMessage, isStreaming, isLoading, connectWebSocket } = useMessage();
+  const { sendMessage, isStreaming, isLoading } = useMessage();
   const [input, setInput] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const connectSocket = async () => {
-      try {
-        await connectWebSocket('default');
-        setIsConnected(true);
-        console.log('WebSocket connected');
-      } catch (error) {
-        console.error('Failed to connect WebSocket:', error);
-        setIsConnected(false);
-      }
-    };
-    connectSocket();
-  }, [connectWebSocket]);
-
-  useEffect(() => {
-    console.log(`InputArea state: isStreaming=${isStreaming}, isLoading=${isLoading}, isConnected=${isConnected}`);
-  }, [isStreaming, isLoading, isConnected]);
 
   const handleSend = () => {
-    if (input.trim() && !isStreaming && !isLoading && isConnected) {
+    if (input.trim() && !isStreaming && !isLoading) {
       sendMessage(input);
       setInput('');
       console.log('Message sent');
-    } else if (!isConnected) {
-      console.error('WebSocket is not connected. Attempting to reconnect...');
-      connectWebSocket('default');
     }
   };
 
@@ -48,16 +34,20 @@ const InputArea: React.FC = () => {
           value={input}
           onChangeText={setInput}
           placeholder="Type a message..."
-          placeholderTextColor="#999"
-          editable={!isStreaming && !isLoading && isConnected}
+          placeholderTextColor="#666"
+          editable={!isStreaming && !isLoading}
+          multiline={false}
+          returnKeyType="send"
+          onSubmitEditing={handleSend}
+          blurOnSubmit={true}
         />
         <TouchableOpacity
           style={[
             styles.sendButton,
-            (isStreaming || isLoading || !isConnected || !input.trim()) && styles.disabledButton
+            (isStreaming || isLoading || !input.trim()) && styles.disabledButton
           ]}
           onPress={handleSend}
-          disabled={isStreaming || isLoading || !isConnected || !input.trim()}
+          disabled={isStreaming || isLoading || !input.trim()}
         >
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
@@ -73,18 +63,24 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingVertical: 16,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#1f281f',
+    borderTopWidth: 1,
+    borderTopColor: '#2a332a',
+    width: '100%',
   },
   input: {
     flex: 1,
     marginRight: 10,
-    borderWidth: 0,
+    borderWidth: 1,
+    borderColor: '#2a332a',
     borderRadius: 15,
     paddingHorizontal: 14,
     paddingVertical: 8,
     backgroundColor: '#041402',
-    color: '#eee',
+    color: '#fff',
+    fontSize: 16,
+    minHeight: 40,
   },
   sendButton: {
     backgroundColor: '#4CAF50',
@@ -93,9 +89,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    minWidth: 80,
   },
   disabledButton: {
-    backgroundColor: '#888',
+    backgroundColor: '#2a332a',
   },
   sendButtonText: {
     color: '#fff',
@@ -103,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InputArea;
+export default InputArea

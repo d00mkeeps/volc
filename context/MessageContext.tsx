@@ -9,6 +9,7 @@ interface MessageContextType {
   clearMessages: () => void;
   isLoading: boolean;
   connectWebSocket: (configName: string) => void;
+  registerMessageHandler?: (handler: (type: string, data?: any) => void) => void;
 }
 
 const MessageContext = createContext<MessageContextType | null>(null);
@@ -20,6 +21,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isLoading, setIsLoading] = useState(false);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const latestStreamingContentRef = useRef<string>('');
+  const [messageHandler, setMessageHandler] = useState<((type: string, data?: any) => void) | null>(null);
   
 
   const connectWebSocket = useCallback((configName: string) => {
@@ -27,7 +29,7 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       socket.close();
     }
 
-    const ws = new WebSocket(`ws://192.168.1.103:8000/api/llm/ws/llm_service/${configName}`);
+    const ws = new WebSocket(`ws://192.168.1.101:8000/api/llm/ws/llm_service/${configName}`);
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
@@ -50,6 +52,9 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
             };
           });
           break;
+          case 'workout_history_complete':
+            // Forward to registered handler if exists
+            messageHandler?.(data.type, data.data);
           case 'done':
             const finalContent = latestStreamingContentRef.current;
             setMessages(prev => {
@@ -107,6 +112,10 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
   }, [socket]);
 
+  const registerMessageHandler = useCallback((handler: (type: string, data?: any) => void) => {
+    setMessageHandler(() => handler);
+  }, []);
+
   const sendMessage = useCallback((content: string) => {
     if (content.trim() && socket && socket.readyState === WebSocket.OPEN) {
       const newMessage: Message = {
@@ -115,13 +124,30 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
         content: content.trim(),
       };
       setMessages(prev => [...prev, newMessage]);
-      socket.send(JSON.stringify({ content: content.trim() }));
+      
+      // Log the full messages array before sending
+      console.log('Messages array before sending:', 
+        [...messages, newMessage].map(msg => ({
+          id: msg.id,
+          role: msg.role,
+          content: msg.content,
+        }))
+      );
+      
+      const payload = {
+        content: content.trim(),
+        messages: [...messages, newMessage].map(msg => ({
+          role: msg.role,
+          content: msg.content
+        }))
+      };
+      
+      socket.send(JSON.stringify(payload));
       setIsLoading(true);
-      console.log('Message sent, isLoading set to true');
     } else if (!socket || socket.readyState !== WebSocket.OPEN) {
       console.error("WebSocket is not open");
     }
-  }, [socket]);
+  }, [socket, messages]);
 
   const clearMessages = useCallback(() => {
     setMessages([]);
@@ -137,7 +163,8 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
       sendMessage, 
       clearMessages, 
       isLoading,
-      connectWebSocket 
+      connectWebSocket,
+      registerMessageHandler,
     }}>
       {children}
     </MessageContext.Provider>

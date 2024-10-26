@@ -1,17 +1,23 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import ChatUI from '../conversation/organisms/ChatUI';
+import { WorkoutHistoryChat } from './WorkoutHistoryChat';
 
-export const WorkoutHistoryStep: React.FC = () => {
+interface WorkoutHistoryStepProps {
+  wizardRef?: React.RefObject<any>; 
+}
+
+export const WorkoutHistoryStep: React.FC<WorkoutHistoryStepProps> = ({ wizardRef }) => {
+  const handleCollectionComplete = () => {
+    if (wizardRef?.current) {
+      wizardRef.current.next();
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <ChatUI 
-        title="Workout History"
-        subtitle="Let's chat about your workout history. This will help us tailor your experience." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
-          throw new Error('Function not implemented.');
-        } } onDraftMessageChange={function (draft: string): void {
-          throw new Error('Function not implemented.');
-        } }      />
+      <WorkoutHistoryChat 
+        onCollectionComplete={handleCollectionComplete}
+      />
     </View>
   );
 };
@@ -21,7 +27,4 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
-  conversationContainer: {
-    flex: 1,
-  }
 });

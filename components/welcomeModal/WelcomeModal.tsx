@@ -7,8 +7,8 @@ import { WorkoutHistoryStep } from './WorkoutHistoryStep';
 import { FinishStep } from './FinishStep';
 import { Button } from '../public/atoms';
 import { UserInfoData } from './index';
-import { showNotification } from '../public/molecules/notifications';
 import Toast from 'react-native-toast-message';
+import { MessageProvider } from '@/context/MessageContext';
 
 type ActualWizardProps = {
   ref: React.RefObject<any>;
@@ -56,7 +56,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       content: <UserInfoStep onNext={(data: UserInfoData) => setUserInfo(data)} initialData={userInfo} />
     },
     {
-      content: <WorkoutHistoryStep />
+      content: <WorkoutHistoryStep wizardRef={wizardRef}/>
     },
     {
       content: <FinishStep />
@@ -70,6 +70,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       visible={isVisible}
       onRequestClose={onClose}
     >
+      <MessageProvider>
      <SafeAreaView style={styles.modalContainer}>
         <View style={styles.wizardContainer}>
           {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
@@ -116,6 +117,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
           </Button>
         </View>
       </SafeAreaView>
+      </MessageProvider>
     </Modal>
   );
 };
@@ -125,14 +127,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    width: '100%',
   },
   wizardContainer: {
     backgroundColor: '#1f281f',
     borderRadius: 20,
     width: '90%',
     height: '80%',
-    padding: 20,
+    paddingHorizontal: 6, 
+    paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
