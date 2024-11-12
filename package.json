@@ -14,16 +14,19 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.3",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.0.2",
     "@supabase/supabase-js": "^2.45.6",
     "axios": "^1.7.7",
-    "expo": "^51.0.38",
-    "expo-dev-client": "~4.0.26",
+    "eventemitter3": "^5.0.1",
+    "expo": "~51.0.39",
+    "expo-dev-client": "~4.0.29",
     "expo-font": "~12.0.9",
     "expo-linking": "~6.3.1",
-    "expo-router": "~3.5.23",
-    "expo-splash-screen": "~0.27.5",
+    "expo-network": "~6.0.1",
+    "expo-router": "~3.5.24",
+    "expo-splash-screen": "~0.27.7",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
@@ -41,8 +44,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
     "react-native-wizard": "^2.1.1",
-    "victory-native": "^37.1.2",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "victory-native": "^37.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

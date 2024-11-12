@@ -118,6 +118,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
         </View>
       </SafeAreaView>
       </MessageProvider>
+      <Toast/>
     </Modal>
   );
 };
@@ -147,6 +148,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    width: '48%', // Adjust this value to control button width
+    width: '48%',
   },
 });

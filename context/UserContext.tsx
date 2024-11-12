@@ -12,8 +12,8 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
-const MAX_RETRIES = 3
-const RETRY_DELAY = 100 // 1 second
+const MAX_RETRIES = 3 
+const RETRY_DELAY = 100 //quick but not blazingly fast
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)

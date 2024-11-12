@@ -1,73 +1,48 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useMessage } from '@/context/MessageContext';
-import { Message } from '@/types';
-import { ListRenderItemInfo, View, FlatList, StyleSheet, Text } from 'react-native';
-import InputArea from '../atoms/InputArea';
-import MessageItem from '../atoms/MessageItem';
+import { useMessage } from "@/context/MessageContext";
+import { ChatUIProps } from "@/types/chat";
+import { useEffect } from "react";
+import { View } from "react-native";
+import Header from "../molecules/Header";
+import InputArea from "../atoms/InputArea";
+import MessageList from "../molecules/MessageList";
+import { StyleSheet } from "react-native";
 
-interface ChatUIProps {
-  configName: string;
-  title?: string;
-  subtitle?: string;
-}
-
-const ChatUI: React.FC<ChatUIProps> = ({ configName, title, subtitle }) => {
-  const { messages, isStreaming, streamingMessage, connectWebSocket } = useMessage();
-  const flatListRef = useRef<FlatList<Message>>(null);
-
-  useEffect(() => {
-    connectWebSocket(configName);
-  }, [configName, connectWebSocket]);
-
-  const renderItem = ({ item }: ListRenderItemInfo<Message>) => {
-    if (!item) {
-      console.error('Attempting to render null item');
-      return null;
-    }
-    return (
-      <MessageItem
-        message={item}
-        isStreaming={item.id === 'streaming'}
-      />
-    );
-  };
-  
-  const allMessages = useMemo(() => {
-    const validMessages = messages.filter(msg => msg && msg.id);
-    if (isStreaming && streamingMessage && streamingMessage.content) {
-      return [...validMessages, { ...streamingMessage, id: 'streaming' }];
-    }
-    return validMessages;
-  }, [messages, isStreaming, streamingMessage]);
+export const ChatUI: React.FC<ChatUIProps> = ({
+  configName,
+  title,
+  subtitle,
+  signalHandler
+}) => {
+  const { 
+    messages, 
+    streamingMessage, 
+    registerMessageHandler,
+    connect,
+    connectionState
+  } = useMessage();
 
   useEffect(() => {
-    if (flatListRef.current && allMessages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: true });
+    connect(configName);
+  }, [connect, configName]);
+
+  useEffect(() => {
+    if (signalHandler) {
+      registerMessageHandler(signalHandler);
+      return () => registerMessageHandler(null);
     }
-  }, [allMessages]);
+  }, [registerMessageHandler, signalHandler]);
 
   return (
     <View style={styles.container}>
-      <FlatList
-        ref={flatListRef}
-        data={allMessages}
-        renderItem={renderItem}
-        ListHeaderComponent={
-          <View style={styles.headerContainer}>
-            {title ? <Text style={styles.title}>{title}</Text> : null}
-            {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-          </View>
-        }
-        keyExtractor={(item) => item.id || 'fallback-key'}
-        contentContainerStyle={styles.listContent}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+      <Header title={title || ""} subtitle={subtitle ||""} />
+      <MessageList 
+        messages={messages}
+        streamingMessage={streamingMessage}
       />
       <InputArea />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,6 +68,21 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingBottom: 20,
   },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    marginTop: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 4,
+  },
+  statusText: {
+    color: '#fff',
+    marginLeft: 8,
+  },
+  errorText: {
+    color: '#ff6b6b',
+  }
 });
 
-export default ChatUI
+export default ChatUI;

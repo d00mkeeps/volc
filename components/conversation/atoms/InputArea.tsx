@@ -1,25 +1,90 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  KeyboardAvoidingView, 
-  Platform, 
-  Text 
+import React, { useMemo, useState } from 'react';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Text
 } from 'react-native';
 import { useMessage } from '@/context/MessageContext';
+import { ConnectionState } from '@/types/states';
 
-const InputArea: React.FC = () => {
-  const { sendMessage, isStreaming, isLoading } = useMessage();
-  const [input, setInput] = useState('');
+interface InputAreaProps {
+  isHomePage?: boolean;
+  disabled?: boolean;
+  onSendMessage?: (message: string) => void;  
+  draftMessage?: string;                    
+  onDraftMessageChange?: (message: string) => void;  
+}
+
+const getPlaceholderText = (connectionState: ConnectionState, isHomePage: boolean): string => {
+  // If on home page, always show default message
+  if (isHomePage) return 'Type a message to start a new chat...';
+  
+  // Otherwise use connection-based messages
+  switch (connectionState.type) {
+    case 'DISCONNECTED':
+      return 'Disconnected...';
+    case 'CONNECTING':
+      return 'Connecting...';
+    case 'STREAMING':
+      return 'Processing...';
+    case 'ERROR':
+      return 'Connection error';
+    default:
+      return 'Type a message...';
+  }
+};
+
+const getErrorMessage = (connectionState: ConnectionState, isHomePage: boolean): string | null => {
+  // Don't show connection errors on home page
+  if (isHomePage) return null;
+  
+  if (connectionState.type === 'ERROR') {
+    return connectionState.error?.message || 'Unable to send messages';
+  }
+  if (connectionState.type === 'DISCONNECTED') {
+    return 'Not connected';
+  }
+  return null;
+};
+
+const InputArea: React.FC<InputAreaProps> = ({ isHomePage = false, disabled = false,
+  onSendMessage,
+  onDraftMessageChange,
+  draftMessage
+ }) => {
+  const { sendMessage: contextSendMessage, connectionState } = useMessage();
+  const [input, setInput] = useState(draftMessage || '');
+
+  const messageState = useMemo(() => {
+    const canType = isHomePage ? !disabled : connectionState.canSendMessage;
+    const hasValidInput = input.trim().length > 0;
+    
+    return {
+      canType,
+      canSend: canType && hasValidInput,
+      placeholder: getPlaceholderText(connectionState, isHomePage),
+      errorMessage: getErrorMessage(connectionState, isHomePage)
+    };
+  }, [connectionState, input, isHomePage, disabled]);
 
   const handleSend = () => {
-    if (input.trim() && !isStreaming && !isLoading) {
-      sendMessage(input);
+    if (messageState.canSend) {
+      if (onSendMessage) {
+        onSendMessage(input);
+      } else {
+        contextSendMessage(input);
+      }
       setInput('');
-      console.log('Message sent');
     }
+  };
+
+  const handleInputChange = (text: string) => {
+    setInput(text);
+    onDraftMessageChange?.(text);
   };
 
   return (
@@ -28,28 +93,44 @@ const InputArea: React.FC = () => {
       keyboardVerticalOffset={90}
       style={styles.keyboardAvoidingView}
     >
-      <View style={styles.container}>
+      <View style={[
+        styles.container,
+        isHomePage && styles.homePageContainer
+      ]}>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            !messageState.canType && styles.disabledInput,
+            isHomePage && styles.homePageInput
+          ]}
           value={input}
-          onChangeText={setInput}
-          placeholder="Type a message..."
+          onChangeText={handleInputChange}
+          placeholder={messageState.placeholder}
           placeholderTextColor="#666"
-          editable={!isStreaming && !isLoading}
+          editable={messageState.canType}
           multiline={false}
           returnKeyType="send"
           onSubmitEditing={handleSend}
           blurOnSubmit={true}
+          enablesReturnKeyAutomatically={true}
+          keyboardAppearance="dark"
+          maxLength={1000}
         />
         <TouchableOpacity
           style={[
             styles.sendButton,
-            (isStreaming || isLoading || !input.trim()) && styles.disabledButton
+            !messageState.canSend && styles.disabledButton,
+            isHomePage && styles.homePageSendButton
           ]}
           onPress={handleSend}
-          disabled={isStreaming || isLoading || !input.trim()}
+          disabled={!messageState.canSend}
         >
-          <Text style={styles.sendButtonText}>Send</Text>
+          <Text style={[
+            styles.sendButtonText,
+            !messageState.canSend && styles.disabledButtonText
+          ]}>
+            Send
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -69,6 +150,10 @@ const styles = StyleSheet.create({
     borderTopColor: '#2a332a',
     width: '100%',
   },
+  homePageContainer: {
+    backgroundColor: '#222',
+    borderTopColor: '#333',
+  },
   input: {
     flex: 1,
     marginRight: 10,
@@ -82,6 +167,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 40,
   },
+  homePageInput: {
+    backgroundColor: '#333',
+    borderColor: '#444',
+  },
+  disabledInput: {
+    backgroundColor: '#0a1c08',
+    borderColor: '#1a231a',
+    color: '#666',
+  },
   sendButton: {
     backgroundColor: '#4CAF50',
     borderRadius: 15,
@@ -91,6 +185,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 80,
   },
+  homePageSendButton: {
+    backgroundColor: '#4CAF50', // Keep the same or change if needed
+  },
   disabledButton: {
     backgroundColor: '#2a332a',
   },
@@ -98,6 +195,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  disabledButtonText: {
+    color: '#666',
+  },
 });
 
-export default InputArea
+export default InputArea;

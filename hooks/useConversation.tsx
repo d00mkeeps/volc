@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+/*import { useState, useCallback, useRef, useEffect } from 'react';
 import { Message } from '@/types';
 
 export function useConversation() {
@@ -104,4 +104,4 @@ export function useConversation() {
   }, [messages]); 
 
   return { messages, isLoading, isStreaming, sendMessage };
-}
+}*/

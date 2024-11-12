@@ -1,36 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
 
+// Temporary function - to be replaced with actual database implementation
+const createNewConversation = async (): Promise<string> => {
+  // TODO: Replace this with actual database implementation
+  // Should:
+  // 1. Create a new conversation record in the database
+  // 2. Return the conversation ID
+  // 3. Handle any database errors appropriately
+  
+  return Date.now().toString(); // Temporary ID generation
+};
+
 export default function HomeScreen() {
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const router = useRouter();
-  const { openWelcomeModal: shouldOpenWelcomeModal } = useLocalSearchParams<{ openWelcomeModal?: string }>();
-
-  useEffect(() => {
-    if (shouldOpenWelcomeModal === 'true') {
-      setOpenWelcomeModal(true);
-      // Reset the parameter after opening the modal
-      router.setParams({ openWelcomeModal: undefined });
-    }
-  }, [shouldOpenWelcomeModal]);
 
   const handleConversationPress = (id: string) => {
-    setSelectedConversationId(id);
-    // Navigate to the conversation page
     router.push(`/conversation/${id}`);
   };
 
-  const handleNewMessage = (message: string) => {
-    if (selectedConversationId) {
-      console.log('New message for conversation', selectedConversationId, ':', message);
-    } else {
-      console.log('Creating new conversation with message:', message);
+  const handleNewMessage = async (message: string) => {
+    if (isCreatingConversation) return;
+    
+    try {
+      setIsCreatingConversation(true);
+      const conversationId = await createNewConversation();
+      
+      // Navigate to conversation with pending message
+      router.push({
+        pathname: "/conversation/[id]" as const,
+        params: { 
+          id: conversationId,
+          pendingMessage: message 
+        }
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to create conversation',
+        text2: 'Please try again'
+      });
+    } finally {
+      setIsCreatingConversation(false);
     }
   };
 
@@ -42,13 +60,11 @@ export default function HomeScreen() {
         <ConversationList onConversationPress={handleConversationPress} />
       </View>
       <InputArea 
-      isHomePage={true}
-        onSendMessage={handleNewMessage} 
-        draftMessage={''} 
-        onDraftMessageChange={(draft: string) => {
-          console.log('Draft message changed:', draft);
-          
-        }} 
+        isHomePage={true}
+        onSendMessage={handleNewMessage}
+        draftMessage=""
+        onDraftMessageChange={() => {}}
+        disabled={isCreatingConversation}
       />
       <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)} />
       <Toast />

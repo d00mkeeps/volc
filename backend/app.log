@@ -1,9 +1,25 @@
-2024-10-26 23:36:31,689 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-10-26 23:36:31,690 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-10-26 23:36:31,690 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-10-26 23:36:31,690 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-10-26 23:36:32,537 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sat, 26 Oct 2024 22:36:32 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-10-26T22:37:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'39000'), (b'anthropic-ratelimit-tokens-reset', b'2024-10-26T22:36:33Z'), (b'request-id', b'req_01Xzs88F4xdo6WozJ5nE8C51'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8d8decfa4fb4b3c3-MAN')])
-2024-10-26 23:36:32,539 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-10-26 23:36:32,539 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-10-26 23:36:32,539 - app.services.llm_service - INFO - Stream created successfully
-2024-10-26 23:36:32,540 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-11-09 16:55:36,655 - httpcore.connection - DEBUG - close.started
+2024-11-09 16:55:36,657 - httpcore.connection - DEBUG - close.complete
+2024-11-09 16:55:36,657 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
+2024-11-09 16:55:36,675 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x108fc8350>
+2024-11-09 16:55:36,675 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x108f043d0> server_hostname='api.anthropic.com' timeout=600
+2024-11-09 16:55:36,695 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x108eb60f0>
+2024-11-09 16:55:36,695 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2024-11-09 16:55:36,696 - httpcore.http11 - DEBUG - send_request_headers.complete
+2024-11-09 16:55:36,696 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2024-11-09 16:55:36,696 - httpcore.http11 - DEBUG - send_request_body.complete
+2024-11-09 16:55:36,696 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2024-11-09 16:55:37,114 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sat, 09 Nov 2024 16:55:37 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-11-09T16:56:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-11-09T16:55:37Z'), (b'request-id', b'req_01KDKWw6PF4p52UMMv4BjQVA'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8dff54d6587bcc9d-MAN')])
+2024-11-09 16:55:37,115 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-11-09 16:55:37,115 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2024-11-09 16:55:37,115 - app.services.llm_service - INFO - Stream created successfully
+2024-11-09 16:55:37,116 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-11-09 16:55:37,570 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-11-09 16:55:37,571 - httpcore.http11 - DEBUG - response_closed.started
+2024-11-09 16:55:37,571 - httpcore.http11 - DEBUG - response_closed.complete
+2024-11-09 17:17:14,771 - app.api.endpoints.llm - INFO - WebSocket disconnected for config: default
+2024-11-09 17:17:14,786 - app.api.endpoints.llm - INFO - WebSocket connection closed for config: default
+2024-11-09 17:17:14,787 - app.api.endpoints.llm - INFO - WebSocket disconnected for config: default
+2024-11-09 17:17:14,787 - app.api.endpoints.llm - INFO - WebSocket connection closed for config: default
+2024-11-12 14:56:01,316 - root - DEBUG - Logging has been set up
+2024-11-12 14:56:01,316 - app.main - INFO - Application starting
