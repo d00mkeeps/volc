@@ -1,7 +1,6 @@
-// [id].tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ChatUI } from '@/components/conversation/organisms/ChatUI';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { useMessage } from '@/context/MessageContext';
 
@@ -10,12 +9,18 @@ export default function ConversationPage() {
     id: string;
     pendingMessage?: string;
   }>();
-  const { connect, sendMessage, connectionState } = useMessage();
+  const { sendMessage, connectionState } = useMessage();
+  const router = useRouter();
+  const hasSentPendingMessage = useRef(false);
 
   useEffect(() => {
-    // If there's a pending message, wait for connection before sending
-    if (pendingMessage && connectionState.type === 'CONNECTED') {
+    // Only send if we have a pending message, are connected, and haven't sent it yet
+    if (pendingMessage && connectionState.type === 'CONNECTED' && !hasSentPendingMessage.current) {
+      hasSentPendingMessage.current = true;
       sendMessage(pendingMessage);
+      
+      // Clear the pending message from the URL
+      router.setParams({ pendingMessage: undefined });
     }
   }, [pendingMessage, connectionState.type]);
 
@@ -35,7 +40,6 @@ export default function ConversationPage() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
