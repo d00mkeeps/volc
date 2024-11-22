@@ -1,7 +1,7 @@
 import logging
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
-from lib.prompts.workout_history import WORKOUT_HISTORY_PROMPT
+from app.core.prompts.workout_history import WORKOUT_HISTORY_PROMPT
 
 logger = logging.getLogger(__name__)
 

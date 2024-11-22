@@ -3,7 +3,7 @@ import React from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { useColorScheme } from '@/components/useColorScheme';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, SafeAreaView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -29,35 +29,84 @@ export default function DrawerLayout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-    <Drawer
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={({ navigation }) => ({
-        headerShown: true,
-        drawerActiveTintColor: '#007AFF',
-        drawerInactiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
-        headerTitle: () => (
-          <TouchableOpacity onPress={() => router.push('/(drawer)')}>
-            <Text style={styles.headerTitle}>TrainSmart</Text>
+<Drawer
+  drawerContent={(props) => <CustomDrawerContent {...props} />}
+  screenOptions={({ navigation }) => ({
+    headerShown: true,
+    header: ({ navigation, route, options }) => (
+      <SafeAreaView style={{ 
+        backgroundColor: '#222',
+        paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
+      }}>
+        <View style={{
+          height: 24,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+        }}>
+          {/* Left - Drawer Toggle */}
+          <TouchableOpacity 
+            onPress={() => navigation.toggleDrawer()}
+            style={{ 
+              padding: 8,
+              position: 'absolute',
+              left: 8,
+              zIndex: 1
+            }}
+          >
+            <Text>
+              <Ionicons name="menu" size={20} color="#007AFF" />
+            </Text>
           </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <View style={styles.headerButtonContainer}>
+          
+          {/* Center - Title */}
+          <View style={{ 
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <TouchableOpacity 
+              onPress={() => router.push('/(drawer)')}
+              style={{
+              }}
+            >
+              <Text style={{
+                fontSize: 18,
+                fontWeight: 'bold',
+                color: '#007AFF',
+              }}>
+                TrainSmart
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Right - Buttons */}
+          <View style={[
+            styles.headerButtonContainer, 
+            { 
+              position: 'absolute',
+              right: 8,
+              zIndex: 1
+            }
+          ]}>
             <TouchableOpacity
               onPress={() => navigation.setParams({ openWelcomeModal: true })}
-              style={styles.headerButton}
+              style={[styles.headerButton, { width: 28, height: 28 }]}
             >
-              <Text style={styles.headerButtonText}>W</Text>
+              <Text style={[styles.headerButtonText, { fontSize: 14 }]}>W</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('programs')}
-              style={styles.headerButton}
+              style={[styles.headerButton, { width: 28, height: 28 }]}
             >
-              <Text style={styles.headerButtonText}>P</Text>
+              <Text style={[styles.headerButtonText, { fontSize: 14 }]}>P</Text>
             </TouchableOpacity>
           </View>
-        ),
-      })}
-    >
+        </View>
+      </SafeAreaView>
+    ),
+})}
+>
       <Drawer.Screen
         name="index"
         options={{
@@ -125,6 +174,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF', // You can adjust this color as needed
+    color: '#007AFF', 
+    marginHorizontal: 16,
+    textAlign: 'center'
   },
 });

@@ -15,6 +15,7 @@ export class WebSocketService {
   private readonly reconnectInterval = 1000;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private currentConfigName: ChatConfigName | null = null;
+  private readonly BASE_PATH = '/api/llm/ws/';
 
   public async initialize(): Promise<void> {
     this.baseUrl = await getLocalIpAddress();
@@ -27,21 +28,22 @@ export class WebSocketService {
 
     if (this.socket?.readyState === WebSocket.OPEN) {
       if (this.currentConfigName === configName) {
-        return; // Already connected to correct config
+        return;
       }
-      this.disconnect(); // Disconnect if switching configs
+      this.disconnect();
     }
 
     this.currentConfigName = configName;
     
     try {
-      const url = `ws://${this.baseUrl}:8000/api/llm/ws/llm_service/${configName}`;
+      const url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
       this.socket = new WebSocket(url);
       this.attachEventHandlers();
     } catch (error) {
       this.handleError(error as Error);
     }
   }
+
 
   private attachEventHandlers(): void {
     if (!this.socket) return;
@@ -52,11 +54,19 @@ export class WebSocketService {
 
     this.socket.onmessage = (event: MessageEvent) => {
       try {
-        const message = JSON.parse(event.data) as WebSocketMessage;
-        this.events.emit('message', message);
+        let message;
+        //handle string and objects
+        if (typeof event.data === 'string') {
+          message = JSON.parse(event.data)
+        } else {
+          //if it's already an object, stringify and parse it
+          message = JSON.parse(JSON.stringify(event.data))
+        } 
+        this.events.emit('message', message)
       } catch (error) {
-        this.handleError(new Error('Failed to parse WebSocket message'));
+        this.handleError(new Error('Failed to parse WebSocket message!'))
       }
+      
     };
 
     this.socket.onclose = (event) => {
@@ -84,18 +94,19 @@ export class WebSocketService {
     }, this.reconnectInterval);
   }
 
-  public sendMessage(payload: any): void {
-    if (this.socket?.readyState !== WebSocket.OPEN) {
+public sendMessage(payload: { message: string }): void {
+  if (this.socket?.readyState !== WebSocket.OPEN) {
       this.handleError(new Error('WebSocket is not connected'));
       return;
-    }
-
-    try {
-      this.socket.send(JSON.stringify(payload));
-    } catch (error) {
-      this.handleError(new Error('Failed to send message'));
-    }
   }
+
+  try {
+      console.log('WebSocketService sending:', payload);
+      this.socket.send(JSON.stringify(payload));
+  } catch (error) {
+      this.handleError(new Error('Failed to send message'));
+  }
+}
 
   private handleError(error: Error): void {
     this.events.emit('error', error);
@@ -115,7 +126,6 @@ export class WebSocketService {
     this.currentConfigName = null;
   }
 
-  // Event listener methods
   public on<K extends keyof WebSocketEvents>(
     event: K,
     listener: WebSocketEvents[K]

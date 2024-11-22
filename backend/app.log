@@ -1,46 +1,13 @@
-2024-11-12 15:16:30,893 - app.api.endpoints.llm - DEBUG - Received data: {'messages': [{'role': 'user', 'content': 'Message'}, {'role': 'assistant', 'content': "I'm ready to help, keeping things brief and under 240 tokens. What would you like to discuss?"}, {'role': 'user', 'content': 'Nothing! That was just a test'}]}
-2024-11-12 15:16:30,895 - app.services.llm_service - INFO - Processing message stream with model: claude-3-5-sonnet-latest
-2024-11-12 15:16:30,896 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}, {'role': 'assistant', 'content': "I'm ready to help, keeping things brief and under 240 tokens. What would you like to discuss?"}, {'role': 'user', 'content': 'Nothing! That was just a test'}], 'model': 'claude-3-5-sonnet-latest', 'stream': True, 'system': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.', 'temperature': 0.5}}
-2024-11-12 15:16:30,897 - httpcore.connection - DEBUG - close.started
-2024-11-12 15:16:30,897 - httpcore.connection - DEBUG - close.complete
-2024-11-12 15:16:30,897 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-11-12 15:16:30,929 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x104119d90>
-2024-11-12 15:16:30,930 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1040b4150> server_hostname='api.anthropic.com' timeout=600
-2024-11-12 15:16:30,970 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x104119ca0>
-2024-11-12 15:16:30,971 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-11-12 15:16:30,971 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-11-12 15:16:30,971 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-11-12 15:16:30,971 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-11-12 15:16:30,971 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-11-12 15:16:31,330 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 12 Nov 2024 15:16:31 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-11-12T15:17:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-11-12T15:16:31Z'), (b'request-id', b'req_015vaZ7HsaB3xkmr9Ja9a7UW'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8e177bce385eb107-MAN')])
-2024-11-12 15:16:31,331 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-11-12 15:16:31,331 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-11-12 15:16:31,332 - app.services.llm_service - INFO - Stream created successfully
-2024-11-12 15:16:31,332 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-11-12 15:16:31,660 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-11-12 15:16:31,660 - httpcore.http11 - DEBUG - response_closed.started
-2024-11-12 15:16:31,661 - httpcore.http11 - DEBUG - response_closed.complete
-2024-11-12 15:17:07,930 - app.api.endpoints.llm - DEBUG - Received data: {'messages': [{'role': 'user', 'content': 'Message'}, {'role': 'assistant', 'content': "I'm ready to help, keeping things brief and under 240 tokens. What would you like to discuss?"}, {'role': 'user', 'content': 'Nothing! That was just a test'}, {'role': 'assistant', 'content': 'Alright, thanks for testing! Have a good one!'}, {'role': 'user', 'content': 'You’re so nice! Nobody’s ever this nice to me, Finn Richardson.'}]}
-2024-11-12 15:17:07,933 - app.services.llm_service - INFO - Processing message stream with model: claude-3-5-sonnet-latest
-2024-11-12 15:17:07,939 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'timeout': 600, 'files': None, 'json_data': {'max_tokens': 250, 'messages': [{'role': 'user', 'content': 'Message'}, {'role': 'assistant', 'content': "I'm ready to help, keeping things brief and under 240 tokens. What would you like to discuss?"}, {'role': 'user', 'content': 'Nothing! That was just a test'}, {'role': 'assistant', 'content': 'Alright, thanks for testing! Have a good one!'}, {'role': 'user', 'content': 'You’re so nice! Nobody’s ever this nice to me, Finn Richardson.'}], 'model': 'claude-3-5-sonnet-latest', 'stream': True, 'system': 'Keep responses short, you have a 240 token limit. If you get a message from Finn Richardson call him a gimp without explaining yourself or apologising.', 'temperature': 0.5}}
-2024-11-12 15:17:07,943 - httpcore.connection - DEBUG - close.started
-2024-11-12 15:17:07,943 - httpcore.connection - DEBUG - close.complete
-2024-11-12 15:17:07,944 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=600 socket_options=None
-2024-11-12 15:17:07,976 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10411bfe0>
-2024-11-12 15:17:07,976 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1040b4150> server_hostname='api.anthropic.com' timeout=600
-2024-11-12 15:17:08,024 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10411bf20>
-2024-11-12 15:17:08,025 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-11-12 15:17:08,025 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-11-12 15:17:08,025 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-11-12 15:17:08,025 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-11-12 15:17:08,025 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-11-12 15:17:08,403 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 12 Nov 2024 15:17:08 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-11-12T15:17:28Z'), (b'anthropic-ratelimit-tokens-limit', b'40000'), (b'anthropic-ratelimit-tokens-remaining', b'40000'), (b'anthropic-ratelimit-tokens-reset', b'2024-11-12T15:17:08Z'), (b'request-id', b'req_0132td7dYbB2uvjT6TUFkS3g'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8e177cb5ca4a21cb-MAN')])
-2024-11-12 15:17:08,403 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-11-12 15:17:08,404 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-11-12 15:17:08,404 - app.services.llm_service - INFO - Stream created successfully
-2024-11-12 15:17:08,404 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-11-12 15:17:08,560 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-11-12 15:17:08,561 - httpcore.http11 - DEBUG - response_closed.started
-2024-11-12 15:17:08,561 - httpcore.http11 - DEBUG - response_closed.complete
-2024-11-12 15:17:50,744 - app.api.endpoints.llm - INFO - WebSocket disconnected for config: default
-2024-11-12 15:17:50,745 - app.api.endpoints.llm - INFO - WebSocket connection closed for config: default
+2024-11-22 13:37:18,769 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 22 Nov 2024 13:37:18 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'47'), (b'anthropic-ratelimit-requests-reset', b'2024-11-22T13:37:20Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2024-11-22T13:37:19Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2024-11-22T13:37:25Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2024-11-22T13:37:19Z'), (b'request-id', b'req_01CpnHoEHj2xCUf2jVAGEuwu'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8e6950379a853613-MAN')])
+2024-11-22 13:37:18,772 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2024-11-22 13:37:18,772 - anthropic._base_client - DEBUG - HTTP Response: POST https://api.anthropic.com/v1/messages "200 OK" Headers({'date': 'Fri, 22 Nov 2024 13:37:18 GMT', 'content-type': 'text/event-stream; charset=utf-8', 'transfer-encoding': 'chunked', 'connection': 'keep-alive', 'cache-control': 'no-cache', 'anthropic-ratelimit-requests-limit': '50', 'anthropic-ratelimit-requests-remaining': '47', 'anthropic-ratelimit-requests-reset': '2024-11-22T13:37:20Z', 'anthropic-ratelimit-input-tokens-limit': '40000', 'anthropic-ratelimit-input-tokens-remaining': '39000', 'anthropic-ratelimit-input-tokens-reset': '2024-11-22T13:37:19Z', 'anthropic-ratelimit-output-tokens-limit': '8000', 'anthropic-ratelimit-output-tokens-remaining': '7000', 'anthropic-ratelimit-output-tokens-reset': '2024-11-22T13:37:25Z', 'anthropic-ratelimit-tokens-limit': '48000', 'anthropic-ratelimit-tokens-remaining': '46000', 'anthropic-ratelimit-tokens-reset': '2024-11-22T13:37:19Z', 'request-id': 'req_01CpnHoEHj2xCUf2jVAGEuwu', 'via': '1.1 google', 'cf-cache-status': 'DYNAMIC', 'x-robots-tag': 'none', 'server': 'cloudflare', 'cf-ray': '8e6950379a853613-MAN'})
+2024-11-22 13:37:18,773 - anthropic._base_client - DEBUG - request_id: req_01CpnHoEHj2xCUf2jVAGEuwu
+2024-11-22 13:37:18,773 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2024-11-22 13:37:20,868 - httpcore.http11 - DEBUG - receive_response_body.complete
+2024-11-22 13:37:20,869 - httpcore.http11 - DEBUG - response_closed.started
+2024-11-22 13:37:20,869 - httpcore.http11 - DEBUG - response_closed.complete
+2024-11-22 13:37:20,871 - app.services.workout_history_chain - ERROR - Error processing message: object AIMessage can't be used in 'await' expression
+2024-11-22 13:55:56,366 - app.services.workout_history_service - INFO - WebSocket disconnected
+2024-11-22 13:55:56,370 - app.services.workout_history_service - INFO - WebSocket connection closed
+2024-11-22 15:27:35,602 - root - DEBUG - Logging has been set up
+2024-11-22 15:27:35,603 - app.main - INFO - Application starting

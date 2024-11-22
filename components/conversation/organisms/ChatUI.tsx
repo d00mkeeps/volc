@@ -7,6 +7,7 @@ import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
 import { StyleSheet } from "react-native";
 
+
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
   title,

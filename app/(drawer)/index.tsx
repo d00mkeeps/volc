@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
@@ -21,7 +21,15 @@ export default function HomeScreen() {
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const router = useRouter();
-
+  const params = useLocalSearchParams<{ openWelcomeModal?: string }>();
+  
+  useEffect(() => {
+    if (params.openWelcomeModal === 'true') {
+      setOpenWelcomeModal(true);
+      // Reset the parameter after opening the modal
+      router.setParams({ openWelcomeModal: undefined });
+    }
+  }, [params.openWelcomeModal]);
   const handleConversationPress = (id: string) => {
     router.push(`/conversation/${id}`);
   };
@@ -66,7 +74,10 @@ export default function HomeScreen() {
         onDraftMessageChange={() => {}}
         disabled={isCreatingConversation}
       />
-      <WelcomeModal isVisible={openWelcomeModal} onClose={() => setOpenWelcomeModal(false)} />
+      <WelcomeModal 
+        isVisible={openWelcomeModal} 
+        onClose={() => setOpenWelcomeModal(false)} 
+      />
       <Toast />
     </View>
   );

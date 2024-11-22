@@ -1,7 +1,7 @@
 export interface ProgramExercise {
   id: string;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   setData?: SetData[];
   orderInWorkout?: number;
   sets?: number;

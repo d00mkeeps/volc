@@ -1,6 +1,5 @@
 import 'dotenv/config'
-export default
- {
+const config = {
 expo: {
 name: "trainsmart",
 slug: "trainsmart",
@@ -16,14 +15,17 @@ backgroundColor: "#ffffff"
  },
 ios: {
 supportsTablet: true,
-bundleIdentifier: "com.d00mkeeps.trainsmart"
+bundleIdentifier: "com.d00mkeeps.trainsmart",
+minimumOSVersion: "15.1" 
  },
 android: {
 adaptiveIcon: {
 foregroundImage: "./assets/images/adaptive-icon.png",
 backgroundColor: "#ffffff"
  },
-package: "com.d00mkeeps.trainsmart"
+package: "com.d00mkeeps.trainsmart",
+minSdkVersion: 24,       
+compileSdkVersion: 35 
  },
 web: {
 bundler: "metro",
@@ -45,6 +47,8 @@ projectId: "5e8c9085-5d3d-4a87-a841-3e1b55340ff8"
  },
 apiUrl: process.env.API_URL || "https://localhost:8000",
  },
-jsEngine: "hermes"
+jsEngine: "hermes",
+newArchEnabled: true,
  }
 }
+export default config

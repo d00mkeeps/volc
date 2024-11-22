@@ -102,44 +102,50 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const sendMessage = useCallback(async (content: string) => {
+  // MessageContext.tsx - update sendMessage
+const sendMessage = useCallback(async (content: string) => {
     if (!connectionState.canSendMessage) return;
 
     const newMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content
+        id: Date.now().toString(),
+        role: 'user',
+        content
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    // Add to messages array first
+    setMessages(prev => {
+        const updatedMessages = [...prev, newMessage];
+        console.log('Updated messages array:', updatedMessages);
+        return updatedMessages;
+    });
+
     setConnectionState(prev => ({
-      ...prev,
-      type: 'STREAMING',
-      isLoading: true,
-      canSendMessage: false
+        ...prev,
+        type: 'STREAMING',
+        isLoading: true,
+        canSendMessage: false
     }));
 
     try {
-      // Format all messages for the API including history
-      const formattedMessages = messages.concat(newMessage).map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }));
+        // Only send the new message
+        console.log('Sending single message to WebSocket:', {
+            message: content,
+            messageId: newMessage.id  // Optional: for tracking
+        });
 
-      await webSocket.sendMessage({ 
-        messages: formattedMessages
-      });
+        await webSocket.sendMessage({ 
+            message: content
+        });
     } catch (error) {
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'ERROR',
-        error: error as Error,
-        canSendMessage: true,
-        isLoading: false
-      }));
+        setConnectionState(prev => ({
+            ...prev,
+            type: 'ERROR',
+            error: error as Error,
+            canSendMessage: true,
+            isLoading: false
+        }));
     }
-}, [webSocket, connectionState.canSendMessage, messages]); // Note: added messages to dependencies
-
+}, [webSocket, connectionState.canSendMessage]);
   const registerMessageHandler = useCallback((handler: MessageHandler | null) => {
     messageHandlerRef.current = handler;
   }, []);
