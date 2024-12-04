@@ -1,7 +1,7 @@
 import logging
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Dict, Any
-from app.core.prompts.workout_history import WORKOUT_HISTORY_PROMPT
+from app.core.prompts.onboarding_conversation import ONBOARDING_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
             "model": "claude-3-5-sonnet-latest",
             "max_tokens": 300,
             "temperature": 0.7,
-            "system_prompt": WORKOUT_HISTORY_PROMPT
+            "system_prompt": ONBOARDING_PROMPT
         }
     }
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

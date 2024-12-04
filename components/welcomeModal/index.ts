@@ -1,6 +1,6 @@
 export { WelcomeStep } from './WelcomeStep';
 export { UserInfoStep } from './UserInfoStep';
-export { WorkoutHistoryStep} from './WorkoutHistoryStep'
+export { OnboardingConversationStep} from './OnboardingStep'
 export {FinishStep} from './FinishStep'
 
 export enum ModalStep {

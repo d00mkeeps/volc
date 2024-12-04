@@ -1,5 +1,5 @@
 export type ChatConfigName = 
-  | 'workout-history'
+  | 'onboarding'
   | 'default'
   /* example of new config 
   | 'workout-planner'

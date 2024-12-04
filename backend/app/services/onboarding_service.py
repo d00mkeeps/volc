@@ -1,13 +1,12 @@
-# backend/app/services/workout_history_service.py
 import logging
 from fastapi import WebSocket, WebSocketDisconnect
-from app.services.workout_history_chain import WorkoutHistoryChain
+from app.services.chains.onboarding_chain import OnboardingChain
 
 logger = logging.getLogger(__name__)
 
-class WorkoutHistoryService:
+class OnboardingService:
     def __init__(self):
-        self.chain = WorkoutHistoryChain()
+        self.chain = OnboardingChain()
 
     async def process_websocket(self, websocket: WebSocket) -> None:
         """Handle WebSocket connection and message processing"""

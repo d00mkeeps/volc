@@ -102,7 +102,6 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  // MessageContext.tsx - update sendMessage
 const sendMessage = useCallback(async (content: string) => {
     if (!connectionState.canSendMessage) return;
 
@@ -111,8 +110,6 @@ const sendMessage = useCallback(async (content: string) => {
         role: 'user',
         content
     };
-
-    // Add to messages array first
     setMessages(prev => {
         const updatedMessages = [...prev, newMessage];
         console.log('Updated messages array:', updatedMessages);
@@ -130,7 +127,7 @@ const sendMessage = useCallback(async (content: string) => {
         // Only send the new message
         console.log('Sending single message to WebSocket:', {
             message: content,
-            messageId: newMessage.id  // Optional: for tracking
+            messageId: newMessage.id  //for tracking
         });
 
         await webSocket.sendMessage({ 

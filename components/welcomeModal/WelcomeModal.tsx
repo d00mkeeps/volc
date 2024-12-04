@@ -2,8 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
 import Wizard, {WizardRef} from "react-native-wizard";
 import { WelcomeStep } from './WelcomeStep';
-import { UserInfoStep } from './UserInfoStep';
-import { WorkoutHistoryStep } from './WorkoutHistoryStep';
+import {OnboardingConversationStep} from './OnboardingStep';
 import { FinishStep } from './FinishStep';
 import { Button } from '../public/atoms';
 import { UserInfoData } from './index';
@@ -27,12 +26,9 @@ type WelcomeModalProps = {
 
 
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
-  const [userInfo, setUserInfo] = useState<UserInfoData>({
-    displayName: '',
-    firstName: '',
-    lastName: '',
-    isImperial: false,
-  });
+
+  
+
 
   const wizardRef = useRef<WizardRef>(null);
   const [isFirstStep, setIsFirstStep] = useState(true);
@@ -53,10 +49,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       } } />
     },
     {
-      content: <UserInfoStep onNext={(data: UserInfoData) => setUserInfo(data)} initialData={userInfo} />
-    },
-    {
-      content: <WorkoutHistoryStep wizardRef={wizardRef}/>
+      content: <OnboardingConversationStep wizardRef={wizardRef}/>
     },
     {
       content: <FinishStep />
@@ -79,12 +72,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
             isFirstStep: (val) => setIsFirstStep(val),
             isLastStep: (val) => setIsLastStep(val),
             onNext: (step) => {
-              console.log("Next Step", step);
-              if (step === 1) {  // Assuming UserInfoStep is the second step (index 1)
-                const userInfoStep = stepList[step].content as React.ReactElement<{onNext: (data: UserInfoData) => void}>;
-                userInfoStep.props.onNext(userInfo);
-                showNotification("Your profile has been created successfully!");
-              }
+              
             },
             onPrev: (step) => {
               console.log("Previous Step", step);

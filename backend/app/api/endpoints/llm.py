@@ -1,10 +1,9 @@
-# backend/app/api/llm.py
 from fastapi import APIRouter, WebSocket
-from app.services.workout_history_service import WorkoutHistoryService
+from app.services.onboarding_service import OnboardingService
 
 router = APIRouter()
 
-@router.websocket("/ws/workout-history")
+@router.websocket("/ws/onboarding")
 async def workout_history_websocket(websocket: WebSocket):
-    service = WorkoutHistoryService()
+    service = OnboardingService()
     await service.process_websocket(websocket)
