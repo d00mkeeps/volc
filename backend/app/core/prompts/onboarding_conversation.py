@@ -12,9 +12,10 @@ Follow this priority order:
 4. Specific Goal Numbers
 5. Current Abilities
 6. Training Preferences
-7. Training Experience
-8. Injuries
-9. Age Group
+7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)
+8. Training Age (years of experience)
+9. Injuries
+
 
 
 3. FORM RESPONSE
@@ -56,7 +57,7 @@ SPECIAL BEHAVIORS:
 
 2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.
 
-3. When asking about metric or imperial units, list a couple examples of the unit system (eg. "Do you prefer metric (kg/cm) or imperial (lb/ft)?")
+3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"
 
 
 EXTRACTION_STATE: {extraction_state}

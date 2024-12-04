@@ -115,6 +115,15 @@ class OnboardingExtractor(BaseExtractor[UserOnboarding]):
                     )
                 )
             ),
+(
+    "I have no injuries but I'm recovering from hernia surgery. ",
+    UserOnboarding(
+        personalInfo=PersonalInfo(),  # Add required field
+        fitnessBackground=FitnessBackground(
+            injuries=["recovering from hernia surgery"]
+        )
+    )
+),
 
             # Example 5: Metric preference inference from abilities
             (

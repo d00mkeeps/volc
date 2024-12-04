@@ -109,16 +109,15 @@ currentAbilities:
   - Inconsistent formatting
 
 injuries:
-- Current or relevant past injuries
-- Empty array [] for "no injuries"
+- Must be a list/array format, never a string
+- Empty array [] for "no injuries/limitations"
+- Single item list for one condition: ["recovering from surgery"]
 - Examples:
   ✓ [] (when "no injuries" stated)
-  ✓ ["lower back pain", "right knee"]
-  ✗ null (when injuries discussed)
-- Common mistakes:
-  - Using null for "no injuries"
-  - Missing explicit statements of no injuries
-  - Not updating with new information
+  ✓ ["lower back pain"]  # Single item
+  ✓ ["recent surgery", "knee pain"]  # Multiple items
+  ✗ "no injuries"  # String not allowed
+  ✗ null  # Must use [] for no injuries
 
 Remember: 
 - Maintain persistent state across conversation
