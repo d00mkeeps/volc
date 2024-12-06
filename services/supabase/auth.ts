@@ -1,4 +1,4 @@
-import { AuthError, SignInCredentials, SignUpCredentials } from '../types/auth'
+import { AuthError, SignInCredentials, SignUpCredentials } from '@/types/auth'
 import { supabase } from '@/lib/supabaseClient'
 
 export const authService = {

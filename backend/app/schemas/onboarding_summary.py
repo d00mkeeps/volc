@@ -18,17 +18,22 @@ class PersonalInfo(BaseModel):
 
 class FitnessBackground(BaseModel):
     trainingAge: Optional[str] = None
-    exercisePreferences: Optional[List[str]] = None
-    currentAbilities: Optional[List[str]] = None
-    injuries: Optional[List[str]] = None
+    # Initialize array fields with empty lists instead of None
+    exercisePreferences: List[str] = []  # Changed from Optional[List[str]] = None
+    currentAbilities: List[str] = []     # Changed from Optional[List[str]] = None
+    injuries: List[str] = []             # Changed from Optional[List[str]] = None
 
     @field_validator('*')
     def handle_not_provided(cls, v):
-        if v is None or v == "not provided":
-            return None
-        if isinstance(v, list):
-            if not v or v[0] == "not provided":
+        # For non-list fields (trainingAge), keep existing None behavior
+        if not isinstance(v, list):
+            if v is None or v == "not provided":
                 return None
+            return v
+        
+        # For list fields, ensure we always return at least an empty list
+        if not v or v[0] == "not provided":
+            return []
         return v
 
 class UserOnboarding(BaseModel):

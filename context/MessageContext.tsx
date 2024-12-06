@@ -7,8 +7,8 @@ import React, {
   useEffect, 
   useMemo 
 } from 'react';
-import { WebSocketService } from '@/services/WebSocketService';
-import { StreamHandler } from '@/services/StreamHandler';
+import { WebSocketService } from '@/services/websocket/WebSocketService';
+import { StreamHandler } from '@/services/websocket/StreamHandler';
 import { 
   Message, 
   ConnectionState, 

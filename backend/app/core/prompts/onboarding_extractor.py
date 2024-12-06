@@ -87,11 +87,16 @@ trainingAge:
 exercisePreferences:
 - Types of training user enjoys/practices
 - Can be explicit or inferred from context
+- Must be a list/array format, never null
+- Empty array [] for "no preferences"
 - Examples:
   ✓ ["powerlifting", "crossfit"]
   ✓ ["running", "weightlifting"]
-  ✗ null (when preferences mentioned)
+  ✓ ["any", "all"] for "not picky" or "open to anything"
+  ✗ null (when preferences discussed)
+  ✗ "any" (single string)
 - Common mistakes:
+  - Using null instead of empty array or ["any"]
   - Missing implicit preferences
   - Not updating with new information
   - Using single string instead of array

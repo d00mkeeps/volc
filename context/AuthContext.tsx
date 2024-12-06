@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { AuthState, AuthError } from '../types/auth'
-import { authService } from '../services/auth'
+import { authService } from '../services/supabase/auth'
 import { supabase } from '@/lib/supabaseClient'
 
 interface AuthContextType extends AuthState {

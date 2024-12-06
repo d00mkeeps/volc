@@ -1,7 +1,5 @@
 import EventEmitter from 'eventemitter3';
 import { 
-  WebSocketConfig, 
-  WebSocketMessage, 
   WebSocketEvents,
   ChatConfigName 
 } from '@/types/index';

@@ -1,7 +1,6 @@
 export interface PersonalInfo {
     firstName: string;
     lastName: string;
-    displayName: string;
     ageGroup: string;
     preferredUnits: 'metric' | 'imperial';
   }

@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { OnboardingChat } from '@/components/conversation/organisms/OnboardingChat';
-import type { UserOnboarding } from '@/types/onboarding';
+import { UserOnboarding } from '@/types/onboarding';
 import { useMessage } from '@/context/MessageContext';
+import { UserProfileService } from '@/services/supabase/onboarding';
 
 interface OnboardingStepProps {
   wizardRef?: React.RefObject<any>;
 }
+
+const userProfileService = new UserProfileService();
 
 export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({ 
   wizardRef 
@@ -14,21 +17,17 @@ export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({
   const { sendMessage, messages } = useMessage();
 
   useEffect(() => {
-    // Only send initial message if there are no messages yet
     if (messages.length === 0) {
       sendMessage("Hi");
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  const handleComplete = useCallback((onboardingData: UserOnboarding) => {
-    console.log('OnboardingStep: Collection complete');
-    console.log('Onboarding Data:', onboardingData);
-    
-    if (wizardRef?.current) {
-      console.log('OnboardingStep: Advancing wizard');
-      wizardRef.current.next();
-    } else {
-      console.warn('OnboardingStep: wizardRef not available');
+  const handleComplete = useCallback(async (onboardingData: UserOnboarding) => {
+    try {
+      await userProfileService.saveUserProfile(onboardingData);
+      wizardRef?.current?.next();
+    } catch (error) {
+      console.error('Failed to save profile:', error);
     }
   }, [wizardRef]);
  
@@ -47,5 +46,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
-export default OnboardingConversationStep
