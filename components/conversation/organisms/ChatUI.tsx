@@ -7,12 +7,12 @@ import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
 import { StyleSheet } from "react-native";
 
-
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
   title,
   subtitle,
-  signalHandler
+  signalHandler,
+  conversationId
 }) => {
   const { 
     messages, 
@@ -22,12 +22,17 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     connectionState
   } = useMessage();
 
+  console.log('ChatUI rendered with config:', configName);
+  console.log('Current connection state:', connectionState.type);
+
   useEffect(() => {
-    connect(configName);
-  }, [connect, configName]);
+    console.log('ChatUI connecting with:', { configName, conversationId });
+    connect(configName, conversationId);
+  }, [connect, configName, conversationId]);
 
   useEffect(() => {
     if (signalHandler) {
+      console.log('Registering signal handler');
       registerMessageHandler(signalHandler);
       return () => registerMessageHandler(null);
     }
@@ -44,6 +49,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

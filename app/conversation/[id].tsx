@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { ChatUI } from '@/components/conversation/organisms/ChatUI';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { useMessage } from '@/context/MessageContext';
+import { ConversationChat } from '@/components/conversation/organisms/DefaultChat';
 
 export default function ConversationPage() {
   const { id, pendingMessage } = useLocalSearchParams<{ 
@@ -12,14 +12,17 @@ export default function ConversationPage() {
   const { sendMessage, connectionState } = useMessage();
   const router = useRouter();
   const hasSentPendingMessage = useRef(false);
+  console.log('Page received ID:', id);
+  // Handle any conversation-specific signals if needed
+  const handleSignal = useCallback((type: string, data: any) => {
+    // Handle any conversation-specific signals here
+    console.log('Conversation signal received:', { type, data });
+  }, []);
 
   useEffect(() => {
-    // Only send if we have a pending message, are connected, and haven't sent it yet
     if (pendingMessage && connectionState.type === 'CONNECTED' && !hasSentPendingMessage.current) {
       hasSentPendingMessage.current = true;
       sendMessage(pendingMessage);
-      
-      // Clear the pending message from the URL
       router.setParams({ pendingMessage: undefined });
     }
   }, [pendingMessage, connectionState.type]);
@@ -32,14 +35,14 @@ export default function ConversationPage() {
           headerBackTitle: "Home",
         }} 
       />
-      <ChatUI 
-        configName="default"
-        title="Trainsmart"
-        subtitle="Chat to your AI coach today!"
+      <ConversationChat 
+        conversationId={id}
+        onSignal={handleSignal}
       />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

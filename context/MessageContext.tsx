@@ -23,7 +23,7 @@ interface MessageContextType {
   connectionState: ConnectionState;
   registerMessageHandler: (handler: MessageHandler | null) => void;
   sendMessage: (content: string) => void;
-  connect: (configName: ChatConfigName) => Promise<void>;
+  connect: (configName: ChatConfigName, conversationId?: string) => Promise<void>;
 }
 
 const createInitialConnectionState = (): ConnectionState => ({
@@ -46,7 +46,10 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const streamHandler = useMemo(() => new StreamHandler(), []);
   const webSocket = useMemo(() => new WebSocketService(), []);
 
-  const connect = useCallback(async (configName: ChatConfigName) => {
+  const connect = useCallback(async (
+    configName: ChatConfigName,
+    conversationId?: string
+  ) => {
     try {
       setConnectionState(prev => ({
         ...prev,
@@ -55,7 +58,17 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
       
       await webSocket.initialize();
-      await webSocket.connect(configName);
+      
+      // Handle different connection types
+      if (configName === 'onboarding') {
+        await webSocket.connect(configName);
+      } else {
+        // For non-onboarding chats, require the conversation ID
+        if (!conversationId) {
+          throw new Error('Conversation ID required for non-onboarding chats');
+        }
+        await webSocket.connect(configName, conversationId);
+      }
     } catch (error) {
       setConnectionState(prev => ({
         ...prev,
@@ -66,6 +79,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
     }
   }, [webSocket]);
+
 
   const handleStreamContent = useCallback((chunk: string) => {
     setStreamingMessage(prev => {

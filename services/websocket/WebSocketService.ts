@@ -19,13 +19,14 @@ export class WebSocketService {
     this.baseUrl = await getLocalIpAddress();
   }
 
-  public async connect(configName: ChatConfigName): Promise<void> {
+  public async connect(configName: ChatConfigName, conversationId?: string): Promise<void> {
     if (!this.baseUrl) {
       await this.initialize();
     }
 
     if (this.socket?.readyState === WebSocket.OPEN) {
       if (this.currentConfigName === configName) {
+        console.log('Already connected with this config');
         return;
       }
       this.disconnect();
@@ -34,14 +35,24 @@ export class WebSocketService {
     this.currentConfigName = configName;
     
     try {
-      const url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
+      // Build the appropriate URL based on the chat type
+      let url;
+      if (configName === 'onboarding') {
+        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
+      } else if (conversationId) {
+        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}/${conversationId}`;
+      } else {
+        throw new Error('Conversation ID required for non-onboarding chats');
+      }
+
+      console.log('Attempting to connect to WebSocket URL:', url);
       this.socket = new WebSocket(url);
       this.attachEventHandlers();
     } catch (error) {
+      console.log('WebSocket connection error:', error);
       this.handleError(error as Error);
     }
   }
-
 
   private attachEventHandlers(): void {
     if (!this.socket) return;
@@ -75,6 +86,7 @@ export class WebSocketService {
     };
 
     this.socket.onerror = (error) => {
+      console.log('WebSocket error occurred:', error);
       this.handleError(new Error('WebSocket error occurred'));
     };
   }

@@ -12,5 +12,6 @@ export interface ChatUIProps {
   configName: ChatConfigName;
   title?: string;
   subtitle?: string;
-  signalHandler?: SignalHandler
+  signalHandler?: SignalHandler;
+  conversationId?: string; 
 }
