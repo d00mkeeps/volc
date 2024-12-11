@@ -14,7 +14,7 @@ export const OnboardingChat: React.FC<OnboardingChatProps> = ({
       console.log('OnboardingChat: Received onboarding data', data);
       onComplete?.(data as UserOnboarding);
     }
-  }, [onComplete]);
+  }, []);
 
   return (
     <ChatUI

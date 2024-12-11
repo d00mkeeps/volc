@@ -7,7 +7,7 @@ export const FinishStep: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>You're All Set!</Text>
       <Text style={styles.description}>
-        Thank you for providing your information. We're excited to help you on your fitness journey!
+        We're excited to help you reach your fitness goals! Why don't you start by logging a workout?
       </Text>
       <Text style={styles.instruction}>
         Tap 'Finish' to get started
