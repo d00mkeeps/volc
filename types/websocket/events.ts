@@ -2,7 +2,8 @@ export type WebSocketMessageType =
   | 'content' 
   | 'done' 
   | 'workout_history_approved' 
-  | 'error';
+  | 'error'
+  | 'workout_approved'
 
 export interface WebSocketMessage {
   type: WebSocketMessageType;

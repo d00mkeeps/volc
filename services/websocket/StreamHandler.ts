@@ -32,6 +32,13 @@ export class StreamHandler {
             data: message.data
           });
           break;
+          
+        case 'workout_approved':
+          this.events.emit('signal', {
+            type: 'workout_approved',
+            data: message.data
+          });
+          break;
 
         case 'error':
           this.events.emit('error', new Error(message.error || 'Unknown error'));

@@ -8,6 +8,7 @@ import { ScrollToBottomButton } from '../atoms/ScrollToBottom';
 interface MessageListProps {
   messages: Message[];
   streamingMessage: Message | null;
+  style?: any
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage }) => {
