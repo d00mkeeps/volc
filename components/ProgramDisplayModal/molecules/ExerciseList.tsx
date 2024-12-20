@@ -1,11 +1,7 @@
 import React from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { ExerciseCard } from '../atoms/ExerciseCard';
-import { Workout } from '@/types'; 
-
-interface ExerciseListProps {
-  workout: Workout;
-}
+import { ExerciseListProps } from '@/types'; 
 
 export const ExerciseList: React.FC<ExerciseListProps> = ({ workout }) => {
   return (

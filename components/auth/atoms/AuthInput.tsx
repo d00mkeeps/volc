@@ -23,7 +23,6 @@ export function AuthInput({
   )
 }
 
-// components/auth/atoms/AuthInput.tsx
 const styles = StyleSheet.create({
   input: {
     backgroundColor: '#2a332a', // Slightly lighter than background

@@ -1,10 +1,7 @@
 import { View, ActivityIndicator } from 'react-native'
 import { useAuth } from '../../context/AuthContext'
 import { AuthScreen } from './screens/AuthScreen'
-
-interface AuthGateProps {
-  children: React.ReactNode
-}
+import { AuthGateProps } from '@/types/auth'
 
 export function AuthGate({ children }: AuthGateProps) {
   const { user, loading } = useAuth()

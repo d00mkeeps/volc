@@ -26,33 +26,23 @@ export class StreamHandler {
           this.events.emit('done');
           break;
         
-        case 'workout_history_approved':
-          this.events.emit('signal', {
-            type: 'workout_history_approved',
-            data: message.data
-          });
-          break;
-          
-        case 'workout_approved':
-          this.events.emit('signal', {
-            type: 'workout_approved',
-            data: message.data
-          });
-          break;
-
         case 'error':
           this.events.emit('error', new Error(message.error || 'Unknown error'));
           break;
           
         default:
-          console.warn(`Unhandled message type: ${message.type}`);
+          // All business logic signals handled uniformly
+          this.events.emit('signal', {
+            type: message.type,
+            data: message.data
+          });
       }
     } catch (error) {
       this.events.emit('error', error as Error);
     }
   }
 
-  // Event listener methods
+  // Event listener methods remain unchanged
   public on<K extends keyof StreamEvents>(
     event: K,
     listener: StreamEvents[K]

@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ProfileItem from '../atoms/ProfileItem';
-
-interface ProfileGroupProps {
-  data: Record<string, any>;
-}
+import { ProfileGroupProps } from '@/types/profileComponents';
 
 const ProfileGroup: React.FC<ProfileGroupProps> = ({ data }) => {
   const formatValue = (key: string, value: any): string => {

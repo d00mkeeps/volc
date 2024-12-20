@@ -1,10 +1,6 @@
+import { HeaderProps } from '@/types/chat';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-interface HeaderProps {
-  title?: string;  // Made optional to match ChatUIProps
-  subtitle?: string;
-}
 
 const Header: React.FC<HeaderProps> = ({ title, subtitle }) => (
   <View style={styles.container}>

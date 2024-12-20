@@ -1,9 +1,7 @@
+import { WelcomeStepProps } from '@/types/welcomeModal';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-type WelcomeStepProps = {
-  onNext: () => void;
-};
 
 export const WelcomeStep: React.FC<WelcomeStepProps> = () => {
 

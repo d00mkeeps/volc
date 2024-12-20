@@ -10,15 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { styles } from './styles';
-
-
-interface ExpandedModalProps {
-  visible: boolean;
-  onClose: () => void;
-  value: string;
-  onChangeText: (text: string) => void;
-  onSend: () => void;
-}
+import { ExpandedModalProps } from '@/types/index';
 
 const ExpandedModal: React.FC<ExpandedModalProps> = ({
   visible,

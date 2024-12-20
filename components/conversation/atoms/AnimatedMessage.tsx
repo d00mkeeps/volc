@@ -1,12 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 import MessageItem from './MessageItem';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { Message } from '@/types';
 
 interface AnimatedMessageProps {
   message: Message;

@@ -5,17 +5,13 @@ import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
+import { v4 as uuidv4 } from 'uuid';
 
 // Temporary function - to be replaced with actual database implementation
 const createNewConversation = async (): Promise<string> => {
-  // TODO: Replace this with actual database implementation
-  // Should:
-  // 1. Create a new conversation record in the database
-  // 2. Return the conversation ID
-  // 3. Handle any database errors appropriately
-  
-  return Date.now().toString(); // Temporary ID generation
-};
+ const conversationId = uuidv4(
+ )
+ return conversationId}
 
 export default function HomeScreen() {
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
@@ -52,7 +48,7 @@ export default function HomeScreen() {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Failed to create conversation',
+        text1: 'Failed to start conversation',
         text2: 'Please try again'
       });
     } finally {
@@ -68,10 +64,7 @@ export default function HomeScreen() {
         <ConversationList onConversationPress={handleConversationPress} />
       </View>
       <InputArea 
-        isHomePage={true}
         onSendMessage={handleNewMessage}
-        draftMessage=""
-        onDraftMessageChange={() => {}}
         disabled={isCreatingConversation}
       />
       <WelcomeModal 

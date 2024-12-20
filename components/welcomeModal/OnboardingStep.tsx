@@ -1,20 +1,15 @@
-import React, { useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { OnboardingChat } from '@/components/conversation/organisms/OnboardingChat';
-import { UserOnboarding } from '@/types/onboarding';
-import { useMessage } from '@/context/MessageContext';
-import { UserProfileService } from '@/services/supabase/onboarding';
-
-interface OnboardingStepProps {
-  wizardRef?: React.RefObject<any>;
-}
-
-const userProfileService = new UserProfileService();
+import { useMessage } from "@/context/MessageContext";
+import { UserProfileService } from "@/services/supabase/onboarding";
+import { useEffect, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
+import { ChatUI } from "../conversation/organisms/ChatUI";
+import { OnboardingStepProps } from "@/types/welcomeModal";
 
 export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({ 
   wizardRef 
 }) => {
   const { sendMessage, messages } = useMessage();
+  const userProfileService = new UserProfileService();
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -22,27 +17,33 @@ export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({
     }
   }, []);
 
-  const handleComplete = useCallback(async (onboardingData: UserOnboarding) => {
-    try {
-      await userProfileService.saveUserProfile(onboardingData);
-      wizardRef?.current?.next();
-    } catch (error) {
-      console.error('Failed to save profile:', error);
+  const handleSignal = useCallback(async (type: string, data: any) => {
+    if (type === 'workout_history_approved') {
+      try {
+        await userProfileService.saveUserProfile(data);
+        wizardRef?.current?.next();
+      } catch (error) {
+        console.error('Failed to save profile:', error);
+      }
     }
   }, [wizardRef]);
  
   return (
-    <View style={styles.container}>
-      <OnboardingChat 
-        onComplete={handleComplete}
+    <View style={styles.stepContainer}>
+      <ChatUI 
+        configName="onboarding"
+        title="Let's Get to Know You"
+        subtitle="Building your personalized fitness journey"
+        onSignal={handleSignal}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  stepContainer: {
     flex: 1,
     width: '100%',
+    backgroundColor: '#1f281f',
   },
 });

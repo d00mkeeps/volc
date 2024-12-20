@@ -1,11 +1,7 @@
+import { ProfileItemProps } from '@/types/profileComponents';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-interface ProfileItemProps {
-  label: string;
-  value: string | number | null;
-  isLastItem?: boolean;
-}
 
 const ProfileItem: React.FC<ProfileItemProps> = ({ label, value, isLastItem = false }) => (
   <View style={[styles.container, isLastItem && styles.lastItem]}>

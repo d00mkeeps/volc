@@ -1,8 +1,8 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
-// At the top of styles.ts - let's be explicit about our measurements
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const MODAL_HEIGHT = SCREEN_HEIGHT * 0.35; // 70% of screen height
+const MODAL_HEIGHT = SCREEN_HEIGHT * 0.35;
 export const MODAL_WIDTH = SCREEN_WIDTH * 0.9;
 
 export const styles = StyleSheet.create({
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 80 : 20, // Add some bottom padding
+    paddingBottom: Platform.OS === 'ios' ? 80 : 20,
   },
   modalContent: {
     width: MODAL_WIDTH,
@@ -32,13 +32,11 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#333',
   },
-
   dismissArea: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   modalHeader: {
     paddingBottom: 12,
     borderBottomWidth: 1,
@@ -63,18 +61,19 @@ export const styles = StyleSheet.create({
   },
 
   // Input Area styles
+container: {
+  flexDirection: 'row',
+  paddingVertical: 16,
+  paddingHorizontal: 16,
+  backgroundColor: '#1f281f',
+  borderTopWidth: 1,
+  borderTopColor: '#2a332a',
+  width: '100%',
+  minHeight: 80,
+},
   keyboardAvoidingView: {
     width: '100%',
-  },
-  container: {
-    flexDirection: 'row',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    backgroundColor: '#1f281f',
-    borderTopWidth: 1,
-    borderTopColor: '#2a332a',
-    width: '100%',
-  },
+},
   homePageContainer: {
     backgroundColor: '#222',
     borderTopColor: '#333',

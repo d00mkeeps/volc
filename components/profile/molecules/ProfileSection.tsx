@@ -2,11 +2,7 @@ import React, { memo, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import SectionHeader from '../atoms/SectionHeader';
 import ProfileGroup from './ProfileGroup';
-
-interface ProfileSectionProps {
-  title: string;
-  data: Record<string, any>;
-}
+import { ProfileSectionProps } from '@/types/profileComponents';
 
 function ProfileSection({ title, data }: ProfileSectionProps) {
   // Memoize the formatted data to prevent unnecessary processing

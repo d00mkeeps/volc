@@ -10,6 +10,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/AuthGate';
 import { UserProvider } from '@/context/UserContext';
 import Toast from 'react-native-toast-message';
+import React from 'react';
 
 export {
   ErrorBoundary,
@@ -47,6 +48,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+
   return (
     <>
       <AuthProvider>
@@ -55,8 +57,32 @@ function RootLayoutNav() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <AuthGate>
                 <Stack>
-                  <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-                  <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                  <Stack.Screen 
+                    name="(drawer)" 
+                    options={{ headerShown: false }} 
+                  />
+                  <Stack.Screen 
+                    name="modal" 
+                    options={{ presentation: 'modal' }} 
+                  />
+                  {/* Add explicit configuration for conversation route */}
+                  <Stack.Screen 
+                    name="conversation/[id]" 
+                    options={{
+                      headerShown: true,
+                      headerTitle: "Conversation",
+                      headerBackTitle: "Home",
+                      contentStyle: {
+                        backgroundColor: '#1f281f',
+                        flex: 1,
+                      },
+                      headerStyle: {
+                        backgroundColor: '#1f281f',
+                      },
+                      // Ensure proper layout handling
+                      animation: 'slide_from_right',
+                    }}
+                  />
                 </Stack>
               </AuthGate>
             </ThemeProvider>

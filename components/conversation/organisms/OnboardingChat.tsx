@@ -1,10 +1,7 @@
 import { useCallback } from "react";
-import ChatUI from "./ChatUI";
+import {ChatUI} from "./ChatUI";
 import type { UserOnboarding } from '@/types/onboarding';
-
-interface OnboardingChatProps {
-  onComplete?: (onboardingData: UserOnboarding) => void;
-}
+import { OnboardingChatProps } from "@/types/chat";
 
 export const OnboardingChat: React.FC<OnboardingChatProps> = ({
   onComplete
@@ -21,7 +18,7 @@ export const OnboardingChat: React.FC<OnboardingChatProps> = ({
       configName="onboarding"
       title="Let's Get to Know You"
       subtitle="Building your personalized fitness journey"
-      signalHandler={handleSignal}
+      onSignal={handleSignal}
     />
   );
 };

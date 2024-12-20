@@ -1,155 +1,138 @@
-import React, { useMemo, useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
+import { InputAreaProps } from "@/types/index";
+import { memo, useCallback, useEffect, useState,  } from "react";
+import { View, 
+  TextInput, 
+  TouchableOpacity, 
   Text,
-} from 'react-native';
-import { useMessage } from '@/context/MessageContext';
-import { ConnectionState } from '@/types/states';
-import ExpandedModal from './ExpandedModal';
-import { styles } from './styles';
+StyleSheet, 
+LayoutChangeEvent} from "react-native";
 
-interface InputAreaProps {
-  isHomePage?: boolean;
-  disabled?: boolean;
-  onSendMessage?: (message: string) => void;  
-  draftMessage?: string;                    
-  onDraftMessageChange?: (message: string) => void;  
-}
+const InputArea: React.FC<InputAreaProps> = memo(({ disabled, onSendMessage }) => {
+  const [input, setInput] = useState('');
 
-const getPlaceholderText = (connectionState: ConnectionState, isHomePage: boolean): string => {
-  if (isHomePage) return 'Describe your workout to start tracking...';
-  
-  switch (connectionState.type) {
-    case 'DISCONNECTED':
-      return 'Disconnected...';
-    case 'CONNECTING':
-      return 'Connecting...';
-    case 'STREAMING':
-      return 'Processing...';
-    case 'ERROR':
-      return 'Connection error';
-    default:
-      return 'Type a message...';
-  }
-};
+  useEffect(() => {
+    console.log('InputArea rendered');
+  });
 
-const getErrorMessage = (connectionState: ConnectionState, isHomePage: boolean): string | null => {
-  if (isHomePage) return null;
-  
-  if (connectionState.type === 'ERROR') {
-    return connectionState.error?.message || 'Unable to send messages';
-  }
-  if (connectionState.type === 'DISCONNECTED') {
-    return 'Not connected';
-  }
-  return null;
-};
-
-const InputArea: React.FC<InputAreaProps> = ({ 
-  isHomePage = false, 
-  disabled = false,
-  onSendMessage,
-  onDraftMessageChange,
-  draftMessage
-}) => {
-  const { sendMessage: contextSendMessage, connectionState } = useMessage();
-  const [input, setInput] = useState(draftMessage || '');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const messageState = useMemo(() => {
-    const canType = isHomePage ? !disabled : connectionState.canSendMessage;
-    const hasValidInput = input.trim().length > 0;
-    
-    return {
-      canType,
-      canSend: canType && hasValidInput,
-      placeholder: getPlaceholderText(connectionState, isHomePage),
-      errorMessage: getErrorMessage(connectionState, isHomePage)
+  const measureLayout = useCallback(() => {
+    // Using onLayout to get position info
+    return (event: LayoutChangeEvent) => {
+      const {x, y, width, height} = event.nativeEvent.layout;
+      console.log('InputArea position:', {x, y, width, height});
     };
-  }, [connectionState, input, isHomePage, disabled]);
+  }, []);
+
+  // Track input changes
+  const handleInputChange = (text: string) => {
+    console.log('Input changed:', text);
+    setInput(text);
+  };
+  
 
   const handleSend = () => {
-    if (messageState.canSend) {
-      if (onSendMessage) {
-        onSendMessage(input);
-      } else {
-        contextSendMessage(input);
-      }
+    if (!disabled && input.trim()) {
+      onSendMessage(input);
       setInput('');
-      setIsModalVisible(false);
     }
   };
 
-  const handleInputChange = (text: string) => {
-    setInput(text);
-    onDraftMessageChange?.(text);
-  };
-
   return (
-    <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={90}
-        style={styles.keyboardAvoidingView}
+    <View 
+    style={styles.container}
+    onLayout={measureLayout}
+    >
+      <TextInput
+        style={[styles.input, disabled && styles.disabledInput]}
+        value={input}
+        onChangeText={handleInputChange}
+        onFocus={() => console.log('Input focused')}
+        onBlur={() => console.log('Input blurred')}
+        placeholder={disabled ? 'Not connected...' : 'Type a message...'}
+        placeholderTextColor="#666"
+        editable={!disabled}
+        multiline={false}
+        returnKeyType="send"
+        onSubmitEditing={handleSend}
+        blurOnSubmit={true}
+        enablesReturnKeyAutomatically={true}
+        keyboardAppearance="dark"
+        maxLength={1000}
+      />
+      <TouchableOpacity
+        style={[styles.sendButton, disabled && styles.disabledButton]}
+        onPress={handleSend}
+        disabled={disabled || !input.trim()}
       >
-        <View style={[
-          styles.container,
-          isHomePage && styles.homePageContainer
-        ]}>
-          <TextInput
-            style={[
-              styles.input,
-              !messageState.canType && styles.disabledInput,
-              isHomePage && styles.homePageInput
-            ]}
-            value={input}
-            onChangeText={handleInputChange}
-            placeholder={messageState.placeholder}
-            placeholderTextColor="#666"
-            editable={messageState.canType}
-            multiline={false}
-            returnKeyType="send"
-            onFocus={() => isHomePage && setIsModalVisible(true)}
-            blurOnSubmit={true}
-            enablesReturnKeyAutomatically={true}
-            keyboardAppearance="dark"
-          />
-          <TouchableOpacity
-            style={[
-              styles.sendButton,
-              !messageState.canSend && styles.disabledButton,
-              isHomePage && styles.homePageSendButton
-            ]}
-            onPress={handleSend}
-            disabled={!messageState.canSend}
-          >
-            <Text style={[
-              styles.sendButtonText,
-              !messageState.canSend && styles.disabledButtonText
-            ]}>
-              Send
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-      
-      {isModalVisible && (
-        <View style={styles.modalContainer}>
-          <ExpandedModal
-            visible={isModalVisible}
-            onClose={() => setIsModalVisible(false)}
-            value={input}
-            onChangeText={handleInputChange}
-            onSend={handleSend}
-          />
-        </View>
-      )}
-    </>
+        <Text style={[styles.sendButtonText, disabled && styles.disabledButtonText]}>
+          Send
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
-};
+});
+
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    width: '100%',
+  },
+  container: {
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#1f281f',
+    borderTopWidth: 1,
+    borderTopColor: '#2a332a',
+    width: '100%',
+  },
+  homePageContainer: {
+    backgroundColor: '#222',
+    borderTopColor: '#333',
+  },
+  input: {
+    flex: 1,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#2a332a',
+    borderRadius: 15,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    backgroundColor: '#041402',
+    color: '#fff',
+    fontSize: 16,
+    minHeight: 40,
+  },
+  homePageInput: {
+    backgroundColor: '#333',
+    borderColor: '#444',
+  },
+  disabledInput: {
+    backgroundColor: '#0a1c08',
+    borderColor: '#1a231a',
+    color: '#666',
+  },
+  sendButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 80,
+  },
+  homePageSendButton: {
+    backgroundColor: '#4CAF50', // Keep the same or change if needed
+  },
+  disabledButton: {
+    backgroundColor: '#2a332a',
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  disabledButtonText: {
+    color: '#666',
+  },
+});
 
 export default InputArea;

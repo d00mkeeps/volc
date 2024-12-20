@@ -1,17 +1,17 @@
-import React, { useCallback } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { Message } from '@/types';
-import MessageItem from '../atoms/MessageItem';
-import { useAutoScroll } from '@/hooks/useAutoScroll';
-import { ScrollToBottomButton } from '../atoms/ScrollToBottom';
+import { useAutoScroll } from "@/hooks/useAutoScroll";
+import { Message } from "@/types";
+import { useCallback } from "react";
+import { 
+  StyleProp, 
+  ViewStyle, 
+  View, 
+  FlatList, 
+  StyleSheet } from "react-native";
+import MessageItem from "../atoms/MessageItem";
+import { ScrollToBottomButton } from "../atoms/ScrollToBottom";
+import { MessageListProps } from "@/types/chat";
 
-interface MessageListProps {
-  messages: Message[];
-  streamingMessage: Message | null;
-  style?: any
-}
-
-const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, style }) => {
   const { 
     listRef, 
     handleScroll, 
@@ -23,13 +23,12 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage })
     <MessageItem message={item} />
   ), []);
 
-  // Include streaming message in data if present
   const allMessages = streamingMessage 
     ? [...messages, streamingMessage]
     : messages;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <FlatList
         ref={listRef}
         data={allMessages}
@@ -37,12 +36,10 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage })
         keyExtractor={(item) => item.id}
         style={styles.list}
         onScroll={handleScroll}
-        scrollEventThrottle={16}
+        scrollEventThrottle={400}
         onContentSizeChange={() => scrollToBottom(false)}
         onLayout={() => scrollToBottom(false)}
-        maintainVisibleContentPosition={{
-          minIndexForVisible: 0,
-        }}
+        removeClippedSubviews={true}
       />
       {showScrollButton && (
         <ScrollToBottomButton onPress={() => scrollToBottom(true)} />
@@ -50,14 +47,12 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage })
     </View>
   );
 };
-
+export default MessageList
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   list: {
     flex: 1,
-  }, 
+  },
 });
-
-export default MessageList

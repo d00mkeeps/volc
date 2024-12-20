@@ -1,13 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { WorkoutSelect } from '../atoms/WorkoutSelect';
-import { Workout } from '@/types'; 
+import { Workout, WorkoutHeaderProps } from '@/types'; 
 
-interface WorkoutHeaderProps {
-  workouts: Workout[];
-  selectedWorkout: Workout | null;
-  onSelectWorkout: (workout: Workout) => void;
-}
 
 export const WorkoutHeader: React.FC<WorkoutHeaderProps> = ({ workouts, selectedWorkout, onSelectWorkout }) => {
   return (

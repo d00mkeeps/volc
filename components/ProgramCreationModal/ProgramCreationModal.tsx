@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
 import Wizard, { WizardRef } from "react-native-wizard";
 import { Button } from '../public/atoms';
-import ChatUI from '../conversation/organisms/ChatUI';
+import {ChatUI} from '../conversation/organisms/ChatUI';
 import { Text } from '@/components/Themed';
 
 type ProgramCreationModalProps = {
@@ -10,43 +10,76 @@ type ProgramCreationModalProps = {
   onClose: () => void;
 };
 
+// Add step type definition
+interface WizardStep {
+  content: JSX.Element;
+}
+
 export const ProgramCreationModal: React.FC<ProgramCreationModalProps> = ({ isVisible, onClose }) => {
   const wizardRef = useRef<WizardRef>(null);
   const [isFirstStep, setIsFirstStep] = useState(true);
   const [isLastStep, setIsLastStep] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const stepList = [
+  const handleProgramGoalsSignal = useCallback((type: string, data: any) => {
+    if (type === 'program_goals_complete') {
+      wizardRef.current?.next();
+    }
+  }, []);
+
+  const handleIntermediateGoalsSignal = useCallback((type: string, data: any) => {
+    if (type === 'program_intermediate_complete') {
+      wizardRef.current?.next();
+    }
+  }, []);
+
+  const stepList: WizardStep[] = [
     {
       content: (
         <ChatUI 
+          configName="program"
           title="Program Goals"
-          subtitle="Let's define your basic goal and create a SMART goal for your program." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
-            throw new Error('Function not implemented.');
-          } } onDraftMessageChange={function (draft: string): void {
-            throw new Error('Function not implemented.');
-          } }        />
+          subtitle="Let's define your basic goal and create a SMART goal for your program."
+          onSignal={handleProgramGoalsSignal}
+        />
       )
     },
     {
       content: (
         <ChatUI 
+          configName="program"
           title="Intermediate Goals"
-          subtitle="Let's discuss suitable intermediate goals and create your program." messages={[]} draftMessage={''} onSendMessage={function (message: string): void {
-            throw new Error('Function not implemented.');
-          } } onDraftMessageChange={function (draft: string): void {
-            throw new Error('Function not implemented.');
-          } }        />
+          subtitle="Let's discuss suitable intermediate goals and create your program."
+          onSignal={handleIntermediateGoalsSignal}
+        />
       )
     },
     {
       content: (
         <View style={styles.finalStep}>
-          <Text style={styles.finalStepText}>Great job! Your program has been created and uploaded to your profile.</Text>
+          <Text style={styles.finalStepText}>
+            Great job! Your program has been created and uploaded to your profile.
+          </Text>
         </View>
       )
     }
   ];
+
+  // Type the callback parameters
+  const handleCurrentStep = useCallback(({ 
+    currentStep, 
+    isLastStep, 
+    isFirstStep 
+  }: {
+    currentStep: number;
+    isLastStep: boolean;
+    isFirstStep: boolean;
+  }) => {
+    setCurrentStep(currentStep);
+    setIsFirstStep(isFirstStep);
+    setIsLastStep(isLastStep);
+    console.log(`Step ${currentStep + 1} of ${stepList.length}`);
+  }, []);
 
   return (
     <Modal
@@ -60,14 +93,9 @@ export const ProgramCreationModal: React.FC<ProgramCreationModalProps> = ({ isVi
           <Wizard
             ref={wizardRef}
             steps={stepList}
-            isFirstStep={(val) => setIsFirstStep(val)}
-            isLastStep={(val) => setIsLastStep(val)}
-            currentStep={({ currentStep, isLastStep, isFirstStep }) => {
-              setCurrentStep(currentStep);
-              setIsFirstStep(isFirstStep);
-              setIsLastStep(isLastStep);
-              console.log(`Step ${currentStep + 1} of ${stepList.length}`);
-            }}
+            isFirstStep={(val: boolean) => setIsFirstStep(val)}
+            isLastStep={(val: boolean) => setIsLastStep(val)}
+            currentStep={handleCurrentStep}
           />
         </View>
         <View style={styles.buttonContainer}>
@@ -96,6 +124,8 @@ export const ProgramCreationModal: React.FC<ProgramCreationModalProps> = ({ isVi
     </Modal>
   );
 };
+
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,

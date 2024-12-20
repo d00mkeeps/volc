@@ -160,3 +160,14 @@ export interface SetData {
   weight?: number;
   duration?: string;
 }
+
+export interface ExerciseListProps {
+  workout: Workout;
+}
+
+export interface WorkoutHeaderProps {
+  workouts: Workout[];
+  selectedWorkout: Workout | null;
+  onSelectWorkout: (workout: Workout) => void;
+}
+

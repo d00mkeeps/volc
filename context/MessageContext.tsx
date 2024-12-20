@@ -13,18 +13,9 @@ import {
   Message, 
   ConnectionState, 
   MessageHandler,
-  WebSocketConfig, 
   ChatConfigName
 } from '@/types/index';
-
-interface MessageContextType {
-  messages: Message[];
-  streamingMessage: Message | null;
-  connectionState: ConnectionState;
-  registerMessageHandler: (handler: MessageHandler | null) => void;
-  sendMessage: (content: string) => void;
-  connect: (configName: ChatConfigName, conversationId?: string) => Promise<void>;
-}
+import { MessageContextType } from '@/types/context';
 
 const createInitialConnectionState = (): ConnectionState => ({
   type: 'DISCONNECTED',
@@ -41,15 +32,26 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
   const [connectionState, setConnectionState] = useState<ConnectionState>(createInitialConnectionState());
-  const latestStreamingContentRef = useRef<string>('');
+  const [currentConfigName, setCurrentConfigName] = useState<ChatConfigName | null>(null);
+  
   const messageHandlerRef = useRef<MessageHandler | null>(null);
   const streamHandler = useMemo(() => new StreamHandler(), []);
   const webSocket = useMemo(() => new WebSocketService(), []);
+
+  const streamingStateRef = useRef({
+    content: '',
+    messageId: '',
+  });
 
   const connect = useCallback(async (
     configName: ChatConfigName,
     conversationId?: string
   ) => {
+    if (webSocket.isConnected() && currentConfigName === configName) {
+      console.log('Already connected with this config');
+      return;
+    }
+
     try {
       setConnectionState(prev => ({
         ...prev,
@@ -58,17 +60,8 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
       
       await webSocket.initialize();
-      
-      // Handle different connection types
-      if (configName === 'onboarding') {
-        await webSocket.connect(configName);
-      } else {
-        // For non-onboarding chats, require the conversation ID
-        if (!conversationId) {
-          throw new Error('Conversation ID required for non-onboarding chats');
-        }
-        await webSocket.connect(configName, conversationId);
-      }
+      await webSocket.connect(configName, conversationId);
+      setCurrentConfigName(configName);
     } catch (error) {
       setConnectionState(prev => ({
         ...prev,
@@ -78,30 +71,35 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
         isLoading: false
       }));
     }
-  }, [webSocket]);
-
+  }, [webSocket, currentConfigName]);
 
   const handleStreamContent = useCallback((chunk: string) => {
-    setStreamingMessage(prev => {
-      const newContent = prev ? prev.content + chunk : chunk;
-      latestStreamingContentRef.current = newContent;
-      return {
-        id: 'streaming',
-        role: 'assistant',
-        content: newContent
-      };
-    });
+    streamingStateRef.current.content += chunk;
+    
+    const streamingMsg: Message = {
+      id: streamingStateRef.current.messageId || 'streaming',
+      role: 'assistant',
+      content: streamingStateRef.current.content
+    };
+    
+    setStreamingMessage(streamingMsg);
   }, []);
 
   const handleStreamComplete = useCallback(() => {
-    const finalContent = latestStreamingContentRef.current;
-    setMessages(prev => [...prev, {
+    const finalMessage: Message = {
       id: Date.now().toString(),
       role: 'assistant',
-      content: finalContent
-    }]);
+      content: streamingStateRef.current.content
+    };
+
+    setMessages(prev => [...prev, finalMessage]);
     setStreamingMessage(null);
-    latestStreamingContentRef.current = '';
+    
+    streamingStateRef.current = {
+      content: '',
+      messageId: '',
+    };
+
     setConnectionState(prev => ({
       ...prev,
       type: 'CONNECTED',
@@ -116,47 +114,46 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string) => {
     if (!connectionState.canSendMessage) return;
 
+    const messageId = Date.now().toString();
     const newMessage: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content
+      id: messageId,
+      role: 'user',
+      content
     };
-    setMessages(prev => {
-        const updatedMessages = [...prev, newMessage];
-        console.log('Updated messages array:', updatedMessages);
-        return updatedMessages;
-    });
 
+    setMessages(prev => [...prev, newMessage]);
     setConnectionState(prev => ({
-        ...prev,
-        type: 'STREAMING',
-        isLoading: true,
-        canSendMessage: false
+      ...prev,
+      type: 'STREAMING',
+      isLoading: true,
+      canSendMessage: false
     }));
 
-    try {
-        // Only send the new message
-        console.log('Sending single message to WebSocket:', {
-            message: content,
-            messageId: newMessage.id  //for tracking
-        });
+    streamingStateRef.current.messageId = messageId;
 
-        await webSocket.sendMessage({ 
-            message: content
-        });
+    try {
+      console.log('Sending single message to WebSocket:', {
+        message: content,
+        messageId
+      });
+
+      await webSocket.sendMessage({ 
+        message: content
+      });
     } catch (error) {
-        setConnectionState(prev => ({
-            ...prev,
-            type: 'ERROR',
-            error: error as Error,
-            canSendMessage: true,
-            isLoading: false
-        }));
+      setConnectionState(prev => ({
+        ...prev,
+        type: 'ERROR',
+        error: error as Error,
+        canSendMessage: true,
+        isLoading: false
+      }));
     }
-}, [webSocket, connectionState.canSendMessage]);
+  }, [webSocket, connectionState.canSendMessage]);
+
   const registerMessageHandler = useCallback((handler: MessageHandler | null) => {
     messageHandlerRef.current = handler;
   }, []);
@@ -167,6 +164,7 @@ const sendMessage = useCallback(async (content: string) => {
     streamHandler.on('signal', handleSignal);
 
     webSocket.on('message', msg => streamHandler.handleMessage(msg));
+
     webSocket.on('connect', () => {
       setConnectionState(prev => ({
         ...prev,
@@ -175,7 +173,9 @@ const sendMessage = useCallback(async (content: string) => {
         isLoading: false
       }));
     });
+
     webSocket.on('disconnect', () => {
+      setCurrentConfigName(null);
       setConnectionState(prev => ({
         ...prev,
         type: 'DISCONNECTED',
@@ -183,6 +183,7 @@ const sendMessage = useCallback(async (content: string) => {
         isLoading: false
       }));
     });
+
     webSocket.on('error', (error) => {
       setConnectionState(prev => ({
         ...prev,
@@ -193,29 +194,30 @@ const sendMessage = useCallback(async (content: string) => {
       }));
     });
 
-   return () => {
-    webSocket.disconnect();
-    streamHandler.off('content', handleStreamContent);
-    streamHandler.off('done', handleStreamComplete);
-    streamHandler.off('signal', handleSignal);
-  };
-}, [webSocket, streamHandler, handleStreamContent, handleStreamComplete, handleSignal]);
+    return () => {
+      webSocket.disconnect();
+      streamHandler.off('content', handleStreamContent);
+      streamHandler.off('done', handleStreamComplete);
+      streamHandler.off('signal', handleSignal);
+    };
+  }, [webSocket, streamHandler, handleStreamContent, handleStreamComplete, handleSignal]);
 
-const value = useMemo(() => ({
-  messages,
-  streamingMessage,
-  connectionState,
-  registerMessageHandler,
-  sendMessage,
-  connect
-}), [messages, streamingMessage, connectionState, registerMessageHandler, sendMessage, connect]);
+  const value = useMemo(() => ({
+    messages,
+    streamingMessage,
+    connectionState,
+    registerMessageHandler,
+    sendMessage,
+    connect
+  }), [messages, streamingMessage, connectionState, registerMessageHandler, sendMessage, connect]);
 
-return (
-  <MessageContext.Provider value={value}>
-    {children}
-  </MessageContext.Provider>
-);
+  return (
+    <MessageContext.Provider value={value}>
+      {children}
+    </MessageContext.Provider>
+  );
 };
+
 export const useMessage = () => {
   const context = useContext(MessageContext);
   if (!context) {

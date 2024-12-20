@@ -11,6 +11,12 @@ export interface AuthError {
   status?: number
 }
 
+export type AuthMode = 'signIn' | 'signUp'
+
+export interface AuthGateProps {
+  children: React.ReactNode
+}
+
 export interface SignInCredentials {
   email: string
   password: string

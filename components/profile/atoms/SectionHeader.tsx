@@ -1,9 +1,6 @@
+import { SectionHeaderProps } from '@/types/profileComponents';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-interface SectionHeaderProps {
-  title: string;
-}
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
   <View style={styles.container}>

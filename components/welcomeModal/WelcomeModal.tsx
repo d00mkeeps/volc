@@ -5,24 +5,9 @@ import { WelcomeStep } from './WelcomeStep';
 import {OnboardingConversationStep} from './OnboardingStep';
 import { FinishStep } from './FinishStep';
 import { Button } from '../public/atoms';
-import { UserInfoData } from './index';
 import Toast from 'react-native-toast-message';
 import { MessageProvider } from '@/context/MessageContext';
-
-type ActualWizardProps = {
-  ref: React.RefObject<any>;
-  steps: Array<{ content: React.ReactElement }>;
-  isFirstStep: (val: boolean) => void;
-  isLastStep: (val: boolean) => void;
-  onNext: (step: number) => void;
-  onPrev: (step: number) => void;
-  currentStep: (data: { currentStep: number; isLastStep: boolean; isFirstStep: boolean }) => void;
-};
-
-type WelcomeModalProps = {
-  isVisible: boolean;
-  onClose: () => void;
-};
+import { ActualWizardProps, WelcomeModalProps } from '@/types/welcomeModal';
 
 
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {

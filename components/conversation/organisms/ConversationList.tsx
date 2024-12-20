@@ -4,10 +4,7 @@ import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import ConversationItem from '../atoms/ConversationItem';
 import { Conversation, mockConversations } from '../../../assets/mockData';
-
-interface ConversationListProps {
-  onConversationPress: (id: string) => void;
-}
+import { ConversationListProps } from '@/types';
 
 const ConversationList: React.FC<ConversationListProps> = ({ onConversationPress }) => {
   const renderItem = ({ item }: { item: Conversation }) => (

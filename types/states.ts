@@ -1,4 +1,3 @@
-// src/types/states.ts
 export type WebSocketEvent = 
   | 'CONNECT'
   | 'CONNECTED'

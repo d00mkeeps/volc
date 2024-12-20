@@ -1,51 +1,78 @@
 import { useMessage } from "@/context/MessageContext";
-import { ChatUIProps } from "@/types/chat";
-import { useEffect } from "react";
-import { View } from "react-native";
+import { ChatConfigName } from "@/types/chat";
+import { useRef, useEffect } from "react";
+import { View, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
-import { StyleSheet } from "react-native";
+
+interface ChatUIProps {
+  configName: ChatConfigName;
+  conversationId?: string;
+  title: string;
+  subtitle?: string;
+  onSignal?: (type: string, data: any) => void;
+}
 
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
+  conversationId,
   title,
   subtitle,
-  signalHandler,
-  conversationId
+  onSignal,
 }) => {
   const { 
     messages, 
     streamingMessage, 
-    registerMessageHandler,
+    connectionState, 
+    sendMessage,
     connect,
-    connectionState
+    registerMessageHandler
   } = useMessage();
 
-  console.log('ChatUI rendered with config:', configName);
-  console.log('Current connection state:', connectionState.type);
+  const hasConnectedRef = useRef(false);
 
+  // Handle initial connection
   useEffect(() => {
-    console.log('ChatUI connecting with:', { configName, conversationId });
-    connect(configName, conversationId);
-  }, [connect, configName, conversationId]);
-
-  useEffect(() => {
-    if (signalHandler) {
-      console.log('Registering signal handler');
-      registerMessageHandler(signalHandler);
-      return () => registerMessageHandler(null);
+    if (!hasConnectedRef.current && connectionState.type !== 'CONNECTED') {
+      console.log(`ChatUI: Initial connection for ${configName}`);
+      hasConnectedRef.current = true;
+      connect(configName, conversationId);
     }
-  }, [registerMessageHandler, signalHandler]);
+    return () => {
+      hasConnectedRef.current = false;
+    };
+  }, [connect, configName, conversationId, connectionState.type]);
+
+  // Handle signal registration
+  useEffect(() => {
+    if (onSignal) {
+      registerMessageHandler(onSignal);
+    }
+    return () => {
+      registerMessageHandler(null);
+    };
+  }, [onSignal, registerMessageHandler]);
 
   return (
     <View style={styles.container}>
-      <Header title={title || ""} subtitle={subtitle ||""} />
+      <Header title={title} subtitle={subtitle} />
+      
       <MessageList 
         messages={messages}
         streamingMessage={streamingMessage}
+        style={styles.messageList}
       />
-      <InputArea />
+      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        <InputArea
+          disabled={!connectionState.canSendMessage}
+          onSendMessage={sendMessage}
+        />
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -54,42 +81,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1f281f',
-    width: '100%',
   },
-  headerContainer: {
-    padding: 10,
-    width: '100%',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#ccc',
-    marginTop: 5,
-  },
-  listContent: {
-    flexGrow: 1,
-    width: '100%',
-    paddingBottom: 20,
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 8,
-    marginTop: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 4,
-  },
-  statusText: {
-    color: '#fff',
-    marginLeft: 8,
-  },
-  errorText: {
-    color: '#ff6b6b',
+  messageList: {
+    flex: 1,
   }
 });
-
-export default ChatUI;

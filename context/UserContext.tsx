@@ -1,14 +1,8 @@
 import { createContext, useContext, useState } from 'react'
 import type { UserProfile } from '@/types'
 import { supabase } from '@/lib/supabaseClient'
+import { UserContextType } from '@/types/context'
 
-interface UserContextType {
-  userProfile: UserProfile | null
-  loading: boolean
-  error: Error | null
-  refreshProfile: () => Promise<void>
-  updateProfile: (updates: Partial<UserProfile>) => Promise<void>
-}
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 

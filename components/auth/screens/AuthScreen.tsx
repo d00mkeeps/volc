@@ -5,8 +5,7 @@ import { SignUpForm } from '../molecules/SignUpForm'
 import { AuthToggle } from '../atoms/AuthToggle'
 import { AuthError } from '../atoms/AuthError'
 import { useAuth } from '../../../context/AuthContext'
-
-type AuthMode = 'signIn' | 'signUp'
+import { AuthMode } from '@/types/auth'
 
 export function AuthScreen() {
   const [mode, setMode] = useState<AuthMode>('signIn')

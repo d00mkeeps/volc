@@ -15,7 +15,7 @@ import { SignOutButton } from '@/components/auth/atoms/SignOutButton';
 import { useUser } from '@/context/UserContext';
 
 const MAX_RENDER_RETRIES = 3;
-const RENDER_RETRY_DELAY = 1000;
+const RENDER_RETRY_DELAY = 800;
 
 export default function ProfileDisplayScreen() {
   const { userProfile, loading, refreshProfile, error } = useUser();
