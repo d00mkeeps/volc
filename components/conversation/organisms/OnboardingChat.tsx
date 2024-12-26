@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+/*import { useCallback } from "react";
 import {ChatUI} from "./ChatUI";
 import type { UserOnboarding } from '@/types/onboarding';
 import { OnboardingChatProps } from "@/types/chat";
@@ -22,3 +22,4 @@ export const OnboardingChat: React.FC<OnboardingChatProps> = ({
     />
   );
 };
+*/

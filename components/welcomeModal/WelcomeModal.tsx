@@ -1,24 +1,21 @@
-import React, { useState, useRef } from 'react';
-import { View, Modal, StyleSheet, SafeAreaView } from 'react-native';
-import Wizard, {WizardRef} from "react-native-wizard";
-import { WelcomeStep } from './WelcomeStep';
-import {OnboardingConversationStep} from './OnboardingStep';
-import { FinishStep } from './FinishStep';
-import { Button } from '../public/atoms';
-import Toast from 'react-native-toast-message';
-import { MessageProvider } from '@/context/MessageContext';
-import { ActualWizardProps, WelcomeModalProps } from '@/types/welcomeModal';
+import { MessageProvider } from "@/context/MessageContext";
+import { WelcomeModalProps, ActualWizardProps } from "@/types/welcomeModal";
+import { useRef, useState } from "react";
+import { Modal, SafeAreaView, View, StyleSheet } from "react-native";
+import Toast from "react-native-toast-message";
+import Wizard, { WizardRef } from "react-native-wizard";
+import WelcomeStep from "./WelcomeStep";
+import { FinishStep } from "./FinishStep";
+import { OnboardingConversationStep } from "./OnboardingStep";
+import React from "react";
+import { Button } from "../public/atoms";
 
-
-export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
-
-  
-
-
+ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
   const wizardRef = useRef<WizardRef>(null);
   const [isFirstStep, setIsFirstStep] = useState(true);
   const [isLastStep, setIsLastStep] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+
   const showNotification = (message: string) => {
     Toast.show({
       type: 'success',
@@ -26,19 +23,55 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       text2: message,
     });
   };
+
+  const getWizardContainerStyle = (step: number) => {
+    const baseStyle = {
+      backgroundColor: '#1f281f',
+      borderRadius: 20,
+      width: '90%' as any,
+      paddingHorizontal: 6,
+      paddingVertical: 10,
+    };
+
+    switch (step) {
+      case 0: // Welcome Step
+        return {
+          ...baseStyle,
+          height: '30%' as any,
+        };
+      case 1: // Onboarding Conversation Step
+        return {
+          ...baseStyle,
+          height: '70%' as any,
+          marginVertical: 20, // Add some margin for better visibility
+        };
+      case 2: // Finish Step
+        return {
+          ...baseStyle,
+          height: '30%' as any,
+        };
+      default:
+        return baseStyle;
+    }
+  };
+
   const stepList = [
     {
-      content: <WelcomeStep onNext={() => {
-        showNotification('Successfully started the setup process.');
-        wizardRef.current?.next();
-      } } />
+      content: (
+        <WelcomeStep
+          onNext={() => {
+            showNotification('Successfully started the setup process.');
+            wizardRef.current?.next();
+          }}
+        />
+      ),
     },
     {
-      content: <OnboardingConversationStep wizardRef={wizardRef}/>
+      content: <OnboardingConversationStep wizardRef={wizardRef} />,
     },
     {
-      content: <FinishStep />
-    }
+      content: <FinishStep />,
+    },
   ];
 
   return (
@@ -49,49 +82,45 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }
       onRequestClose={onClose}
     >
       <MessageProvider>
-     <SafeAreaView style={styles.modalContainer}>
-        <View style={styles.wizardContainer}>
-          {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
-            ref: wizardRef,
-            steps: stepList,
-            isFirstStep: (val) => setIsFirstStep(val),
-            isLastStep: (val) => setIsLastStep(val),
-            onNext: (step) => {
-              
-            },
-            onPrev: (step) => {
-              console.log("Previous Step", step);
-            },
-            currentStep: ({ currentStep, isLastStep, isFirstStep }) => {
-              console.log("Current step: ", currentStep);
-            }
-          })}
-        </View>
-        <View style={styles.buttonContainer}>
-          {!isFirstStep && (
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={[styles.wizardWrapper, getWizardContainerStyle(currentStep)]}>
+            {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
+              ref: wizardRef,
+              steps: stepList,
+              isFirstStep: (val) => setIsFirstStep(val),
+              isLastStep: (val) => setIsLastStep(val),
+              onNext: () => setCurrentStep(prev => prev + 1),
+              onPrev: () => setCurrentStep(prev => prev - 1),
+              currentStep: ({ currentStep }) => {
+                setCurrentStep(currentStep);
+              },
+            })}
+          </View>
+          <View style={styles.buttonContainer}>
+            {!isFirstStep && (
+              <Button
+                onPress={() => wizardRef.current?.prev()}
+                style={styles.button}
+              >
+                Back
+              </Button>
+            )}
             <Button
-              onPress={() => wizardRef.current?.prev()}
+              onPress={() => {
+                if (isLastStep) {
+                  onClose();
+                } else {
+                  wizardRef.current?.next();
+                }
+              }}
               style={styles.button}
             >
-              Back
+              {isLastStep ? "Finish" : "Next"}
             </Button>
-          )}
-          <Button
-            onPress={() => {
-              if (isLastStep) {
-                onClose();
-              } else {
-                wizardRef.current?.next();
-              }
-            }}
-            style={styles.button}
-          >
-            {isLastStep ? "Finish" : "Next"}
-          </Button>
-        </View>
-      </SafeAreaView>
+          </View>
+        </SafeAreaView>
+        <Toast />
       </MessageProvider>
-      <Toast/>
     </Modal>
   );
 };
@@ -104,23 +133,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     width: '100%',
   },
-  wizardContainer: {
-    backgroundColor: '#1f281f',
-    borderRadius: 20,
+  wizardWrapper: {
     width: '90%',
-    height: '80%',
-    paddingHorizontal: 6, 
-    paddingVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '90%',
     marginTop: 20,
+    paddingHorizontal: 6,
   },
   button: {
     width: '48%',
   },
 });
+
+export default WelcomeModal

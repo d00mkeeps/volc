@@ -1,4 +1,3 @@
-// FinishStep.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -18,32 +17,27 @@ export const FinishStep: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
-    color: '#8cd884'
-
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#8cd884'
-
+    color: '#8cd884',
   },
   description: {
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 30,
-    color: '#8cd884'
-
-  
+    color: '#8cd884',
   },
   instruction: {
     fontSize: 14,
     fontStyle: 'italic',
     textAlign: 'center',
-    color: '#8cd884'
+    color: '#8cd884',
   },
 });

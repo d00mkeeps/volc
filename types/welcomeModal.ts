@@ -10,6 +10,7 @@ export type ActualWizardProps = {
 
 export interface OnboardingStepProps {
     wizardRef?: React.RefObject<any>;
+    onMessageSent?: () => void
   }
 
 export type WelcomeModalProps = {

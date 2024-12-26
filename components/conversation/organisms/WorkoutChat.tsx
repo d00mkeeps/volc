@@ -1,6 +1,4 @@
-import { useCallback } from "react";
-import {ChatUI} from "./ChatUI";
-import { View, StyleSheet } from "react-native";
+/*import { View, StyleSheet } from "react-native";
 import { WorkoutChatProps } from "@/types/chat";
 
 export const WorkoutChat: React.FC<WorkoutChatProps> = ({
@@ -31,4 +29,4 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column', // Add this
   },
-});
+});*/

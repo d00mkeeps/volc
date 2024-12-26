@@ -1,5 +1,5 @@
 import { useMessage } from "@/context/MessageContext";
-import { ChatConfigName, ChatUIProps } from "@/types/chat";
+import { ChatUIProps } from "@/types/chat";
 import { useRef, useEffect, useCallback, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView } from "react-native";
 import Header from "../molecules/Header";
@@ -62,6 +62,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
       registerMessageHandler(null);
     };
   }, [onSignal, registerMessageHandler]);
+  
   const handleSendMessage = useCallback((message: string) => {
     sendMessage(message);
   }, [sendMessage]);

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { WelcomeModal } from '@/components/welcomeModal/WelcomeModal';
+import WelcomeModal from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';

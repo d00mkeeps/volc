@@ -6,7 +6,7 @@ import { ChatUI } from "../conversation/organisms/ChatUI";
 import { OnboardingStepProps } from "@/types/welcomeModal";
 
 export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({ 
-  wizardRef 
+  wizardRef,
 }) => {
   const { sendMessage, messages } = useMessage();
   const userProfileService = new UserProfileService();
@@ -44,6 +44,9 @@ const styles = StyleSheet.create({
   stepContainer: {
     flex: 1,
     width: '100%',
+    height: '100%',
     backgroundColor: '#1f281f',
+    minHeight: '100%',
+    alignSelf: 'stretch',
   },
 });
