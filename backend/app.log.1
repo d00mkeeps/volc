@@ -1,57 +1,79 @@
-2024-12-25 21:22:40,075 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2024-12-25 21:22:40,125 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1065b1520>
-2024-12-25 21:22:40,125 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x106657bd0> server_hostname='api.anthropic.com' timeout=None
-2024-12-25 21:22:40,171 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1065b15e0>
-2024-12-25 21:22:40,172 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-12-25 21:22:40,172 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-12-25 21:22:40,172 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-12-25 21:22:40,172 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-12-25 21:22:40,172 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-12-25 21:22:42,849 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 26 Dec 2024 03:22:42 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-12-26T03:22:41Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2024-12-26T03:22:45Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2024-12-26T03:22:42Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2024-12-26T03:22:42Z'), (b'request-id', b'req_01CcrEfEo5tC6oQxRYdgaSc8'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8f7df2a1786cd63c-IAD'), (b'Content-Encoding', b'gzip')])
-2024-12-25 21:22:42,851 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-12-25 21:22:42,851 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-12-25 21:22:42,852 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-12-25 21:22:42,852 - httpcore.http11 - DEBUG - response_closed.started
-2024-12-25 21:22:42,852 - httpcore.http11 - DEBUG - response_closed.complete
-2024-12-25 21:22:42,853 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-12-25 21:22:42,857 - app.services.chains.onboarding_chain - INFO - [32mExtracted Data: {
-  "personalInfo": {
-    "firstName": null,
-    "lastName": null,
-    "ageGroup": null,
-    "preferredUnits": null
-  },
-  "goal": null,
-  "fitnessBackground": {
-    "trainingAge": null,
-    "exercisePreferences": [],
-    "currentAbilities": [],
-    "injuries": []
-  }
-}[0m
-2024-12-25 21:22:42,862 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Hi'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. \n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. First/Last Name + Unit system (metric/imperial)\n2. Basic Goal\n3. Goal Timeframe\n4. Specific Goal Numbers\n5. Current Abilities\n6. Training Preferences\n7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)\n8. Training Age (years of experience)\n9. Injuries\n\n\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Thanks, John! What fitness goals would you like to achieve?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other text or system information.\n\n5. SUMMARY DISPLAY\nOnly once all the required information has been collected, return this exact message:\n\nGreat! I\'ve got all the information I need. Here\'s a summary of what we discussed:\n\nTraining Profile for [First Name]:\n- Goal: [specific goal with timeframe]\n- Current Level: [abilities]\n- Experience: [training age]\n- Preferences: [exercise preferences]\n- Health Notes: [injuries/limitations]\n\nPersonal Details:\n- Name: [First Last]\n- Age Group: [range]\n- Units: [metric/imperial]\n\nDoes this look accurate to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. Age Group Question\n   When asking for age group, always list valid ranges:\n   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"\n\n2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.\n\n3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"\n\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}
-2024-12-25 21:22:42,864 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2024-12-25 21:22:42,901 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1065b2a50>
-2024-12-25 21:22:42,901 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1065c6850> server_hostname='api.anthropic.com' timeout=None
-2024-12-25 21:22:42,946 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1065b05f0>
-2024-12-25 21:22:42,946 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-12-25 21:22:42,947 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-12-25 21:22:42,948 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-12-25 21:22:42,948 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-12-25 21:22:42,948 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-12-25 21:22:43,670 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 26 Dec 2024 03:22:43 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-12-26T03:22:44Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2024-12-26T03:22:46Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2024-12-26T03:22:50Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'45000'), (b'anthropic-ratelimit-tokens-reset', b'2024-12-26T03:22:46Z'), (b'request-id', b'req_01Ngzvsb3G1VQHgqjxi4inXy'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8f7df2b2dc69c99b-IAD')])
-2024-12-25 21:22:43,671 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-12-25 21:22:43,672 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-12-25 21:22:43,672 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-12-25 21:22:44,486 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-12-25 21:22:44,487 - httpcore.http11 - DEBUG - response_closed.started
-2024-12-25 21:22:44,487 - httpcore.http11 - DEBUG - response_closed.complete
-2024-12-25 21:22:54,419 - app.services.onboarding_service - INFO - WebSocket disconnected
-2024-12-25 21:22:54,420 - app.services.onboarding_service - INFO - WebSocket connection closed
-2024-12-25 21:25:20,894 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,906 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,923 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,923 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,934 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,935 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,946 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,420 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,441 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,442 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,454 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,455 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,463 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,463 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,485 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:05:15,487 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,487 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,495 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,496 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,503 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,504 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,512 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,513 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,524 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:05:15,526 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,526 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,534 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,534 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,541 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,541 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,548 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,548 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,557 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:05:15,558 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,558 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,565 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,566 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,581 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,583 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,640 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:05:15,640 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:05:15,683 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:05:15,684 - httpcore.connection - DEBUG - close.started
+2024-12-26 08:05:15,684 - httpcore.connection - DEBUG - close.started
+2024-12-26 08:05:15,685 - httpcore.connection - DEBUG - close.complete
+2024-12-26 08:05:15,687 - httpcore.connection - DEBUG - close.complete
+2024-12-26 08:06:19,500 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:06:19,502 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:06:19,509 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:06:19,511 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:06:19,512 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:06:19,515 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:06:19,515 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:06:19,515 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:06:24,390 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,392 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,406 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,407 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,416 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,416 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,423 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,424 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,436 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:06:24,438 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,438 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,445 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,446 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,452 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,452 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,462 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:06:24,463 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:06:24,471 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:11:03,057 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:11:03,062 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:11:03,063 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:11:03,063 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:11:09,890 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,904 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,918 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,919 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,927 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,928 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,936 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,936 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,954 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:11:09,956 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False

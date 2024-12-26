@@ -1,13 +1,30 @@
-2024-12-25 21:25:20,947 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,967 - app.services.onboarding_service - INFO - WebSocket connection accepted
-2024-12-25 21:25:20,971 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,972 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,979 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,979 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,986 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,986 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:20,992 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-25 21:25:20,993 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-25 21:25:21,001 - app.services.onboarding_service - INFO - WebSocket connection accepted
-2024-12-25 21:25:24,221 - app.services.onboarding_service - INFO - WebSocket disconnected
-2024-12-25 21:25:24,221 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:11:09,956 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,965 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,965 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,973 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,973 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,979 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:11:09,980 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:11:09,989 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:13:14,244 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:13:14,247 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:13:14,251 - app.services.onboarding_service - INFO - WebSocket disconnected
+2024-12-26 08:13:14,252 - app.services.onboarding_service - INFO - WebSocket connection closed
+2024-12-26 08:13:57,872 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,886 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,904 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,905 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,914 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,914 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,922 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,922 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,937 - app.services.onboarding_service - INFO - WebSocket connection accepted
+2024-12-26 08:13:57,939 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,939 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,947 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,947 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:57,953 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:57,954 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:58,012 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-26 08:13:58,022 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-26 08:13:58,067 - app.services.onboarding_service - INFO - WebSocket connection accepted

@@ -1,21 +1,14 @@
 import { useMessage } from "@/context/MessageContext";
 import { UserProfileService } from "@/services/supabase/onboarding";
-import { useEffect, useCallback } from "react";
+import { OnboardingStepProps } from "@/types/welcomeModal";
+import { useRef, useEffect, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { ChatUI } from "../conversation/organisms/ChatUI";
-import { OnboardingStepProps } from "@/types/welcomeModal";
 
 export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({ 
-  wizardRef,
+  wizardRef 
 }) => {
-  const { sendMessage, messages } = useMessage();
   const userProfileService = new UserProfileService();
-
-  useEffect(() => {
-    if (messages.length === 0) {
-      sendMessage("Hi");
-    }
-  }, []);
 
   const handleSignal = useCallback(async (type: string, data: any) => {
     if (type === 'workout_history_approved') {

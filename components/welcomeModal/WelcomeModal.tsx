@@ -1,7 +1,7 @@
 import { MessageProvider } from "@/context/MessageContext";
 import { WelcomeModalProps, ActualWizardProps } from "@/types/welcomeModal";
 import { useRef, useState } from "react";
-import { Modal, SafeAreaView, View, StyleSheet } from "react-native";
+import { Modal, SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import Wizard, { WizardRef } from "react-native-wizard";
 import WelcomeStep from "./WelcomeStep";
@@ -42,7 +42,7 @@ import { Button } from "../public/atoms";
       case 1: // Onboarding Conversation Step
         return {
           ...baseStyle,
-          height: '70%' as any,
+          height: '80%' as any,
           marginVertical: 20, // Add some margin for better visibility
         };
       case 2: // Finish Step
@@ -76,54 +76,63 @@ import { Button } from "../public/atoms";
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={isVisible}
       onRequestClose={onClose}
     >
       <MessageProvider>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={[styles.wizardWrapper, getWizardContainerStyle(currentStep)]}>
-            {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
-              ref: wizardRef,
-              steps: stepList,
-              isFirstStep: (val) => setIsFirstStep(val),
-              isLastStep: (val) => setIsLastStep(val),
-              onNext: () => setCurrentStep(prev => prev + 1),
-              onPrev: () => setCurrentStep(prev => prev - 1),
-              currentStep: ({ currentStep }) => {
-                setCurrentStep(currentStep);
-              },
-            })}
-          </View>
-          <View style={styles.buttonContainer}>
-            {!isFirstStep && (
-              <Button
-                onPress={() => wizardRef.current?.prev()}
-                style={styles.button}
-              >
-                Back
-              </Button>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={[styles.wizardWrapper, getWizardContainerStyle(currentStep)]}>
+              {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
+                ref: wizardRef,
+                steps: stepList,
+                isFirstStep: (val) => setIsFirstStep(val),
+                isLastStep: (val) => setIsLastStep(val),
+                onNext: () => setCurrentStep(prev => prev + 1),
+                onPrev: () => setCurrentStep(prev => prev - 1),
+                currentStep: ({ currentStep }) => {
+                  setCurrentStep(currentStep);
+                },
+              })}
+            </View>
+            {currentStep !== 1 && (
+              <View style={styles.buttonContainer}>
+                {!isFirstStep && !isLastStep && (
+                  <Button
+                    onPress={() => wizardRef.current?.prev()}
+                    style={styles.button}
+                  >
+                    Back
+                  </Button>
+                )}
+                <Button
+                  onPress={() => {
+                    if (isLastStep) {
+                      onClose();
+                    } else {
+                      wizardRef.current?.next();
+                    }
+                  }}
+                  style={{
+                    ...styles.button,
+                    width: (!isFirstStep && !isLastStep) ? '48%' : '100%'
+                  }}
+                >
+                  {isLastStep ? "Finish" : "Next"}
+                </Button>
+              </View>
             )}
-            <Button
-              onPress={() => {
-                if (isLastStep) {
-                  onClose();
-                } else {
-                  wizardRef.current?.next();
-                }
-              }}
-              style={styles.button}
-            >
-              {isLastStep ? "Finish" : "Next"}
-            </Button>
-          </View>
-        </SafeAreaView>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
         <Toast />
       </MessageProvider>
     </Modal>
-  );
-};
+  );}
 
 const styles = StyleSheet.create({
   modalContainer: {

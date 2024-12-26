@@ -118,6 +118,8 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!connectionState.canSendMessage) return;
 
     const messageId = Date.now().toString();
+
+    //Replace with UUID and conversation id
     const newMessage: Message = {
       id: messageId,
       role: 'user',
