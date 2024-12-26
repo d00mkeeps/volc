@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import WorkoutDisplay from '@/components/workout/organisms/WorkoutDisplay';
-import { sampleWorkouts } from '@/assets/mockData'; // Adjust the import path as needed
+import { sampleWorkouts } from '@/assets/mockData'; 
 
 export default function WorkoutHistoryScreen() {
 

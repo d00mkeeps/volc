@@ -1,9 +1,8 @@
 import { ChatUI } from "@/components/conversation/organisms/ChatUI";
-import { WorkoutChat } from "@/components/conversation/organisms/WorkoutChat";
 import { useMessage } from "@/context/MessageContext";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useCallback, useEffect } from "react";
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 function ConversationPage() {
   const { id, pendingMessage } = useLocalSearchParams<{ 
@@ -37,22 +36,18 @@ function ConversationPage() {
     console.log('ConversationPage connection state:', connectionState.type);
   }, [connectionState.type]);
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
+    <View style={styles.container}>
       <ChatUI 
         configName="default"
         conversationId={id}
         title="Trainsmart"
         subtitle="Chat to your AI coach today!"
         onSignal={handleSignal}
+        showNavigation={true}
       />
-    </KeyboardAvoidingView>
-  );
-}
-
+    </View>
+  );}
+  
 const styles = StyleSheet.create({
   container: {
     flex: 1,

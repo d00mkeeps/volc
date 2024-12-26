@@ -26,22 +26,27 @@ export default function HomeScreen() {
       router.setParams({ openWelcomeModal: undefined });
     }
   }, [params.openWelcomeModal]);
-  const handleConversationPress = (id: string) => {
-    router.push(`/conversation/${id}`);
-  };
 
+  const handleConversationPress = (id: string) => {
+    console.log(`Routing to conversation ${id}`);
+    router.push({
+      pathname: "/conversation/[id]",
+      params: { id }
+    });
+  };
+  
   const handleNewMessage = async (message: string) => {
     if (isCreatingConversation) return;
     
     try {
       setIsCreatingConversation(true);
-      const conversationId = await createNewConversation();
+      const newConversationId = await createNewConversation();
       
       // Navigate to conversation with pending message
       router.push({
-        pathname: "/conversation/[id]" as const,
+        pathname: "/conversation/[id]",
         params: { 
-          id: conversationId,
+          id: newConversationId,
           pendingMessage: message 
         }
       });

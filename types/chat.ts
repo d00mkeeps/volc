@@ -13,13 +13,14 @@ export type ChatConfigName =
 interface SignalHandler {
     (type: string, data: any): void
   }
-export interface ChatUIProps {
-  configName: ChatConfigName;
-  conversationId?: string;
-  title: string;
-  subtitle?: string;
-  onSignal?: (type: string, data: any) => void;
-}
+ export  interface ChatUIProps {
+    configName: ChatConfigName;
+    conversationId?: string;
+    title: string;
+    subtitle?: string;
+    onSignal?: (type: string, data: any) => void;
+    showNavigation?: boolean
+  }
 
 export interface WorkoutChatProps {
   conversationId: string;
@@ -47,6 +48,9 @@ export interface WorkoutChatProps {
 export interface HeaderProps {
   title?: string;  // Made optional to match ChatUIProps
   subtitle?: string;
+  showNavigation?: boolean,
+  onHomePress?: () => void,
+  onBackPress?: () => void
 }
 
 export interface MessageListProps {

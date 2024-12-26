@@ -1,18 +1,10 @@
 import { useMessage } from "@/context/MessageContext";
-import { ChatConfigName } from "@/types/chat";
-import { useRef, useEffect } from "react";
-import { View, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { ChatConfigName, ChatUIProps } from "@/types/chat";
+import { useRef, useEffect, useCallback, useState } from "react";
+import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView } from "react-native";
 import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
-
-interface ChatUIProps {
-  configName: ChatConfigName;
-  conversationId?: string;
-  title: string;
-  subtitle?: string;
-  onSignal?: (type: string, data: any) => void;
-}
 
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
@@ -20,6 +12,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
   title,
   subtitle,
   onSignal,
+  showNavigation,
 }) => {
   const { 
     messages, 
@@ -30,10 +23,26 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     registerMessageHandler
   } = useMessage();
 
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const hasConnectedRef = useRef(false);
 
-  // Handle initial connection
   useEffect(() => {
+    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', () => {
+      console.log('ChatUI: Keyboard shown');
+      setKeyboardVisible(true);
+    });
+
+    const keyboardDidHide = Keyboard.addListener('keyboardDidHide', () => {
+      console.log('ChatUI: Keyboard hidden');
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidShow.remove();
+      keyboardDidHide.remove();
+    };
+  }, []);
+    useEffect(() => {
     if (!hasConnectedRef.current && connectionState.type !== 'CONNECTED') {
       console.log(`ChatUI: Initial connection for ${configName}`);
       hasConnectedRef.current = true;
@@ -53,30 +62,33 @@ export const ChatUI: React.FC<ChatUIProps> = ({
       registerMessageHandler(null);
     };
   }, [onSignal, registerMessageHandler]);
+  const handleSendMessage = useCallback((message: string) => {
+    sendMessage(message);
+  }, [sendMessage]);
 
   return (
-    <View style={styles.container}>
-      <Header title={title} subtitle={subtitle} />
-      
+    <SafeAreaView style={styles.container}>
+      <Header 
+      title={title} 
+      subtitle={subtitle}
+      showNavigation={showNavigation} />
       <MessageList 
         messages={messages}
         streamingMessage={streamingMessage}
         style={styles.messageList}
       />
-      
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.inputContainer}
       >
         <InputArea
           disabled={!connectionState.canSendMessage}
           onSendMessage={sendMessage}
         />
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -84,5 +96,9 @@ const styles = StyleSheet.create({
   },
   messageList: {
     flex: 1,
+  },
+  inputContainer: {
+    width: '100%',
+    backgroundColor: '#1f281f',
   }
 });

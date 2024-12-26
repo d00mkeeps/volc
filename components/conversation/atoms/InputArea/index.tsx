@@ -1,45 +1,77 @@
 import { InputAreaProps } from "@/types/index";
-import { memo, useCallback, useEffect, useState,  } from "react";
-import { View, 
+import { memo, useCallback, useEffect, useState, useRef } from "react";
+import { 
+  View, 
   TextInput, 
   TouchableOpacity, 
   Text,
-StyleSheet, 
-LayoutChangeEvent} from "react-native";
+  StyleSheet, 
+  LayoutChangeEvent,
+  Keyboard
+} from "react-native";
 
 const InputArea: React.FC<InputAreaProps> = memo(({ disabled, onSendMessage }) => {
   const [input, setInput] = useState('');
+  const lastLayoutRef = useRef<LayoutChangeEvent['nativeEvent']['layout']>();
+
+  const measureLayout = useCallback((event: LayoutChangeEvent) => {
+    const currentLayout = event.nativeEvent.layout;
+    const lastLayout = lastLayoutRef.current;
+    
+    console.log('InputArea layout event:', {
+      current: currentLayout,
+      previous: lastLayout,
+      changed: lastLayout ? {
+        x: currentLayout.x !== lastLayout.x,
+        y: currentLayout.y !== lastLayout.y,
+        width: currentLayout.width !== lastLayout.width,
+        height: currentLayout.height !== lastLayout.height
+      } : 'initial layout'
+    });
+
+    lastLayoutRef.current = currentLayout;
+  }, []);
 
   useEffect(() => {
-    console.log('InputArea rendered');
-  });
+    const keyboardWillShow = Keyboard.addListener('keyboardWillShow', (event) => {
+      console.log('Keyboard will show:', event);
+    });
+    
+    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', (event) => {
+      console.log('Keyboard did show:', event);
+    });
 
-  const measureLayout = useCallback(() => {
-    // Using onLayout to get position info
-    return (event: LayoutChangeEvent) => {
-      const {x, y, width, height} = event.nativeEvent.layout;
-      console.log('InputArea position:', {x, y, width, height});
+    const keyboardWillHide = Keyboard.addListener('keyboardWillHide', (event) => {
+      console.log('Keyboard will hide:', event);
+    });
+    
+    const keyboardDidHide = Keyboard.addListener('keyboardDidHide', (event) => {
+      console.log('Keyboard did hide:', event);
+    });
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardDidShow.remove();
+      keyboardWillHide.remove();
+      keyboardDidHide.remove();
     };
   }, []);
 
-  // Track input changes
-  const handleInputChange = (text: string) => {
-    console.log('Input changed:', text);
+  const handleInputChange = useCallback((text: string) => {
     setInput(text);
-  };
-  
+  }, []);
 
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     if (!disabled && input.trim()) {
       onSendMessage(input);
       setInput('');
     }
-  };
+  }, [disabled, input, onSendMessage]);
 
   return (
     <View 
-    style={styles.container}
-    onLayout={measureLayout}
+      style={styles.container}
+      onLayout={measureLayout}
     >
       <TextInput
         style={[styles.input, disabled && styles.disabledInput]}
@@ -71,11 +103,7 @@ const InputArea: React.FC<InputAreaProps> = memo(({ disabled, onSendMessage }) =
   );
 });
 
-
 const styles = StyleSheet.create({
-  keyboardAvoidingView: {
-    width: '100%',
-  },
   container: {
     flexDirection: 'row',
     paddingVertical: 16,
@@ -84,10 +112,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#2a332a',
     width: '100%',
-  },
-  homePageContainer: {
-    backgroundColor: '#222',
-    borderTopColor: '#333',
+    position: 'relative',
+    bottom: 0,
   },
   input: {
     flex: 1,
@@ -102,10 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 40,
   },
-  homePageInput: {
-    backgroundColor: '#333',
-    borderColor: '#444',
-  },
   disabledInput: {
     backgroundColor: '#0a1c08',
     borderColor: '#1a231a',
@@ -119,9 +141,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     minWidth: 80,
-  },
-  homePageSendButton: {
-    backgroundColor: '#4CAF50', // Keep the same or change if needed
   },
   disabledButton: {
     backgroundColor: '#2a332a',
