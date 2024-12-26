@@ -26,7 +26,7 @@ export const OnboardingConversationStep: React.FC<OnboardingStepProps> = ({
       <ChatUI 
         configName="onboarding"
         title="Let's Get to Know You"
-        subtitle="Building your personalized fitness journey"
+        subtitle="Send a message to meet the TrainSmart coach!"
         onSignal={handleSignal}
       />
     </View>

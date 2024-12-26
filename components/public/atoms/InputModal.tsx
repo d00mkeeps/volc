@@ -1,27 +1,39 @@
-import React, { useEffect } from 'react';
+// components/common/InputModal.tsx
+import React from 'react';
 import {
+  KeyboardAvoidingView,
+  Platform,
+  Animated,
+  TouchableWithoutFeedback,
   View,
   TextInput,
   TouchableOpacity,
   Text,
-  TouchableWithoutFeedback,
-  Animated,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
-import { styles } from '../../../public/atoms/styles';
-import { ExpandedModalProps } from '@/types/index';
+import { styles } from './styles'; 
 
-const ExpandedModal: React.FC<ExpandedModalProps> = ({
+interface InputModalProps {
+  visible: boolean;
+  onClose: () => void;
+  value: string;
+  onChangeText: (text: string) => void;
+  onSend: () => void;
+  title?: string;
+  placeholder?: string;
+}
+
+const InputModal: React.FC<InputModalProps> = ({
   visible,
   onClose,
   value,
   onChangeText,
   onSend,
+  title = "Type a message",
+  placeholder = "3 sets of squat (180x5, 180x5, 180x4);\n5k @ 5:40 pace..."
 }) => {
   const slideAnim = React.useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (visible) {
       Animated.spring(slideAnim, {
         toValue: 1,
@@ -62,30 +74,24 @@ const ExpandedModal: React.FC<ExpandedModalProps> = ({
               ]}
             >
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Start conversation!</Text>
+                <Text style={styles.modalTitle}>{title}</Text>
               </View>
               <TextInput
                 style={styles.expandedInput}
                 value={value}
                 onChangeText={onChangeText}
                 multiline
-                placeholder="Describe your workout..."
+                placeholder={placeholder}
                 placeholderTextColor="#666"
                 autoFocus
                 keyboardAppearance="dark"
               />
               <TouchableOpacity
-                style={[
-                  styles.sendButton,
-                  !value.trim() && styles.disabledButton
-                ]}
+                style={[styles.sendButton, !value.trim() && styles.disabledButton]}
                 onPress={onSend}
                 disabled={!value.trim()}
               >
-                <Text style={[
-                  styles.sendButtonText,
-                  !value.trim() && styles.disabledButtonText
-                ]}>
+                <Text style={[styles.sendButtonText, !value.trim() && styles.disabledButtonText]}>
                   Send
                 </Text>
               </TouchableOpacity>
@@ -97,4 +103,4 @@ const ExpandedModal: React.FC<ExpandedModalProps> = ({
   );
 };
 
-export default ExpandedModal;
+export default InputModal;

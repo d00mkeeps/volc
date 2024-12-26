@@ -38,6 +38,10 @@ export interface ExpandedModalProps {
 export interface InputAreaProps {
   disabled?: boolean;
   onSendMessage: (message: string) => void;
+  useModal?: boolean; // Add this prop to control whether to use modal behavior
+  modalTitle?: string;
+  customContainerStyle?: ViewStyle
+
 }
 
 export interface WorkoutChatProps {

@@ -7,7 +7,6 @@ import ConversationList from '@/components/conversation/organisms/ConversationLi
 import InputArea from '@/components/conversation/atoms/InputArea';
 import { v4 as uuidv4 } from 'uuid';
 
-// Temporary function - to be replaced with actual database implementation
 const createNewConversation = async (): Promise<string> => {
  const conversationId = uuidv4(
  )
@@ -71,6 +70,9 @@ export default function HomeScreen() {
       <InputArea 
         onSendMessage={handleNewMessage}
         disabled={isCreatingConversation}
+        useModal={true}
+        modalTitle='Enter your workout!'
+        customContainerStyle={{ backgroundColor: '#222'}}
       />
       <WelcomeModal 
         isVisible={openWelcomeModal} 

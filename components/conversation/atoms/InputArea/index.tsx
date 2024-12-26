@@ -1,4 +1,6 @@
+import InputModal from "@/components/public/atoms/InputModal";
 import { InputAreaProps } from "@/types/index";
+import React from "react";
 import { memo, useCallback, useEffect, useState, useRef } from "react";
 import { 
   View, 
@@ -10,8 +12,15 @@ import {
   Keyboard
 } from "react-native";
 
-const InputArea: React.FC<InputAreaProps> = memo(({ disabled, onSendMessage }) => {
+const InputArea: React.FC<InputAreaProps> = memo(({ 
+  disabled, 
+  onSendMessage,
+  useModal= false,
+  modalTitle = 'Start conversation',
+  customContainerStyle
+ }) => {
   const [input, setInput] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
   const lastLayoutRef = useRef<LayoutChangeEvent['nativeEvent']['layout']>();
 
   const measureLayout = useCallback((event: LayoutChangeEvent) => {
@@ -65,12 +74,49 @@ const InputArea: React.FC<InputAreaProps> = memo(({ disabled, onSendMessage }) =
     if (!disabled && input.trim()) {
       onSendMessage(input);
       setInput('');
+      setModalVisible(false)
     }
   }, [disabled, input, onSendMessage]);
 
+  if (useModal) {
+    return (
+      <>
+        <TouchableOpacity 
+          onPress={() => setModalVisible(true)}
+          disabled={disabled}
+        >
+          <View style={[styles.container, customContainerStyle]}>
+            <TextInput
+              style={[styles.input, disabled && styles.disabledInput]}
+              placeholder={disabled ? 'Loading...' : 'Type a message...'}
+              placeholderTextColor="#666"
+              editable={false}
+              pointerEvents="none"
+            />
+            <View style={[styles.sendButton, disabled && styles.disabledButton]}>
+              <Text style={[styles.sendButtonText, disabled && styles.disabledButtonText]}>
+                Send
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <InputModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          value={input}
+          onChangeText={handleInputChange}
+          onSend={handleSend}
+          title={modalTitle}
+        />
+      </>
+    );
+  }
+  
+
   return (
     <View 
-      style={styles.container}
+      style={[styles.container, customContainerStyle]}
       onLayout={measureLayout}
     >
       <TextInput
