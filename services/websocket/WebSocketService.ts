@@ -35,17 +35,16 @@ export class WebSocketService {
     this.currentConfigName = configName;
     
     try {
-      // Build the appropriate URL based on the chat type
       let url;
       if (configName === 'onboarding') {
         url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
       } else if (conversationId) {
-        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}/${conversationId}`;
+        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}default/${conversationId}`;
       } else {
         throw new Error('Conversation ID required for non-onboarding chats');
       }
 
-      console.log('Attempting to connect to WebSocket URL:', url);
+      console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
       this.attachEventHandlers();
     } catch (error) {
@@ -58,44 +57,50 @@ export class WebSocketService {
     if (!this.socket) return;
 
     this.socket.onopen = () => {
+      console.log('WebSocket connection opened');
       this.events.emit('connect');
     };
 
     this.socket.onmessage = (event: MessageEvent) => {
       try {
         let message;
-        //handle string and objects
         if (typeof event.data === 'string') {
-          message = JSON.parse(event.data)
+          message = JSON.parse(event.data);
         } else {
-          //if it's already an object, stringify and parse it
-          message = JSON.parse(JSON.stringify(event.data))
+          message = JSON.parse(JSON.stringify(event.data));
         } 
-        this.events.emit('message', message)
-      } catch (error) {
-        this.handleError(new Error('Failed to parse WebSocket message!'))
+        console.log('WebSocket received message:', message);
+
+              // Handle connection status message
+      if (message.type === 'connection_status' && message.data === 'connected') {
+        this.events.emit('connect');  // Emit connect event again to ensure state update
       }
       
+        this.events.emit('message', message);
+      } catch (error) {
+        console.error('Failed to parse WebSocket message:', error);
+        this.handleError(new Error('Failed to parse WebSocket message'));
+      }
     };
 
     this.socket.onclose = (event) => {
-      this.events.emit('disconnect');
-      if (!event.wasClean) {
-        this.attemptReconnect();
-      }
+      console.log('WebSocket closed:', {
+        code: event.code,
+        reason: event.reason,
+        wasClean: event.wasClean
+      });
     };
 
+
     this.socket.onerror = (error) => {
-      console.log('WebSocket error occurred:', error);
-      this.handleError(new Error('WebSocket error occurred'));
-    };
-  }
+  console.error('WebSocket error:', error);
+};}
 
   private attemptReconnect(): void {
     if (!this.currentConfigName) return;
     
     if (this.reconnectAttempts >= this.reconnectAttempts) {
-      this.handleError(new Error('Max reconnection attempts reached'));
+      this.handleError(new Error(`Max reconnection attempts (${this.reconnectAttempts}) reached`));
       return;
     }
 
@@ -104,21 +109,23 @@ export class WebSocketService {
     }, this.reconnectInterval);
   }
 
-public sendMessage(payload: { message: string }): void {
-  if (this.socket?.readyState !== WebSocket.OPEN) {
+  public sendMessage(payload: { message: string }): void {
+    if (this.socket?.readyState !== WebSocket.OPEN) {
       this.handleError(new Error('WebSocket is not connected'));
       return;
-  }
+    }
 
-  try {
+    try {
       console.log('WebSocketService sending:', payload);
       this.socket.send(JSON.stringify(payload));
-  } catch (error) {
+    } catch (error) {
+      console.error('Failed to send message:', error);
       this.handleError(new Error('Failed to send message'));
+    }
   }
-}
 
   private handleError(error: Error): void {
+    console.error('WebSocket error:', error);
     this.events.emit('error', error);
   }
 

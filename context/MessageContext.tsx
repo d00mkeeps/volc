@@ -1,217 +1,188 @@
-import React, { 
-  createContext, 
-  useContext, 
-  useState, 
-  useRef, 
-  useCallback, 
-  useEffect, 
-  useMemo 
-} from 'react';
-import { WebSocketService } from '@/services/websocket/WebSocketService';
-import { StreamHandler } from '@/services/websocket/StreamHandler';
-import { 
-  Message, 
-  ConnectionState, 
-  MessageHandler,
-  ChatConfigName
-} from '@/types/index';
-import { MessageContextType } from '@/types/context';
+import { ConversationService } from "@/services/supabase/conversation";
+import { StreamHandler } from "@/services/websocket/StreamHandler";
+import { WebSocketService } from "@/services/websocket/WebSocketService";
+import { Message } from "@/types";
+import { createInitialConnectionState, MessageHandler } from "@/types/core";
+import { ConnectionState } from "@/types/states";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-const createInitialConnectionState = (): ConnectionState => ({
-  type: 'DISCONNECTED',
-  canSendMessage: false,
-  canConnect: true,
-  isLoading: false
-});
-
+interface MessageContextType {
+  messages: Message[];
+  streamingMessage: Message | null;
+  connectionState: ConnectionState;
+  startNewConversation: (firstMessage: string) => Promise<void>;
+  sendMessage: (content: string) => Promise<void>;
+  loadConversation: (conversationId: string) => Promise<void>;
+  registerMessageHandler: (handler: MessageHandler | null) => void;
+}
 const MessageContext = createContext<MessageContextType | null>(null);
-
 export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({ 
   children 
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
   const [connectionState, setConnectionState] = useState<ConnectionState>(createInitialConnectionState());
-  const [currentConfigName, setCurrentConfigName] = useState<ChatConfigName | null>(null);
-  
-  const messageHandlerRef = useRef<MessageHandler | null>(null);
-  const streamHandler = useMemo(() => new StreamHandler(), []);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+
+  const conversationService = useMemo(() => new ConversationService(), []);
   const webSocket = useMemo(() => new WebSocketService(), []);
+  const streamHandler = useMemo(() => new StreamHandler(), []);
+  const messageHandlerRef = useRef<MessageHandler | null>(null);
 
-  const streamingStateRef = useRef({
-    content: '',
-    messageId: '',
-  });
-
-  const connect = useCallback(async (
-    configName: ChatConfigName,
-    conversationId?: string
-  ) => {
-    if (webSocket.isConnected() && currentConfigName === configName) {
-      console.log('Already connected with this config');
-      return;
-    }
-
+  const loadConversation = useCallback(async (conversationId: string) => {
     try {
+      console.log('MessageContext: Loading conversation:', conversationId);
+      
+      const [conversation, messages] = await Promise.all([
+        conversationService.getConversation(conversationId),
+        conversationService.getConversationMessages(conversationId)
+      ]);
+  
+      console.log('MessageContext: Conversation details:', {
+        id: conversation.id,
+        config_name: conversation.config_name
+      });
+  
+      setMessages(messages);
+      setCurrentConversationId(conversationId);
+      
+      await webSocket.connect(conversation.config_name, conversationId);
+    } catch (error) {
+      console.error('MessageContext: Error loading conversation:', error);
       setConnectionState(prev => ({
         ...prev,
-        type: 'CONNECTING',
-        isLoading: true
+        type: 'ERROR',
+        error: error as Error
       }));
-      
-      await webSocket.initialize();
-      await webSocket.connect(configName, conversationId);
-      setCurrentConfigName(configName);
+    }
+  }, [conversationService, webSocket]);
+
+  const startNewConversation = useCallback(async (firstMessage: string) => {
+    if (!connectionState.canConnect) return;
+  
+    try {
+      const conversation = await conversationService.createConversation({
+        userId: 'current-user-id',
+        title: firstMessage.substring(0, 50),
+        firstMessage,
+        configName: 'chat'  //TODO: Add this parameter
+      });
+  
+      setCurrentConversationId(conversation.id);
+      setMessages([]);
+      await loadConversation(conversation.id);
     } catch (error) {
       setConnectionState(prev => ({
         ...prev,
         type: 'ERROR',
-        error: error as Error,
-        canSendMessage: false,
-        isLoading: false
+        error: error as Error
       }));
     }
-  }, [webSocket, currentConfigName]);
+  }, [connectionState.canConnect, conversationService, loadConversation]);
 
-  const handleStreamContent = useCallback((chunk: string) => {
-    streamingStateRef.current.content += chunk;
-    
-    const streamingMsg: Message = {
-      id: streamingStateRef.current.messageId || 'streaming',
-      role: 'assistant',
-      content: streamingStateRef.current.content
-    };
-    
-    setStreamingMessage(streamingMsg);
-  }, []);
+  const sendMessage = useCallback(async (content: string) => {
+    if (!currentConversationId || !connectionState.canSendMessage) return;
 
-  const handleStreamComplete = useCallback(() => {
-    const finalMessage: Message = {
-      id: Date.now().toString(),
-      role: 'assistant',
-      content: streamingStateRef.current.content
-    };
+    try {
+      const newMessage = await conversationService.saveMessage({
+        conversationId: currentConversationId,
+        content,
+        sender: 'user'
+      });
 
-    setMessages(prev => [...prev, finalMessage]);
-    setStreamingMessage(null);
-    
-    streamingStateRef.current = {
-      content: '',
-      messageId: '',
-    };
+      setMessages(prev => [...prev, newMessage]);
+      await webSocket.sendMessage({ message: content });
+    } catch (error) {
+      setConnectionState(prev => ({
+        ...prev,
+        type: 'ERROR',
+        error: error as Error
+      }));
+    }
+  }, [currentConversationId, connectionState.canSendMessage, conversationService, webSocket]);
 
+ // WebSocket handler
+useEffect(() => {
+  webSocket.on('connect', () => {
     setConnectionState(prev => ({
       ...prev,
       type: 'CONNECTED',
-      isLoading: false,
       canSendMessage: true
     }));
-  }, []);
+  });
 
-  const handleSignal = useCallback((signal: { type: string; data: any }) => {
-    if (messageHandlerRef.current) {
-      messageHandlerRef.current(signal.type, signal.data);
-    }
-  }, []);
-
-  const sendMessage = useCallback(async (content: string) => {
-    if (!connectionState.canSendMessage) return;
-
-    const messageId = Date.now().toString();
-
-    //Replace with UUID and conversation id
-    const newMessage: Message = {
-      id: messageId,
-      role: 'user',
-      content
-    };
-
-    setMessages(prev => [...prev, newMessage]);
+  webSocket.on('disconnect', () => {
     setConnectionState(prev => ({
       ...prev,
-      type: 'STREAMING',
-      isLoading: true,
+      type: 'DISCONNECTED',
       canSendMessage: false
     }));
+  });
 
-    streamingStateRef.current.messageId = messageId;
+  webSocket.on('error', (error: Error) => {
+    setConnectionState(prev => ({
+      ...prev,
+      type: 'ERROR',
+      error: error
+    }));
+  });
 
-    try {
-      console.log('Sending single message to WebSocket:', {
-        message: content,
-        messageId
-      });
+  webSocket.on('message', msg => streamHandler.handleMessage(msg));
+  
+  return () => {
+    webSocket.disconnect();
+  };
+}, [webSocket, streamHandler]);
 
-      await webSocket.sendMessage({ 
-        message: content
-      });
-    } catch (error) {
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'ERROR',
-        error: error as Error,
-        canSendMessage: true,
-        isLoading: false
-      }));
-    }
-  }, [webSocket, connectionState.canSendMessage]);
+// Stream handler
+useEffect(() => {
+  streamHandler.on('content', (chunk: string) => {
+    if (!currentConversationId) return;
+    
+    setStreamingMessage(prev => ({
+      id: 'streaming',
+      conversation_id: currentConversationId,
+      content: prev ? prev.content + chunk : chunk,
+      sender: 'assistant',
+      conversation_sequence: (messages[messages.length - 1]?.conversation_sequence || 0) + 1,
+      timestamp: new Date()
+    }));
+  });
 
-  const registerMessageHandler = useCallback((handler: MessageHandler | null) => {
-    messageHandlerRef.current = handler;
-  }, []);
-
-  useEffect(() => {
-    streamHandler.on('content', handleStreamContent);
-    streamHandler.on('done', handleStreamComplete);
-    streamHandler.on('signal', handleSignal);
-
-    webSocket.on('message', msg => streamHandler.handleMessage(msg));
-
-    webSocket.on('connect', () => {
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'CONNECTED',
-        canSendMessage: true,
-        isLoading: false
-      }));
+  streamHandler.on('done', async () => {
+    if (!streamingMessage || !currentConversationId) return;
+    
+    const finalMessage = await conversationService.saveMessage({
+      conversationId: currentConversationId,
+      content: streamingMessage.content,
+      sender: 'assistant'
     });
 
-    webSocket.on('disconnect', () => {
-      setCurrentConfigName(null);
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'DISCONNECTED',
-        canSendMessage: false,
-        isLoading: false
-      }));
-    });
+    setMessages(prev => [...prev, finalMessage]);
+    setStreamingMessage(null);
+    setConnectionState(prev => ({
+      ...prev,
+      type: 'CONNECTED',
+      canSendMessage: true
+    }));
+  });
 
-    webSocket.on('error', (error) => {
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'ERROR',
-        error,
-        canSendMessage: false,
-        isLoading: false
-      }));
-    });
-
-    return () => {
-      webSocket.disconnect();
-      streamHandler.off('content', handleStreamContent);
-      streamHandler.off('done', handleStreamComplete);
-      streamHandler.off('signal', handleSignal);
-    };
-  }, [webSocket, streamHandler, handleStreamContent, handleStreamComplete, handleSignal]);
+  return () => {
+    streamHandler.removeAllListeners();
+  };
+}, [currentConversationId, messages, streamingMessage, conversationService]);
 
   const value = useMemo(() => ({
     messages,
     streamingMessage,
     connectionState,
-    registerMessageHandler,
+    startNewConversation,
     sendMessage,
-    connect
-  }), [messages, streamingMessage, connectionState, registerMessageHandler, sendMessage, connect]);
+    loadConversation,
+    registerMessageHandler: (handler: MessageHandler | null) => {
+      messageHandlerRef.current = handler;
+    }
+  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation]);
 
   return (
     <MessageContext.Provider value={value}>

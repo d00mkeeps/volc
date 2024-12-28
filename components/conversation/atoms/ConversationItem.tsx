@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { Conversation } from '../../../assets/mockData';
+import { Conversation } from '@/types';
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -8,15 +8,19 @@ interface ConversationItemProps {
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPress }) => {
+  const formattedDate = new Date(conversation.updated_at).toLocaleString();
+  
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{conversation.title}</Text>
-        <Text style={styles.lastMessageTime}>Last message: {conversation.lastMessageTime}</Text>
+        <Text style={styles.title}>{conversation.title || 'Untitled Conversation'}</Text>
+        <Text style={styles.lastMessageTime}>Last updated: {formattedDate}</Text>
       </View>
       <View style={styles.contentRow}>
         <View style={styles.bottomRightComponent}>
-          <Text style={styles.bottomRightText}>attachments placeholder</Text>
+          <Text style={styles.bottomRightText}>
+            Messages: {conversation.message_count}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

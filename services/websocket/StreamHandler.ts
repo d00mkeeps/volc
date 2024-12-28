@@ -42,7 +42,6 @@ export class StreamHandler {
     }
   }
 
-  // Event listener methods remain unchanged
   public on<K extends keyof StreamEvents>(
     event: K,
     listener: StreamEvents[K]
@@ -56,6 +55,15 @@ export class StreamHandler {
     listener: StreamEvents[K]
   ): this {
     this.events.off(event, listener as any);
+    return this;
+  }
+
+  public removeAllListeners<K extends keyof StreamEvents>(event?: K): this {
+    if (event) {
+      this.events.removeAllListeners(event);
+    } else {
+      this.events.removeAllListeners();
+    }
     return this;
   }
 }

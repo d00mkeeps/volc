@@ -5,7 +5,7 @@ import WelcomeModal from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
-import { v4 as uuidv4 } from 'uuid';
+import { UUIDTypes, v4 as uuidv4 } from 'uuid';
 
 const createNewConversation = async (): Promise<string> => {
  const conversationId = uuidv4(

@@ -1,3 +1,5 @@
+import { ChatConfigName } from "./types/chat";
+
 export interface ProgramExercise {
   id: string;
   name?: string;
@@ -118,19 +120,24 @@ export interface ProgramDetailsModalProps {
 export interface UseConversationProps {
   initialConversation: Conversation;
 }
-export interface Conversation {
-  id: string;
-  title: string;
-  timestamp: string;
-  messages: Message[];
-  lastMessage: string | null;
-  lastMessageTime: string | null;
-}
-
 export interface Message {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  conversation_id: string;
+  conversation_sequence: number;
   content: string;
+  sender: 'user' | 'assistant';
+  timestamp: Date;
+}
+
+export interface Conversation {
+  id: string;
+  user_id: string;
+  title: string;
+  config_name: ChatConfigName;  // Add this
+  created_at: Date;
+  updated_at: Date;
+  status: 'active' | 'archived' | 'deleted';
+  message_count: number;
 }
 export interface UserProfile {
   user_id: number;

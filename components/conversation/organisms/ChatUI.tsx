@@ -19,7 +19,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     streamingMessage, 
     connectionState, 
     sendMessage,
-    connect,
+    loadConversation,
     registerMessageHandler
   } = useMessage();
 
@@ -42,18 +42,18 @@ export const ChatUI: React.FC<ChatUIProps> = ({
       keyboardDidHide.remove();
     };
   }, []);
-    useEffect(() => {
-    if (!hasConnectedRef.current && connectionState.type !== 'CONNECTED') {
-      console.log(`ChatUI: Initial connection for ${configName}`);
+
+  useEffect(() => {
+    if (!hasConnectedRef.current && connectionState.type !== 'CONNECTED' && conversationId) {
+      console.log(`ChatUI: Loading conversation ${conversationId}`);
       hasConnectedRef.current = true;
-      connect(configName, conversationId);
+      loadConversation(conversationId);
     }
     return () => {
       hasConnectedRef.current = false;
     };
-  }, [connect, configName, conversationId, connectionState.type]);
+  }, [loadConversation, conversationId, connectionState.type]);
 
-  // Handle signal registration
   useEffect(() => {
     if (onSignal) {
       registerMessageHandler(onSignal);
@@ -62,17 +62,14 @@ export const ChatUI: React.FC<ChatUIProps> = ({
       registerMessageHandler(null);
     };
   }, [onSignal, registerMessageHandler]);
-  
-  const handleSendMessage = useCallback((message: string) => {
-    sendMessage(message);
-  }, [sendMessage]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-      title={title} 
-      subtitle={subtitle}
-      showNavigation={showNavigation} />
+        title={title} 
+        subtitle={subtitle}
+        showNavigation={showNavigation} 
+      />
       <MessageList 
         messages={messages}
         streamingMessage={streamingMessage}
@@ -90,6 +87,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

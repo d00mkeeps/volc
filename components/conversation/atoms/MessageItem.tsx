@@ -12,12 +12,12 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message, isStreaming = f
     <View style={styles.messageWrapper}>
       <View style={[
         styles.container,
-        message.role === 'user' ? styles.userMessage : styles.assistantMessage,
+        message.sender === 'user' ? styles.userMessage : styles.assistantMessage,
         isStreaming && styles.streamingMessage
       ]}>
         <Text style={[
           styles.text,
-          message.role === 'user' ? styles.userText : styles.assistantText
+          message.sender === 'user' ? styles.userText : styles.assistantText
         ]}>
           {message.content}
           {isStreaming && '...'}
