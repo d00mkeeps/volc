@@ -4,6 +4,7 @@ import {
   ChatConfigName 
 } from '@/types/index';
 import { getLocalIpAddress } from '@/utils/network';
+import { Message } from '@/types';
 
 export class WebSocketService {
   private socket: WebSocket | null = null;
@@ -18,20 +19,45 @@ export class WebSocketService {
   public async initialize(): Promise<void> {
     this.baseUrl = await getLocalIpAddress();
   }
+  private sendInitialMessages(messages: Message[]): void {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      console.log('Socket not ready for initialization');
+      return;
+    }
+  
+    try {
+      console.log('Sending conversation history:', messages);
+      this.socket.send(JSON.stringify({
+        type: 'initialize',
+        messages
+      }));
+    } catch (error) {
+      console.error('Failed to send initialization message:', error);
+      this.handleError(error instanceof Error ? error : new Error('Failed to send initialization message'));
+    }
+  }
 
-  public async connect(configName: ChatConfigName, conversationId?: string): Promise<void> {
+  public async connect(configName: ChatConfigName, conversationId?: string, messages?: Message[]): Promise<void> {
+
+    
     if (!this.baseUrl) {
       await this.initialize();
     }
-
+  
     if (this.socket?.readyState === WebSocket.OPEN) {
       if (this.currentConfigName === configName) {
         console.log('Already connected with this config');
+        // If we have messages to send, wait for next tick to ensure socket is ready
+        if (messages?.length) {
+          setTimeout(() => {
+            this.sendInitialMessages(messages);
+          }, 0);
+        }
         return;
       }
       this.disconnect();
     }
-
+  
     this.currentConfigName = configName;
     
     try {
@@ -43,16 +69,72 @@ export class WebSocketService {
       } else {
         throw new Error('Conversation ID required for non-onboarding chats');
       }
-
+  
       console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
-      this.attachEventHandlers();
+      
+      // Set up connection promise to ensure proper sequencing
+      const connectionPromise = new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Connection timeout'));
+        }, 5000);
+  
+        this.socket!.onopen = () => {
+          console.log('WebSocket connection opened');
+          clearTimeout(timeout);
+          if (messages?.length) {
+            this.sendInitialMessages(messages);
+          }
+          this.events.emit('connect');
+          resolve();
+        };
+  
+        this.socket!.onclose = (event) => {
+          console.log('WebSocket closed:', {
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean
+          });
+          this.events.emit('disconnect');
+          reject(new Error('Connection closed'));
+        };
+  
+this.socket!.onerror = (error: Event) => {
+  console.error('WebSocket error:', error);
+  this.events.emit('error', new Error('WebSocket connection error'));
+  reject(new Error('WebSocket connection error'));
+};
+  
+        this.socket!.onmessage = (event: MessageEvent) => {
+          try {
+            let message;
+            if (typeof event.data === 'string') {
+              message = JSON.parse(event.data);
+            } else {
+              message = JSON.parse(JSON.stringify(event.data));
+            } 
+            console.log('WebSocket received message:', message);
+            
+            // Handle connection status message
+            if (message.type === 'connection_status' && message.data === 'connected') {
+              this.events.emit('connect');
+            }
+            
+            this.events.emit('message', message);
+          } catch (error) {
+            console.error('Failed to parse WebSocket message:', error);
+            this.handleError(new Error('Failed to parse WebSocket message'));
+          }
+        };
+      });
+  
+      await connectionPromise;
+  
     } catch (error) {
-      console.log('WebSocket connection error:', error);
+      console.error('WebSocket connection error:', error);
       this.handleError(error as Error);
     }
   }
-
   private attachEventHandlers(): void {
     if (!this.socket) return;
 

@@ -52,7 +52,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     return () => {
       hasConnectedRef.current = false;
     };
-  }, [loadConversation, conversationId, connectionState.type]);
+  }, [loadConversation, conversationId, connectionState.type, messages]);
 
   useEffect(() => {
     if (onSignal) {

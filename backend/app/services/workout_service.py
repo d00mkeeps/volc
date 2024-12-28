@@ -1,4 +1,4 @@
-# app/services/workout_service.py
+'''# app/services/workout_service.py
 from fastapi import WebSocket
 import logging
 from typing import Dict, Any
@@ -38,4 +38,4 @@ class WorkoutService:
             try:
                 await websocket.close()
             except:
-                pass
+                pass'''

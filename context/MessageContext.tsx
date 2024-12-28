@@ -46,7 +46,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       setMessages(messages);
       setCurrentConversationId(conversationId);
       
-      await webSocket.connect(conversation.config_name, conversationId);
+      await webSocket.connect(conversation.config_name, conversationId, messages);
     } catch (error) {
       console.error('MessageContext: Error loading conversation:', error);
       setConnectionState(prev => ({
