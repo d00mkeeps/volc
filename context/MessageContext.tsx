@@ -32,6 +32,9 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const loadConversation = useCallback(async (conversationId: string) => {
     try {
       console.log('MessageContext: Loading conversation:', conversationId);
+
+      setMessages([]);
+      setStreamingMessage(null)
       
       const [conversation, messages] = await Promise.all([
         conversationService.getConversation(conversationId),

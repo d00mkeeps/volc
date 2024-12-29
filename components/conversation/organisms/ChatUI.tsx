@@ -44,15 +44,19 @@ export const ChatUI: React.FC<ChatUIProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!hasConnectedRef.current && connectionState.type !== 'CONNECTED' && conversationId) {
+    // Reset hasConnectedRef when conversationId changes
+    hasConnectedRef.current = false;
+    
+    if (!hasConnectedRef.current && conversationId) {
       console.log(`ChatUI: Loading conversation ${conversationId}`);
       hasConnectedRef.current = true;
       loadConversation(conversationId);
     }
+    
     return () => {
       hasConnectedRef.current = false;
     };
-  }, [loadConversation, conversationId, connectionState.type, messages]);
+  }, [loadConversation, conversationId, connectionState.type]);
 
   useEffect(() => {
     if (onSignal) {

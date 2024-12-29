@@ -1,32 +1,43 @@
-2024-12-28 15:24:57,614 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'd you do for'}...
-2024-12-28 15:24:57,663 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' each of'}...
-2024-12-28 15:24:57,692 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' the'}...
-2024-12-28 15:24:57,730 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' 4 sets'}...
-2024-12-28 15:24:57,769 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': '?'}...
-2024-12-28 15:24:57,831 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ''}...
-2024-12-28 15:24:57,911 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-12-28 15:24:57,911 - httpcore.http11 - DEBUG - response_closed.started
-2024-12-28 15:24:57,912 - httpcore.http11 - DEBUG - response_closed.complete
-2024-12-28 15:24:57,914 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'done'}...
-2024-12-28 15:28:45,690 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1000 and reason: 
+2024-12-28 18:33:36,057 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:33:36,059 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:33:36,078 - app.services.conversation_service - DEBUG - ConversationService initialized with chain: <app.services.chains.workout_chain.WorkoutChain object at 0x106c16fc0>
+2024-12-28 18:33:36,078 - app.api.endpoints.llm - INFO - Created ConversationService instance
+2024-12-28 18:33:36,078 - app.services.conversation_service - INFO - Starting message processing for conversation: 4d8d5d6b-2395-48a3-982f-b3a570855636
+2024-12-28 18:33:36,078 - app.services.conversation_service - DEBUG - Chain state: <app.services.chains.workout_chain.WorkoutChain object at 0x106c16fc0>
+2024-12-28 18:33:36,079 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
+2024-12-28 18:33:52,426 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1000 and reason: 
 Was clean: unknown
-2024-12-28 15:28:45,698 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2024-12-28 15:28:49,424 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 4d8d5d6b-2395-48a3-982f-b3a570855636
-2024-12-28 15:28:49,428 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2024-12-28 15:28:49,452 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-28 15:28:49,466 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-28 15:28:49,482 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-28 15:28:49,482 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-28 15:28:49,491 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-28 15:28:49,491 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-28 15:28:49,499 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2024-12-28 15:28:49,499 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
-2024-12-28 15:28:49,523 - app.services.conversation_service - DEBUG - ConversationService initialized with chain: <app.services.chains.workout_chain.WorkoutChain object at 0x106c2ca40>
-2024-12-28 15:28:49,523 - app.api.endpoints.llm - INFO - Created ConversationService instance
-2024-12-28 15:28:49,523 - app.services.conversation_service - INFO - Starting message processing for conversation: 4d8d5d6b-2395-48a3-982f-b3a570855636
-2024-12-28 15:28:49,523 - app.services.conversation_service - DEBUG - Chain state: <app.services.chains.workout_chain.WorkoutChain object at 0x106c2ca40>
-2024-12-28 15:28:49,524 - httpcore.connection - DEBUG - close.started
-2024-12-28 15:28:49,524 - httpcore.connection - DEBUG - close.started
-2024-12-28 15:28:49,524 - httpcore.connection - DEBUG - close.complete
-2024-12-28 15:28:49,526 - httpcore.connection - DEBUG - close.complete
-2024-12-28 15:28:49,527 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
+2024-12-28 18:33:52,428 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2024-12-28 18:34:02,803 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 4d8d5d6b-2395-48a3-982f-b3a570855636
+2024-12-28 18:34:02,804 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2024-12-28 18:34:02,808 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:34:02,810 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:34:02,823 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:34:02,824 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:34:02,834 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:34:02,835 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:34:02,843 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:34:02,843 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:34:02,855 - app.services.conversation_service - DEBUG - ConversationService initialized with chain: <app.services.chains.workout_chain.WorkoutChain object at 0x106c336b0>
+2024-12-28 18:34:02,855 - app.api.endpoints.llm - INFO - Created ConversationService instance
+2024-12-28 18:34:02,855 - app.services.conversation_service - INFO - Starting message processing for conversation: 4d8d5d6b-2395-48a3-982f-b3a570855636
+2024-12-28 18:34:02,855 - app.services.conversation_service - DEBUG - Chain state: <app.services.chains.workout_chain.WorkoutChain object at 0x106c336b0>
+2024-12-28 18:34:02,855 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
+2024-12-28 18:52:58,179 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1000 and reason: 
+Was clean: unknown
+2024-12-28 18:52:58,190 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2024-12-28 18:53:04,487 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 92822a35-09b6-4ba0-881d-65e2615e8563
+2024-12-28 18:53:04,488 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2024-12-28 18:53:04,503 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:53:04,513 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:53:04,532 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:53:04,533 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:53:04,542 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:53:04,543 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:53:04,551 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
+2024-12-28 18:53:04,552 - httpx - DEBUG - load_verify_locations cafile='/Users/mileshillary/Desktop/supreme-octo-doodle/.venv/lib/python3.12/site-packages/certifi/cacert.pem'
+2024-12-28 18:53:04,570 - app.services.conversation_service - DEBUG - ConversationService initialized with chain: <app.services.chains.workout_chain.WorkoutChain object at 0x106c256d0>
+2024-12-28 18:53:04,570 - app.api.endpoints.llm - INFO - Created ConversationService instance
+2024-12-28 18:53:04,570 - app.services.conversation_service - INFO - Starting message processing for conversation: 92822a35-09b6-4ba0-881d-65e2615e8563
+2024-12-28 18:53:04,570 - app.services.conversation_service - DEBUG - Chain state: <app.services.chains.workout_chain.WorkoutChain object at 0x106c256d0>
+2024-12-28 18:53:04,571 - app.services.conversation_service - INFO - Initialized conversation with 2 messages
