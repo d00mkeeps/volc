@@ -3,4 +3,5 @@ uvicorn
 anthropic
 pydantic-settings
 websockets
-'uvicorn[standard]'
+uvicorn[standard]
+langchain_anthropic

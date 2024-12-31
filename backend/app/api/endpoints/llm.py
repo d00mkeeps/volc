@@ -27,8 +27,9 @@ async def conversation_websocket(websocket: WebSocket, conversation_id: str):
             "data": "connected"
         })
         
-        service = ConversationService()
-        logger.info("Created ConversationService instance")
+        # Create new service instance for each connection
+        service = ConversationService(conversation_id)  # Pass conversation_id
+        logger.info(f"Created ConversationService instance for conversation: {conversation_id}")
         
         await service.process_websocket(websocket, conversation_id)
             

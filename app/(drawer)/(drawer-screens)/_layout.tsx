@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#0f3310',
+    color: 'red',
   },
   headerButtonContainer: {
     flexDirection: 'row',

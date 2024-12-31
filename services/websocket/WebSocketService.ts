@@ -15,6 +15,8 @@ export class WebSocketService {
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private currentConfigName: ChatConfigName | null = null;
   private readonly BASE_PATH = '/api/llm/ws/';
+  private currentConversationId: string | null = null
+
 
   public async initialize(): Promise<void> {
     this.baseUrl = await getLocalIpAddress();
@@ -39,26 +41,32 @@ export class WebSocketService {
 
   public async connect(configName: ChatConfigName, conversationId?: string, messages?: Message[]): Promise<void> {
 
-    
     if (!this.baseUrl) {
       await this.initialize();
     }
+
+    if (configName !== 'onboarding' && !conversationId) {
+      console.error('Conversation ID required for non-onboarding chats');
+      return;
+  }
+
   
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      if (this.currentConfigName === configName) {
-        console.log('Already connected with this config');
-        // If we have messages to send, wait for next tick to ensure socket is ready
+  if (this.socket?.readyState === WebSocket.OPEN) {
+    if (this.currentConfigName === configName && this.currentConversationId === conversationId) {
+        console.log('Already connected to this conversation');
         if (messages?.length) {
-          setTimeout(() => {
-            this.sendInitialMessages(messages);
-          }, 0);
+            setTimeout(() => {
+                this.sendInitialMessages(messages);
+            }, 0);
         }
         return;
-      }
-      this.disconnect();
     }
-  
-    this.currentConfigName = configName;
+    // Different conversation, so disconnect
+    this.disconnect();
+}
+
+this.currentConfigName = configName;
+this.currentConversationId = conversationId || null;  // Convert undefined to null
     
     try {
       let url;
@@ -135,61 +143,7 @@ this.socket!.onerror = (error: Event) => {
       this.handleError(error as Error);
     }
   }
-  private attachEventHandlers(): void {
-    if (!this.socket) return;
 
-    this.socket.onopen = () => {
-      console.log('WebSocket connection opened');
-      this.events.emit('connect');
-    };
-
-    this.socket.onmessage = (event: MessageEvent) => {
-      try {
-        let message;
-        if (typeof event.data === 'string') {
-          message = JSON.parse(event.data);
-        } else {
-          message = JSON.parse(JSON.stringify(event.data));
-        } 
-        console.log('WebSocket received message:', message);
-
-              // Handle connection status message
-      if (message.type === 'connection_status' && message.data === 'connected') {
-        this.events.emit('connect');  // Emit connect event again to ensure state update
-      }
-      
-        this.events.emit('message', message);
-      } catch (error) {
-        console.error('Failed to parse WebSocket message:', error);
-        this.handleError(new Error('Failed to parse WebSocket message'));
-      }
-    };
-
-    this.socket.onclose = (event) => {
-      console.log('WebSocket closed:', {
-        code: event.code,
-        reason: event.reason,
-        wasClean: event.wasClean
-      });
-    };
-
-
-    this.socket.onerror = (error) => {
-  console.error('WebSocket error:', error);
-};}
-
-  private attemptReconnect(): void {
-    if (!this.currentConfigName) return;
-    
-    if (this.reconnectAttempts >= this.reconnectAttempts) {
-      this.handleError(new Error(`Max reconnection attempts (${this.reconnectAttempts}) reached`));
-      return;
-    }
-
-    this.reconnectTimeout = setTimeout(() => {
-      this.connect(this.currentConfigName!);
-    }, this.reconnectInterval);
-  }
 
   public sendMessage(payload: { message: string }): void {
     if (this.socket?.readyState !== WebSocket.OPEN) {
@@ -223,6 +177,7 @@ this.socket!.onerror = (error: Event) => {
     }
 
     this.currentConfigName = null;
+    this.currentConversationId = null
   }
 
   public on<K extends keyof WebSocketEvents>(

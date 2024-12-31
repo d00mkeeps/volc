@@ -5,17 +5,22 @@ from app.services.chains.workout_chain import WorkoutChain
 from langchain_core.messages import HumanMessage, AIMessage
 
 class ConversationService:
-    def __init__(self):
+    def __init__(self, conversation_id: str):
         self.logger = logging.getLogger(__name__)
+        self.conversation_id = conversation_id
+        self.reset_chain()
+        self.logger.debug(f"ConversationService initialized for conversation: {conversation_id}")
+
+    def reset_chain(self):
+        """Create a new chain instance"""
         self.chain = WorkoutChain()
-        self.logger.debug(f"ConversationService initialized with chain: {self.chain}")
+        self.logger.info(f"Created new WorkoutChain for conversation: {self.conversation_id}")
 
     async def process_websocket(self, websocket: WebSocket, conversation_id: str):
         """Process WebSocket connection and handle messages."""
         try:
             self.logger.info(f"Starting message processing for conversation: {conversation_id}")
-            self.logger.debug(f"Chain state: {self.chain}")
-
+            
             # Send initial connection status
             await websocket.send_json({
                 "type": "connection_status",
@@ -27,18 +32,23 @@ class ConversationService:
             message_data = json.loads(message_json)
             
             if message_data.get('type') == 'initialize':
-                # Initialize conversation history directly in the chain
+                # Reset chain for new conversation
+                self.reset_chain()
+                self.logger.info(f"Resetting chain for conversation: {conversation_id}")
+                
+                # Initialize conversation history
                 for msg in message_data.get('messages', []):
                     if msg['sender'] == 'user':
                         self.chain.messages.append(HumanMessage(content=msg['content']))
                     else:
                         self.chain.messages.append(AIMessage(content=msg['content']))
-                self.logger.info(f"Initialized conversation with {len(message_data['messages'])} messages")
+                self.logger.info(f"Initialized conversation {conversation_id} with {len(message_data['messages'])} messages")
                 
                 # Get next message after initialization
                 message_json = await websocket.receive_text()
                 message_data = json.loads(message_json)
 
+            # Rest of the existing code...
             while True:
                 try:
                     if not message_data.get('message'):
