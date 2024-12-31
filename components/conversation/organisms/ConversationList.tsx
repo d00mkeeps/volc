@@ -13,7 +13,6 @@ const ConversationList: React.FC<ConversationListProps> = ({ onConversationPress
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        // You'll need to add this method to your ConversationService
         const userConversations = await conversationService.getUserConversations();
         setConversations(userConversations);
       } catch (error) {
@@ -23,11 +22,20 @@ const ConversationList: React.FC<ConversationListProps> = ({ onConversationPress
 
     fetchConversations();
   }, []);
+  const handleDelete = async (id: string) => {
+    try {
+      await conversationService.deleteConversation(id);
+      setConversations(prev => prev.filter(conv => conv.id !== id));
+    } catch (error) {
+      console.error('Failed to delete conversation:', error);
+    }
+  };
 
   const renderItem = ({ item }: { item: Conversation }) => (
     <ConversationItem 
       conversation={item} 
-      onPress={() => onConversationPress(item.id)} 
+      onPress={() => onConversationPress(item.id)}
+      onDelete={handleDelete}
     />
   );
 

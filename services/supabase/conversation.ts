@@ -65,8 +65,6 @@ export class ConversationService extends BaseService {
   
     return this.withRetry(operation);
   }  
-
-  // services/conversation.ts
 async getUserConversations(): Promise<Conversation[]> {
   const operation = async () => {
     const response = await this.supabase
@@ -86,6 +84,21 @@ async getUserConversations(): Promise<Conversation[]> {
   };
 
   return this.withRetry(operation);
+}
+async deleteConversation(conversationId: string): Promise<void> {
+  const operation = async (): Promise<PostgrestSingleResponse<any>> => {
+    const response = await this.supabase
+      .from('conversations')  
+      .update({ status: 'deleted' })
+      .eq('id', conversationId)
+      .select()
+      .single();
+
+    if (response.error) throw response.error;
+    return response;
+  };
+
+  await this.withRetry(operation);
 }
 
   async saveMessage(params: {

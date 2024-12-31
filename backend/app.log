@@ -1,11 +1,60 @@
-2024-12-31 13:42:47,822 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' the 3 '}...
-2024-12-31 13:42:47,857 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'sets with'}...
-2024-12-31 13:42:47,894 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' the'}...
-2024-12-31 13:42:47,937 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' 65lb'}...
-2024-12-31 13:42:47,977 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' dum'}...
-2024-12-31 13:42:48,013 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'bbells?'}...
-2024-12-31 13:42:48,067 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ''}...
-2024-12-31 13:42:48,075 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-12-31 13:42:48,076 - httpcore.http11 - DEBUG - response_closed.started
-2024-12-31 13:42:48,076 - httpcore.http11 - DEBUG - response_closed.complete
-2024-12-31 13:42:48,077 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'done'}...
+2024-12-31 16:11:16,819 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,820 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,820 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,821 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,821 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,821 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,821 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,821 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,821 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,821 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,821 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,821 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,822 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,822 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,823 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,823 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,823 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,823 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,823 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,823 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,823 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,823 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,823 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,823 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,824 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,824 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 

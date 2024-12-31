@@ -5,9 +5,10 @@ import { Conversation } from '@/types';
 interface ConversationItemProps {
   conversation: Conversation;
   onPress: () => void;
+  onDelete: (id: string) => void
 }
 
-const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPress }) => {
+const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPress, onDelete }) => {
   const formattedDate = new Date(conversation.updated_at).toLocaleString();
   
   return (
@@ -17,12 +18,18 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ conversation, onPre
         <Text style={styles.lastMessageTime}>Last updated: {formattedDate}</Text>
       </View>
       <View style={styles.contentRow}>
-        <View style={styles.bottomRightComponent}>
-          <Text style={styles.bottomRightText}>
-            Messages: {conversation.message_count}
-          </Text>
-        </View>
-      </View>
+  <View style={styles.bottomRightComponent}>
+    <Text style={styles.bottomRightText}>
+      Messages: {conversation.message_count}
+    </Text>
+  </View>
+  <TouchableOpacity 
+    style={styles.deleteButton}
+    onPress={() => onDelete(conversation.id)}
+  >
+    <Text style={styles.deleteText}>Delete</Text>
+  </TouchableOpacity>
+</View>
     </TouchableOpacity>
   );
 };
@@ -37,21 +44,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
+  },
+  contentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    backgroundColor: '#aa3333',
+    padding: 8,
+    borderRadius: 8,
+    marginLeft: 'auto', // Pushes button to right
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#ddd',
   },
   lastMessageTime: {
     fontSize: 13,
     color: '#222',
-  },
-  contentRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
   },
   lastMessage: {
     fontSize: 13,
@@ -66,6 +79,10 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   bottomRightText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  deleteText: {
     color: '#fff',
     fontSize: 12,
   },

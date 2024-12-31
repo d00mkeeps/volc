@@ -1,64 +1,102 @@
-2024-12-31 13:42:46,636 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 31 Dec 2024 19:42:46 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-12-31T19:42:45Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2024-12-31T19:42:48Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2024-12-31T19:42:46Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'47000'), (b'anthropic-ratelimit-tokens-reset', b'2024-12-31T19:42:46Z'), (b'request-id', b'req_01BBr15ABS6jR3PEqmH2od9a'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8facc126ed52c9c0-IAD'), (b'Content-Encoding', b'gzip')])
-2024-12-31 13:42:46,642 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-12-31 13:42:46,642 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-12-31 13:42:46,643 - httpcore.http11 - DEBUG - receive_response_body.complete
-2024-12-31 13:42:46,644 - httpcore.http11 - DEBUG - response_closed.started
-2024-12-31 13:42:46,644 - httpcore.http11 - DEBUG - response_closed.complete
-2024-12-31 13:42:46,645 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-12-31 13:42:46,649 - app.services.chains.workout_chain - INFO - [32mExtracted Workout Data: {
-  "name": "Epic Chest Day",
-  "description": null,
-  "exercises": [
-    {
-      "exercise_name": "Bench Press",
-      "set_data": {
-        "sets": [
-          {
-            "weight": 185,
-            "reps": 12
-          },
-          {
-            "weight": 185,
-            "reps": 12
-          },
-          {
-            "weight": 185,
-            "reps": 10
-          },
-          {
-            "weight": 185,
-            "reps": 8
-          }
-        ]
-      },
-      "order_in_workout": 1
-    }
-  ]
-}[0m
-2024-12-31 13:42:46,670 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'Just finished a great chest workout! Did 4 sets of bench press at 185lbs, 3 sets of incline dumbbell press with 65lbs, and finished with 3 sets of cable flyes.'}, {'role': 'assistant', 'content': 'That sounds like a solid chest workout! What would you like to name this workout session?'}, {'role': 'user', 'content': 'Epic chest day'}, {'role': 'assistant', 'content': "Got it, Epic Chest Day it is! Let's start with the bench press. How many reps did you do for each of the 4 sets?"}, {'role': 'user', 'content': [{'type': 'text', 'text': '12, 12, 10, 8'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to collect details about the user\'s workout through structured conversation.\n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding workout information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. Workout Name (if not provided)\n2. Exercise Details (one exercise at a time)\n   - Exercise Name\n   - Number of Sets\n   - For each set: Reps, Weight, Duration, Distance (as applicable)\n3. Additional Exercises (ask if user wants to add more)\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Got it! What would you like to name this workout?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other system information.\n\n5. SUMMARY DISPLAY\nOnce all exercises are recorded, return this exact message:\n\nGreat! Here\'s a summary of your workout:\n\n[Workout Name]\nDescription: [if provided]\n\nExercises:\n1. [Exercise Name]\n   [Set details formatted appropriately]\n2. [Exercise Name]\n   [Set details formatted appropriately]\n[etc.]\n\nDoes this look correct to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. When asking about exercises, be specific:\n   "What exercise would you like to add next?"\n\n2. For set data collection:\n   - Ask about one set at a time\n   - Adapt to exercise type (strength vs cardio)\n   - Confirm before moving to next set/exercise\n\n3. Always ask if user wants to add another exercise before showing summary\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}
-2024-12-31 13:42:46,671 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2024-12-31 13:42:46,714 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1061b6e70>
-2024-12-31 13:42:46,714 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x106181c50> server_hostname='api.anthropic.com' timeout=None
-2024-12-31 13:42:46,767 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1061b58e0>
-2024-12-31 13:42:46,769 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2024-12-31 13:42:46,769 - httpcore.http11 - DEBUG - send_request_headers.complete
-2024-12-31 13:42:46,769 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2024-12-31 13:42:46,771 - httpcore.http11 - DEBUG - send_request_body.complete
-2024-12-31 13:42:46,771 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2024-12-31 13:42:47,457 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 31 Dec 2024 19:42:47 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2024-12-31T19:42:48Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2024-12-31T19:42:49Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2024-12-31T19:42:54Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'45000'), (b'anthropic-ratelimit-tokens-reset', b'2024-12-31T19:42:49Z'), (b'request-id', b'req_01U3GkBiSDjkKVZfDzNXHzbK'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8facc136ec23c952-IAD')])
-2024-12-31 13:42:47,458 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2024-12-31 13:42:47,459 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2024-12-31 13:42:47,459 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2024-12-31 13:42:47,461 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ''}...
-2024-12-31 13:42:47,464 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'Okay, got'}...
-2024-12-31 13:42:47,466 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' those'}...
-2024-12-31 13:42:47,467 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' set details for'}...
-2024-12-31 13:42:47,472 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' the bench press.'}...
-2024-12-31 13:42:47,506 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' Now'}...
-2024-12-31 13:42:47,548 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' for'}...
-2024-12-31 13:42:47,588 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' the incline '}...
-2024-12-31 13:42:47,623 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'dumbbell press -'}...
-2024-12-31 13:42:47,663 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' how many reps'}...
-2024-12-31 13:42:47,705 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' di'}...
-2024-12-31 13:42:47,738 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': 'd you do for each'}...
-2024-12-31 13:42:47,791 - app.services.conversation_service - DEBUG - Sent chunk in 4d8d5d6b-2395-48a3-982f-b3a570855636: {'type': 'content', 'data': ' of'}...
+2024-12-31 16:11:16,808 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,810 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,811 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,811 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,811 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,811 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,811 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,811 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,811 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,812 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,812 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,812 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,812 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,812 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,813 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,813 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,813 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,813 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,813 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,814 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,814 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,814 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,814 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,814 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,814 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,815 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,815 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,815 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,815 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,815 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,815 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,815 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,815 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,815 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,815 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,816 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,816 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,816 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,816 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,816 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,816 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,817 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,817 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,817 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,817 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,817 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,818 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,818 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,818 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,818 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,818 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,818 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,818 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,818 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,819 - app.services.conversation_service - ERROR - WebSocket disconnected in 4d8d5d6b-2395-48a3-982f-b3a570855636 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,819 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2024-12-31 16:11:16,819 - app.services.conversation_service - ERROR - WebSocket disconnected in 92822a35-09b6-4ba0-881d-65e2615e8563 with code 1012 and reason: 
+Was clean: unknown
+2024-12-31 16:11:16,819 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
