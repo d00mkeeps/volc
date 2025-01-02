@@ -1,7 +1,7 @@
 import { ChatUI } from "@/components/conversation/organisms/ChatUI";
 import { useMessage } from "@/context/MessageContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useRef, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 
 function ConversationPage() {
@@ -11,30 +11,49 @@ function ConversationPage() {
   }>();
   const { sendMessage, connectionState } = useMessage();
   const router = useRouter();
-  const hasSentPendingMessage = useRef(false);
+  const initialMessageSent = useRef(false);
 
   const handleSignal = useCallback((type: string, data: any) => {
     console.log('Conversation signal received:', { type, data });
   }, []);
 
+  // Handle initial message send after connection is established
   useEffect(() => {
-    if (pendingMessage && connectionState.type === 'CONNECTED' && !hasSentPendingMessage.current) {
-      hasSentPendingMessage.current = true;
-      sendMessage(pendingMessage);
-      router.setParams({ pendingMessage: undefined });
-    }
-  }, [pendingMessage, connectionState.type]);
+    const sendInitialMessage = async () => {
+      if (
+        pendingMessage && 
+        !initialMessageSent.current && 
+        connectionState.type === 'CONNECTED' && 
+        connectionState.canSendMessage
+      ) {
+        console.log('🚀 Sending initial message:', pendingMessage);
+        try {
+          await sendMessage(pendingMessage);
+          initialMessageSent.current = true;
+          router.setParams({ pendingMessage: undefined });
+          console.log('✅ Initial message sent successfully');
+        } catch (error) {
+          console.error('❌ Failed to send initial message:', error);
+          initialMessageSent.current = false;
+        }
+      }
+    };
+
+    sendInitialMessage();
+  }, [connectionState, pendingMessage, sendMessage]);
 
   useEffect(() => {
     console.log('ConversationPage mounted');
     return () => {
       console.log('ConversationPage unmounted');
+      initialMessageSent.current = false;
     };
   }, []);
 
   useEffect(() => {
     console.log('ConversationPage connection state:', connectionState.type);
   }, [connectionState.type]);
+
   return (
     <View style={styles.container}>
       <ChatUI 
@@ -46,13 +65,13 @@ function ConversationPage() {
         showNavigation={true}
       />
     </View>
-  );}
-  
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1f281f',
   },
 });
-
 export default ConversationPage

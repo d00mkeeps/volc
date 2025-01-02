@@ -41,30 +41,6 @@ const InputArea: React.FC<InputAreaProps> = memo(({
     lastLayoutRef.current = currentLayout;
   }, []);
 
-  useEffect(() => {
-    const keyboardWillShow = Keyboard.addListener('keyboardWillShow', (event) => {
-      console.log('Keyboard will show:', event);
-    });
-    
-    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', (event) => {
-      console.log('Keyboard did show:', event);
-    });
-
-    const keyboardWillHide = Keyboard.addListener('keyboardWillHide', (event) => {
-      console.log('Keyboard will hide:', event);
-    });
-    
-    const keyboardDidHide = Keyboard.addListener('keyboardDidHide', (event) => {
-      console.log('Keyboard did hide:', event);
-    });
-
-    return () => {
-      keyboardWillShow.remove();
-      keyboardDidShow.remove();
-      keyboardWillHide.remove();
-      keyboardDidHide.remove();
-    };
-  }, []);
 
   const handleInputChange = useCallback((text: string) => {
     setInput(text);

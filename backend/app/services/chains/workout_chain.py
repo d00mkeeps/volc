@@ -95,39 +95,37 @@ class WorkoutChain:
         return "Information still needed:\n" + "\n".join(f"- {field}" for field in missing)
 
     async def process_message(self, message: str) -> AsyncGenerator[dict, None]:
-        """
-        Processes each user message, maintaining conversation state and handling data extraction.
-        """
+        """Processes each user message, maintaining conversation state and handling data extraction."""
         max_retries = 3
         base_delay = 1
         
         for attempt in range(max_retries):
             try:
+                logger.debug(f"Processing message (attempt {attempt + 1}): {message[:100]}...")
                 current_message = HumanMessage(content=message)
                 self.messages.append(current_message)
 
                 if self.current_summary:
+                    logger.debug("Analyzing sentiment for current summary...")
                     is_approved = await self.analyze_sentiment(message)
                     if is_approved:
+                        logger.debug("Summary approved by user")
                         yield {
                             "type": "workout_approved",
                             "data": self.current_summary
                         }
                         return
 
+                logger.debug("Extracting data from messages...")
                 extracted_data = await self.extractor.extract(self.messages)
-                logger.info("\033[32m" + f"Extracted Workout Data: {json.dumps(extracted_data.model_dump(), indent=2)}" + "\033[0m")
+                logger.info(f"Extracted Workout Data: {json.dumps(extracted_data.model_dump(), indent=2)}")
                 
                 self.extraction_state = extracted_data
                 missing_fields = self._get_missing_fields(extracted_data)
-
-                # Check if we have all required information
-                if extracted_data.name and extracted_data.exercises and \
-                   all(len(ex.set_data.sets) > 0 for ex in extracted_data.exercises) and \
-                   not self.current_summary:
-                    self.current_summary = extracted_data.model_dump()
+                logger.debug(f"Missing fields: {missing_fields}")
 
                 # Generate and stream conversation response
+                logger.debug("Generating conversation response...")
                 full_response = ""
                 async for chunk in self.chain.astream({
                     "messages": self.messages,
@@ -142,24 +140,23 @@ class WorkoutChain:
                         "data": chunk_content
                     }
 
+                logger.debug(f"Response generated: {full_response[:100]}...")
                 self.messages.append(AIMessage(content=full_response))
                 yield {"type": "done"}
                 break
-
             except Exception as e:
                 if "overloaded_error" in str(e) and attempt < max_retries - 1:
                     delay = base_delay * (2 ** attempt)
                     logger.info(f"Retrying in {delay} seconds after overload error")
                     await asyncio.sleep(delay)
-                    continue
-                
-                logger.error(f"Error processing message: {str(e)}")
-                yield {
-                    "type": "error",
-                    "error": str(e)
-                }
-                return
-
+                continue
+            
+            logger.error(f"Error processing message: {str(e)}")
+            yield {
+                "type": "error",
+                "error": str(e)
+            }
+            return
     async def analyze_sentiment(self, response: str, max_retries: int = 3) -> Optional[bool]:
         """Analyze user's response to workout summary with retry logic"""
         if not self.current_summary:

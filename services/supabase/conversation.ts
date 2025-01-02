@@ -7,26 +7,38 @@ export class ConversationService extends BaseService {
     userId: string;
     title: string;
     firstMessage: string;
-    configName: string;  // Add this parameter
+    configName: string;
   }): Promise<Conversation> {
     const operation = async () => {
-      const response = await this.supabase
+      console.log('📤 Creating conversation with params:', params);
+      
+      const { data: conversationId, error } = await this.supabase
         .rpc('create_conversation_with_message', {
           p_user_id: params.userId,
           p_title: params.title,
           p_first_message: params.firstMessage,
-          p_config_name: params.configName  // Add to RPC call
+          p_config_name: params.configName
         });
-
+  
+      if (error) throw error;
+      if (!conversationId) throw new Error('No conversation ID returned');
+  
+      const response = await this.supabase
+        .from('conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .single();
+  
       if (response.error) throw response.error;
-      if (!response.data) throw new Error('No data returned');
-      
+      if (!response.data) throw new Error('Failed to fetch created conversation');
+  
+      console.log('📥 Conversation creation complete:', response.data);
       return response as PostgrestSingleResponse<Conversation>;
     };
-
-    return this.withRetry(operation);
+  
+    const result = await this.withRetry(operation);
+    return result as Conversation;
   }
-
   async getConversationMessages(conversationId: string): Promise<Message[]> {
     const operation = async (): Promise<PostgrestSingleResponse<Message[]>> => {
       const response = await this.supabase

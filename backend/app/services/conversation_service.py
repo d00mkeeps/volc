@@ -28,10 +28,12 @@ class ConversationService:
             })
 
             # Wait for potential initialization message
+            self.logger.debug("Waiting for initialization message...")
             message_json = await websocket.receive_text()
             message_data = json.loads(message_json)
             
             if message_data.get('type') == 'initialize':
+                self.logger.debug(f"Processing initialization with {len(message_data.get('messages', []))} messages...")
                 # Reset chain for new conversation
                 self.reset_chain()
                 self.logger.info(f"Resetting chain for conversation: {conversation_id}")
@@ -44,52 +46,30 @@ class ConversationService:
                         self.chain.messages.append(AIMessage(content=msg['content']))
                 self.logger.info(f"Initialized conversation {conversation_id} with {len(message_data['messages'])} messages")
                 
-                # Get next message after initialization
+                # Process first message
+                first_message = message_data['messages'][-1]['content']
+                self.logger.debug(f"Processing initial message: {first_message[:100]}...")
+                async for chunk in self.chain.process_message(first_message):
+                    await websocket.send_json(chunk)
+                    self.logger.debug(f"Sent chunk: {chunk}")
+
+            while True:
                 message_json = await websocket.receive_text()
                 message_data = json.loads(message_json)
+                
+                user_message = message_data.get('message', '')
+                if not user_message:  # Skip empty messages
+                    continue
 
-            # Rest of the existing code...
-            while True:
-                try:
-                    if not message_data.get('message'):
-                        message_json = await websocket.receive_text()
-                        message_data = json.loads(message_json)
-                    
-                    user_message = message_data.get('message', '')
-                    if not user_message:  # Skip empty messages
-                        message_data = {}
-                        continue
-                        
-                    self.logger.debug(f"Parsed message in {conversation_id}: {user_message[:100]}...")
+                self.logger.debug(f"Processing message: {user_message[:100]}...")
+                async for chunk in self.chain.process_message(user_message):
+                    await websocket.send_json(chunk)
+                    self.logger.debug(f"Sent chunk: {chunk}")
 
-                    # The chain will handle adding messages to its history
-                    async for chunk in self.chain.process_message(user_message):
-                        await websocket.send_json(chunk)
-                        self.logger.debug(f"Sent chunk in {conversation_id}: {str(chunk)[:100]}...")
-                    
-                    # Reset message_data for next iteration
-                    message_data = {}
-                        
-                except json.JSONDecodeError as e:
-                    self.logger.error(f"Failed to parse JSON in {conversation_id}: {str(e)}")
-                    self.logger.debug(f"Raw message that failed: {message_json[:100]}...")
-                    await websocket.send_json({
-                        "type": "error",
-                        "data": "Invalid message format"
-                    })
-                    
         except WebSocketDisconnect as e:
             self.logger.error(
                 f"WebSocket disconnected in {conversation_id} with code {e.code} "
                 f"and reason: {e.reason}\n"
                 f"Was clean: {getattr(e, 'wasClean', 'unknown')}"
             )
-            raise
-                    
-        except Exception as e:
-            self.logger.error(f"Fatal error in conversation {conversation_id}: {str(e)}", exc_info=True)
-            try:
-                await websocket.close(code=1011)
-            except:
-                self.logger.error("Failed to close websocket after error")
             raise

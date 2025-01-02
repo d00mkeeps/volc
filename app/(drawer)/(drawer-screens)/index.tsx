@@ -5,14 +5,10 @@ import WelcomeModal from '@/components/welcomeModal/WelcomeModal';
 import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
-import { UUIDTypes, v4 as uuidv4 } from 'uuid';
-
-const createNewConversation = async (): Promise<string> => {
- const conversationId = uuidv4(
- )
- return conversationId}
+import {useMessage} from '@/context/MessageContext'
 
 export default function HomeScreen() {
+  const { startNewConversation, currentConversationId } = useMessage();
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
   const router = useRouter();
@@ -35,31 +31,39 @@ export default function HomeScreen() {
   };
   
   const handleNewMessage = async (message: string) => {
-    if (isCreatingConversation) return;
+    console.log('📮 handleNewMessage called:', { message });
+    
+    if (isCreatingConversation) {
+      console.log('⚠️ Already creating conversation, returning');
+      return;
+    }
     
     try {
-      setIsCreatingConversation(true);
-      const newConversationId = await createNewConversation();
-      
-      // Navigate to conversation with pending message
+      setIsCreatingConversation(true)
+      const newConversationId = await startNewConversation(message);
+      console.log('🚗 Routing to new conversation:', newConversationId);
+
       router.push({
-        pathname: "/conversation/[id]",
+        pathname: "/(drawer)/conversation/[id]",
         params: { 
-          id: newConversationId,
-          pendingMessage: message 
+          id: newConversationId, 
         }
       });
+      
     } catch (error) {
+      console.error('❌ handleNewMessage failed:', error);
       Toast.show({
         type: 'error',
         text1: 'Failed to start conversation',
         text2: 'Please try again'
       });
     } finally {
-      setIsCreatingConversation(false);
+      setTimeout(() => {
+        setIsCreatingConversation(false);
+      }, 2000); // Prevent rapid re-submissions
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recent Chats</Text>

@@ -1,3 +1,5 @@
+import { LLMService } from "@/services/llm/base";
+import { authService } from "@/services/supabase/auth";
 import { ConversationService } from "@/services/supabase/conversation";
 import { StreamHandler } from "@/services/websocket/StreamHandler";
 import { WebSocketService } from "@/services/websocket/WebSocketService";
@@ -10,11 +12,13 @@ interface MessageContextType {
   messages: Message[];
   streamingMessage: Message | null;
   connectionState: ConnectionState;
-  startNewConversation: (firstMessage: string) => Promise<void>;
+  startNewConversation: (firstMessage: string) => Promise<string>; // Changed return type
   sendMessage: (content: string) => Promise<void>;
   loadConversation: (conversationId: string) => Promise<void>;
+  currentConversationId: string | null;
   registerMessageHandler: (handler: MessageHandler | null) => void;
 }
+
 const MessageContext = createContext<MessageContextType | null>(null);
 export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({ 
   children 
@@ -60,28 +64,49 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [conversationService, webSocket]);
 
-  const startNewConversation = useCallback(async (firstMessage: string) => {
-    if (!connectionState.canConnect) return;
-  
-    try {
-      const conversation = await conversationService.createConversation({
-        userId: 'current-user-id',
-        title: firstMessage.substring(0, 50),
-        firstMessage,
-        configName: 'chat'  //TODO: Add this parameter
-      });
-  
-      setCurrentConversationId(conversation.id);
-      setMessages([]);
-      await loadConversation(conversation.id);
-    } catch (error) {
-      setConnectionState(prev => ({
-        ...prev,
-        type: 'ERROR',
-        error: error as Error
-      }));
-    }
-  }, [connectionState.canConnect, conversationService, loadConversation]);
+ // In MessageContext.tsx
+ const startNewConversation = useCallback(async (firstMessage: string): Promise<string> => {
+  const session = await authService.getSession();
+  if (!session?.user?.id) {
+    throw new Error('No authenticated user found');
+  }
+
+  if (!connectionState.canConnect) {
+    throw new Error('Cannot connect to create conversation');
+  }
+
+  try {
+    console.log('🏁 Starting new conversation:', { firstMessage });
+    
+    const llmService = new LLMService();
+    const title = await llmService.generateTitle(firstMessage);
+    console.log('📝 Title generated:', { title });
+
+    const conversation = await conversationService.createConversation({
+      userId: session.user.id,
+      title,
+      firstMessage,
+      configName: 'chat'
+    });
+    console.log('🔍 Conversation received in MessageContext:', conversation);
+
+    setCurrentConversationId(conversation.id);
+    setMessages([]);
+    await loadConversation(conversation.id);
+    console.log('✅ Conversation loaded successfully:', { id: conversation.id });
+
+    return conversation.id;
+    
+  } catch (error) {
+    console.error('❌ Failed to start conversation in MessageContext:', error);
+    setConnectionState(prev => ({
+      ...prev,
+      type: 'ERROR',
+      error: error as Error
+    }));
+    throw error;
+  }
+}, [connectionState.canConnect, conversationService, loadConversation]);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!currentConversationId || !connectionState.canSendMessage) return;
@@ -182,6 +207,7 @@ useEffect(() => {
     startNewConversation,
     sendMessage,
     loadConversation,
+    currentConversationId,
     registerMessageHandler: (handler: MessageHandler | null) => {
       messageHandlerRef.current = handler;
     }

@@ -5,6 +5,7 @@ import {
 } from '@/types/index';
 import { getLocalIpAddress } from '@/utils/network';
 import { Message } from '@/types';
+import config from '@/app.config';
 
 export class WebSocketService {
   private socket: WebSocket | null = null;
@@ -16,6 +17,7 @@ export class WebSocketService {
   private currentConfigName: ChatConfigName | null = null;
   private readonly BASE_PATH = '/api/llm/ws/';
   private currentConversationId: string | null = null
+  private isConnecting: boolean = false;
 
 
   public async initialize(): Promise<void> {
@@ -40,56 +42,60 @@ export class WebSocketService {
   }
 
   public async connect(configName: ChatConfigName, conversationId?: string, messages?: Message[]): Promise<void> {
-
-    if (!this.baseUrl) {
-      await this.initialize();
-    }
-
-    if (configName !== 'onboarding' && !conversationId) {
-      console.error('Conversation ID required for non-onboarding chats');
+    // Add connection lock
+    if (this.isConnecting) {
+      console.log('Connection already in progress');
       return;
-  }
-
-  
-  if (this.socket?.readyState === WebSocket.OPEN) {
-    if (this.currentConfigName === configName && this.currentConversationId === conversationId) {
-        console.log('Already connected to this conversation');
-        if (messages?.length) {
-            setTimeout(() => {
-                this.sendInitialMessages(messages);
-            }, 0);
-        }
-        return;
     }
-    // Different conversation, so disconnect
-    this.disconnect();
-}
-
-this.currentConfigName = configName;
-this.currentConversationId = conversationId || null;  // Convert undefined to null
+    
+    this.isConnecting = true;
     
     try {
+      if (!this.baseUrl) {
+        await this.initialize();
+      }
+  
+      if (configName !== 'onboarding' && !conversationId) {
+        throw new Error('Conversation ID required for non-onboarding chats');
+      }
+  
+      // If already connected to the same conversation, just send messages
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        if (this.currentConfigName === configName && this.currentConversationId === conversationId) {
+          console.log('Already connected to this conversation');
+          if (messages?.length) {
+            this.sendInitialMessages(messages);
+          }
+          return;
+        }
+        // Different conversation, so disconnect first
+        await this.disconnect();
+      }
+  
+      this.currentConfigName = configName;
+      this.currentConversationId = conversationId || null;
+  
+      // Build WebSocket URL
       let url;
       if (configName === 'onboarding') {
         url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
       } else if (conversationId) {
         url = `ws://${this.baseUrl}:8000${this.BASE_PATH}default/${conversationId}`;
       } else {
-        throw new Error('Conversation ID required for non-onboarding chats');
+        throw new Error('Invalid configuration');
       }
   
       console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
-      
-      // Set up connection promise to ensure proper sequencing
-      const connectionPromise = new Promise<void>((resolve, reject) => {
+  
+      await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error('Connection timeout'));
         }, 5000);
   
         this.socket!.onopen = () => {
-          console.log('WebSocket connection opened');
           clearTimeout(timeout);
+          console.log('WebSocket connection opened');
           if (messages?.length) {
             this.sendInitialMessages(messages);
           }
@@ -98,6 +104,7 @@ this.currentConversationId = conversationId || null;  // Convert undefined to nu
         };
   
         this.socket!.onclose = (event) => {
+          clearTimeout(timeout);
           console.log('WebSocket closed:', {
             code: event.code,
             reason: event.reason,
@@ -107,11 +114,12 @@ this.currentConversationId = conversationId || null;  // Convert undefined to nu
           reject(new Error('Connection closed'));
         };
   
-this.socket!.onerror = (error: Event) => {
-  console.error('WebSocket error:', error);
-  this.events.emit('error', new Error('WebSocket connection error'));
-  reject(new Error('WebSocket connection error'));
-};
+        this.socket!.onerror = (error: Event) => {
+          clearTimeout(timeout);
+          console.error('WebSocket error:', error);
+          this.events.emit('error', new Error('WebSocket connection error'));
+          reject(new Error('WebSocket connection error'));
+        };
   
         this.socket!.onmessage = (event: MessageEvent) => {
           try {
@@ -120,10 +128,9 @@ this.socket!.onerror = (error: Event) => {
               message = JSON.parse(event.data);
             } else {
               message = JSON.parse(JSON.stringify(event.data));
-            } 
+            }
             console.log('WebSocket received message:', message);
             
-            // Handle connection status message
             if (message.type === 'connection_status' && message.data === 'connected') {
               this.events.emit('connect');
             }
@@ -136,11 +143,12 @@ this.socket!.onerror = (error: Event) => {
         };
       });
   
-      await connectionPromise;
-  
     } catch (error) {
       console.error('WebSocket connection error:', error);
       this.handleError(error as Error);
+      throw error;
+    } finally {
+      this.isConnecting = false;
     }
   }
 

@@ -1,0 +1,1 @@
+export const TITLE_SYSTEM_PROMPT = `Generate a 2-6 word title capturing the main topic. Focus on key concepts or questions being asked. Be concise but descriptive. This is for workout or fitness related conversations.`;
