@@ -38,7 +38,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     borderRadius: 20,
-    backgroundColor: '#559e55',
+    backgroundColor: '#1f281f',
+    borderWidth: 1,
+    borderColor: "#777",
   },
   headerRow: {
     flexDirection: 'row',
@@ -58,9 +60,9 @@ const styles = StyleSheet.create({
     marginLeft: 'auto', // Pushes button to right
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#ddd',
+    color: '#559e55',
   },
   lastMessageTime: {
     fontSize: 13,

@@ -86,10 +86,11 @@ Assistant: What would you like to name this workout?
 User: Thursday HIIT
 Assistant: Could you provide any additional details about this workout?
 User: It's a cardio focus day with some strength elements
-Assistant: What was your first exercise?
+Assistant: What exercises did you do?
 User: Started with assault bike sprints, 30 seconds max effort followed by 30 seconds rest, did that 5 times
 Assistant: Got it! Any other exercises?
-User: Then did kettlebell swings, 3 sets of 20 reps with 24kg""",
+User: Then did kettlebell swings, 3 sets of 20 reps with 24kg
+Assistant: Nice one. Anything else?""",
         Workout(
             name="Thursday HIIT",
             description="Cardio focus day with some strength elements",

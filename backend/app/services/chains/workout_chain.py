@@ -1,4 +1,3 @@
-# app/services/chains/workout_chain.py
 import asyncio
 import json
 import logging
@@ -118,7 +117,7 @@ class WorkoutChain:
 
                 logger.debug("Extracting data from messages...")
                 extracted_data = await self.extractor.extract(self.messages)
-                logger.info(f"Extracted Workout Data: {json.dumps(extracted_data.model_dump(), indent=2)}")
+                logger.info("\033[32m" + f"Extracted Workout Data: {json.dumps(extracted_data.model_dump(), indent=2)}" + "\033[0m")
                 
                 self.extraction_state = extracted_data
                 missing_fields = self._get_missing_fields(extracted_data)

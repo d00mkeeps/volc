@@ -1,67 +1,68 @@
-2025-01-02 15:35:03,610 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-01-02 15:35:03,611 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-01-02 15:35:06,870 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 02 Jan 2025 21:35:06 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-02T21:35:04Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-02T21:35:07Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-02T21:35:06Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'47000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-02T21:35:06Z'), (b'request-id', b'req_01TRn3ceZCUQS8MRNoL6KT5d'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8fbde06fea60c9a8-IAD'), (b'Content-Encoding', b'gzip')])
-2025-01-02 15:35:06,875 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-01-02 15:35:06,877 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-01-02 15:35:06,878 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-01-02 15:35:06,878 - httpcore.http11 - DEBUG - response_closed.started
-2025-01-02 15:35:06,879 - httpcore.http11 - DEBUG - response_closed.complete
-2025-01-02 15:35:06,879 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-01-02 15:35:06,885 - app.services.chains.workout_chain - INFO - Extracted Workout Data: {
-  "name": "2/1/2025 back day",
-  "description": null,
-  "exercises": [
-    {
-      "exercise_name": "Barbell Shrugs",
-      "set_data": {
-        "sets": [
-          {
-            "weight": 120,
-            "reps": 12
-          },
-          {
-            "weight": 120,
-            "reps": 12
-          },
-          {
-            "weight": 120,
-            "reps": 12
-          },
-          {
-            "weight": 120,
-            "reps": 8
-          }
-        ]
-      },
-      "order_in_workout": 1
-    }
-  ]
-}
-2025-01-02 15:35:06,885 - app.services.chains.workout_chain - DEBUG - Missing fields: All required information has been collected.
-2025-01-02 15:35:06,885 - app.services.chains.workout_chain - DEBUG - Generating conversation response...
-2025-01-02 15:35:06,892 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'I had a great back workout! I did shrugs, rows, and deadlifts. Can we track it?'}, {'type': 'text', 'text': 'I had a great back workout! I did shrugs, rows, and deadlifts. Can we track it?'}]}, {'role': 'assistant', 'content': "Great, let's track your back workout! What would you like to name this workout?"}, {'role': 'user', 'content': '2/1/2025 back day'}, {'role': 'assistant', 'content': "Got it! Let's start with the first exercise - shrugs. How many sets of shrugs did you do?"}, {'role': 'user', 'content': '4 sets of 120kg, 12 reps for all but the last. '}, {'role': 'assistant', 'content': 'Okay, got 4 sets of barbell shrugs:\n\nSet 1: 12 reps x 120kg\nSet 2: 12 reps x 120kg  \nSet 3: 12 reps x 120kg\nSet 4: What was the rep and weight for the last set?'}, {'role': 'user', 'content': [{'type': 'text', 'text': '120kg for 8 reps'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to collect details about the user\'s workout through structured conversation.\n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding workout information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. Workout Name (if not provided)\n2. Exercise Details (one exercise at a time)\n   - Exercise Name\n   - Number of Sets\n   - For each set: Reps, Weight, Duration, Distance (as applicable)\n3. Additional Exercises (ask if user wants to add more)\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Got it! What would you like to name this workout?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other system information.\n\n5. SUMMARY DISPLAY\nOnce all exercises are recorded, return this exact message:\n\nGreat! Here\'s a summary of your workout:\n\n[Workout Name]\nDescription: [if provided]\n\nExercises:\n1. [Exercise Name]\n   [Set details formatted appropriately]\n2. [Exercise Name]\n   [Set details formatted appropriately]\n[etc.]\n\nDoes this look correct to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. When asking about exercises, be specific:\n   "What exercise would you like to add next?"\n\n2. For set data collection:\n   - Ask about one set at a time\n   - Adapt to exercise type (strength vs cardio)\n   - Confirm before moving to next set/exercise\n\n3. Always ask if user wants to add another exercise before showing summary\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}
-2025-01-02 15:35:06,893 - httpcore.connection - DEBUG - close.started
-2025-01-02 15:35:06,893 - httpcore.connection - DEBUG - close.complete
-2025-01-02 15:35:06,893 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-01-02 15:35:06,940 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x103f43980>
-2025-01-02 15:35:06,940 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x103d460d0> server_hostname='api.anthropic.com' timeout=None
-2025-01-02 15:35:06,984 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x103f43d70>
-2025-01-02 15:35:06,984 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-01-02 15:35:06,984 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-01-02 15:35:06,984 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-01-02 15:35:06,984 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-01-02 15:35:06,984 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-01-02 15:35:08,008 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 02 Jan 2025 21:35:07 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-02T21:35:08Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-02T21:35:08Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-02T21:35:14Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-02T21:35:08Z'), (b'request-id', b'req_01GQvsZn6WMUbwxoxCjqmSk9'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8fbde084fee0d6c9-IAD')])
-2025-01-02 15:35:08,009 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-01-02 15:35:08,010 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-01-02 15:35:08,010 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-01-02 15:35:08,011 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
-2025-01-02 15:35:08,012 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'Got'}
-2025-01-02 15:35:08,017 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' it, thanks.'}
-2025-01-02 15:35:08,018 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' Now'}
-2025-01-02 15:35:08,019 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': " let's move to"}
-2025-01-02 15:35:08,020 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' the'}
-2025-01-02 15:35:08,021 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' next exercise - rows'}
-2025-01-02 15:35:08,023 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '. What'}
-2025-01-02 15:35:08,024 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' kin'}
-2025-01-02 15:35:08,042 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'd of rows'}
+2025-01-07 16:27:31,558 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10653bbf0>
+2025-01-07 16:27:31,560 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1064c3e50> server_hostname='api.anthropic.com' timeout=None
+2025-01-07 16:27:31,575 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1062e6960>
+2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-01-07 16:27:31,577 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-01-07 16:27:31,577 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-01-07 16:27:33,329 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 07 Jan 2025 16:27:33 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-07T16:27:33Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-07T16:27:33Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-07T16:27:39Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-07T16:27:33Z'), (b'request-id', b'req_01AdwFCcLxsMhsQk3AtbxpVL'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8fe550d36ed1eb11-MAN')])
+2025-01-07 16:27:33,331 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-01-07 16:27:33,331 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-01-07 16:27:33,331 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-01-07 16:27:33,333 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
+2025-01-07 16:27:33,335 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Great'}
+2025-01-07 16:27:33,336 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '!'}
+2025-01-07 16:27:33,337 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': " Here's"}
+2025-01-07 16:27:33,337 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' a summary of your'}
+2025-01-07 16:27:33,338 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' workout:'}
+2025-01-07 16:27:33,354 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nTuesday Chest'}
+2025-01-07 16:27:33,365 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Day'}
+2025-01-07 16:27:33,404 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\nDescription'}
+2025-01-07 16:27:33,427 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': Got'}
+2025-01-07 16:27:33,608 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' a little hungry near'}
+2025-01-07 16:27:33,610 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' the end.'}
+2025-01-07 16:27:33,611 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Loved weighted dips,'}
+2025-01-07 16:27:33,667 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' need to buy own'}
+2025-01-07 16:27:33,698 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' belt to do them'}
+2025-01-07 16:27:33,766 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' more often. O'}
+2025-01-07 16:27:33,796 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'HP felt rough,'}
+2025-01-07 16:27:33,862 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' maybe swap for cable shoulder exercise.'}
+2025-01-07 16:27:33,887 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nExercises:'}
+2025-01-07 16:27:33,930 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n1'}
+2025-01-07 16:27:33,945 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '. Bench Press'}
+2025-01-07 16:27:34,027 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   '}
+2025-01-07 16:27:34,132 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 1: '}
+2025-01-07 16:27:34,134 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 reps'}
+2025-01-07 16:27:34,135 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 90 '}
+2025-01-07 16:27:34,172 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'lbs\n   '}
+2025-01-07 16:27:34,198 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 2:'}
+2025-01-07 16:27:34,237 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 5 r'}
+2025-01-07 16:27:34,259 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'eps at 92'}
+2025-01-07 16:27:34,291 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '.5 l'}
+2025-01-07 16:27:34,326 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'bs\n   Set'}
+2025-01-07 16:27:34,370 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 3: '}
+2025-01-07 16:27:34,412 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '4 reps'}
+2025-01-07 16:27:34,469 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 92.'}
+2025-01-07 16:27:34,493 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 lbs'}
+2025-01-07 16:27:34,543 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '  \n   Set '}
+2025-01-07 16:27:34,659 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '4: 5'}
+2025-01-07 16:27:34,662 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at'}
+2025-01-07 16:27:34,683 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 90 l'}
+2025-01-07 16:27:34,710 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'bs\n\n2.'}
+2025-01-07 16:27:34,712 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Preacher'}
+2025-01-07 16:27:34,811 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Curl\n   4'}
+2025-01-07 16:27:34,845 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' sets of '}
+2025-01-07 16:27:34,892 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps'}
+2025-01-07 16:27:34,958 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 35 lbs  '}
+2025-01-07 16:27:35,049 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\n3.'}
+2025-01-07 16:27:35,060 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Dips\n   '}
+2025-01-07 16:27:35,084 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 1: 8 r'}
+2025-01-07 16:27:35,178 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'eps + 7.5 kg'}
+2025-01-07 16:27:35,182 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' weight\n   Set 2: '}
+2025-01-07 16:27:35,239 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '10 reps + 7.'}
+2025-01-07 16:27:35,302 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 kg weight\n   Set '}
+2025-01-07 16:27:35,336 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '3: 7'}
+2025-01-07 16:27:35,406 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps + 7.5'}
+2025-01-07 16:27:35,992 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' kg weight\n   Set 4'}
+2025-01-07 16:27:36,295 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': 7 reps bodyweight'}

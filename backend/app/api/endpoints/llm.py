@@ -28,10 +28,10 @@ async def conversation_websocket(websocket: WebSocket, conversation_id: str):
         })
         
         # Create new service instance for each connection
-        service = ConversationService(conversation_id)  # Pass conversation_id
+        service = ConversationService()  # Pass conversation_id
         logger.info(f"Created ConversationService instance for conversation: {conversation_id}")
         
-        await service.process_websocket(websocket, conversation_id)
+        await service.process_websocket(websocket)
             
     except WebSocketDisconnect as e:
         logger.error(f"WebSocket disconnected with code {e.code} and reason: {e.reason}")

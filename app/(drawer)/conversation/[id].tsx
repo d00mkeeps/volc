@@ -17,7 +17,6 @@ function ConversationPage() {
     console.log('Conversation signal received:', { type, data });
   }, []);
 
-  // Handle initial message send after connection is established
   useEffect(() => {
     const sendInitialMessage = async () => {
       if (
