@@ -1,68 +1,99 @@
-2025-01-07 16:27:31,558 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10653bbf0>
-2025-01-07 16:27:31,560 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1064c3e50> server_hostname='api.anthropic.com' timeout=None
-2025-01-07 16:27:31,575 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1062e6960>
-2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-01-07 16:27:31,576 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-01-07 16:27:31,577 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-01-07 16:27:31,577 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-01-07 16:27:33,329 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 07 Jan 2025 16:27:33 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-07T16:27:33Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-07T16:27:33Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-07T16:27:39Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-07T16:27:33Z'), (b'request-id', b'req_01AdwFCcLxsMhsQk3AtbxpVL'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'8fe550d36ed1eb11-MAN')])
-2025-01-07 16:27:33,331 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-01-07 16:27:33,331 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-01-07 16:27:33,331 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-01-07 16:27:33,333 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
-2025-01-07 16:27:33,335 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Great'}
-2025-01-07 16:27:33,336 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '!'}
-2025-01-07 16:27:33,337 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': " Here's"}
-2025-01-07 16:27:33,337 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' a summary of your'}
-2025-01-07 16:27:33,338 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' workout:'}
-2025-01-07 16:27:33,354 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nTuesday Chest'}
-2025-01-07 16:27:33,365 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Day'}
-2025-01-07 16:27:33,404 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\nDescription'}
-2025-01-07 16:27:33,427 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': Got'}
-2025-01-07 16:27:33,608 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' a little hungry near'}
-2025-01-07 16:27:33,610 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' the end.'}
-2025-01-07 16:27:33,611 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Loved weighted dips,'}
-2025-01-07 16:27:33,667 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' need to buy own'}
-2025-01-07 16:27:33,698 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' belt to do them'}
-2025-01-07 16:27:33,766 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' more often. O'}
-2025-01-07 16:27:33,796 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'HP felt rough,'}
-2025-01-07 16:27:33,862 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' maybe swap for cable shoulder exercise.'}
-2025-01-07 16:27:33,887 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nExercises:'}
-2025-01-07 16:27:33,930 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n1'}
-2025-01-07 16:27:33,945 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '. Bench Press'}
-2025-01-07 16:27:34,027 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   '}
-2025-01-07 16:27:34,132 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 1: '}
-2025-01-07 16:27:34,134 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 reps'}
-2025-01-07 16:27:34,135 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 90 '}
-2025-01-07 16:27:34,172 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'lbs\n   '}
-2025-01-07 16:27:34,198 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 2:'}
-2025-01-07 16:27:34,237 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 5 r'}
-2025-01-07 16:27:34,259 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'eps at 92'}
-2025-01-07 16:27:34,291 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '.5 l'}
-2025-01-07 16:27:34,326 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'bs\n   Set'}
-2025-01-07 16:27:34,370 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 3: '}
-2025-01-07 16:27:34,412 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '4 reps'}
-2025-01-07 16:27:34,469 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 92.'}
-2025-01-07 16:27:34,493 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 lbs'}
-2025-01-07 16:27:34,543 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '  \n   Set '}
-2025-01-07 16:27:34,659 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '4: 5'}
-2025-01-07 16:27:34,662 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at'}
-2025-01-07 16:27:34,683 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 90 l'}
-2025-01-07 16:27:34,710 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'bs\n\n2.'}
-2025-01-07 16:27:34,712 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Preacher'}
-2025-01-07 16:27:34,811 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Curl\n   4'}
-2025-01-07 16:27:34,845 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' sets of '}
-2025-01-07 16:27:34,892 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps'}
-2025-01-07 16:27:34,958 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 35 lbs  '}
-2025-01-07 16:27:35,049 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\n3.'}
-2025-01-07 16:27:35,060 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Dips\n   '}
-2025-01-07 16:27:35,084 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 1: 8 r'}
-2025-01-07 16:27:35,178 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'eps + 7.5 kg'}
-2025-01-07 16:27:35,182 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' weight\n   Set 2: '}
-2025-01-07 16:27:35,239 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '10 reps + 7.'}
-2025-01-07 16:27:35,302 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '5 kg weight\n   Set '}
-2025-01-07 16:27:35,336 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '3: 7'}
-2025-01-07 16:27:35,406 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps + 7.5'}
-2025-01-07 16:27:35,992 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' kg weight\n   Set 4'}
-2025-01-07 16:27:36,295 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': 7 reps bodyweight'}
+2025-01-07 16:27:36,368 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\n4. Cable Lateral Raise'}
+2025-01-07 16:27:36,437 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '  \n   Set '}
+2025-01-07 16:27:36,525 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '1: 8 reps at'}
+2025-01-07 16:27:36,593 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 7.9'}
+2025-01-07 16:27:36,642 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' kg (weaker arm)'}
+2025-01-07 16:27:36,751 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   Set 2'}
+2025-01-07 16:27:36,751 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': 9 '}
+2025-01-07 16:27:36,794 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'reps at '}
+2025-01-07 16:27:36,853 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '7.9 '}
+2025-01-07 16:27:36,898 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg (weaker'}
+2025-01-07 16:27:36,962 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' arm)\n   '}
+2025-01-07 16:27:36,996 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 3:'}
+2025-01-07 16:27:37,032 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 15 reps at 12'}
+2025-01-07 16:27:37,060 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '.5 lbs with rest pause'}
+2025-01-07 16:27:37,095 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' (weaker arm'}
+2025-01-07 16:27:37,114 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ')\n\n5.'}
+2025-01-07 16:27:37,130 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Chest Fly'}
+2025-01-07 16:27:37,156 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Machine\n   Set 1: '}
+2025-01-07 16:27:37,172 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps at 86 '}
+2025-01-07 16:27:37,184 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg\n   Set 2: '}
+2025-01-07 16:27:37,276 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps'}
+2025-01-07 16:27:37,278 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 86 kg\n   Set'}
+2025-01-07 16:27:37,279 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 3: 7 reps'}
+2025-01-07 16:27:37,287 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 93 '}
+2025-01-07 16:27:37,296 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg\n\n6.'}
+2025-01-07 16:27:37,314 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Barbell O'}
+2025-01-07 16:27:37,338 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'HP\n   Set'}
+2025-01-07 16:27:37,359 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 1: 5 reps'}
+2025-01-07 16:27:37,390 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 50 '}
+2025-01-07 16:27:37,425 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg  \n   Set '}
+2025-01-07 16:27:37,441 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '2: 3'}
+2025-01-07 16:27:37,463 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at'}
+2025-01-07 16:27:37,497 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 50 kg'}
+2025-01-07 16:27:37,514 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   Set '}
+2025-01-07 16:27:37,535 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '3: 8'}
+2025-01-07 16:27:37,550 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at 40 kg'}
+2025-01-07 16:27:37,565 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nDoes this look'}
+2025-01-07 16:27:37,583 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' correct to you?'}
+2025-01-07 16:27:37,603 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
+2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - response_closed.started
+2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - response_closed.complete
+2025-01-07 16:27:37,676 - app.services.chains.workout_chain - DEBUG - Response generated: Great! Here's a summary of your workout:
+
+Tuesday Chest Day
+Description: Got a little hungry near th...
+2025-01-07 16:27:37,676 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'done'}
+2025-01-07 16:37:37,478 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1012 and reason: 
+2025-01-07 16:37:37,479 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
+2025-01-07 16:37:38,487 - root - DEBUG - Logging has been set up
+2025-01-07 16:37:38,488 - app.main - INFO - Application starting
+2025-01-07 16:37:38,491 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
+2025-01-07 16:37:38,491 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-01-07 16:37:38,533 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
+2025-01-07 16:37:38,535 - app.services.conversation_service - DEBUG - Processing initialization with 4 messages...
+2025-01-07 16:37:38,539 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
+2025-01-07 16:37:45,460 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-01-07 16:37:45,460 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-01-07 16:37:56,581 - root - DEBUG - Logging has been set up
+2025-01-07 16:37:56,581 - app.main - INFO - Application starting
+2025-01-07 16:39:17,557 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
+2025-01-07 16:39:17,558 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-01-07 16:39:17,611 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
+2025-01-07 16:39:17,612 - app.services.conversation_service - DEBUG - Processing initialization with 4 messages...
+2025-01-07 16:39:17,615 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
+2025-01-07 16:39:43,310 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-01-07 16:39:43,319 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-01-07 16:51:11,556 - root - DEBUG - Logging has been set up
+2025-01-07 16:51:11,556 - app.main - INFO - Application starting
+2025-01-07 16:51:45,911 - root - DEBUG - Logging has been set up
+2025-01-07 16:51:45,911 - app.main - INFO - Application starting
+2025-01-07 16:51:53,498 - root - DEBUG - Logging has been set up
+2025-01-07 16:51:53,498 - app.main - INFO - Application starting
+2025-01-07 16:55:37,712 - root - DEBUG - Logging has been set up
+2025-01-07 16:55:37,713 - app.main - INFO - Application starting
+2025-01-07 16:55:54,986 - root - DEBUG - Logging has been set up
+2025-01-07 16:55:54,986 - app.main - INFO - Application starting
+2025-01-07 16:56:34,071 - root - DEBUG - Logging has been set up
+2025-01-07 16:56:34,071 - app.main - INFO - Application starting
+2025-01-07 16:57:43,878 - root - DEBUG - Logging has been set up
+2025-01-07 16:57:43,878 - app.main - INFO - Application starting
+2025-01-07 16:58:13,858 - root - DEBUG - Logging has been set up
+2025-01-07 16:58:13,858 - app.main - INFO - Application starting
+2025-01-07 17:00:22,429 - root - DEBUG - Logging has been set up
+2025-01-07 17:00:22,429 - app.main - INFO - Application starting
+2025-01-07 17:00:28,310 - root - DEBUG - Logging has been set up
+2025-01-07 17:00:28,310 - app.main - INFO - Application starting
+2025-01-07 17:01:58,376 - root - DEBUG - Logging has been set up
+2025-01-07 17:01:58,376 - app.main - INFO - Application starting
+2025-01-07 17:02:05,040 - root - DEBUG - Logging has been set up
+2025-01-07 17:02:05,040 - app.main - INFO - Application starting
+2025-01-07 17:03:31,891 - root - DEBUG - Logging has been set up
+2025-01-07 17:03:31,891 - app.main - INFO - Application starting
+2025-01-07 17:04:29,688 - root - DEBUG - Logging has been set up
+2025-01-07 17:04:29,689 - app.main - INFO - Application starting
+2025-01-07 18:23:45,285 - root - DEBUG - Logging has been set up
+2025-01-07 18:23:45,285 - app.main - INFO - Application starting
+2025-01-07 18:37:55,750 - root - DEBUG - Logging has been set up
+2025-01-07 18:37:55,750 - app.main - INFO - Application starting

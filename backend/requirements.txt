@@ -5,3 +5,6 @@ pydantic-settings
 websockets
 uvicorn[standard]
 langchain_anthropic
+python-dotenv
+pydantic
+langchain-core

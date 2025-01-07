@@ -1,69 +1,71 @@
-2025-01-07 16:27:36,368 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\n4. Cable Lateral Raise'}
-2025-01-07 16:27:36,437 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '  \n   Set '}
-2025-01-07 16:27:36,525 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '1: 8 reps at'}
-2025-01-07 16:27:36,593 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 7.9'}
-2025-01-07 16:27:36,642 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' kg (weaker arm)'}
-2025-01-07 16:27:36,751 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   Set 2'}
-2025-01-07 16:27:36,751 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ': 9 '}
-2025-01-07 16:27:36,794 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'reps at '}
-2025-01-07 16:27:36,853 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '7.9 '}
-2025-01-07 16:27:36,898 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg (weaker'}
-2025-01-07 16:27:36,962 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' arm)\n   '}
-2025-01-07 16:27:36,996 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Set 3:'}
-2025-01-07 16:27:37,032 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 15 reps at 12'}
-2025-01-07 16:27:37,060 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '.5 lbs with rest pause'}
-2025-01-07 16:27:37,095 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' (weaker arm'}
-2025-01-07 16:27:37,114 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ')\n\n5.'}
-2025-01-07 16:27:37,130 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Chest Fly'}
-2025-01-07 16:27:37,156 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Machine\n   Set 1: '}
-2025-01-07 16:27:37,172 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps at 86 '}
-2025-01-07 16:27:37,184 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg\n   Set 2: '}
-2025-01-07 16:27:37,276 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '8 reps'}
-2025-01-07 16:27:37,278 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 86 kg\n   Set'}
-2025-01-07 16:27:37,279 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 3: 7 reps'}
-2025-01-07 16:27:37,287 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 93 '}
-2025-01-07 16:27:37,296 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg\n\n6.'}
-2025-01-07 16:27:37,314 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' Barbell O'}
-2025-01-07 16:27:37,338 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'HP\n   Set'}
-2025-01-07 16:27:37,359 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 1: 5 reps'}
-2025-01-07 16:27:37,390 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' at 50 '}
-2025-01-07 16:27:37,425 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'kg  \n   Set '}
-2025-01-07 16:27:37,441 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '2: 3'}
-2025-01-07 16:27:37,463 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at'}
-2025-01-07 16:27:37,497 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' 50 kg'}
-2025-01-07 16:27:37,514 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n   Set '}
-2025-01-07 16:27:37,535 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '3: 8'}
-2025-01-07 16:27:37,550 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' reps at 40 kg'}
-2025-01-07 16:27:37,565 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '\n\nDoes this look'}
-2025-01-07 16:27:37,583 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' correct to you?'}
-2025-01-07 16:27:37,603 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
-2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - response_closed.started
-2025-01-07 16:27:37,675 - httpcore.http11 - DEBUG - response_closed.complete
-2025-01-07 16:27:37,676 - app.services.chains.workout_chain - DEBUG - Response generated: Great! Here's a summary of your workout:
-
-Tuesday Chest Day
-Description: Got a little hungry near th...
-2025-01-07 16:27:37,676 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'done'}
-2025-01-07 16:37:37,478 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1012 and reason: 
-2025-01-07 16:37:37,479 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
-2025-01-07 16:37:38,487 - root - DEBUG - Logging has been set up
-2025-01-07 16:37:38,488 - app.main - INFO - Application starting
-2025-01-07 16:37:38,491 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
-2025-01-07 16:37:38,491 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-01-07 16:37:38,533 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
-2025-01-07 16:37:38,535 - app.services.conversation_service - DEBUG - Processing initialization with 4 messages...
-2025-01-07 16:37:38,539 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
-2025-01-07 16:37:45,460 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-01-07 16:37:45,460 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-01-07 16:37:56,581 - root - DEBUG - Logging has been set up
-2025-01-07 16:37:56,581 - app.main - INFO - Application starting
-2025-01-07 16:39:17,557 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
-2025-01-07 16:39:17,558 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-01-07 16:39:17,611 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ce165d4a-2930-4f7b-8e59-bb6c6b555f9f
-2025-01-07 16:39:17,612 - app.services.conversation_service - DEBUG - Processing initialization with 4 messages...
-2025-01-07 16:39:17,615 - app.services.conversation_service - INFO - Initialized conversation with 4 messages
-2025-01-07 16:39:43,310 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-01-07 16:39:43,319 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-01-07 16:51:11,556 - root - DEBUG - Logging has been set up
-2025-01-07 16:51:11,556 - app.main - INFO - Application starting
+2025-01-07 18:38:04,556 - root - DEBUG - Logging has been set up
+2025-01-07 18:38:04,556 - app.main - INFO - Application starting
+2025-01-07 18:38:24,802 - root - DEBUG - Logging has been set up
+2025-01-07 18:38:24,802 - app.main - INFO - Application starting
+2025-01-07 18:39:00,239 - root - DEBUG - Logging has been set up
+2025-01-07 18:39:00,239 - app.main - INFO - Application starting
+2025-01-07 18:39:38,804 - root - DEBUG - Logging has been set up
+2025-01-07 18:39:38,804 - app.main - INFO - Application starting
+2025-01-07 18:40:32,880 - root - DEBUG - Logging has been set up
+2025-01-07 18:40:32,880 - app.main - INFO - Application starting
+2025-01-07 18:41:39,593 - root - DEBUG - Logging has been set up
+2025-01-07 18:41:39,593 - app.main - INFO - Application starting
+2025-01-07 18:47:02,422 - root - DEBUG - Logging has been set up
+2025-01-07 18:47:02,423 - app.main - INFO - Application starting
+2025-01-07 19:03:58,267 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
+2025-01-07 19:03:58,270 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-01-07 19:03:58,341 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
+    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
+    self.sentiment_prompt = ChatPromptTemplate.from_messages([
+                            ^^^^^^^^^^^^^^^^^^
+NameError: name 'ChatPromptTemplate' is not defined
+2025-01-07 19:03:58,534 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
+2025-01-07 19:03:58,535 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-01-07 19:03:58,541 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
+    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
+    self.sentiment_prompt = ChatPromptTemplate.from_messages([
+                            ^^^^^^^^^^^^^^^^^^
+NameError: name 'ChatPromptTemplate' is not defined
+2025-01-07 19:03:58,571 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
+2025-01-07 19:03:58,571 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-01-07 19:03:58,573 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
+    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
+    self.sentiment_prompt = ChatPromptTemplate.from_messages([
+                            ^^^^^^^^^^^^^^^^^^
+NameError: name 'ChatPromptTemplate' is not defined

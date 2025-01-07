@@ -55,4 +55,3 @@ class ChainService:
            except:
                pass
            logger.info("WebSocket connection closed")
-
