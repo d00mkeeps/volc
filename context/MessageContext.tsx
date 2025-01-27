@@ -27,6 +27,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [streamingMessage, setStreamingMessage] = useState<Message | null>(null);
   const [connectionState, setConnectionState] = useState<ConnectionState>(createInitialConnectionState());
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const accumulatedMessageRef = useRef<string>('');
 
   const conversationService = useMemo(() => new ConversationService(), []);
   const webSocket = useMemo(() => new WebSocketService(), []);
@@ -64,7 +65,6 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [conversationService, webSocket]);
 
- // In MessageContext.tsx
  const startNewConversation = useCallback(async (firstMessage: string): Promise<string> => {
   const session = await authService.getSession();
   if (!session?.user?.id) {
@@ -166,6 +166,16 @@ useEffect(() => {
 useEffect(() => {
   streamHandler.on('content', (chunk: string) => {
     if (!currentConversationId) return;
+
+    accumulatedMessageRef.current += chunk;
+    setStreamingMessage({
+      id: 'streaming',
+      conversation_id: currentConversationId,
+      content: accumulatedMessageRef.current,
+      sender: 'assistant',
+      conversation_sequence: (messages[messages.length -1]?.conversation_sequence || 0) + 1,
+      timestamp: new Date()
+    })
     
     setStreamingMessage(prev => ({
       id: 'streaming',
@@ -173,21 +183,31 @@ useEffect(() => {
       content: prev ? prev.content + chunk : chunk,
       sender: 'assistant',
       conversation_sequence: (messages[messages.length - 1]?.conversation_sequence || 0) + 1,
-      timestamp: new Date()
+      timestamp: new Date(0)
     }));
   });
 
+  streamHandler.on('signal', (signal: { type: string; data: any }) => {
+    console.log('MessageContext: Received signal:', signal);
+    if (messageHandlerRef.current) {
+      console.log('MessageContext: Forwarding signal to handler');
+      messageHandlerRef.current(signal.type, signal.data);
+    }else {
+      console.log('MessageContext: No message handler registered');}
+  });
+
   streamHandler.on('done', async () => {
-    if (!streamingMessage || !currentConversationId) return;
+    if (!currentConversationId) return;
     
     const finalMessage = await conversationService.saveMessage({
       conversationId: currentConversationId,
-      content: streamingMessage.content,
+      content: accumulatedMessageRef.current,
       sender: 'assistant'
     });
 
     setMessages(prev => [...prev, finalMessage]);
     setStreamingMessage(null);
+    accumulatedMessageRef.current = '';
     setConnectionState(prev => ({
       ...prev,
       type: 'CONNECTED',

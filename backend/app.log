@@ -1,71 +1,21 @@
-2025-01-07 18:38:04,556 - root - DEBUG - Logging has been set up
-2025-01-07 18:38:04,556 - app.main - INFO - Application starting
-2025-01-07 18:38:24,802 - root - DEBUG - Logging has been set up
-2025-01-07 18:38:24,802 - app.main - INFO - Application starting
-2025-01-07 18:39:00,239 - root - DEBUG - Logging has been set up
-2025-01-07 18:39:00,239 - app.main - INFO - Application starting
-2025-01-07 18:39:38,804 - root - DEBUG - Logging has been set up
-2025-01-07 18:39:38,804 - app.main - INFO - Application starting
-2025-01-07 18:40:32,880 - root - DEBUG - Logging has been set up
-2025-01-07 18:40:32,880 - app.main - INFO - Application starting
-2025-01-07 18:41:39,593 - root - DEBUG - Logging has been set up
-2025-01-07 18:41:39,593 - app.main - INFO - Application starting
-2025-01-07 18:47:02,422 - root - DEBUG - Logging has been set up
-2025-01-07 18:47:02,423 - app.main - INFO - Application starting
-2025-01-07 19:03:58,267 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
-2025-01-07 19:03:58,270 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-01-07 19:03:58,341 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-              ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
-    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
-    self.sentiment_prompt = ChatPromptTemplate.from_messages([
-                            ^^^^^^^^^^^^^^^^^^
-NameError: name 'ChatPromptTemplate' is not defined
-2025-01-07 19:03:58,534 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
-2025-01-07 19:03:58,535 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-01-07 19:03:58,541 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-              ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
-    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
-    self.sentiment_prompt = ChatPromptTemplate.from_messages([
-                            ^^^^^^^^^^^^^^^^^^
-NameError: name 'ChatPromptTemplate' is not defined
-2025-01-07 19:03:58,571 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6a07eb35-8f9d-42f2-8077-0c572f160d36
-2025-01-07 19:03:58,571 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-01-07 19:03:58,573 - app.api.endpoints.llm - ERROR - Error in websocket handler: name 'ChatPromptTemplate' is not defined
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 31, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-              ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/chains/workout_chain.py", line 40, in __init__
-    self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/supreme-octo-doodle/backend/app/services/sentiment_analysis/base.py", line 6, in __init__
-    self.sentiment_prompt = ChatPromptTemplate.from_messages([
-                            ^^^^^^^^^^^^^^^^^^
-NameError: name 'ChatPromptTemplate' is not defined
+2025-01-27 23:42:56,153 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': "Last AI Message: You're absolutely right, let me incorporate your notes into the summary:\n\nMonday Strength Workout \nExercises:\n1. Incline Dumbbell Bench Press\n   7 sets x 34kg, 6 sets x 34kg, 6 sets x 34kg\n2. Preacher Curls  \n   6 sets x 40kg, 6 sets x 40kg, 7 sets x 40kg, 8 sets x 30kg\n3. Tricep Dips\n   12 reps x bodyweight+5kg, 12 reps x bodyweight+6.25kg, 9 reps x bodyweight+7.5kg, 9 reps x bodyweight+7.5kg  \n4. Upright Rows\n   20 reps x 30kg, 18 reps x 32.5kg, 18 reps x 32.5kg\n5. Tricep Pushdowns\n   10 reps x 30.6kg (2 sets), 8 reps x 30.6kg\n6. Hammer Curls\n   10 reps x 16kg, 9 reps x 16kg, 8 reps x 16kg\n7. Cable Lateral Raises\n   10 reps x 18kg, 12 reps x 18kg, 12 reps x 18kg\n\nNotes:\nYou felt a little tired during this workout due to changing pre-workouts and lack of sleep recently. However, everything felt good overall. Your goal is to get back up to 12 reps on all exercises before increasing weight, ideally within a week, but you're not rushing progress given your calorie deficit.\n\nPlease let me know if this updated summary accurately captures your Monday workout and notes.\nUser Response: Looks good\n\nOnly return APPROVE if both:\n1. The AI's last message contains a workout summary\n2. The user's response indicates approval"}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': "Analyze if the user's response fully approves the summary or requests any changes.\nRules:\n- Return 'APPROVE' only if the response indicates complete acceptance\n- Return 'REJECT' if:\n  * Any changes are requested, even minor ones\n  * User seems unsure or asks questions\n  * User indicates any information is incorrect or missing\n  * User wants to add or modify any details"}}
+2025-01-27 23:42:56,159 - httpcore.connection - DEBUG - close.started
+2025-01-27 23:42:56,160 - httpcore.connection - DEBUG - close.complete
+2025-01-27 23:42:56,160 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-01-27 23:42:56,185 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1076476e0>
+2025-01-27 23:42:56,185 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x106d69850> server_hostname='api.anthropic.com' timeout=None
+2025-01-27 23:42:56,203 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x107647860>
+2025-01-27 23:42:56,203 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-01-27 23:42:56,204 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-01-27 23:42:56,204 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-01-27 23:42:56,204 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-01-27 23:42:56,204 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-01-27 23:42:57,192 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 27 Jan 2025 23:42:57 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-27T23:42:57Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'40000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-27T23:42:56Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-27T23:43:04Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'47000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-27T23:42:56Z'), (b'request-id', b'req_016AbahBDd9G85Jhu3bkPmio'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'908c9a21aa72cc9e-MAN')])
+2025-01-27 23:42:57,193 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-01-27 23:42:57,193 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-01-27 23:42:57,194 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-01-27 23:42:57,204 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-01-27 23:42:57,204 - httpcore.http11 - DEBUG - response_closed.started
+2025-01-27 23:42:57,204 - httpcore.http11 - DEBUG - response_closed.complete
+2025-01-27 23:42:57,205 - app.services.chains.workout_chain - DEBUG - Summary approved by user
+2025-01-27 23:42:57,206 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'workout_approved', 'data': {'name': 'Monday Upper Body', 'description': 'Felt a little tired during this workout due to lack of sleep and change in pre-workout routine. Everything felt good overall. Aiming to hit 12 reps on all exercises before increasing weight. Not in a rush given current caloric deficit.', 'exercises': [{'exercise_name': 'Slight Incline Dumbbell Bench Press', 'set_data': {'sets': [{'weight': 34, 'reps': 7}, {'weight': 34, 'reps': 6}, {'weight': 34, 'reps': 6}]}, 'order_in_workout': 1, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Preacher Curl', 'set_data': {'sets': [{'weight': 40, 'reps': 6}, {'weight': 40, 'reps': 6}, {'weight': 40, 'reps': 7}, {'weight': 30, 'reps': 8}]}, 'order_in_workout': 2, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Tricep Dips', 'set_data': {'sets': [{'weight': 5, 'reps': 12}, {'weight': 6.25, 'reps': 12}, {'weight': 7.5, 'reps': 9}, {'weight': 7.5, 'reps': 9}]}, 'order_in_workout': 3, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Upright Row', 'set_data': {'sets': [{'weight': 30, 'reps': 20}, {'weight': 32.5, 'reps': 18}, {'weight': 32.5, 'reps': 18}]}, 'order_in_workout': 4, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Tricep Pushdown', 'set_data': {'sets': [{'weight': 30.6, 'reps': 10}, {'weight': 30.6, 'reps': 10}, {'weight': 30.6, 'reps': 8}]}, 'order_in_workout': 5, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Hammer Curls', 'set_data': {'sets': [{'weight': 16, 'reps': 10}, {'weight': 16, 'reps': 9}, {'weight': 16, 'reps': 8}]}, 'order_in_workout': 6, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Cable Lateral Raise', 'set_data': {'sets': [{'weight': 18, 'reps': 10}, {'weight': 18, 'reps': 12}, {'weight': 18, 'reps': 12}]}, 'order_in_workout': 7, 'weight_unit': 'kg', 'distance_unit': None}]}}

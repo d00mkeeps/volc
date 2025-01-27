@@ -77,15 +77,15 @@ const styles = StyleSheet.create({
   bottomRightComponent: {
     // Adjust these styles as needed for your specific component
     backgroundColor: '#4a854a',
-    borderRadius: 10,
+    borderRadius: 6,
     padding: 4,
   },
   bottomRightText: {
-    color: '#fff',
+    color: '#eee',
     fontSize: 12,
   },
   deleteText: {
-    color: '#fff',
+    color: '#aaa',
     fontSize: 12,
   },
 });

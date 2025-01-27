@@ -1,65 +1,37 @@
-# app/core/prompts/workout_extractor.py
 WORKOUT_EXTRACTOR_PROMPT = """Extract workout information from the conversation.
 
 WORKOUT FIELDS:
+name: string (workout name given by user or empty string)
+description: string | null (optional context about workout)
 
-name:
-- User-provided name for the workout
-- Must be a string
-- Examples:
-  ✓ "Upper Body Day"
-  ✓ "5x5 Squat Session"
-  ✓ "Morning Cardio"
-  ✗ "" (empty when name discussed)
-- Common mistakes:
-  - Using default names when user hasn't specified
-  - Including date/time information
-  - Mixing description content into name
+exercises: array of:
+  exercise_name: string (properly capitalized)
+  weight_unit: "kg" | "lbs" | null 
+  distance_unit: "km" | "m" | "mi" | null
+  order_in_workout: number (1-based index)
+  sets: array of:
+    weight: number | null
+    reps: number | null
+    duration: "MM:SS" | null
+    distance: number | null
 
-description:
-- Optional additional context about the workout
-- Can be null if not provided
-- Examples:
-  ✓ "Focus on progressive overload"
-  ✓ "Recovery session"
-  ✗ Including exercise details that belong in set_data
+EXTRACTION RULES:
+- Extract only explicitly stated information
+- Maintain exercise order from conversation
+- Never assume units - only include unit fields when explicitly specified
+- Each set should be individually recorded with its metrics
+- Keep original weight/distance values as specified by user
 
-exercises:
-- List of exercises in workout
-- Each exercise must include:
-  1. exercise_name (properly capitalized)
-  2. set_data with array of sets
-  3. order_in_workout (1-based index)
-- Common mistakes:
-  - Incorrect exercise ordering
-  - Missing sets
-  - Improper set data structure
-
-SET DATA FORMATTING RULES:
-
-1. Strength Training:
-   {
-     "weight": number,  // in lbs or kg
-     "reps": number
-   }
-
-2. Cardio/Duration:
-   {
-     "duration": string,  // "MM:SS" format
-     "distance": string   // include units
-   }
-
-3. Mixed/Complex:
-   {
-     "weight": number,
-     "reps": number,
-     "duration": string,
-     "distance": string
-   }
-
-Remember:
-- Maintain exercise order as mentioned in conversation
-- Each set should be individually recorded
-- Convert informal language to structured data
-- Keep original units as specified by user
-- Don't assume or add information not in conversation"""
+Example correct structure:
+{
+  "name": "Upper Body Day",
+  "exercises": [{
+    "exercise_name": "Bench Press",
+    "weight_unit": "lbs",
+    "sets": [
+      {"weight": 225, "reps": 8},
+      {"weight": 225, "reps": 8}
+    ],
+    "order_in_workout": 1
+  }]
+}"""

@@ -2,9 +2,11 @@ import json
 import asyncio
 import logging
 from typing import Optional
-from backend.app.core.prompts.sentiment_analysis import SENTIMENT_ANALYSIS_PROMPT
+from app.core.prompts.sentiment_analysis import SENTIMENT_ANALYSIS_PROMPT
 from langchain_anthropic import ChatAnthropic
-from langchain_core.messages import HumanMessage, SystemMessage, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, SystemMessage
+
+from langchain_core.prompts.chat import MessagesPlaceholder
 from langchain_core.prompts import ChatPromptTemplate
 
 logger = logging.getLogger(__name__)

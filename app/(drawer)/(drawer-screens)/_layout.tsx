@@ -62,8 +62,10 @@ export default function DrawerScreensLayout() {
                 <Text style={styles.headerTitle}>TrainSmart</Text>
               </TouchableOpacity>
               
+
+              
               {/* Right - Buttons */}
-              <View style={styles.headerButtonContainer}>
+                <View style={styles.headerButtonContainer}>
                 <TouchableOpacity
                   onPress={() => navigation.setParams({ openWelcomeModal: true })}
                   style={styles.headerButton}
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: 'red',
+    color: '#559e55',
   },
   headerButtonContainer: {
     flexDirection: 'row',
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#559e55',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,

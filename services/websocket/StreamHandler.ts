@@ -31,7 +31,10 @@ export class StreamHandler {
           break;
           
         default:
-          // All business logic signals handled uniformly
+          console.log('StreamHandler: Emitting signal:', {
+            type: message.type,
+            data: message.data
+          });
           this.events.emit('signal', {
             type: message.type,
             data: message.data

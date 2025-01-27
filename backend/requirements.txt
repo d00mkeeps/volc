@@ -4,7 +4,7 @@ anthropic
 pydantic-settings
 websockets
 uvicorn[standard]
-langchain_anthropic
+langchain-anthropic
 python-dotenv
 pydantic
 langchain-core

@@ -1,4 +1,5 @@
 import { useMessage } from "@/context/MessageContext";
+import { useWorkouts } from "@/context/ChatAttachmentContext";
 import { ChatUIProps } from "@/types/chat";
 import { useRef, useEffect, useCallback, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView } from "react-native";
@@ -22,6 +23,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     loadConversation,
     registerMessageHandler
   } = useMessage();
+  const { handleSignal } = useWorkouts();
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const hasConnectedRef = useRef(false);
@@ -44,9 +46,6 @@ export const ChatUI: React.FC<ChatUIProps> = ({
   }, []);
 
   useEffect(() => {
-    // Reset hasConnectedRef when conversationId changes
-    hasConnectedRef.current = false;
-    
     if (!hasConnectedRef.current && conversationId) {
       console.log(`ChatUI: Loading conversation ${conversationId}`);
       hasConnectedRef.current = true;
@@ -59,13 +58,21 @@ export const ChatUI: React.FC<ChatUIProps> = ({
   }, [loadConversation, conversationId, connectionState.type]);
 
   useEffect(() => {
-    if (onSignal) {
-      registerMessageHandler(onSignal);
-    }
+    console.log('ChatUI: Registering signal handler');
+    const signalHandler = (type: string, data: any) => {
+      console.log('ChatUI: Handling signal:', { type, data });
+      handleSignal(type, data);
+      if (onSignal) {
+        onSignal(type, data);
+      }
+    };
+  
+    registerMessageHandler(signalHandler);
     return () => {
+      console.log('ChatUI: Unregistering signal handler');
       registerMessageHandler(null);
     };
-  }, [onSignal, registerMessageHandler]);
+  }, [onSignal, registerMessageHandler, handleSignal]);
 
   return (
     <SafeAreaView style={styles.container}>
