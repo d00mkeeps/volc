@@ -4,7 +4,7 @@ import { ProfileSkeleton } from '../atoms/ProfileSkeleton';
 
 const ProfileDisplay = React.lazy(() => import('./ProfileDisplay'));
 
-export function LazyProfileDisplay() {
+export function     LazyProfileDisplay() {
   const { userProfile } = useUser();
 
   return (

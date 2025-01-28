@@ -83,7 +83,7 @@ Assistant: Got it! Any other exercises?
 User: Then did kettlebell swings, 3 sets of 20 reps with 24kg""",
         Workout(
             name="Thursday HIIT",
-            description="Cardio focus day with some strength elements",
+            description=["High-intensity interval training", "Mixed cardio and strength"],
             exercises=[
                 WorkoutExercise(
                     exercise_name="Assault Bike Sprints",

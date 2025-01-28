@@ -14,5 +14,5 @@ class WorkoutExercise(BaseModel):
 
 class Workout(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: Optional[List[str]] = None
     exercises: List[WorkoutExercise]

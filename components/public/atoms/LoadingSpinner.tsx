@@ -1,91 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import { RingLoader as Loader } from "react-spinners";
 
-export const LoadingSpinner = () => {
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+function LoadingSpinner({ loading = true, size = 100 }) {
+ if (!loading) return null;
 
-  useEffect(() => {
-    const pulse = Animated.sequence([
-      Animated.timing(pulseAnim, {
-        toValue: 0.7,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(pulseAnim, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-    ]);
+ return (
+   <div style={{
+     position: 'relative',
+     width: size,
+     height: size
+   }}>
+     <div style={{
+       position: 'absolute',
+       top: 0,
+       left: 0,
+       zIndex: 2,
+       animation: 'fade 2s infinite'
+     }}>
+       <Loader loading={loading} size={size} color="#36d7b7" />
+     </div>
+     <div style={{
+       position: 'absolute', 
+       top: 0,
+       left: 0,
+       zIndex: 1
+     }}>
+       <Loader loading={loading} size={size} color="#ff0000" />
+     </div>
+     <style>{`
+       @keyframes fade {
+         0% { opacity: 0.3; }
+         50% { opacity: 0.8; }
+         100% { opacity: 0.3; }
+       }
+     `}</style>
+   </div>
+ );
+}
 
-    Animated.loop(pulse).start();
-
-    return () => {
-      pulseAnim.setValue(1);
-    };
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.dot,
-          {
-            opacity: pulseAnim,
-            transform: [{
-              scale: pulseAnim
-            }]
-          }
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.dot,
-          styles.dotMiddle,
-          {
-            opacity: pulseAnim,
-            transform: [{
-              scale: pulseAnim.interpolate({
-                inputRange: [0.7, 1],
-                outputRange: [1, 0.7]
-              })
-            }]
-          }
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.dot,
-          {
-            opacity: pulseAnim,
-            transform: [{
-              scale: pulseAnim
-            }]
-          }
-        ]}
-      />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#222',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#8cd884', // Matches your green accent color
-    margin: 3,
-  },
-  dotMiddle: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-});
+export default LoadingSpinner;

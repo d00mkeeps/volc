@@ -2,7 +2,7 @@ WORKOUT_EXTRACTOR_PROMPT = """Extract workout information from the conversation.
 
 WORKOUT FIELDS:
 name: string (workout name given by user or empty string)
-description: string | null (optional context about workout)
+description: string[] | null (optional context about workout)
 
 exercises: array of:
   exercise_name: string (properly capitalized)
@@ -18,9 +18,14 @@ exercises: array of:
 EXTRACTION RULES:
 - Extract only explicitly stated information
 - Maintain exercise order from conversation
-- Never assume units - only include unit fields when explicitly specified
+- Never assume units; only include unit fields when explicitly specified
 - Each set should be individually recorded with its metrics
 - Keep original weight/distance values as specified by user
+- Convert description into key points array:
+  - Extract main points about workout quality, improvements, successes
+  - Keep points concise and actionable 
+  - Remove redundant information
+  - Convert narrative text into discrete statements
 
 Example correct structure:
 {
