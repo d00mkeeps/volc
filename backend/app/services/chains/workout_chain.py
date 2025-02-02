@@ -43,6 +43,7 @@ class WorkoutChain:
        self.messages = [SystemMessage(content=WORKOUT_PROMPT)]
        self.extraction_state = None
        self.current_summary = None
+       self.summary_presented = False
        
        # Create prompts and chains
        self._initialize_prompts_and_chains()
@@ -83,8 +84,10 @@ class WorkoutChain:
                current_message = HumanMessage(content=message)
                self.messages.append(current_message)
 
-               if self.current_summary:
-                   logger.debug("Analyzing sentiment for current summary...")
+               # Check if the last assistant message was a summary presentation
+               last_assistant_msg = next((msg for msg in reversed(self.messages) if isinstance(msg, AIMessage)), None)
+               if self.current_summary and last_assistant_msg and "Does this look correct?" in last_assistant_msg.content:
+                   logger.debug("Analyzing sentiment for presented summary...")
                    is_approved = await self.sentiment_analyzer.analyze_sentiment(
                        message,
                        self.current_summary,

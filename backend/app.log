@@ -1,13 +1,32 @@
-2025-01-28 14:44:52,436 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 28 Jan 2025 14:44:52 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-01-28T14:44:52Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'40000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-01-28T14:44:51Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-01-28T14:44:59Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'47000'), (b'anthropic-ratelimit-tokens-reset', b'2025-01-28T14:44:51Z'), (b'request-id', b'req_01Vb7duK53avBxnwVgpasirt'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9091c34c4a0c074a-MAN')])
-2025-01-28 14:44:52,442 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-01-28 14:44:52,442 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-01-28 14:44:52,443 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-01-28 14:44:52,447 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-01-28 14:44:52,448 - httpcore.http11 - DEBUG - response_closed.started
-2025-01-28 14:44:52,448 - httpcore.http11 - DEBUG - response_closed.complete
-2025-01-28 14:44:52,451 - app.services.chains.workout_chain - DEBUG - Summary approved by user
-2025-01-28 14:44:52,452 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'workout_approved', 'data': {'name': 'Monday Upper Body', 'description': ['Feeling a little tired from lack of sleep and change in pre-workout routine', 'Want to focus on getting back to 12 reps before increasing weight', 'Not in a rush to progress given caloric deficit'], 'exercises': [{'exercise_name': 'Incline Dumbbell Bench Press', 'set_data': {'sets': [{'weight': 34, 'reps': 7}, {'weight': 34, 'reps': 6}, {'weight': 34, 'reps': 6}]}, 'order_in_workout': 1, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Preacher Curls', 'set_data': {'sets': [{'weight': 40, 'reps': 6}, {'weight': 40, 'reps': 6}, {'weight': 40, 'reps': 7}, {'weight': 30, 'reps': 8}]}, 'order_in_workout': 2, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Triceps Dips', 'set_data': {'sets': [{'weight': 5, 'reps': 12}, {'weight': 6.25, 'reps': 12}, {'weight': 7.5, 'reps': 9}, {'weight': 7.5, 'reps': 9}]}, 'order_in_workout': 3, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Upright Rows', 'set_data': {'sets': [{'weight': 30, 'reps': 20}, {'weight': 32.5, 'reps': 18}, {'weight': 32.5, 'reps': 18}]}, 'order_in_workout': 4, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Triceps Pushdowns', 'set_data': {'sets': [{'weight': 30.6, 'reps': 10}, {'weight': 30.6, 'reps': 10}, {'weight': 30.6, 'reps': 8}]}, 'order_in_workout': 5, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Hammer Curls', 'set_data': {'sets': [{'weight': 16, 'reps': 10}, {'weight': 16, 'reps': 9}, {'weight': 16, 'reps': 8}]}, 'order_in_workout': 6, 'weight_unit': 'kg', 'distance_unit': None}, {'exercise_name': 'Cable Lateral Raises', 'set_data': {'sets': [{'weight': 18, 'reps': 10}, {'weight': 18, 'reps': 12}, {'weight': 18, 'reps': 12}]}, 'order_in_workout': 7, 'weight_unit': 'kg', 'distance_unit': None}]}}
-2025-01-28 20:50:34,763 - root - DEBUG - Logging has been set up
-2025-01-28 20:50:34,764 - app.main - INFO - Application starting
-2025-01-28 21:46:52,776 - root - DEBUG - Logging has been set up
-2025-01-28 21:46:52,776 - app.main - INFO - Application starting
+2025-01-30 15:05:14,638 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-01-30 15:05:14,640 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-01-30 15:05:14,641 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-01-30 15:05:14,642 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
+2025-01-30 15:05:14,644 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'Got'}
+2025-01-30 15:05:14,656 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' it, thanks for'}
+2025-01-30 15:05:14,718 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' providing the full details.'}
+2025-01-30 15:05:14,807 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': " Here's the summary:"}
+2025-01-30 15:05:14,870 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '\n\nRunning 5k\n- Distance'}
+2025-01-30 15:05:14,954 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ': 5 '}
+2025-01-30 15:05:14,984 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'kilometers\n- Average'}
+2025-01-30 15:05:15,008 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' Pace: '}
+2025-01-30 15:05:15,100 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '6:20/km  \n- Average Heart'}
+2025-01-30 15:05:15,201 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' Rate: 140 BPM'}
+2025-01-30 15:05:15,272 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '\n\nNotes:\n- Felt pretty'}
+2025-01-30 15:05:15,364 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' good overall\n\nDoes'}
+2025-01-30 15:05:15,459 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' this workout summary look correct'}
+2025-01-30 15:05:15,520 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '? Let me know if you'}
+2025-01-30 15:05:15,663 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' need to modify anything.'}
+2025-01-30 15:05:15,671 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
+2025-01-30 15:05:15,703 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-01-30 15:05:15,703 - httpcore.http11 - DEBUG - response_closed.started
+2025-01-30 15:05:15,703 - httpcore.http11 - DEBUG - response_closed.complete
+2025-01-30 15:05:15,704 - app.services.chains.workout_chain - DEBUG - Response generated: Got it, thanks for providing the full details. Here's the summary:
+
+Running 5k
+- Distance: 5 kilomet...
+2025-01-30 15:05:15,704 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done'}
+2025-01-30 21:08:18,310 - root - DEBUG - Logging has been set up
+2025-01-30 21:08:18,311 - app.main - INFO - Application starting
+2025-02-02 17:54:22,554 - root - DEBUG - Logging has been set up
+2025-02-02 17:54:22,555 - app.main - INFO - Application starting

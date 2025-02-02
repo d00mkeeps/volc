@@ -1,4 +1,6 @@
-import 'dotenv/config'
+const dotenv = require('dotenv');
+dotenv.config()
+
 const config = {
 expo: {
 name: "trainsmart",

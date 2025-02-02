@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { 
@@ -8,14 +8,18 @@ import {
   SafeAreaView,
   StatusBar,
   View,
-  StyleSheet } from 'react-native';
+  StyleSheet, 
+  Modal} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import PulsingLoader from '@/components/public/atoms/molecules/TestLottie';
 
 type IconProps = {
   color: string;
   size: number;
 };
+
+const animationSource = require('@/assets/animations/ai_loading.json');
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const router = useRouter();
@@ -35,10 +39,14 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 
 export default function DrawerScreensLayout() {
+  const [showLoader, setShowLoader] = useState(false)
+   const router = useRouter()
 
-  const router = useRouter()
+   console.log('Loader visible:', showLoader); // Debug log
   
   return (
+    <>
+      {showLoader && <PulsingLoader size={30}/>}
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={({ navigation }) => ({
@@ -72,6 +80,12 @@ export default function DrawerScreensLayout() {
                 >
                   <Text style={styles.headerButtonText}>W</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => setShowLoader(!showLoader)}
+                    style={styles.headerButton}
+                  >
+                    <Text style={styles.headerButtonText}>L</Text>
+                  </TouchableOpacity>
               </View>
             </View>
           </SafeAreaView>
@@ -100,6 +114,7 @@ export default function DrawerScreensLayout() {
       />
       {/* Add other drawer screens here */}
     </Drawer>
+    </>
   );
 }
 
@@ -131,6 +146,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  animationDebugContainer: {
+    width: 300,
+    height: 300,
+    backgroundColor: 'rgba(255, 0, 0, 0.2)', // Debug background
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerButton: {
     width: 28,
     height: 28,
@@ -144,5 +166,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  loaderContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  animation: {
+    width: 200,
+    height: 200,
   },
 });

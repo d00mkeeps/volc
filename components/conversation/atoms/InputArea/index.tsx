@@ -1,7 +1,7 @@
 import InputModal from "@/components/public/atoms/InputModal";
 import { InputAreaProps } from "@/types/index";
 import React from "react";
-import { memo, useCallback, useEffect, useState, useRef } from "react";
+import { memo, useCallback, useState, useRef } from "react";
 import { 
   View, 
   TextInput, 

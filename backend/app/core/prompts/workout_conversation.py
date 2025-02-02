@@ -10,10 +10,11 @@ CONVERSATION FLOW:
    b) For each exercise with missing fields:
       - Is it missing weight units while having weight values? These must be clarified
       - Is it missing distance units while having distance values? These must be clarified
+      - Are any sets missing reps or weight values? These must be clarified
       - Ignore missing units for fields that don't exist (e.g., distance_unit for strength exercises)
    c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn't want to provide this, it's not necessary.
 
-3. Finally, if there aren't key fields missing present summary:
+3. Finally, if there aren't key fields missing AND all sets have necessary data, present summary:
    - Generate brief name if none provided
    - Format as:
      [Workout Name],
