@@ -8,8 +8,10 @@ import {
   FlatList, 
   StyleSheet } from "react-native";
 import MessageItem from "../atoms/MessageItem";
+import LoaderItem from "./LoaderItem";
 import { ScrollToBottomButton } from "../atoms/ScrollToBottom";
 import { MessageListProps } from "@/types/chat";
+import { useMessage } from "@/context/MessageContext";
 
 const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, style }) => {
   const { 
@@ -19,13 +21,36 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
     scrollToBottom 
   } = useAutoScroll(streamingMessage);
 
-  const renderItem = useCallback(({ item }: { item: Message }) => (
-    <MessageItem message={item} />
-  ), []);
+  const {showLoader} = useMessage()
 
-  const allMessages = streamingMessage 
+  const renderItem = useCallback(({ item }: { item: Message }) => {
+    console.log('Rendering message:', {
+      id: item.id,
+      isStreaming: streamingMessage?.id === item.id
+    });
+    
+    return (
+      <MessageItem 
+        message={item} 
+        isStreaming={streamingMessage?.id === item.id}
+      />
+    );
+  }, [streamingMessage]);
+
+  // We need to show the loader immediately when a message is sent and before streaming starts
+  const shouldShowLoader = !!streamingMessage;
+
+  const allMessages = streamingMessage
     ? [...messages, streamingMessage]
     : messages;
+
+  const renderFooter = useCallback(() => {
+    if (showLoader) {
+      console.log('🔄 Rendering LoaderItem');
+      return <LoaderItem />;
+    }
+    return null;
+  }, [showLoader]);
 
   return (
     <View style={[styles.container, style]}>
@@ -33,6 +58,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
         ref={listRef}
         data={allMessages}
         renderItem={renderItem}
+        ListFooterComponent={renderFooter}
         keyExtractor={(item) => item.id}
         style={styles.list}
         onScroll={handleScroll}
@@ -47,7 +73,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
     </View>
   );
 };
-export default MessageList
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -56,3 +82,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default MessageList;

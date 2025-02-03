@@ -29,14 +29,14 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message, isStreaming = f
 
 const styles = StyleSheet.create({
   messageWrapper: {
-    paddingHorizontal: 16, // Add horizontal padding to the message wrapper
-    paddingVertical: 4, // Add vertical padding to create space between messages
+    paddingHorizontal: 16,
+    paddingVertical: 4,
   },
   container: {
     maxWidth: '80%',
-    padding: 12, // Increase padding inside the message bubble
-    borderRadius: 12, // Slightly increase border radius for a softer look
-    marginVertical: 2, // Reduce vertical margin as we've added padding to the wrapper
+    padding: 12,
+    borderRadius: 12,
+    marginVertical: 2,
   },
   userMessage: {
     alignSelf: 'flex-end',
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#041402',
   },
   text: {
-    fontSize: 16, // Add a default font size
-    lineHeight: 22, // Add line height for better readability
+    fontSize: 16,
+    lineHeight: 22,
   },
   userText: {
     color: '#041402'

@@ -19,7 +19,6 @@ type IconProps = {
   size: number;
 };
 
-const animationSource = require('@/assets/animations/ai_loading.json');
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const router = useRouter();

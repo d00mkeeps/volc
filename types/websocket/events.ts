@@ -4,6 +4,7 @@ export type WebSocketMessageType =
   | 'workout_history_approved' 
   | 'error'
   | 'workout_approved'
+  | 'loading_start'
 
 export interface WebSocketMessage {
   type: WebSocketMessageType;

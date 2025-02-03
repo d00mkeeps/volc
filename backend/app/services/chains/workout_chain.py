@@ -75,6 +75,12 @@ class WorkoutChain:
 
    async def process_message(self, message: str) -> AsyncGenerator[dict, None]:
        """Processes each user message, maintaining conversation state and handling data extraction."""
+
+       yield {
+           "type": "loading_start",
+           "data": None
+       }
+       
        max_retries = 3
        base_delay = 1
        

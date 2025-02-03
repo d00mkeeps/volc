@@ -6,6 +6,8 @@ type StreamEvents = {
   done: () => void;
   signal: (signal: { type: string; data: any }) => void;
   error: (error: Error) => void;
+  loadingStart: () => void;
+  loadingDone: () => void
 };
 
 export class StreamHandler {
@@ -15,12 +17,19 @@ export class StreamHandler {
     try {
       switch (message.type) {
         case 'content':
+          if (message.data === '') {
+            this.events.emit('loadingDone');
+          }
           if (typeof message.data === 'string') {
             this.events.emit('content', message.data);
           } else {
             throw new Error('Invalid content data type');
           }
           break;
+
+          case 'loading_start': 
+            this.events.emit('loadingStart')
+            break
         
         case 'done':
           this.events.emit('done');

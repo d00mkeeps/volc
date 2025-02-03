@@ -6,6 +6,7 @@ import { WebSocketService } from "@/services/websocket/WebSocketService";
 import { Message } from "@/types";
 import { createInitialConnectionState, MessageHandler } from "@/types/core";
 import { ConnectionState } from "@/types/states";
+import { first } from "lodash";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 interface MessageContextType {
@@ -17,9 +18,11 @@ interface MessageContextType {
   loadConversation: (conversationId: string) => Promise<void>;
   currentConversationId: string | null;
   registerMessageHandler: (handler: MessageHandler | null) => void;
-}
+  showLoader: boolean
+};
 
 const MessageContext = createContext<MessageContextType | null>(null);
+
 export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({ 
   children 
 }) => {
@@ -28,7 +31,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const [connectionState, setConnectionState] = useState<ConnectionState>(createInitialConnectionState());
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const accumulatedMessageRef = useRef<string>('');
-
+  const [showLoader, setShowLoader] = useState(false);
   const conversationService = useMemo(() => new ConversationService(), []);
   const webSocket = useMemo(() => new WebSocketService(), []);
   const streamHandler = useMemo(() => new StreamHandler(), []);
@@ -112,6 +115,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!currentConversationId || !connectionState.canSendMessage) return;
 
     try {
+      setShowLoader(true)
       const newMessage = await conversationService.saveMessage({
         conversationId: currentConversationId,
         content,
@@ -164,6 +168,14 @@ useEffect(() => {
 
 // Stream handler
 useEffect(() => {
+  streamHandler.on('loadingStart', () => {
+    setShowLoader(true)
+  })
+
+  streamHandler.on('loadingDone', () => {
+    setShowLoader(false)
+  })
+
   streamHandler.on('content', (chunk: string) => {
     if (!currentConversationId) return;
 
@@ -197,6 +209,7 @@ useEffect(() => {
   });
 
   streamHandler.on('done', async () => {
+    console.log('✅ Stream done');  // Remove the firstChunkReceived reset
     if (!currentConversationId) return;
     
     const finalMessage = await conversationService.saveMessage({
@@ -228,10 +241,11 @@ useEffect(() => {
     sendMessage,
     loadConversation,
     currentConversationId,
+    showLoader,
     registerMessageHandler: (handler: MessageHandler | null) => {
       messageHandlerRef.current = handler;
     }
-  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation]);
+  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader]);
 
   return (
     <MessageContext.Provider value={value}>
