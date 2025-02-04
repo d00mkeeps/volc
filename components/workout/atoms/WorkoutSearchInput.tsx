@@ -12,7 +12,7 @@ const WorkoutSearchInput: React.FC<WorkoutSearchInputProps> = ({ value, onChange
     value={value}
     onChangeText={onChangeText}
     placeholder="Search workouts"
-    placeholderTextColor="#888"
+    placeholderTextColor="#aaa"
   />
 );
 
@@ -20,11 +20,12 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#333',
     color: '#fff',
-    paddingVertical: 8,
+    paddingVertical: 20,
     paddingHorizontal: 12,
     borderRadius: 8,
     flex: 1,
     marginRight: 8,
+    height: 40
   },
 });
 

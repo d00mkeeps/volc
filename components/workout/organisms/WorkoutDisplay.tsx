@@ -11,14 +11,14 @@ interface WorkoutDisplayProps {
 const ITEMS_PER_PAGE = 20;
 
 const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) =>{
-  const [searchValue, setSearchValue] = useState('');
+  const [value, setValue] = useState('');
   const [filteredWorkouts, setFilteredWorkouts] = useState(workouts);
   const [displayedWorkouts, setDisplayedWorkouts] = useState<CompleteWorkout[]>([]);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     const filtered = workouts.filter(workout => {
-      const nameMatch = workout.name.toLowerCase().includes(searchValue.toLowerCase());
+      const nameMatch = workout.name.toLowerCase().includes(value.toLowerCase());
       
       if (!workout.notes) return nameMatch;
 
@@ -27,7 +27,7 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) =>{
           // Parse JSON array and search through all notes
           const parsedNotes = JSON.parse(workout.notes) as string[];
           return nameMatch || parsedNotes.some(note => 
-            note.toLowerCase().includes(searchValue.toLowerCase())
+            note.toLowerCase().includes(value.toLowerCase())
           );
         }
       } catch {
@@ -35,12 +35,12 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) =>{
       }
       
       // Default to searching the original string
-      return nameMatch || workout.notes.toLowerCase().includes(searchValue.toLowerCase());
+      return nameMatch || workout.notes.toLowerCase().includes(value.toLowerCase());
     });
 
     setFilteredWorkouts(filtered);
     setPage(1);
-  }, [searchValue, workouts]);
+  }, [value, workouts]);
 
   useEffect(() => {
     setDisplayedWorkouts(filteredWorkouts.slice(0, page * ITEMS_PER_PAGE));
@@ -63,8 +63,8 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) =>{
   return (
     <View style={styles.container}>
       <WorkoutDisplayHeader 
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
+        value={value}
+        onSearchChange={setValue}
       />
       <WorkoutList 
         workouts={displayedWorkouts} 
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    color: '#888',
+    color: '#222',
     fontSize: 16,
   },
 });

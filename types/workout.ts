@@ -1,15 +1,15 @@
 export type WorkoutSet = {
-    id: string;
-    exercise_id: string;
-    set_number: number;
-    weight?: number;
-    reps?: number;
-    rpe?: number;
-    distance?: number;
-    duration?: string;
-    created_at: string;
-    updated_at: string;
-  };
+  id: string;
+  exercise_id: string;
+  set_number: number;
+  weight?: number | null;
+  reps?: number | null;
+  rpe?: number | null;
+  distance?: number | null;
+  duration?: string | null;
+  created_at: string;
+  updated_at: string;
+};
   
   export type WorkoutExercise = {
     id: string;

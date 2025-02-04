@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CompleteWorkout } from '@/types/workout';
+import WorkoutDetailModal from '../organisms/WorkoutDetailModal';
 import { useWorkout } from '@/context/WorkoutContext';
+import { WorkoutService } from '@/services/supabase/workout';
 
 interface WorkoutItemProps {
   workout: CompleteWorkout;
   isLastItem?: boolean;
 }
+const workoutService = new WorkoutService();
 
 const WorkoutItem: React.FC<WorkoutItemProps> = ({ workout, isLastItem = false }) => {
-  const { getWorkout } = useWorkout();
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const formattedDate = new Date(workout.created_at).toLocaleDateString();
+
+  const {loadWorkouts} = useWorkout()
   
   const formatNotes = (notes: string | undefined): string[] | undefined => {
     if (!notes) return undefined;
@@ -26,31 +31,38 @@ const WorkoutItem: React.FC<WorkoutItemProps> = ({ workout, isLastItem = false }
       // If JSON parsing fails, treat as regular string
     }
     
-    // Return single string as an array with one item
     return [notes.length > 30 ? `${notes.substring(0, 27)}...` : notes];
   };
 
   const displayNotes = formatNotes(workout.notes);
 
-  const handlePress = () => {
-    getWorkout(workout.id);
-  };
-
   return (
-    <TouchableOpacity 
-      style={[styles.container, isLastItem && styles.lastItem]}
-      onPress={handlePress}
-    >
-      <View style={styles.contentContainer}>
-        <Text style={styles.name}>{workout.name}</Text>
-        {displayNotes && displayNotes.map((note, index) => (
-          <Text key={index} style={styles.description}>
-            • {note}
-          </Text>
-        ))}
-      </View>
-      <Text style={styles.date}>{formattedDate}</Text>
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity 
+        style={[styles.container, isLastItem && styles.lastItem]}
+        onPress={() => setIsModalVisible(true)}
+      >
+        <View style={styles.contentContainer}>
+          <Text style={styles.name}>{workout.name}</Text>
+          {displayNotes && displayNotes.map((note, index) => (
+            <Text key={index} style={styles.description}>
+              • {note}
+            </Text>
+          ))}
+        </View>
+        <Text style={styles.date}>{formattedDate}</Text>
+      </TouchableOpacity>
+
+      <WorkoutDetailModal 
+  isVisible={isModalVisible}
+  workout={workout}
+  onClose={() => setIsModalVisible(false)}
+  onSave={async (updatedWorkout) => {
+    await workoutService.updateWorkout(workout.id, updatedWorkout);
+    await loadWorkouts(workout.user_id);
+  }}
+/>
+    </>
   );
 };
 
