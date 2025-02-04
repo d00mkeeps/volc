@@ -1,10 +1,10 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import WorkoutItem from '../atoms/WorkoutItem';
-import { Workout } from '@/types';
+import { CompleteWorkout } from '@/types/workout';
 
 interface WorkoutListProps {
-  workouts: Workout[];
+  workouts: CompleteWorkout[];
   onEndReached: () => void;
   onEndReachedThreshold: number;
 }

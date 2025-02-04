@@ -1,20 +1,42 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import WorkoutDisplay from '@/components/workout/organisms/WorkoutDisplay';
-import { sampleWorkouts } from '@/assets/mockData'; 
+import { useWorkout } from '@/context/WorkoutContext';
+import { useAuth } from '@/context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 export default function WorkoutHistoryScreen() {
+  const { workouts, loading, error, loadWorkouts, clearError } = useWorkout();
+  const { user } = useAuth();
 
-  const extendedWorkouts = Array(12).fill(sampleWorkouts).flat().map((workout, index) => ({
-    ...workout,
-    id: `${workout.id}-${index}`, // Ensure each workout has a unique id
-    createdAt: new Date(Date.now() - index * 86400000).toISOString(), // Create different dates for each workout
-  }));
+  useEffect(() => {
+    if (user?.id) {
+      loadWorkouts(user.id);
+    }
+  }, [user?.id, loadWorkouts]);
 
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error.message,
+      });
+      clearError();
+    }
+  }, [error, clearError]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color="#8cd884" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <WorkoutDisplay workouts={extendedWorkouts} />
+      <WorkoutDisplay workouts={workouts} />
     </View>
   );
 }
@@ -22,6 +44,10 @@ export default function WorkoutHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#222', // Match the background color of WorkoutDisplay
+    backgroundColor: '#222',
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

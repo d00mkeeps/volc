@@ -1,26 +1,56 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Workout } from '@/types';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { CompleteWorkout } from '@/types/workout';
+import { useWorkout } from '@/context/WorkoutContext';
 
 interface WorkoutItemProps {
-  workout: Workout;
+  workout: CompleteWorkout;
   isLastItem?: boolean;
 }
 
 const WorkoutItem: React.FC<WorkoutItemProps> = ({ workout, isLastItem = false }) => {
-  const formattedDate = new Date(workout.createdAt).toLocaleDateString();
-  const truncatedDescription = workout.description.length > 50 
-    ? workout.description.substring(0, 47) + '...' 
-    : workout.description;
+  const { getWorkout } = useWorkout();
+  const formattedDate = new Date(workout.created_at).toLocaleDateString();
+  
+  const formatNotes = (notes: string | undefined): string[] | undefined => {
+    if (!notes) return undefined;
+    
+    try {
+      if (notes.startsWith('[') && notes.endsWith(']')) {
+        const parsedNotes = JSON.parse(notes) as string[];
+        return parsedNotes.map(note => 
+          note.length > 30 ? `${note.substring(0, 27)}...` : note
+        );
+      }
+    } catch {
+      // If JSON parsing fails, treat as regular string
+    }
+    
+    // Return single string as an array with one item
+    return [notes.length > 30 ? `${notes.substring(0, 27)}...` : notes];
+  };
+
+  const displayNotes = formatNotes(workout.notes);
+
+  const handlePress = () => {
+    getWorkout(workout.id);
+  };
 
   return (
-    <View style={[styles.container, isLastItem && styles.lastItem]}>
+    <TouchableOpacity 
+      style={[styles.container, isLastItem && styles.lastItem]}
+      onPress={handlePress}
+    >
       <View style={styles.contentContainer}>
         <Text style={styles.name}>{workout.name}</Text>
-        <Text style={styles.description}>{truncatedDescription}</Text>
+        {displayNotes && displayNotes.map((note, index) => (
+          <Text key={index} style={styles.description}>
+            • {note}
+          </Text>
+        ))}
       </View>
       <Text style={styles.date}>{formattedDate}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -29,7 +59,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#111',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
@@ -51,6 +81,8 @@ const styles = StyleSheet.create({
   description: {
     color: '#bbb',
     fontSize: 14,
+    marginLeft: 8,
+    marginTop: 2,
   },
   date: {
     color: '#eee',

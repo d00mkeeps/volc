@@ -4,13 +4,13 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
-import { Slot } from 'expo-router';
 import { MessageProvider } from '@/context/MessageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { AuthGate } from '@/components/auth/AuthGate';
 import { UserProvider } from '@/context/UserContext';
 import Toast from 'react-native-toast-message';
 import React from 'react';
+import { WorkoutProvider } from '@/context/WorkoutContext';
 
 export {
   ErrorBoundary,
@@ -53,6 +53,7 @@ function RootLayoutNav() {
     <>
       <AuthProvider>
         <UserProvider>
+          <WorkoutProvider>
           <MessageProvider>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
               <AuthGate>
@@ -87,6 +88,7 @@ function RootLayoutNav() {
               </AuthGate>
             </ThemeProvider>
           </MessageProvider>
+          </WorkoutProvider>
         </UserProvider>
       </AuthProvider>
       <Toast/>

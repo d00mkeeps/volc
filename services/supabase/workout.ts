@@ -1,24 +1,9 @@
+import { WorkoutInput, CompleteWorkout, WorkoutSet, WorkoutExercise,  } from '@/types/workout';
 import { BaseService } from './base';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
-type WorkoutExercise = {
-  exercise_name: string;
-  set_data: {
-    sets: Record<string, any>[];
-  };
-  order_in_workout: number;
-  weight_unit?: 'kg' | 'lbs';
-  distance_unit?: 'km' | 'm' | 'mi';
-};
-
-type Workout = {
-  name: string;
-  description?: string;
-  exercises: WorkoutExercise[];
-};
-
 export class WorkoutService extends BaseService {
-  async createWorkout(userId: string, workout: Workout) {
+  async createWorkout(userId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
     const operation = async () => {
       const { data: workoutData, error: workoutError } = await this.supabase
         .from('workouts')
@@ -30,15 +15,11 @@ export class WorkoutService extends BaseService {
         .select()
         .single();
 
+      if (workoutError) {
+        console.error('Error creating workout:', workoutError);
+        throw workoutError;
+      }
 
-        if (workoutError) {
-          console.error('Error creating workout:', workoutError);
-          throw workoutError;
-        }
-
-        console.log('Workout insert result:', { workoutData, workoutError });
-
-        console.log('Workout created:', workoutData);
       const exercisePromises = workout.exercises.map(async (exercise) => {
         const { data: exerciseData, error: exerciseError } = await this.supabase
           .from('workout_exercises')
@@ -46,6 +27,8 @@ export class WorkoutService extends BaseService {
             workout_id: workoutData.id,
             name: exercise.exercise_name,
             order_index: exercise.order_in_workout,
+            weight_unit: exercise.weight_unit,
+            distance_unit: exercise.distance_unit,
           })
           .select()
           .single();
@@ -53,7 +36,7 @@ export class WorkoutService extends BaseService {
         if (exerciseError) throw exerciseError;
 
         const setPromises = exercise.set_data.sets.map(async (set, index) => {
-          await this.supabase
+          const { error: setError } = await this.supabase
             .from('workout_exercise_sets')
             .insert({
               exercise_id: exerciseData.id,
@@ -64,6 +47,8 @@ export class WorkoutService extends BaseService {
               distance: set.distance,
               duration: set.duration,
             });
+
+          if (setError) throw setError;
         });
 
         await Promise.all(setPromises);
@@ -71,69 +56,131 @@ export class WorkoutService extends BaseService {
       });
 
       await Promise.all(exercisePromises);
-      return { data: workoutData, error: null } as PostgrestSingleResponse<any>;
+
+      // Fetch the complete workout after creation
+      const createdWorkout = await this.getWorkout(workoutData.id);
+      return { data: createdWorkout, error: null } as PostgrestSingleResponse<CompleteWorkout>;
     };
 
     return this.withRetry(operation);
-  } catch (error: Error) {
-    console.error('createWorkout error:', error)
-  throw error}
+  }
 
-  async getWorkout(workoutId: string) {
+  async getWorkout(workoutId: string): Promise<CompleteWorkout> {
     const operation = async () => {
-      const { data: workout, error: workoutError } = await this.supabase
+      const { data, error } = await this.supabase
         .from('workouts')
-        .select('*')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
         .eq('id', workoutId)
+        .order('workout_exercises.order_index')
+        .order('workout_exercises.workout_exercise_sets.set_number')
         .single();
-  
-      if (workoutError) throw workoutError;
-  
-      const { data: exercises, error: exercisesError } = await this.supabase
-        .from('workout_exercises')
-        .select('*, workout_exercise_sets(*)')
-        .eq('workout_id', workoutId)
-        .order('order_index');
-  
-      if (exercisesError) throw exercisesError;
-  
+
+      if (error) throw error;
+      if (!data) throw new Error('Workout not found');
+
+      const workout: CompleteWorkout = {
+        ...data,
+        workout_exercises: data.workout_exercises.map((exercise: WorkoutExercise) => ({
+          ...exercise,
+          workout_exercise_sets: exercise.workout_exercise_sets.sort(
+            (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+          )
+        }))
+      };
+
       return {
-        data: { ...workout, exercises },
+        data: workout,
         error: null,
         count: null,
         status: 200,
         statusText: 'OK'
-      } as PostgrestSingleResponse<any>;
-    };
-  
-    return this.withRetry(operation);
-  }
-  async getUserWorkouts(userId: string) {
-    const operation = async () => {
-      const response = await this.supabase
-        .from('workouts')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('status', 'active')
-        .order('updated_at', { ascending: false });
-
-      if (response.error) throw response.error;
-      return response;
+      } as PostgrestSingleResponse<CompleteWorkout>;
     };
 
     return this.withRetry(operation);
   }
 
-  async deleteWorkout(workoutId: string) {
+ // In getUserWorkouts method, update the map callbacks with proper typing
+async getUserWorkouts(userId: string): Promise<CompleteWorkout[]> {
+  const operation = async () => {
+    const { data, error } = await this.supabase
+      .from('workouts')
+      .select(`
+        *,
+        workout_exercises (
+          *,
+          workout_exercise_sets (*)
+        )
+      `)
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+
+    if (error) throw error;
+    if (!data) {
+      return {
+        data: [] as CompleteWorkout[],
+        error: null,
+        count: 0,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<CompleteWorkout[]>;
+    }
+
+    const workouts: CompleteWorkout[] = data.map((workout: any) => ({
+      ...workout,
+      workout_exercises: workout.workout_exercises
+        .map((exercise: WorkoutExercise) => ({
+          ...exercise,
+          workout_exercise_sets: exercise.workout_exercise_sets.sort(
+            (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+          )
+        }))
+        .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+    }));
+
+    return {
+      data: workouts,
+      error: null,
+      count: workouts.length,
+      status: 200,
+      statusText: 'OK'
+    } as PostgrestSingleResponse<CompleteWorkout[]>;
+  };
+
+  return this.withRetry(operation);
+}
+
+  async deleteWorkout(workoutId: string): Promise<CompleteWorkout> {
     const operation = async () => {
-      const response = await this.supabase
+      const { data, error } = await this.supabase
         .from('workouts')
         .update({ status: 'deleted' })
         .eq('id', workoutId)
-        .select();
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .single();
 
-      if (response.error) throw response.error;
-      return response;
+      if (error) throw error;
+      if (!data) throw new Error('Workout not found');
+
+      return {
+        data,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<CompleteWorkout>;
     };
 
     return this.withRetry(operation);

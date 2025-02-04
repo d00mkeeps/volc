@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {} from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { 
@@ -8,17 +8,14 @@ import {
   SafeAreaView,
   StatusBar,
   View,
-  StyleSheet, 
-  Modal} from 'react-native';
+  StyleSheet} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import PulsingLoader from '@/components/public/atoms/molecules/TestLottie';
 
 type IconProps = {
   color: string;
   size: number;
 };
-
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const router = useRouter();
@@ -38,14 +35,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 
 export default function DrawerScreensLayout() {
-  const [showLoader, setShowLoader] = useState(false)
    const router = useRouter()
-
-   console.log('Loader visible:', showLoader); // Debug log
   
   return (
-    <>
-      {showLoader && <PulsingLoader size={30}/>}
+    
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={({ navigation }) => ({
@@ -79,12 +72,6 @@ export default function DrawerScreensLayout() {
                 >
                   <Text style={styles.headerButtonText}>W</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setShowLoader(!showLoader)}
-                    style={styles.headerButton}
-                  >
-                    <Text style={styles.headerButtonText}>L</Text>
-                  </TouchableOpacity>
               </View>
             </View>
           </SafeAreaView>
@@ -113,7 +100,7 @@ export default function DrawerScreensLayout() {
       />
       {/* Add other drawer screens here */}
     </Drawer>
-    </>
+    
   );
 }
 

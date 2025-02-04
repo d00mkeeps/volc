@@ -1,27 +1,43 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import WorkoutDisplayHeader from '../molecules/WorkoutDisplayHeader';
 import WorkoutList from '../molecules/WorkoutList';
-import { Workout } from '@/types';
+import { CompleteWorkout } from '@/types/workout';
 
 interface WorkoutDisplayProps {
-  workouts: Workout[];
+  workouts: CompleteWorkout[];
 }
 
 const ITEMS_PER_PAGE = 20;
 
-const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) => {
+const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) =>{
   const [searchValue, setSearchValue] = useState('');
   const [filteredWorkouts, setFilteredWorkouts] = useState(workouts);
-  const [displayedWorkouts, setDisplayedWorkouts] = useState<Workout[]>([]);
+  const [displayedWorkouts, setDisplayedWorkouts] = useState<CompleteWorkout[]>([]);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const filtered = workouts.filter(workout => 
-      workout.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      workout.description.toLowerCase().includes(searchValue.toLowerCase())
-    );
+    const filtered = workouts.filter(workout => {
+      const nameMatch = workout.name.toLowerCase().includes(searchValue.toLowerCase());
+      
+      if (!workout.notes) return nameMatch;
+
+      try {
+        if (workout.notes.startsWith('[') && workout.notes.endsWith(']')) {
+          // Parse JSON array and search through all notes
+          const parsedNotes = JSON.parse(workout.notes) as string[];
+          return nameMatch || parsedNotes.some(note => 
+            note.toLowerCase().includes(searchValue.toLowerCase())
+          );
+        }
+      } catch {
+        // If JSON parsing fails, search original string
+      }
+      
+      // Default to searching the original string
+      return nameMatch || workout.notes.toLowerCase().includes(searchValue.toLowerCase());
+    });
+
     setFilteredWorkouts(filtered);
     setPage(1);
   }, [searchValue, workouts]);
@@ -35,6 +51,14 @@ const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({ workouts }) => {
       setPage(prevPage => prevPage + 1);
     }
   };
+
+  if (workouts.length === 0) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Text style={styles.emptyText}>No workouts found</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -55,6 +79,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#222',
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#888',
+    fontSize: 16,
   },
 });
 

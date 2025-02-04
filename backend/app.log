@@ -1,52 +1,59 @@
-2025-02-03 17:24:43,791 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-02-03 17:24:43,792 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-02-03 17:24:43,792 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-02-03 17:24:43,793 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-02-03 17:24:43,793 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-02-03 17:24:44,729 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Feb 2025 17:24:44 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-03T17:24:45Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'37000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-03T17:24:48Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-03T17:24:47Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'44000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-03T17:24:47Z'), (b'request-id', b'req_016dNUz2us3ZzsbqS9XMF3Y6'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90c41dbeecedb3f0-MAN')])
-2025-02-03 17:24:44,730 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-02-03 17:24:44,730 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-02-03 17:24:44,730 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-02-03 17:24:44,731 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
-2025-02-03 17:24:44,733 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'You'}
-2025-02-03 17:24:44,747 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': "'re absolutely right,"}
-2025-02-03 17:24:44,813 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' my previous'}
-2025-02-03 17:24:44,837 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' response including'}
-2025-02-03 17:24:44,865 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' metadata'}
-2025-02-03 17:24:44,894 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' was inappropriate. As'}
-2025-02-03 17:24:44,931 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' an AI assistant,'}
-2025-02-03 17:24:44,970 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' I should remain'}
-2025-02-03 17:24:45,000 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' focused on providing'}
-2025-02-03 17:24:45,016 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' helpful fitness'}
-2025-02-03 17:24:45,048 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' tracking'}
-2025-02-03 17:24:45,087 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' information to'}
-2025-02-03 17:24:45,105 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' users in'}
-2025-02-03 17:24:45,144 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' a'}
-2025-02-03 17:24:45,164 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' friendly'}
-2025-02-03 17:24:45,199 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ','}
-2025-02-03 17:24:45,227 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' professional manner without'}
-2025-02-03 17:24:45,257 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' expos'}
-2025-02-03 17:24:45,285 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'ing any internal'}
-2025-02-03 17:24:45,328 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' system details. Thank'}
-2025-02-03 17:24:45,363 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' you for the'}
-2025-02-03 17:24:45,378 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' feedback - it will'}
-2025-02-03 17:24:45,405 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' help me improve.'}
-2025-02-03 17:24:45,434 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' I'}
-2025-02-03 17:24:45,466 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': "'m"}
-2025-02-03 17:24:45,498 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' ready'}
-2025-02-03 17:24:45,526 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' to have'}
-2025-02-03 17:24:45,576 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' a productive conversation about'}
-2025-02-03 17:24:45,590 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' logging your'}
-2025-02-03 17:24:45,618 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' actual workout when'}
-2025-02-03 17:24:45,649 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' you have'}
-2025-02-03 17:24:45,681 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' those'}
-2025-02-03 17:24:45,721 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' details'}
-2025-02-03 17:24:45,743 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' to'}
-2025-02-03 17:24:45,763 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' provide'}
-2025-02-03 17:24:45,807 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '.'}
-2025-02-03 17:24:45,811 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
-2025-02-03 17:24:45,892 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-03 17:24:45,892 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-03 17:24:45,892 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-03 17:24:45,893 - app.services.chains.workout_chain - DEBUG - Response generated: You're absolutely right, my previous response including metadata was inappropriate. As an AI assista...
-2025-02-03 17:24:45,893 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done'}
+2025-02-03 17:31:00,842 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10501fb90>
+2025-02-03 17:31:00,845 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x104fc05d0> server_hostname='api.anthropic.com' timeout=None
+2025-02-03 17:31:00,951 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10501f5c0>
+2025-02-03 17:31:00,952 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-02-03 17:31:00,953 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-02-03 17:31:00,954 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-02-03 17:31:00,954 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-02-03 17:31:00,954 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-02-03 17:31:01,988 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Feb 2025 17:31:02 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-03T17:31:02Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'37000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-03T17:31:06Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-03T17:31:05Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'44000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-03T17:31:05Z'), (b'request-id', b'req_01GU1FbbM7S18ZeJTaErqQZ3'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90c426f43a12b376-MAN')])
+2025-02-03 17:31:01,989 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-03 17:31:01,989 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-03 17:31:01,989 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-03 17:31:01,990 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
+2025-02-03 17:31:01,990 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'No problem at all'}
+2025-02-03 17:31:02,014 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ', I appreciate you'}
+2025-02-03 17:31:02,035 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' taking the time to'}
+2025-02-03 17:31:02,068 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' thoroughly'}
+2025-02-03 17:31:02,097 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' test'}
+2025-02-03 17:31:02,120 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' the'}
+2025-02-03 17:31:02,147 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' system'}
+2025-02-03 17:31:02,177 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '.'}
+2025-02-03 17:31:02,219 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' I'}
+2025-02-03 17:31:02,331 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': "'m glad we coul"}
+2025-02-03 17:31:02,332 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'd have this'}
+2025-02-03 17:31:02,333 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' interactive'}
+2025-02-03 17:31:02,341 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' exchange'}
+2025-02-03 17:31:02,362 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' to verify'}
+2025-02-03 17:31:02,397 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' I'}
+2025-02-03 17:31:02,416 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' can have'}
+2025-02-03 17:31:02,446 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' a natural'}
+2025-02-03 17:31:02,477 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' conversation flow'}
+2025-02-03 17:31:02,508 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' while'}
+2025-02-03 17:31:02,541 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' properly'}
+2025-02-03 17:31:02,571 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' handling'}
+2025-02-03 17:31:02,594 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' workout'}
+2025-02-03 17:31:02,626 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' logging details. Thank'}
+2025-02-03 17:31:02,669 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' you for your patience'}
+2025-02-03 17:31:02,686 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' and for'}
+2025-02-03 17:31:02,721 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' helping'}
+2025-02-03 17:31:02,742 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' improve'}
+2025-02-03 17:31:02,786 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' the'}
+2025-02-03 17:31:02,814 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' experience'}
+2025-02-03 17:31:02,836 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '.'}
+2025-02-03 17:31:02,869 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' I look forward to'}
+2025-02-03 17:31:02,902 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' ass'}
+2025-02-03 17:31:02,927 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'isting more'}
+2025-02-03 17:31:02,963 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' users'}
+2025-02-03 17:31:02,985 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' in tracking'}
+2025-02-03 17:31:03,019 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' their fitness routines'}
+2025-02-03 17:31:03,053 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' effectively'}
+2025-02-03 17:31:03,073 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '.'}
+2025-02-03 17:31:03,106 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
+2025-02-03 17:31:03,123 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-03 17:31:03,123 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-03 17:31:03,123 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-03 17:31:03,124 - app.services.chains.workout_chain - DEBUG - Response generated: No problem at all, I appreciate you taking the time to thoroughly test the system. I'm glad we could...
+2025-02-03 17:31:03,124 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done'}
+2025-02-03 17:48:17,699 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-03 17:48:17,707 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
