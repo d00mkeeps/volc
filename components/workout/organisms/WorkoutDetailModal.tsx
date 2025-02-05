@@ -6,6 +6,7 @@ import { CompleteWorkout } from '@/types/workout';
 import WorkoutModalHeader from '../molecules/WorkoutModalHeader';
 import WorkoutNotesList from '../molecules/WorkoutNotesList';
 import WorkoutExerciseList from './WorkoutExerciseList';
+import { useWorkout } from '@/context/WorkoutContext';
 
 interface WorkoutDetailModalProps {
   isVisible: boolean;
@@ -20,6 +21,39 @@ const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const {deleteWorkout, setWorkouts} = useWorkout()
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Workout',
+      'Are you sure you want to delete this workout? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteWorkout(workout.id);
+              // Close modal first
+              onClose();
+              // Then update the workouts state in context
+              setWorkouts(prev => prev.filter(w => w.id !== workout.id));
+            } catch (error) {
+              Alert.alert(
+                'Error',
+                'Failed to delete workout',
+                [{ text: 'OK' }]
+              );
+            }
+          }
+        }
+      ]
+    );
+  };
+  
   const [editMode, setEditMode] = useState(false);
   const [editedWorkout, setEditedWorkout] = useState<CompleteWorkout>(workout);
   const [isSaving, setIsSaving] = useState(false);
@@ -164,6 +198,7 @@ const WorkoutDetailModal: React.FC<WorkoutDetailModalProps> = ({
               workout={editMode ? editedWorkout : workout}
               editMode={editMode}
               onWorkoutChange={setEditedWorkout}
+              onDeletePress={handleDelete}
             />
             {workout.notes !== undefined && (
               <WorkoutNotesList 

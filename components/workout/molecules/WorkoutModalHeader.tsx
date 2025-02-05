@@ -1,18 +1,20 @@
-// components/workout/molecules/WorkoutModalHeader.tsx
+// WorkoutModalHeader.tsx
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { CompleteWorkout } from '@/types/workout';
 
 interface WorkoutModalHeaderProps {
   workout: CompleteWorkout;
   editMode: boolean;
   onWorkoutChange: React.Dispatch<React.SetStateAction<CompleteWorkout>>;
+  onDeletePress: () => void;  // Add this prop
 }
 
 const WorkoutModalHeader: React.FC<WorkoutModalHeaderProps> = ({ 
   workout,
   editMode,
-  onWorkoutChange 
+  onWorkoutChange,
+  onDeletePress
 }) => {
   const formattedDate = new Date(workout.created_at).toLocaleDateString();
 
@@ -25,17 +27,25 @@ const WorkoutModalHeader: React.FC<WorkoutModalHeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      {editMode ? (
-        <TextInput
-          style={[styles.title, styles.input]}
-          value={workout.name}
-          onChangeText={handleNameChange}
-          placeholder="Workout Name"
-          placeholderTextColor="#666"
-        />
-      ) : (
-        <Text style={styles.title}>{workout.name}</Text>
-      )}
+      <View style={styles.titleContainer}>
+        {editMode ? (
+          <TextInput
+            style={[styles.title, styles.input]}
+            value={workout.name}
+            onChangeText={handleNameChange}
+            placeholder="Workout Name"
+            placeholderTextColor="#666"
+          />
+        ) : (
+          <Text style={styles.title}>{workout.name}</Text>
+        )}
+        <TouchableOpacity 
+          style={styles.deleteButton}
+          onPress={onDeletePress}
+        >
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.date}>{formattedDate}</Text>
     </View>
   );
@@ -48,11 +58,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#444',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   title: {
     color: '#8cd884',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
+    flex: 1,
+    marginRight: 12,
   },
   input: {
     backgroundColor: '#333',
@@ -62,6 +79,16 @@ const styles = StyleSheet.create({
   date: {
     color: '#888',
     fontSize: 14,
+  },
+  deleteButton: {
+    backgroundColor: '#ff4444',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 

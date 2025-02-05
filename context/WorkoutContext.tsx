@@ -4,6 +4,7 @@ import { CompleteWorkout, WorkoutInput } from '@/types/workout';
 
 interface WorkoutContextType {
   workouts: CompleteWorkout[];
+  setWorkouts: React.Dispatch<React.SetStateAction<CompleteWorkout[]>>;
   currentWorkout: CompleteWorkout | null;
   loading: boolean;
   error: Error | null;
@@ -97,6 +98,7 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     createWorkout,
     deleteWorkout,
     clearError,
+    setWorkouts
   };
 
   return (

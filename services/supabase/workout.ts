@@ -155,36 +155,42 @@ export class WorkoutService extends BaseService {
     return this.withRetry(operation);
   }
 
-  async deleteWorkout(workoutId: string): Promise<CompleteWorkout> {
+  async deleteWorkout(workoutId: string): Promise<PostgrestSingleResponse<null>> {
     const operation = async () => {
-      const { data, error } = await this.supabase
+      // Delete workout exercise sets first (due to foreign key constraints)
+      const { data: exercises } = await this.supabase
+        .from('workout_exercises')
+        .select('id')
+        .eq('workout_id', workoutId);
+      
+      if (exercises && exercises.length > 0) {
+        const exerciseIds = exercises.map(e => e.id);
+        const { error: setsError } = await this.supabase
+          .from('workout_exercise_sets')
+          .delete()
+          .in('exercise_id', exerciseIds);
+  
+        if (setsError) throw setsError;
+      }
+  
+      // Delete workout exercises
+      const { error: exercisesError } = await this.supabase
+        .from('workout_exercises')
+        .delete()
+        .eq('workout_id', workoutId);
+  
+      if (exercisesError) throw exercisesError;
+  
+      // Finally delete the workout and return its response
+      return await this.supabase
         .from('workouts')
-        .update({ status: 'deleted' })
+        .delete()
         .eq('id', workoutId)
-        .select(`
-          *,
-          workout_exercises (
-            *,
-            workout_exercise_sets (*)
-          )
-        `)
         .single();
-
-      if (error) throw error;
-      if (!data) throw new Error('Workout not found');
-
-      return {
-        data,
-        error: null,
-        count: null,
-        status: 200,
-        statusText: 'OK'
-      } as PostgrestSingleResponse<CompleteWorkout>;
     };
-
+  
     return this.withRetry(operation);
   }
-
   async updateWorkout(workoutId: string, workout: CompleteWorkout): Promise<CompleteWorkout> {
     const operation = async () => {
       try {
