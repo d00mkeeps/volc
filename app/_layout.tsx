@@ -48,50 +48,48 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
-
   return (
     <>
       <AuthProvider>
         <UserProvider>
           <WorkoutProvider>
-          <MessageProvider>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <AuthGate>
-                <Stack>
-                  <Stack.Screen 
-                    name="(drawer)" 
-                    options={{ headerShown: false }} 
-                  />
-                  <Stack.Screen 
-                    name="modal" 
-                    options={{ presentation: 'modal' }} 
-                  />
-                  {/* Add explicit configuration for conversation route */}
-                  <Stack.Screen 
-                    name="conversation/[id]" 
-                    options={{
-                      headerShown: true,
-                      headerTitle: "Conversation",
-                      headerBackTitle: "Home",
-                      contentStyle: {
-                        backgroundColor: '#1f281f',
-                        flex: 1,
-                      },
-                      headerStyle: {
-                        backgroundColor: '#1f281f',
-                      },
-                      // Ensure proper layout handling
-                      animation: 'slide_from_right',
-                    }}
-                  />
-                </Stack>
-              </AuthGate>
-            </ThemeProvider>
-          </MessageProvider>
+            <MessageProvider>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <AuthGate>
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen 
+  name="conversation/[id]"
+  options={{
+    headerShown: true,
+    headerTitle: "Conversation",
+    headerBackTitle: "Home",
+    contentStyle: {
+      backgroundColor: '#1f281f',
+      flex: 1,
+    },
+    headerStyle: {
+      backgroundColor: '#1f281f',
+    },
+    animation: 'slide_from_right',
+  }}
+  getId={({ params }: { params?: Record<string, any> }) => {
+    if (!params) return undefined;
+    return String(params.id);
+  }}
+/>
+                    <Stack.Screen 
+                      name="modal" 
+                      options={{ presentation: 'modal' }} 
+                    />
+                  </Stack>
+                </AuthGate>
+              </ThemeProvider>
+            </MessageProvider>
           </WorkoutProvider>
         </UserProvider>
       </AuthProvider>
-      <Toast/>
+      <Toast />
     </>
   );
 }

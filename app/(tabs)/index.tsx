@@ -44,7 +44,7 @@ export default function HomeScreen() {
       console.log('🚗 Routing to new conversation:', newConversationId);
 
       router.push({
-        pathname: "/(drawer)/conversation/[id]",
+        pathname: "/conversation/[id]",
         params: { 
           id: newConversationId, 
         }

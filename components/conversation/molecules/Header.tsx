@@ -7,7 +7,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, showNavigation }) => {
   const router = useRouter();
 
   const handleHomePress = () => {
-    router.push("/(drawer)/(drawer-screens)");
+    router.push("/(tabs)");
   };
 
   return (
