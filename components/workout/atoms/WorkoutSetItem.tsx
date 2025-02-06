@@ -5,17 +5,34 @@ import { WorkoutSet } from '@/types/workout';
 interface WorkoutSetItemProps {
   set: WorkoutSet;
   isLastSet: boolean;
+  activeFields: {
+    weight: boolean;
+    reps: boolean;
+    rpe: boolean;
+    distance: boolean;
+    duration: boolean;
+  };
 }
 
-const WorkoutSetItem: React.FC<WorkoutSetItemProps> = ({ set, isLastSet }) => {
+const WorkoutSetItem: React.FC<WorkoutSetItemProps> = ({ set, isLastSet, activeFields }) => {
   return (
     <View style={[styles.container, !isLastSet && styles.bottomBorder]}>
       <Text style={styles.setText}>{set.set_number}</Text>
-      {set.weight && <Text style={styles.setText}>{set.weight}</Text>}
-      {set.reps && <Text style={styles.setText}>{set.reps}</Text>}
-      {set.rpe && <Text style={styles.setText}>RPE {set.rpe}</Text>}
-      {set.distance && <Text style={styles.setText}>{set.distance}</Text>}
-      {set.duration && <Text style={styles.setText}>{set.duration}s</Text>}
+      {activeFields.weight && (
+        <Text style={styles.setText}>{set.weight ?? '-'}</Text>
+      )}
+      {activeFields.reps && (
+        <Text style={styles.setText}>{set.reps ?? '-'}</Text>
+      )}
+      {activeFields.rpe && (
+        <Text style={styles.setText}>{set.rpe ? `RPE ${set.rpe}` : '-'}</Text>
+      )}
+      {activeFields.distance && (
+        <Text style={styles.setText}>{set.distance ?? '-'}</Text>
+      )}
+      {activeFields.duration && (
+        <Text style={styles.setText}>{set.duration ? `${set.duration}s` : '-'}</Text>
+      )}
     </View>
   );
 };

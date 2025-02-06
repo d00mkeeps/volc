@@ -10,6 +10,8 @@ export type WorkoutSet = {
   created_at: string;
   updated_at: string;
 };
+
+export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
   
   export type WorkoutExercise = {
     id: string;

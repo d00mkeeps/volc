@@ -1,4 +1,3 @@
-// components/workout/organisms/WorkoutDetailModal.tsx
 import React, { useState } from 'react';
 import { Modal, View, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

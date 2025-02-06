@@ -8,40 +8,37 @@ interface WorkoutExerciseItemProps {
   isLastExercise: boolean;
 }
 
-const WorkoutExerciseItem: React.FC<WorkoutExerciseItemProps> = ({ 
+const WorkoutExerciseItem: React.FC<WorkoutExerciseItemProps> = ({
   exercise,
   isLastExercise,
 }) => {
-  const getHeaderItems = () => {
-    const items = ['Set'];
-    if (exercise.workout_exercise_sets.some(set => set.weight !== null)) {
-      items.push(`Weight (${exercise.weight_unit || 'kg'})`);
-    }
-    if (exercise.workout_exercise_sets.some(set => set.reps !== null)) {
-      items.push('Reps');
-    }
-    if (exercise.workout_exercise_sets.some(set => set.rpe !== null)) {
-      items.push('RPE');
-    }
-    if (exercise.workout_exercise_sets.some(set => set.distance !== null)) {
-      items.push(`Distance (${exercise.distance_unit || 'm'})`);
-    }
-    if (exercise.workout_exercise_sets.some(set => set.duration !== null)) {
-      items.push('Time');
-    }
-    return items;
+  const getHeaderConfig = () => {
+    const config = {
+      weight: exercise.workout_exercise_sets.some(set => set.weight !== null),
+      reps: exercise.workout_exercise_sets.some(set => set.reps !== null),
+      rpe: exercise.workout_exercise_sets.some(set => set.rpe !== null),
+      distance: exercise.workout_exercise_sets.some(set => set.distance !== null),
+      duration: exercise.workout_exercise_sets.some(set => set.duration !== null),
+    };
+    return config;
   };
+
+  const headerConfig = getHeaderConfig();
+  const headerItems = ['Set'];
+  if (headerConfig.weight) headerItems.push(`Weight (${exercise.weight_unit || 'kg'})`);
+  if (headerConfig.reps) headerItems.push('Reps');
+  if (headerConfig.rpe) headerItems.push('RPE');
+  if (headerConfig.distance) headerItems.push(`Distance (${exercise.distance_unit || 'm'})`);
+  if (headerConfig.duration) headerItems.push('Time');
 
   return (
     <View style={[styles.container, !isLastExercise && styles.bottomBorder]}>
       <Text style={styles.exerciseName}>{exercise.name}</Text>
-      
       <View style={styles.headerRow}>
-        {getHeaderItems().map((item, index) => (
+        {headerItems.map((item, index) => (
           <Text key={index} style={styles.headerText}>{item}</Text>
         ))}
       </View>
-
       {exercise.workout_exercise_sets
         .sort((a, b) => a.set_number - b.set_number)
         .map((set, index) => (
@@ -49,6 +46,7 @@ const WorkoutExerciseItem: React.FC<WorkoutExerciseItemProps> = ({
             key={set.id}
             set={set}
             isLastSet={index === exercise.workout_exercise_sets.length - 1}
+            activeFields={headerConfig}
           />
         ))}
     </View>

@@ -1,18 +1,22 @@
 // components/workout/atoms/WorkoutSetEditor.tsx
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, Text, StyleSheet } from 'react-native';
 import { WorkoutSet } from '@/types/workout';
+
+type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
 
 interface WorkoutSetEditorProps {
   set: WorkoutSet;
   onSetChange: (set: WorkoutSet) => void;
   isLastSet: boolean;
+  visibleFields: WorkoutField[];
 }
 
 const WorkoutSetEditor: React.FC<WorkoutSetEditorProps> = ({
   set,
   onSetChange,
   isLastSet,
+  visibleFields,
 }) => {
   const [errors, setErrors] = useState<Record<string, string | null>>({});
 
@@ -78,52 +82,36 @@ const WorkoutSetEditor: React.FC<WorkoutSetEditorProps> = ({
     }
   };
 
+  const renderField = (field: WorkoutField) => {
+    const getPlaceholder = () => {
+      switch(field) {
+        case 'weight': return 'kg';
+        case 'reps': return '#';
+        case 'rpe': return '1-10';
+        case 'distance': return 'km';
+        case 'duration': return 'sec';
+      }
+    };
+
+    
+    return (
+      <View key={field} style={styles.fieldContainer}>
+        <Text style={styles.fieldLabel}>{field.charAt(0).toUpperCase() + field.slice(1)}</Text>
+        <TextInput
+          style={[styles.input, errors[field] && styles.inputError]}
+          value={set[field]?.toString() || ''}
+          onChangeText={(value) => handleChange(value, field)}
+          keyboardType="numeric"
+          placeholder={getPlaceholder()}
+          placeholderTextColor="#666"
+        />
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, !isLastSet && styles.bottomBorder]}>
-      <TextInput
-        style={[styles.input, errors.weight && styles.inputError]}
-        value={set.weight?.toString() || ''}
-        onChangeText={(value) => handleChange(value, 'weight')}
-        keyboardType="numeric"
-        placeholder="Weight"
-        placeholderTextColor="#666"
-      />
-      <TextInput
-        style={[styles.input, errors.reps && styles.inputError]}
-        value={set.reps?.toString() || ''}
-        onChangeText={(value) => handleChange(value, 'reps')}
-        keyboardType="numeric"
-        placeholder="Reps"
-        placeholderTextColor="#666"
-      />
-      <TextInput
-        style={[styles.input, errors.rpe && styles.inputError]}
-        value={set.rpe?.toString() || ''}
-        onChangeText={(value) => handleChange(value, 'rpe')}
-        keyboardType="numeric"
-        placeholder="RPE"
-        placeholderTextColor="#666"
-      />
-      {set.distance !== undefined && (
-        <TextInput
-          style={[styles.input, errors.distance && styles.inputError]}
-          value={set.distance?.toString() || ''}
-          onChangeText={(value) => handleChange(value, 'distance')}
-          keyboardType="numeric"
-          placeholder="Distance"
-          placeholderTextColor="#666"
-        />
-      )}
-      {set.duration !== undefined && (
-        <TextInput
-          style={[styles.input, errors.duration && styles.inputError]}
-          value={set.duration?.toString() || ''}
-          onChangeText={(value) => handleChange(value, 'duration')}
-          keyboardType="numeric"
-          placeholder="Duration"
-          placeholderTextColor="#666"
-        />
-      )}
+      {visibleFields.map(field => renderField(field))}
     </View>
   );
 };
@@ -138,13 +126,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#333',
   },
-  input: {
+  fieldContainer: {
     flex: 1,
+    marginHorizontal: 4,
+  },
+  fieldLabel: {
+    color: '#888',
+    fontSize: 12,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  input: {
     color: '#bbb',
     fontSize: 14,
     textAlign: 'center',
     backgroundColor: '#333',
-    marginHorizontal: 4,
     padding: 8,
     borderRadius: 4,
   },

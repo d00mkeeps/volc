@@ -1,18 +1,23 @@
-2025-02-04 12:12:44,825 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '\n\nWoul'}
-2025-02-04 12:12:44,861 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'd you like to'}
-2025-02-04 12:12:44,900 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' add any other exercises'}
-2025-02-04 12:12:44,912 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' to this chest'}
-2025-02-04 12:12:45,003 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' and back workout?'}
-2025-02-04 12:12:45,030 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
-2025-02-04 12:12:45,031 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-04 12:12:45,031 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-04 12:12:45,032 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-04 12:12:45,033 - app.services.chains.workout_chain - DEBUG - Response generated: Okay, got those first two exercises:
-
-- Machine Row, 3 sets
-- Seated Overhead Press, 3 sets  
-
-Would...
-2025-02-04 12:12:45,033 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done'}
-2025-02-04 13:24:42,549 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
-2025-02-04 13:24:42,604 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 00:18:28,534 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:18:28,544 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-06 00:18:28,598 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:18:28,601 - app.services.conversation_service - DEBUG - Processing initialization with 2 messages...
+2025-02-06 00:18:28,610 - app.services.conversation_service - INFO - Initialized conversation with 2 messages
+2025-02-06 00:18:30,183 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 00:18:30,184 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 00:18:59,612 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:18:59,613 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-06 00:18:59,619 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:18:59,629 - app.services.conversation_service - DEBUG - Processing initialization with 2 messages...
+2025-02-06 00:18:59,632 - app.services.conversation_service - INFO - Initialized conversation with 2 messages
+2025-02-06 00:20:22,739 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 00:20:22,740 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 00:23:12,404 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:23:12,407 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-06 00:23:12,430 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 5e351fa5-bd10-46e8-b395-ef2db936ef24
+2025-02-06 00:23:12,430 - app.services.conversation_service - DEBUG - Processing initialization with 2 messages...
+2025-02-06 00:23:12,451 - app.services.conversation_service - INFO - Initialized conversation with 2 messages
+2025-02-06 00:23:12,454 - httpcore.connection - DEBUG - close.started
+2025-02-06 00:23:12,455 - httpcore.connection - DEBUG - close.complete
+2025-02-06 00:23:28,523 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-02-06 00:23:28,525 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 

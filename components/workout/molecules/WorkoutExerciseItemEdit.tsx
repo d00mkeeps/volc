@@ -1,8 +1,7 @@
-// components/workout/molecules/WorkoutExerciseItemEdit.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { WorkoutExercise, WorkoutSet } from '@/types/workout';
+import { WorkoutExercise, WorkoutField, WorkoutSet } from '@/types/workout';
 import WorkoutSetEditor from '../atoms/WorkoutSetEditor';
 
 interface WorkoutExerciseItemEditProps {
@@ -19,6 +18,39 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
   onDeleteExercise,
 }) => {
   const [nameError, setNameError] = useState<string | null>(null);
+  const [visibleFields, setVisibleFields] = useState<Set<WorkoutField>>(() => {
+    const fields = new Set<WorkoutField>();
+    exercise.workout_exercise_sets.forEach(set => {
+      if (set.weight !== null) fields.add('weight');
+      if (set.reps !== null) fields.add('reps');
+      if (set.rpe !== null) fields.add('rpe');
+      if (set.distance !== null) fields.add('distance');
+      if (set.duration !== null) fields.add('duration');
+    });
+    if (fields.size === 0) fields.add('reps');
+    return fields;
+  });
+  const [showFieldMenu, setShowFieldMenu] = useState(false);
+
+  const availableFields: Array<{id: WorkoutField, label: string}> = [
+    { id: 'weight' as WorkoutField, label: 'Weight measurement' },
+    { id: 'distance' as WorkoutField, label: 'Distance' },
+    { id: 'duration' as WorkoutField, label: 'Duration' },
+    { id: 'rpe' as WorkoutField, label: 'RPE' }
+  ].filter(field => !visibleFields.has(field.id));
+
+  const addField = (fieldId: WorkoutField) => {
+    setVisibleFields(prev => new Set([...prev, fieldId]));
+    const updatedSets = exercise.workout_exercise_sets.map(set => ({
+      ...set,
+      [fieldId]: null
+    }));
+    onExerciseChange({
+      ...exercise,
+      workout_exercise_sets: updatedSets
+    });
+    setShowFieldMenu(false);
+  };
 
   const handleNameChange = (name: string) => {
     if (name.trim().length === 0) {
@@ -74,61 +106,92 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
     });
   };
 
+
   return (
     <View style={[styles.container, !isLastExercise && styles.bottomBorder]}>
       <View style={styles.header}>
         <View style={styles.nameContainer}>
           <TextInput
-            style={[
-              styles.exerciseName,
-              nameError && styles.inputError
-            ]}
+            style={[styles.exerciseName, nameError && styles.inputError]}
             value={exercise.name}
             onChangeText={handleNameChange}
             placeholder="Exercise Name"
             placeholderTextColor="#666"
           />
-          {nameError && (
-            <Text style={styles.errorText}>{nameError}</Text>
-          )}
+          {nameError && <Text style={styles.errorText}>{nameError}</Text>}
         </View>
-        <TouchableOpacity 
-          style={styles.deleteButton} 
-          onPress={onDeleteExercise}
-        >
-          <Ionicons name="trash-outline" size={20} color="#ff4444" />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          {availableFields.length > 0 && (
+            <TouchableOpacity 
+              style={styles.addFieldButton} 
+              onPress={() => setShowFieldMenu(true)}
+            >
+              <Ionicons name="add-circle-outline" size={20} color="#8cd884" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity 
+            style={styles.deleteButton} 
+            onPress={onDeleteExercise}
+          >
+            <Ionicons name="trash-outline" size={20} color="#ff4444" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <Modal
+        visible={showFieldMenu}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowFieldMenu(false)}
+      >
+        <TouchableOpacity 
+          style={styles.menuOverlay}
+          activeOpacity={1}
+          onPress={() => setShowFieldMenu(false)}
+        >
+          <View style={styles.menuContent}>
+            {availableFields.map(field => (
+              <TouchableOpacity
+                key={field.id}
+                style={styles.menuItem}
+                onPress={() => addField(field.id)}
+              >
+                <Text style={styles.menuItemText}>{field.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       <View style={styles.setsContainer}>
         {exercise.workout_exercise_sets
           .sort((a, b) => a.set_number - b.set_number)
           .map((set, index) => (
-// Update the setRow JSX in WorkoutExerciseItemEdit.tsx:
-<View key={set.id} style={styles.setRow}>
-  <Text style={styles.setNumber}>{index + 1}</Text>
-  <View style={styles.setEditorContainer}>
-    <WorkoutSetEditor
-      set={set}
-      onSetChange={(updatedSet) => handleSetChange(updatedSet, index)}
-      isLastSet={index === exercise.workout_exercise_sets.length - 1}
-    />
-  </View>
-  <TouchableOpacity 
-    style={[
-      styles.deleteSetButton,
-      exercise.workout_exercise_sets.length === 1 && styles.deleteSetButtonDisabled
-    ]}
-    onPress={() => deleteSet(index)}
-    disabled={exercise.workout_exercise_sets.length === 1}
-  >
-    <Ionicons 
-      name="trash-outline" 
-      size={20} 
-      color={exercise.workout_exercise_sets.length === 1 ? '#666' : '#ff4444'} 
-    />
-  </TouchableOpacity>
-</View>
+            <View key={set.id} style={styles.setRow}>
+              <Text style={styles.setNumber}>{index + 1}</Text>
+              <View style={styles.setEditorContainer}>
+                <WorkoutSetEditor
+                  set={set}
+                  visibleFields={Array.from(visibleFields)}
+                  onSetChange={(updatedSet) => handleSetChange(updatedSet, index)}
+                  isLastSet={index === exercise.workout_exercise_sets.length - 1}
+                />
+              </View>
+              <TouchableOpacity 
+                style={[
+                  styles.deleteSetButton,
+                  exercise.workout_exercise_sets.length === 1 && styles.deleteSetButtonDisabled
+                ]}
+                onPress={() => deleteSet(index)}
+                disabled={exercise.workout_exercise_sets.length === 1}
+              >
+                <Ionicons 
+                  name="trash-outline" 
+                  size={20} 
+                  color={exercise.workout_exercise_sets.length === 1 ? '#666' : '#ff4444'} 
+                />
+              </TouchableOpacity>
+            </View>
           ))}
       </View>
 
@@ -218,6 +281,36 @@ const styles = StyleSheet.create({
     color: '#8cd884',
     fontSize: 14,
     marginLeft: 8,
+  }, 
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  addFieldButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  menuOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuContent: {
+    backgroundColor: '#222',
+    borderRadius: 8,
+    padding: 16,
+    minWidth: 200,
+  },
+  menuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  menuItemText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
