@@ -1,47 +1,101 @@
-2025-02-06 00:10:04,073 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 06 Feb 2025 00:10:04 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-06T00:10:03Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-06T00:10:05Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-06T00:10:04Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-06T00:10:04Z'), (b'request-id', b'req_019pSiJi8KRhnXQ9SYUivQGq'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90d6ea311ba8eb14-MAN'), (b'Content-Encoding', b'gzip')])
-2025-02-06 00:10:04,077 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-02-06 00:10:04,078 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-02-06 00:10:04,079 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-06 00:10:04,079 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-06 00:10:04,079 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-06 00:10:04,080 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-02-06 00:10:04,093 - app.services.chains.workout_chain - INFO - [32mExtracted Workout Data: {
-  "name": "Morning Workout",
+2025-02-06 18:54:43,878 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 06 Feb 2025 18:54:43 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-06T18:54:39Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-06T18:54:42Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-06T18:54:43Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-06T18:54:42Z'), (b'request-id', b'req_01DtM8vQqnWALCLeiDwRu3uH'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90dd598f8fd3cc85-MAN'), (b'Content-Encoding', b'gzip')])
+2025-02-06 18:54:43,881 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-06 18:54:43,881 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-06 18:54:43,883 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-06 18:54:43,883 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-06 18:54:43,883 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-06 18:54:43,884 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-06 18:54:43,890 - app.services.chains.workout_chain - INFO - [32mExtracted Workout Data: {
+  "name": "Chest Day",
   "description": null,
-  "exercises": []
+  "exercises": [
+    {
+      "exercise_name": "Bench Press",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 100,
+            "reps": 3
+          },
+          {
+            "weight": 100,
+            "reps": 5
+          },
+          {
+            "weight": 105,
+            "reps": 3
+          }
+        ]
+      },
+      "order_in_workout": 1,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Dips",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 10,
+            "reps": 12
+          },
+          {
+            "weight": 10,
+            "reps": 12
+          },
+          {
+            "weight": 10,
+            "reps": 12
+          }
+        ]
+      },
+      "order_in_workout": 2,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Preacher Curl",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 40,
+            "reps": 8
+          },
+          {
+            "weight": 40,
+            "reps": 8
+          },
+          {
+            "weight": 40,
+            "reps": 8
+          }
+        ]
+      },
+      "order_in_workout": 3,
+      "weight_unit": "kg",
+      "distance_unit": null
+    }
+  ]
 }[0m
-2025-02-06 00:10:04,094 - app.services.chains.workout_chain - DEBUG - Generating conversation response...
-2025-02-06 00:10:04,097 - httpx - DEBUG - load_ssl_context verify=True cert=None trust_env=True http2=False
-2025-02-06 00:10:04,097 - httpx - DEBUG - load_verify_locations cafile='/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/certifi/cacert.pem'
-2025-02-06 00:10:04,132 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Hi'}, {'type': 'text', 'text': 'Hi'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': 'You are the TrainSmart Coach - warm, encouraging, and professional while keeping responses brief and natural.\n\nCONVERSATION FLOW:\n1. ALWAYS ask "Would you like to add another exercise to this workout?" after each exercise\n   - Only proceed to next steps when user confirms no more exercises\n\n2. Once user has no more exercises:\n   Think through the following steps:\n   a) Look at MISSING_FIELDS and the EXTRACTION_STATE\n   b) For each exercise with missing fields:\n      - Is it missing weight units while having weight values? These must be clarified\n      - Is it missing distance units while having distance values? These must be clarified\n      - Are any sets missing reps or weight values? These must be clarified\n      - Ignore missing units for fields that don\'t exist (e.g., distance_unit for strength exercises)\n   c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn\'t want to provide this, it\'s not necessary.\n\n3. Finally, if there aren\'t key fields missing AND all sets have necessary data, present summary:\n   - Generate brief name if none provided\n   - Format as:\n     [Workout Name],\n     Exercises:\n     1. [Exercise Name]\n        Sets:[Set details with explicit units, each set on it\'s own line]\n     2. [rest of exercises...]\n     Notes:\n      [Workout description point 1],\n      [workout description point 2],\n      [rest of workout description...], \n   - Ask "Does this look correct?"\n\n<OtherInstructions>\nMatch user\'s technical knowledge level in responses.\nYou must NEVER discuss missing fields or other system processes in conversation. \nGenerally, a strength exercise is shown as reps and weight. If an exercise is shown as "7x34kg", you should assume it represents one set of seven reps with 34kg, not seven sets of 34kg with unknown reps (unless corrected).\nDisplay the summary as bullet points\n</OtherInstructions>\n\n<Metadata>\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\nPrevious conversation: {messages}\nHuman: {current_message}\n</Metadata>\n'}}
-2025-02-06 00:10:04,133 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-02-06 00:10:04,149 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1087937a0>
-2025-02-06 00:10:04,150 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1088773d0> server_hostname='api.anthropic.com' timeout=None
-2025-02-06 00:10:04,171 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10891b290>
-2025-02-06 00:10:04,171 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-02-06 00:10:04,171 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-02-06 00:10:04,172 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-02-06 00:10:04,172 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-02-06 00:10:04,172 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-02-06 00:10:05,253 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 06 Feb 2025 00:10:05 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-06T00:10:05Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-06T00:10:06Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-06T00:10:08Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-06T00:10:06Z'), (b'request-id', b'req_016FYWKdQ37J9UyjrYWzqcfn'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90d6ea402eb7b320-MAN')])
-2025-02-06 00:10:05,255 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-02-06 00:10:05,255 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-02-06 00:10:05,256 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-02-06 00:10:05,266 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
-2025-02-06 00:10:05,267 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'Hello'}
-2025-02-06 00:10:05,308 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': "! I'm your Tra"}
-2025-02-06 00:10:05,373 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'inSmart Coach. It'}
-2025-02-06 00:10:05,468 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': "'s great to meet you."}
-2025-02-06 00:10:05,541 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': " Let's start"}
-2025-02-06 00:10:05,583 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' building your workout'}
-2025-02-06 00:10:05,644 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '. What exercise'}
-2025-02-06 00:10:05,749 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' would you like to add first'}
-2025-02-06 00:10:05,810 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': '?'}
-2025-02-06 00:10:05,813 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ''}
-2025-02-06 00:10:05,827 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-06 00:10:05,828 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-06 00:10:05,828 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-06 00:10:05,829 - app.services.chains.workout_chain - DEBUG - Response generated: Hello! I'm your TrainSmart Coach. It's great to meet you. Let's start building your workout. What ex...
-2025-02-06 00:10:05,830 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'done'}
-2025-02-06 00:10:33,187 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
-2025-02-06 00:10:33,188 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-02-06 18:54:43,890 - app.services.chains.workout_chain - DEBUG - Generating conversation response...
+2025-02-06 18:54:43,896 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Chest day:\n3 sets bench press\n100kg x 3, 100kg x 5, 105kg x 3\n\n3 sets dips:\nbe+10kg x 12 (all 3 sets are the same)'}, {'type': 'text', 'text': 'Chest day:\n3 sets bench press\n100kg x 3, 100kg x 5, 105kg x 3\n\n3 sets dips:\nbe+10kg x 12 (all 3 sets are the same)'}]}, {'role': 'assistant', 'content': 'Would you like to add another exercise to this workout?'}, {'role': 'user', 'content': 'Preacher. Curl : 40kg x 8 (all 3 sets)'}, {'role': 'assistant', 'content': 'Would you like to add another exercise to this workout?'}, {'role': 'user', 'content': [{'type': 'text', 'text': 'No'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-sonnet-20240229', 'stream': True, 'system': 'You are the TrainSmart Coach - warm, encouraging, and professional while keeping responses brief and natural.\n\nCONVERSATION FLOW:\n1. ALWAYS ask "Would you like to add another exercise to this workout?" after each exercise\n   - Only proceed to next steps when user confirms no more exercises\n\n2. Once user has no more exercises:\n   Think through the following steps:\n   a) Look at MISSING_FIELDS and the EXTRACTION_STATE\n   b) For each exercise with missing fields:\n      - Is it missing weight units while having weight values? These must be clarified\n      - Is it missing distance units while having distance values? These must be clarified\n      - Are any sets missing reps or weight values? These must be clarified\n      - Ignore missing units for fields that don\'t exist (e.g., distance_unit for strength exercises)\n   c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn\'t want to provide this, it\'s not necessary.\n\n3. Finally, if there aren\'t key fields missing AND all sets have necessary data, present summary:\n   - Generate brief name if none provided\n   - Format as:\n     [Workout Name],\n     Exercises:\n     1. [Exercise Name]\n        Sets:[Set details with explicit units, each set on it\'s own line]\n     2. [rest of exercises...]\n     Notes:\n      [Workout description point 1],\n      [workout description point 2],\n      [rest of workout description...], \n   - Ask "Does this look correct?"\n\n<OtherInstructions>\nMatch user\'s technical knowledge level in responses.\nYou must NEVER discuss missing fields or other system processes in conversation. \nGenerally, a strength exercise is shown as reps and weight. If an exercise is shown as "7x34kg", you should assume it represents one set of seven reps with 34kg, not seven sets of 34kg with unknown reps (unless corrected).\nDisplay the summary as bullet points\n</OtherInstructions>\n\n<Metadata>\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\nPrevious conversation: {messages}\nHuman: {current_message}\n</Metadata>\n'}}
+2025-02-06 18:54:43,900 - httpcore.connection - DEBUG - close.started
+2025-02-06 18:54:43,901 - httpcore.connection - DEBUG - close.complete
+2025-02-06 18:54:43,901 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-02-06 18:54:43,915 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11135aa80>
+2025-02-06 18:54:43,916 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x111018350> server_hostname='api.anthropic.com' timeout=None
+2025-02-06 18:54:43,943 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11135a600>
+2025-02-06 18:54:43,943 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-02-06 18:54:43,944 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-02-06 18:54:43,944 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-02-06 18:54:43,944 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-02-06 18:54:43,944 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-02-06 18:54:45,427 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 06 Feb 2025 18:54:45 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-06T18:54:45Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-06T18:54:45Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-06T18:54:47Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-06T18:54:45Z'), (b'request-id', b'req_014X18HAneN978gDAzgUNEEx'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'90dd59b4db6f0765-MAN')])
+2025-02-06 18:54:45,428 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-06 18:54:45,428 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-06 18:54:45,428 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-06 18:54:45,429 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ''}
+2025-02-06 18:54:45,430 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'Let'}
+2025-02-06 18:54:45,566 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' me summarize your workout:\n\n•'}
+2025-02-06 18:54:45,875 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' Chest Day\nExercises:\n1'}
+2025-02-06 18:54:46,066 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': '. Bench Press\n   - Set'}

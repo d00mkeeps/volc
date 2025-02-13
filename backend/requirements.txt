@@ -8,3 +8,6 @@ langchain-anthropic
 python-dotenv
 pydantic
 langchain-core
+pytest
+pytest-asyncio
+supabase
