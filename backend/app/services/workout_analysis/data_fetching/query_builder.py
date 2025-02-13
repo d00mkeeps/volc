@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 from app.core.supabase.client import SupabaseClient
 from app.schemas.workout_query import ExerciseQuery
 from datetime import datetime, timedelta
+from ..formatter import WorkoutFormatter
 
 class WorkoutQueryBuilder:
     def __init__(self, supabase_client: SupabaseClient):
@@ -23,13 +24,14 @@ class WorkoutQueryBuilder:
                 raise ValueError(f"Unsupported time unit: {unit}")
         except Exception as e:
             print(f"Error converting timeframe: {e}")
-            return 90  # Default to 3 months (90 days) if conversion fails
+            return 90 
+        
 
     def fetch_exercise_data(
         self,
         user_id: str,
         query_params: ExerciseQuery
-    ) -> Optional[List[Dict]]:
+    ) -> Optional[Dict]:
         try:
             days = self._convert_timeframe_to_days(query_params.timeframe)
             from_date = datetime.now() - timedelta(days=days)
@@ -55,7 +57,8 @@ class WorkoutQueryBuilder:
                     distance_unit,
                     workouts!inner(
                         created_at,
-                        notes
+                        notes,
+                        name
                     ),
                     workout_exercise_sets!inner(
                         weight,
@@ -74,10 +77,12 @@ class WorkoutQueryBuilder:
                 .execute())
             
             print("\nQuery executed successfully")
+
+
             if result.data:
-                print(f"Found {len(result.data)} matching exercises")
-            
-            return result.data
+                formatter = WorkoutFormatter()
+                return formatter.format_exercise_data(result.data)
+            return None
                 
         except Exception as e:
             print(f"\nQuery execution failed: {e}")
