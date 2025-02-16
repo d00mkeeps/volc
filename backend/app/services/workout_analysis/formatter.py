@@ -1,5 +1,3 @@
-# /backend/app/services/workout_analysis/formatter.py
-
 from typing import Dict, List, Optional
 from app.utils.one_rm_calc import OneRMCalculator
 

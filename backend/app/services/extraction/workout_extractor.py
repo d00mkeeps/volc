@@ -1,4 +1,3 @@
-# app/services/extraction/workout_extractor.py
 from asyncio.log import logger
 import os
 from typing import Any, List
@@ -13,7 +12,7 @@ from app.core.examples.workout_extractor import WORKOUT_EXAMPLES
 from langchain_core.utils.function_calling import tool_example_to_messages
 
 class WorkoutExtractor(BaseExtractor[Workout]):
-    def __init__(self, model: str = "claude-3-sonnet-20240229") -> None:
+    def __init__(self, model: str = "claude-3-5-sonnet-20241022") -> None:
 
         load_dotenv()
 

@@ -1,8 +1,8 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from app.core.supabase.client import SupabaseClient
-from app.schemas.workout_query import ExerciseQuery
+from app.schemas.exercise_query import ExerciseQuery
 from datetime import datetime, timedelta
-from ..formatter import WorkoutFormatter
+from .formatter import WorkoutFormatter
 
 class WorkoutQueryBuilder:
     def __init__(self, supabase_client: SupabaseClient):

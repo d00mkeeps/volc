@@ -1,6 +1,5 @@
-import pytest
-from app.schemas.workout_query import ExerciseQuery
-from app.services.workout_analysis.data_fetching.query_builder import WorkoutQueryBuilder
+from backend.app.schemas.exercise_query import ExerciseQuery
+from backend.app.services.workout_analysis.query_builder import WorkoutQueryBuilder
 from app.core.supabase.client import SupabaseClient
 from pprint import pprint
 
