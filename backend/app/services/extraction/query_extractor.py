@@ -1,6 +1,5 @@
 from typing import List, Optional
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.utils.function_calling import tool_example_to_messages
@@ -12,6 +11,7 @@ QUERY_EXTRACTOR_PROMPT = """You are an expert at extracting exercise query infor
 Extract exercises and timeframe from workout queries following these rules:
 - Default timeframe is "3 months" if none specified
 - Extract all exercise names mentioned that the user wants to analyze
+- Always output exercise names in singular form (e.g. "squat" not "squats", "calf raise" not "calf raises")
 - Timeframe should be in format "<number> <unit>" where unit is days/months/years
 - Normalize timeframe phrases (e.g. "last year" -> "12 months", "past week" -> "7 days")"""
 
@@ -33,19 +33,18 @@ class QueryExtractor(BaseExtractor[ExerciseQuery]):
             (
                 "Show me my bench press and squats from the last year",
                 ExerciseQuery(
-                    exercises=["bench press", "squats"],
+                    exercises=["bench press", "squat"],  # Note: singular forms
                     timeframe="12 months"
                 )
             ),
             (
                 "How are my deadlifts progressing?",
                 ExerciseQuery(
-                    exercises=["deadlifts"],
+                    exercises=["deadlift"],  # Note: singular form
                     timeframe="3 months"  # default
                 )
             )
         ]
-
     async def extract(self, conversation: List[HumanMessage | AIMessage]) -> Optional[ExerciseQuery]:
         try:
             conversation_text = self._format_conversation(conversation)

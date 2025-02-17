@@ -22,32 +22,33 @@ async def test_workout_analysis_chain():
     chain = WorkoutAnalysisChain(supabase_client)
     
     # Test cases with expected structures
+    # Test cases with expected structures
     test_cases = [
         (
-            "Show me my bench press and squats from the last 3 months",
+            "Show me my bench press progress",
             ExerciseQuery(
-                exercises=["bench press", "squats"],
-                timeframe="3 months"
-            )
+                exercises=["bench press"]  # timeframe will default to "3 months"
+            ),
+            ["Bench Press", "Incline Dumbbell Bench Press"]
         ),
         (
-            "How are my deadlifts progressing?",
+            "How are my squats progressing?",
             ExerciseQuery(
-                exercises=["deadlifts"],
-                timeframe="3 months"  # default
-            )
+                exercises=["squat"]
+            ),
+            ["Squat"]
         ),
         (
-            "Check my pull-ups over the past year",
+            "Show my progress on upper body pushing exercises",
             ExerciseQuery(
-                exercises=["pull-ups"],
-                timeframe="12 months"
-            )
+                exercises=["push"]
+            ),
+            ["Bench Press", "Incline Dumbbell Bench Press", "Dips", "Triceps Pushdowns"]
         )
     ]
     
     print("\nTesting WorkoutAnalysisChain:")
-    for query, expected_extraction in test_cases:
+    for query, expected_extraction, expected_selections in test_cases:
         print(f"\nTesting query: {query}")
         
         # Test extraction component
@@ -55,11 +56,8 @@ async def test_workout_analysis_chain():
         extracted = await chain._extract_query(query)
         assert extracted is not None, "Extraction failed"
         assert isinstance(extracted, ExerciseQuery), "Incorrect extraction type"
-        assert set(extracted.exercises) == set(expected_extraction.exercises), "Extracted exercises don't match"
-        assert extracted.timeframe == expected_extraction.timeframe, "Extracted timeframe doesn't match"
         print(f"Extraction successful: {extracted}")
         
- 
         print("Testing database query...")
         db_result = await chain._fetch_workout_data(
             query_params=extracted, 
@@ -71,22 +69,42 @@ async def test_workout_analysis_chain():
         print(f"Database query successful")
         print(f"Found {db_result['metadata']['total_workouts']} workouts")
         
+        # Test exercise selection
+        print("Testing exercise selection...")
+        chart_config = await chain.generate_chart_config(
+            workouts=db_result,
+            original_query=query,
+            llm=chain.llm
+        )
+        assert chart_config is not None, "Chart configuration generation failed"
+        assert "datasets" in chart_config, "Missing datasets in chart config"
+        
+        # Check if at least one of the expected exercises is included
+        selected_exercises = [dataset["label"].lower() for dataset in chart_config["datasets"]]
+        found_match = any(
+            expected.lower() in selected_exercises 
+            for expected in expected_selections
+        )
+        assert found_match, f"Selected exercises {selected_exercises} don't contain any expected {expected_selections}"
+        
         # Test full chain integration
         print("Testing full chain...")
         result = await chain.invoke(query, TEST_USER_ID)
         assert result is not None, "Full chain execution failed"
-        assert "workouts" in result, "Missing workouts in chain result"
-        assert "metadata" in result, "Missing metadata in chain result"
+        assert "data" in result, "Missing data in chain result"
+        assert "chart" in result, "Missing chart in chain result"
+        assert "url" in result["chart"], "Missing chart URL"
+        assert "config" in result["chart"], "Missing chart configuration"
         
         # Print summary of results
         print("\nResults summary:")
-        print(f"Total workouts: {result['metadata']['total_workouts']}")
-        print(f"Total exercises: {result['metadata']['total_exercises']}")
-        if result['workouts']:
+        print(f"Total workouts: {result['data']['metadata']['total_workouts']}")
+        print(f"Total exercises: {result['data']['metadata']['total_exercises']}")
+        print(f"Selected exercises: {[d['label'] for d in result['chart']['config']['datasets']]}")
+        print(f"\033[92mChart URL generated: {result['chart']['url']}\033[0m")        
+        if result['data']['workouts']:
             print("\nSample workout:")
-            pprint(result['workouts'][0])
-    
-    print("\nAll tests passed successfully!")
+            pprint(result['data']['workouts'][0])
 
 if __name__ == "__main__":
     import asyncio

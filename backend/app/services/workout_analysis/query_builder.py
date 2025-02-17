@@ -26,8 +26,7 @@ class WorkoutQueryBuilder:
             print(f"Error converting timeframe: {e}")
             return 90 
         
-
-    def fetch_exercise_data(
+    async def fetch_exercise_data(
         self,
         user_id: str,
         query_params: ExerciseQuery
@@ -77,7 +76,6 @@ class WorkoutQueryBuilder:
                 .execute())
             
             print("\nQuery executed successfully")
-
 
             if result.data:
                 formatter = WorkoutFormatter()

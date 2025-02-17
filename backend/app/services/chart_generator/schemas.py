@@ -27,34 +27,35 @@ DEFAULT_OPTIONS = {
     "title": {
         "display": True,
         "text": "1RM Progress Over Time",
-        "color": "#fff",
-        "font": {
-            "size": 16
-        }
+        "fontColor": "#fff",  # v2 uses fontColor instead of color
+        "fontSize": 16
     },
     "legend": {
         "display": True,
+        "position": "bottom",
         "labels": {
-            "color": "#fff",
-            "padding": 10  # Reduced padding
-        },
-        "position": "bottom"
+            "fontColor": "#fff",
+            "padding": 8,
+            "boxWidth": 12,
+            "fontSize": 11,
+            "usePointStyle": True
+        }
     },
     "scales": {
-        "xAxes": [{
+        "xAxes": [{  # v2 uses arrays for axes
             "display": True,
-            "scaleLabel": {
+            "scaleLabel": {  # v2 uses scaleLabel
                 "display": True,
-                "labelString": "Date",
-                "color": "#fff",
-                "padding": 5  # Added smaller padding
+                "labelString": "Date",  # v2 uses labelString
+                "fontColor": "#fff",
+                "padding": 5
             },
-            "gridLines": {
+            "gridLines": {  # v2 uses gridLines
                 "color": "#999"
             },
             "ticks": {
-                "color": "#fff",
-                "padding": 5  # Added smaller padding
+                "fontColor": "#fff",
+                "padding": 5
             }
         }],
         "yAxes": [{
@@ -62,15 +63,15 @@ DEFAULT_OPTIONS = {
             "scaleLabel": {
                 "display": True,
                 "labelString": "Estimated 1RM (kg)",
-                "color": "#fff",
-                "padding": 5  # Added smaller padding
+                "fontColor": "#fff",
+                "padding": 5
             },
             "gridLines": {
                 "color": "#999"
             },
             "ticks": {
-                "color": "#fff",
-                "padding": 5  # Added smaller padding
+                "fontColor": "#fff",
+                "padding": 5
             }
         }]
     },
@@ -79,7 +80,7 @@ DEFAULT_OPTIONS = {
             "left": 10,
             "right": 10,
             "top": 10,
-            "bottom": 10
+            "bottom": 20
         }
     }
 }

@@ -1,8 +1,6 @@
 '''
 This function takes our styled QuickChartConfig and generates a valid URL for the QuickChart API.
 It combines the chart styling parameters and Chart.js configuration into a properly encoded URL.
-
-Note: If URLs get too long, we may need to handle that with short URLs or chunking.
 '''
 
 from urllib.parse import urlencode, quote
