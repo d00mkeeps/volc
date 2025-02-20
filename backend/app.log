@@ -6,3 +6,100 @@
 2025-02-14 13:26:56,522 - app.main - INFO - Application starting
 2025-02-14 13:26:59,595 - root - DEBUG - Logging has been set up
 2025-02-14 13:26:59,596 - app.main - INFO - Application starting
+2025-02-18 11:08:54,821 - root - DEBUG - Logging has been set up
+2025-02-18 11:08:54,821 - app.main - INFO - Application starting
+2025-02-18 11:11:24,397 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 0b563463-3992-4624-95a9-feb83655e689
+2025-02-18 11:11:24,399 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-18 11:11:24,409 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 33, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ~~~~~~~~~~~~^^
+TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+2025-02-18 11:11:24,567 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 0b563463-3992-4624-95a9-feb83655e689
+2025-02-18 11:11:24,567 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-18 11:11:24,568 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 33, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ~~~~~~~~~~~~^^
+TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+2025-02-18 11:11:24,653 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 0b563463-3992-4624-95a9-feb83655e689
+2025-02-18 11:11:24,654 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-18 11:11:24,654 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 33, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ~~~~~~~~~~~~^^
+TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+2025-02-18 11:12:02,808 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 1028d9d8-5a87-4c80-8000-91d3f702a671
+2025-02-18 11:12:02,810 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-18 11:12:02,814 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 33, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ~~~~~~~~~~~~^^
+TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+2025-02-18 11:12:02,997 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 1028d9d8-5a87-4c80-8000-91d3f702a671
+2025-02-18 11:12:02,997 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-18 11:12:02,999 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 33, in conversation_websocket
+    service = ConversationService()  # Pass conversation_id
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
+    self.reset_chain()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
+    self.chain = WorkoutChain()
+                 ~~~~~~~~~~~~^^
+TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
+2025-02-18 15:02:14,728 - root - DEBUG - Logging has been set up
+2025-02-18 15:02:14,744 - app.main - INFO - Application starting
+2025-02-18 15:02:56,245 - root - DEBUG - Logging has been set up
+2025-02-18 15:02:56,246 - app.main - INFO - Application starting
+2025-02-18 15:03:33,138 - root - DEBUG - Logging has been set up
+2025-02-18 15:03:33,138 - app.main - INFO - Application starting
+2025-02-18 15:23:34,033 - root - DEBUG - Logging has been set up
+2025-02-18 15:23:34,034 - app.main - INFO - Application starting
+2025-02-18 15:57:17,521 - root - DEBUG - Logging has been set up
+2025-02-18 15:57:17,521 - app.main - INFO - Application starting
+2025-02-18 15:57:36,556 - root - DEBUG - Logging has been set up
+2025-02-18 15:57:36,557 - app.main - INFO - Application starting
+2025-02-18 16:02:57,744 - root - DEBUG - Logging has been set up
+2025-02-18 16:02:57,744 - app.main - INFO - Application starting
+2025-02-18 16:09:02,784 - root - DEBUG - Logging has been set up
+2025-02-18 16:09:02,784 - app.main - INFO - Application starting
+2025-02-18 16:18:29,157 - root - DEBUG - Logging has been set up
+2025-02-18 16:18:29,157 - app.main - INFO - Application starting
+2025-02-18 16:32:07,969 - root - DEBUG - Logging has been set up
+2025-02-18 16:32:07,969 - app.main - INFO - Application starting
+2025-02-18 16:35:01,432 - root - DEBUG - Logging has been set up
+2025-02-18 16:35:01,432 - app.main - INFO - Application starting
+2025-02-18 16:35:16,506 - root - DEBUG - Logging has been set up
+2025-02-18 16:35:16,506 - app.main - INFO - Application starting
+2025-02-18 16:35:54,188 - root - DEBUG - Logging has been set up
+2025-02-18 16:35:54,188 - app.main - INFO - Application starting
+2025-02-18 16:38:40,477 - root - DEBUG - Logging has been set up
+2025-02-18 16:38:40,477 - app.main - INFO - Application starting
+2025-02-18 16:46:42,630 - root - DEBUG - Logging has been set up
+2025-02-18 16:46:42,631 - app.main - INFO - Application starting

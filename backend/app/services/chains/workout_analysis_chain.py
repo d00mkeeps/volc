@@ -1,122 +1,117 @@
-import os
-from typing import Optional, Dict, Any
-from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from datetime import datetime
+from typing import Dict, Any, List, Optional
+import logging
+import json
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from app.services.extraction.query_extractor import QueryExtractor
-from app.services.workout_analysis.query_builder import WorkoutQueryBuilder
-from app.services.chart_generator.chart_service import ChartService
-from app.services.chart_generator.config_builder import generate_chart_config
-from app.core.supabase.client import SupabaseClient
-from app.schemas.exercise_query import ExerciseQuery
+from langchain_anthropic import ChatAnthropic
+from app.schemas.workout_data_bundle import WorkoutDataBundle
+from .base_conversation_chain import BaseConversationChain
 
-class WorkoutAnalysisChain:
-    """Chain for analyzing workout data based on natural language queries."""
-    
-    def __init__(self, supabase_client: SupabaseClient):
-        self.query_extractor = QueryExtractor()
-        self.query_builder = WorkoutQueryBuilder(supabase_client)
-        self.chart_service = ChartService()
-        
-        # Initialize LLM with proper configuration
-        load_dotenv()
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
-        
-        self.llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
-            streaming=False,
-            api_key=api_key,
-        )
-        
-        self._initialize_prompts_and_chains()
+logger = logging.getLogger(__name__)
 
-    def _initialize_prompts_and_chains(self) -> None:
-        """Sets up the conversation prompts and chains."""
+class WorkoutAnalysisChain(BaseConversationChain):
+    def __init__(self, llm: ChatAnthropic, user_id: str):
+        system_prompt = """You are a workout analysis assistant with access to the user's workout data. When responding:
+1. Always check the available_data in your context first
+2. If you see ANY workout data, make sure you let the user know about it.
+3. Reference actual values from the data, such as:
+ - Specific weights/1RMs achieved
+ - Progress over time
+ - Notable improvements or patterns
+4. Integrate graph data when available by discussing the trends shown
+For example, if you see bench press data showing progression from 100kg to 110kg over 3 months, mention these specific numbers and the rate of improvement.
+If no data is available for a specific query, then explain what data would be needed."""
+
+
+        super().__init__(system_prompt=system_prompt, llm=llm)
+        self.user_id = user_id
+        self._data_bundles: List[WorkoutDataBundle] = []
+        self.logger = logging.getLogger(__name__)
+
+    @property
+    def data_bundles(self) -> List[WorkoutDataBundle]:
+        return self._data_bundles
+
+    async def add_data_bundle(self, bundle: WorkoutDataBundle) -> bool:
+        """Add a workout data bundle to the conversation context."""
+        try:
+            self._data_bundles.append(bundle)
+            logger.info(f"Added workout data bundle:")
+            logger.info(f"Original query: {bundle.original_query}")
+            logger.info(f"Workout data: {bundle.workout_data}")
+            logger.info(f"Metadata: {bundle.metadata}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to add workout data bundle: {str(e)}")
+            return False
+
+    def _initialize_prompt_template(self) -> None:
+        """Sets up the workout-specific prompt template with context."""
         self.prompt = ChatPromptTemplate.from_messages([
-            SystemMessage(content="Extract workout query parameters and fetch relevant data."),
+            ("system", self.system_prompt),
+            ("system", "Current workout data context:\n{context}"),
             MessagesPlaceholder(variable_name="messages"),
-            HumanMessage(content="{query}")
+            ("human", "{current_message}")
         ])
-        
-        self.chain = self.prompt | self.query_extractor.extract_model
 
-    async def _extract_query(self, query: str) -> Optional[ExerciseQuery]:
-        """Extract structured parameters from natural language query."""
+    def _format_date(self, dt: datetime) -> str:
+        """Format datetime to string."""
+        return dt.isoformat() if dt else None
+
+    async def get_additional_prompt_vars(self) -> Dict[str, Any]:
+        """Get workout-specific context variables."""
+        base_vars = await super().get_additional_prompt_vars()
+
         try:
-            messages = [HumanMessage(content=query)]
-            result = await self.query_extractor.extract(messages)
-            
-            # Add debug prints
-            print(f"Raw extraction result: {result}")
-            print(f"Result type: {type(result)}")
-            
-            # Ensure we return an ExerciseQuery
-            if not isinstance(result, ExerciseQuery):
-                return ExerciseQuery(**result) if result else None
-                
-            return result
-        except Exception as e:
-            print(f"Query extraction failed: {e}")
-            return None
-
-    async def _fetch_workout_data(self, query_params: ExerciseQuery, user_id: str) -> Optional[Dict]:
-        """Fetch workout data using extracted parameters."""
-        try:
-            if not query_params:
-                return None
-                
-            result = await self.query_builder.fetch_exercise_data(
-                user_id=user_id,
-                query_params=query_params
-            )
-            return result
-            
-        except Exception as e:
-            print(f"Error fetching workout data: {e}")
-            return None
-        
-    async def generate_chart_config(self, workouts: Dict, original_query: str, llm):
-        """Generate chart configuration using exercise selection."""
-        return await generate_chart_config(
-            workouts=workouts,
-            original_query=original_query,
-            llm=llm
-        )
-
-    async def invoke(self, query: str, user_id: str) -> Optional[Dict]:
-        """Process a natural language query and return relevant workout data with chart."""
-        try:
-            # Extract parameters
-            query_params = await self._extract_query(query)
-            if not query_params:
-                return None
-                
-            # Fetch data
-            workout_data = await self._fetch_workout_data(query_params, user_id)
-            if not workout_data:
-                return None
-
-            # Generate chart configuration
-            chart_config = await generate_chart_config(
-                workouts=workout_data,
-                original_query=query,
-                llm=self.llm
-            )
-            
-            # Generate chart URL
-            chart_url = self.chart_service.create_quickchart_url(config=chart_config)
-            
-            return {
-                "data": workout_data,
-                "chart": {
-                    "url": chart_url,
-                    "config": chart_config
-                }
+            workout_context = {
+                "available_data": []
             }
             
+            if self.data_bundles:
+                latest_bundle = self.data_bundles[-1]
+                
+                exercise_summaries = {}
+                for workout in latest_bundle.workout_data.get('workouts', []):
+                    date = workout['date']
+                    for exercise in workout.get('exercises', []):
+                        name = exercise['exercise_name']
+                        if name not in exercise_summaries:
+                            exercise_summaries[name] = []
+                        
+                        exercise_summaries[name].append({
+                            'date': date,
+                            'metrics': exercise['metrics'],
+                            'sets': [
+                                {
+                                    'weight': s.get('weight'),
+                                    'reps': s.get('reps'),
+                                    'estimated_1rm': s.get('estimated_1rm')
+                                }
+                                for s in exercise.get('sets', [])
+                            ]
+                        })
+                
+                date_range = latest_bundle.metadata.date_range
+
+                workout_context["available_data"] = {
+                    "query": latest_bundle.original_query,
+                    "date_range": {
+                        "start": self._format_date(date_range['earliest']),
+                        "end": self._format_date(date_range['latest'])
+                    },
+                    "exercises": exercise_summaries,
+                    "total_workouts": latest_bundle.metadata.total_workouts
+                }
+            
+            context_str = f"""Available workout data:
+            {json.dumps(workout_context, indent=2)}"""
+            
+            base_vars["context"] = context_str
+            return base_vars
+            
+            
         except Exception as e:
-            print(f"Chain execution failed: {e}")
-            return None
+            self.logger.error(f"Error getting prompt variables: {str(e)}")
+            base_vars["context"] = "No workout data available"
+            return base_vars

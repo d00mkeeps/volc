@@ -1,111 +1,111 @@
+from langchain_anthropic import ChatAnthropic
 import pytest
 from dotenv import load_dotenv
 import os
-from pprint import pprint
+import logging
+from typing import AsyncGenerator, Dict, Any
 
+from app.services.workout_analysis_service import WorkoutAnalysisService
 from app.core.supabase.client import SupabaseClient
-from app.services.chains.workout_analysis_chain import WorkoutAnalysisChain
-from app.schemas.exercise_query import ExerciseQuery
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 @pytest.mark.asyncio
-async def test_workout_analysis_chain():
-    # Load environment variables  
+async def test_workout_analysis_service():
     load_dotenv()
+    logger = logging.getLogger(__name__)
+    logger.info("\nStarting workout analysis service test")
     
-    # Get test user ID and validate environment
-    TEST_USER_ID = os.environ.get("DEVELOPMENT_USER_ID")
-    if not TEST_USER_ID:
-        pytest.skip("DEVELOPMENT_USER_ID not found in environment variables")
-        
-    # Initialize chain
+    # Validate environment
+    user_id = os.getenv("DEVELOPMENT_USER_ID")
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not user_id or not api_key:
+        pytest.skip("Missing required environment variables")
+    
+    llm = ChatAnthropic(
+        model="claude-3-5-sonnet-20241022",
+        streaming=True,
+        api_key=api_key,
+    )
+
+    # Initialize service
     supabase_client = SupabaseClient()
-    chain = WorkoutAnalysisChain(supabase_client)
+    service = WorkoutAnalysisService(llm = llm, 
+                                    supabase_client=supabase_client)
     
-    # Test cases with expected structures
-    # Test cases with expected structures
     test_cases = [
-        (
-            "Show me my bench press progress",
-            ExerciseQuery(
-                exercises=["bench press"]  # timeframe will default to "3 months"
-            ),
-            ["Bench Press", "Incline Dumbbell Bench Press"]
-        ),
-        (
-            "How are my squats progressing?",
-            ExerciseQuery(
-                exercises=["squat"]
-            ),
-            ["Squat"]
-        ),
-        (
-            "Show my progress on upper body pushing exercises",
-            ExerciseQuery(
-                exercises=["push"]
-            ),
-            ["Bench Press", "Incline Dumbbell Bench Press", "Dips", "Triceps Pushdowns"]
-        )
+        # Case 1: Graph + Analysis
+        {
+            "query": "Show me my bench press progress over the last 3 months",
+            "generate_graph": True,
+            "expected_types": ["graph", "content"]
+        },
+        # Case 2: Graph + Analysis
+        {
+            "query": "How are my squats improving?",
+            "generate_graph": True,
+            "expected_types": ["graph", "content"]
+        },
+        # Case 3: Analysis only
+        {
+            "query": "What muscle groups have I been focusing on recently?",
+            "generate_graph": False,
+            "expected_types": ["content", "graph", "error"]
+        }
     ]
     
-    print("\nTesting WorkoutAnalysisChain:")
-    for query, expected_extraction, expected_selections in test_cases:
-        print(f"\nTesting query: {query}")
-        
-        # Test extraction component
-        print("Testing extraction...")
-        extracted = await chain._extract_query(query)
-        assert extracted is not None, "Extraction failed"
-        assert isinstance(extracted, ExerciseQuery), "Incorrect extraction type"
-        print(f"Extraction successful: {extracted}")
-        
-        print("Testing database query...")
-        db_result = await chain._fetch_workout_data(
-            query_params=extracted, 
-            user_id=TEST_USER_ID 
+    async def collect_response(generator: AsyncGenerator[Dict[str, Any], None]) -> list:
+        responses = []
+        async for response in generator:
+            responses.append(response)
+            # Only log non-chunk debugging info
+            if response.get('type') == 'debug':
+                logger.info(f"\nDebug Info: {response.get('data', {})}")
+        return responses
+
+    for case in test_cases:
+        print(f"\nTesting query: {case['query']}")
+
+                # Add debug logging for the raw data
+        if case['generate_graph']:
+            query = await service.graph_service.query_extractor.extract(case['query'])
+            if query:
+                raw_data = await service.graph_service.query_builder.fetch_exercise_data(
+                    user_id=user_id,
+                    query_params=query
+                )
+                print("\nRaw workout data from Supabase:")
+                print(raw_data)
+
+        responses = await collect_response(
+            service.process_query(
+                user_id=user_id,
+                message=case['query'],
+                generate_graph=case['generate_graph']
+            )
         )
-        assert db_result is not None, "Database query failed"
-        assert "workouts" in db_result, "Missing workouts in result"
-        assert "metadata" in db_result, "Missing metadata in result"
-        print(f"Database query successful")
-        print(f"Found {db_result['metadata']['total_workouts']} workouts")
+        # Verify response types
+        response_types = [r["type"] for r in responses if r["type"] != "loading_start"]
+        for expected_type in case["expected_types"]:
+            assert expected_type in response_types, f"Missing {expected_type} in response"
+            
+        # Verify graph URL when expected
+        if case["generate_graph"]:
+            graph_responses = [r for r in responses if r["type"] == "graph"]
+            assert len(graph_responses) == 1, "Should have exactly one graph response"
+            assert "url" in graph_responses[0]["data"], "Graph response missing URL"
+            print(f"Graph URL: {graph_responses[0]['data']['url']}")
         
-        # Test exercise selection
-        print("Testing exercise selection...")
-        chart_config = await chain.generate_chart_config(
-            workouts=db_result,
-            original_query=query,
-            llm=chain.llm
-        )
-        assert chart_config is not None, "Chart configuration generation failed"
-        assert "datasets" in chart_config, "Missing datasets in chart config"
+        # Print conversation content
+        content_responses = [r["data"] for r in responses if r["type"] == "content"]
+        print("Conversation response:", "".join(content_responses))
         
-        # Check if at least one of the expected exercises is included
-        selected_exercises = [dataset["label"].lower() for dataset in chart_config["datasets"]]
-        found_match = any(
-            expected.lower() in selected_exercises 
-            for expected in expected_selections
-        )
-        assert found_match, f"Selected exercises {selected_exercises} don't contain any expected {expected_selections}"
-        
-        # Test full chain integration
-        print("Testing full chain...")
-        result = await chain.invoke(query, TEST_USER_ID)
-        assert result is not None, "Full chain execution failed"
-        assert "data" in result, "Missing data in chain result"
-        assert "chart" in result, "Missing chart in chain result"
-        assert "url" in result["chart"], "Missing chart URL"
-        assert "config" in result["chart"], "Missing chart configuration"
-        
-        # Print summary of results
-        print("\nResults summary:")
-        print(f"Total workouts: {result['data']['metadata']['total_workouts']}")
-        print(f"Total exercises: {result['data']['metadata']['total_exercises']}")
-        print(f"Selected exercises: {[d['label'] for d in result['chart']['config']['datasets']]}")
-        print(f"\033[92mChart URL generated: {result['chart']['url']}\033[0m")        
-        if result['data']['workouts']:
-            print("\nSample workout:")
-            pprint(result['data']['workouts'][0])
+        # Verify no errors
+        error_responses = [r for r in responses if r["type"] == "error"]
+        assert len(error_responses) == 0, f"Received errors: {error_responses}"
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(test_workout_analysis_chain())
+    asyncio.run(test_workout_analysis_service())

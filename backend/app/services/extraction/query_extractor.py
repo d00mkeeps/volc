@@ -1,5 +1,6 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from dotenv import load_dotenv
+from fastapi import logger
 from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.utils.function_calling import tool_example_to_messages
@@ -45,26 +46,30 @@ class QueryExtractor(BaseExtractor[ExerciseQuery]):
                 )
             )
         ]
-    async def extract(self, conversation: List[HumanMessage | AIMessage]) -> Optional[ExerciseQuery]:
+# In query_extractor.py
+    async def extract(self, input_query: Union[str, List[HumanMessage | AIMessage]]) -> Optional[ExerciseQuery]:
         try:
-            conversation_text = self._format_conversation(conversation)
-            
-            # Create messages with examples
-            example_messages = []
-            for txt, tool_call in self.examples:
-                example_messages.extend(
-                    tool_example_to_messages(txt, [tool_call])
-                )
-            
-            messages = [
-                SystemMessage(content=QUERY_EXTRACTOR_PROMPT),
-                *example_messages,
-                HumanMessage(content=conversation_text)
-            ]
+            # Handle string input
+            if isinstance(input_query, str):
+                messages = [
+                    SystemMessage(content=QUERY_EXTRACTOR_PROMPT),
+                    *[msg for example in self.examples 
+                    for msg in tool_example_to_messages(example[0], [example[1]])],
+                    HumanMessage(content=input_query)
+                ]
+            else:
+                # Handle message list input
+                conversation_text = self._format_conversation(input_query)
+                messages = [
+                    SystemMessage(content=QUERY_EXTRACTOR_PROMPT),
+                    *[msg for example in self.examples 
+                    for msg in tool_example_to_messages(example[0], [example[1]])],
+                    HumanMessage(content=conversation_text)
+                ]
             
             result = await self.extract_model.ainvoke(messages)
             return result
-            
+                
         except Exception as e:
-            print(f"Extraction failed: {e}")
+            logger.error(f"Extraction failed: {e}")
             return None
