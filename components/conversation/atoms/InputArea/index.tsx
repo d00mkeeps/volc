@@ -11,8 +11,9 @@ import {
   LayoutChangeEvent,
   Keyboard
 } from "react-native";
+import ConfigSelect, { ChatConfigKey } from '../ConfigSelect';
 
-const InputArea: React.FC<InputAreaProps> = memo(({ 
+const InputArea: React.FC<InputAreaProps> = memo(({  
   disabled, 
   onSendMessage,
   useModal= false,
@@ -21,6 +22,8 @@ const InputArea: React.FC<InputAreaProps> = memo(({
  }) => {
   const [input, setInput] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [configSelectVisible, setConfigSelectVisible] = useState(false);
+  const [selectedConfig, setSelectedConfig] = useState<ChatConfigKey | null>(null);
   const lastLayoutRef = useRef<LayoutChangeEvent['nativeEvent']['layout']>();
 
   const measureLayout = useCallback((event: LayoutChangeEvent) => {
@@ -47,12 +50,12 @@ const InputArea: React.FC<InputAreaProps> = memo(({
   }, []);
 
   const handleSend = useCallback(() => {
-    if (!disabled && input.trim()) {
-      onSendMessage(input);
+    if (!disabled && input.trim() && selectedConfig) {
+      onSendMessage(input, selectedConfig);
       setInput('');
       setModalVisible(false)
     }
-  }, [disabled, input, onSendMessage]);
+  }, [disabled, input, selectedConfig, onSendMessage]);
 
   if (useModal) {
     return (
@@ -78,13 +81,15 @@ const InputArea: React.FC<InputAreaProps> = memo(({
         </TouchableOpacity>
 
         <InputModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          value={input}
-          onChangeText={handleInputChange}
-          onSend={handleSend}
-          title={modalTitle}
-        />
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  value={input}
+  onChangeText={handleInputChange}
+  onSend={handleSend}
+  title={modalTitle}
+  selectedConfig={selectedConfig}
+  onConfigSelect={setSelectedConfig}
+/>
       </>
     );
   }

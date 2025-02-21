@@ -1,5 +1,5 @@
 // components/common/InputModal.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,17 +9,22 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
+  StyleSheet
 } from 'react-native';
 import { styles } from './styles'; 
+import { CHAT_CONFIGS, ChatConfigKey } from '@/constants/ChatConfigMaps';
+import ConfigSelect from '@/components/conversation/atoms/ConfigSelect';
 
 interface InputModalProps {
   visible: boolean;
   onClose: () => void;
   value: string;
   onChangeText: (text: string) => void;
-  onSend: () => void;
+  onSend: (message: string, config: ChatConfigKey) => void;
   title?: string;
   placeholder?: string;
+  selectedConfig: ChatConfigKey | null;  // Add this
+  onConfigSelect: (config: ChatConfigKey) => void;  // Add this
 }
 
 const InputModal: React.FC<InputModalProps> = ({
@@ -29,8 +34,11 @@ const InputModal: React.FC<InputModalProps> = ({
   onChangeText,
   onSend,
   title = "Type a message",
-  placeholder = "3 sets of squat (180x5, 180x5, 180x4);\n5k @ 5:40 pace..."
+  placeholder = "3 sets of squat (180x5, 180x5, 180x4);\n5k @ 5:40 pace...",
+  selectedConfig,
+  onConfigSelect
 }) => {
+  const [configSelectVisible, setConfigSelectVisible] = useState(false);
   const slideAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -52,7 +60,7 @@ const InputModal: React.FC<InputModalProps> = ({
   if (!visible) return null;
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.modalContainer}
       keyboardVerticalOffset={Platform.OS === "ios" ? -64 : 0}
@@ -60,7 +68,7 @@ const InputModal: React.FC<InputModalProps> = ({
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.modalContent,
                 {
@@ -76,6 +84,17 @@ const InputModal: React.FC<InputModalProps> = ({
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{title}</Text>
               </View>
+
+              {/* Add config selector button */}
+              <TouchableOpacity 
+                style={styles.configSelector}
+                onPress={() => setConfigSelectVisible(true)}
+              >
+                <Text style={styles.configSelectorText}>
+                  {selectedConfig ? CHAT_CONFIGS[selectedConfig] : 'Select chat type'}
+                </Text>
+              </TouchableOpacity>
+
               <TextInput
                 style={styles.expandedInput}
                 value={value}
@@ -86,15 +105,35 @@ const InputModal: React.FC<InputModalProps> = ({
                 autoFocus
                 keyboardAppearance="dark"
               />
+              
               <TouchableOpacity
-                style={[styles.sendButton, !value.trim() && styles.disabledButton]}
-                onPress={onSend}
-                disabled={!value.trim()}
-              >
-                <Text style={[styles.sendButtonText, !value.trim() && styles.disabledButtonText]}>
-                  Send
-                </Text>
-              </TouchableOpacity>
+                style={[
+                  styles.sendButton, 
+                  (!value.trim() || !selectedConfig) && styles.disabledButton
+                ]}
+    onPress={() => {
+      if (value.trim() && selectedConfig) {
+        onSend(value, selectedConfig);  // Pass both the message and config
+        onClose();
+      }
+    }}
+    disabled={!value.trim() || !selectedConfig}
+  >
+    <Text style={[
+      styles.sendButtonText, 
+      (!value.trim() || !selectedConfig) && styles.disabledButtonText
+    ]}>
+      Send
+    </Text>
+  </TouchableOpacity>
+              <ConfigSelect
+                visible={configSelectVisible}
+                onClose={() => setConfigSelectVisible(false)}
+                onSelect={(config) => {
+                  onConfigSelect(config);
+                  setConfigSelectVisible(false);
+                }}
+              />
             </Animated.View>
           </TouchableWithoutFeedback>
         </View>

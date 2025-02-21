@@ -6,6 +6,18 @@ const MODAL_HEIGHT = SCREEN_HEIGHT * 0.35;
 export const MODAL_WIDTH = SCREEN_WIDTH * 0.9;
 
 export const styles = StyleSheet.create({
+  configSelector: {
+    borderWidth: 1,
+    borderColor: '#2a332a',
+    borderRadius: 15,
+    padding: 14,
+    marginBottom: 16,
+    backgroundColor: '#041402',
+  },
+  configSelectorText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   // Modal styles
   modalContainer: {
     position: 'absolute',

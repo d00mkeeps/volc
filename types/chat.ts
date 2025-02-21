@@ -1,14 +1,13 @@
 import { Message } from "@/types";
 import { StyleProp, ViewStyle } from "react-native";
 import { UserOnboarding } from "./onboarding";
+import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 
 export type ChatConfigName = 
   | 'onboarding'
   | 'default'
-  |'program'
-  /* example of new config 
-  | 'workout-planner'
-  */
+  |'workout-analysis'
+ 
 
 interface SignalHandler {
     (type: string, data: any): void
@@ -37,11 +36,10 @@ export interface ExpandedModalProps {
 
 export interface InputAreaProps {
   disabled?: boolean;
-  onSendMessage: (message: string) => void;
-  useModal?: boolean; // Add this prop to control whether to use modal behavior
+  onSendMessage: (message: string, config: ChatConfigKey) => void;
+  useModal?: boolean;
   modalTitle?: string;
   customContainerStyle?: ViewStyle
-
 }
 
 export interface WorkoutChatProps {

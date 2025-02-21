@@ -1,3 +1,4 @@
+import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 import { LLMService } from "@/services/llm/base";
 import { authService } from "@/services/supabase/auth";
 import { ConversationService } from "@/services/supabase/conversation";
@@ -13,7 +14,7 @@ interface MessageContextType {
   messages: Message[];
   streamingMessage: Message | null;
   connectionState: ConnectionState;
-  startNewConversation: (firstMessage: string) => Promise<string>; // Changed return type
+  startNewConversation: (firstMessage: string, configName: ChatConfigKey) => Promise<string>; // Changed return type
   sendMessage: (content: string) => Promise<void>;
   loadConversation: (conversationId: string) => Promise<void>;
   currentConversationId: string | null;
@@ -68,48 +69,45 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [conversationService, webSocket]);
 
- const startNewConversation = useCallback(async (firstMessage: string): Promise<string> => {
-  const session = await authService.getSession();
-  if (!session?.user?.id) {
-    throw new Error('No authenticated user found');
-  }
-
-  if (!connectionState.canConnect) {
-    throw new Error('Cannot connect to create conversation');
-  }
-
-  try {
-    console.log('🏁 Starting new conversation:', { firstMessage });
-    
-    const llmService = new LLMService();
-    const title = await llmService.generateTitle(firstMessage);
-    console.log('📝 Title generated:', { title });
-
-    const conversation = await conversationService.createConversation({
-      userId: session.user.id,
-      title,
-      firstMessage,
-      configName: 'chat'
-    });
-    console.log('🔍 Conversation received in MessageContext:', conversation);
-
-    setCurrentConversationId(conversation.id);
-    setMessages([]);
-    await loadConversation(conversation.id);
-    console.log('✅ Conversation loaded successfully:', { id: conversation.id });
-
-    return conversation.id;
-    
-  } catch (error) {
-    console.error('❌ Failed to start conversation in MessageContext:', error);
-    setConnectionState(prev => ({
-      ...prev,
-      type: 'ERROR',
-      error: error as Error
-    }));
-    throw error;
-  }
-}, [connectionState.canConnect, conversationService, loadConversation]);
+  const startNewConversation = useCallback(async (firstMessage: string, configName: ChatConfigKey): Promise<string> => {
+    const session = await authService.getSession();
+    if (!session?.user?.id) {
+      throw new Error('No authenticated user found');
+    }
+  
+    if (!connectionState.canConnect) {
+      throw new Error('Cannot connect to create conversation');
+    }
+  
+    try {
+      console.log('🏁 Starting new conversation:', { firstMessage, configName });
+      
+      const llmService = new LLMService();
+      const title = await llmService.generateTitle(firstMessage);
+      
+      const conversation = await conversationService.createConversation({
+        userId: session.user.id,
+        title,
+        firstMessage,
+        configName // Use the passed in config
+      });
+  
+      setCurrentConversationId(conversation.id);
+      setMessages([]);
+      await loadConversation(conversation.id);
+  
+      return conversation.id;
+      
+    } catch (error) {
+      console.error('❌ Failed to start conversation:', error);
+      setConnectionState(prev => ({
+        ...prev,
+        type: 'ERROR',
+        error: error as Error
+      }));
+      throw error;
+    }
+  }, [connectionState.canConnect, conversationService, loadConversation]);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!currentConversationId || !connectionState.canSendMessage) return;
@@ -242,10 +240,11 @@ useEffect(() => {
     loadConversation,
     currentConversationId,
     showLoader,
+    
     registerMessageHandler: (handler: MessageHandler | null) => {
       messageHandlerRef.current = handler;
     }
-  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader]);
+  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader, ]);
 
   return (
     <MessageContext.Provider value={value}>

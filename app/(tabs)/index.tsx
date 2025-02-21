@@ -6,6 +6,7 @@ import Toast from 'react-native-toast-message';
 import ConversationList from '@/components/conversation/organisms/ConversationList';
 import InputArea from '@/components/conversation/atoms/InputArea';
 import {useMessage} from '@/context/MessageContext'
+import { ChatConfigKey } from '@/constants/ChatConfigMaps';
 
 export default function HomeScreen() {
   const { startNewConversation, currentConversationId } = useMessage();
@@ -30,7 +31,7 @@ export default function HomeScreen() {
     });
   };
   
-  const handleNewMessage = async (message: string) => {
+  const handleNewMessage = async (message: string, config: ChatConfigKey) => {
     console.log('📮 handleNewMessage called:', { message });
     
     if (isCreatingConversation) {
@@ -40,7 +41,7 @@ export default function HomeScreen() {
     
     try {
       setIsCreatingConversation(true)
-      const newConversationId = await startNewConversation(message);
+      const newConversationId = await startNewConversation(message, config);
       console.log('🚗 Routing to new conversation:', newConversationId);
 
       router.push({
@@ -75,7 +76,7 @@ export default function HomeScreen() {
         onSendMessage={handleNewMessage}
         disabled={isCreatingConversation}
         useModal={true}
-        modalTitle='Enter your workout!'
+        modalTitle='Start new chat!'
         customContainerStyle={{ backgroundColor: '#222'}}
       />
       <WelcomeModal 

@@ -5,7 +5,6 @@ import {
 } from '@/types/index';
 import { getLocalIpAddress } from '@/utils/network';
 import { Message } from '@/types';
-import config from '@/app.config';
 
 export class WebSocketService {
   private socket: WebSocket | null = null;
@@ -18,7 +17,6 @@ export class WebSocketService {
   private readonly BASE_PATH = '/api/llm/ws/';
   private currentConversationId: string | null = null
   private isConnecting: boolean = false;
-
 
   public async initialize(): Promise<void> {
     this.baseUrl = await getLocalIpAddress();
@@ -77,12 +75,21 @@ export class WebSocketService {
   
       // Build WebSocket URL
       let url;
-      if (configName === 'onboarding') {
-        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
-      } else if (conversationId) {
-        url = `ws://${this.baseUrl}:8000${this.BASE_PATH}default/${conversationId}`;
-      } else {
-        throw new Error('Invalid configuration');
+      switch (configName) {
+        case 'onboarding':
+          url = `ws://${this.baseUrl}:8000${this.BASE_PATH}${configName}`;
+          break;
+        case 'workout-analysis':
+          url = `ws://${this.baseUrl}:8000${this.BASE_PATH}workout-analysis`;
+          break;
+        case 'default':
+          if (!conversationId) {
+            throw new Error('Conversation ID required for default chat');
+          }
+          url = `ws://${this.baseUrl}:8000${this.BASE_PATH}default/${conversationId}`;
+          break;
+        default:
+          throw new Error('Invalid chat configuration');
       }
   
       console.log('WebSocketService: Attempting connection to:', url);
