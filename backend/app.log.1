@@ -1,130 +1,56 @@
-2025-02-20 21:35:49,882 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 35, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-    ~~~~~~~~~~~~~~~~^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ~~~~~~~~~~~~^^
-TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-2025-02-20 21:35:49,924 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: e50ed44b-09b5-4f04-855d-2d1b507e9180
-2025-02-20 21:35:49,924 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:35:49,925 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 35, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-    ~~~~~~~~~~~~~~~~^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ~~~~~~~~~~~~^^
-TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-2025-02-20 21:36:09,998 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: e50ed44b-09b5-4f04-855d-2d1b507e9180
-2025-02-20 21:36:09,999 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:36:10,002 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 35, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-    ~~~~~~~~~~~~~~~~^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ~~~~~~~~~~~~^^
-TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-2025-02-20 21:37:21,057 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: e50ed44b-09b5-4f04-855d-2d1b507e9180
-2025-02-20 21:37:21,058 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:37:21,059 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 35, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-    ~~~~~~~~~~~~~~~~^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ~~~~~~~~~~~~^^
-TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-2025-02-20 21:38:12,758 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout analysis - user: None
-2025-02-20 21:38:12,760 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:38:12,770 - app.api.endpoints.llm - ERROR - Error in websocket handler: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 66, in workout_analysis_websocket
-    llm = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
-        streaming=True,
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
-    )
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/langchain_core/load/serializable.py", line 125, in __init__
-    super().__init__(*args, **kwargs)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/pydantic/main.py", line 214, in __init__
-    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-2025-02-20 21:38:13,239 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: e50ed44b-09b5-4f04-855d-2d1b507e9180
-2025-02-20 21:38:13,239 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:38:13,240 - app.api.endpoints.llm - ERROR - Error in websocket handler: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 35, in conversation_websocket
-    service = ConversationService()  # Pass conversation_id
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 10, in __init__
-    self.reset_chain()
-    ~~~~~~~~~~~~~~~~^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/conversation_service.py", line 15, in reset_chain
-    self.chain = WorkoutChain()
-                 ~~~~~~~~~~~~^^
-TypeError: WorkoutChain.__init__() missing 1 required positional argument: 'api_key'
-2025-02-20 21:38:13,358 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout analysis - user: None
-2025-02-20 21:38:13,358 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:38:13,359 - app.api.endpoints.llm - ERROR - Error in websocket handler: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 66, in workout_analysis_websocket
-    llm = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
-        streaming=True,
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
-    )
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/langchain_core/load/serializable.py", line 125, in __init__
-    super().__init__(*args, **kwargs)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/pydantic/main.py", line 214, in __init__
-    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-2025-02-20 21:38:23,803 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout analysis - user: None
-2025-02-20 21:38:23,805 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-20 21:38:23,812 - app.api.endpoints.llm - ERROR - Error in websocket handler: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 66, in workout_analysis_websocket
-    llm = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
-        streaming=True,
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
-    )
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/langchain_core/load/serializable.py", line 125, in __init__
-    super().__init__(*args, **kwargs)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/pydantic/main.py", line 214, in __init__
-    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-pydantic_core._pydantic_core.ValidationError: 1 validation error for ChatAnthropic
-api_key
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-2025-02-20 21:39:03,896 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout analysis - user: None
+2025-02-24 22:20:57,742 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 24 Feb 2025 22:20:57 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-24T22:20:53Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-24T22:20:54Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-24T22:20:59Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-24T22:20:54Z'), (b'request-id', b'req_019U7nEXXVESM4N3fDeAFvuY'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9172d86b0a21b11c-MAN')])
+2025-02-24 22:20:57,745 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-24 22:20:57,745 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-24 22:20:57,745 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-24 22:20:57,745 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb' usage_metadata={'input_tokens': 1683, 'output_tokens': 1, 'total_tokens': 1684, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+2025-02-24 22:20:57,745 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:57,746 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Looking' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:57,746 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:57,815 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' at your preacher curl' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:57,815 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:58,005 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' data from Jan 27' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:58,005 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:58,070 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' to Feb 20, 2025:' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:58,070 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:58,399 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='\n- Started at 37' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:58,400 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:58,485 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='.5kg for 8 r' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:58,485 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,068 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='eps (46.95kg ' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,068 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,077 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='1RM)\n- Stea' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,077 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,078 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='dily increased to 45kg for 8 ' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,078 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,087 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='reps (56.' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,087 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,088 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='35kg 1RM' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,088 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,311 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=')\n- Total improvement: 7' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,311 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,387 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='.5kg in working weight\n-' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,387 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,726 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' Consistent 8 reps per' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,727 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:20:59,901 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' set throughout\nNice steady' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:20:59,902 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:21:00,052 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' progression with no plate' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:21:00,052 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:21:00,117 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='aus!' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
+2025-02-24 22:21:00,117 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:21:00,118 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb' usage_metadata={'input_tokens': 0, 'output_tokens': 109, 'total_tokens': 109, 'input_token_details': {}}
+2025-02-24 22:21:00,118 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-24 22:21:00,127 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-24 22:21:00,128 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-24 22:21:00,128 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - 
+=== Final Conversation State ===
+2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - Total messages: 10
+2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-02-24 22:57:34,232 - app.services.workout_analysis_service - INFO - WebSocket disconnected
+2025-02-24 22:57:35,471 - root - DEBUG - Logging has been set up
+2025-02-24 22:57:35,471 - app.main - INFO - Application starting
+2025-02-24 22:57:35,475 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-24 22:57:35,522 - app.services.workout_analysis_service - INFO - Initialized conversation with 10 messages
+2025-02-24 22:57:36,071 - app.services.workout_analysis_service - INFO - WebSocket disconnected
+2025-02-24 22:57:36,072 - app.api.endpoints.llm - INFO - WebSocket connection accepted

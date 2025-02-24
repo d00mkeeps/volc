@@ -50,12 +50,19 @@ const InputArea: React.FC<InputAreaProps> = memo(({
   }, []);
 
   const handleSend = useCallback(() => {
-    if (!disabled && input.trim() && selectedConfig) {
+    console.log('InputArea: Send button clicked with input:', input);
+    if (!disabled && input.trim()) {
+      console.log('InputArea: Calling onSendMessage with:', input);
       onSendMessage(input, selectedConfig);
       setInput('');
-      setModalVisible(false)
+      setModalVisible(false);
+    } else {
+      console.log('InputArea: Send conditions not met:', {
+        disabled,
+        inputEmpty: !input.trim()
+      });
     }
-  }, [disabled, input, selectedConfig, onSendMessage]);
+  }, [disabled, input, onSendMessage, selectedConfig]);
 
   if (useModal) {
     return (

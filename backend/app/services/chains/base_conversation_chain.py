@@ -45,9 +45,7 @@ class BaseConversationChain:
             "messages": self.messages,
             "current_message": ""
         }
-
     async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
-        """Process an incoming message and yield response chunks."""
         try:
             # Add message to conversation history
             self.messages.append(HumanMessage(content=message))
@@ -55,17 +53,6 @@ class BaseConversationChain:
             # Get prompt variables including any from child classes
             prompt_vars = await self.get_additional_prompt_vars()
             prompt_vars["current_message"] = message
-            
-            # Debug log the prompt variables
-            logger.info("\n=== Prompt Variables ===")
-            debug_vars = {
-                "context": prompt_vars.get("context"),
-                "messages": [{"type": type(m).__name__, "content": m.content} 
-                            for m in prompt_vars.get("messages", [])],
-                "current_message": prompt_vars.get("current_message")
-            }
-            logger.info(json.dumps(debug_vars, indent=2))
-            logger.info("=====================")
             
             # Format the prompt
             formatted_prompt = self.prompt.format_messages(**prompt_vars)
@@ -82,23 +69,34 @@ class BaseConversationChain:
             async for chunk in self.chat_model.astream(
                 input=formatted_prompt
             ):
+                logger.info(f"Raw chunk from Anthropic: {chunk}")
+                logger.info(f"Chunk type: {type(chunk)}")
+                
+                # Check if this is a completion chunk
+                if (not chunk.content and 
+                    getattr(chunk, 'response_metadata', {}).get('stop_reason') == 'end_turn'):
+                    yield {
+                        "type": "done",
+                        "data": ""
+                    }
+                    continue
+                    
                 chunk_content = chunk.content
-                full_response += chunk_content
-                yield {
-                    "type": "content",
-                    "data": chunk_content
-                }
+                if chunk_content:  # Only send non-empty content chunks
+                    full_response += chunk_content
+                    yield {
+                        "type": "content",
+                        "data": chunk_content
+                    }
 
-            # Add response to conversation history
             self.messages.append(AIMessage(content=full_response))
             
-            # Log final conversation state
             logger.info("\n=== Final Conversation State ===")
             logger.info(f"Total messages: {len(self.messages)}")
             logger.info("=====================")
                 
         except Exception as e:
-            logger.error(f"Error processing message: {str(e)}")
+            logger.error(f"Error processing message: {str(e)}", exc_info=True)
             yield {
                 "type": "error",
                 "data": "An error occurred while processing your message"

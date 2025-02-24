@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { SafeAreaView, View, TouchableOpacity, Platform, StatusBar, StyleSheet, Text } from "react-native";
 
-const Header: React.FC<HeaderProps> = ({ title, subtitle, showNavigation }) => {
+const Header: React.FC<HeaderProps> = ({ title, subtitle, showNavigation, onToggleSidebar, isSidebarOpen }) => {
   const router = useRouter();
 
   const handleHomePress = () => {
@@ -28,6 +28,16 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, showNavigation }) => {
             {title && <Text style={styles.title}>{title}</Text>}
             {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
           </View>
+          <TouchableOpacity 
+            onPress={onToggleSidebar}
+            style={styles.sidebarButton}
+          >
+            <Ionicons 
+              name={isSidebarOpen ? "close" : "menu"} 
+              size={24} 
+              color="#fff" 
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -55,6 +65,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 16,
+  },
+  sidebarButton: {
+    padding: 8,
   },
   navButton: {
     marginRight: 12,

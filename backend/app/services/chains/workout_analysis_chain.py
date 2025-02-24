@@ -21,8 +21,9 @@ class WorkoutAnalysisChain(BaseConversationChain):
  - Notable improvements or patterns
 4. Integrate graph data when available by discussing the trends shown
 For example, if you see bench press data showing progression from 100kg to 110kg over 3 months, mention these specific numbers and the rate of improvement.
-If no data is available for a specific query, then explain what data would be needed."""
+If no data is available for a specific query, then explain what data would be needed.
 
+try to keep token output to a maximum of 100, and less if possible"""
 
         super().__init__(system_prompt=system_prompt, llm=llm)
         self.user_id = user_id
@@ -43,7 +44,7 @@ If no data is available for a specific query, then explain what data would be ne
             logger.info(f"Metadata: {bundle.metadata}")
             return True
         except Exception as e:
-            logger.error(f"Failed to add workout data bundle: {str(e)}")
+            logger.error(f"Failed to add workout data bundle: {str(e)}", exc_info=True)
             return False
 
     def _initialize_prompt_template(self) -> None:
@@ -112,6 +113,9 @@ If no data is available for a specific query, then explain what data would be ne
             
             
         except Exception as e:
-            self.logger.error(f"Error getting prompt variables: {str(e)}")
-            base_vars["context"] = "No workout data available"
-            return base_vars
+            self.logger.error(f"Error getting prompt variables: {str(e)}", exc_info=True)
+            return {
+                "context": "No workout data available",
+                "messages": self.messages,
+                "current_message": ""
+            }

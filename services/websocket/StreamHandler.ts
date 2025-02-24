@@ -17,9 +17,13 @@ export class StreamHandler {
     try {
       switch (message.type) {
         case 'content':
+          // First check if this is an empty content message
           if (message.data === '') {
+            console.log('StreamHandler: Empty content message received, emitting loadingDone');
             this.events.emit('loadingDone');
           }
+          
+          // Then emit content event for both empty and non-empty content
           if (typeof message.data === 'string') {
             this.events.emit('content', message.data);
           } else {
@@ -27,16 +31,21 @@ export class StreamHandler {
           }
           break;
 
-          case 'loading_start': 
-            this.events.emit('loadingStart')
-            break
+        case 'loading_start': 
+          this.events.emit('loadingStart');
+          break;
         
         case 'done':
           this.events.emit('done');
+          // Also emit loadingDone here as a fallback in case it wasn't 
+          // emitted by the empty content message
+          this.events.emit('loadingDone');
           break;
         
         case 'error':
           this.events.emit('error', new Error(message.error || 'Unknown error'));
+          // Also emit loadingDone to ensure loader is hidden on errors
+          this.events.emit('loadingDone');
           break;
           
         default:
@@ -51,6 +60,8 @@ export class StreamHandler {
       }
     } catch (error) {
       this.events.emit('error', error as Error);
+      // Also emit loadingDone to ensure loader is hidden on errors
+      this.events.emit('loadingDone');
     }
   }
 

@@ -1,7 +1,8 @@
 import EventEmitter from 'eventemitter3';
 import { 
   WebSocketEvents,
-  ChatConfigName 
+  ChatConfigName, 
+  WebSocketMessage
 } from '@/types/index';
 import { getLocalIpAddress } from '@/utils/network';
 import { Message } from '@/types';
@@ -94,22 +95,18 @@ export class WebSocketService {
   
       console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
-  
+
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error('Connection timeout'));
         }, 5000);
-  
+
+        let hasReceivedConnectedStatus = false;
+
         this.socket!.onopen = () => {
-          clearTimeout(timeout);
           console.log('WebSocket connection opened');
-          if (messages?.length) {
-            this.sendInitialMessages(messages);
-          }
-          this.events.emit('connect');
-          resolve();
         };
-  
+
         this.socket!.onclose = (event) => {
           clearTimeout(timeout);
           console.log('WebSocket closed:', {
@@ -118,28 +115,37 @@ export class WebSocketService {
             wasClean: event.wasClean
           });
           this.events.emit('disconnect');
-          reject(new Error('Connection closed'));
+          if (!hasReceivedConnectedStatus) {
+            reject(new Error('Connection closed before initialization'));
+          }
         };
-  
-        this.socket!.onerror = (error: Event) => {
-          clearTimeout(timeout);
-          console.error('WebSocket error:', error);
-          this.events.emit('error', new Error('WebSocket connection error'));
-          reject(new Error('WebSocket connection error'));
-        };
-  
+
         this.socket!.onmessage = (event: MessageEvent) => {
           try {
-            let message;
-            if (typeof event.data === 'string') {
-              message = JSON.parse(event.data);
-            } else {
-              message = JSON.parse(JSON.stringify(event.data));
-            }
+            let message = typeof event.data === 'string' ? JSON.parse(event.data) : JSON.parse(JSON.stringify(event.data));
+
+            console.log('WebSocket raw message:', event.data);
+            console.log('WebSocket parsed message:', {
+              type: message.type,
+              dataType: typeof message.data,
+              dataLength: typeof message.data === 'string' ? message.data.length : 'N/A',
+              dataIsEmpty: message.data === '',
+              data: message.data
+            });
+            
+
             console.log('WebSocket received message:', message);
             
             if (message.type === 'connection_status' && message.data === 'connected') {
+              hasReceivedConnectedStatus = true;
               this.events.emit('connect');
+              
+              if (messages?.length) {
+                this.sendInitialMessages(messages);
+              }
+              
+              clearTimeout(timeout);
+              resolve();
             }
             
             this.events.emit('message', message);
@@ -160,7 +166,7 @@ export class WebSocketService {
   }
 
 
-  public sendMessage(payload: { message: string }): void {
+  public sendMessage(payload: WebSocketMessage): void {
     if (this.socket?.readyState !== WebSocket.OPEN) {
       this.handleError(new Error('WebSocket is not connected'));
       return;

@@ -15,7 +15,7 @@ interface MessageContextType {
   streamingMessage: Message | null;
   connectionState: ConnectionState;
   startNewConversation: (firstMessage: string, configName: ChatConfigKey) => Promise<string>; // Changed return type
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, options?: { detailedAnalysis?: boolean }) => Promise<void>;  // Updated this line  
   loadConversation: (conversationId: string) => Promise<void>;
   currentConversationId: string | null;
   registerMessageHandler: (handler: MessageHandler | null) => void;
@@ -109,20 +109,35 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [connectionState.canConnect, conversationService, loadConversation]);
 
-  const sendMessage = useCallback(async (content: string) => {
-    if (!currentConversationId || !connectionState.canSendMessage) return;
-
+  const sendMessage = useCallback(async (content: string, options?: { detailedAnalysis?: boolean }) => {
+    if (!currentConversationId || !connectionState.canSendMessage) {
+      console.log('MessageContext: Cannot send message:', {
+        hasConversationId: !!currentConversationId,
+        canSendMessage: connectionState.canSendMessage
+      });
+      return;
+    }
+  
     try {
-      setShowLoader(true)
+      setShowLoader(true);
+      console.log('showing loader')
       const newMessage = await conversationService.saveMessage({
         conversationId: currentConversationId,
         content,
         sender: 'user'
       });
-
+      console.log('MessageContext: Message saved, updating UI');
       setMessages(prev => [...prev, newMessage]);
-      await webSocket.sendMessage({ message: content });
+      console.log('MessageContext: Sending message to WebSocket');
+      await webSocket.sendMessage({ 
+        message: content,
+        generate_graph: options?.detailedAnalysis 
+      });
     } catch (error) {
+      setShowLoader(false);
+      console.log('hiding loader')
+
+      console.error('MessageContext: Error sending message:', error);
       setConnectionState(prev => ({
         ...prev,
         type: 'ERROR',
@@ -130,8 +145,6 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
     }
   }, [currentConversationId, connectionState.canSendMessage, conversationService, webSocket]);
-
- // WebSocket handler
 useEffect(() => {
   webSocket.on('connect', () => {
     setConnectionState(prev => ({
@@ -168,10 +181,14 @@ useEffect(() => {
 useEffect(() => {
   streamHandler.on('loadingStart', () => {
     setShowLoader(true)
+    console.log('showing loader')
+
   })
 
   streamHandler.on('loadingDone', () => {
     setShowLoader(false)
+    console.log('hiding loader')
+
   })
 
   streamHandler.on('content', (chunk: string) => {

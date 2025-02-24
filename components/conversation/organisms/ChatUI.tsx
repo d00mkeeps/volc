@@ -1,11 +1,13 @@
 import { useMessage } from "@/context/MessageContext";
 import { useWorkouts } from "@/context/ChatAttachmentContext";
 import { ChatUIProps } from "@/types/chat";
-import { useRef, useEffect, useCallback, useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView } from "react-native";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
+import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView, View } from "react-native";
 import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
+import { Sidebar } from "../molecules/Sidebar";
+import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
@@ -24,9 +26,30 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     registerMessageHandler
   } = useMessage();
   const { handleSignal } = useWorkouts();
-
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const hasConnectedRef = useRef(false);
+  const [detailedAnalysis, setDetailedAnalysis] = useState(false)
+
+  const handleToggleSidebar = useCallback(() => {
+    setIsSidebarOpen(prev => !prev);
+  }, []);
+
+  const handleToggleAnalysis = useCallback((value: boolean) => {
+    setDetailedAnalysis(value);
+  }, []);
+
+  const handleSendMessage = useCallback(async (message: string) => {
+    console.log('ChatUI: handleSendMessage called with:', message);
+    try {
+      console.log('ChatUI: Calling sendMessage with:', message, { detailedAnalysis });
+      await sendMessage(message, { detailedAnalysis });
+      console.log('ChatUI: sendMessage completed successfully');
+      setDetailedAnalysis(false);
+    } catch (error) {
+      console.error('ChatUI: Failed to send message:', error);
+    }
+  }, [sendMessage, detailedAnalysis]);
 
   useEffect(() => {
     const keyboardDidShow = Keyboard.addListener('keyboardDidShow', () => {
@@ -57,6 +80,19 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     };
   }, [loadConversation, conversationId, connectionState.type]);
 
+  const sidebarComponent = useMemo(() => {
+    if (!conversationId) return null;
+    
+    return (
+      <Sidebar 
+        isOpen={isSidebarOpen}
+        conversationId={conversationId}
+        detailedAnalysis={detailedAnalysis}
+        onToggleAnalysis={handleToggleAnalysis}
+      />
+    );
+  }, [isSidebarOpen, conversationId, detailedAnalysis, handleToggleAnalysis]);
+
   useEffect(() => {
     console.log('ChatUI: Registering signal handler');
     const signalHandler = (type: string, data: any) => {
@@ -74,35 +110,50 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     };
   }, [onSignal, registerMessageHandler, handleSignal]);
 
+  if (!conversationId) {
+    console.error('ChatUI: conversationId is required');
+    return null; // Or render an error state
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <Header 
-        title={title} 
-        subtitle={subtitle}
-        showNavigation={showNavigation} 
-      />
+    <Header 
+      title={title} 
+      subtitle={subtitle}
+      showNavigation={showNavigation}
+      onToggleSidebar={handleToggleSidebar}
+      isSidebarOpen={isSidebarOpen}
+    />
+    <View style={styles.contentContainer}>
       <MessageList 
         messages={messages}
         streamingMessage={streamingMessage}
         style={styles.messageList}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.inputContainer}
-      >
-        <InputArea
-          disabled={!connectionState.canSendMessage}
-          onSendMessage={sendMessage}
-        />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
+ {sidebarComponent}
+    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={styles.inputContainer}
+    >
+      <InputArea
+        disabled={!connectionState.canSendMessage}
+        onSendMessage={handleSendMessage}
+      />
+    </KeyboardAvoidingView>
+  </SafeAreaView>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1f281f',
+  },
+  contentContainer: {
+    flex: 1,
+    position: 'relative', 
   },
   messageList: {
     flex: 1,

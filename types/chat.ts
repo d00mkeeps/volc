@@ -8,10 +8,6 @@ export type ChatConfigName =
   | 'default'
   |'workout-analysis'
  
-
-interface SignalHandler {
-    (type: string, data: any): void
-  }
  export  interface ChatUIProps {
     configName: ChatConfigName;
     conversationId?: string;
@@ -36,10 +32,10 @@ export interface ExpandedModalProps {
 
 export interface InputAreaProps {
   disabled?: boolean;
-  onSendMessage: (message: string, config: ChatConfigKey) => void;
-  useModal?: boolean;
+  onSendMessage: (message: string, config?: any) => Promise<void>;  useModal?: boolean;
   modalTitle?: string;
-  customContainerStyle?: ViewStyle
+  customContainerStyle?: ViewStyle,
+  selectedConfig?: string;
 }
 
 export interface WorkoutChatProps {
@@ -52,7 +48,9 @@ export interface HeaderProps {
   subtitle?: string;
   showNavigation?: boolean,
   onHomePress?: () => void,
-  onBackPress?: () => void
+  onBackPress?: () => void,
+  onToggleSidebar: () => void,
+  isSidebarOpen: boolean
 }
 
 export interface MessageListProps {
@@ -63,6 +61,11 @@ export interface MessageListProps {
 
 export interface ConversationListProps {
   onConversationPress: (id: string) => void;
+}
+
+export interface SendMessageOptions {
+  detailedAnalysis?: boolean;
+  configName?: ChatConfigKey;
 }
 
 export interface OnboardingChatProps {

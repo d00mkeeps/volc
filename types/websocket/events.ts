@@ -7,9 +7,11 @@ export type WebSocketMessageType =
   | 'loading_start'
 
 export interface WebSocketMessage {
-  type: WebSocketMessageType;
-  data?: any;
-  error?: string;
+type?: any;
+data?: string;
+error?: string;
+message: string,
+generate_graph?: boolean
 }
 
 export type WebSocketEvents = {

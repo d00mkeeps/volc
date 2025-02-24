@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import PulsingLoader from '@/components/public/atoms/molecules/TestLottie';
+import PulsingLoader from '@/components/public/molecules/PulsingLoader';
 
 const LoaderItem = () => {
     useEffect(() => {
