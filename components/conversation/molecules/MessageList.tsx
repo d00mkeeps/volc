@@ -23,7 +23,15 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
 
   const {showLoader} = useMessage()
 
-  const renderItem = useCallback(({ item }: { item: Message }) => {
+  const allMessages = streamingMessage
+  ? [...messages, streamingMessage]
+  : messages;
+
+
+  const renderItem = useCallback(({ item, index }: { item: Message, index: number }) => {
+
+    const previousMessage = index > 0 ? allMessages[index - 1] : undefined;
+
     console.log('Rendering message:', {
       id: item.id,
       isStreaming: streamingMessage?.id === item.id
@@ -33,16 +41,10 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
       <MessageItem 
         message={item} 
         isStreaming={streamingMessage?.id === item.id}
+        previousMessage={previousMessage}
       />
     );
-  }, [streamingMessage]);
-
-  // We need to show the loader immediately when a message is sent and before streaming starts
-  const shouldShowLoader = !!streamingMessage;
-
-  const allMessages = streamingMessage
-    ? [...messages, streamingMessage]
-    : messages;
+  }, [allMessages, streamingMessage]);
 
   const renderFooter = useCallback(() => {
     if (showLoader) {

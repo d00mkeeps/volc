@@ -1,8 +1,10 @@
 // components/molecules/Sidebar.tsx
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View, ScrollView } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { Title } from '../../public/atoms/Title';
 import { ToggleSwitch } from '../../public/atoms/ToggleSwitch';
+import { GraphDisplay } from '../../data/graph/organisms/GraphDisplay';
+import { useAttachments } from '@/context/ChatAttachmentContext';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,6 +22,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleAnalysis,
 }) => {
   const slideAnim = useRef(new Animated.Value(SIDEBAR_WIDTH)).current;
+  const { getGraphBundlesByConversation } = useAttachments();
+  const graphBundles = getGraphBundlesByConversation(conversationId);
+  const hasGraphs = graphBundles.length > 0;
 
   useEffect(() => {
     Animated.spring(slideAnim, {
@@ -38,27 +43,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
         },
       ]}
     >
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <Title 
-            title="Conversation Data"
-            subtitle="Analysis and attachments"
-            variant="medium"
-          />
-        </View>
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.content}>
+          <View style={styles.section}>
+            <Title 
+              title="Conversation Data"
+              subtitle="Analysis and attachments"
+              variant="medium"
+            />
+          </View>
 
-        <View style={styles.section}>
-          <Title 
-            title="Options"
-            variant="small"
-          />
-          <ToggleSwitch
-            label="Detailed Analysis"
-            value={detailedAnalysis}
-            onValueChange={onToggleAnalysis}
-          />
+          {hasGraphs && (
+            <View style={styles.graphSection}>
+              <Title 
+                title="Graphs"
+                variant="small"
+              />
+              <View style={styles.graphsContainer}>
+                <GraphDisplay 
+                  conversationId={conversationId}
+                  maxDisplayed={2} // Show fewer graphs to fit in sidebar
+                />
+              </View>
+            </View>
+          )}
+
+          <View style={styles.section}>
+            <Title 
+              title="Options"
+              variant="small"
+            />
+            <ToggleSwitch
+              label="Detailed Analysis"
+              value={detailedAnalysis}
+              onValueChange={onToggleAnalysis}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </Animated.View>
   );
 };
@@ -75,6 +97,9 @@ const styles = StyleSheet.create({
     borderLeftColor: '#3a433a',
     zIndex: 100,
   },
+  scrollContainer: {
+    flex: 1,
+  },
   content: {
     flex: 1,
     padding: 16,
@@ -84,5 +109,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#3a433a',
     paddingBottom: 16,
+  },
+  graphSection: {
+    marginBottom: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3a433a',
+    paddingBottom: 16,
+  },
+  graphsContainer: {
+    marginTop: 8,
   },
 });

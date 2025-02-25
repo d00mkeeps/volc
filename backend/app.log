@@ -1,1 +1,10 @@
-2025-02-24 22:57:36,185 - app.services.workout_analysis_service - INFO - Initialized conversation with 4 messages
+2025-02-25 14:35:55,624 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f' usage_metadata={'input_tokens': 0, 'output_tokens': 55, 'total_tokens': 55, 'input_token_details': {}}
+2025-02-25 14:35:55,627 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:55,638 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-25 14:35:55,638 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-25 14:35:55,638 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-25 14:35:55,640 - app.services.chains.base_conversation_chain - INFO - 
+=== Final Conversation State ===
+2025-02-25 14:35:55,640 - app.services.chains.base_conversation_chain - INFO - Total messages: 7
+2025-02-25 14:35:55,640 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-02-25 14:36:09,125 - app.services.workout_analysis_service - INFO - WebSocket disconnected

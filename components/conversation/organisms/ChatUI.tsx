@@ -1,5 +1,5 @@
 import { useMessage } from "@/context/MessageContext";
-import { useWorkouts } from "@/context/ChatAttachmentContext";
+import { useAttachments } from "@/context/ChatAttachmentContext";
 import { ChatUIProps } from "@/types/chat";
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView, View } from "react-native";
@@ -7,7 +7,6 @@ import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
 import { Sidebar } from "../molecules/Sidebar";
-import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 
 export const ChatUI: React.FC<ChatUIProps> = ({
   configName,
@@ -25,7 +24,7 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     loadConversation,
     registerMessageHandler
   } = useMessage();
-  const { handleSignal } = useWorkouts();
+  const { handleSignal } = useAttachments();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const hasConnectedRef = useRef(false);
@@ -40,9 +39,8 @@ export const ChatUI: React.FC<ChatUIProps> = ({
   }, []);
 
   const handleSendMessage = useCallback(async (message: string) => {
-    console.log('ChatUI: handleSendMessage called with:', message);
     try {
-      console.log('ChatUI: Calling sendMessage with:', message, { detailedAnalysis });
+
       await sendMessage(message, { detailedAnalysis });
       console.log('ChatUI: sendMessage completed successfully');
       setDetailedAnalysis(false);
@@ -93,22 +91,37 @@ export const ChatUI: React.FC<ChatUIProps> = ({
     );
   }, [isSidebarOpen, conversationId, detailedAnalysis, handleToggleAnalysis]);
 
-  useEffect(() => {
-    console.log('ChatUI: Registering signal handler');
-    const signalHandler = (type: string, data: any) => {
-      console.log('ChatUI: Handling signal:', { type, data });
-      handleSignal(type, data);
-      if (onSignal) {
-        onSignal(type, data);
-      }
-    };
-  
-    registerMessageHandler(signalHandler);
-    return () => {
-      console.log('ChatUI: Unregistering signal handler');
-      registerMessageHandler(null);
-    };
-  }, [onSignal, registerMessageHandler, handleSignal]);
+ // In ChatUI.tsx
+
+useEffect(() => {
+  console.log('ChatUI: Registering signal handler');
+  const signalHandler = (type: string, data: any) => {
+    console.log('ChatUI: Handling signal:', { type, data });
+    
+    // No need to explicitly connect bundles to messages
+    // Instead, our MessageItem component will find matching bundles using original_query
+    
+    // Just pass the signal to the attachment handler
+    handleSignal(type, data);
+    
+    if (onSignal) {
+      onSignal(type, data);
+    }
+    
+    // Optionally, trigger a component refresh when a graph bundle arrives
+    if (type === 'workout_data_bundle' && data?.bundle_id) {
+      // Could use a custom event or state update to notify components
+      console.log('Graph bundle received:', data.bundle_id);
+      // This is handled by MessageItem directly now
+    }
+  };
+
+  registerMessageHandler(signalHandler);
+  return () => {
+    console.log('ChatUI: Unregistering signal handler');
+    registerMessageHandler(null);
+  };
+}, [onSignal, registerMessageHandler, handleSignal]);
 
   if (!conversationId) {
     console.error('ChatUI: conversationId is required');

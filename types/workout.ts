@@ -61,3 +61,37 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     exercises: ExerciseInput[];
   };
   
+  // types/workout.ts
+export type BundleMetadata = {
+  total_workouts: number;
+  total_exercises: number;
+  date_range: {
+    start: string;
+    end: string;
+  };
+  exercises_included: string[];
+};
+
+export type WorkoutDataBundle = {
+  bundle_id: string;
+  metadata: BundleMetadata;
+  workout_data: Record<string, any>;
+  original_query: string;
+  chart_url: string | null;
+  created_at: string;
+  conversationId?: string;
+};
+
+export type Workout = {
+  id: string;
+  name: string;
+  description?: string;
+  exercises: WorkoutExercise[];
+  created_at: string;
+};
+
+export type WorkoutWithConversation = Workout & {
+  conversationId: string;
+};
+
+export type AttachmentType = 'workout' | 'graph_bundle';

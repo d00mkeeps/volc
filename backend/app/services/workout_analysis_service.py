@@ -183,7 +183,7 @@ class WorkoutAnalysisService:
                     return
 
                 bundle.chart_url = chart_url
-                logger.info(f"Chart generated successfully: {chart_url}")
+                logger.info(f"Bundle ID: {bundle.bundle_id} prepared with chart URL: {bundle.chart_url}")     
                 yield {
                     "type": "workout_data_bundle",
                     "data": bundle.model_dump()

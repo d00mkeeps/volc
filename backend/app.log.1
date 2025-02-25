@@ -1,56 +1,52 @@
-2025-02-24 22:20:57,742 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 24 Feb 2025 22:20:57 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-24T22:20:53Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-24T22:20:54Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-24T22:20:59Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-24T22:20:54Z'), (b'request-id', b'req_019U7nEXXVESM4N3fDeAFvuY'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9172d86b0a21b11c-MAN')])
-2025-02-24 22:20:57,745 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-02-24 22:20:57,745 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-02-24 22:20:57,745 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-02-24 22:20:57,745 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb' usage_metadata={'input_tokens': 1683, 'output_tokens': 1, 'total_tokens': 1684, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
-2025-02-24 22:20:57,745 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:57,746 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Looking' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:57,746 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:57,815 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' at your preacher curl' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:57,815 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:58,005 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' data from Jan 27' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:58,005 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:58,070 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' to Feb 20, 2025:' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:58,070 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:58,399 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='\n- Started at 37' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:58,400 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:58,485 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='.5kg for 8 r' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:58,485 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,068 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='eps (46.95kg ' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,068 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,077 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='1RM)\n- Stea' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,077 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,078 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='dily increased to 45kg for 8 ' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,078 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,087 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='reps (56.' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,087 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,088 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='35kg 1RM' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,088 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,311 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=')\n- Total improvement: 7' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,311 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,387 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='.5kg in working weight\n-' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,387 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,726 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' Consistent 8 reps per' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,727 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:20:59,901 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' set throughout\nNice steady' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:20:59,902 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:21:00,052 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' progression with no plate' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:21:00,052 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:21:00,117 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='aus!' additional_kwargs={} response_metadata={} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb'
-2025-02-24 22:21:00,117 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:21:00,118 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-1e477c47-d7e5-45ee-b543-965ba6fba1fb' usage_metadata={'input_tokens': 0, 'output_tokens': 109, 'total_tokens': 109, 'input_token_details': {}}
-2025-02-24 22:21:00,118 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-24 22:21:00,127 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-24 22:21:00,128 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-24 22:21:00,128 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - 
-=== Final Conversation State ===
-2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - Total messages: 10
-2025-02-24 22:21:00,128 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-02-24 22:57:34,232 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-24 22:57:35,471 - root - DEBUG - Logging has been set up
-2025-02-24 22:57:35,471 - app.main - INFO - Application starting
-2025-02-24 22:57:35,475 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-24 22:57:35,522 - app.services.workout_analysis_service - INFO - Initialized conversation with 10 messages
-2025-02-24 22:57:36,071 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-24 22:57:36,072 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-02-25 14:35:53,413 - app.services.chains.base_conversation_chain - INFO - Content: Hi! I don't see any workout data in your profile yet. Once you start logging your workouts, I can help analyze your progress, trends, and provide specific insights about your training.
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - 
+Message 5 (HumanMessage):
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - Content: Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month?
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - 
+Message 6 (AIMessage):
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - Content: I currently don't have access to any workout data in your profile. To analyze those exercises, you would need to log:
+
+- Bench press sets/reps/weights
+- Hack squat records
+- Preacher curl data
+- Pull-up performances
+
+Once logged, I can track progress, identify trends, and provide specific insights.
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - 
+Message 7 (HumanMessage):
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - Content: Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - 
+Message 8 (HumanMessage):
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - Content: Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - 
+Message 9 (HumanMessage):
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - Content: Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month
+2025-02-25 14:35:53,415 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-02-25 14:35:53,452 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'Hello\n'}, {'role': 'assistant', 'content': "Hi! I don't see any workout data in your profile yet. Once you start logging your workouts, I can help analyze your progress, trends, and provide specific insights about your training."}, {'role': 'user', 'content': 'Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month?'}, {'role': 'assistant', 'content': "I currently don't have access to any workout data in your profile. To analyze those exercises, you would need to log:\n\n- Bench press sets/reps/weights\n- Hack squat records\n- Preacher curl data\n- Pull-up performances\n\nOnce logged, I can track progress, identify trends, and provide specific insights."}, {'role': 'user', 'content': [{'type': 'text', 'text': 'Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month'}, {'type': 'text', 'text': 'Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month'}, {'type': 'text', 'text': 'Can we analyse my bench press, hack squat, preacher curl, and pull up performance over the last month'}]}], 'model': 'claude-3-5-sonnet-20241022', 'stream': True, 'system': [{'type': 'text', 'text': "You are a workout analysis assistant with access to the user's workout data. When responding:\n1. Always check the available_data in your context first\n2. If you see ANY workout data, make sure you let the user know about it.\n3. Reference actual values from the data, such as:\n - Specific weights/1RMs achieved\n - Progress over time\n - Notable improvements or patterns\n4. Integrate graph data when available by discussing the trends shown\nFor example, if you see bench press data showing progression from 100kg to 110kg over 3 months, mention these specific numbers and the rate of improvement.\nIf no data is available for a specific query, then explain what data would be needed.\n\ntry to keep token output to a maximum of 100, and less if possible"}, {'type': 'text', 'text': 'Current workout data context:\nAvailable workout data:\n            {\n  "available_data": []\n}'}]}}
+2025-02-25 14:35:53,454 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-02-25 14:35:53,485 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x106bc6490>
+2025-02-25 14:35:53,490 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x106b903b0> server_hostname='api.anthropic.com' timeout=None
+2025-02-25 14:35:53,508 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1069d26c0>
+2025-02-25 14:35:53,509 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-02-25 14:35:53,509 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-02-25 14:35:53,509 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-02-25 14:35:53,509 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-02-25 14:35:53,510 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-02-25 14:35:54,603 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 25 Feb 2025 14:35:54 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-25T14:35:54Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'40000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-25T14:35:54Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-25T14:36:00Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'47000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-25T14:35:54Z'), (b'request-id', b'req_01JBGoNQzrioUBr8uS12qKxf'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91786cab8967eb1c-MAN')])
+2025-02-25 14:35:54,604 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-25 14:35:54,605 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-25 14:35:54,605 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-25 14:35:54,608 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f' usage_metadata={'input_tokens': 425, 'output_tokens': 2, 'total_tokens': 427, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+2025-02-25 14:35:54,608 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:54,609 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='I don' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:54,609 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:54,666 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content="'t have any workout data available in your profile to" additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:54,666 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:54,834 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' analyze. When you start logging your workouts, I can' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:54,834 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:55,017 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' help track your progress in bench press, hack squat' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:55,017 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:55,104 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', preacher curls, and pull-' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:55,105 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-25 14:35:55,476 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='ups. Please log your exercises first.' additional_kwargs={} response_metadata={} id='run-5bfa8481-d2fa-419f-b4ed-8a37ac817c2f'
+2025-02-25 14:35:55,476 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>

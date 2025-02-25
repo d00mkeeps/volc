@@ -19,7 +19,8 @@ interface MessageContextType {
   loadConversation: (conversationId: string) => Promise<void>;
   currentConversationId: string | null;
   registerMessageHandler: (handler: MessageHandler | null) => void;
-  showLoader: boolean
+  showLoader: boolean,
+  didMessageRequestGraph: (messageId: string) => boolean
 };
 
 const MessageContext = createContext<MessageContextType | null>(null);
@@ -37,6 +38,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const webSocket = useMemo(() => new WebSocketService(), []);
   const streamHandler = useMemo(() => new StreamHandler(), []);
   const messageHandlerRef = useRef<MessageHandler | null>(null);
+  const [messagesRequestingGraphs, setMessagesRequestingGraphs] = useState<Set<string>>(new Set());
 
   const loadConversation = useCallback(async (conversationId: string) => {
     try {
@@ -111,32 +113,33 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const sendMessage = useCallback(async (content: string, options?: { detailedAnalysis?: boolean }) => {
     if (!currentConversationId || !connectionState.canSendMessage) {
-      console.log('MessageContext: Cannot send message:', {
-        hasConversationId: !!currentConversationId,
-        canSendMessage: connectionState.canSendMessage
-      });
       return;
     }
   
     try {
       setShowLoader(true);
-      console.log('showing loader')
       const newMessage = await conversationService.saveMessage({
         conversationId: currentConversationId,
         content,
         sender: 'user'
       });
-      console.log('MessageContext: Message saved, updating UI');
+      
+      // Track if this message requested a graph
+      if (options?.detailedAnalysis) {
+        setMessagesRequestingGraphs(prev => {
+          const updated = new Set(prev);
+          updated.add(newMessage.id);
+          return updated;
+        });
+      }
+      
       setMessages(prev => [...prev, newMessage]);
-      console.log('MessageContext: Sending message to WebSocket');
       await webSocket.sendMessage({ 
         message: content,
         generate_graph: options?.detailedAnalysis 
       });
     } catch (error) {
       setShowLoader(false);
-      console.log('hiding loader')
-
       console.error('MessageContext: Error sending message:', error);
       setConnectionState(prev => ({
         ...prev,
@@ -145,6 +148,20 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
     }
   }, [currentConversationId, connectionState.canSendMessage, conversationService, webSocket]);
+
+// Add this helper function to check if a message requested a graph
+const didMessageRequestGraph = useCallback((messageId: string) => {
+  return messagesRequestingGraphs.has(messageId);
+}, [messagesRequestingGraphs]);
+
+// Add a function to clear graph request state once a graph arrives
+const clearGraphRequest = useCallback((messageId: string) => {
+  setMessagesRequestingGraphs(prev => {
+    const updated = new Set(prev);
+    updated.delete(messageId);
+    return updated;
+  });
+}, []);
 useEffect(() => {
   webSocket.on('connect', () => {
     setConnectionState(prev => ({
@@ -169,6 +186,27 @@ useEffect(() => {
       error: error
     }));
   });
+
+  // Modify the signal handler in the streamHandler useEffect
+streamHandler.on('signal', (signal: { type: string; data: any }) => {
+  console.log('MessageContext: Received signal:', signal);
+  
+  // If this is a workout data bundle signal, find the associated message
+  if (signal.type === 'workout_data_bundle' && signal.data?.original_query) {
+    // Find the message that triggered this graph
+    messages.forEach(msg => {
+      if (msg.sender === 'user' && messagesRequestingGraphs.has(msg.id) && 
+          msg.content.includes(signal.data.original_query)) {
+        // Clear the graph request state
+        clearGraphRequest(msg.id);
+      }
+    });
+  }
+  
+  if (messageHandlerRef.current) {
+    messageHandlerRef.current(signal.type, signal.data);
+  }
+});
 
   webSocket.on('message', msg => streamHandler.handleMessage(msg));
   
@@ -257,11 +295,11 @@ useEffect(() => {
     loadConversation,
     currentConversationId,
     showLoader,
-    
+    didMessageRequestGraph,
     registerMessageHandler: (handler: MessageHandler | null) => {
       messageHandlerRef.current = handler;
     }
-  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader, ]);
+  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader, didMessageRequestGraph ]);
 
   return (
     <MessageContext.Provider value={value}>

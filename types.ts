@@ -127,6 +127,7 @@ export interface Message {
   content: string;
   sender: 'user' | 'assistant';
   timestamp: Date;
+  expectsGraph?: boolean;
 }
 
 export interface Conversation {
