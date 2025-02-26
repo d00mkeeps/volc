@@ -75,7 +75,7 @@ export type BundleMetadata = {
 export type WorkoutDataBundle = {
   bundle_id: string;
   metadata: BundleMetadata;
-  workout_data: Record<string, any>;
+  workout_data: any;
   original_query: string;
   chart_url: string | null;
   created_at: string;

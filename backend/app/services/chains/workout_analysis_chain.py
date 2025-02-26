@@ -23,7 +23,9 @@ class WorkoutAnalysisChain(BaseConversationChain):
 For example, if you see bench press data showing progression from 100kg to 110kg over 3 months, mention these specific numbers and the rate of improvement.
 If no data is available for a specific query, then explain what data would be needed.
 
-try to keep token output to a maximum of 100, and less if possible"""
+try to keep token output to a maximum of 100, and less if possible
+
+The first message generally won't have workout data available, so just respond in a friendly, helpful manner."""
 
         super().__init__(system_prompt=system_prompt, llm=llm)
         self.user_id = user_id

@@ -19,6 +19,7 @@ interface GraphImageProps {
   height?: number;
   onError?: (error: Error) => void;
   enableZoom?: boolean;
+  inert?: boolean; // New prop to make image completely inert
 }
 
 export const GraphImage: React.FC<GraphImageProps> = ({
@@ -26,7 +27,8 @@ export const GraphImage: React.FC<GraphImageProps> = ({
   width = 320,
   height = 240,
   onError,
-  enableZoom = true
+  enableZoom = true,
+  inert = false
 }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -40,7 +42,7 @@ export const GraphImage: React.FC<GraphImageProps> = ({
   };
 
   const handlePress = () => {
-    if (enableZoom && !error) {
+    if (enableZoom && !error && !inert) {
       setEnlarged(true);
     }
   };
@@ -80,7 +82,8 @@ export const GraphImage: React.FC<GraphImageProps> = ({
     </View>
   );
 
-  if (!enableZoom) {
+  // If inert or not using zoom, just return the image without any interaction
+  if (inert || !enableZoom) {
     return imageComponent;
   }
 

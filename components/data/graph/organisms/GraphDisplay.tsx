@@ -151,7 +151,7 @@ export const GraphDisplay: React.FC<GraphDisplayProps> = ({
                 {selectedBundle ? 'Graph Detail' : `All Graphs (${graphBundles.length})`}
               </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#333" />
+                <Ionicons name="close" size={24} color="#eee" />
               </TouchableOpacity>
             </View>
             
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#333',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '90%',
@@ -314,12 +314,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#333',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: '#eee',
   },
   
   // Detail view styles
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   detailQuery: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
+    color: '#fff',
     textAlign: 'center',
     marginTop: 16,
     marginBottom: 20,

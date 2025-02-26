@@ -162,6 +162,21 @@ export function ChatAttachmentProvider({ children, conversationId }: Props) {
         if (!session?.user?.id) {
           throw new Error('No authenticated user found');
         }
+
+        console.log('Received workout_data_bundle:', data);
+        console.log('workout_data type:', typeof data.workout_data);
+        if (data.workout_data) {
+          console.log('workout_data keys:', Object.keys(data.workout_data));
+          // If it's a string, try to log parsed version too
+          if (typeof data.workout_data === 'string') {
+            try {
+              const parsed = JSON.parse(data.workout_data);
+              console.log('Parsed workout_data:', parsed);
+            } catch (e) {
+              console.log('workout_data is not valid JSON string');
+            }
+          }
+        }
         
         // Store the graph bundle with the current conversation ID
         const bundleWithConversation = { 

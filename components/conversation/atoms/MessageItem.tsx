@@ -1,9 +1,11 @@
+// Modified MessageItem.tsx
 import React, { memo, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Message } from '@/types';
 import { GraphImage } from '../../data/graph/atoms/GraphImage';
 import { useAttachments } from '@/context/ChatAttachmentContext';
 import { WorkoutDataBundle } from '@/types/workout';
+import { WorkoutDataModal } from '../../data/table/WorkoutDataModal';
 
 interface MessageItemProps {
   message: Message;
@@ -19,13 +21,15 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
   const { getGraphBundlesByConversation } = useAttachments();
   const [matchingBundle, setMatchingBundle] = useState<WorkoutDataBundle | null>(null);
   const [isLoadingGraph, setIsLoadingGraph] = useState(false);
-  const [enlargedGraph, setEnlargedGraph] = useState(false);
+  const [workoutModalVisible, setWorkoutModalVisible] = useState(false);
   
   // Determine if this message should show a graph based on previous message
   useEffect(() => {
     // Only assistant messages can have associated graphs and only if there's a previous user message
     if (message.sender === 'assistant' && previousMessage?.sender === 'user') {
       const bundles = getGraphBundlesByConversation(message.conversation_id);
+
+      console.log(`Found ${bundles.length} bundles for conversation:`, message.conversation_id);
       
       // If no bundles exist yet, we don't need to do anything
       if (!bundles.length) return;
@@ -37,10 +41,14 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
       );
       
       if (match) {
+        console.log('Found matching bundle:', match.bundle_id);
+        console.log('Bundle structure:', match);
+        console.log('workout_data type:', typeof match.workout_data);
+        console.log('workout_data keys:', Object.keys(match.workout_data || {}));
+        
         setMatchingBundle(match);
         setIsLoadingGraph(false);
       } 
-      
     }
   }, [message, previousMessage, getGraphBundlesByConversation]);
   
@@ -51,6 +59,27 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
         message.sender === 'user' ? styles.userMessage : styles.assistantMessage,
         isStreaming && styles.streamingMessage
       ]}>
+        {/* Graph at the top of assistant message */}
+        {message.sender === 'assistant' && matchingBundle?.chart_url && (
+          <View style={styles.graphContainer}>
+            <TouchableOpacity 
+              activeOpacity={0.9}
+              onPress={() => setWorkoutModalVisible(true)}
+            >
+              <GraphImage 
+                chartUrl={matchingBundle.chart_url}
+                width={280}
+                height={200}
+                inert={true}
+              />
+              <View style={styles.graphOverlay}>
+                <Text style={styles.graphOverlayText}>Tap for details</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        
+        {/* Message text content */}
         <Text style={[
           styles.text,
           message.sender === 'user' ? styles.userText : styles.assistantText
@@ -74,51 +103,14 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
             </Text>
           </View>
         )}
-        
-        {/* Graph display */}
-        {matchingBundle?.chart_url && (
-          <View style={styles.graphContainer}>
-            <TouchableOpacity 
-              activeOpacity={0.9}
-              onPress={() => setEnlargedGraph(true)}
-            >
-              <GraphImage 
-                chartUrl={matchingBundle.chart_url}
-                width={280}
-                height={200}
-              />
-              <View style={styles.graphOverlay}>
-                <Text style={styles.graphOverlayText}>Tap to enlarge</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
       
-      {/* Enlarged graph modal */}
-      <Modal
-        visible={enlargedGraph}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setEnlargedGraph(false)}
-      >
-        <TouchableOpacity 
-          style={styles.modalOverlay} 
-          activeOpacity={1} 
-          onPress={() => setEnlargedGraph(false)}
-        >
-          <View style={styles.enlargedGraphContainer}>
-            <GraphImage
-              chartUrl={matchingBundle?.chart_url || ''}
-              width={340}
-              height={260}
-            />
-            <Text style={styles.enlargedGraphTitle}>
-              {matchingBundle?.original_query || 'Workout Analysis'}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+      {/* Workout data modal */}
+      <WorkoutDataModal
+        visible={workoutModalVisible}
+        onClose={() => setWorkoutModalVisible(false)}
+        bundle={matchingBundle}
+      />
     </View>
   );
 });
@@ -156,7 +148,7 @@ const styles = StyleSheet.create({
     opacity: 0.7
   },
   graphContainer: {
-    marginTop: 12,
+    marginBottom: 12,
     borderRadius: 8,
     overflow: 'hidden',
     alignSelf: 'center',
@@ -189,30 +181,6 @@ const styles = StyleSheet.create({
   graphOverlayText: {
     color: '#fff',
     fontSize: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  enlargedGraphContainer: {
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  enlargedGraphTitle: {
-    marginTop: 12,
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#041402',
-    textAlign: 'center',
   }
 });
 
