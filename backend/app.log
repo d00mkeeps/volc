@@ -1,60 +1,10 @@
-2025-02-26 16:26:08,419 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:08,420 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Yes' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:08,420 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:08,548 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', I can see your leg curl data now' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:08,548 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:08,674 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='! From Jan 27 to' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:08,674 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:08,723 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' Feb 20, ' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:08,723 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:08,873 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='2025:\n\n- Starte' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:08,873 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,022 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='d at 55kg for 15' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,023 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,119 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' reps (83.97kg 1' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,119 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,215 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='RM)\n- Latest workout' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,215 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,314 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=': 65kg for 15 reps' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,314 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,360 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' (99.24' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,360 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,414 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='kg 1RM' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,415 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,550 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=')\n- Consistent 15-rep sets' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,550 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,609 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' throughout\n- Steady' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,609 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,741 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' progression: +10kg in working weight' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,741 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:09,951 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='\n- 1RM improve' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:09,951 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,029 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='d by 15.27kg' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:10,029 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,217 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='\n\nGreat consistency with ' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:10,218 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,355 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='8 workouts and progressive' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:10,355 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,540 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' overload! 💪' additional_kwargs={} response_metadata={} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96'
-2025-02-26 16:26:10,540 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,542 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-d899a0e8-a1ae-4b69-87c6-e828d2c86c96' usage_metadata={'input_tokens': 0, 'output_tokens': 127, 'total_tokens': 127, 'input_token_details': {}}
-2025-02-26 16:26:10,542 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-26 16:26:10,548 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-02-26 16:26:10,548 - httpcore.http11 - DEBUG - response_closed.started
-2025-02-26 16:26:10,549 - httpcore.http11 - DEBUG - response_closed.complete
-2025-02-26 16:26:10,549 - app.services.chains.base_conversation_chain - INFO - 
+2025-02-27 16:34:27,078 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e' usage_metadata={'input_tokens': 0, 'output_tokens': 29, 'total_tokens': 29, 'input_token_details': {}}
+2025-02-27 16:34:27,080 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-02-27 16:34:27,080 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done', 'data': ''}
+2025-02-27 16:34:27,095 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-27 16:34:27,095 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-27 16:34:27,096 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-27 16:34:27,096 - app.services.chains.base_conversation_chain - INFO - 
 === Final Conversation State ===
-2025-02-26 16:26:10,549 - app.services.chains.base_conversation_chain - INFO - Total messages: 10
-2025-02-26 16:26:10,549 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-02-26 16:49:11,841 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-26 17:59:59,325 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-26 17:59:59,394 - app.services.workout_analysis_service - INFO - Initialized conversation with 12 messages
-2025-02-26 18:54:24,022 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-26 18:54:27,161 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-26 18:54:27,198 - app.services.workout_analysis_service - INFO - Initialized conversation with 10 messages
-2025-02-26 20:09:50,628 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-26 20:13:14,192 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-26 20:13:14,225 - app.services.workout_analysis_service - INFO - Initialized conversation with 10 messages
-2025-02-26 20:31:07,043 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-02-26 20:31:07,058 - app.services.workout_analysis_service - INFO - WebSocket disconnected
-2025-02-26 20:31:07,136 - app.services.workout_analysis_service - INFO - Initialized conversation with 12 messages
+2025-02-27 16:34:27,096 - app.services.chains.base_conversation_chain - INFO - Total messages: 12
+2025-02-27 16:34:27,096 - app.services.chains.base_conversation_chain - INFO - =====================

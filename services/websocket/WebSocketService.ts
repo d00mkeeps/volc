@@ -41,11 +41,18 @@ export class WebSocketService {
   }
 
   public async connect(configName: ChatConfigName, conversationId?: string, messages?: Message[]): Promise<void> {
-    // Add connection lock
+
     if (this.isConnecting) {
-      console.log('Connection already in progress');
-      return;
+      console.log('Connection in progress, waiting...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      if (this.isConnecting) {
+        console.log('Connection still in progress after wait, returning');
+        return;
+      }
     }
+    
+
+    this.disconnect()
     
     this.isConnecting = true;
     
@@ -99,7 +106,7 @@ export class WebSocketService {
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
           reject(new Error('Connection timeout'));
-        }, 5000);
+        }, 10000);
 
         let hasReceivedConnectedStatus = false;
 

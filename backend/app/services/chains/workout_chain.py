@@ -1,5 +1,7 @@
 import json
 from typing import Dict, Any, Optional
+
+from langchain_anthropic import ChatAnthropic
 from app.core.prompts.workout_conversation import WORKOUT_PROMPT
 from app.schemas.workout import Workout
 from app.services.extraction.workout_extractor import WorkoutExtractor
@@ -8,12 +10,18 @@ from .base_conversation_chain import BaseConversationChain
 
 class WorkoutChain(BaseConversationChain):
     def __init__(self, api_key: str):
+
+        llm = ChatAnthropic(
+            model="claude-3-5-sonnet-20241022",
+            streaming=True,
+            api_key = api_key
+        )
         super().__init__(
             system_prompt=WORKOUT_PROMPT,
-            api_key=api_key,
-            approval_signal_type="workout_approved"
+            llm=llm
         )
         
+        self.approval_signal_type = 'workout_approved'
         # Initialize specialized components
         self.extractor = WorkoutExtractor()
         self.sentiment_analyzer = WorkoutSentimentAnalyzer(self.chat_model)
@@ -45,13 +53,17 @@ class WorkoutChain(BaseConversationChain):
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
         """Get variables needed for workout conversation."""
+        base_vars = await super().get_additional_prompt_vars()
         if not self.extraction_state:
-            return {}
-
-        return {
+            return base_vars
+        
+        base_vars.update({
             "extraction_state": json.dumps(self.extraction_state.model_dump(), indent=2),
             "missing_fields": self._get_missing_fields(self.extraction_state)
-        }
+        })
+    
+
+        return base_vars
 
     def _is_workout_saveable(self, extracted_data: Workout) -> bool:
         """Determines if a workout has enough information to be saved."""

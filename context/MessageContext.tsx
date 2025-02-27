@@ -10,17 +10,33 @@ import { ConnectionState } from "@/types/states";
 import { first } from "lodash";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
+// Update the MessageContextType interface to correctly type getConversationConfig
 interface MessageContextType {
   messages: Message[];
   streamingMessage: Message | null;
   connectionState: ConnectionState;
-  startNewConversation: (firstMessage: string, configName: ChatConfigKey) => Promise<string>; // Changed return type
-  sendMessage: (content: string, options?: { detailedAnalysis?: boolean }) => Promise<void>;  // Updated this line  
+  startNewConversation: (firstMessage: string, configName: ChatConfigKey) => Promise<string>;
+  sendMessage: (content: string, options?: { detailedAnalysis?: boolean }) => Promise<void>;
   loadConversation: (conversationId: string) => Promise<void>;
   currentConversationId: string | null;
   registerMessageHandler: (handler: MessageHandler | null) => void;
-  showLoader: boolean,
-  didMessageRequestGraph: (messageId: string) => boolean
+  showLoader: boolean;
+  didMessageRequestGraph: (messageId: string) => boolean;
+  // Changed from Promise to synchronous return
+  getConversationConfig: (conversationId: string) => ChatConfigKey;
+}
+
+const fetchConversationConfig = async (
+  conversationId: string,
+  conversationService: ConversationService
+): Promise<ChatConfigKey> => {
+  try {
+    const conversation = await conversationService.getConversation(conversationId);
+    return conversation.config_name as ChatConfigKey;
+  } catch (error) {
+    console.error('Error fetching conversation config:', error);
+    return 'default';
+  }
 };
 
 const MessageContext = createContext<MessageContextType | null>(null);
@@ -39,28 +55,34 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const streamHandler = useMemo(() => new StreamHandler(), []);
   const messageHandlerRef = useRef<MessageHandler | null>(null);
   const [messagesRequestingGraphs, setMessagesRequestingGraphs] = useState<Set<string>>(new Set());
+  const [conversationConfigMap, setConversationConfigMap] = useState<Record<string, ChatConfigKey>>({});
+
+  const getConversationConfig = useCallback((conversationId: string): ChatConfigKey => {
+    return conversationConfigMap[conversationId] || 'default';
+  }, [conversationConfigMap]);
 
   const loadConversation = useCallback(async (conversationId: string) => {
     try {
       console.log('MessageContext: Loading conversation:', conversationId);
-
       setMessages([]);
-      setStreamingMessage(null)
+      setStreamingMessage(null);
       
-      const [conversation, messages] = await Promise.all([
-        conversationService.getConversation(conversationId),
-        conversationService.getConversationMessages(conversationId)
-      ]);
-  
-      console.log('MessageContext: Conversation details:', {
-        id: conversation.id,
-        config_name: conversation.config_name
-      });
-  
+      // Get correct config (either from cache or fetch new)
+      let correctConfig = conversationConfigMap[conversationId];
+      if (!correctConfig) {
+        correctConfig = await fetchConversationConfig(conversationId, conversationService);
+        // Cache the config to avoid refetching
+        setConversationConfigMap(prev => ({...prev, [conversationId]: correctConfig}));
+      }
+      
+      // Fetch messages
+      const messages = await conversationService.getConversationMessages(conversationId);
+      
       setMessages(messages);
       setCurrentConversationId(conversationId);
       
-      await webSocket.connect(conversation.config_name, conversationId, messages);
+      // Connect using the correct config
+      await webSocket.connect(correctConfig, conversationId, messages);
     } catch (error) {
       console.error('MessageContext: Error loading conversation:', error);
       setConnectionState(prev => ({
@@ -69,7 +91,7 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
         error: error as Error
       }));
     }
-  }, [conversationService, webSocket]);
+  }, [conversationService, webSocket, conversationConfigMap]);
 
   const startNewConversation = useCallback(async (firstMessage: string, configName: ChatConfigKey): Promise<string> => {
     const session = await authService.getSession();
@@ -296,10 +318,11 @@ useEffect(() => {
     currentConversationId,
     showLoader,
     didMessageRequestGraph,
+    getConversationConfig,
     registerMessageHandler: (handler: MessageHandler | null) => {
       messageHandlerRef.current = handler;
     }
-  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader, didMessageRequestGraph ]);
+  }), [messages, streamingMessage, connectionState, startNewConversation, sendMessage, loadConversation, showLoader, getConversationConfig,didMessageRequestGraph ]);
 
   return (
     <MessageContext.Provider value={value}>

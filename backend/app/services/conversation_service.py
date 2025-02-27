@@ -5,14 +5,18 @@ from app.services.chains.workout_chain import WorkoutChain
 from langchain_core.messages import HumanMessage, AIMessage
 
 class ConversationService:
-    def __init__(self):
+    def __init__(self, api_key = None):
         self.logger = logging.getLogger(__name__)
+        self.api_key = api_key
         self.reset_chain()
 
 
     def reset_chain(self):
         """Create a new chain instance"""
-        self.chain = WorkoutChain()
+        if self.api_key:
+            self.chain = WorkoutChain(api_key=self.api_key)
+        else: 
+            raise ValueError('API key is required')
 
     async def process_websocket(self, websocket: WebSocket):
         """Process WebSocket connection and handle messages."""

@@ -32,8 +32,11 @@ async def conversation_websocket(websocket: WebSocket, conversation_id: str):
             "data": "connected"
         })
         
-        # Create new service instance for each connection
-        service = ConversationService()  # Pass conversation_id
+        # Get API key
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        
+        # Create new service instance with the LLM
+        service = ConversationService(api_key=api_key)
         logger.info(f"Created ConversationService instance for conversation: {conversation_id}")
         
         await service.process_websocket(websocket)
