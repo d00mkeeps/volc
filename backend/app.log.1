@@ -1,34 +1,198 @@
-2025-02-27 16:34:25,454 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-02-27 16:34:25,460 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'This is a test message'}, {'role': 'assistant', 'content': "Hello! I'd be happy to help you log your workout. What's the first exercise you'd like to add?"}, {'role': 'user', 'content': 'Bench press'}, {'role': 'assistant', 'content': 'Could you share the details of your bench press sets? Include the weight and number of reps for each set.'}, {'role': 'user', 'content': '3 sets, all 80kg x 8 at rpe 8.'}, {'role': 'assistant', 'content': "I've got your bench press: 3 sets of 8 reps at 80kg, RPE 8.\n\nWould you like to add another exercise to this workout?"}, {'role': 'user', 'content': 'No'}, {'role': 'assistant', 'content': "Since this was your workout, I'd love to hear how it went. How do you feel the session went overall? Any particular highlights or areas you think could have been better?"}, {'role': 'user', 'content': 'The gym was busy so I left early'}, {'role': 'assistant', 'content': "Thanks for letting me know. Here's a summary of your workout:\n\nChest Training\n• Bench Press\n  - Set 1: 8 reps at 80kg\n  - Set 2: 8 reps at 80kg\n  - Set 3: 8 reps at 80kg\n\nNotes:\n• Gym was busy, had to cut session short\n\nDoes this look correct?"}, {'role': 'user', 'content': [{'type': 'text', 'text': 'Yes! Looks good.'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-5-sonnet-20241022', 'stream': True, 'system': 'You are the TrainSmart Coach - warm, encouraging, and professional while keeping responses brief and natural.\n\nCONVERSATION FLOW:\n1. ALWAYS ask "Would you like to add another exercise to this workout?" after each exercise\n   - Only proceed to next steps when user confirms no more exercises\n\n2. Once user has no more exercises:\n   Think through the following steps:\n   a) Look at MISSING_FIELDS and the EXTRACTION_STATE\n   b) For each exercise with missing fields:\n      - Is it missing weight units while having weight values? These must be clarified\n      - Is it missing distance units while having distance values? These must be clarified\n      - Are any sets missing reps or weight values? These must be clarified\n      - Ignore missing units for fields that don\'t exist (e.g., distance_unit for strength exercises)\n   c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn\'t want to provide this, it\'s not necessary.\n\n3. Finally, if there aren\'t key fields missing AND all sets have necessary data, present summary:\n   - Generate brief name if none provided\n   - Format as:\n     [Workout Name],\n     Exercises:\n     1. [Exercise Name]\n        Sets:[Set details with explicit units, each set on it\'s own line]\n     2. [rest of exercises...]\n     Notes:\n      [Workout description point 1],\n      [workout description point 2],\n      [rest of workout description...], \n   - Ask "Does this look correct?"\n\n<OtherInstructions>\nMatch user\'s technical knowledge level in responses.\nYou must NEVER discuss missing fields or other system processes in conversation. \nGenerally, a strength exercise is shown as reps and weight. If an exercise is shown as "7x34kg", you should assume it represents one set of seven reps with 34kg, not seven sets of 34kg with unknown reps (unless corrected).\nDisplay the summary as bullet points\n</OtherInstructions>\n\n<Metadata>\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\nPrevious conversation: {messages}\nHuman: {current_message}\n</Metadata>\n'}}
-2025-02-27 16:34:25,463 - httpcore.connection - DEBUG - close.started
-2025-02-27 16:34:25,463 - httpcore.connection - DEBUG - close.complete
-2025-02-27 16:34:25,463 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-02-27 16:34:25,478 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x109776990>
-2025-02-27 16:34:25,479 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x109712ba0> server_hostname='api.anthropic.com' timeout=None
-2025-02-27 16:34:25,500 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1091e1810>
-2025-02-27 16:34:25,500 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-02-27 16:34:25,501 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-02-27 16:34:25,501 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-02-27 16:34:25,501 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-02-27 16:34:25,501 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-02-27 16:34:26,516 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Thu, 27 Feb 2025 16:34:26 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-27T16:34:26Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-27T16:34:26Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-27T16:34:32Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-27T16:34:26Z'), (b'request-id', b'req_01NRziPqig1bwE5Ap6HLWKQq'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9189950d7c1bb3f0-MAN')])
-2025-02-27 16:34:26,516 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-02-27 16:34:26,516 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-02-27 16:34:26,516 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-02-27 16:34:26,517 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e' usage_metadata={'input_tokens': 830, 'output_tokens': 3, 'total_tokens': 833, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
-2025-02-27 16:34:26,517 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:26,517 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Great! Your' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e'
-2025-02-27 16:34:26,517 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:26,518 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'Great! Your'}
-2025-02-27 16:34:26,602 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' workout has been logged.' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e'
-2025-02-27 16:34:26,602 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:26,602 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' workout has been logged.'}
-2025-02-27 16:34:26,778 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' Feel free to start recording another' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e'
-2025-02-27 16:34:26,778 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:26,778 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' Feel free to start recording another'}
-2025-02-27 16:34:26,919 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' workout anytime. Have' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e'
-2025-02-27 16:34:26,919 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:26,919 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' workout anytime. Have'}
-2025-02-27 16:34:27,024 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' a great rest of your day!' additional_kwargs={} response_metadata={} id='run-630a1b19-4893-4f2d-956a-bf1bf0b7c17e'
-2025-02-27 16:34:27,024 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-02-27 16:34:27,024 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' a great rest of your day!'}
+2025-02-28 19:01:53,446 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-02-28 19:01:53,447 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-02-28 19:02:05,779 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 28 Feb 2025 19:02:05 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-02-28T19:01:54Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'38000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-02-28T19:01:58Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-02-28T19:02:06Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-02-28T19:01:58Z'), (b'request-id', b'req_01XJ3xuTY8WJVdb3FSCXBUZF'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9192aa714facb37e-MAN'), (b'Content-Encoding', b'gzip')])
+2025-02-28 19:02:05,782 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-02-28 19:02:05,782 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-02-28 19:02:05,783 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-02-28 19:02:05,784 - httpcore.http11 - DEBUG - response_closed.started
+2025-02-28 19:02:05,784 - httpcore.http11 - DEBUG - response_closed.complete
+2025-02-28 19:02:05,786 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-02-28 19:02:05,790 - app.services.chains.workout_chain - INFO - Extracted workout data: {
+  "name": "Saturday Back & Core Workout",
+  "description": [
+    "Focus on back and core exercises",
+    "Good form emphasis on pull-ups with lower trap engagement",
+    "DB rows possibly too heavy - note for future sessions",
+    "Preference noted for pull-ups over chin-ups"
+  ],
+  "exercises": [
+    {
+      "exercise_name": "Face Pulls",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 26.4,
+            "reps": 10
+          }
+        ]
+      },
+      "order_in_workout": 1,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Hyperextensions",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 45,
+            "reps": 8
+          },
+          {
+            "weight": 45,
+            "reps": 10
+          },
+          {
+            "weight": 45,
+            "reps": 12
+          }
+        ]
+      },
+      "order_in_workout": 2,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Decline Crunches",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 10,
+            "reps": 12
+          },
+          {
+            "weight": 15,
+            "reps": 10
+          }
+        ]
+      },
+      "order_in_workout": 3,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Chin-ups",
+      "set_data": {
+        "sets": [
+          {
+            "reps": 8
+          },
+          {
+            "reps": 8
+          }
+        ]
+      },
+      "order_in_workout": 4,
+      "weight_unit": null,
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Leg Raises",
+      "set_data": {
+        "sets": [
+          {
+            "reps": 12
+          },
+          {
+            "reps": 15
+          },
+          {
+            "reps": 18
+          },
+          {
+            "reps": 18
+          }
+        ]
+      },
+      "order_in_workout": 5,
+      "weight_unit": null,
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Pull-ups",
+      "set_data": {
+        "sets": [
+          {
+            "reps": 6
+          },
+          {
+            "reps": 6
+          }
+        ]
+      },
+      "order_in_workout": 6,
+      "weight_unit": null,
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Single-arm Dumbbell Row",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 38,
+            "reps": 4
+          },
+          {
+            "weight": 38,
+            "reps": 8
+          },
+          {
+            "weight": 38,
+            "reps": 8
+          },
+          {
+            "weight": 28,
+            "reps": 8
+          }
+        ]
+      },
+      "order_in_workout": 7,
+      "weight_unit": "kg",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Single-arm Machine Row",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 130,
+            "reps": 15
+          },
+          {
+            "weight": 130,
+            "reps": 15
+          },
+          {
+            "weight": 130,
+            "reps": 15
+          }
+        ]
+      },
+      "order_in_workout": 8,
+      "weight_unit": "lbs",
+      "distance_unit": null
+    },
+    {
+      "exercise_name": "Snatch Grip Shrugs",
+      "set_data": {
+        "sets": [
+          {
+            "weight": 60,
+            "reps": 15
+          },
+          {
+            "weight": 60,
+            "reps": 14
+          },
+          {
+            "weight": 60,
+            "reps": 14
+          }
+        ]
+      },
+      "order_in_workout": 9,
+      "weight_unit": "kg",
+      "distance_unit": null
+    }
+  ]
+}

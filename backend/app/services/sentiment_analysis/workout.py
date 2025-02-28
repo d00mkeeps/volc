@@ -1,38 +1,43 @@
 # workout.py
-import asyncio
+import json
 import logging
 from .base import BaseSentimentAnalyzer
-from typing import Optional, List
+from typing import Dict, List
 from langchain_core.messages import HumanMessage, AIMessage
 
 logger = logging.Logger(__name__)
 class WorkoutSentimentAnalyzer(BaseSentimentAnalyzer):
-    async def analyze_sentiment(
-        self,
-        response: str,
-        current_summary: Optional[dict],
-        messages: List[HumanMessage | AIMessage],
-        max_retries: int = 3
-    ) -> Optional[bool]:
-        if not current_summary or len(messages) < 2 or not isinstance(messages[-2], AIMessage):
+    async def analyze_sentiment(self, message: str, current_summary: Dict, messages: List[HumanMessage | AIMessage] = None) -> bool:
+        """Analyze if user approves of the workout summary."""
+        if not current_summary:
             return False
-
-        sentiment_messages = [
-            HumanMessage(content=f"""Last AI Message: {messages[-2].content}
-User Response: {response}
-
-Only return APPROVE if both:
-1. The AI's last message contains a workout summary
-2. The user's response indicates approval""")
-        ]
-
-        for attempt in range(max_retries):
-            try:
-                result = await self.sentiment_chain.ainvoke({"messages": sentiment_messages})
-                return result.content.strip() == "APPROVE"
-            except Exception as e:
-                if "overloaded_error" in str(e) and attempt < max_retries - 1:
-                    await asyncio.sleep(1 * (attempt + 1))
-                    continue
-                logger.error(f"Error in sentiment analysis: {str(e)}")
+            
+        if messages:
+            if len(messages) < 2 or not isinstance(messages[-2], AIMessage):
                 return False
+                
+            last_ai_message = messages[-2].content
+            
+            # Only analyze if the last message asked for confirmation
+            if "Does this look correct?" not in last_ai_message:
+                return False
+                
+            sentiment_messages = [
+                HumanMessage(content=f"""Last AI Message: {last_ai_message}
+        User Response: {message}""")
+            ]
+        else:
+            # Fallback to base class format
+            sentiment_messages = [
+                HumanMessage(content=f"""Summary: {json.dumps(current_summary, indent=2)}
+    User's Response: {message}""")
+            ]
+
+        try:
+            result = await self.sentiment_chain.ainvoke({"messages": sentiment_messages})
+            response = result.content.strip()
+            logger.info(f"Sentiment analysis raw response: '{response}'")
+            return response == "APPROVE"
+        except Exception as e:
+            logger.error(f"Error in sentiment analysis: {str(e)}")
+            return False
