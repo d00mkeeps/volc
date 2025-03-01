@@ -86,75 +86,88 @@ export function ChatAttachmentProvider({ children, conversationId }: Props) {
   const handleSignal = async (type: string, data: any) => {
     console.log('ChatAttachmentProvider: Handling signal:', { type, data });
     
-    if (type === 'workout_approved') {
-      let workoutId: string | null = null;
+  // In the handleSignal method where workout_approved is processed
+if (type === 'workout_approved') {
+  let workoutId: string | null = null;
+  
+  try {
+    setIsLoading(true);
+    const session = await authService.getSession();
+    if (!session?.user?.id) {
+      throw new Error('No authenticated user found');
+    }
+
+    console.log('Processing workout:', data);
+    workoutId = uuidv4();
+    const workoutWithMeta = { 
+      ...data, 
+      id: workoutId, 
+      conversationId,
+      created_at: new Date().toISOString()
+    };
+    
+    // Add to state
+    setWorkouts(prev => {
+      const newWorkouts = new Map(prev);
       
-      try {
-        setIsLoading(true);
-        const session = await authService.getSession();
-        if (!session?.user?.id) {
-          throw new Error('No authenticated user found');
-        }
-    
-        console.log('Processing workout:', data);
-        workoutId = uuidv4();
-        const workoutWithMeta = { 
-          ...data, 
-          id: workoutId, 
-          conversationId,
-          created_at: new Date().toISOString()
-        };
+      // Check if we need to remove older workouts
+      const conversationWorkouts = Array.from(newWorkouts.values())
+        .filter(w => w.conversationId === conversationId);
         
-        // Add to state
-        setWorkouts(prev => {
-          const newWorkouts = new Map(prev);
-          
-          // Check if we need to remove older workouts
-          const conversationWorkouts = Array.from(newWorkouts.values())
-            .filter(w => w.conversationId === conversationId);
-            
-          if (conversationWorkouts.length >= MAX_WORKOUTS_PER_CONVERSATION) {
-            // Sort by creation time (oldest first)
-            const sortedWorkouts = conversationWorkouts.sort((a, b) => {
-              return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-            });
-            
-            // Remove oldest
-            const toRemove = sortedWorkouts[0];
-            if (toRemove) {
-              newWorkouts.delete(toRemove.id);
-            }
-          }
-          
-          // Add new workout
-          newWorkouts.set(workoutId!, workoutWithMeta);
-          return newWorkouts;
+      if (conversationWorkouts.length >= MAX_WORKOUTS_PER_CONVERSATION) {
+        // Sort by creation time (oldest first)
+        const sortedWorkouts = conversationWorkouts.sort((a, b) => {
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         });
-    
-        // Save workout and link it to the conversation
-        await workoutService.createWorkout(session.user.id, workoutWithMeta);
-        await attachmentService.linkWorkoutToConversation(
-          session.user.id,
-          workoutId,
-          conversationId
-        );
         
-        console.log('Workout saved successfully:', workoutId);
-      } catch (error) {
-        console.error('Failed to handle workout signal:', error);
-        // Remove from state if saving failed
-        if (workoutId) {
-          setWorkouts(prev => {
-            const newWorkouts = new Map(prev);
-            newWorkouts.delete(workoutId!);
-            return newWorkouts;
-          });
+        // Remove oldest
+        const toRemove = sortedWorkouts[0];
+        if (toRemove) {
+          newWorkouts.delete(toRemove.id);
         }
-        throw error;
-      } finally {
-        setIsLoading(false);
       }
-    } 
+      
+      // Add new workout
+      newWorkouts.set(workoutId!, workoutWithMeta);
+      return newWorkouts;
+    });
+
+    try {
+      // Try to save workout and link it to the conversation
+      console.log('Saving workout to database:', workoutId);
+      await workoutService.createWorkout(session.user.id, workoutWithMeta);
+      
+      console.log('Linking workout to conversation:', workoutId, conversationId);
+      await attachmentService.linkWorkoutToConversation(
+        session.user.id,
+        workoutId,
+        conversationId
+      );
+      
+      console.log('Workout saved successfully:', workoutId);
+    } catch (dbError: any) {
+      // Log detailed error information
+      console.error('Database error details:', dbError);
+      if (dbError && dbError.message && dbError.message.includes('order')) {
+        console.error('Order syntax error detected. Check .order() calls in Supabase queries.');
+      }
+      throw dbError;
+    }
+  } catch (error) {
+    console.error('Failed to handle workout signal:', error);
+    // Remove from state if saving failed
+    if (workoutId) {
+      setWorkouts(prev => {
+        const newWorkouts = new Map(prev);
+        newWorkouts.delete(workoutId!);
+        return newWorkouts;
+      });
+    }
+    throw error;
+  } finally {
+    setIsLoading(false);
+  }
+}
     else if (type === 'workout_data_bundle') {
       try {
         setIsLoading(true);

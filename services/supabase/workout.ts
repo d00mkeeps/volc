@@ -14,12 +14,12 @@ export class WorkoutService extends BaseService {
         })
         .select()
         .single();
-
+  
       if (workoutError) {
         console.error('Error creating workout:', workoutError);
         throw workoutError;
       }
-
+  
       const exercisePromises = workout.exercises.map(async (exercise) => {
         const { data: exerciseData, error: exerciseError } = await this.supabase
           .from('workout_exercises')
@@ -32,9 +32,9 @@ export class WorkoutService extends BaseService {
           })
           .select()
           .single();
-
+  
         if (exerciseError) throw exerciseError;
-
+  
         const setPromises = exercise.set_data.sets.map(async (set, index) => {
           const { error: setError } = await this.supabase
             .from('workout_exercise_sets')
@@ -47,26 +47,56 @@ export class WorkoutService extends BaseService {
               distance: set.distance,
               duration: set.duration,
             });
-
+  
           if (setError) throw setError;
         });
-
+  
         await Promise.all(setPromises);
         return exerciseData;
       });
-
+  
       await Promise.all(exercisePromises);
-
-      // Fetch the complete workout after creation
-      const createdWorkout = await this.getWorkout(workoutData.id);
+  
+      // Fetch the complete workout after creation - THIS IS WHERE THE ERROR OCCURS
+      // Instead of using complex ordering in the query, we'll sort in memory
+      const { data, error } = await this.supabase
+        .from('workouts')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .eq('id', workoutData.id)
+        .single();
+  
+      if (error) throw error;
+      if (!data) throw new Error('Failed to fetch created workout');
+  
+      // Sort the data in memory
+// Fix for createWorkout method with proper type annotations
+const createdWorkout = {
+  ...data,
+  workout_exercises: data.workout_exercises
+    .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+    .map((exercise: WorkoutExercise) => ({
+      ...exercise,
+      workout_exercise_sets: exercise.workout_exercise_sets.sort(
+        (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+      )
+    }))
+};
+  
       return { data: createdWorkout, error: null } as PostgrestSingleResponse<CompleteWorkout>;
     };
-
+  
     return this.withRetry(operation);
   }
 
   async getWorkout(workoutId: string): Promise<CompleteWorkout> {
     const operation = async () => {
+      // Fetch data without complex nested ordering
       const { data, error } = await this.supabase
         .from('workouts')
         .select(`
@@ -77,23 +107,24 @@ export class WorkoutService extends BaseService {
           )
         `)
         .eq('id', workoutId)
-        .order('workout_exercises.order_index')
-        .order('workout_exercises.workout_exercise_sets.set_number')
         .single();
-
+  
       if (error) throw error;
       if (!data) throw new Error('Workout not found');
-
+  
+      // Sort nested data in-memory instead of relying on Postgrest's nested ordering
       const workout: CompleteWorkout = {
         ...data,
-        workout_exercises: data.workout_exercises.map((exercise: WorkoutExercise) => ({
-          ...exercise,
-          workout_exercise_sets: exercise.workout_exercise_sets.sort(
-            (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
-          )
-        }))
+        workout_exercises: data.workout_exercises
+          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+          .map((exercise: WorkoutExercise) => ({
+            ...exercise,
+            workout_exercise_sets: exercise.workout_exercise_sets.sort(
+              (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+            )
+          }))
       };
-
+  
       return {
         data: workout,
         error: null,
@@ -102,12 +133,13 @@ export class WorkoutService extends BaseService {
         statusText: 'OK'
       } as PostgrestSingleResponse<CompleteWorkout>;
     };
-
+  
     return this.withRetry(operation);
   }
-
+  
   async getUserWorkouts(userId: string): Promise<CompleteWorkout[]> {
     const operation = async () => {
+      // Fetch data without complex nested ordering
       const { data, error } = await this.supabase
         .from('workouts')
         .select(`
@@ -119,7 +151,7 @@ export class WorkoutService extends BaseService {
         `)
         .eq('user_id', userId)
         .order('updated_at', { ascending: false });
-
+  
       if (error) throw error;
       if (!data) {
         return {
@@ -130,19 +162,20 @@ export class WorkoutService extends BaseService {
           statusText: 'OK'
         } as PostgrestSingleResponse<CompleteWorkout[]>;
       }
-
+  
+      // Sort nested data in-memory instead
       const workouts: CompleteWorkout[] = data.map((workout: any) => ({
         ...workout,
         workout_exercises: workout.workout_exercises
+          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
           .map((exercise: WorkoutExercise) => ({
             ...exercise,
             workout_exercise_sets: exercise.workout_exercise_sets.sort(
               (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
             )
           }))
-          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
       }));
-
+  
       return {
         data: workouts,
         error: null,
@@ -151,10 +184,9 @@ export class WorkoutService extends BaseService {
         statusText: 'OK'
       } as PostgrestSingleResponse<CompleteWorkout[]>;
     };
-
+  
     return this.withRetry(operation);
   }
-
   async deleteWorkout(workoutId: string): Promise<PostgrestSingleResponse<null>> {
     const operation = async () => {
       // Delete workout exercise sets first (due to foreign key constraints)
@@ -303,64 +335,64 @@ export class WorkoutService extends BaseService {
         }
   
         const existingExerciseIds = workout.workout_exercises
-        .filter(e => !e.id.startsWith('temp-'))
-        .map(e => e.id);
-
-      const { data: allExercises } = await this.supabase
-        .from('workout_exercises')
-        .select('id')
-        .eq('workout_id', workoutId);
-
-      const deletedExerciseIds = allExercises
-        ?.filter(e => !existingExerciseIds.includes(e.id))
-        .map(e => e.id) || [];
-
-      if (deletedExerciseIds.length > 0) {
-        await this.supabase
+          .filter(e => !e.id.startsWith('temp-'))
+          .map(e => e.id);
+  
+        const { data: allExercises } = await this.supabase
           .from('workout_exercises')
-          .delete()
-          .in('id', deletedExerciseIds);
+          .select('id')
+          .eq('workout_id', workoutId);
+  
+        const deletedExerciseIds = allExercises
+          ?.filter(e => !existingExerciseIds.includes(e.id))
+          .map(e => e.id) || [];
+  
+        if (deletedExerciseIds.length > 0) {
+          await this.supabase
+            .from('workout_exercises')
+            .delete()
+            .in('id', deletedExerciseIds);
+        }
+  
+        // Fetch the complete updated workout
+        const { data: updatedData, error: fetchError } = await this.supabase
+          .from('workouts')
+          .select(`
+            *,
+            workout_exercises (
+              *,
+              workout_exercise_sets (*)
+            )
+          `)
+          .eq('id', workoutId)
+          .single();
+  
+        if (fetchError) throw fetchError;
+        if (!updatedData) throw new Error('Failed to fetch updated workout');
+  
+        // Sort the data in memory with proper type annotations
+        updatedData.workout_exercises.sort((a: WorkoutExercise, b: WorkoutExercise) => 
+          a.order_index - b.order_index
+        );
+        updatedData.workout_exercises.forEach((exercise: WorkoutExercise) => {
+          exercise.workout_exercise_sets.sort((a: WorkoutSet, b: WorkoutSet) => 
+            a.set_number - b.set_number
+          );
+        });
+  
+        return {
+          data: updatedData,
+          error: null,
+          count: null,
+          status: 200,
+          statusText: 'OK'
+        } as PostgrestSingleResponse<CompleteWorkout>;
+  
+      } catch (error) {
+        console.error('Workout update failed:', error);
+        throw error;
       }
-
-// Fetch the complete updated workout
-const { data: updatedData, error: fetchError } = await this.supabase
-  .from('workouts')
-  .select(`
-    *,
-    workout_exercises (
-      *,
-      workout_exercise_sets (*)
-    )
-  `)
-  .eq('id', workoutId)
-  .single();
-
-if (fetchError) throw fetchError;
-if (!updatedData) throw new Error('Failed to fetch updated workout');
-
-// Sort the data in memory with proper type annotations
-updatedData.workout_exercises.sort((a: WorkoutExercise, b: WorkoutExercise) => 
-  a.order_index - b.order_index
-);
-updatedData.workout_exercises.forEach((exercise: WorkoutExercise) => {
-  exercise.workout_exercise_sets.sort((a: WorkoutSet, b: WorkoutSet) => 
-    a.set_number - b.set_number
-  );
-});
-
-return {
-  data: updatedData,
-  error: null,
-  count: null,
-  status: 200,
-  statusText: 'OK'
-} as PostgrestSingleResponse<CompleteWorkout>;
-
-    } catch (error) {
-      console.error('Workout update failed:', error);
-      throw error;
-    }
-  };
-
-  return this.withRetry(operation);
-}}
+    };
+  
+    return this.withRetry(operation);
+  }}

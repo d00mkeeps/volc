@@ -1,4 +1,4 @@
-import { PostgrestSingleResponse, PostgrestError } from '@supabase/supabase-js';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { BaseService } from './base';
 import { Message, Conversation } from '@/types';
 
