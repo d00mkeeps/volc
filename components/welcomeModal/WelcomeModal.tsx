@@ -1,20 +1,24 @@
+import { uuidv4 } from '@/utils/uuid';
 import { MessageProvider } from "@/context/MessageContext";
+import { ChatAttachmentProvider } from "@/context/ChatAttachmentContext";
 import { WelcomeModalProps, ActualWizardProps } from "@/types/welcomeModal";
 import { useRef, useState } from "react";
 import { Modal, SafeAreaView, View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import Wizard, { WizardRef } from "react-native-wizard";
-import WelcomeStep from "./WelcomeStep";
+import {WelcomeStep} from "./WelcomeStep";
 import { FinishStep } from "./FinishStep";
 import { OnboardingConversationStep } from "./OnboardingStep";
 import React from "react";
 import { Button } from "../public/atoms";
 
- const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
+const WelcomeModal: React.FC<WelcomeModalProps> = ({ isVisible, onClose }) => {
   const wizardRef = useRef<WizardRef>(null);
   const [isFirstStep, setIsFirstStep] = useState(true);
   const [isLastStep, setIsLastStep] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  // Generate a UUID for this onboarding session
+  const [sessionId] = useState(() => uuidv4());
 
   const showNotification = (message: string) => {
     Toast.show({
@@ -67,7 +71,7 @@ import { Button } from "../public/atoms";
       ),
     },
     {
-      content: <OnboardingConversationStep wizardRef={wizardRef} />,
+      content: <OnboardingConversationStep wizardRef={wizardRef} sessionId={sessionId} />,
     },
     {
       content: <FinishStep />,
@@ -81,59 +85,61 @@ import { Button } from "../public/atoms";
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <MessageProvider>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1 }}
-        >
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={[styles.wizardWrapper, getWizardContainerStyle(currentStep)]}>
-              {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
-                ref: wizardRef,
-                steps: stepList,
-                isFirstStep: (val) => setIsFirstStep(val),
-                isLastStep: (val) => setIsLastStep(val),
-                onNext: () => setCurrentStep(prev => prev + 1),
-                onPrev: () => setCurrentStep(prev => prev - 1),
-                currentStep: ({ currentStep }) => {
-                  setCurrentStep(currentStep);
-                },
-              })}
-            </View>
-            {currentStep !== 1 && (
-              <View style={styles.buttonContainer}>
-                {!isFirstStep && !isLastStep && (
-                  <Button
-                    onPress={() => wizardRef.current?.prev()}
-                    style={styles.button}
-                  >
-                    Back
-                  </Button>
-                )}
-                <Button
-                  onPress={() => {
-                    if (isLastStep) {
-                      onClose();
-                    } else {
-                      wizardRef.current?.next();
-                    }
-                  }}
-                  style={{
-                    ...styles.button,
-                    width: (!isFirstStep && !isLastStep) ? '48%' : '100%'
-                  }}
-                >
-                  {isLastStep ? "Finish" : "Next"}
-                </Button>
+      <ChatAttachmentProvider conversationId={sessionId}>
+        <MessageProvider>
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+          >
+            <SafeAreaView style={styles.modalContainer}>
+              <View style={[styles.wizardWrapper, getWizardContainerStyle(currentStep)]}>
+                {React.createElement(Wizard as unknown as React.ComponentType<ActualWizardProps>, {
+                  ref: wizardRef,
+                  steps: stepList,
+                  isFirstStep: (val) => setIsFirstStep(val),
+                  isLastStep: (val) => setIsLastStep(val),
+                  onNext: () => setCurrentStep(prev => prev + 1),
+                  onPrev: () => setCurrentStep(prev => prev - 1),
+                  currentStep: ({ currentStep }) => {
+                    setCurrentStep(currentStep);
+                  },
+                })}
               </View>
-            )}
-          </SafeAreaView>
-        </KeyboardAvoidingView>
-        <Toast />
-      </MessageProvider>
+              {currentStep !== 1 && (
+                <View style={styles.buttonContainer}>
+                  {!isFirstStep && !isLastStep && (
+                    <Button
+                      onPress={() => wizardRef.current?.prev()}
+                      style={styles.button}
+                    >
+                      Back
+                    </Button>
+                  )}
+                  <Button
+                    onPress={() => {
+                      if (isLastStep) {
+                        onClose();
+                      } else {
+                        wizardRef.current?.next();
+                      }
+                    }}
+                    style={{
+                      ...styles.button,
+                      width: (!isFirstStep && !isLastStep) ? '48%' : '100%'
+                    }}
+                  >
+                    {isLastStep ? "Finish" : "Next"}
+                  </Button>
+                </View>
+              )}
+            </SafeAreaView>
+          </KeyboardAvoidingView>
+          <Toast />
+        </MessageProvider>
+      </ChatAttachmentProvider>
     </Modal>
-  );}
-
+  );
+};
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
@@ -157,4 +163,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WelcomeModal
+
+
+export default WelcomeModal;

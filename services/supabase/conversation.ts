@@ -77,12 +77,46 @@ export class ConversationService extends BaseService {
   
     return this.withRetry(operation);
   }  
+
+  // In conversation.ts
+async createOnboardingConversation(params: {
+  userId: string;
+  sessionId: string;  // The UUID we generated
+  configName: string;
+}): Promise<Conversation> {
+  const operation = async () => {
+    console.log('📤 Creating onboarding conversation:', params);
+    
+    // Use a direct insert instead of the RPC since we need to specify the ID
+    const { data, error } = await this.supabase
+      .from('conversations')
+      .insert({
+        id: params.sessionId,
+        user_id: params.userId,
+        title: 'Onboarding Session',
+        config_name: params.configName,
+        status: 'active'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create onboarding conversation');
+
+    console.log('📥 Onboarding conversation created:', data);
+    return { data, error: null, count: null, status: 200, statusText: 'OK' };
+  };
+
+  return this.withRetry(operation);
+}
+
 async getUserConversations(): Promise<Conversation[]> {
   const operation = async () => {
     const response = await this.supabase
       .from('conversations')
       .select('*')
       .eq('status', 'active')
+      .not('config_name', 'eq', 'onboarding') 
       .order('updated_at', { ascending: false });
 
     if (response.error) throw response.error;

@@ -4,17 +4,18 @@ import { UserOnboarding } from "./onboarding";
 import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 
 export type ChatConfigName = 
-  | 'onboarding'
-  | 'default'
+  |'onboarding'
+  |'default'
   |'workout-analysis'
  
- export  interface ChatUIProps {
-    configName: ChatConfigName;
+  export interface ChatUIProps {
+    configName: string;
     conversationId?: string;
-    title: string;
+    title?: string;
     subtitle?: string;
     onSignal?: (type: string, data: any) => void;
-    showNavigation?: boolean
+    showNavigation?: boolean;
+    showSidebar?: boolean; // Add this line
   }
 
 export interface WorkoutChatProps {
@@ -49,7 +50,7 @@ export interface HeaderProps {
   showNavigation?: boolean,
   onHomePress?: () => void,
   onBackPress?: () => void,
-  onToggleSidebar: () => void,
+  onToggleSidebar?: () => void,
   isSidebarOpen: boolean
 }
 

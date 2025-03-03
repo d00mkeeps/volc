@@ -1,7 +1,7 @@
 import { WelcomeStepProps } from "@/types/welcomeModal";
 import { View, Text, StyleSheet } from "react-native";
 
-const WelcomeStep: React.FC<WelcomeStepProps> = () => {
+export const WelcomeStep: React.FC<WelcomeStepProps> = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.stepTitle}>Welcome to Our App!</Text>
@@ -32,5 +32,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-export default WelcomeStep

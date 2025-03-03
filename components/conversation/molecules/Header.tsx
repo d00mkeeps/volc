@@ -28,23 +28,27 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, showNavigation, onTogg
             {title && <Text style={styles.title}>{title}</Text>}
             {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
           </View>
-          <TouchableOpacity 
-            onPress={onToggleSidebar}
-            style={styles.sidebarButton}
-          >
-            <Ionicons 
-              name={isSidebarOpen ? "close" : "menu"} 
-              size={24} 
-              color="#fff" 
-            />
-          </TouchableOpacity>
+          {/* Only render sidebar button if onToggleSidebar is provided */}
+          {onToggleSidebar && (
+            <TouchableOpacity 
+              onPress={onToggleSidebar}
+              style={styles.sidebarButton}
+            >
+              <Ionicons 
+                name={isSidebarOpen ? "close" : "menu"} 
+                size={24} 
+                color="#fff" 
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Header
+export default Header;
+
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: '#1f281f',

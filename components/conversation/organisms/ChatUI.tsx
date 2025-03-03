@@ -15,6 +15,7 @@ export const ChatUI = memo(({
   subtitle,
   onSignal,
   showNavigation,
+  showSidebar = true, // New prop with default value true
 }: ChatUIProps) => {
   const { 
     messages, 
@@ -29,11 +30,13 @@ export const ChatUI = memo(({
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const hasConnectedRef = useRef(false);
   const [detailedAnalysis, setDetailedAnalysis] = useState(false);
-  const signalHandlerRef = useRef<((type: string, data: any) => void) | null>(null);
 
+  // Only allow sidebar toggle if showSidebar is true
   const handleToggleSidebar = useCallback(() => {
-    setIsSidebarOpen(prev => !prev);
-  }, []);
+    if (conversationId && showSidebar) {
+      setIsSidebarOpen(prev => !prev);
+    }
+  }, [conversationId, showSidebar]);
 
   const handleToggleAnalysis = useCallback((value: boolean) => {
     setDetailedAnalysis(value);
@@ -49,48 +52,29 @@ export const ChatUI = memo(({
     }
   }, [sendMessage, detailedAnalysis]);
 
-  // Memoize the signal handler to avoid recreating it on each render
-  const createSignalHandler = useCallback(() => {
-    if (!signalHandlerRef.current) {
-      signalHandlerRef.current = (type: string, data: any) => {
-        console.log('ChatUI: Handling signal:', { type, data });
-        
-        // Pass the signal to the attachment handler
-        handleSignal(type, data);
-        
-        if (onSignal) {
-          onSignal(type, data);
-        }
-        
-        // Optionally, trigger a component refresh when a graph bundle arrives
-        if (type === 'workout_data_bundle' && data?.bundle_id) {
-          console.log('Graph bundle received:', data.bundle_id);
-        }
-      };
-    }
-    return signalHandlerRef.current;
-  }, [handleSignal, onSignal]);
-
-// Modified ChatUI.tsx signal handler effect
-useEffect(() => {
-  // Skip registration until the component is fully mounted and stable
-  const timer = setTimeout(() => {
-    console.log('ChatUI: Registering signal handler');
+  // Register signal handler
+  useEffect(() => {
+    // Create handler function
     const handler = (type: string, data: any) => {
       console.log('ChatUI: Handling signal:', { type, data });
-      handleSignal(type, data);
-      if (onSignal) onSignal(type, data);
+      
+      if (handleSignal) {
+        handleSignal(type, data);
+      }
+      
+      if (onSignal) {
+        onSignal(type, data);
+      }
     };
     
+    console.log('ChatUI: Registering signal handler');
     registerMessageHandler(handler);
-  }, 100); // Small delay to ensure stability
-  
-  return () => {
-    clearTimeout(timer);
-    console.log('ChatUI: Unregistering signal handler');
-    registerMessageHandler(null);
-  };
-}, [handleSignal, onSignal, registerMessageHandler]);
+    
+    return () => {
+      console.log('ChatUI: Unregistering signal handler');
+      registerMessageHandler(null);
+    };
+  }, [handleSignal, onSignal, registerMessageHandler]);
 
   // Keyboard event listeners
   useEffect(() => {
@@ -108,13 +92,17 @@ useEffect(() => {
     };
   }, []);
 
-  // Load conversation once
+  // Load conversation if conversationId exists
   useEffect(() => {
     const loadConversationOnce = async () => {
       if (!hasConnectedRef.current && conversationId) {
         console.log(`ChatUI: Loading conversation ${conversationId}`);
         hasConnectedRef.current = true;
-        await loadConversation(conversationId);
+        try {
+          await loadConversation(conversationId);
+        } catch (error) {
+          console.error(`ChatUI: Failed to load conversation ${conversationId}:`, error);
+        }
       }
     };
     
@@ -127,7 +115,8 @@ useEffect(() => {
 
   // Memoize sidebar to prevent unnecessary re-renders
   const sidebarComponent = useMemo(() => {
-    if (!conversationId) return null;
+    // Don't show sidebar if showSidebar is false or no conversationId
+    if (!conversationId || !showSidebar) return null;
     
     return (
       <Sidebar 
@@ -137,22 +126,16 @@ useEffect(() => {
         onToggleAnalysis={handleToggleAnalysis}
       />
     );
-  }, [isSidebarOpen, conversationId, detailedAnalysis, handleToggleAnalysis]);
-
-  // Early exit if no conversationId
-  if (!conversationId) {
-    console.error('ChatUI: conversationId is required');
-    return null;
-  }
+  }, [isSidebarOpen, conversationId, detailedAnalysis, handleToggleAnalysis, showSidebar]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Header 
-        title={title} 
-        subtitle={subtitle}
+        title={title || "Chat"} 
+        subtitle={subtitle || ""}
         showNavigation={showNavigation}
-        onToggleSidebar={handleToggleSidebar}
-        isSidebarOpen={isSidebarOpen}
+        onToggleSidebar={showSidebar ? handleToggleSidebar : undefined}
+        isSidebarOpen={showSidebar ? isSidebarOpen : false}
       />
       <View style={styles.contentContainer}>
         <MessageList 

@@ -1,4 +1,4 @@
-export { WelcomeStep } from './WelcomeStep';
+export {WelcomeStep} from './WelcomeStep';
 export { OnboardingConversationStep} from './OnboardingStep'
 export {FinishStep} from './FinishStep'
 
