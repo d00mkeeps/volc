@@ -11,11 +11,39 @@ from ...services.workout_analysis_service import WorkoutAnalysisService
 
 router = APIRouter()
 load_dotenv()
+
 @router.websocket("/ws/onboarding")
 async def onboarding_websocket(websocket: WebSocket):
     """Handles the onboarding chat flow"""
-    service = OnboardingService()
-    await service.process_websocket(websocket)
+    logger = logging.getLogger(__name__)
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    
+    try:
+        await websocket.accept()
+        logger.info("WebSocket connection accepted")
+        
+        # Initialize LLM instance
+        llm = ChatAnthropic(
+            model="claude-3-7-sonnet-20250219",
+            streaming=True,
+            api_key=api_key
+        )
+        
+        # Create service with LLM
+        service = OnboardingService(llm=llm)
+        
+        # Process WebSocket messages
+        await service.process_websocket(websocket)
+        
+    except WebSocketDisconnect:
+        logger.info("WebSocket disconnected")
+    except Exception as e:
+        logger.error(f"Error in onboarding websocket: {str(e)}", exc_info=True)
+        try:
+            await websocket.close(code=1011)
+        except:
+            pass
+        raise
 
 @router.websocket("/ws/default/{conversation_id}")
 async def conversation_websocket(websocket: WebSocket, conversation_id: str):
@@ -62,7 +90,7 @@ async def workout_analysis_websocket(websocket: WebSocket):
         
         # Initialize service with dependencies
         llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-7-sonnet-20250219",
             streaming=True,
             api_key=api_key,
         )

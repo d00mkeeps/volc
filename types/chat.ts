@@ -9,7 +9,7 @@ export type ChatConfigName =
   |'workout-analysis'
  
   export interface ChatUIProps {
-    configName: string;
+    configName: ChatConfigName;
     conversationId?: string;
     title?: string;
     subtitle?: string;
@@ -58,6 +58,7 @@ export interface MessageListProps {
   messages: Message[];
   streamingMessage: Message | null;
   style?: StyleProp<ViewStyle>;
+  configName?: ChatConfigName
 }
 
 export interface ConversationListProps {

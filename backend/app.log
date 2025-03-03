@@ -1,44 +1,32 @@
-2025-03-03 15:23:38,221 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ccf22f1e-8649-420d-a571-c48c4bbbff0e
-2025-03-03 15:23:38,224 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:23:38,246 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ccf22f1e-8649-420d-a571-c48c4bbbff0e
-2025-03-03 15:23:38,759 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:23:38,759 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:23:38,760 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: ccf22f1e-8649-420d-a571-c48c4bbbff0e
-2025-03-03 15:23:38,761 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:23:38,767 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: ccf22f1e-8649-420d-a571-c48c4bbbff0e
-2025-03-03 15:23:51,705 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1012 and reason: 
-2025-03-03 15:23:51,707 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1012 and reason: 
-2025-03-03 15:24:04,169 - root - DEBUG - Logging has been set up
-2025-03-03 15:24:04,170 - app.main - INFO - Application starting
-2025-03-03 15:39:57,532 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:39:57,533 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:39:57,550 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:39:57,558 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:39:57,558 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:39:57,558 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:39:57,558 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:39:57,562 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:42:48,775 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:42:48,777 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:42:48,799 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:42:48,799 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:42:48,799 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:53:34,982 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:53:34,988 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:53:35,004 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:53:35,005 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:53:35,023 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 6bd45924-658c-4b45-88f9-8883f794ed89
-2025-03-03 15:55:55,646 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:55:55,648 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:56:04,176 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 73bab234-3065-44e1-a628-5caa1c48868b
-2025-03-03 15:56:04,193 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:56:04,248 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 73bab234-3065-44e1-a628-5caa1c48868b
-2025-03-03 15:56:04,687 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:56:04,687 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 15:56:04,689 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: 73bab234-3065-44e1-a628-5caa1c48868b
-2025-03-03 15:56:04,689 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-03 15:56:04,695 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: 73bab234-3065-44e1-a628-5caa1c48868b
-2025-03-03 16:02:29,873 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 16:02:29,877 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-03 16:12:11,989 - root - DEBUG - Logging has been set up
-2025-03-03 16:12:11,990 - app.main - INFO - Application starting
+2025-03-03 20:00:25,219 - httpcore.connection - DEBUG - close.started
+2025-03-03 20:00:25,220 - httpcore.connection - DEBUG - close.complete
+2025-03-03 20:00:25,221 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-03-03 20:00:25,235 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1085a4050>
+2025-03-03 20:00:25,236 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x108457e30> server_hostname='api.anthropic.com' timeout=None
+2025-03-03 20:00:25,258 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1084cec30>
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-03-03 20:00:26,248 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Mar 2025 20:00:26 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-03T20:00:26Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'19000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-03T20:00:27Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-03T20:00:32Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'26000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-03T20:00:27Z'), (b'request-id', b'req_01XQSq96RyP7bUhpVr9ixab3'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91abb84e08e8cc8d-MAN')])
+2025-03-03 20:00:26,249 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-03 20:00:26,249 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-03 20:00:26,249 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 680, 'output_tokens': 1, 'total_tokens': 681, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Thanks' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', Miles! What fitness goals would you like to achieve? For' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' example, building muscle, losing weight, improving endurance, etc.' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 0, 'output_tokens': 31, 'total_tokens': 31, 'input_token_details': {}}
+2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - 
+=== Final Conversation State ===
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - Total messages: 5
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - =====================

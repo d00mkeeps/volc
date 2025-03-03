@@ -1,27 +1,108 @@
-2025-03-03 00:20:27,000 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Hello! \n\nSaturday workout:\nWarm up:\nFace pulls:\n10x26.4kg \n\nHyperextensions:\n8x45kg, 10x45kg, 12x45lg\n\nDecline crunches:\n12x10kg, 10x15kg\n\n\nChins:\n8, 8\nThere are ok but I prefer how pull ups feel\n\nLeg raises:\n12, 15, 18, 18\n\nPull ups:\n6, 6\n\n1x db row:\n38x4, 38x8, 38x8 (drop set into 28x8)\nWeaker side listed for these. I haven’t done them in a while, so probably heavier than I should be lifting lol\n\n1 arm Machine row:\n15x130lbs (all 3 sets)\n\nSnatch grip shrugs:\n60x15, 60x14, 60x14\n\nNote on pull ups: I made sure to engage lower traps to bring scapula back, then I used my last to finish the movement '}, {'type': 'text', 'text': 'Hello! \n\nSaturday workout:\nWarm up:\nFace pulls:\n10x26.4kg \n\nHyperextensions:\n8x45kg, 10x45kg, 12x45lg\n\nDecline crunches:\n12x10kg, 10x15kg\n\n\nChins:\n8, 8\nThere are ok but I prefer how pull ups feel\n\nLeg raises:\n12, 15, 18, 18\n\nPull ups:\n6, 6\n\n1x db row:\n38x4, 38x8, 38x8 (drop set into 28x8)\nWeaker side listed for these. I haven’t done them in a while, so probably heavier than I should be lifting lol\n\n1 arm Machine row:\n15x130lbs (all 3 sets)\n\nSnatch grip shrugs:\n60x15, 60x14, 60x14\n\nNote on pull ups: I made sure to engage lower traps to bring scapula back, then I used my last to finish the movement '}]}, {'role': 'assistant', 'content': "Hi there! I've got your back day workout here. Would you like to add any more exercises to this workout?"}, {'role': 'user', 'content': 'No thanks!'}, {'role': 'assistant', 'content': 'Great! I notice some mixed units between kg and lbs - for the Machine Row, would you prefer to record that in kg to match the rest of your workout?\n\nAlso, for the DB Row, is that 38kg for the weight?'}, {'role': 'user', 'content': 'Good thinking, let’s use 59kg for the weight currently in lbs'}, {'role': 'assistant', 'content': 'Thanks for clarifying that! Could you share a bit about how the overall workout felt? What went well and what could have been better?'}, {'role': 'user', 'content': 'It was good! No further notes needed!'}, {'role': 'assistant', 'content': "Perfect! Here's your workout summary:\n\nBack & Core Workout\nExercises:\n1. Face Pulls\n   • Set 1: 10 reps x 26.4kg\n\n2. Hyperextensions\n   • Set 1: 8 reps x 45kg\n   • Set 2: 10 reps x 45kg\n   • Set 3: 12 reps x 45kg\n\n3. Decline Crunches\n   • Set 1: 12 reps x 10kg\n   • Set 2: 10 reps x 15kg\n\n4. Chin-ups\n   • Set 1: 8 reps (bodyweight)\n   • Set 2: 8 reps (bodyweight)\n\n5. Leg Raises\n   • Set 1: 12 reps\n   • Set 2: 15 reps\n   • Set 3: 18 reps\n   • Set 4: 18 reps\n\n6. Pull-ups\n   • Set 1: 6 reps (bodyweight)\n   • Set 2: 6 reps (bodyweight)\n\n7. Single-arm DB Row\n   • Set 1: 4 reps x 38kg\n   • Set 2: 8 reps x 38kg\n   • Set 3: 8 reps x 38kg, drop set to 8 reps x 28kg\n\n8. Single-arm Machine Row\n   • Set 1: 15 reps x 59kg\n   • Set 2: 15 reps x 59kg\n   • Set 3: 15 reps x 59kg\n\n9. Snatch Grip Shrugs\n   • Set 1: 15 reps x 60kg\n   • Set 2: 14 reps x 60kg\n   • Set 3: 14 reps x 60kg\n\nNote:\n• Pull-up form note: Engaged lower traps for scapular retraction before completing movement\n\nDoes this look correct?"}, {'role': 'user', 'content': [{'type': 'text', 'text': 'Looks good!'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-5-sonnet-20241022', 'stream': True, 'system': 'You are the TrainSmart Coach - warm, encouraging, and professional while keeping responses brief and natural.\n\nCONVERSATION FLOW:\n1. ALWAYS ask "Would you like to add another exercise to this workout?" after each exercise\n   - Only proceed to next steps when user confirms no more exercises\n\n2. Once user has no more exercises:\n   Think through the following steps:\n   a) Look at MISSING_FIELDS and the EXTRACTION_STATE\n   b) For each exercise with missing fields:\n      - Is it missing weight units while having weight values? These must be clarified\n      - Is it missing distance units while having distance values? These must be clarified\n      - Are any sets missing reps or weight values? These must be clarified\n      - Ignore missing units for fields that don\'t exist (e.g., distance_unit for strength exercises)\n   c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn\'t want to provide this, it\'s not necessary.\n\n3. Finally, if there aren\'t key fields missing AND all sets have necessary data, present summary:\n   - Generate brief name if none provided\n   - Format as:\n     [Workout Name],\n     Exercises:\n     1. [Exercise Name]\n        Sets:[Set details with explicit units, each set on it\'s own line]\n     2. [rest of exercises...]\n     Notes:\n      [Workout description point 1],\n      [workout description point 2],\n      [rest of workout description...], \n   - Ask "Does this look correct?"\n\n<OtherInstructions>\nMatch user\'s technical knowledge level in responses.\nYou must NEVER discuss missing fields or other system processes in conversation. \nGenerally, a strength exercise is shown as reps and weight. If an exercise is shown as "7x34kg", you should assume it represents one set of seven reps with 34kg, not seven sets of 34kg with unknown reps (unless corrected).\nDisplay the summary as bullet points\n</OtherInstructions>\n\n<Metadata>\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\nPrevious conversation: {messages}\nHuman: {current_message}\n</Metadata>\n'}}
-2025-03-03 00:20:27,003 - httpcore.connection - DEBUG - close.started
-2025-03-03 00:20:27,004 - httpcore.connection - DEBUG - close.complete
-2025-03-03 00:20:27,004 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-03-03 00:20:27,021 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11561b110>
-2025-03-03 00:20:27,021 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x11489bec0> server_hostname='api.anthropic.com' timeout=None
-2025-03-03 00:20:27,048 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11561b070>
-2025-03-03 00:20:27,048 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-03-03 00:20:27,048 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-03-03 00:20:27,048 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-03-03 00:20:27,049 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-03-03 00:20:27,049 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-03-03 00:20:28,207 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Mar 2025 00:20:28 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-03T00:20:28Z'), (b'anthropic-ratelimit-input-tokens-limit', b'40000'), (b'anthropic-ratelimit-input-tokens-remaining', b'39000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-03T00:20:29Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-03T00:20:33Z'), (b'anthropic-ratelimit-tokens-limit', b'48000'), (b'anthropic-ratelimit-tokens-remaining', b'46000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-03T00:20:29Z'), (b'request-id', b'req_01NmsUH5cV6EL2yJ7Bp5nQ2R'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91a4f7d53b11b0fe-MAN')])
-2025-03-03 00:20:28,207 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-03 00:20:28,208 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-03-03 00:20:28,208 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-03-03 00:20:28,209 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': 'Great! Your'}
-2025-03-03 00:20:28,339 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': ' workout has been saved. Feel free to start'}
-2025-03-03 00:20:28,514 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'content', 'data': " a new workout whenever you're ready!"}
-2025-03-03 00:20:28,648 - app.services.conversation_service - DEBUG - Sent chunk: {'type': 'done', 'data': ''}
-2025-03-03 00:20:28,661 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-03-03 00:20:28,661 - httpcore.http11 - DEBUG - response_closed.started
-2025-03-03 00:20:28,661 - httpcore.http11 - DEBUG - response_closed.complete
-2025-03-03 11:51:46,196 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
-2025-03-03 11:51:46,197 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
-2025-03-03 15:14:08,407 - root - DEBUG - Logging has been set up
-2025-03-03 15:14:08,407 - app.main - INFO - Application starting
+2025-03-03 20:00:15,442 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content="'d love to help you with your fitness goals." additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
+2025-03-03 20:00:15,445 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:15,632 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' To get started, could you share your first an' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
+2025-03-03 20:00:15,632 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:15,825 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='d last name, and whether you prefer metric (' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
+2025-03-03 20:00:15,825 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:15,915 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='kg/cm) or imperial (lb/ft' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
+2025-03-03 20:00:15,915 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:16,090 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=')?' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
+2025-03-03 20:00:16,091 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:16,100 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-8e53838e-1576-4f39-9727-24c973e0b525' usage_metadata={'input_tokens': 0, 'output_tokens': 47, 'total_tokens': 47, 'input_token_details': {}}
+2025-03-03 20:00:16,101 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:16,118 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-03 20:00:16,119 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-03 20:00:16,119 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - 
+=== Final Conversation State ===
+2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - Total messages: 3
+2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-03-03 20:00:25,209 - app.services.onboarding_service - INFO - Processing message: I’m miles and I use the metric system
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. 
+
+PROCESS FOR EACH RESPONSE:
+1. CHECK MISSING FIELDS
+Read MISSING_FIELDS to identify outstanding information
+
+2. DETERMINE NEXT FIELD
+Follow this priority order:
+1. First/Last Name + Unit system (metric/imperial)
+2. Basic Goal
+3. Goal Timeframe
+4. Specific Goal Numbers
+5. Current Abilities
+6. Training Preferences
+7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)
+8. Training Age (years of experience)
+9. Injuries
+
+
+
+3. FORM RESPONSE
+Structure: [Brief acknowledgment] + [Single question for next priority field]
+Example: "Thanks, John! What fitness goals would you like to achieve?"
+
+4. OUTPUT
+CRITICAL: Return ONLY the formed response. No other text or system information.
+
+5. SUMMARY DISPLAY
+Only once all the required information has been collected, return this exact message:
+
+Great! I've got all the information I need. Here's a summary of what we discussed:
+
+Training Profile for [First Name]:
+- Goal: [specific goal with timeframe]
+- Current Level: [abilities]
+- Experience: [training age]
+- Preferences: [exercise preferences]
+- Health Notes: [injuries/limitations]
+
+Personal Details:
+- Name: [First Last]
+- Age Group: [range]
+- Units: [metric/imperial]
+
+Does this look accurate to you?
+
+PERSONALITY:
+- Warm and encouraging but professional
+- Match user's technical level
+- Keep responses brief
+- Natural, conversational tone
+
+SPECIAL BEHAVIORS:
+1. Age Group Question
+   When asking for age group, always list valid ranges:
+   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"
+
+2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.
+
+3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"
+
+
+EXTRACTION_STATE: {extraction_state}
+MISSING_FIELDS: {missing_fields}
+
+Previous conversation: {messages}
+Human: {current_message}
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
+Message 3 (HumanMessage):
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!
+2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
+Message 4 (AIMessage):
+2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! I'd love to help you with your fitness goals. To get started, could you share your first and last name, and whether you prefer metric (kg/cm) or imperial (lb/ft)?
+2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - 
+Message 5 (HumanMessage):
+2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: I’m miles and I use the metric system
+2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - 
+Message 6 (HumanMessage):
+2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: {current_message}
+2025-03-03 20:00:25,212 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-03-03 20:00:25,219 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': "Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!"}, {'type': 'text', 'text': "Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!"}]}, {'role': 'assistant', 'content': "Hi there! I'd love to help you with your fitness goals. To get started, could you share your first and last name, and whether you prefer metric (kg/cm) or imperial (lb/ft)?"}, {'role': 'user', 'content': [{'type': 'text', 'text': 'I’m miles and I use the metric system'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-7-sonnet-20250219', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. \n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. First/Last Name + Unit system (metric/imperial)\n2. Basic Goal\n3. Goal Timeframe\n4. Specific Goal Numbers\n5. Current Abilities\n6. Training Preferences\n7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)\n8. Training Age (years of experience)\n9. Injuries\n\n\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Thanks, John! What fitness goals would you like to achieve?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other text or system information.\n\n5. SUMMARY DISPLAY\nOnly once all the required information has been collected, return this exact message:\n\nGreat! I\'ve got all the information I need. Here\'s a summary of what we discussed:\n\nTraining Profile for [First Name]:\n- Goal: [specific goal with timeframe]\n- Current Level: [abilities]\n- Experience: [training age]\n- Preferences: [exercise preferences]\n- Health Notes: [injuries/limitations]\n\nPersonal Details:\n- Name: [First Last]\n- Age Group: [range]\n- Units: [metric/imperial]\n\nDoes this look accurate to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. Age Group Question\n   When asking for age group, always list valid ranges:\n   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"\n\n2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.\n\n3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"\n\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}

@@ -12,7 +12,7 @@ from app.core.examples.workout_extractor import WORKOUT_EXAMPLES
 from langchain_core.utils.function_calling import tool_example_to_messages
 
 class WorkoutExtractor(BaseExtractor[Workout]):
-    def __init__(self, model: str = "claude-3-5-sonnet-20241022") -> None:
+    def __init__(self, model: str = "claude-3-7-sonnet-20250219") -> None:
 
         load_dotenv()
 

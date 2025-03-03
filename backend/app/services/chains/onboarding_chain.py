@@ -1,18 +1,22 @@
 from datetime import datetime
 import json
-from typing import Dict, Any, Optional
+from typing import AsyncGenerator, Dict, Any, Optional
+import logging
+from fastapi import WebSocket, WebSocketDisconnect
+from langchain_anthropic import ChatAnthropic
 from app.core.prompts.onboarding_conversation import ONBOARDING_PROMPT
 from app.schemas.onboarding_summary import UserOnboarding
 from app.services.extraction.onboarding_extractor import OnboardingExtractor
 from app.services.sentiment_analysis import BaseSentimentAnalyzer
 from .base_conversation_chain import BaseConversationChain
 
+
+logger = logging.getLogger()
 class OnboardingChain(BaseConversationChain):
-    def __init__(self, api_key: str):
+    def __init__(self, llm: ChatAnthropic):
         super().__init__(
             system_prompt=ONBOARDING_PROMPT,
-            api_key=api_key,
-            approval_signal_type="workout_history_approved"
+            llm=llm
         )
         
         # Initialize specialized components
@@ -24,13 +28,13 @@ class OnboardingChain(BaseConversationChain):
         self.current_summary: Optional[Dict] = None
         self.state_history = []
 
-    async def extract_data(self) -> UserOnboarding:
-        """Extract onboarding data from conversation."""
-        return await self.extractor.extract(self.messages)
-
+        self.approval_signal_type="workout_history_approved",
+  
     async def analyze_sentiment(self, message: str, current_summary: Dict) -> bool:
         """Analyze if user approves of the onboarding summary."""
         return await self.sentiment_analyzer.analyze_sentiment(message, current_summary)
+
+
 
     async def update_state(self, extracted_data: UserOnboarding) -> None:
         """Update onboarding state and track changes."""
@@ -53,8 +57,14 @@ class OnboardingChain(BaseConversationChain):
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
         """Get variables needed for onboarding conversation."""
+        # Start with the required messages key
+        prompt_vars = {
+            "messages": self.messages,
+            "current_message": ""  # Add empty default for current_message
+        }
+        
         if not self.extraction_state:
-            return {}
+            return prompt_vars
 
         extraction_state_display = {
             "personalInfo": {
@@ -68,10 +78,12 @@ class OnboardingChain(BaseConversationChain):
             }
         }
 
-        return {
+        prompt_vars.update({
             "extraction_state": json.dumps(extraction_state_display, indent=2),
             "missing_fields": self._get_missing_fields(self.extraction_state)
-        }
+        })
+
+        return prompt_vars
 
     def _detect_changes(self, old_state: UserOnboarding, new_state: UserOnboarding) -> Dict[str, Any]:
         """Track changes between states."""

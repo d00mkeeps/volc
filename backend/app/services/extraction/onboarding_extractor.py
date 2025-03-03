@@ -11,7 +11,7 @@ from .base_extractor import BaseExtractor
 logger = logging.getLogger(__name__)
 
 class OnboardingExtractor(BaseExtractor[UserOnboarding]):
-    def __init__(self, model: str = "claude-3-sonnet-20241022") -> None:
+    def __init__(self, model: str = "claude-3-7-sonnet-20250219") -> None:
         """
         Initialize the OnboardingExtractor with a specified model.
         """

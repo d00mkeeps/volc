@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class WorkoutChain(BaseConversationChain):
     def __init__(self, api_key: str):
         llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
+            model="claude-3-7-sonnet-20250219",
             streaming=True,
             api_key=api_key
         )
@@ -25,7 +25,7 @@ class WorkoutChain(BaseConversationChain):
             llm=llm
         )
         self.sentiment_model = ChatAnthropic(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-3-7-sonnet-20250219",
         streaming=False,  # Important: non-streaming for reliable responses
         api_key=api_key
         )

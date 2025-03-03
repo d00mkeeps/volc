@@ -142,6 +142,7 @@ export const ChatUI = memo(({
           messages={messages}
           streamingMessage={streamingMessage}
           style={styles.messageList}
+          configName={configName}
         />
         {sidebarComponent}
       </View>

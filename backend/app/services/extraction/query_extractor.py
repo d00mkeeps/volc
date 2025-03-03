@@ -17,7 +17,7 @@ Extract exercises and timeframe from workout queries following these rules:
 - Normalize timeframe phrases (e.g. "last year" -> "12 months", "past week" -> "7 days")"""
 
 class QueryExtractor(BaseExtractor[ExerciseQuery]):
-    def __init__(self, model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, model: str = "claude-3-7-sonnet-20250219"):
 
         load_dotenv()
 

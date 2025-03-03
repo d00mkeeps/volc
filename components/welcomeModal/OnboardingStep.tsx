@@ -22,7 +22,6 @@ export const OnboardingConversationStep: React.FC<ExtendedOnboardingStepProps> =
   const [error, setError] = useState<string | null>(null);
   const { loadConversation } = useMessage();
 
-  // Initialize conversation
   useEffect(() => {
     const initializeConversation = async () => {
       try {
@@ -37,10 +36,15 @@ export const OnboardingConversationStep: React.FC<ExtendedOnboardingStepProps> =
         await conversationService.createOnboardingConversation({
           userId: session.user.id,
           sessionId: sessionId,
-          configName: "onboarding" // Make sure this config exists in your system
+          configName: "onboarding" 
         });
         
-        // Load the conversation
+        await conversationService.saveMessage({
+          conversationId: sessionId,
+          content: "Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!",
+          sender: 'user'
+        });
+        
         await loadConversation(sessionId);
         
         setIsLoading(false);

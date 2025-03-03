@@ -1,6 +1,6 @@
 import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { Message } from "@/types";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { 
   StyleProp, 
   ViewStyle, 
@@ -13,7 +13,7 @@ import { ScrollToBottomButton } from "../atoms/ScrollToBottom";
 import { MessageListProps } from "@/types/chat";
 import { useMessage } from "@/context/MessageContext";
 
-const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, style }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, style, configName }) => {
   const { 
     listRef, 
     handleScroll, 
@@ -21,21 +21,26 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
     scrollToBottom 
   } = useAutoScroll(streamingMessage);
 
-  const {showLoader} = useMessage()
+  const { showLoader } = useMessage();
+
+  // Filter messages for onboarding
+  const filteredMessages = useMemo(() => {
+    if (!messages.length) return [];
+    
+    // If this is onboarding, always hide the first user message
+    if (configName === 'onboarding') {
+      return messages.slice(1);
+    }
+    
+    return messages;
+  }, [messages, configName]);
 
   const allMessages = streamingMessage
-  ? [...messages, streamingMessage]
-  : messages;
-
+    ? [...filteredMessages, streamingMessage]
+    : filteredMessages;
 
   const renderItem = useCallback(({ item, index }: { item: Message, index: number }) => {
-
     const previousMessage = index > 0 ? allMessages[index - 1] : undefined;
-
-    console.log('Rendering message:', {
-      id: item.id,
-      isStreaming: streamingMessage?.id === item.id
-    });
     
     return (
       <MessageItem 
@@ -48,7 +53,6 @@ const MessageList: React.FC<MessageListProps> = ({ messages, streamingMessage, s
 
   const renderFooter = useCallback(() => {
     if (showLoader) {
-      console.log('🔄 Rendering LoaderItem');
       return <LoaderItem />;
     }
     return null;
