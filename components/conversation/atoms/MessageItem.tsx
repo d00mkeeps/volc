@@ -1,11 +1,12 @@
-// Modified MessageItem.tsx
 import React, { memo, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Message } from '@/types';
 import { GraphImage } from '../../data/graph/atoms/GraphImage';
 import { useAttachments } from '@/context/ChatAttachmentContext';
-import { WorkoutDataBundle } from '@/types/workout';
+import { WorkoutDataBundle, WorkoutWithConversation, CompleteWorkout, SetInput } from '@/types/workout';
 import { WorkoutDataModal } from '../../data/table/WorkoutDataModal';
+import WorkoutDetailModal from '@/components/workout/organisms/WorkoutDetailModal';
+import { convertToCompleteWorkout } from '@/utils/workout';
 
 interface MessageItemProps {
   message: Message;
@@ -18,39 +19,63 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
   isStreaming = false, 
   previousMessage
  }) => {
-  const { getGraphBundlesByConversation } = useAttachments();
+  const { getGraphBundlesByConversation, getWorkoutsByConversation } = useAttachments();
   const [matchingBundle, setMatchingBundle] = useState<WorkoutDataBundle | null>(null);
+  const [matchingWorkout, setMatchingWorkout] = useState<WorkoutWithConversation | null>(null);
   const [isLoadingGraph, setIsLoadingGraph] = useState(false);
-  const [workoutModalVisible, setWorkoutModalVisible] = useState(false);
+  const [workoutDataModalVisible, setWorkoutDataModalVisible] = useState(false);
+  const [workoutDetailModalVisible, setWorkoutDetailModalVisible] = useState(false);
   
-  // Determine if this message should show a graph based on previous message
+  // Determine if this message has an associated graph or workout
   useEffect(() => {
-    // Only assistant messages can have associated graphs and only if there's a previous user message
+    // Only assistant messages can have associated data and only if there's a previous user message
     if (message.sender === 'assistant' && previousMessage?.sender === 'user') {
+      // Check for graph bundles
       const bundles = getGraphBundlesByConversation(message.conversation_id);
-
-      console.log(`Found ${bundles.length} bundles for conversation:`, message.conversation_id);
       
-      // If no bundles exist yet, we don't need to do anything
-      if (!bundles.length) return;
-      
-      // Find a bundle where the original query matches the previous message's content
-      const match = bundles.find(bundle => 
-        bundle.original_query && 
-        previousMessage.content.includes(bundle.original_query)
-      );
-      
-      if (match) {
-        console.log('Found matching bundle:', match.bundle_id);
-        console.log('Bundle structure:', match);
-        console.log('workout_data type:', typeof match.workout_data);
-        console.log('workout_data keys:', Object.keys(match.workout_data || {}));
+      if (bundles.length) {
+        const match = bundles.find(bundle => 
+          bundle.original_query && 
+          previousMessage.content.includes(bundle.original_query)
+        );
         
-        setMatchingBundle(match);
-        setIsLoadingGraph(false);
-      } 
+        if (match) {
+          setMatchingBundle(match);
+          setIsLoadingGraph(false);
+        }
+      }
+      
+      // Check for workouts - get the most recent workout for this conversation
+      const workouts = getWorkoutsByConversation(message.conversation_id);
+    
+      if (workouts.length) {
+        // Get the most recent workout (should be the first one given our sort)
+        const recentWorkout = workouts[0];
+        
+        // Set as matching workout if it's within a reasonable time window of this message
+        // Add null check for timestamp
+        if (recentWorkout) {
+          const workoutTime = new Date(recentWorkout.created_at).getTime();
+          
+          // Check if message has a valid timestamp
+          if (message.timestamp && typeof message.timestamp.getTime === 'function') {
+            const messageTime = message.timestamp.getTime();
+            
+            // If workout was created within 10 seconds of message
+            if (Math.abs(workoutTime - messageTime) < 10000) {
+              setMatchingWorkout(recentWorkout);
+            }
+          } else {
+            // If no valid timestamp, match the most recent workout anyway
+            setMatchingWorkout(recentWorkout);
+          }
+        }
+      }
     }
-  }, [message, previousMessage, getGraphBundlesByConversation]);
+  }, [message, previousMessage, getGraphBundlesByConversation, getWorkoutsByConversation]);
+  
+
+const completeWorkout = matchingWorkout ? convertToCompleteWorkout(matchingWorkout) : null;  const exerciseCount = completeWorkout?.workout_exercises.length || 0;
   
   return (
     <View style={styles.messageWrapper}>
@@ -64,7 +89,7 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
           <View style={styles.graphContainer}>
             <TouchableOpacity 
               activeOpacity={0.9}
-              onPress={() => setWorkoutModalVisible(true)}
+              onPress={() => setWorkoutDataModalVisible(true)}
             >
               <GraphImage 
                 chartUrl={matchingBundle.chart_url}
@@ -74,6 +99,25 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
               />
               <View style={styles.graphOverlay}>
                 <Text style={styles.graphOverlayText}>Tap for details</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        
+        {/* Workout summary at the top of assistant message */}
+        {message.sender === 'assistant' && matchingWorkout && (
+          <View style={styles.workoutContainer}>
+            <TouchableOpacity 
+              activeOpacity={0.9}
+              onPress={() => setWorkoutDetailModalVisible(true)}
+              style={styles.workoutSummary}
+            >
+              <Text style={styles.workoutTitle}>{matchingWorkout.name}</Text>
+              <Text style={styles.workoutSubtitle}>
+                {exerciseCount} exercise{exerciseCount !== 1 ? 's' : ''}
+              </Text>
+              <View style={styles.workoutOverlay}>
+                <Text style={styles.workoutOverlayText}>Tap to view workout</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -107,14 +151,23 @@ const MessageItem: React.FC<MessageItemProps> = memo(({
       
       {/* Workout data modal */}
       <WorkoutDataModal
-        visible={workoutModalVisible}
-        onClose={() => setWorkoutModalVisible(false)}
+        visible={workoutDataModalVisible}
+        onClose={() => setWorkoutDataModalVisible(false)}
         bundle={matchingBundle}
       />
+      
+      {/* Workout detail modal */}
+      {completeWorkout && (
+        <WorkoutDetailModal
+          isVisible={workoutDetailModalVisible}
+          workout={completeWorkout}
+          onClose={() => setWorkoutDetailModalVisible(false)}
+          onSave={async () => Promise.resolve()} // Return a Promise that resolves immediately
+        />
+      )}
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   messageWrapper: {
     paddingHorizontal: 16,
@@ -181,7 +234,46 @@ const styles = StyleSheet.create({
   graphOverlayText: {
     color: '#fff',
     fontSize: 12,
-  }
+  },
+  // New styles for workout display
+  workoutContainer: {
+    marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+    alignSelf: 'center',
+    width: '100%',
+  },
+  workoutSummary: {
+    backgroundColor: '#272d27',
+    padding: 12,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#8cd884',
+    position: 'relative',
+  },
+  workoutTitle: {
+    color: '#8cd884',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  workoutSubtitle: {
+    color: '#def7dc',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  workoutOverlay: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+  },
+  workoutOverlayText: {
+    color: '#fff',
+    fontSize: 12,
+  },
 });
 
 export default MessageItem;

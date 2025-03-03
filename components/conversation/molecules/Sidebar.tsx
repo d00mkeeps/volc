@@ -1,10 +1,11 @@
-// components/molecules/Sidebar.tsx
+// Modified Sidebar.tsx
 import { Animated, StyleSheet, View, ScrollView } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { Title } from '../../public/atoms/Title';
 import { ToggleSwitch } from '../../public/atoms/ToggleSwitch';
 import { GraphDisplay } from '../../data/graph/organisms/GraphDisplay';
 import { useAttachments } from '@/context/ChatAttachmentContext';
+import SidebarWorkoutList from '../../data/workout/organisms/SidebarWorkoutList';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -22,9 +23,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleAnalysis,
 }) => {
   const slideAnim = useRef(new Animated.Value(SIDEBAR_WIDTH)).current;
-  const { getGraphBundlesByConversation } = useAttachments();
+  const { getGraphBundlesByConversation, getWorkoutsByConversation } = useAttachments();
   const graphBundles = getGraphBundlesByConversation(conversationId);
+  const workouts = getWorkoutsByConversation(conversationId);
+  
   const hasGraphs = graphBundles.length > 0;
+  const hasWorkouts = workouts.length > 0;
 
   useEffect(() => {
     Animated.spring(slideAnim, {
@@ -53,6 +57,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           </View>
 
+          {hasWorkouts && (
+            <View style={styles.section}>
+              <Title 
+                title="Workouts"
+                variant="small"
+              />
+              <View style={styles.workoutsContainer}>
+                <SidebarWorkoutList 
+                  workouts={workouts}
+                  maxDisplayed={3}
+                />
+              </View>
+            </View>
+          )}
+
           {hasGraphs && (
             <View style={styles.graphSection}>
               <Title 
@@ -62,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <View style={styles.graphsContainer}>
                 <GraphDisplay 
                   conversationId={conversationId}
-                  maxDisplayed={2} // Show fewer graphs to fit in sidebar
+                  maxDisplayed={2}
                 />
               </View>
             </View>
@@ -117,6 +136,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   graphsContainer: {
+    marginTop: 8,
+  },
+  workoutsContainer: {
     marginTop: 8,
   },
 });

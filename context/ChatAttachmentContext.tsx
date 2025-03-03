@@ -255,8 +255,8 @@ if (type === 'workout_approved') {
 
   const getWorkoutsByConversation = (convId: string) => 
     Array.from(workouts.values())
-      .filter(w => w.conversationId === convId);
-
+      .filter(w => w.conversationId === convId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   const getGraphBundlesByConversation = (convId: string) => 
     Array.from(graphBundles.values())
       .filter(b => b.conversationId === convId)

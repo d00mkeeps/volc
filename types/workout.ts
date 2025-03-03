@@ -24,7 +24,16 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     updated_at: string;
     workout_exercise_sets: WorkoutSet[];
   };
-  
+
+  // Add this to your types/workout.ts or at the top of both files
+  export interface SetInput {
+    weight?: number;
+    reps?: number;
+    distance?: number; 
+    duration?: number;
+    rpe?: number;
+  }
+
   export type CompleteWorkout = {
     id: string;
     user_id: string;
@@ -36,14 +45,6 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     workout_exercises: WorkoutExercise[];
   };
   
-  // Input Types
-  export type SetInput = {
-    weight?: number;
-    reps?: number;
-    rpe?: number;
-    distance?: number;
-    duration?: string;
-  };
   
   export type ExerciseInput = {
     exercise_name: string;
