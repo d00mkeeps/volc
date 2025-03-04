@@ -24,7 +24,8 @@ const WorkoutDisplayHeader: React.FC<WorkoutDisplayHeaderProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingBottom: 40,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#444',
   },

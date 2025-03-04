@@ -33,3 +33,5 @@
 2025-03-04 15:47:31,600 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
 2025-03-04 15:47:31,677 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
 2025-03-04 15:47:31,680 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
+2025-03-04 16:37:41,522 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 16:37:41,531 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
