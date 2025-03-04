@@ -15,7 +15,9 @@ export interface SectionHeaderProps {
   
 export interface ProfileGroupProps {
     data: Record<string, any>;
-  }
+    onEdit?: (fieldKey: string, currentValue: string, displayName: string) => void;
+    nonEditableFields?: string[];
+    }
 
 export interface ProfileSectionProps {
   title: string;

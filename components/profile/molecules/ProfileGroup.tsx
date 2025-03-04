@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import ProfileItem from '../atoms/ProfileItem';
 import { ProfileGroupProps } from '@/types/profileComponents';
 
-const ProfileGroup: React.FC<ProfileGroupProps> = ({ data }) => {
+const ProfileGroup: React.FC<ProfileGroupProps> = ({ data, onEdit, nonEditableFields = [] }) => {
   const formatValue = (key: string, value: any): string => {
     if (Array.isArray(value)) {
       return value.join(', ');
@@ -30,6 +30,9 @@ const ProfileGroup: React.FC<ProfileGroupProps> = ({ data }) => {
           label={formatLabel(key)}
           value={formatValue(key, value)}
           isLastItem={index === Object.entries(data).length - 1}
+          onEdit={onEdit && !nonEditableFields.includes(key) 
+            ? () => onEdit(key, formatValue(key, value), formatLabel(key)) 
+            : undefined}
         />
       ))}
     </View>

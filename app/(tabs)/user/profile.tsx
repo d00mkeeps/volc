@@ -13,40 +13,21 @@ import { SignOutButton } from '@/components/auth/atoms/SignOutButton';
 
 import { useUser } from '@/context/UserContext';
 
-const MAX_RENDER_RETRIES = 3;
-const RENDER_RETRY_DELAY = 800;
-
 export default function ProfileDisplayScreen() {
   const { userProfile, loading, refreshProfile, error } = useUser();
-  const [renderAttempts, setRenderAttempts] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    const attemptInitialLoad = async () => {
-      if (!userProfile && !loading && renderAttempts < MAX_RENDER_RETRIES) {
-        try {
-          await new Promise(resolve => setTimeout(resolve, RENDER_RETRY_DELAY));
-          await refreshProfile();
-          setRenderAttempts(prev => prev + 1);
-        } catch (err) {
-          console.error('Profile load attempt failed:', err);
-        }
-      } else if (userProfile) {
-        setIsInitialLoad(false);
-      }
-    };
-
-    attemptInitialLoad();
-  }, [userProfile, loading, renderAttempts, refreshProfile]);
+    // Initial load only
+    if (!userProfile && !loading && isInitialLoad) {
+      refreshProfile();
+    } else if (userProfile) {
+      setIsInitialLoad(false);
+    }
+  }, [userProfile, loading, refreshProfile]);
 
   const handleRefresh = async () => {
-    setRenderAttempts(0);
     await refreshProfile();
-  };
-
-  const handleRetry = () => {
-    setRenderAttempts(0);
-    handleRefresh();
   };
 
   if (error && !isInitialLoad) {
@@ -58,7 +39,7 @@ export default function ProfileDisplayScreen() {
           </Text>
           <TouchableOpacity
             style={styles.retryButton}
-            onPress={handleRetry}
+            onPress={handleRefresh}
           >
             <Text style={styles.retryButtonText}>Retry</Text>
           </TouchableOpacity>

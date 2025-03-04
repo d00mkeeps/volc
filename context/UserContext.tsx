@@ -67,7 +67,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
 
       const { error } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .update(updates)
         .eq('auth_user_uuid', session.session.user.id)
 

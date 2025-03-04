@@ -1,108 +1,69 @@
-2025-03-03 20:00:15,442 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content="'d love to help you with your fitness goals." additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
-2025-03-03 20:00:15,445 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:15,632 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' To get started, could you share your first an' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
-2025-03-03 20:00:15,632 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:15,825 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='d last name, and whether you prefer metric (' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
-2025-03-03 20:00:15,825 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:15,915 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='kg/cm) or imperial (lb/ft' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
-2025-03-03 20:00:15,915 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:16,090 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=')?' additional_kwargs={} response_metadata={} id='run-8e53838e-1576-4f39-9727-24c973e0b525'
-2025-03-03 20:00:16,091 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:16,100 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-8e53838e-1576-4f39-9727-24c973e0b525' usage_metadata={'input_tokens': 0, 'output_tokens': 47, 'total_tokens': 47, 'input_token_details': {}}
-2025-03-03 20:00:16,101 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:16,118 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-03-03 20:00:16,119 - httpcore.http11 - DEBUG - response_closed.started
-2025-03-03 20:00:16,119 - httpcore.http11 - DEBUG - response_closed.complete
-2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - 
+2025-03-03 20:00:25,219 - httpcore.connection - DEBUG - close.started
+2025-03-03 20:00:25,220 - httpcore.connection - DEBUG - close.complete
+2025-03-03 20:00:25,221 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-03-03 20:00:25,235 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1085a4050>
+2025-03-03 20:00:25,236 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x108457e30> server_hostname='api.anthropic.com' timeout=None
+2025-03-03 20:00:25,258 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1084cec30>
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-03-03 20:00:26,248 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Mar 2025 20:00:26 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-03T20:00:26Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'19000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-03T20:00:27Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-03T20:00:32Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'26000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-03T20:00:27Z'), (b'request-id', b'req_01XQSq96RyP7bUhpVr9ixab3'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91abb84e08e8cc8d-MAN')])
+2025-03-03 20:00:26,249 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-03 20:00:26,249 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-03 20:00:26,249 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 680, 'output_tokens': 1, 'total_tokens': 681, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Thanks' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', Miles! What fitness goals would you like to achieve? For' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' example, building muscle, losing weight, improving endurance, etc.' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
+2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 0, 'output_tokens': 31, 'total_tokens': 31, 'input_token_details': {}}
+2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - 
 === Final Conversation State ===
-2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - Total messages: 3
-2025-03-03 20:00:16,120 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-03 20:00:25,209 - app.services.onboarding_service - INFO - Processing message: I’m miles and I use the metric system
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. 
-
-PROCESS FOR EACH RESPONSE:
-1. CHECK MISSING FIELDS
-Read MISSING_FIELDS to identify outstanding information
-
-2. DETERMINE NEXT FIELD
-Follow this priority order:
-1. First/Last Name + Unit system (metric/imperial)
-2. Basic Goal
-3. Goal Timeframe
-4. Specific Goal Numbers
-5. Current Abilities
-6. Training Preferences
-7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)
-8. Training Age (years of experience)
-9. Injuries
-
-
-
-3. FORM RESPONSE
-Structure: [Brief acknowledgment] + [Single question for next priority field]
-Example: "Thanks, John! What fitness goals would you like to achieve?"
-
-4. OUTPUT
-CRITICAL: Return ONLY the formed response. No other text or system information.
-
-5. SUMMARY DISPLAY
-Only once all the required information has been collected, return this exact message:
-
-Great! I've got all the information I need. Here's a summary of what we discussed:
-
-Training Profile for [First Name]:
-- Goal: [specific goal with timeframe]
-- Current Level: [abilities]
-- Experience: [training age]
-- Preferences: [exercise preferences]
-- Health Notes: [injuries/limitations]
-
-Personal Details:
-- Name: [First Last]
-- Age Group: [range]
-- Units: [metric/imperial]
-
-Does this look accurate to you?
-
-PERSONALITY:
-- Warm and encouraging but professional
-- Match user's technical level
-- Keep responses brief
-- Natural, conversational tone
-
-SPECIAL BEHAVIORS:
-1. Age Group Question
-   When asking for age group, always list valid ranges:
-   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"
-
-2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.
-
-3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"
-
-
-EXTRACTION_STATE: {extraction_state}
-MISSING_FIELDS: {missing_fields}
-
-Previous conversation: {messages}
-Human: {current_message}
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - Content: Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!
-2025-03-03 20:00:25,210 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (AIMessage):
-2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! I'd love to help you with your fitness goals. To get started, could you share your first and last name, and whether you prefer metric (kg/cm) or imperial (lb/ft)?
-2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: I’m miles and I use the metric system
-2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (HumanMessage):
-2025-03-03 20:00:25,211 - app.services.chains.base_conversation_chain - INFO - Content: {current_message}
-2025-03-03 20:00:25,212 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-03 20:00:25,219 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': "Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!"}, {'type': 'text', 'text': "Hello! I'm a new user hoping to make a friend and achieve fitness goals with you!"}]}, {'role': 'assistant', 'content': "Hi there! I'd love to help you with your fitness goals. To get started, could you share your first and last name, and whether you prefer metric (kg/cm) or imperial (lb/ft)?"}, {'role': 'user', 'content': [{'type': 'text', 'text': 'I’m miles and I use the metric system'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-7-sonnet-20250219', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. \n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. First/Last Name + Unit system (metric/imperial)\n2. Basic Goal\n3. Goal Timeframe\n4. Specific Goal Numbers\n5. Current Abilities\n6. Training Preferences\n7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)\n8. Training Age (years of experience)\n9. Injuries\n\n\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Thanks, John! What fitness goals would you like to achieve?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other text or system information.\n\n5. SUMMARY DISPLAY\nOnly once all the required information has been collected, return this exact message:\n\nGreat! I\'ve got all the information I need. Here\'s a summary of what we discussed:\n\nTraining Profile for [First Name]:\n- Goal: [specific goal with timeframe]\n- Current Level: [abilities]\n- Experience: [training age]\n- Preferences: [exercise preferences]\n- Health Notes: [injuries/limitations]\n\nPersonal Details:\n- Name: [First Last]\n- Age Group: [range]\n- Units: [metric/imperial]\n\nDoes this look accurate to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. Age Group Question\n   When asking for age group, always list valid ranges:\n   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"\n\n2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.\n\n3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"\n\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - Total messages: 5
+2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-03-03 20:02:39,082 - app.services.onboarding_service - INFO - WebSocket disconnected
+2025-03-03 20:02:39,083 - app.services.onboarding_service - INFO - WebSocket connection closed
+2025-03-04 14:48:33,339 - root - DEBUG - Logging has been set up
+2025-03-04 14:48:33,341 - app.main - INFO - Application starting
+2025-03-04 15:47:22,150 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,154 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-04 15:47:22,218 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,235 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
+2025-03-04 15:47:22,241 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
+2025-03-04 15:47:22,616 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,616 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,617 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,618 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-04 15:47:22,621 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,670 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
+2025-03-04 15:47:22,674 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
+2025-03-04 15:47:22,719 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,719 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,720 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,720 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-04 15:47:22,723 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,757 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
+2025-03-04 15:47:22,760 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
+2025-03-04 15:47:22,799 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,799 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:22,800 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,800 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-04 15:47:22,803 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
+2025-03-04 15:47:22,837 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
+2025-03-04 15:47:22,840 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
+2025-03-04 15:47:30,616 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:30,616 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 15:47:30,617 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
+2025-03-04 15:47:30,617 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-04 15:47:30,620 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
+2025-03-04 15:47:30,688 - app.services.conversation_service - DEBUG - Processing initialization with 10 messages...
+2025-03-04 15:47:30,696 - app.services.conversation_service - INFO - Initialized conversation with 10 messages

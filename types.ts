@@ -141,13 +141,14 @@ export interface Conversation {
   message_count: number;
 }
 export interface UserProfile {
+  age_group: number;
   user_id: number;
   first_name: string | null;
   last_name: string | null;
   is_imperial: boolean;
   display_name: string | null;
   auth_user_uuid: string | null;
-  goals: string | null;
+  goal: string | null;
   training_history: any | null;
 }
 
