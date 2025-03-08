@@ -13,22 +13,24 @@ export default function InsightsLayout() {
           paddingTop: 8,
           borderTopColor:'#666' ,
           borderTopWidth: 2,
+          display: 'none'
+
         },
         tabBarLabelStyle: { 
           fontSize: 12 
         },
       }}
     >
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
+<Tabs.Screen
+  name="profile"
+  options={{
+    title: 'Profile',
+    tabBarIcon: ({ color, size }) => (
+      <Ionicons name="people-outline" size={size} color={color} />
+    ),
+  }}
+/>
+      {/* <Tabs.Screen
         name="trophy-room"
         options={{
           title: 'Trophy Room',
@@ -36,7 +38,7 @@ export default function InsightsLayout() {
             <Ionicons name="trophy-outline" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
    
     </Tabs>
   );

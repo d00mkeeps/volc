@@ -13,13 +13,14 @@ export default function InsightsLayout() {
           paddingTop: 4,
           borderTopColor:'#666' ,
           borderTopWidth: 2,
+          display: 'none'
         },
         tabBarLabelStyle: { 
           fontSize: 12 
         },
       }}
     >
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="visual-data"
         options={{
           title: 'Visual Data',
@@ -27,16 +28,16 @@ export default function InsightsLayout() {
             <Ionicons name="bar-chart-outline" size={size} color={color} />
           ),
         }}
-      />
-      <Tabs.Screen
-        name="workout-history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time-outline" size={size} color={color} />
-          ),
-        }}
-      />
+      /> */}
+<Tabs.Screen
+  name="workout-history"
+  options={{
+    title: 'History',
+    tabBarIcon: ({ color, size }) => (
+      <Ionicons name="book-outline" size={size} color={color} />
+    ),
+  }}
+/>
    
     </Tabs>
   );

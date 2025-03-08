@@ -1,69 +1,44 @@
-2025-03-03 20:00:25,219 - httpcore.connection - DEBUG - close.started
-2025-03-03 20:00:25,220 - httpcore.connection - DEBUG - close.complete
-2025-03-03 20:00:25,221 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-03-03 20:00:25,235 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1085a4050>
-2025-03-03 20:00:25,236 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x108457e30> server_hostname='api.anthropic.com' timeout=None
-2025-03-03 20:00:25,258 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1084cec30>
-2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-03-03 20:00:25,258 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-03-03 20:00:25,259 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-03-03 20:00:26,248 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Mon, 03 Mar 2025 20:00:26 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-03T20:00:26Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'19000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-03T20:00:27Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-03T20:00:32Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'26000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-03T20:00:27Z'), (b'request-id', b'req_01XQSq96RyP7bUhpVr9ixab3'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91abb84e08e8cc8d-MAN')])
-2025-03-03 20:00:26,249 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-03 20:00:26,249 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-03-03 20:00:26,249 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 680, 'output_tokens': 1, 'total_tokens': 681, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
-2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Thanks' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
-2025-03-03 20:00:26,250 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', Miles! What fitness goals would you like to achieve? For' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
-2025-03-03 20:00:26,424 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' example, building muscle, losing weight, improving endurance, etc.' additional_kwargs={} response_metadata={} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03'
-2025-03-03 20:00:26,566 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-9e2c3698-f2ac-4ce3-82ab-5fd3bd852b03' usage_metadata={'input_tokens': 0, 'output_tokens': 31, 'total_tokens': 31, 'input_token_details': {}}
-2025-03-03 20:00:26,593 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.started
-2025-03-03 20:00:26,613 - httpcore.http11 - DEBUG - response_closed.complete
-2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - 
-=== Final Conversation State ===
-2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - Total messages: 5
-2025-03-03 20:00:26,614 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-03 20:02:39,082 - app.services.onboarding_service - INFO - WebSocket disconnected
-2025-03-03 20:02:39,083 - app.services.onboarding_service - INFO - WebSocket connection closed
-2025-03-04 14:48:33,339 - root - DEBUG - Logging has been set up
-2025-03-04 14:48:33,341 - app.main - INFO - Application starting
-2025-03-04 15:47:22,150 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,154 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:22,218 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,235 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:22,241 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:22,616 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,616 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,617 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,618 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:22,621 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,670 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:22,674 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:22,719 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,719 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,720 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,720 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:22,723 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,757 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:22,760 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:22,799 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,799 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:22,800 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,800 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:22,803 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:22,837 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:22,840 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:30,616 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,616 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,617 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
-2025-03-04 15:47:30,617 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:30,620 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
-2025-03-04 15:47:30,688 - app.services.conversation_service - DEBUG - Processing initialization with 10 messages...
-2025-03-04 15:47:30,696 - app.services.conversation_service - INFO - Initialized conversation with 10 messages
+2025-03-04 19:12:21,719 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 04 Mar 2025 19:12:21 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'46'), (b'anthropic-ratelimit-requests-reset', b'2025-03-04T19:12:24Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'13000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-04T19:12:41Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'5000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-04T19:12:40Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'18000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-04T19:12:40Z'), (b'request-id', b'req_01588TaimWymDmJwV7VXxyNW'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91b3af420a12b36d-MAN')])
+2025-03-04 19:12:21,722 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-04 19:12:21,722 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-04 19:12:21,722 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-04 19:12:21,724 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-03-04 19:12:21,724 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-03-04 19:12:21,746 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 04 Mar 2025 19:12:21 GMT'), (b'Content-Type', b'application/json'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'47'), (b'anthropic-ratelimit-requests-reset', b'2025-03-04T19:12:22Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'14000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-04T19:12:37Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'6000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-04T19:12:34Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'20000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-04T19:12:34Z'), (b'request-id', b'req_013UuxNQeQSrLbKT2fVHdBt2'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91b3af376c08b104-MAN'), (b'Content-Encoding', b'gzip')])
+2025-03-04 19:12:21,746 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-04 19:12:21,747 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-04 19:12:21,747 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-04 19:12:21,747 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-04 19:12:21,747 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-04 19:12:21,747 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-04 19:12:21,750 - app.services.chains.workout_chain - INFO - Extracted workout data: {
+  "name": "",
+  "description": null,
+  "exercises": [
+    {
+      "exercise_name": "<UNKNOWN>",
+      "set_data": {
+        "sets": []
+      },
+      "order_in_workout": 1,
+      "weight_unit": null,
+      "distance_unit": null
+    }
+  ]
+}
+2025-03-04 19:12:21,768 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 04 Mar 2025 19:12:21 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'47'), (b'anthropic-ratelimit-requests-reset', b'2025-03-04T19:12:23Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'14000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-04T19:12:39Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'6000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-04T19:12:33Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'20000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-04T19:12:33Z'), (b'request-id', b'req_01WnPnoY4R9cRsjUnZnhnRR4'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91b3af404822075d-MAN')])
+2025-03-04 19:12:21,768 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-04 19:12:21,768 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-04 19:12:21,768 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-04 19:12:21,769 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Blah bla alskd\n'}, {'type': 'text', 'text': 'Blah bla alskd\n'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-7-sonnet-20250219', 'stream': True, 'system': 'You are the TrainSmart Coach - warm, encouraging, and professional while keeping responses brief and natural.\n\nCONVERSATION FLOW:\n1. ALWAYS ask "Would you like to add another exercise to this workout?" after each exercise\n   - Only proceed to next steps when user confirms no more exercises\n\n2. Once user has no more exercises:\n   Think through the following steps:\n   a) Look at MISSING_FIELDS and the EXTRACTION_STATE\n   b) For each exercise with missing fields:\n      - Is it missing weight units while having weight values? These must be clarified\n      - Is it missing distance units while having distance values? These must be clarified\n      - Are any sets missing reps or weight values? These must be clarified\n      - Ignore missing units for fields that don\'t exist (e.g., distance_unit for strength exercises)\n   c) Did the user provide a workout description? If not, this should be requested by asking the user how they feel the workout went, what they think could have been better, and what they think went well. If the user doesn\'t want to provide this, it\'s not necessary.\n\n3. Finally, if there aren\'t key fields missing AND all sets have necessary data, present summary:\n   - Generate brief name if none provided\n   - Format as:\n     [Workout Name],\n     Exercises:\n     1. [Exercise Name]\n        Sets:[Set details with explicit units, each set on it\'s own line]\n     2. [rest of exercises...]\n     Notes:\n      [Workout description point 1],\n      [workout description point 2],\n      [rest of workout description...], \n   - Ask "Does this look correct?"\n\n<OtherInstructions>\nMatch user\'s technical knowledge level in responses.\nYou must NEVER discuss missing fields or other system processes in conversation. \nGenerally, a strength exercise is shown as reps and weight. If an exercise is shown as "7x34kg", you should assume it represents one set of seven reps with 34kg, not seven sets of 34kg with unknown reps (unless corrected).\nDisplay the summary as bullet points\n</OtherInstructions>\n\n<Metadata>\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\nPrevious conversation: {messages}\nHuman: {current_message}\n</Metadata>\n'}}
+2025-03-04 19:12:21,769 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-03-04 19:12:21,770 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-03-04 19:12:21,770 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-03-04 19:12:21,789 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11f1c6580>
+2025-03-04 19:12:21,790 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x11f14e0f0> server_hostname='api.anthropic.com' timeout=None
+2025-03-04 19:12:21,823 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x11aec9b80>
+2025-03-04 19:12:21,824 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-03-04 19:12:21,824 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-03-04 19:12:21,824 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-03-04 19:12:21,824 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-03-04 19:12:21,824 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>

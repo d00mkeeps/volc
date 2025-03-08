@@ -1,37 +1,13 @@
-2025-03-04 15:47:30,755 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:30,757 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:30,758 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,758 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,768 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:30,829 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:30,832 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:30,960 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,961 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:30,961 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
-2025-03-04 15:47:30,961 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:30,964 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: baf7d8c6-27c2-407c-ba2e-52f57b24e0ef
-2025-03-04 15:47:31,023 - app.services.conversation_service - DEBUG - Processing initialization with 10 messages...
-2025-03-04 15:47:31,030 - app.services.conversation_service - INFO - Initialized conversation with 10 messages
-2025-03-04 15:47:31,090 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,091 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,092 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,092 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:31,095 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,152 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:31,158 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:31,260 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,260 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,261 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,261 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:31,265 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,325 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:31,333 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 15:47:31,594 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,594 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 15:47:31,595 - app.api.endpoints.llm - INFO - WebSocket connection request received for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,595 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-04 15:47:31,600 - app.api.endpoints.llm - INFO - Created ConversationService instance for conversation: d8bf5b92-9d16-4a51-8ce4-ee6bbc904612
-2025-03-04 15:47:31,677 - app.services.conversation_service - DEBUG - Processing initialization with 8 messages...
-2025-03-04 15:47:31,680 - app.services.conversation_service - INFO - Initialized conversation with 8 messages
-2025-03-04 16:37:41,522 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1000 and reason: 
-2025-03-04 16:37:41,531 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1000 and reason: 
+2025-03-04 19:12:22,898 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Tue, 04 Mar 2025 19:12:22 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'46'), (b'anthropic-ratelimit-requests-reset', b'2025-03-04T19:12:25Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'13000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-04T19:12:42Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'5000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-04T19:12:41Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'18000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-04T19:12:41Z'), (b'request-id', b'req_01Qam2fZL8RYebVAHZQKPK3f'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'CF-Cache-Status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'91b3af48b940b3ae-MAN')])
+2025-03-04 19:12:22,902 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-04 19:12:22,903 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-04 19:12:22,903 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-04 19:12:22,904 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': "I'"}
+2025-03-04 19:12:23,161 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': 'd be happy to help you record your workout! What'}
+2025-03-04 19:12:23,266 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'content', 'data': ' exercise would you like to start with?'}
+2025-03-04 19:12:23,267 - app.services.conversation_service - DEBUG - Sent initial chunk: {'type': 'done', 'data': ''}
+2025-03-04 19:12:23,269 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-04 19:12:23,269 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-04 19:12:23,269 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-04 21:38:21,327 - app.services.conversation_service - ERROR - WebSocket disconnected with code 1006 and reason: 
+2025-03-04 21:38:21,330 - app.api.endpoints.llm - ERROR - WebSocket disconnected with code 1006 and reason: 

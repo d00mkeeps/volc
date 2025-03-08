@@ -52,7 +52,28 @@ export default function TabLayout() {
           ),
         }}
       />
+      
       <Tabs.Screen
+        name="user"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      
+      <Tabs.Screen
+        name="insights"
+        options={{
+          title: 'Workouts',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      
+      {/* <Tabs.Screen
         name="programs"
         options={{
           title: 'Programs',
@@ -60,12 +81,12 @@ export default function TabLayout() {
             <Ionicons name="list-outline" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
+
     </Tabs>
     </GestureHandlerRootView>
   );
 }
-
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#222',
