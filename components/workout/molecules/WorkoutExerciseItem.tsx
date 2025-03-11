@@ -6,6 +6,7 @@ import WorkoutSetItem from '../atoms/WorkoutSetItem';
 interface WorkoutExerciseItemProps {
   exercise: WorkoutExercise;
   isLastExercise: boolean;
+  isTemplateValue?: boolean;
 }
 
 const WorkoutExerciseItem: React.FC<WorkoutExerciseItemProps> = ({
@@ -85,6 +86,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
+  templateValue: {
+    opacity: 0.6,
+  },
+  
 });
 
 export default WorkoutExerciseItem;

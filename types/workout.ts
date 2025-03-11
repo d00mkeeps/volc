@@ -34,17 +34,19 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     rpe?: number;
   }
 
-  export type CompleteWorkout = {
-    id: string;
-    user_id: string;
-    program_id?: string;
-    name: string;
-    notes?: string;
-    created_at: string;
-    updated_at: string;
-    workout_exercises: WorkoutExercise[];
-  };
-  
+// In types/workout.ts
+export interface CompleteWorkout {
+  id: string;
+  user_id: string;
+  name: string;
+  notes: string;
+  created_at: string;
+  updated_at: string;
+  is_template?: boolean;
+  template_id?: string;
+  used_as_template?: string; // Add this field
+  workout_exercises: WorkoutExercise[];
+}
   
   export type ExerciseInput = {
     exercise_name: string;

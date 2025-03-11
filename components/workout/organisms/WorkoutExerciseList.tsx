@@ -5,16 +5,32 @@ import { WorkoutExercise } from '@/types/workout';
 import WorkoutExerciseItem from '../molecules/WorkoutExerciseItem';
 import WorkoutExerciseItemEdit from '../molecules/WorkoutExerciseItemEdit';
 
+// Update the interface in WorkoutExerciseList.tsx
 interface WorkoutExerciseListProps {
   exercises: WorkoutExercise[];
   editMode: boolean;
   onExercisesChange: (exercises: WorkoutExercise[]) => void;
+  workoutId?: string;
+  // Add these new props:
+  templateId?: string | null;
+  modifiedFields?: Record<string, boolean>;
+  onFieldModified?: (fieldId: string) => void;
+  // Keep the existing templateValues for backward compatibility
+  templateValues?: {
+    exerciseIds: Set<string>;
+    setIds: Set<string>;
+  };
 }
 
 const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
   exercises,
   editMode,
   onExercisesChange,
+  templateValues,
+  workoutId,
+  templateId,
+  modifiedFields,
+  onFieldModified
 }) => {
   const sortedExercises = [...exercises].sort((a, b) => a.order_index - b.order_index);
 
@@ -40,8 +56,8 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
   const addExercise = () => {
     const now = new Date().toISOString();
     const newExercise: WorkoutExercise = {
-      id: `temp-${Date.now()}`, // Will be replaced on save
-      workout_id: exercises[0].workout_id,
+      id: `temp-${Date.now()}`,
+      workout_id: exercises.length > 0 ? exercises[0].workout_id : workoutId || `temp-workout-${Date.now()}`,
       name: '',
       order_index: exercises.length,
       weight_unit: 'kg',
@@ -67,29 +83,32 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
     onExercisesChange([...exercises, newExercise]);
   };
 
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Exercises</Text>
       {sortedExercises.map((exercise, index) => (
-        editMode ? (
-          <WorkoutExerciseItemEdit
-            key={exercise.id}
-            exercise={exercise}
-            isLastExercise={index === exercises.length - 1}
-            onExerciseChange={(updatedExercise) => 
-              handleExerciseChange(updatedExercise, index)
-            }
-            onDeleteExercise={() => handleDeleteExercise(index)}
-          />
-        ) : (
-          <WorkoutExerciseItem
-            key={exercise.id}
-            exercise={exercise}
-            isLastExercise={index === exercises.length - 1}
-          />
-        )
-      ))}
-      
+  editMode ? (
+    <WorkoutExerciseItemEdit
+      key={exercise.id}
+      exercise={exercise}
+      isLastExercise={index === exercises.length - 1}
+      onExerciseChange={(updatedExercise) => 
+        handleExerciseChange(updatedExercise, index)
+      }
+      onDeleteExercise={() => handleDeleteExercise(index)}
+      templateId={templateId}
+      modifiedFields={modifiedFields}
+      onFieldModified={onFieldModified}
+    />
+  ) : (
+    <WorkoutExerciseItem
+      key={exercise.id}
+      exercise={exercise}
+      isLastExercise={index === exercises.length - 1}
+    />
+  )
+))}
       {editMode && (
         <TouchableOpacity 
           style={styles.addExerciseButton} 

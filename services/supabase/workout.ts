@@ -5,12 +5,16 @@ import { PostgrestSingleResponse } from '@supabase/supabase-js';
 export class WorkoutService extends BaseService {
   async createWorkout(userId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
     const operation = async () => {
+      const now = new Date().toISOString();
+      
       const { data: workoutData, error: workoutError } = await this.supabase
         .from('workouts')
         .insert({
           user_id: userId,
           name: workout.name,
           notes: workout.description,
+          created_at: now,
+          used_as_template: now  // Set this to creation date by default
         })
         .select()
         .single();
@@ -136,7 +140,294 @@ const createdWorkout = {
   
     return this.withRetry(operation);
   }
+  async updateTemplateUsage(templateId: string): Promise<void> {
+    const operation = async () => {
+      const { error } = await this.supabase
+        .from('workouts')
+        .update({ 
+          used_as_template: new Date().toISOString() // Only update this timestamp
+        })
+        .eq('id', templateId);
+          
+      if (error) throw error;
+      
+      return {
+        data: { id: templateId},
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<unknown>;
+    };
+    
+    await this.withRetry(operation);
+  }
   
+async getTemplates(userId: string): Promise<CompleteWorkout[]> {
+  const operation = async () => {
+    const { data, error } = await this.supabase
+      .from('workouts')
+      .select(`
+        *,
+        workout_exercises (
+          *,
+          workout_exercise_sets (*)
+        )
+      `)
+      .eq('user_id', userId)
+      .order('used_as_template', { ascending: false, nullsFirst: false })
+      .limit(50)
+
+    if (error) throw error;
+    if (!data) {
+      return {
+        data: [] as CompleteWorkout[],
+        error: null,
+        count: 0,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<CompleteWorkout[]>;
+    }
+
+    // Sort nested data in-memory instead
+    const templates: CompleteWorkout[] = data.map((workout: any) => ({
+      ...workout,
+      workout_exercises: workout.workout_exercises
+        .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+        .map((exercise: WorkoutExercise) => ({
+          ...exercise,
+          workout_exercise_sets: exercise.workout_exercise_sets.sort(
+            (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+          )
+        }))
+    }));
+
+    return {
+      data: templates,
+      error: null,
+      count: templates.length,
+      status: 200,
+      statusText: 'OK'
+    } as PostgrestSingleResponse<CompleteWorkout[]>;
+  };
+
+  return this.withRetry(operation);
+}
+
+async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
+  const operation = async () => {
+    try {
+      // Deep copy the workout and modify for template
+      const templateWorkout = {
+        ...JSON.parse(JSON.stringify(workout)), // Deep copy
+        id: undefined, // Let DB generate new ID
+        is_template: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      // Insert the template workout
+      const { data: workoutData, error: workoutError } = await this.supabase
+        .from('workouts')
+        .insert({
+          user_id: workout.user_id,
+          name: workout.name,
+          notes: workout.notes,
+          is_template: true
+        })
+        .select()
+        .single();
+      
+      if (workoutError) throw workoutError;
+      
+      // Copy exercises
+      for (const exercise of workout.workout_exercises) {
+        const { data: exerciseData, error: exerciseError } = await this.supabase
+          .from('workout_exercises')
+          .insert({
+            workout_id: workoutData.id,
+            name: exercise.name,
+            order_index: exercise.order_index,
+            weight_unit: exercise.weight_unit,
+            distance_unit: exercise.distance_unit,
+          })
+          .select()
+          .single();
+        
+        if (exerciseError) throw exerciseError;
+        
+        // Copy sets
+        const setPromises = exercise.workout_exercise_sets.map(set =>
+          this.supabase
+            .from('workout_exercise_sets')
+            .insert({
+              exercise_id: exerciseData.id,
+              set_number: set.set_number,
+              weight: set.weight,
+              reps: set.reps,
+              rpe: set.rpe,
+              distance: set.distance,
+              duration: set.duration,
+            })
+        );
+        
+        await Promise.all(setPromises);
+      }
+      
+      // Fetch the complete template
+      const { data, error } = await this.supabase
+        .from('workouts')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .eq('id', workoutData.id)
+        .single();
+      
+      if (error) throw error;
+      
+      // Sort the data in memory
+      const template = {
+        ...data,
+        workout_exercises: data.workout_exercises
+          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+          .map((exercise: WorkoutExercise) => ({
+            ...exercise,
+            workout_exercise_sets: exercise.workout_exercise_sets.sort(
+              (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+            )
+          }))
+      };
+      
+      return {
+        data: template,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<CompleteWorkout>;
+    } catch (error) {
+      console.error('Error saving template:', error);
+      throw error;
+    }
+  };
+  
+  return this.withRetry(operation);
+}
+
+async createWorkoutFromTemplate(userId: string, templateId: string): Promise<CompleteWorkout> {
+  const operation = async () => {
+    try {
+      // Fetch the template
+      const { data: template, error: templateError } = await this.supabase
+        .from('workouts')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .eq('id', templateId)
+        .eq('is_template', true)
+        .single();
+        
+      if (templateError) throw templateError;
+      if (!template) throw new Error('Template not found');
+      
+      // Create the new workout
+      const { data: workoutData, error: workoutError } = await this.supabase
+        .from('workouts')
+        .insert({
+          name: template.name,
+          notes: template.notes,
+          user_id: userId,
+          template_id: templateId,
+          is_template: false
+        })
+        .select()
+        .single();
+        
+      if (workoutError) throw workoutError;
+      
+      // Copy all exercises and sets
+      for (const exercise of template.workout_exercises) {
+        const { data: exerciseData, error: exerciseError } = await this.supabase
+          .from('workout_exercises')
+          .insert({
+            workout_id: workoutData.id,
+            name: exercise.name,
+            order_index: exercise.order_index,
+            weight_unit: exercise.weight_unit,
+            distance_unit: exercise.distance_unit,
+          })
+          .select()
+          .single();
+          
+        if (exerciseError) throw exerciseError;
+        
+        // Copy sets
+        const setPromises = exercise.workout_exercise_sets.map((set: { set_number: any; weight: any; reps: any; rpe: any; distance: any; duration: any; }) =>
+          this.supabase
+            .from('workout_exercise_sets')
+            .insert({
+              exercise_id: exerciseData.id,
+              set_number: set.set_number,
+              weight: set.weight,
+              reps: set.reps,
+              rpe: set.rpe,
+              distance: set.distance,
+              duration: set.duration,
+            })
+        );
+        
+        await Promise.all(setPromises);
+      }
+      
+      // Fetch the complete new workout
+      const { data: newWorkout, error } = await this.supabase
+        .from('workouts')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .eq('id', workoutData.id)
+        .single();
+        
+      if (error) throw error;
+      
+      // Sort the data in memory with proper type annotations
+      newWorkout.workout_exercises.sort((a: WorkoutExercise, b: WorkoutExercise) => 
+        a.order_index - b.order_index
+      );
+      
+      newWorkout.workout_exercises.forEach((exercise: WorkoutExercise) => {
+        exercise.workout_exercise_sets.sort((a: WorkoutSet, b: WorkoutSet) => 
+          a.set_number - b.set_number
+        );
+      });
+      
+      return {
+        data: newWorkout,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<CompleteWorkout>;
+    } catch (error) {
+      console.error('Error creating workout from template:', error);
+      throw error;
+    }
+  };
+  
+  return this.withRetry(operation);
+}
   async getUserWorkouts(userId: string): Promise<CompleteWorkout[]> {
     const operation = async () => {
       // Fetch data without complex nested ordering

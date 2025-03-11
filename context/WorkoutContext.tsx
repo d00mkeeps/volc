@@ -13,6 +13,9 @@ interface WorkoutContextType {
   createWorkout: (userId: string, workout: WorkoutInput) => Promise<void>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
+  templates: CompleteWorkout[];
+  fetchTemplates: (userId: string) => Promise<void>;
+  saveAsTemplate: (workout: CompleteWorkout) => Promise<CompleteWorkout>;
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
@@ -24,6 +27,35 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
   const [currentWorkout, setCurrentWorkout] = useState<CompleteWorkout | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [templates, setTemplates] = useState<CompleteWorkout[]>([]);
+
+  const fetchTemplates = useCallback(async (userId: string) => {
+    try {
+      setLoading(true);
+      const templateList = await workoutService.getTemplates(userId);
+      setTemplates(templateList);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load templates'));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  const saveAsTemplate = useCallback(async (workout: CompleteWorkout) => {
+    try {
+      setLoading(true);
+      const template = await workoutService.saveAsTemplate(workout);
+      setTemplates(prev => [template, ...prev]);
+      return template;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to save template'));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  
 
   const loadWorkouts = useCallback(async (userId: string) => {
     try {
@@ -98,7 +130,10 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     createWorkout,
     deleteWorkout,
     clearError,
-    setWorkouts
+    setWorkouts,
+    templates, 
+    fetchTemplates,
+    saveAsTemplate
   };
 
   return (

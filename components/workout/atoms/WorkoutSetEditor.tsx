@@ -10,6 +10,7 @@ interface WorkoutSetEditorProps {
   onSetChange: (set: WorkoutSet) => void;
   isLastSet: boolean;
   visibleFields: WorkoutField[];
+  isTemplateValue?: boolean
 }
 
 const WorkoutSetEditor: React.FC<WorkoutSetEditorProps> = ({
@@ -17,6 +18,7 @@ const WorkoutSetEditor: React.FC<WorkoutSetEditorProps> = ({
   onSetChange,
   isLastSet,
   visibleFields,
+  isTemplateValue = false
 }) => {
   const [errors, setErrors] = useState<Record<string, string | null>>({});
 
@@ -98,13 +100,17 @@ const WorkoutSetEditor: React.FC<WorkoutSetEditorProps> = ({
       <View key={field} style={styles.fieldContainer}>
         <Text style={styles.fieldLabel}>{field.charAt(0).toUpperCase() + field.slice(1)}</Text>
         <TextInput
-          style={[styles.input, errors[field] && styles.inputError]}
-          value={set[field]?.toString() || ''}
-          onChangeText={(value) => handleChange(value, field)}
-          keyboardType="numeric"
-          placeholder={getPlaceholder()}
-          placeholderTextColor="#666"
-        />
+  style={[
+    styles.input, 
+    errors[field] && styles.inputError,
+    isTemplateValue && styles.templateValue // Add template styling
+  ]}
+  value={set[field]?.toString() || ''}
+  onChangeText={(value) => handleChange(value, field)}
+  keyboardType="numeric"
+  placeholder={getPlaceholder()}
+  placeholderTextColor="#666"
+/>
       </View>
     );
   };
@@ -147,6 +153,10 @@ const styles = StyleSheet.create({
   inputError: {
     borderWidth: 1,
     borderColor: '#ff4444',
+  },
+  templateValue: {
+    opacity: 0.6,
+    color: '#888', // Lighter color for template values
   },
 });
 

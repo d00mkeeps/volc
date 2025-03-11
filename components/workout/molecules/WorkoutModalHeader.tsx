@@ -7,14 +7,16 @@ interface WorkoutModalHeaderProps {
   workout: CompleteWorkout;
   editMode: boolean;
   onWorkoutChange: React.Dispatch<React.SetStateAction<CompleteWorkout>>;
-  onDeletePress: () => void;  // Add this prop
+  onDeletePress: () => void;
+  hideDeleteButton?: boolean
 }
 
 const WorkoutModalHeader: React.FC<WorkoutModalHeaderProps> = ({ 
   workout,
   editMode,
   onWorkoutChange,
-  onDeletePress
+  onDeletePress,
+  hideDeleteButton = false
 }) => {
   const formattedDate = new Date(workout.created_at).toLocaleDateString();
 
@@ -39,12 +41,14 @@ const WorkoutModalHeader: React.FC<WorkoutModalHeaderProps> = ({
         ) : (
           <Text style={styles.title}>{workout.name}</Text>
         )}
-        <TouchableOpacity 
-          style={styles.deleteButton}
-          onPress={onDeletePress}
-        >
-          <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
+        {!hideDeleteButton && (
+          <TouchableOpacity 
+            style={styles.deleteButton}
+            onPress={onDeletePress}
+          >
+            <Text style={styles.deleteButtonText}>Delete</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.date}>{formattedDate}</Text>
     </View>

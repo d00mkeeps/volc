@@ -9,6 +9,10 @@ interface WorkoutExerciseItemEditProps {
   isLastExercise: boolean;
   onExerciseChange: (exercise: WorkoutExercise) => void;
   onDeleteExercise: () => void;
+  // Add these new props:
+  templateId?: string | null;
+  modifiedFields?: Record<string, boolean>;
+  onFieldModified?: (fieldId: string) => void;
 }
 
 const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
@@ -16,6 +20,9 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
   isLastExercise,
   onExerciseChange,
   onDeleteExercise,
+  templateId,
+  modifiedFields,
+  onFieldModified
 }) => {
   const [nameError, setNameError] = useState<string | null>(null);
   const [visibleFields, setVisibleFields] = useState<Set<WorkoutField>>(() => {
@@ -31,6 +38,11 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
     return fields;
   });
   const [showFieldMenu, setShowFieldMenu] = useState(false);
+
+  const isTemplateField = (fieldId: string): boolean => {
+    return Boolean(templateId && !modifiedFields?.[fieldId]);
+  };
+  
 
   const availableFields: Array<{id: WorkoutField, label: string}> = [
     { id: 'weight' as WorkoutField, label: 'Weight measurement' },
@@ -49,7 +61,6 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
       ...exercise,
       workout_exercise_sets: updatedSets
     });
-    setShowFieldMenu(false);
   };
 
   const handleNameChange = (name: string) => {
@@ -111,24 +122,32 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
     <View style={[styles.container, !isLastExercise && styles.bottomBorder]}>
       <View style={styles.header}>
         <View style={styles.nameContainer}>
-          <TextInput
-            style={[styles.exerciseName, nameError && styles.inputError]}
-            value={exercise.name}
-            onChangeText={handleNameChange}
-            placeholder="Exercise Name"
-            placeholderTextColor="#666"
-          />
+        <TextInput
+  style={[
+    styles.exerciseName,
+    nameError && styles.inputError,
+    isTemplateField(`exercise_${exercise.id}_name`) && styles.templateValue
+  ]}
+  value={exercise.name}
+  onChangeText={(text) => {
+    handleNameChange(text);
+    onFieldModified?.(`exercise_${exercise.id}_name`);
+  }}
+  placeholder="Exercise Name"
+  placeholderTextColor="#666"
+/>
+
           {nameError && <Text style={styles.errorText}>{nameError}</Text>}
         </View>
         <View style={styles.headerButtons}>
-          {availableFields.length > 0 && (
+      
             <TouchableOpacity 
               style={styles.addFieldButton} 
               onPress={() => setShowFieldMenu(true)}
             >
-              <Ionicons name="add-circle-outline" size={20} color="#8cd884" />
+              <Ionicons name="ellipsis-horizontal" size={20} color="#8cd884" />
             </TouchableOpacity>
-          )}
+          
           <TouchableOpacity 
             style={styles.deleteButton} 
             onPress={onDeleteExercise}
@@ -139,30 +158,70 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
       </View>
 
       <Modal
-        visible={showFieldMenu}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowFieldMenu(false)}
-      >
-        <TouchableOpacity 
-          style={styles.menuOverlay}
-          activeOpacity={1}
-          onPress={() => setShowFieldMenu(false)}
-        >
-          <View style={styles.menuContent}>
-            {availableFields.map(field => (
-              <TouchableOpacity
-                key={field.id}
-                style={styles.menuItem}
-                onPress={() => addField(field.id)}
-              >
-                <Text style={styles.menuItemText}>{field.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+  visible={showFieldMenu}
+  transparent={true}
+  animationType="fade"
+  onRequestClose={() => setShowFieldMenu(false)}
+>
+  <TouchableOpacity 
+    style={styles.menuOverlay}
+    activeOpacity={1}
+    onPress={() => setShowFieldMenu(false)}
+  >
+    <View style={styles.menuContent}>
+      <View style={styles.modalHeader}>
+        <Text style={styles.modalTitle}>Measurements</Text>
+        <TouchableOpacity onPress={() => setShowFieldMenu(false)}>
+          <Ionicons name="close" size={22} color="#fff" />
         </TouchableOpacity>
-      </Modal>
-
+      </View>
+      
+      {/* Non-negotiable reps field */}
+      <TouchableOpacity
+        style={[styles.menuItem, styles.selectedMenuItem]}
+        disabled={true}
+      >
+        <Text style={styles.menuItemText}>Repetitions</Text>
+        <Ionicons name="checkmark" size={18} color="#999" />
+      </TouchableOpacity>
+      
+      {/* Selectable fields */}
+      {['weight', 'rpe', 'distance', 'duration'].map(fieldId => {
+        const isSelected = visibleFields.has(fieldId as WorkoutField);
+        const label = {
+          'weight': 'Weight',
+          'rpe': 'RPE',
+          'distance': 'Distance',
+          'duration': 'Duration'
+        }[fieldId];
+        
+        return (
+          <TouchableOpacity
+            key={fieldId}
+            style={[
+              styles.menuItem, 
+              isSelected && styles.selectedMenuItem
+            ]}
+            onPress={() => {
+              if (isSelected) {
+                // Remove field logic (if needed)
+                const newFields = new Set(visibleFields);
+                newFields.delete(fieldId as WorkoutField);
+                setVisibleFields(newFields);
+              } else {
+                // Add field logic
+                addField(fieldId as WorkoutField);
+              }
+            }}
+          >
+            <Text style={styles.menuItemText}>{label}</Text>
+            {isSelected && <Ionicons name="checkmark" size={18} color="#999" />}
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  </TouchableOpacity>
+</Modal>
       <View style={styles.setsContainer}>
         {exercise.workout_exercise_sets
           .sort((a, b) => a.set_number - b.set_number)
@@ -170,12 +229,17 @@ const WorkoutExerciseItemEdit: React.FC<WorkoutExerciseItemEditProps> = ({
             <View key={set.id} style={styles.setRow}>
               <Text style={styles.setNumber}>{index + 1}</Text>
               <View style={styles.setEditorContainer}>
-                <WorkoutSetEditor
-                  set={set}
-                  visibleFields={Array.from(visibleFields)}
-                  onSetChange={(updatedSet) => handleSetChange(updatedSet, index)}
-                  isLastSet={index === exercise.workout_exercise_sets.length - 1}
-                />
+              <WorkoutSetEditor
+  set={set}
+  visibleFields={Array.from(visibleFields)}
+  onSetChange={(updatedSet) => {
+    handleSetChange(updatedSet, index);
+    onFieldModified?.(`set_${set.id}`);
+  }}
+  isLastSet={index === exercise.workout_exercise_sets.length - 1}
+  isTemplateValue={isTemplateField(`set_${set.id}`)}
+/>
+
               </View>
               <TouchableOpacity 
                 style={[
@@ -269,6 +333,29 @@ const styles = StyleSheet.create({
   deleteSetButton: {
     padding: 8,
     marginLeft: 4,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+    marginBottom: 8,
+  },
+  templateValue: {
+    opacity: 0.6,
+  },
+  modalTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  selectedMenuItem: {
+    backgroundColor: 'rgba(140, 216, 132, 0.2)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   addSetButton: {
     flexDirection: 'row',
