@@ -9,6 +9,10 @@ from langchain_anthropic import ChatAnthropic
 from app.services.workout_analysis.graph_service import WorkoutGraphService
 from app.services.chains.workout_analysis_chain import WorkoutAnalysisChain
 from app.core.supabase.client import SupabaseClient
+from ..schemas.exercise_query import ExerciseQuery
+from ..core.utils.id_gen import new_uuid
+from ..schemas.workout_data_bundle import BundleMetadata, CorrelationData, WorkoutDataBundle
+from ..services.workout_analysis.correlation_service import CorrelationService
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +82,16 @@ class WorkoutAnalysisService:
             while True:
                 message_json = await websocket.receive_text()
                 message_data = json.loads(message_json)
+
+                if message_data.get('type') == 'analyze_workout':
+                    workout_data = message_data.get('workout_data')
+                    if workout_data:
+                        async for response in self.analyze_workout(
+                            user_id=user_id,
+                            workout_data=workout_data,
+                            message=message_data.get('message', 'Analyze my workout')
+                        ):
+                            await send_json_safe(response)
                 
                 if message := message_data.get('message'):
                     async for response in self.process_query(
@@ -200,5 +214,77 @@ class WorkoutAnalysisService:
                 "data": {
                     "code": "processing_error",
                     "message": "An error occurred processing your request"
+                }
+            }
+    async def analyze_workout(
+        self, 
+        user_id: str,
+        workout_data: Dict[str, Any],
+        message: str
+    ) -> AsyncGenerator[Dict[str, Any], None]:
+        """Analyze workout directly without extraction."""
+        try:
+            logger.info(f"Starting workout analysis for user {user_id}")
+            
+            # Initialize conversation chain if needed
+            if not self.conversation_chain:
+                self.conversation_chain = WorkoutAnalysisChain(llm=self.llm, user_id=user_id)
+            
+            # Run correlation analysis
+            correlation_service = CorrelationService()
+            correlation_results = correlation_service.analyze_exercise_correlations(workout_data)
+            logger.info(f"Correlation analysis complete: found {len(correlation_results.get('summary', []))} significant correlations")
+            
+            # Create bundle
+            bundle_id = await new_uuid()
+            bundle = WorkoutDataBundle(
+                bundle_id=bundle_id,
+                metadata=BundleMetadata(
+                    total_workouts=workout_data['metadata']['total_workouts'],
+                    total_exercises=workout_data['metadata']['total_exercises'],
+                    date_range=workout_data['metadata']['date_range'],
+                    # In analyze_workout method
+                exercises_included = list(set(
+                    exercise.get('exercise_name', '').lower() 
+                    for workout in workout_data.get('workouts', [])
+                    for exercise in workout.get('exercises', [])
+                ))
+                ),
+                workout_data=workout_data,
+                original_query=message,
+                created_at=datetime.now(),
+                correlation_data=CorrelationData(**correlation_results) if correlation_results else None
+            )
+            
+            # Add bundle to conversation
+            await self.conversation_chain.add_data_bundle(bundle)
+            
+            # Generate chart if needed
+            chart_url = await self.graph_service.add_chart_to_bundle(
+                bundle=bundle,
+                llm=self.llm
+            )
+            
+            if chart_url:
+                bundle.chart_url = chart_url
+                logger.info(f"Chart generated: {chart_url}")
+            
+            # Return bundle data
+            yield {
+                "type": "workout_data_bundle", 
+                "data": bundle.model_dump()
+            }
+            
+            # Generate analysis with LLM
+            async for response in self.conversation_chain.process_message(message):
+                yield response
+                
+        except Exception as e:
+            logger.error(f"Error analyzing workout: {str(e)}", exc_info=True)
+            yield {
+                "type": "error", 
+                "data": {
+                    "code": "analysis_error",
+                    "message": f"Failed to analyze workout: {str(e)}"
                 }
             }

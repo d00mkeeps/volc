@@ -1,9 +1,14 @@
 # app/schemas/workout_data_bundle.py
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
-from pydantic.json_schema import JsonSchemaValue
+
+class CorrelationData(BaseModel):
+    summary: List[Dict[str, Any]] = Field(description="Summary of correlation analysis")
+    heatmap_base64: Optional[str] = Field(description="Base64 encoded heatmap image")
+    time_series: Dict[str, Dict[str, Any]] = Field(description="Time series data for correlated exercises")
+
 
 class BundleMetadata(BaseModel):
     total_workouts: int
@@ -22,6 +27,7 @@ class WorkoutDataBundle(BaseModel):
     chart_url: Optional[str] = None
     created_at: datetime = datetime.now()
     bundle_id: UUID
+    correlation_data: Optional[CorrelationData] = None
     
     model_config = ConfigDict(json_encoders={
         datetime: lambda dt: dt.isoformat(),

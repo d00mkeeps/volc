@@ -65,6 +65,8 @@ export default function HomeScreen() {
     }
     
     await createWorkout(user.id, workoutInput);
+
+    
   };
 
   const handleAnalysisPress = () => {

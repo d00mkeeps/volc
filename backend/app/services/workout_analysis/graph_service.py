@@ -1,28 +1,26 @@
 from typing import Optional
 from datetime import datetime
 import logging
-from app.schemas.workout_data_bundle import WorkoutDataBundle, BundleMetadata
-from ..extraction.query_extractor import QueryExtractor
+from app.schemas.workout_data_bundle import CorrelationData, WorkoutDataBundle, BundleMetadata
 from .query_builder import WorkoutQueryBuilder
 from ..chart_generator.chart_service import ChartService
 from ..chart_generator.config_builder import generate_chart_config
 from app.core.supabase.client import SupabaseClient
 from ...core.utils.id_gen import new_uuid
-from uuid import UUID
+from .correlation_service import CorrelationService 
+
 logger = logging.getLogger(__name__)
 
 class WorkoutGraphService:
     """Service for generating workout data graphs and associated data bundles."""
     
     def __init__(self, supabase_client: SupabaseClient):
-        self.query_extractor = QueryExtractor()
         self.query_builder = WorkoutQueryBuilder(supabase_client)
         self.chart_service = ChartService()
+        self.correlation_service = CorrelationService()
 
     async def create_workout_bundle(self, user_id: str, query_text: str) -> Optional[WorkoutDataBundle]:
-        """
-        Creates a workout data bundle with the query results, without generating a chart.
-        """
+        """Creates a workout data bundle with query results and correlation analysis."""
         try:
             logger.debug(f"Extracting query parameters from: {query_text}")
             query = await self.query_extractor.extract(query_text)
@@ -42,7 +40,6 @@ class WorkoutGraphService:
                 return None
             logger.info(f"Formatted data: {formatted_data}")
 
-
             # Create bundle metadata
             metadata = BundleMetadata(
                 total_workouts=formatted_data['metadata']['total_workouts'],
@@ -55,20 +52,26 @@ class WorkoutGraphService:
                 ]
             )
 
+            # Add correlation analysis
+            correlation_results = self.correlation_service.analyze_exercise_correlations(formatted_data)
+
             bundle_id = await new_uuid()
 
-            # Create bundle without chart URL
-            return WorkoutDataBundle(
+            # Create bundle with correlation data
+            bundle = WorkoutDataBundle(
                 bundle_id=bundle_id,
                 metadata=metadata,
                 workout_data=formatted_data,
                 original_query=query_text,
                 chart_url=None,  # No chart URL yet
+                correlation_data=CorrelationData(**correlation_results) if correlation_results else None,
                 created_at=datetime.now()
             )
+            
+            return bundle
 
         except Exception as e:
-            logger.error(f"Error creating workout bundle: {str(e)}")
+            logger.error(f"Error creating workout bundle: {str(e)}", exc_info=True)
             return None
 
     async def add_chart_to_bundle(self, bundle: WorkoutDataBundle, llm) -> Optional[str]:

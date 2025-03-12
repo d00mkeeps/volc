@@ -84,6 +84,8 @@ DEFAULT_OPTIONS = {
         }
     }
 }
+
+
 class ChartStyle(BaseModel):
    width: int = Field(default=400)
    height: int = Field(default=350)
@@ -100,8 +102,6 @@ class Dataset(BaseModel):
     fill: Optional[bool] = None
     tension: Optional[float] = None
     pointRadius: Optional[float] = None
-
-# Rest of schemas remain the same
 
 class ChartData(BaseModel):
    labels: List[str]  # Dates

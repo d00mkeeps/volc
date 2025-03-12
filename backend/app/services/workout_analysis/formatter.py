@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 from app.utils.one_rm_calc import OneRMCalculator
 
@@ -30,14 +31,28 @@ class WorkoutFormatter:
         workouts = {}
         
         for exercise in raw_data:
-            workout_id = exercise['workouts']['created_at']
+            workout_date = exercise['workouts']['created_at']
+            
+            # Standardize date format
+            if isinstance(workout_date, str):
+                try:
+                    # Parse date and convert to simple ISO format without microseconds/timezone
+                    dt = datetime.fromisoformat(workout_date.replace('Z', '+00:00'))
+                    workout_date = dt.strftime('%Y-%m-%dT%H:%M:%S')
+                except ValueError:
+                    # Keep original if parsing fails
+                    pass
+            
+            workout_id = workout_date
+            
             if workout_id not in workouts:
                 workouts[workout_id] = {
                     'workout_name': exercise['workouts']['name'],
-                    'workout_date': exercise['workouts']['created_at'],
+                    'workout_date': workout_date,  # Standardized date
                     'workout_notes': exercise['workouts']['notes'],
                     'exercises': []
                 }
+            
             
             exercise_entry = {
                 'exercise_name': exercise['name'],

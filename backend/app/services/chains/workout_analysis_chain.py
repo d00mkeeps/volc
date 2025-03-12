@@ -74,6 +74,7 @@ The first message generally won't have workout data available, so just respond i
             if self.data_bundles:
                 latest_bundle = self.data_bundles[-1]
                 
+                # Process exercise data (existing code)
                 exercise_summaries = {}
                 for workout in latest_bundle.workout_data.get('workouts', []):
                     date = workout['date']
@@ -97,6 +98,14 @@ The first message generally won't have workout data available, so just respond i
                 
                 date_range = latest_bundle.metadata.date_range
 
+                # Add correlation data if available
+                correlation_data = None
+                if latest_bundle.correlation_data:
+                    correlation_data = {
+                        "significant_relationships": latest_bundle.correlation_data.summary,
+                        "has_heatmap": latest_bundle.correlation_data.heatmap_base64 is not None
+                    }
+                
                 workout_context["available_data"] = {
                     "query": latest_bundle.original_query,
                     "date_range": {
@@ -104,7 +113,8 @@ The first message generally won't have workout data available, so just respond i
                         "end": self._format_date(date_range['latest'])
                     },
                     "exercises": exercise_summaries,
-                    "total_workouts": latest_bundle.metadata.total_workouts
+                    "total_workouts": latest_bundle.metadata.total_workouts,
+                    "correlation_analysis": correlation_data
                 }
             
             context_str = f"""Available workout data:
@@ -112,7 +122,6 @@ The first message generally won't have workout data available, so just respond i
             
             base_vars["context"] = context_str
             return base_vars
-            
             
         except Exception as e:
             self.logger.error(f"Error getting prompt variables: {str(e)}", exc_info=True)
