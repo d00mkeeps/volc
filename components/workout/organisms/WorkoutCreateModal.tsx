@@ -10,6 +10,7 @@ import TemplateSelector from '../molecules/TemplateSelector';
 import { useAuth } from '@/context/AuthContext';
 import { WorkoutService } from '@/services/supabase/workout';
 import { useWorkout } from '@/context/WorkoutContext';
+import { useWorkoutAnalysis } from '@/hooks/useWorkoutAnalysis';
 
 interface WorkoutCreateModalProps {
     isVisible: boolean;
@@ -35,6 +36,7 @@ const WorkoutCreateModal: React.FC<WorkoutCreateModalProps> = ({
   const { fetchTemplates, templates: contextTemplates } = useWorkout();  
   const { user } = useAuth();
   const workoutService = new WorkoutService();
+  const {analyzeWorkout} = useWorkoutAnalysis()
 
   useEffect(() => {
     if (isVisible && user?.id) {
@@ -150,17 +152,32 @@ const markFieldAsModified = (fieldId: string) => {
     
     const errors = validateWorkout(workout);
     if (errors.length > 0) {
-      Alert.alert(
-        'Validation Error',
-        errors.join('\n'),
-        [{ text: 'OK' }]
-      );
+      Alert.alert('Validation Error', errors.join('\n'), [{ text: 'OK' }]);
       return;
     }
 
     try {
       setIsSaving(true);
       await onSave(workout);
+
+      Alert.alert(
+        'Workout Saved',
+        'Would you like to analyze this workout?',
+        [
+          { text: 'No', style: 'cancel' },
+          { 
+            text: 'Yes', 
+            onPress: async () => {
+              try {
+                await analyzeWorkout(workout);
+              } catch (error) {
+                Alert.alert('Error', 'Failed to start workout analysis');
+              }
+            }
+          }
+        ]
+      );
+      
       setWorkout(null);
       setSelectedTemplateId(null);
       onClose();

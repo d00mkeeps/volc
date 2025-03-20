@@ -7,6 +7,7 @@ export type ChatConfigName =
   |'onboarding'
   |'default'
   |'workout-analysis'
+  |'base'
  
   export interface ChatUIProps {
     configName: ChatConfigName;

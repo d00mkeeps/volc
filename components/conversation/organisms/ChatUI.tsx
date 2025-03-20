@@ -2,7 +2,7 @@ import { useMessage } from "@/context/MessageContext";
 import { useAttachments } from "@/context/ChatAttachmentContext";
 import { ChatUIProps } from "@/types/chat";
 import React, { useRef, useEffect, useCallback, useState, useMemo, memo } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView, View, Text } from "react-native";
 import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
@@ -137,6 +137,14 @@ export const ChatUI = memo(({
         onToggleSidebar={showSidebar ? handleToggleSidebar : undefined}
         isSidebarOpen={showSidebar ? isSidebarOpen : false}
       />
+         {connectionState.type !== 'CONNECTED' && (
+      <View style={styles.connectionBanner}>
+        <Text style={styles.connectionText}>
+          {connectionState.type === 'CONNECTING' ? 'Connecting...' : 
+           connectionState.type === 'ERROR' ? 'Connection error' : 'Offline'}
+        </Text>
+      </View>
+    )}
       <View style={styles.contentContainer}>
         <MessageList 
           messages={messages}
@@ -174,5 +182,17 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     backgroundColor: '#1f281f',
-  }
+  },
+  connectionBanner: {
+    backgroundColor: '#FF9800',
+    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  connectionText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
 });

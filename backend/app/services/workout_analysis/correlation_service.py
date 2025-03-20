@@ -84,11 +84,16 @@ class CorrelationService:
         try:
             exercise_data = self._prepare_exercise_data(workout_data)
             
+            # Convert to weekly series
             weekly_series = {}
             for name, data in exercise_data.items():
                 series = self._convert_to_weekly_series(data)
-                if not series.empty and len(series) >= 3:
+                if not series.empty and len(series) >= 3:  # Need at least 3 points
                     weekly_series[name] = series
+            
+            # If fewer than 2 exercises with sufficient data, return empty results
+            if len(weekly_series) < 2:
+                return {'summary': [], 'heatmap_base64': None, 'time_series': {}}
             
             correlation_summary = []
             correlation_matrix = {}
@@ -98,19 +103,21 @@ class CorrelationService:
             for i, ex1 in enumerate(exercises):
                 correlation_matrix[ex1] = {}
                 for j, ex2 in enumerate(exercises):
-                    if i >= j:  # Process each pair once
+                    if i >= j:  # Skip self-correlations and duplicates
                         continue
                         
+                    # Calculate lag results
                     lag_results = self.time_lagged_correlation(weekly_series[ex1], weekly_series[ex2])
                     strongest = max(lag_results, key=lambda x: abs(x['correlation']))
                     
+                    # Store in matrix
                     correlation_matrix[ex1][ex2] = strongest
                     if ex2 not in correlation_matrix:
                         correlation_matrix[ex2] = {}
                     correlation_matrix[ex2][ex1] = strongest
                     
+                    # Add to summary if significant
                     if strongest['significant']:
-                        pair_key = f"{ex1}_{ex2}"
                         correlation_summary.append({
                             'exercise1': ex1,
                             'exercise2': ex2,
@@ -119,17 +126,26 @@ class CorrelationService:
                             'p_value': strongest['p_value'],
                             'significant': True
                         })
-                        
-                        s1, s2 = weekly_series[ex1].align(weekly_series[ex2], join='outer')
-                        time_series_data[pair_key] = {
-                            'dates': s1.index.strftime('%Y-%m-%d').tolist(),
-                            'exercise1_values': s1.fillna(float('nan')).tolist(),
-                            'exercise2_values': s2.fillna(float('nan')).tolist(), 
-                            'exercise1_name': ex1,
-                            'exercise2_name': ex2
-                        }
+                    
+                    # Always add time series data for frontend visualization
+                    pair_key = f"{ex1}_{ex2}".lower().replace(' ', '_')
+                    s1, s2 = weekly_series[ex1].align(weekly_series[ex2], join='outer')
+                    
+                    time_series_data[pair_key] = {
+                        'exercise1': ex1,
+                        'exercise2': ex2,
+                        'dates': s1.index.strftime('%Y-%m-%d').tolist(),
+                        'exercise1_values': s1.fillna(float('nan')).tolist(),
+                        'exercise2_values': s2.fillna(float('nan')).tolist(),
+                        'correlation': strongest['correlation'],
+                        'lag_weeks': strongest['lag'],
+                        'significant': strongest['significant']
+                    }
             
-            heatmap_base64 = self.generate_heatmap(correlation_matrix, exercises)
+            # Generate heatmap if we have correlations
+            heatmap_base64 = None
+            if correlation_matrix and len(exercises) > 1:
+                heatmap_base64 = self.generate_heatmap(correlation_matrix, exercises)
             
             return {
                 'summary': correlation_summary,
@@ -140,7 +156,6 @@ class CorrelationService:
         except Exception as e:
             logger.error(f"Error in correlation analysis: {str(e)}", exc_info=True)
             return {'summary': [], 'heatmap_base64': None, 'time_series': {}}
-
     def generate_heatmap(self, correlation_matrix, exercises):
         """Generate correlation heatmap visualization"""
         try:

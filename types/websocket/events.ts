@@ -1,3 +1,5 @@
+import { Message } from "@/types";
+
 export type WebSocketMessageType = 
   | 'content' 
   | 'done' 
@@ -8,15 +10,19 @@ export type WebSocketMessageType =
 
 export interface WebSocketMessage {
 type?: any;
-data?: string;
+data?: string | Message[];
 error?: string;
-message: string,
-generate_graph?: boolean
+message?: string,
+generate_graph?: boolean,
+timestamp?: string
 }
 
 export type WebSocketEvents = {
-  message: (message: WebSocketMessage) => void;
   error: (error: Error) => void;
   connect: () => void;
   disconnect: () => void;
+  message: (message: any) => void;
+  messageSent: (message: WebSocketMessage) => void;
+  connecting: () => void; 
+
 };

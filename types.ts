@@ -180,3 +180,5 @@ export interface WorkoutHeaderProps {
   onSelectWorkout: (workout: Workout) => void;
 }
 
+
+export { ChatConfigName };
