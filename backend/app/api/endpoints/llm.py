@@ -12,7 +12,7 @@ router = APIRouter()
 load_dotenv()
 
 # Base user connection
-@router.websocket("/{user_id}")
+@router.websocket("/base/{user_id}")
 async def user_base_websocket(websocket: WebSocket, user_id: str):
     logger = logging.getLogger(__name__)
     
@@ -56,6 +56,12 @@ async def onboarding_websocket(websocket: WebSocket):
     try:
         await websocket.accept()
         logger.info("WebSocket connection accepted")
+
+        await websocket.send_json({
+            "type": "connection_status",
+            "data": "connected"
+        })
+        
         
         # Initialize LLM instance
         llm = ChatAnthropic(
@@ -78,9 +84,7 @@ async def onboarding_websocket(websocket: WebSocket):
                     "timestamp": data.get('timestamp')
                 })
                 continue
-        
-        # Process WebSocket messages
-        await service.process_websocket(websocket)
+            await service.process_message(websocket, data)
         
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected")

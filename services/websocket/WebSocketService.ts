@@ -42,16 +42,14 @@ export interface QueueState {
 
 export class WebSocketService {
   // Original properties
+  private currentMessages: Message[] | null = null;
   private socket: WebSocket | null = null;
   private events: EventEmitter<WebSocketEvents> = new EventEmitter();
   private baseUrl: string | null = null;
   private readonly reconnectAttempts = 3;
   private readonly reconnectInterval = 1000;
   private reconnectTimeout: NodeJS.Timeout | null = null;
-  private currentConfigName: ChatConfigName | null = null;
   private readonly BASE_PATH = '/';
-  private currentId: string | null = null;
-  private currentMessages: Message[] | null = null;
   private isConnecting: boolean = false;
   private isConnectionReady = false;
   private isReconnecting: boolean = false;
@@ -78,6 +76,10 @@ export class WebSocketService {
   private enableQueuePersistence: boolean = false;
   private lastNetworkType: string | null = null;
   private appState: 'active' | 'background' | 'inactive' = 'active';
+
+  //connection registry
+  private connectionRegistry = new Map<string, {refCount: number, configName: string, id: string}>();
+private getConnectionKey = (configName: string, id: string): string => `${configName}:${id}`;
 
   /**
    * Initialize the WebSocket service with optional queue persistence
@@ -152,12 +154,15 @@ export class WebSocketService {
    * Get information about the current connection
    */
   public getCurrentConnectionInfo() {
-    if (this.currentConfigName && this.currentId) {
-      return {
-        configName: this.currentConfigName,
-        id: this.currentId,
-        messages: this.currentMessages || undefined
-      };
+    if (this.socket && this.isConnected()) {
+      // Find the active connection in the registry
+      for (const [key, entry] of this.connectionRegistry.entries()) {
+        return {
+          configName: entry.configName,
+          id: entry.id,
+          messages: this.currentMessages || undefined
+        };
+      }
     }
     return null;
   }
@@ -216,52 +221,19 @@ export class WebSocketService {
     }, 'high', true); // High priority, persistent (important for reconnection)
   }
   /**
-   * Attempt to reconnect to the WebSocket server
-   */
-  private async reconnect(): Promise<void> {
-    if (this.isReconnecting) return;
-    
-    this.isReconnecting = true;
-    this.events.emit('connecting');
-    
-    let attempts = 0;
-    while (attempts < this.reconnectAttempts && !this.isConnected()) {
-      try {
-        if (this.currentConfigName && this.currentId) {
-          await this.connect(this.currentConfigName, this.currentId, this.currentMessages || undefined);
-          console.log('Reconnection successful');
-          break;
-        } else {
-          console.log('No previous connection info available');
-          break;
-        }
-      } catch (error) {
-        console.error(`Reconnection attempt ${attempts + 1} failed:`, error);
-        attempts++;
-        
-        if (attempts < this.reconnectAttempts) {
-          await new Promise(resolve => 
-            setTimeout(resolve, this.reconnectInterval * Math.pow(2, attempts))
-          );
-        }
-      }
-    }
-    
-    this.isReconnecting = false;
-    
-    if (this.isConnected()) {
-      this.processQueue();
-    } else if (attempts >= this.reconnectAttempts) {
-      console.log('Max reconnection attempts reached, will try again later');
-      // Schedule a retry after some time
-      this.reconnectTimeout = setTimeout(() => this.reconnect(), 60000); // 1 minute
-    }
-  }
-
-  /**
    * Connect to the WebSocket server
    */
   public async connect(configName: ChatConfigName, id: string, messages?: Message[]): Promise<void> {
+    const connectionKey = this.getConnectionKey(configName, id);
+    
+    if (this.isConnected() && this.connectionRegistry.has(connectionKey)) {
+      console.log(`Reusing existing connection: ${connectionKey}`);
+      const entry = this.connectionRegistry.get(connectionKey)!;
+      this.connectionRegistry.set(connectionKey, {...entry, refCount: entry.refCount + 1});
+      this.events.emit('connect');
+      return;
+    }
+  
     if (this.isConnecting) {
       console.log('Connection in progress, waiting...');
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -270,7 +242,7 @@ export class WebSocketService {
         return;
       }
     }
-
+  
     this.disconnect();
     this.isConnecting = true;
     this.isConnectionReady = false;
@@ -279,17 +251,12 @@ export class WebSocketService {
       if (!this.baseUrl) {
         await this.initialize();
       }
-
-      // Store current connection info for reconnection
-      this.currentConfigName = configName;
-      this.currentId = id;
-      this.currentMessages = messages || null;
-
+  
       // Build WebSocket URL
       let url;
       switch (configName) {
         case 'base':
-          url = `ws://${this.baseUrl}:8000/${id}`;
+          url = `ws://${this.baseUrl}:8000/base/${id}`;
           break;
         case 'onboarding':
           url = `ws://${this.baseUrl}:8000/onboarding`;
@@ -301,7 +268,7 @@ export class WebSocketService {
         default:
           throw new Error('Invalid chat configuration');
       }
-
+  
       console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
   
@@ -380,6 +347,23 @@ export class WebSocketService {
       this.isConnecting = false;
       this.handleError(error as Error);
       throw error;
+    } finally {
+      this.connectionRegistry.set(connectionKey, {refCount: 1, configName, id});
+    }
+  }
+
+  public disconnectFrom(configName: string, id: string): void {
+    const connectionKey = this.getConnectionKey(configName, id);
+    
+    if (this.connectionRegistry.has(connectionKey)) {
+      const entry = this.connectionRegistry.get(connectionKey)!;
+      
+      if (entry.refCount > 1) {
+        this.connectionRegistry.set(connectionKey, {...entry, refCount: entry.refCount - 1});
+      } else {
+        this.connectionRegistry.delete(connectionKey);
+        this.disconnect();
+      }
     }
   }
 
@@ -823,6 +807,50 @@ export class WebSocketService {
   /**
    * Disconnect and clean up resources
    */
+  private async reconnect(): Promise<void> {
+    if (this.isReconnecting) return;
+    
+    this.isReconnecting = true;
+    this.events.emit('connecting');
+    
+    // Get current active connection from registry if exists
+    let activeConnection = null;
+    for (const [key, entry] of this.connectionRegistry.entries()) {
+      activeConnection = entry;
+      break; // Just get the first one for reconnection
+    }
+    
+    if (!activeConnection) {
+      this.isReconnecting = false;
+      return;
+    }
+    
+    let attempts = 0;
+    while (attempts < this.reconnectAttempts && !this.isConnected()) {
+      try {
+        await this.connect(activeConnection.configName as ChatConfigName, activeConnection.id);
+        console.log('Reconnection successful');
+        break;
+      } catch (error) {
+        console.error(`Reconnection attempt ${attempts + 1} failed:`, error);
+        attempts++;
+        
+        if (attempts < this.reconnectAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 
+            this.reconnectInterval * Math.pow(2, attempts)));
+        }
+      }
+    }
+    
+    this.isReconnecting = false;
+    
+    if (this.isConnected()) {
+      this.processQueue();
+    } else if (attempts >= this.reconnectAttempts) {
+      this.reconnectTimeout = setTimeout(() => this.reconnect(), 60000);
+    }
+  }
+  
   public disconnect(): void {
     // Stop timers
     this.stopHeartbeat();
@@ -842,13 +870,10 @@ export class WebSocketService {
       this.socket.close();
       this.socket = null;
     }
-
-    // Clear connection info
-    this.currentConfigName = null;
-    this.currentId = null;
+  
+    // Clear registry on full disconnect
+    this.connectionRegistry.clear();
     this.processingQueue = false;
-    
-    // We don't clear the message queue here to allow reconnection attempts
   }
 
   // Event handling for WebSocketEvents

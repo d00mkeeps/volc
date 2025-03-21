@@ -20,7 +20,7 @@ class OnboardingService:
         self.chain = OnboardingChain(llm=llm)
         self.logger = logging.getLogger(__name__)
 
-    async def process_websocket(self, websocket: WebSocket) -> None:
+    async def process_websocket(self, websocket: WebSocket, data: Dict[str, Any] = None) -> None:
         """Process WebSocket connection and handle messages (legacy method for backward compatibility)."""
         try:
             self.logger.info("Processing WebSocket messages")

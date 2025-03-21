@@ -2,14 +2,13 @@ import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 import { LLMService } from "@/services/llm/base";
 import { authService } from "@/services/supabase/auth";
 import { ConversationService } from "@/services/supabase/conversation";
+import { getWebSocketService, resolveConfig } from "@/services/websocket/GlobalWebsocketService";
 import { StreamHandler } from "@/services/websocket/StreamHandler";
-import { WebSocketService } from "@/services/websocket/WebSocketService";
 import { Message } from "@/types";
 import { createInitialConnectionState, MessageHandler } from "@/types/core";
 import { ConnectionState } from "@/types/states";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-// Update the MessageContextType interface to correctly type getConversationConfig
 interface MessageContextType {
   messages: Message[];
   streamingMessage: Message | null;
@@ -50,8 +49,8 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   const accumulatedMessageRef = useRef<string>('');
   const [showLoader, setShowLoader] = useState(false);
   const conversationService = useMemo(() => new ConversationService(), []);
-  const webSocket = useMemo(() => new WebSocketService(), []);
-  const streamHandler = useMemo(() => new StreamHandler(), []);
+  const webSocket = useMemo(() => getWebSocketService(), []);
+    const streamHandler = useMemo(() => new StreamHandler(), []);
   const messageHandlerRef = useRef<MessageHandler | null>(null);
   const [messagesRequestingGraphs, setMessagesRequestingGraphs] = useState<Set<string>>(new Set());
   const [conversationConfigMap, setConversationConfigMap] = useState<Record<string, ChatConfigKey>>({});
@@ -61,46 +60,28 @@ export const MessageProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [conversationConfigMap]);
 
 // In MessageContext.tsx - loadConversation function
-const loadConversation = useCallback(async (conversationId: string, retryCount = 0) => {
+const loadConversation = useCallback(async (conversationId: string) => {
   try {
-    console.log('MessageContext: Loading conversation:', conversationId);
     setMessages([]);
     setStreamingMessage(null);
     
-    // Get correct config
-    let correctConfig = conversationConfigMap[conversationId];
-    if (!correctConfig) {
-      correctConfig = await fetchConversationConfig(conversationId, conversationService);
-      setConversationConfigMap(prev => ({...prev, [conversationId]: correctConfig}));
-    }
-    
-    // Fetch messages
+    const config = await resolveConfig(conversationId);
     const messages = await conversationService.getConversationMessages(conversationId);
     
     setMessages(messages);
     setCurrentConversationId(conversationId);
+    setConversationConfigMap(prev => ({...prev, [conversationId]: config as ChatConfigKey}));
     
-    // Connect using the correct config
-    try {
-      await webSocket.connect(correctConfig, conversationId, messages);
-    } catch (wsError) {
-      console.error('WebSocket connection error:', wsError);
-      if (retryCount < 2) {
-        console.log(`Retrying WebSocket connection (${retryCount + 1}/2)...`);
-        setTimeout(() => loadConversation(conversationId, retryCount + 1), 1000);
-        return;
-      }
-      throw wsError;
-    }
+    await webSocket.connect(config, conversationId, messages);
   } catch (error) {
-    console.error('MessageContext: Error loading conversation:', error);
+    console.error('Error loading conversation:', error);
     setConnectionState(prev => ({
       ...prev,
       type: 'ERROR',
       error: error as Error
-    }));
-  }
-}, [conversationService, webSocket, conversationConfigMap]);
+    }));  }
+}, [conversationService, webSocket]);
+
 
   const startNewConversation = useCallback(async (firstMessage: string, configName: ChatConfigKey): Promise<string> => {
     const session = await authService.getSession();

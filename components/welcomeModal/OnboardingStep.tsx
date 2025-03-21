@@ -3,10 +3,11 @@ import { UserProfileService } from "@/services/supabase/onboarding";
 import { ConversationService } from "@/services/supabase/conversation";
 import { authService } from "@/services/supabase/auth";
 import { OnboardingStepProps } from "@/types/welcomeModal";
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { ChatUI } from "../conversation/organisms/ChatUI";
 import { Button } from "react-native-paper";
+import { releaseConnection } from "@/services/websocket/GlobalWebsocketService";
 
 interface ExtendedOnboardingStepProps extends OnboardingStepProps {
   sessionId: string;
@@ -68,7 +69,15 @@ export const OnboardingConversationStep: React.FC<ExtendedOnboardingStepProps> =
       }
     }
   }, [wizardRef]);
- 
+
+// Replace the problematic useEffect with:
+useEffect(() => {
+  return () => {
+    if (sessionId) {
+      releaseConnection("onboarding", sessionId);
+    }
+  };
+}, [sessionId]);
   // Show loading state or error if needed
   if (isLoading) {
     return (
@@ -124,3 +133,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   }
 });
+
+function getConversationConfig(conversationId: any) {
+  throw new Error("Function not implemented.");
+}

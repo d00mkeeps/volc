@@ -2,10 +2,11 @@
  import { useMessage } from "@/context/MessageContext";
  import { ChatAttachmentProvider } from "@/context/ChatAttachmentContext";
  import { useLocalSearchParams, useRouter } from "expo-router";
- import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { useEffect, useRef, useState } from "react";
  import { View, StyleSheet } from "react-native";
 import { ChatConfigKey } from "@/components/conversation/atoms/ConfigSelect";
- 
+import { releaseConnection } from "@/services/websocket/GlobalWebsocketService";
+
 function ConversationPage() {
   const { id, pendingMessage } = useLocalSearchParams<{ 
     id: string;
@@ -61,6 +62,16 @@ function ConversationPage() {
 
     sendInitialMessage();
   }, [connectionState, pendingMessage, sendMessage, router]);
+
+  // Add this after the existing useEffect hooks in the ConversationPage component
+useEffect(() => {
+  return () => {
+    if (id) {
+      const config = getConversationConfig(id);
+      releaseConnection(config, id);
+    }
+  };
+}, [id, getConversationConfig]);
 
   return (
     <View style={styles.container}>
