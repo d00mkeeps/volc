@@ -20,3 +20,8 @@
 === Final Conversation State ===
 2025-03-21 20:26:26,167 - app.services.chains.base_conversation_chain - INFO - Total messages: 2
 2025-03-21 20:26:26,167 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-03-21 20:35:22,881 - root - DEBUG - Logging has been set up
+2025-03-21 20:35:22,881 - app.main - INFO - Application starting
+2025-03-21 20:35:24,488 - root - DEBUG - Logging has been set up
+2025-03-21 20:35:24,489 - app.main - INFO - Application starting
+2025-03-21 20:35:24,491 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
