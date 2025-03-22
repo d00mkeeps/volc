@@ -1,27 +1,3 @@
-2025-03-21 20:26:25,354 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:25,357 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Hi' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:25,357 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:25,586 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=" there! I'm here to create your personalized training plan." additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:25,586 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:25,822 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' To get started, could you please tell me your' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:25,823 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:25,906 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' first and last name, and whether' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:25,906 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:26,027 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' you prefer metric (kg/cm) or' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:26,027 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:26,097 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' imperial (lb/ft) units?' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0'
-2025-03-21 20:26:26,098 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:26,156 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-64050706-9a07-4a04-a406-c0727dcb76d0' usage_metadata={'input_tokens': 0, 'output_tokens': 51, 'total_tokens': 51, 'input_token_details': {}}
-2025-03-21 20:26:26,156 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-21 20:26:26,165 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-03-21 20:26:26,165 - httpcore.http11 - DEBUG - response_closed.started
-2025-03-21 20:26:26,166 - httpcore.http11 - DEBUG - response_closed.complete
-2025-03-21 20:26:26,167 - app.services.chains.base_conversation_chain - INFO - 
-=== Final Conversation State ===
-2025-03-21 20:26:26,167 - app.services.chains.base_conversation_chain - INFO - Total messages: 2
-2025-03-21 20:26:26,167 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-21 20:35:22,881 - root - DEBUG - Logging has been set up
-2025-03-21 20:35:22,881 - app.main - INFO - Application starting
-2025-03-21 20:35:24,488 - root - DEBUG - Logging has been set up
-2025-03-21 20:35:24,489 - app.main - INFO - Application starting
-2025-03-21 20:35:24,491 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-03-22 15:27:41,574 - app.services.workout_analysis_service - INFO - Initialized conversation with 0 messages
+2025-03-22 15:27:56,277 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: e11525b9-02cf-4e5c-aed1-69f3f68a8e1f
+2025-03-22 15:27:57,502 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3

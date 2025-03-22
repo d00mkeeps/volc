@@ -169,7 +169,9 @@ const markFieldAsModified = (fieldId: string) => {
             text: 'Yes', 
             onPress: async () => {
               try {
+                console.log(`analysing workout: ${workout}`)
                 await analyzeWorkout(workout);
+                
               } catch (error) {
                 Alert.alert('Error', 'Failed to start workout analysis');
               }

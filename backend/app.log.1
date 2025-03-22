@@ -1,106 +1,130 @@
-2025-03-21 20:21:41,722 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:21:46,258 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:21:46,260 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-21 20:22:39,911 - app.api.endpoints.llm - INFO - WebSocket disconnected
-2025-03-21 20:22:41,211 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:25:53,403 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:25:55,873 - root - DEBUG - Logging has been set up
-2025-03-21 20:25:55,873 - app.main - INFO - Application starting
-2025-03-21 20:26:08,965 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:26:21,327 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-21 20:26:21,356 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-21 20:26:21,359 - app.services.onboarding_service - INFO - Initializing with 0 messages
-2025-03-21 20:26:23,840 - app.services.onboarding_service - INFO - Processing message: Message
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - Content: You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. 
+2025-03-22 15:13:56,192 - app.services.workout_analysis_service - ERROR - Error processing message: Cannot call "send" once a close message has been sent.
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 331, in asgi_send
+    await self.send(data)  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 620, in send
+    await self.ensure_open()
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
 
-PROCESS FOR EACH RESPONSE:
-1. CHECK MISSING FIELDS
-Read MISSING_FIELDS to identify outstanding information
+The above exception was the direct cause of the following exception:
 
-2. DETERMINE NEXT FIELD
-Follow this priority order:
-1. First/Last Name + Unit system (metric/imperial)
-2. Basic Goal
-3. Goal Timeframe
-4. Specific Goal Numbers
-5. Current Abilities
-6. Training Preferences
-7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)
-8. Training Age (years of experience)
-9. Injuries
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 85, in send
+    await self._send(message)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
+    await send(message)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 344, in asgi_send
+    raise ClientDisconnected from exc
+uvicorn.protocols.utils.ClientDisconnected
 
+During handling of the above exception, another exception occurred:
 
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 255, in _handle_analyze_workout_message
+    await self._send_json_safe(websocket, response)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
+    await websocket.send_text(json_str)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
+    await self.send({"type": "websocket.send", "text": data})
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 88, in send
+    raise WebSocketDisconnect(code=1006)
+starlette.websockets.WebSocketDisconnect
 
-3. FORM RESPONSE
-Structure: [Brief acknowledgment] + [Single question for next priority field]
-Example: "Thanks, John! What fitness goals would you like to achieve?"
+During handling of the above exception, another exception occurred:
 
-4. OUTPUT
-CRITICAL: Return ONLY the formed response. No other text or system information.
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 132, in process_message
+    await self._handle_analyze_workout_message(websocket, data, conversation_id)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 259, in _handle_analyze_workout_message
+    await self._send_json_safe(websocket, {
+    ...<5 lines>...
+    })
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
+    await websocket.send_text(json_str)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
+    await self.send({"type": "websocket.send", "text": data})
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
+    raise RuntimeError('Cannot call "send" once a close message has been sent.')
+RuntimeError: Cannot call "send" once a close message has been sent.
+2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
+2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
+2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'dict'>
+2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Contents of data field (keys): ['message']
+2025-03-22 15:13:56,195 - app.api.endpoints.llm - ERROR - Error in workout-analysis websocket: Cannot call "send" once a close message has been sent.
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 331, in asgi_send
+    await self.send(data)  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 620, in send
+    await self.ensure_open()
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
 
-5. SUMMARY DISPLAY
-Only once all the required information has been collected, return this exact message:
+The above exception was the direct cause of the following exception:
 
-Great! I've got all the information I need. Here's a summary of what we discussed:
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 85, in send
+    await self._send(message)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
+    await send(message)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 344, in asgi_send
+    raise ClientDisconnected from exc
+uvicorn.protocols.utils.ClientDisconnected
 
-Training Profile for [First Name]:
-- Goal: [specific goal with timeframe]
-- Current Level: [abilities]
-- Experience: [training age]
-- Preferences: [exercise preferences]
-- Health Notes: [injuries/limitations]
+During handling of the above exception, another exception occurred:
 
-Personal Details:
-- Name: [First Last]
-- Age Group: [range]
-- Units: [metric/imperial]
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 255, in _handle_analyze_workout_message
+    await self._send_json_safe(websocket, response)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
+    await websocket.send_text(json_str)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
+    await self.send({"type": "websocket.send", "text": data})
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 88, in send
+    raise WebSocketDisconnect(code=1006)
+starlette.websockets.WebSocketDisconnect
 
-Does this look accurate to you?
+During handling of the above exception, another exception occurred:
 
-PERSONALITY:
-- Warm and encouraging but professional
-- Match user's technical level
-- Keep responses brief
-- Natural, conversational tone
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 132, in process_message
+    await self._handle_analyze_workout_message(websocket, data, conversation_id)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 259, in _handle_analyze_workout_message
+    await self._send_json_safe(websocket, {
+    ...<5 lines>...
+    })
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
+    await websocket.send_text(json_str)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
+    await self.send({"type": "websocket.send", "text": data})
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
+    raise RuntimeError('Cannot call "send" once a close message has been sent.')
+RuntimeError: Cannot call "send" once a close message has been sent.
 
-SPECIAL BEHAVIORS:
-1. Age Group Question
-   When asking for age group, always list valid ranges:
-   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"
+During handling of the above exception, another exception occurred:
 
-2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.
-
-3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"
-
-
-EXTRACTION_STATE: {extraction_state}
-MISSING_FIELDS: {missing_fields}
-
-Previous conversation: {messages}
-Human: {current_message}
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - Content: Message
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-03-21 20:26:23,841 - app.services.chains.base_conversation_chain - INFO - Content: {current_message}
-2025-03-21 20:26:23,842 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-21 20:26:23,968 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': [{'type': 'text', 'text': 'Message'}, {'type': 'text', 'text': '{current_message}'}]}], 'model': 'claude-3-7-sonnet-20250219', 'stream': True, 'system': 'You are The TrainSmart Coach. Your role is to gather user information through a structured conversation. Remember to pay attention to special behaviors when forming a reply. \n\nPROCESS FOR EACH RESPONSE:\n1. CHECK MISSING FIELDS\nRead MISSING_FIELDS to identify outstanding information\n\n2. DETERMINE NEXT FIELD\nFollow this priority order:\n1. First/Last Name + Unit system (metric/imperial)\n2. Basic Goal\n3. Goal Timeframe\n4. Specific Goal Numbers\n5. Current Abilities\n6. Training Preferences\n7. Age Group (18-24, 25-34, 35-44, 45-54, 55-64, or 65+)\n8. Training Age (years of experience)\n9. Injuries\n\n\n\n3. FORM RESPONSE\nStructure: [Brief acknowledgment] + [Single question for next priority field]\nExample: "Thanks, John! What fitness goals would you like to achieve?"\n\n4. OUTPUT\nCRITICAL: Return ONLY the formed response. No other text or system information.\n\n5. SUMMARY DISPLAY\nOnly once all the required information has been collected, return this exact message:\n\nGreat! I\'ve got all the information I need. Here\'s a summary of what we discussed:\n\nTraining Profile for [First Name]:\n- Goal: [specific goal with timeframe]\n- Current Level: [abilities]\n- Experience: [training age]\n- Preferences: [exercise preferences]\n- Health Notes: [injuries/limitations]\n\nPersonal Details:\n- Name: [First Last]\n- Age Group: [range]\n- Units: [metric/imperial]\n\nDoes this look accurate to you?\n\nPERSONALITY:\n- Warm and encouraging but professional\n- Match user\'s technical level\n- Keep responses brief\n- Natural, conversational tone\n\nSPECIAL BEHAVIORS:\n1. Age Group Question\n   When asking for age group, always list valid ranges:\n   "Which age group do you fall into: 18-24, 25-34, 35-44, 45-54, 55-64, or 65+?"\n\n2. Exercise preferences are different styles of exercise. Running, powerlifting, calisthenics, and yoga are all examples of possible preferences.\n\n3. When asking about metric or imperial units, ask exactly as follows: "Do you prefer metric (kg/cm) or imperial (lb/ft)?"\n\n\nEXTRACTION_STATE: {extraction_state}\nMISSING_FIELDS: {missing_fields}\n\nPrevious conversation: {messages}\nHuman: {current_message}'}}
-2025-03-21 20:26:23,972 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
-2025-03-21 20:26:24,254 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x1110dc2f0>
-2025-03-21 20:26:24,255 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x1110a0200> server_hostname='api.anthropic.com' timeout=None
-2025-03-21 20:26:24,453 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x111085590>
-2025-03-21 20:26:24,454 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
-2025-03-21 20:26:24,455 - httpcore.http11 - DEBUG - send_request_headers.complete
-2025-03-21 20:26:24,455 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
-2025-03-21 20:26:24,456 - httpcore.http11 - DEBUG - send_request_body.complete
-2025-03-21 20:26:24,456 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
-2025-03-21 20:26:25,337 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Fri, 21 Mar 2025 20:26:25 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-21T20:26:25Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'19000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-21T20:26:26Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-21T20:26:31Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'26000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-21T20:26:26Z'), (b'request-id', b'req_013svqpKyRmTHhgBTx5pqYer'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'92402f1f7ed5eb1d-MAN')])
-2025-03-21 20:26:25,340 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
-2025-03-21 20:26:25,340 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
-2025-03-21 20:26:25,341 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
-2025-03-21 20:26:25,354 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-64050706-9a07-4a04-a406-c0727dcb76d0' usage_metadata={'input_tokens': 584, 'output_tokens': 1, 'total_tokens': 585, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 158, in conversation_websocket
+    await service.process_message(websocket, data, conversation_id)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 150, in process_message
+    await self._send_json_safe(websocket, {
+    ...<2 lines>...
+    })
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
+    await websocket.send_text(json_str)
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
+    await self.send({"type": "websocket.send", "text": data})
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
+    raise RuntimeError('Cannot call "send" once a close message has been sent.')
+RuntimeError: Cannot call "send" once a close message has been sent.
+2025-03-22 15:14:17,628 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-03-22 15:14:20,868 - root - DEBUG - Logging has been set up
+2025-03-22 15:14:20,868 - app.main - INFO - Application starting
+2025-03-22 15:27:39,027 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-03-22 15:27:41,409 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout-analysis: e11525b9-02cf-4e5c-aed1-69f3f68a8e1f
+2025-03-22 15:27:41,409 - app.api.endpoints.llm - INFO - WebSocket connection accepted
+2025-03-22 15:27:41,556 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3

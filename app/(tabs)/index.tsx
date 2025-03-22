@@ -63,6 +63,7 @@ export default function HomeScreen() {
       });
       return;
     }
+  console.log(`calling createWorkout with ${workout.name} as workout`)
     
     await createWorkout(user.id, workoutInput);
 
