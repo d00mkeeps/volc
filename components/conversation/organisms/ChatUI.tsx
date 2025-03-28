@@ -1,37 +1,70 @@
+// ChatUI.tsx
 import { useMessage } from "@/context/MessageContext";
-import { useAttachments } from "@/context/ChatAttachmentContext";
+import { useData } from "@/context/DataContext";
 import { ChatUIProps } from "@/types/chat";
-import React, { useRef, useEffect, useCallback, useState, useMemo, memo } from "react";
+import React, { useEffect, useCallback, useState, useMemo, memo } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, SafeAreaView, View, Text } from "react-native";
 import Header from "../molecules/Header";
 import InputArea from "../atoms/InputArea";
 import MessageList from "../molecules/MessageList";
 import { Sidebar } from "../molecules/Sidebar";
+import { getWebSocketService } from "@/services/websocket/GlobalWebsocketService";
+import { WebSocketMessage } from "@/types/websocket";
+
+// Type guard function to check if a message is a signal message
+export const isSignalMessage = (message: WebSocketMessage): message is {
+  type: 'signal';
+  data: { type: string; data: any };
+} => {
+  return (
+    message.type === 'signal' &&
+    !!message.data &&
+    typeof message.data === 'object' &&
+    'type' in message.data &&
+    'data' in message.data
+  );
+};
 
 export const ChatUI = memo(({ 
   configName,
   conversationId,
   title,
   subtitle,
-  onSignal,
+  onSignal, // Kept for backward compatibility
   showNavigation,
-  showSidebar = true, // New prop with default value true
+  showSidebar = true,
 }: ChatUIProps) => {
   const { 
     messages, 
     streamingMessage, 
     connectionState, 
-    sendMessage,
-    loadConversation,
-    registerMessageHandler
+    sendMessage
   } = useMessage();
-  const { handleSignal } = useAttachments();
+  const { isLoading } = useData();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const hasConnectedRef = useRef(false);
   const [detailedAnalysis, setDetailedAnalysis] = useState(false);
 
-  // Only allow sidebar toggle if showSidebar is true
+  // Set up WebSocketService message handler for onSignal callback
+  useEffect(() => {
+    if (!conversationId || !onSignal) return;
+    
+    const webSocketService = getWebSocketService();
+    const messageHandler = (message: WebSocketMessage) => {
+      // Use the type guard function to check message structure
+      if (isSignalMessage(message)) {
+        // TypeScript now knows this is a signal with type and data properties
+        onSignal(message.data.type, message.data.data);
+      }
+    };
+    
+    webSocketService.on('message', messageHandler);
+    
+    return () => {
+      webSocketService.off('message', messageHandler);
+    };
+  }, [conversationId, onSignal]);
+
   const handleToggleSidebar = useCallback(() => {
     if (conversationId && showSidebar) {
       setIsSidebarOpen(prev => !prev);
@@ -45,36 +78,11 @@ export const ChatUI = memo(({
   const handleSendMessage = useCallback(async (message: string) => {
     try {
       await sendMessage(message, { detailedAnalysis });
-      console.log('ChatUI: sendMessage completed successfully');
       setDetailedAnalysis(false);
     } catch (error) {
       console.error('ChatUI: Failed to send message:', error);
     }
   }, [sendMessage, detailedAnalysis]);
-
-  // Register signal handler
-  useEffect(() => {
-    // Create handler function
-    const handler = (type: string, data: any) => {
-      console.log('ChatUI: Handling signal:', { type, data });
-      
-      if (handleSignal) {
-        handleSignal(type, data);
-      }
-      
-      if (onSignal) {
-        onSignal(type, data);
-      }
-    };
-    
-    console.log('ChatUI: Registering signal handler');
-    registerMessageHandler(handler);
-    
-    return () => {
-      console.log('ChatUI: Unregistering signal handler');
-      registerMessageHandler(null);
-    };
-  }, [handleSignal, onSignal, registerMessageHandler]);
 
   // Keyboard event listeners
   useEffect(() => {
@@ -91,31 +99,8 @@ export const ChatUI = memo(({
       keyboardDidHide.remove();
     };
   }, []);
-
-  // Load conversation if conversationId exists
-  useEffect(() => {
-    const loadConversationOnce = async () => {
-      if (!hasConnectedRef.current && conversationId) {
-        console.log(`ChatUI: Loading conversation ${conversationId}`);
-        hasConnectedRef.current = true;
-        try {
-          await loadConversation(conversationId);
-        } catch (error) {
-          console.error(`ChatUI: Failed to load conversation ${conversationId}:`, error);
-        }
-      }
-    };
-    
-    loadConversationOnce();
-    
-    return () => {
-      hasConnectedRef.current = false;
-    };
-  }, [loadConversation, conversationId]);
-
-  // Memoize sidebar to prevent unnecessary re-renders
+  
   const sidebarComponent = useMemo(() => {
-    // Don't show sidebar if showSidebar is false or no conversationId
     if (!conversationId || !showSidebar) return null;
     
     return (
@@ -137,14 +122,14 @@ export const ChatUI = memo(({
         onToggleSidebar={showSidebar ? handleToggleSidebar : undefined}
         isSidebarOpen={showSidebar ? isSidebarOpen : false}
       />
-         {connectionState.type !== 'CONNECTED' && (
-      <View style={styles.connectionBanner}>
-        <Text style={styles.connectionText}>
-          {connectionState.type === 'CONNECTING' ? 'Connecting...' : 
-           connectionState.type === 'ERROR' ? 'Connection error' : 'Offline'}
-        </Text>
-      </View>
-    )}
+      {connectionState.type !== 'CONNECTED' && (
+        <View style={styles.connectionBanner}>
+          <Text style={styles.connectionText}>
+            {connectionState.type === 'CONNECTING' ? 'Connecting...' : 
+             connectionState.type === 'ERROR' ? 'Connection error' : 'Offline'}
+          </Text>
+        </View>
+      )}
       <View style={styles.contentContainer}>
         <MessageList 
           messages={messages}

@@ -1,11 +1,11 @@
 // Modified Sidebar.tsx
-import { Animated, StyleSheet, View, ScrollView } from 'react-native';
-import { useEffect, useRef } from 'react';
-import { Title } from '../../public/atoms/Title';
-import { ToggleSwitch } from '../../public/atoms/ToggleSwitch';
-import { GraphDisplay } from '../../data/graph/organisms/GraphDisplay';
-import { useAttachments } from '@/context/ChatAttachmentContext';
-import SidebarWorkoutList from '../../data/workout/organisms/SidebarWorkoutList';
+import { Animated, StyleSheet, View, ScrollView } from "react-native";
+import { useEffect, useRef } from "react";
+import { Title } from "../../public/atoms/Title";
+import { ToggleSwitch } from "../../public/atoms/ToggleSwitch";
+import { GraphDisplay } from "../../data/graph/organisms/GraphDisplay";
+import { useData } from "@/context/DataContext";
+import SidebarWorkoutList from "../../data/workout/organisms/SidebarWorkoutList";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -23,10 +23,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleAnalysis,
 }) => {
   const slideAnim = useRef(new Animated.Value(SIDEBAR_WIDTH)).current;
-  const { getGraphBundlesByConversation, getWorkoutsByConversation } = useAttachments();
+  const { getGraphBundlesByConversation, getWorkoutsByConversation } =
+    useData();
   const graphBundles = getGraphBundlesByConversation(conversationId);
   const workouts = getWorkoutsByConversation(conversationId);
-  
+
   const hasGraphs = graphBundles.length > 0;
   const hasWorkouts = workouts.length > 0;
 
@@ -50,7 +51,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.content}>
           <View style={styles.section}>
-            <Title 
+            <Title
               title="Conversation Data"
               subtitle="Analysis and attachments"
               variant="medium"
@@ -59,27 +60,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {hasWorkouts && (
             <View style={styles.section}>
-              <Title 
-                title="Workouts"
-                variant="small"
-              />
+              <Title title="Workouts" variant="small" />
               <View style={styles.workoutsContainer}>
-                <SidebarWorkoutList 
-                  workouts={workouts}
-                  maxDisplayed={3}
-                />
+                <SidebarWorkoutList workouts={workouts} maxDisplayed={3} />
               </View>
             </View>
           )}
 
           {hasGraphs && (
             <View style={styles.graphSection}>
-              <Title 
-                title="Graphs"
-                variant="small"
-              />
+              <Title title="Graphs" variant="small" />
               <View style={styles.graphsContainer}>
-                <GraphDisplay 
+                <GraphDisplay
                   conversationId={conversationId}
                   maxDisplayed={2}
                 />
@@ -88,10 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
 
           <View style={styles.section}>
-            <Title 
-              title="Options"
-              variant="small"
-            />
+            <Title title="Options" variant="small" />
             <ToggleSwitch
               label="Detailed Analysis"
               value={detailedAnalysis}
@@ -106,14 +95,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
     width: SIDEBAR_WIDTH,
-    backgroundColor: '#2a332a',
+    backgroundColor: "#2a332a",
     borderLeftWidth: 1,
-    borderLeftColor: '#3a433a',
+    borderLeftColor: "#3a433a",
     zIndex: 100,
   },
   scrollContainer: {
@@ -126,13 +115,13 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#3a433a',
+    borderBottomColor: "#3a433a",
     paddingBottom: 16,
   },
   graphSection: {
     marginBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#3a433a',
+    borderBottomColor: "#3a433a",
     paddingBottom: 16,
   },
   graphsContainer: {

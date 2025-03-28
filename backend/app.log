@@ -1,3 +1,2 @@
-2025-03-22 15:27:41,574 - app.services.workout_analysis_service - INFO - Initialized conversation with 0 messages
-2025-03-22 15:27:56,277 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: e11525b9-02cf-4e5c-aed1-69f3f68a8e1f
-2025-03-22 15:27:57,502 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-03-27 18:36:02,596 - root - DEBUG - Logging has been set up
+2025-03-27 18:36:02,596 - app.main - INFO - Application starting

@@ -1,130 +1,107 @@
-2025-03-22 15:13:56,192 - app.services.workout_analysis_service - ERROR - Error processing message: Cannot call "send" once a close message has been sent.
+2025-03-27 18:35:29,381 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-03-27 18:35:29,398 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x135099ae0>
+2025-03-27 18:35:29,398 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x14587c170> server_hostname='api.anthropic.com' timeout=None
+2025-03-27 18:35:29,430 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x13509abe0>
+2025-03-27 18:35:29,430 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-03-27 18:35:29,430 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-03-27 18:35:29,430 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-03-27 18:35:29,515 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-03-27 18:35:29,515 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-03-27 18:35:29,963 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 429, b'Too Many Requests', [(b'Date', b'Thu, 27 Mar 2025 18:35:30 GMT'), (b'Content-Type', b'application/json'), (b'Content-Length', b'529'), (b'Connection', b'keep-alive'), (b'x-should-retry', b'true'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'50'), (b'anthropic-ratelimit-requests-reset', b'2025-03-27T18:35:29Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'0'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-27T18:37:46Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'8000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-27T18:35:29Z'), (b'retry-after', b'136'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'8000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-27T18:35:29Z'), (b'request-id', b'req_018JYXVQRVWnVdPCxkx6EZLs'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9270fce54e992dd8-MAN')])
+2025-03-27 18:35:29,964 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 429 Too Many Requests"
+2025-03-27 18:35:29,964 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "429 Too Many Requests"
+2025-03-27 18:35:29,965 - anthropic._base_client - DEBUG - Encountered httpx.HTTPStatusError
 Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 331, in asgi_send
-    await self.send(data)  # type: ignore[arg-type]
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 620, in send
-    await self.ensure_open()
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
-    raise self.connection_closed_exc()
-websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 85, in send
-    await self._send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
-    await send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 344, in asgi_send
-    raise ClientDisconnected from exc
-uvicorn.protocols.utils.ClientDisconnected
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1622, in _request
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '429 Too Many Requests' for url 'https://api.anthropic.com/v1/messages'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 255, in _handle_analyze_workout_message
-    await self._send_json_safe(websocket, response)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
-    await websocket.send_text(json_str)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
-    await self.send({"type": "websocket.send", "text": data})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 88, in send
-    raise WebSocketDisconnect(code=1006)
-starlette.websockets.WebSocketDisconnect
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1622, in _request
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '429 Too Many Requests' for url 'https://api.anthropic.com/v1/messages'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 132, in process_message
-    await self._handle_analyze_workout_message(websocket, data, conversation_id)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 259, in _handle_analyze_workout_message
-    await self._send_json_safe(websocket, {
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1622, in _request
+    response.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '429 Too Many Requests' for url 'https://api.anthropic.com/v1/messages'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+2025-03-27 18:35:29,967 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-27 18:35:29,968 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-27 18:35:29,968 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-27 18:35:29,968 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-27 18:35:29,968 - anthropic._base_client - DEBUG - Re-raising status error
+2025-03-27 18:35:29,970 - app.services.chains.base_conversation_chain - ERROR - Error processing message: Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'This request would exceed the rate limit for your organization (59abe5d1-222f-4a4e-9568-afed04c257ac) of 20,000 input tokens per minute. For details, refer to: https://docs.anthropic.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase.'}}
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/chains/base_conversation_chain.py", line 69, in process_message
+    async for chunk in self.chat_model.astream(
+    ...<20 lines>...
+            }
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 509, in astream
+    async for chunk in self._astream(
+    ...<14 lines>...
+            generation += chunk
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/langchain_anthropic/chat_models.py", line 749, in _astream
+    stream = await self._async_client.messages.create(**payload)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/resources/messages/messages.py", line 2054, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<24 lines>...
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1848, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1542, in request
+    return await self._request(
+           ^^^^^^^^^^^^^^^^^^^^
     ...<5 lines>...
-    })
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
-    await websocket.send_text(json_str)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
-    await self.send({"type": "websocket.send", "text": data})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
-    raise RuntimeError('Cannot call "send" once a close message has been sent.')
-RuntimeError: Cannot call "send" once a close message has been sent.
-2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'dict'>
-2025-03-22 15:13:56,195 - app.services.workout_analysis_service - DEBUG - Contents of data field (keys): ['message']
-2025-03-22 15:13:56,195 - app.api.endpoints.llm - ERROR - Error in workout-analysis websocket: Cannot call "send" once a close message has been sent.
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 331, in asgi_send
-    await self.send(data)  # type: ignore[arg-type]
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 620, in send
-    await self.ensure_open()
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
-    raise self.connection_closed_exc()
-websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 85, in send
-    await self._send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
-    await send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 344, in asgi_send
-    raise ClientDisconnected from exc
-uvicorn.protocols.utils.ClientDisconnected
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 255, in _handle_analyze_workout_message
-    await self._send_json_safe(websocket, response)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
-    await websocket.send_text(json_str)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
-    await self.send({"type": "websocket.send", "text": data})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 88, in send
-    raise WebSocketDisconnect(code=1006)
-starlette.websockets.WebSocketDisconnect
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 132, in process_message
-    await self._handle_analyze_workout_message(websocket, data, conversation_id)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 259, in _handle_analyze_workout_message
-    await self._send_json_safe(websocket, {
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1628, in _request
+    return await self._retry_request(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1675, in _retry_request
+    return await self._request(
+           ^^^^^^^^^^^^^^^^^^^^
     ...<5 lines>...
-    })
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
-    await websocket.send_text(json_str)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
-    await self.send({"type": "websocket.send", "text": data})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
-    raise RuntimeError('Cannot call "send" once a close message has been sent.')
-RuntimeError: Cannot call "send" once a close message has been sent.
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/api/endpoints/llm.py", line 158, in conversation_websocket
-    await service.process_message(websocket, data, conversation_id)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 150, in process_message
-    await self._send_json_safe(websocket, {
-    ...<2 lines>...
-    })
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 59, in _send_json_safe
-    await websocket.send_text(json_str)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 165, in send_text
-    await self.send({"type": "websocket.send", "text": data})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 97, in send
-    raise RuntimeError('Cannot call "send" once a close message has been sent.')
-RuntimeError: Cannot call "send" once a close message has been sent.
-2025-03-22 15:14:17,628 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-22 15:14:20,868 - root - DEBUG - Logging has been set up
-2025-03-22 15:14:20,868 - app.main - INFO - Application starting
-2025-03-22 15:27:39,027 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-03-22 15:27:41,409 - app.api.endpoints.llm - INFO - WebSocket connection request received for workout-analysis: e11525b9-02cf-4e5c-aed1-69f3f68a8e1f
-2025-03-22 15:27:41,409 - app.api.endpoints.llm - INFO - WebSocket connection accepted
-2025-03-22 15:27:41,556 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1628, in _request
+    return await self._retry_request(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1675, in _retry_request
+    return await self._request(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/anthropic/_base_client.py", line 1643, in _request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.RateLimitError: Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'This request would exceed the rate limit for your organization (59abe5d1-222f-4a4e-9568-afed04c257ac) of 20,000 input tokens per minute. For details, refer to: https://docs.anthropic.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase.'}}
+2025-03-27 18:35:29,983 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
+2025-03-27 18:35:29,983 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
+2025-03-27 18:35:29,984 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
+2025-03-27 18:35:58,850 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 99d9da34-a5a3-40f0-bbd7-5e167b6f83d4

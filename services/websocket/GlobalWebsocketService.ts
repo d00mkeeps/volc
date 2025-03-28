@@ -1,8 +1,21 @@
-// GlobalWebSocketService.ts
-
 import { WebSocketService } from './WebSocketService';
 import { ChatConfigName, Message } from '@/types';
 import { ConversationService } from '@/services/supabase/conversation';
+import { WebSocketMessage } from '@/types/websocket';
+import { handlerManager } from './HandlerManager';
+
+//move to /types!
+export interface MessageContextHandlers {
+  handleContent: (content: string) => void;
+  handleLoadingStart: () => void;
+  handleLoadingDone: () => void;
+  handleStreamDone: () => void;
+  handleSignal: (type: string, data: any) => void;
+}
+
+export interface DataContextHandlers {
+  handleSignal: (type: string, data: any) => void;
+}
 
 // Singleton instance
 let instance: WebSocketService | null = null;
@@ -10,13 +23,35 @@ let instance: WebSocketService | null = null;
 // Config cache to reduce database lookups
 let configCache: Record<string, ChatConfigName> = {};
 
-// Getter function that instantiates if needed
-export const getWebSocketService = (): WebSocketService => {
- if (!instance) {
-   instance = new WebSocketService();
-   instance.initialize();
- }
- return instance;
+// Modified to use HandlerManager and support context IDs
+export const registerContextHandlers = (
+  conversationId: string | null,
+  message: MessageContextHandlers | null,
+  data: DataContextHandlers | null
+) => {
+  if (!conversationId) {
+    console.warn('registerContextHandlers called without conversationId');
+    return;
+  }
+  
+  if (message) {
+    handlerManager.setMessageHandlers(conversationId, message);
+  }
+  
+  if (data) {
+    handlerManager.setDataHandlers(conversationId, data);
+  }
+  
+  console.log('Context handlers registered for conversation:', conversationId, {
+    messageHandlersPresent: !!message,
+    dataHandlersPresent: !!data
+  });
+};
+
+// Add a cleanup function for handler unregistration
+export const unregisterContextHandlers = (conversationId: string) => {
+  handlerManager.clearHandlers(conversationId);
+  console.log('Context handlers unregistered for conversation:', conversationId);
 };
 
 // Connection state tracking
@@ -70,6 +105,14 @@ export const connectWithHistory = async (
  return service.connect(configName, conversationId, messages);
 };
 
+// Updated to delegate message handling to HandlerManager
+function setupMessageHandling(service: WebSocketService): void {
+  service.on('message', (message: WebSocketMessage) => {
+    // Delegate all message handling to the HandlerManager
+    handlerManager.handleWebSocketMessage(message);
+  });
+}
+
 // Cleanup function for logout/app termination
 export const cleanup = (): void => {
  if (instance) {
@@ -91,4 +134,19 @@ export const reconnect = async (): Promise<void> => {
       console.error('Failed to reconnect', error);
     }
   }
+};
+
+// Get WebSocket service singleton instance
+export const getWebSocketService = (): WebSocketService => {
+  if (!instance) {
+    instance = new WebSocketService();
+    instance.initialize();
+    setupMessageHandling(instance);
+  }
+  return instance;
+};
+
+// Add function to get handler statistics for debugging
+export const getHandlerStats = () => {
+  return handlerManager.getHandlerStats();
 };

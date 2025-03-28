@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, useWindowDimensions } from 'react-native';
-import { useAttachments } from '@/context/ChatAttachmentContext';
+import { useAttachments } from '@/context/DataContext';
 import { GraphImage } from '../atoms/GraphImage';
 import { WorkoutDataBundle } from '@/types/workout';
 import { Ionicons } from '@expo/vector-icons';
