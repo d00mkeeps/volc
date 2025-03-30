@@ -3,6 +3,7 @@ from typing import AsyncGenerator, Dict, Any, List, Optional
 import logging
 from datetime import datetime
 import uuid
+import anthropic
 from langchain_core.messages import HumanMessage, AIMessage
 from fastapi import WebSocket, WebSocketDisconnect
 from langchain_anthropic import ChatAnthropic
@@ -13,8 +14,11 @@ from .workout_analysis.query_builder import WorkoutQueryBuilder
 from ..core.utils.id_gen import new_uuid
 from ..schemas.workout_data_bundle import BundleMetadata, CorrelationData, WorkoutDataBundle
 from .workout_analysis.correlation_service import CorrelationService
+from .workout_analysis.metrics_calc import MetricsProcessor
 
 logger = logging.getLogger(__name__)
+PURPLE = "\033[35m"
+RESET = "\033[0m"
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -166,7 +170,6 @@ class WorkoutAnalysisService:
                 generate_graph=data.get("generate_graph", False)
             ):
                 await self._send_json_safe(websocket, response)
-    
     async def _handle_analyze_workout_message(self, websocket: WebSocket, data: Dict[str, Any], conversation_id: str):
         """Handle workout analysis messages with historical context integration."""
         logger.info("=== WORKOUT ANALYSIS REQUEST RECEIVED ===")
@@ -175,6 +178,9 @@ class WorkoutAnalysisService:
         data_str = data.get('data')
         if data_str:
             try:
+                logger.info(f"Data string length: {len(data_str)}")
+                logger.info(f"Data preview: {data_str[:200]}...")
+                
                 # Parse the incoming workout
                 single_workout = json.loads(data_str)
                 logger.info(f"✅ Successfully parsed workout data")
@@ -244,8 +250,27 @@ class WorkoutAnalysisService:
                     return
                 
                 logger.info(f"✅ Retrieved {workout_data['metadata']['total_workouts']} historical workouts")
+            
+                logger.info(f"{PURPLE}Calculating workout metrics in message handler{RESET}")
+                try:
+                    metrics_processor = MetricsProcessor(workout_data)
+                    calculated_metrics = metrics_processor.process()
+                    workout_data['metrics'] = calculated_metrics
+                    logger.info(f"{PURPLE}✅ Successfully added metrics to workout data{RESET}")
+                    logger.info(f"{PURPLE}Metrics categories: {list(calculated_metrics.keys())}{RESET}")
+                    
+                    # Log a sample of each metrics category
+                    for category, values in calculated_metrics.items():
+                        if isinstance(values, dict) and values:
+                            sample_key = next(iter(values))
+                            logger.info(f"{PURPLE}Sample {category}: {sample_key} = {str(values[sample_key])[:100]}...{RESET}")
+                        elif isinstance(values, list) and values:
+                            logger.info(f"{PURPLE}Sample {category}: {str(values[0])[:100]}...{RESET}")
+                except Exception as e:
+                    logger.error(f"{PURPLE}❌ Failed to calculate metrics: {str(e)}{RESET}", exc_info=True)
+                    # Continue without metrics rather than failing the whole request
                 
-                # Now process with the complete dataset - this mirrors the test approach
+                # Now process with the complete dataset
                 message_text = data.get('message', 'Analyze my workout')
                 async for response in self.analyze_workout(
                     user_id=user_id,
@@ -253,109 +278,28 @@ class WorkoutAnalysisService:
                     message=message_text
                 ):
                     await self._send_json_safe(websocket, response)
-                    
-            except Exception as e:
-                logger.error(f"❌ Error processing workout data: {str(e)}", exc_info=True)
+
+            except anthropic.RateLimitError as e:
+                # Specific handler for rate limit errors
+                retry_after = int(getattr(e, 'response', {}).headers.get("retry-after", 60))
+                logger.error(f"❌ Rate limit exceeded. Retry after: {retry_after}s")
                 await self._send_json_safe(websocket, {
                     "type": "error", 
                     "data": {
-                        "code": "processing_error",
-                        "message": f"Error analyzing workout: {str(e)}"
+                        "code": "rate_limit",
+                        "message": f"Service temporarily unavailable due to high demand. Please try again in {retry_after} seconds.",
+                        "retry_after": retry_after
                     }
                 })
-        """Handle workout analysis messages with historical context integration."""
-        logger.info("=== WORKOUT ANALYSIS REQUEST RECEIVED ===")
-        logger.info(f"Message keys: {list(data.keys())}")
-        
-        data_str = data.get('data')
-        if data_str:
-            try:
-                logger.info(f"Data string length: {len(data_str)}")
-                logger.info(f"Data preview: {data_str[:200]}...")
-                
-                # Parse the incoming workout
-                single_workout = json.loads(data_str)
-                logger.info(f"✅ Successfully parsed workout data")
-                logger.info(f"Workout name: {single_workout.get('name', 'Unknown')}")
-                logger.info(f"Workout ID: {single_workout.get('id', 'Unknown')}")
-
-                user_id = single_workout.get('user_id')
-                if not user_id:
-                    logger.error("❌ No user ID found in workout data")
-                    await self._send_json_safe(websocket, {
-                        "type": "error", 
-                        "data": {
-                            "code": "missing_user_id",
-                            "message": "No user ID found in workout data"
-                        }
-                    })
-                    return
-                
-                logger.info(f"Using user ID from workout: {user_id}")
-                
-                # Extract exercise names from the incoming workout
-                exercises = []
-                for ex in single_workout.get('workout_exercises', []):
-                    if ex.get('name'):
-                        exercises.append(ex.get('name').lower())
-                
-                logger.info(f"Extracted {len(exercises)} exercise names: {exercises[:5]}")
-                
-                if not exercises:
-                    logger.error("❌ No exercises found in workout data")
-                    await self._send_json_safe(websocket, {
-                        "type": "error", 
-                        "data": {
-                            "code": "invalid_workout",
-                            "message": "No exercises found in workout data"
-                        }
-                    })
-                    return
-                
-                # Initialize query builder if not already done
-                query_builder = WorkoutQueryBuilder(self.supabase_client)
-                
-                # Create query parameters - fetch 3 months of data by default
-                from app.schemas.exercise_query import ExerciseQuery
-                query = ExerciseQuery(
-                    exercises=exercises,
-                    timeframe="3 months"
-                )
-                
-                # Fetch historical workout data
-                logger.info(f"Fetching historical workout data for user {user_id}")
-                workout_data = await query_builder.fetch_exercise_data(
-                    user_id=user_id,
-                    query_params=query
-                )
-                
-                if not workout_data:
-                    logger.error("❌ No historical workout data found")
-                    await self._send_json_safe(websocket, {
-                        "type": "error", 
-                        "data": {
-                            "code": "no_history",
-                            "message": "No workout history found for analysis"
-                        }
-                    })
-                    return
-                
-                logger.info(f"✅ Retrieved {workout_data['metadata']['total_workouts']} historical workouts")
-                
-                # Now process with the complete dataset
-                async for response in self.analyze_workout(
-                    user_id=user_id,
-                    workout_data=workout_data,
-                    message=data.get('message', 'Analyze my workout')
-                ):
-                    await self._send_json_safe(websocket, response)
-                    
             except json.JSONDecodeError as e:
                 logger.error(f"❌ Failed to parse workout data: {str(e)}")
                 logger.error(f"Raw data preview: {data_str[:100]}")
                 await self._send_json_safe(websocket, {
                     "type": "error",
-                    "data": {"message": "Invalid workout data format"}
+                    "data": {
+                        "code": "invalid_format",
+                        "message": "Invalid workout data format"
+                    }
                 })
             except Exception as e:
                 logger.error(f"❌ Error processing workout data: {str(e)}", exc_info=True)
@@ -518,6 +462,13 @@ class WorkoutAnalysisService:
             correlation_service = CorrelationService()
             correlation_results = correlation_service.analyze_exercise_correlations(workout_data)
             logger.info(f"Correlation analysis complete: found {len(correlation_results.get('summary', []))} significant correlations")
+
+            # Add this block before creating the bundle
+            logger.info(f"{PURPLE}Calculating advanced workout metrics{RESET}")
+            metrics_processor = MetricsProcessor(workout_data)
+            workout_metrics = metrics_processor.process()
+            workout_data['metrics'] = workout_metrics
+            logger.info(f"{PURPLE}Added metrics to workout data: {list(workout_metrics.keys())}{RESET}")
             
             # Create bundle
             bundle_id = await new_uuid()
@@ -527,11 +478,7 @@ class WorkoutAnalysisService:
                     total_workouts=workout_data['metadata']['total_workouts'],
                     total_exercises=workout_data['metadata']['total_exercises'],
                     date_range=workout_data['metadata']['date_range'],
-                    exercises_included=list(set(
-                        exercise.get('exercise_name', '').lower() 
-                        for workout in workout_data.get('workouts', [])
-                        for exercise in workout.get('exercises', [])
-                    ))
+                    exercises_included=workout_data['metadata'].get('exercises_included', [])
                 ),
                 workout_data=workout_data,
                 original_query=message,

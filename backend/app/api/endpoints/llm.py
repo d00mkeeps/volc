@@ -67,7 +67,8 @@ async def onboarding_websocket(websocket: WebSocket):
         llm = ChatAnthropic(
             model="claude-3-7-sonnet-20250219",
             streaming=True,
-            api_key=api_key
+            api_key=api_key,
+            max_retries=0
         )
         
         # Create service with LLM
@@ -138,6 +139,7 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
                 model="claude-3-7-sonnet-20250219",
                 streaming=True,
                 api_key=api_key,
+                max_retries=0
             )
             supabase_client = SupabaseClient()
             service = WorkoutAnalysisService(llm=llm, supabase_client=supabase_client)

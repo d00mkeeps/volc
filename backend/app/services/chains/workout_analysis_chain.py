@@ -12,20 +12,30 @@ logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
     def __init__(self, llm: ChatAnthropic, user_id: str):
-        system_prompt = """You are a workout analysis assistant with access to the user's workout data. When responding:
-1. Always check the available_data in your context first
-2. If you see ANY workout data, make sure you let the user know about it.
-3. Reference actual values from the data, such as:
- - Specific weights/1RMs achieved
- - Progress over time
- - Notable improvements or patterns
-4. Integrate graph data when available by discussing the trends shown
-For example, if you see bench press data showing progression from 100kg to 110kg over 3 months, mention these specific numbers and the rate of improvement.
-If no data is available for a specific query, then explain what data would be needed.
+        system_prompt = """You are a workout analysis assistant with access to the user's workout data metrics. When responding:
 
-try to keep token output to a maximum of 100, and less if possible
+1. Always check the available_data.workout_metrics in your context first
+2. Prioritize discussing the most significant insights from the metrics:
+   - For exercise_progression: Focus on weight changes and volume trends
+   - For strength_progression: Highlight estimated 1RM improvements and monthly rates
+   - For workout_frequency: Mention consistency scores and workout patterns
+   - For most_improved_exercises: Always mention the top performers
 
-The first message generally won't have workout data available, so just respond in a friendly, helpful manner."""
+3. Be specific with numbers when discussing progress:
+   - "Your bench press 1RM has increased by 15kg (12%) over 3 months, at a rate of 5kg per month"
+   - "Your workout consistency score is 85/100, with an average of 3.2 workouts per week"
+   
+
+4. Interpret metrics in context:
+   - Explain what the numbers mean for the user's fitness journey
+   - Compare progress across different exercises when relevant
+   - Note any potential plateaus or exceptional improvements
+
+5. Acknowledge correlations when available by highlighting significant relationships
+
+Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.
+
+"""
 
         super().__init__(system_prompt=system_prompt, llm=llm)
         self.user_id = user_id
@@ -74,37 +84,8 @@ The first message generally won't have workout data available, so just respond i
             if self.data_bundles:
                 latest_bundle = self.data_bundles[-1]
                 
-                # Process exercise data (existing code)
-                exercise_summaries = {}
-                for workout in latest_bundle.workout_data.get('workouts', []):
-                    date = workout['date']
-                    for exercise in workout.get('exercises', []):
-                        name = exercise['exercise_name']
-                        if name not in exercise_summaries:
-                            exercise_summaries[name] = []
-                        
-                        exercise_summaries[name].append({
-                            'date': date,
-                            'metrics': exercise['metrics'],
-                            'sets': [
-                                {
-                                    'weight': s.get('weight'),
-                                    'reps': s.get('reps'),
-                                    'estimated_1rm': s.get('estimated_1rm')
-                                }
-                                for s in exercise.get('sets', [])
-                            ]
-                        })
-                
+                # Include only the advanced metrics and minimal exercise data
                 date_range = latest_bundle.metadata.date_range
-
-                # Add correlation data if available
-                correlation_data = None
-                if latest_bundle.correlation_data:
-                    correlation_data = {
-                        "significant_relationships": latest_bundle.correlation_data.summary,
-                        "has_heatmap": latest_bundle.correlation_data.heatmap_base64 is not None
-                    }
                 
                 workout_context["available_data"] = {
                     "query": latest_bundle.original_query,
@@ -112,9 +93,10 @@ The first message generally won't have workout data available, so just respond i
                         "start": self._format_date(date_range['earliest']),
                         "end": self._format_date(date_range['latest'])
                     },
-                    "exercises": exercise_summaries,
+                    # Focus on providing the metrics instead of raw data
+                    "workout_metrics": latest_bundle.workout_data.get('metrics', {}),
                     "total_workouts": latest_bundle.metadata.total_workouts,
-                    "correlation_analysis": correlation_data
+                    "correlation_analysis": latest_bundle.correlation_data.summary if latest_bundle.correlation_data else None
                 }
             
             context_str = f"""Available workout data:
