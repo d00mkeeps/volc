@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
 import { GraphImage } from "../../data/graph/atoms/GraphImage";
 import { useData } from "@/context/DataContext";
@@ -104,6 +105,124 @@ const MessageItem: React.FC<MessageItemProps> = memo(
       : null;
     const exerciseCount = completeWorkout?.workout_exercises.length || 0;
 
+    // Check if the message is short (for conditional styling)
+    const isShortMessage = message.content.length < 100;
+
+    // Ultra minimal markdown styles for short messages
+    const markdownStyles = StyleSheet.create({
+      // Base text style with absolutely no margins
+      body: {
+        fontSize: styles.text.fontSize,
+        lineHeight: styles.text.lineHeight,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+        margin: 0,
+        padding: 0,
+      },
+
+      // Regular paragraph with no margin
+      paragraph: {
+        marginVertical: 1,
+        marginTop: 0,
+        marginBottom: 0,
+        paddingVertical: 0,
+      },
+
+      // Headings with reduced top margins
+      heading1: {
+        fontSize: 24,
+        fontWeight: "700",
+        marginTop: 6,
+        marginBottom: 6,
+        lineHeight: 28,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+      heading2: {
+        fontSize: 22,
+        fontWeight: "700",
+        marginTop: 6,
+        marginBottom: 4,
+        lineHeight: 26,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+      heading3: {
+        fontSize: 20,
+        fontWeight: "600",
+        marginTop: 5,
+        marginBottom: 3,
+        lineHeight: 24,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+      heading4: {
+        fontSize: 18,
+        fontWeight: "600",
+        marginTop: 4,
+        marginBottom: 2,
+        lineHeight: 22,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+      heading5: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginTop: 3,
+        marginBottom: 1,
+        lineHeight: 20,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+      heading6: {
+        fontSize: 16,
+        fontWeight: "600",
+        fontStyle: "italic",
+        marginTop: 2,
+        marginBottom: 1,
+        lineHeight: 20,
+        color: message.sender === "user" ? "#041402" : "#def7dc",
+      },
+
+      // Text formatting
+      strong: {
+        fontWeight: "800",
+      },
+      em: {
+        fontStyle: "italic",
+      },
+
+      // Lists with minimal indentation and spacing
+      bullet_list: {
+        marginLeft: 10,
+        marginBottom: 0,
+        marginTop: 0,
+      },
+      ordered_list: {
+        marginLeft: 10,
+        marginBottom: 0,
+        marginTop: 0,
+      },
+      list_item: {
+        marginBottom: 0,
+      },
+
+      // Code blocks
+      code_inline: {
+        fontFamily: "monospace",
+        backgroundColor: message.sender === "user" ? "#a0e099" : "#1a291a",
+        paddingHorizontal: 4,
+        borderRadius: 3,
+      },
+      code_block: {
+        fontFamily: "monospace",
+        backgroundColor: message.sender === "user" ? "#a0e099" : "#1a291a",
+        padding: 6,
+        borderRadius: 5,
+        marginVertical: 2,
+      },
+
+      // Links
+      link: {
+        color: message.sender === "user" ? "#006600" : "#8cd884",
+        textDecorationLine: "underline",
+      },
+    });
+
     return (
       <View style={styles.messageWrapper}>
         <View
@@ -156,18 +275,12 @@ const MessageItem: React.FC<MessageItemProps> = memo(
             </View>
           )}
 
-          {/* Message text content */}
-          <Text
-            style={[
-              styles.text,
-              message.sender === "user"
-                ? styles.userText
-                : styles.assistantText,
-            ]}
-          >
-            {message.content}
-            {isStreaming && "..."}
-          </Text>
+          {/* Message text content with Markdown support */}
+          <View style={{ overflow: "visible" }}>
+            <Markdown style={markdownStyles}>
+              {message.content + (isStreaming ? "..." : "")}
+            </Markdown>
+          </View>
 
           {/* Loading indicator for graphs */}
           {isLoadingGraph && (
@@ -210,14 +323,16 @@ const MessageItem: React.FC<MessageItemProps> = memo(
     );
   }
 );
+
 const styles = StyleSheet.create({
   messageWrapper: {
     paddingHorizontal: 16,
-    paddingVertical: 4,
+    paddingVertical: 1, // Minimal vertical padding
   },
   container: {
     maxWidth: "80%",
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6, // Base padding, will be overridden for short messages
     borderRadius: 12,
     marginVertical: 2,
   },

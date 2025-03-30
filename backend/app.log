@@ -1,46 +1,42 @@
-2025-03-30 12:04:34,412 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:34,414 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:34,414 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:34,556 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=".\n\n## Overall Consistency\nYou've maintained exceptional" additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:34,556 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:34,557 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:34,557 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:34,557 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:35,028 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' workout frequency with 8.2 workouts per week over 74 days' additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:35,029 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:35,029 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:35,029 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:35,030 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:35,175 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=", suggesting you're doing multiple sessions some days. This high" additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:35,176 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:35,176 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:35,176 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:35,176 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:35,640 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' frequency has supported your steady strength increases across all lifts.\n\nAll' additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:35,641 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:35,641 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:35,641 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:35,642 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:35,948 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=' exercises are showing 16-20% improvements since January' additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:35,948 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:35,948 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:35,948 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:35,949 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:36,078 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=', demonstrating balanced progress across your program.' additional_kwargs={} response_metadata={} id='run-88778943-1a11-49bd-a319-78c421ddbd9f'
-2025-03-30 12:04:36,078 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:36,078 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:36,078 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:36,078 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:36,081 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-88778943-1a11-49bd-a319-78c421ddbd9f' usage_metadata={'input_tokens': 0, 'output_tokens': 244, 'total_tokens': 244, 'input_token_details': {}}
-2025-03-30 12:04:36,081 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
-2025-03-30 12:04:36,081 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
-2025-03-30 12:04:36,081 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
-2025-03-30 12:04:36,081 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
-2025-03-30 12:04:36,100 - httpcore.http11 - DEBUG - receive_response_body.complete
-2025-03-30 12:04:36,101 - httpcore.http11 - DEBUG - response_closed.started
-2025-03-30 12:04:36,101 - httpcore.http11 - DEBUG - response_closed.complete
-2025-03-30 12:04:36,102 - app.services.chains.base_conversation_chain - INFO - 
+2025-03-30 20:12:22,589 - app.services.chains.base_conversation_chain - INFO - Content: I understand. Can you please keep the response to this message _very_ brief?
+2025-03-30 20:12:22,595 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-03-30 20:12:22,612 - anthropic._base_client - DEBUG - Request options: {'method': 'post', 'url': '/v1/messages', 'files': None, 'json_data': {'max_tokens': 1024, 'messages': [{'role': 'user', 'content': 'So you can’t see the workout data discussed previously/'}, {'role': 'assistant', 'content': "I don't have access to any workout data from previous conversations. There are no workout metrics available in my current context. The available_data array is empty, which means I can't see any exercise progression, strength metrics, workout frequency, or most improved exercises that might have been discussed before.\n\nIf you'd like me to analyze your workout data, you would need to provide the metrics information again, and I'd be happy to offer insights based on that data."}, {'role': 'user', 'content': [{'type': 'text', 'text': 'I understand. Can you please keep the response to this message _very_ brief?'}, {'type': 'text', 'text': 'I understand. Can you please keep the response to this message _very_ brief?'}]}], 'model': 'claude-3-7-sonnet-20250219', 'stream': True, 'system': [{'type': 'text', 'text': 'You are a workout analysis assistant with access to the user\'s workout data metrics. When responding:\n\n1. Always check the available_data.workout_metrics in your context first\n2. Prioritize discussing the most significant insights from the metrics:\n   - For exercise_progression: Focus on weight changes and volume trends\n   - For strength_progression: Highlight estimated 1RM improvements and monthly rates\n   - For workout_frequency: Mention consistency scores and workout patterns\n   - For most_improved_exercises: Always mention the top performers\n\n3. Be specific with numbers when discussing progress:\n   - "Your bench press 1RM has increased by 15kg (12%) over 3 months, at a rate of 5kg per month"\n   - "Your workout consistency score is 85/100, with an average of 3.2 workouts per week"\n   \n\n4. Interpret metrics in context:\n   - Explain what the numbers mean for the user\'s fitness journey\n   - Compare progress across different exercises when relevant\n   - Note any potential plateaus or exceptional improvements\n\n5. Acknowledge correlations when available by highlighting significant relationships\n\nTry to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.\n\n'}, {'type': 'text', 'text': 'Current workout data context:\nAvailable workout data:\n            {\n  "available_data": []\n}'}]}}
+2025-03-30 20:12:22,621 - httpcore.connection - DEBUG - close.started
+2025-03-30 20:12:22,622 - httpcore.connection - DEBUG - close.complete
+2025-03-30 20:12:22,622 - httpcore.connection - DEBUG - connect_tcp.started host='api.anthropic.com' port=443 local_address=None timeout=None socket_options=None
+2025-03-30 20:12:22,715 - httpcore.connection - DEBUG - connect_tcp.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x104041910>
+2025-03-30 20:12:22,717 - httpcore.connection - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x132da9850> server_hostname='api.anthropic.com' timeout=None
+2025-03-30 20:12:22,751 - httpcore.connection - DEBUG - start_tls.complete return_value=<httpcore._backends.anyio.AnyIOStream object at 0x10435fcb0>
+2025-03-30 20:12:22,751 - httpcore.http11 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2025-03-30 20:12:22,752 - httpcore.http11 - DEBUG - send_request_headers.complete
+2025-03-30 20:12:22,752 - httpcore.http11 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2025-03-30 20:12:22,752 - httpcore.http11 - DEBUG - send_request_body.complete
+2025-03-30 20:12:22,752 - httpcore.http11 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2025-03-30 20:12:23,655 - httpcore.http11 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Date', b'Sun, 30 Mar 2025 19:12:23 GMT'), (b'Content-Type', b'text/event-stream; charset=utf-8'), (b'Transfer-Encoding', b'chunked'), (b'Connection', b'keep-alive'), (b'Cache-Control', b'no-cache'), (b'anthropic-ratelimit-requests-limit', b'50'), (b'anthropic-ratelimit-requests-remaining', b'49'), (b'anthropic-ratelimit-requests-reset', b'2025-03-30T19:12:24Z'), (b'anthropic-ratelimit-input-tokens-limit', b'20000'), (b'anthropic-ratelimit-input-tokens-remaining', b'19000'), (b'anthropic-ratelimit-input-tokens-reset', b'2025-03-30T19:12:24Z'), (b'anthropic-ratelimit-output-tokens-limit', b'8000'), (b'anthropic-ratelimit-output-tokens-remaining', b'7000'), (b'anthropic-ratelimit-output-tokens-reset', b'2025-03-30T19:12:29Z'), (b'anthropic-ratelimit-tokens-limit', b'28000'), (b'anthropic-ratelimit-tokens-remaining', b'26000'), (b'anthropic-ratelimit-tokens-reset', b'2025-03-30T19:12:24Z'), (b'request-id', b'req_01P1UNZj3Ne8jVjM15JenksX'), (b'anthropic-organization-id', b'59abe5d1-222f-4a4e-9568-afed04c257ac'), (b'via', b'1.1 google'), (b'cf-cache-status', b'DYNAMIC'), (b'X-Robots-Tag', b'none'), (b'Server', b'cloudflare'), (b'CF-RAY', b'9289eb0eaaec0756-MAN')])
+2025-03-30 20:12:23,656 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-03-30 20:12:23,656 - anthropic._base_client - DEBUG - HTTP Request: POST https://api.anthropic.com/v1/messages "200 OK"
+2025-03-30 20:12:23,656 - httpcore.http11 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2025-03-30 20:12:23,658 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={} id='run-f2096686-ea08-4998-9c25-1f7e847a4090' usage_metadata={'input_tokens': 450, 'output_tokens': 1, 'total_tokens': 451, 'input_token_details': {'cache_creation': 0, 'cache_read': 0}}
+2025-03-30 20:12:23,658 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-30 20:12:23,658 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='Yes' additional_kwargs={} response_metadata={} id='run-f2096686-ea08-4998-9c25-1f7e847a4090'
+2025-03-30 20:12:23,658 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-30 20:12:23,658 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
+2025-03-30 20:12:23,658 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
+2025-03-30 20:12:23,658 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
+2025-03-30 20:12:23,855 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content=", I'll keep my responses brief going forward." additional_kwargs={} response_metadata={} id='run-f2096686-ea08-4998-9c25-1f7e847a4090'
+2025-03-30 20:12:23,855 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-30 20:12:23,856 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
+2025-03-30 20:12:23,856 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
+2025-03-30 20:12:23,856 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
+2025-03-30 20:12:23,962 - app.services.chains.base_conversation_chain - INFO - Raw chunk from Anthropic: content='' additional_kwargs={} response_metadata={'stop_reason': 'end_turn', 'stop_sequence': None} id='run-f2096686-ea08-4998-9c25-1f7e847a4090' usage_metadata={'input_tokens': 0, 'output_tokens': 14, 'total_tokens': 14, 'input_token_details': {}}
+2025-03-30 20:12:23,971 - app.services.chains.base_conversation_chain - INFO - Chunk type: <class 'langchain_core.messages.ai.AIMessageChunk'>
+2025-03-30 20:12:23,971 - app.services.workout_analysis_service - DEBUG - Attempting to serialize data of type: <class 'dict'>
+2025-03-30 20:12:23,971 - app.services.workout_analysis_service - DEBUG - Key: type, Value type: <class 'str'>
+2025-03-30 20:12:23,971 - app.services.workout_analysis_service - DEBUG - Key: data, Value type: <class 'str'>
+2025-03-30 20:12:23,992 - httpcore.http11 - DEBUG - receive_response_body.complete
+2025-03-30 20:12:23,992 - httpcore.http11 - DEBUG - response_closed.started
+2025-03-30 20:12:23,993 - httpcore.http11 - DEBUG - response_closed.complete
+2025-03-30 20:12:23,993 - app.services.chains.base_conversation_chain - INFO - 
 === Final Conversation State ===
-2025-03-30 12:04:36,103 - app.services.chains.base_conversation_chain - INFO - Total messages: 2
-2025-03-30 12:04:36,103 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-03-30 17:28:18,895 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: f38d8f8c-67d2-4771-a309-5682f2439283
+2025-03-30 20:12:23,993 - app.services.chains.base_conversation_chain - INFO - Total messages: 4
+2025-03-30 20:12:23,993 - app.services.chains.base_conversation_chain - INFO - =====================
