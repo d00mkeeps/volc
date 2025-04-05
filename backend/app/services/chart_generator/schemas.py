@@ -1,17 +1,18 @@
 '''
-These schemas define the structure for a 1RM progress chart:
+These schemas define the structure for chart visualizations:
 
 ChartStyle: Handles the chart image properties like size and format
-Dataset: Represents one exercise's 1RM data over time 
-ChartData: Combines multiple datasets with their date labels
-ChartConfig: The full Chart.js configuration for a line chart
+DataPoint: An x/y coordinate for time series data
+Dataset: Represents data series with support for both arrays and time series
+ChartData: Combines datasets and optional labels
+ChartConfig: The full Chart.js configuration 
 QuickChartConfig: Combines style and chart config for the complete visualization
 
 The CHART_COLORS and DEFAULT_OPTIONS provide consistent styling and formatting.
 '''
 
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from typing import List, Optional, Union, Dict, Any
+from pydantic import BaseModel, Field, field_validator
 
 CHART_COLORS = [
     "#4ade80",  # light green
@@ -27,14 +28,14 @@ DEFAULT_OPTIONS = {
     "title": {
         "display": True,
         "text": "1RM Progress Over Time",
-        "fontColor": "#fff",  # v2 uses fontColor instead of color
+        "fontColor": "#ffffff",
         "fontSize": 16
     },
     "legend": {
         "display": True,
         "position": "bottom",
         "labels": {
-            "fontColor": "#fff",
+            "fontColor": "#ffffff",
             "padding": 8,
             "boxWidth": 12,
             "fontSize": 11,
@@ -42,20 +43,29 @@ DEFAULT_OPTIONS = {
         }
     },
     "scales": {
-        "xAxes": [{  # v2 uses arrays for axes
+        "xAxes": [{
             "display": True,
-            "scaleLabel": {  # v2 uses scaleLabel
+            "scaleLabel": {
                 "display": True,
-                "labelString": "Date",  # v2 uses labelString
-                "fontColor": "#fff",
+                "labelString": "Date",
+                "fontColor": "#ffffff",
+                "fontSize": 12,
                 "padding": 5
             },
-            "gridLines": {  # v2 uses gridLines
-                "color": "#999"
+            "gridLines": {
+                "display": True,
+                "color": "rgba(255, 255, 255, 0.2)",
+                "zeroLineColor": "rgba(255, 255, 255, 0.4)",
+                "drawBorder": True,
+                "lineWidth": 0.5,
+                "zeroLineWidth": 1,
+                "drawOnChartArea": True
             },
             "ticks": {
-                "fontColor": "#fff",
-                "padding": 5
+                "fontColor": "#ffffff",
+                "padding": 5,
+                "maxRotation": 45,
+                "minRotation": 45
             }
         }],
         "yAxes": [{
@@ -63,55 +73,122 @@ DEFAULT_OPTIONS = {
             "scaleLabel": {
                 "display": True,
                 "labelString": "Estimated 1RM (kg)",
-                "fontColor": "#fff",
-                "padding": 5
+                "fontColor": "#ffffff",
+                "fontSize": 14,
+                "padding": 10
             },
             "gridLines": {
-                "color": "#999"
+                "display": True,
+                "color": "rgba(255, 255, 255, 0.2)",
+                "zeroLineColor": "rgba(255, 255, 255, 0.4)",
+                "drawBorder": True,
+                "lineWidth": 0.5,
+                "zeroLineWidth": 1,
+                "drawOnChartArea": True
             },
             "ticks": {
-                "fontColor": "#fff",
-                "padding": 5
+                "fontColor": "#ffffff",
+                "padding": 8,
+                "beginAtZero": False
             }
         }]
     },
     "layout": {
         "padding": {
-            "left": 10,
-            "right": 10,
-            "top": 10,
-            "bottom": 20
+            "left": 15,
+            "right": 15,
+            "top": 15,
+            "bottom": 15
+        }
+    },
+    "tooltips": {
+        "mode": "index",
+        "intersect": False,
+        "backgroundColor": "rgba(0, 0, 0, 0.7)",
+        "titleFontColor": "#ffffff",
+        "bodyFontColor": "#ffffff",
+        "bodySpacing": 4,
+        "titleMarginBottom": 6,
+        "xPadding": 10,
+        "yPadding": 10,
+        "cornerRadius": 4
+    },
+    "hover": {
+        "mode": "nearest",
+        "intersect": True
+    },
+    "elements": {
+        "line": {
+            "tension": 0.1,
+            "borderWidth": 2,
+            "fill": False
+        },
+        "point": {
+            "radius": 3,
+            "hoverRadius": 5,
+            "borderWidth": 1,
+            "hoverBorderWidth": 2
         }
     }
 }
 
-
 class ChartStyle(BaseModel):
-   width: int = Field(default=400)
-   height: int = Field(default=350)
-   background_color: str = Field(default="#222")
-   device_pixel_ratio: float = Field(default=2.0)
-   format: str = Field(default="png")
+    """Chart styling properties"""
+    width: int = Field(default=400)
+    height: int = Field(default=350)
+    background_color: str = Field(default="#222")
+    device_pixel_ratio: float = Field(default=2.0)
+    format: str = Field(default="png")
+
+
+class DataPoint(BaseModel):
+    """Time series data point with x/y coordinates"""
+    x: str  # Date in ISO format (e.g. '2025-01-15')
+    y: float  # Value for this data point
+
 
 class Dataset(BaseModel):
-    """Single dataset configuration"""
+    """Single dataset configuration supporting both formats"""
     label: str
-    data: List[float]
+    data: Union[List[float], List[DataPoint], List[Dict[str, Any]]]  # Better support for all formats
     borderColor: Optional[str] = None
     backgroundColor: Optional[str] = None
     fill: Optional[bool] = None
     tension: Optional[float] = None
     pointRadius: Optional[float] = None
+    type: Optional[str] = None  # For mixed chart types
+    
+    @field_validator('data')
+    def validate_data(cls, v):
+        """Ensure data is either all floats or all DataPoints"""
+        # Allow empty lists
+        if not v:
+            return v
+            
+        # Check if the first element is a dict (for DataPoint)
+        if isinstance(v[0], dict):
+            # Convert all items to proper DataPoints
+            return [DataPoint(x=item['x'], y=item['y']) for item in v]
+        # Otherwise assume it's a list of floats
+        return v
+
 
 class ChartData(BaseModel):
-   labels: List[str]  # Dates
-   datasets: List[Dataset]
+    """
+    Chart data structure supporting both traditional and time series formats
+    """
+    datasets: List[Dataset]
+    labels: Optional[List[str]] = None  # Optional for time series charts
+
 
 class ChartConfig(BaseModel):
-   type: str = "line"
-   data: ChartData
-   options: dict = Field(default_factory=lambda: DEFAULT_OPTIONS)
+    """Full chart configuration"""
+    type: str = "line"
+    data: ChartData
+    options: Dict[str, Any] = Field(default_factory=lambda: DEFAULT_OPTIONS)
+
 
 class QuickChartConfig(BaseModel):
-   style: ChartStyle
-   config: ChartConfig
+    """Complete configuration for QuickChart API"""
+    style: ChartStyle
+    config: ChartConfig

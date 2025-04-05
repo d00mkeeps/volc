@@ -219,24 +219,52 @@ class WorkoutFrequencyCalculator(BaseMetricsCalculator):
             }
         }
     
-    def _calculate_consistency(self, intervals: List[int]) -> int:
-        """Calculate a consistency score based on workout intervals"""
-        if not intervals:
-            return 0
+    def _calculate_consistency(self, dates_or_intervals):
+        """Calculate a consistency score based on workout intervals or dates"""
+        if not dates_or_intervals:
+            return {'score': 0, 'streak': 0}
         
-        # Calculate coefficient of variation (lower is more consistent)
-        mean = sum(intervals) / len(intervals)
-        variance = sum((x - mean) ** 2 for x in intervals) / len(intervals)
-        std_dev = variance ** 0.5
-        cv = (std_dev / mean) if mean > 0 else float('inf')
+        intervals = []
+        if isinstance(dates_or_intervals[0], datetime):
+            # Convert dates to intervals
+            dates = sorted(dates_or_intervals)
+            for i in range(1, len(dates)):
+                interval = (dates[i] - dates[i-1]).days
+                intervals.append(interval)
+        else:
+            intervals = dates_or_intervals
         
-        # Convert to a 0-100 score (0 is inconsistent, 100 is perfect consistency)
-        # Cap CV at 1.0 for scoring purposes
-        capped_cv = min(cv, 1.0)
-        score = 100 * (1 - capped_cv)
-        
-        return round(score)
-
+        try:
+            # Ensure all intervals are integers/floats
+            intervals = [float(interval) for interval in intervals]
+            
+            # Calculate coefficient of variation (lower is more consistent)
+            mean = sum(intervals) / len(intervals)
+            variance = sum((x - mean) ** 2 for x in intervals) / len(intervals)
+            std_dev = variance ** 0.5
+            cv = (std_dev / mean) if mean > 0 else float('inf')
+            
+            # Convert to a 0-100 score (0 is inconsistent, 100 is perfect consistency)
+            # Cap CV at 1.0 for scoring purposes
+            capped_cv = min(cv, 1.0)
+            score = 100 * (1 - capped_cv)
+            
+            # Calculate current streak
+            streak = 0
+            for interval in reversed(intervals):
+                if interval <= mean * 1.5:
+                    streak += 1
+                else:
+                    break
+            
+            return {
+                'score': round(score),
+                'streak': streak
+            }
+        except Exception as e:
+            print(f"Error in consistency calculation: {e}")
+            return {'score': 0, 'streak': 0}
+    
 class MetricsProcessor:
     def __init__(self, workout_data: Dict):
         self.workout_data = workout_data

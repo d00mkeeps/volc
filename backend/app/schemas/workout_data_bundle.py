@@ -20,14 +20,47 @@ class BundleMetadata(BaseModel):
         datetime: lambda dt: dt.isoformat()
     })
 
+class ConsistencyMetrics(BaseModel):
+    """Enhanced workout consistency metrics"""
+    score: int = Field(default=0, description="Consistency score from 0-100")
+    streak: int = Field(default=0, description="Current workout streak")
+    avg_gap: float = Field(default=0, description="Average days between workouts")
+
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+    
+class TopPerformer(BaseModel):
+    """Data for a top performing exercise"""
+    name: str
+    first_value: float
+    last_value: float
+    change: float
+    change_percent: float
+    
+class TopPerformers(BaseModel):
+    """Collection of top performing exercises by different metrics"""
+    strength: List[TopPerformer] = Field(default_factory=list, description="Top exercises by 1RM improvement")
+    volume: List[TopPerformer] = Field(default_factory=list, description="Top exercises by volume increase")
+    frequency: List[TopPerformer] = Field(default_factory=list, description="Top exercises by workout frequency")
+
+    def get(self, key, default=None):
+        return getattr(self, key, default)
+
+
 class WorkoutDataBundle(BaseModel):
+    """Enhanced workout data bundle with multiple charts and metrics"""
+    bundle_id: UUID
     metadata: BundleMetadata
     workout_data: Dict
     original_query: str
+    # Keep for backward compatibility
     chart_url: Optional[str] = None
-    created_at: datetime = datetime.now()
-    bundle_id: UUID
+    # New fields for enhanced features
+    chart_urls: Dict[str, str] = Field(default_factory=dict, description="Multiple chart URLs by type")
     correlation_data: Optional[CorrelationData] = None
+    created_at: datetime = datetime.now()
+    consistency_metrics: ConsistencyMetrics = Field(default_factory=ConsistencyMetrics)
+    top_performers: TopPerformers = Field(default_factory=TopPerformers)
     
     model_config = ConfigDict(json_encoders={
         datetime: lambda dt: dt.isoformat(),

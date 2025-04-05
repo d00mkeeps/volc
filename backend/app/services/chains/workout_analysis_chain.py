@@ -47,18 +47,85 @@ Try to keep responses concise (under 100 tokens when possible) while still discu
         return self._data_bundles
 
     async def add_data_bundle(self, bundle: WorkoutDataBundle) -> bool:
-        """Add a workout data bundle to the conversation context."""
+        """Add workout data bundle to conversation context with enhanced details."""
         try:
+            # Store the bundle
             self._data_bundles.append(bundle)
-            logger.info(f"Added workout data bundle:")
-            logger.info(f"Original query: {bundle.original_query}")
-            logger.info(f"Workout data: {bundle.workout_data}")
-            logger.info(f"Metadata: {bundle.metadata}")
+            
+            # Format top performers for display
+            strength_highlights = []
+            volume_highlights = []
+            frequency_highlights = []
+            
+            if hasattr(bundle, 'top_performers'):
+                # Process strength performers
+                for performer in bundle.top_performers.get('strength', []):
+                    if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
+                        strength_highlights.append(
+                            f"{performer.get('name')}: +{performer.get('change_percent')}%"
+                        )
+                
+                # Process volume performers
+                for performer in bundle.top_performers.get('volume', []):
+                    if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
+                        volume_highlights.append(
+                            f"{performer.get('name')}: +{performer.get('change_percent')}%"
+                        )
+                
+                # Process frequency performers
+                for performer in bundle.top_performers.get('frequency', []):
+                    if isinstance(performer, dict):
+                        frequency_highlights.append(
+                            f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
+                        )
+            
+            # Format consistency metrics
+            consistency_score = bundle.consistency_metrics.get('score', 0) if hasattr(bundle, 'consistency_metrics') else 0
+            consistency_streak = bundle.consistency_metrics.get('streak', 0) if hasattr(bundle, 'consistency_metrics') else 0
+            consistency_gap = bundle.consistency_metrics.get('avg_gap', 0) if hasattr(bundle, 'consistency_metrics') else 0
+            
+            # Format chart availability
+            available_charts = []
+            if hasattr(bundle, 'chart_urls') and bundle.chart_urls:
+                if 'strength_progress' in bundle.chart_urls:
+                    available_charts.append("Strength Progress Chart")
+                if 'volume_progress' in bundle.chart_urls:
+                    available_charts.append("Volume Progress Chart")
+                if 'weekly_frequency' in bundle.chart_urls:
+                    available_charts.append("Weekly Workout Frequency Chart")
+            
+            # Create the context message
+            context_message = f"""
+    The user is viewing their workout analysis with these visualizations and metrics:
+
+    CHARTS:
+    {', '.join(available_charts) if available_charts else 'No charts available'}
+
+    CONSISTENCY METRICS:
+    - Score: {consistency_score}/100
+    - Current streak: {consistency_streak} workouts
+    - Average frequency: Every {consistency_gap} days
+
+    TOP PERFORMERS:
+    - Strength gains: {', '.join(strength_highlights) if strength_highlights else 'No significant strength gains detected'}
+    - Volume increases: {', '.join(volume_highlights) if volume_highlights else 'No significant volume increases detected'}
+    - Most frequent exercises: {', '.join(frequency_highlights) if frequency_highlights else 'Not enough data'}
+
+    When discussing their workout progress, reference these specific metrics they can see in their interface.
+    Focus on their most significant improvements and patterns.
+    """
+            
+            # Add to conversation history
+            self.messages.append(SystemMessage(content=context_message))
+            
+            logger.info(f"Added workout data bundle to conversation context")
+            logger.info(f"Bundle has {len(available_charts)} charts available")
+            logger.info(f"Top strength performer: {strength_highlights[0] if strength_highlights else 'None'}")
+            
             return True
         except Exception as e:
             logger.error(f"Failed to add workout data bundle: {str(e)}", exc_info=True)
             return False
-
     def _initialize_prompt_template(self) -> None:
         """Sets up the workout-specific prompt template with context."""
         self.prompt = ChatPromptTemplate.from_messages([

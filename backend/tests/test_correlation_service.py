@@ -1,170 +1,170 @@
-
-import pytest
-import os
-import logging
 import asyncio
 import json
-from dotenv import load_dotenv
+import pytest
+from unittest.mock import AsyncMock, patch, ANY
+import uuid
+from datetime import datetime
+
 from langchain_anthropic import ChatAnthropic
-from datetime import datetime, timedelta
-
-from app.services.workout_analysis_service import CustomJSONEncoder, WorkoutAnalysisService
+from app.services.workout_analysis_service import WorkoutAnalysisService
 from app.core.supabase.client import SupabaseClient
-from app.services.workout_analysis.query_builder import WorkoutQueryBuilder
-from app.schemas.exercise_query import ExerciseQuery
-from app.services.workout_analysis.correlation_service import CorrelationService
+from app.schemas.workout_data_bundle import WorkoutDataBundle
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+@pytest.fixture
+def sample_workout():
+    """Sample workout data for testing"""
+    return {
+        "id": "workout-123",
+        "user_id": "user-456",
+        "name": "Monday Strength",
+        "date": "2025-03-15T10:30:00Z",
+        "workout_exercises": [
+            {
+                "name": "Bench Press",
+                "sets": [
+                    {"weight": 80, "reps": 8, "estimated_1rm": 101},
+                    {"weight": 85, "reps": 6, "estimated_1rm": 102},
+                    {"weight": 90, "reps": 4, "estimated_1rm": 103}
+                ]
+            },
+            {
+                "name": "Squat", 
+                "sets": [
+                    {"weight": 100, "reps": 8, "estimated_1rm": 126},
+                    {"weight": 110, "reps": 6, "estimated_1rm": 132},
+                ]
+            }
+        ]
+    }
+
+@pytest.fixture
+def sample_historical_data():
+    """Sample historical workout data returned by Supabase"""
+    return {
+        "metadata": {
+            "total_workouts": 10, 
+            "total_exercises": 5, 
+            "date_range": {"earliest": "2025-01-15", "latest": "2025-03-15"},
+            "exercises_included": ["Bench Press", "Squat"]
+        },
+        "workouts": [
+            {
+                "id": "workout-100",
+                "date": "2025-01-15T10:00:00Z",
+                "exercises": [
+                    {
+                        "exercise_name": "Bench Press",
+                        "sets": [{"weight": 70, "reps": 8, "estimated_1rm": 88}],
+                        "metrics": {"total_volume": 560, "total_sets": 1}
+                    }
+                ]
+            },
+            {
+                "id": "workout-110",
+                "date": "2025-02-15T10:00:00Z",
+                "exercises": [
+                    {
+                        "exercise_name": "Bench Press",
+                        "sets": [{"weight": 75, "reps": 8, "estimated_1rm": 95}],
+                        "metrics": {"total_volume": 600, "total_sets": 1}
+                    }
+                ]
+            },
+            {
+                "id": "workout-120",
+                "date": "2025-03-15T10:00:00Z",
+                "exercises": [
+                    {
+                        "exercise_name": "Bench Press",
+                        "sets": [{"weight": 80, "reps": 8, "estimated_1rm": 101}],
+                        "metrics": {"total_volume": 640, "total_sets": 1}
+                    }
+                ]
+            }
+        ]
+    }
+
 @pytest.mark.asyncio
-async def test_real_workout_correlation():
-   """Test correlation analysis with real workout data from Supabase."""
-   load_dotenv()
-   logger = logging.getLogger(__name__)
-   
-   # Environment setup
-   user_id = os.getenv("DEVELOPMENT_USER_ID")
-   api_key = os.getenv("ANTHROPIC_API_KEY")
-   if not user_id or not api_key:
-       pytest.skip("Missing required environment variables")
-   
-   # Initialize services
-   supabase_client = SupabaseClient()
-   query_builder = WorkoutQueryBuilder(supabase_client)
-   
-   # Fetch workout data for a 3-month period
-   query = ExerciseQuery(
-       exercises=["bench press", "squat", "overhead press", "deadlift"],
-       timeframe="3 months"
-   )
-   
-   logger.info(f"Fetching workout data for user {user_id}")
-   workout_data = await query_builder.fetch_exercise_data(
-       user_id=user_id,
-       query_params=query
-   )
-   
-   if not workout_data:
-       pytest.skip("No workout data found for the specified exercises")
-   
-   # Log found workout data
-   logger.info(f"Found {workout_data['metadata']['total_workouts']} workouts")
-   logger.info(f"Exercises found: {set(exercise['exercise_name'] for workout in workout_data['workouts'] for exercise in workout['exercises'])}")
-   logger.info(f"Date range: {workout_data['metadata']['date_range']['earliest']} to {workout_data['metadata']['date_range']['latest']}")
-   
-   # Run correlation analysis directly
-   correlation_service = CorrelationService()
-   correlation_results = correlation_service.analyze_exercise_correlations(workout_data)
-   
-   # Log correlation findings
-   if correlation_results and correlation_results.get('summary'):
-       logger.info("\nCorrelation findings:")
-       for corr in correlation_results['summary']:
-           logger.info(f"{corr['exercise1']} and {corr['exercise2']}: {corr['correlation']:.2f} with {corr['optimal_lag_weeks']} week lag")
-           
-       # Log correlation structure for debugging
-       logger.info(f"Correlation result keys: {list(correlation_results.keys())}")
-       if correlation_results.get('summary'):
-           sample_corr = correlation_results['summary'][0]
-           logger.info(f"Sample correlation entry: {sample_corr}")
-           logger.info(f"Sample correlation types: {[(k, type(v).__name__) for k, v in sample_corr.items()]}")
-   else:
-       logger.info("No significant correlations found")
-   
-   # Test end-to-end with WorkoutAnalysisService
-   llm = ChatAnthropic(model="claude-3-7-sonnet-20250219", streaming=True, api_key=api_key)
-   service = WorkoutAnalysisService(llm=llm, supabase_client=supabase_client)
-   
-   async def collect_responses(generator):
-       return [response async for response in generator]
-   
-   responses = await collect_responses(
-       service.analyze_workout(
-           user_id=user_id,
-           workout_data=workout_data,
-           message="What correlations do you see between my exercises? Focus on bench press, squat, and overhead press relationships."
-       )
-   )
-   
-   # Check for successful processing
-   bundle_responses = [r for r in responses if r["type"] == "workout_data_bundle"]
-   assert len(bundle_responses) > 0, "Should have bundle response"
-   
-   # Print LLM analysis
-   content_responses = [r for r in responses if r["type"] == "content"]
-   content = "".join([r["data"] for r in content_responses])
-   logger.info(f"\nLLM Analysis: {content[:500]}...")
-
-   # Test JSON serialization
-   logger.info("\n=== Testing JSON Serialization ===")
-   
-   # Test full response serialization
-   for idx, response in enumerate(responses):
-       logger.info(f"Testing response {idx+1}/{len(responses)} of type: {response['type']}")
-       try:
-           serialized = json.dumps(response)
-           logger.info(f"✓ Successfully serialized with standard JSON encoder")
-       except TypeError as e:
-           logger.error(f"✗ Standard JSON serialization failed: {e}")
-           
-           # Test with CustomJSONEncoder
-           try:
-               serialized = json.dumps(response, cls=CustomJSONEncoder)
-               logger.info(f"✓ Successfully serialized with CustomJSONEncoder")
-           except TypeError as e:
-               logger.error(f"✗ CustomJSONEncoder serialization failed: {e}")
-               
-               # Find problematic key
-               for key, value in response.items():
-                   try:
-                       json.dumps({key: value}, cls=CustomJSONEncoder)
-                   except TypeError:
-                       logger.error(f"  Problem key: '{key}', type: {type(value)}")
-                       
-                       # If it's a dict, go deeper
-                       if isinstance(value, dict):
-                           for subkey, subvalue in value.items():
-                               try:
-                                   json.dumps({subkey: subvalue}, cls=CustomJSONEncoder) 
-                               except TypeError:
-                                   logger.error(f"    Problem subkey: '{subkey}', type: {type(subvalue)}")
-                                   
-                                   # If it's a custom boolean, show its representation
-                                   if isinstance(subvalue, bool) or str(type(subvalue)).find('bool') != -1:
-                                       logger.error(f"    Boolean representation: {repr(subvalue)}, dir: {dir(subvalue)}")
-   
-   # Test specific serialization of bundle
-   if bundle_responses:
-       logger.info("\nTesting bundle serialization specifically:")
-       bundle = bundle_responses[0]
-       
-       # Test correlation_data specifically
-       if 'correlation_data' in bundle.get('data', {}):
-           corr_data = bundle['data']['correlation_data']
-           logger.info(f"Correlation data keys: {list(corr_data.keys() if corr_data else [])}")
-           
-           try:
-               serialized = json.dumps({'correlation_data': corr_data}, cls=CustomJSONEncoder)
-               logger.info("✓ Successfully serialized correlation_data")
-           except TypeError as e:
-               logger.error(f"✗ Failed to serialize correlation_data: {e}")
-               # Try each key in correlation_data
-               if corr_data:
-                   for key, value in corr_data.items():
-                       try:
-                           json.dumps({key: value}, cls=CustomJSONEncoder)
-                       except TypeError:
-                           logger.error(f"  Problem with correlation_data['{key}']")
-                           if key == 'summary' and isinstance(value, list) and value:
-                               logger.error(f"  Summary entry sample: {value[0]}")
-                               logger.error(f"  Summary entry types: {[(k, type(v).__name__) for k, v in value[0].items()]}")
-
-   # Bundle should successfully serialize with the fixed encoder
-   for response in responses:
-       try:
-           serialized = json.dumps(response, cls=CustomJSONEncoder)
-       except TypeError as e:
-           assert False, f"JSON serialization failed: {str(e)}"
-
-   if "heatmap_base64" in bundle_responses[0]["data"]["correlation_data"]:
-       logger.info("\nHeatmap base64 (first 50 chars):")
-       logger.info(bundle_responses[0]["data"]["correlation_data"]["heatmap_base64"][:50])
+async def test_workout_bundle_creation(sample_workout, sample_historical_data):
+    """Test the core workout analysis functionality: input workout → output bundle"""
+    
+    # Mock dependencies
+    mock_llm = AsyncMock(spec=ChatAnthropic)
+    mock_supabase = AsyncMock(spec=SupabaseClient)
+    
+    # Configure mock to return historical data
+    mock_supabase.query_workouts.return_value = sample_historical_data
+    
+    # For the WorkoutQueryBuilder.fetch_exercise_data method
+    with patch('app.services.workout_analysis.query_builder.WorkoutQueryBuilder.fetch_exercise_data', 
+              new_callable=AsyncMock) as mock_fetch:
+        mock_fetch.return_value = sample_historical_data
+        
+        # For the graph service to avoid generating actual charts
+        with patch('app.services.workout_analysis.graph_service.WorkoutGraphService.add_charts_to_bundle', 
+                  new_callable=AsyncMock) as mock_charts:
+            mock_charts.return_value = {
+                "strength_progress": "https://example.com/chart1.png",
+                "volume_progress": "https://example.com/chart2.png"
+            }
+            
+            # Create service
+            service = WorkoutAnalysisService(llm=mock_llm, supabase_client=mock_supabase)
+            
+            # Create a message collector to capture outputs
+            class MessageCollector:
+                def __init__(self):
+                    self.messages = []
+                
+                async def send_text(self, text):
+                    self.messages.append(json.loads(text))
+            
+            collector = MessageCollector()
+            
+            # Create analyze_workout message
+            message = {
+                "type": "analyze_workout",
+                "data": json.dumps(sample_workout),
+                "message": "How has my bench press improved?"
+            }
+            
+            # Set up to capture the first bundle output
+            bundle_output = None
+            async def get_first_bundle(message):
+                nonlocal bundle_output
+                if message.get("type") == "workout_data_bundle":
+                    bundle_output = message.get("data")
+                    return True
+                return False
+            
+            # Process with a patched _send_json_safe to capture outputs
+            with patch.object(service, '_send_json_safe', 
+                             side_effect=lambda ws, msg: get_first_bundle(msg) or collector.send_text(json.dumps(msg))):
+                await service.process_message(collector, message, "conv-789")
+            
+            # Verify a bundle was created
+            assert bundle_output is not None
+            
+            # Test that the bundle has the expected structure
+            assert "bundle_id" in bundle_output
+            assert "workout_data" in bundle_output
+            assert "metadata" in bundle_output
+            assert "chart_urls" in bundle_output
+            
+            # Verify metrics were calculated
+            assert "metrics" in bundle_output["workout_data"]
+            metrics = bundle_output["workout_data"]["metrics"]
+            
+            # Check for specific metric categories
+            assert "exercise_progression" in metrics
+            assert "strength_progression" in metrics
+            assert "workout_frequency" in metrics
+            
+            # Verify top performers were extracted
+            assert "top_performers" in bundle_output
+            assert "strength" in bundle_output["top_performers"]
+            assert "volume" in bundle_output["top_performers"]
+            
+            # Verify consistency metrics were calculated
+            assert "consistency_metrics" in bundle_output
+            assert "score" in bundle_output["consistency_metrics"]

@@ -14,7 +14,7 @@ from .workout_analysis.query_builder import WorkoutQueryBuilder
 from ..core.utils.id_gen import new_uuid
 from ..schemas.workout_data_bundle import BundleMetadata, CorrelationData, WorkoutDataBundle
 from .workout_analysis.correlation_service import CorrelationService
-from .workout_analysis.metrics_calc import MetricsProcessor
+from .workout_analysis.metrics_calc import MetricsProcessor, WorkoutFrequencyCalculator
 
 logger = logging.getLogger(__name__)
 PURPLE = "\033[35m"
@@ -275,7 +275,8 @@ class WorkoutAnalysisService:
                 async for response in self.analyze_workout(
                     user_id=user_id,
                     workout_data=workout_data,
-                    message=message_text
+                    message=message_text,
+                    conversation_id=conversation_id  # Add this parameter
                 ):
                     await self._send_json_safe(websocket, response)
 
@@ -331,13 +332,14 @@ class WorkoutAnalysisService:
             await self._send_json_safe(websocket, response)
 
     # Keep the existing methods unchanged
-    async def _handle_initialization(self, messages: List[Dict], user_id: str):
+    async def _handle_initialization(self, messages: List[Dict], conversation_id: str):
         """Initialize conversation chain with history."""
         self.conversation_chain = WorkoutAnalysisChain(
             llm=self.llm,
-            user_id=user_id
+            user_id=conversation_id
         )
         
+        # Process conversation history
         for msg in messages:
             if msg['sender'] == 'user':
                 self.conversation_chain.messages.append(HumanMessage(content=msg['content']))
@@ -369,6 +371,7 @@ class WorkoutAnalysisService:
 
             if generate_graph:
                 logger.info("\nAttempting to create workout bundle...")
+                # We keep using the existing create_workout_bundle
                 bundle = await self.graph_service.create_workout_bundle(
                     user_id=user_id,
                     query_text=message
@@ -391,6 +394,41 @@ class WorkoutAnalysisService:
                 logger.info(f"Metadata: {bundle.metadata}")
                 logger.info("-"*50)
                 
+                # Calculate metrics for the workout data
+                logger.info(f"Calculating advanced workout metrics")
+                metrics_processor = MetricsProcessor(bundle.workout_data)
+                workout_metrics = metrics_processor.process()
+                bundle.workout_data['metrics'] = workout_metrics
+                
+                # Calculate consistency metrics and get top performers
+                # These will be added to the bundle
+                logger.info(f"Enhancing bundle with consistency metrics and top performers")
+                workout_dates = []
+                for workout in bundle.workout_data.get('workouts', []):
+                    date_str = workout.get('date', '')
+                    if date_str:
+                        try:
+                            date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                            workout_dates.append(date)
+                        except (ValueError, TypeError):
+                            continue
+                            
+                # Calculate consistency metrics
+                frequency_calculator = WorkoutFrequencyCalculator(bundle.workout_data)
+                consistency_data = frequency_calculator._calculate_consistency(workout_dates)
+                
+                # Get top performers
+                top_strength = self.graph_service._get_top_performers(bundle.workout_data, "1rm_change", 3)
+                top_volume = self.graph_service._get_top_performers(bundle.workout_data, "volume_change", 3)
+                
+                # Add to bundle
+                bundle.consistency_metrics = consistency_data
+                bundle.top_performers = {
+                    "strength": top_strength,
+                    "volume": top_volume,
+                    "frequency": []  # Skip frequency for now in this flow
+                }
+                
                 logger.info("\nAttempting to add bundle to conversation chain...")
                 if not await self.conversation_chain.add_data_bundle(bundle):
                     yield {
@@ -402,24 +440,28 @@ class WorkoutAnalysisService:
                     }
                     return
                 
-                logger.info("\nAttempting to generate chart...")
-                chart_url = await self.graph_service.add_chart_to_bundle(
+                logger.info("\nAttempting to generate charts...")
+                chart_urls = await self.graph_service.add_charts_to_bundle(
                     bundle=bundle,
                     llm=self.llm
                 )
                 
-                if not chart_url:
+                if not chart_urls:
                     yield {
                         "type": "error",
                         "data": {
                             "code": "chart_generation_failed",
-                            "message": "Failed to generate graph visualization"
+                            "message": "Failed to generate graph visualizations"
                         }
                     }
                     return
 
-                bundle.chart_url = chart_url
-                logger.info(f"Bundle ID: {bundle.bundle_id} prepared with chart URL: {bundle.chart_url}")     
+                # Update bundle with chart URLs
+                bundle.chart_urls = chart_urls
+                # For backward compatibility
+                bundle.chart_url = chart_urls.get("strength_progress")
+                
+                logger.info(f"Bundle ID: {bundle.bundle_id} prepared with charts")     
                 yield {
                     "type": "workout_data_bundle",
                     "data": bundle.model_dump()
@@ -443,6 +485,7 @@ class WorkoutAnalysisService:
         user_id: str,
         workout_data: Dict[str, Any],
         message: str,
+        conversation_id: str = None,  # Add this parameter
         user_profile: Optional[Dict[str, Any]] = None
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Analyze workout with optional user profile data."""
@@ -463,41 +506,48 @@ class WorkoutAnalysisService:
             correlation_results = correlation_service.analyze_exercise_correlations(workout_data)
             logger.info(f"Correlation analysis complete: found {len(correlation_results.get('summary', []))} significant correlations")
 
-            # Add this block before creating the bundle
+            # Calculate metrics for the workout data
             logger.info(f"{PURPLE}Calculating advanced workout metrics{RESET}")
             metrics_processor = MetricsProcessor(workout_data)
             workout_metrics = metrics_processor.process()
             workout_data['metrics'] = workout_metrics
             logger.info(f"{PURPLE}Added metrics to workout data: {list(workout_metrics.keys())}{RESET}")
             
-            # Create bundle
-            bundle_id = await new_uuid()
-            bundle = WorkoutDataBundle(
-                bundle_id=bundle_id,
-                metadata=BundleMetadata(
-                    total_workouts=workout_data['metadata']['total_workouts'],
-                    total_exercises=workout_data['metadata']['total_exercises'],
-                    date_range=workout_data['metadata']['date_range'],
-                    exercises_included=workout_data['metadata'].get('exercises_included', [])
-                ),
-                workout_data=workout_data,
+            # Create enhanced bundle
+            logger.info("Creating enhanced workout bundle")
+            bundle = await self._prepare_enhanced_bundle(
+                workout_data=workout_data, 
                 original_query=message,
-                created_at=datetime.now(),
-                correlation_data=CorrelationData(**correlation_results) if correlation_results else None
+                correlation_results=correlation_results
             )
             
             # Add bundle to conversation
             await self.conversation_chain.add_data_bundle(bundle)
+
+            # In your analyze_workout method, after creating the bundle:
+
+# Link bundle to conversation
+            if conversation_id:
+                await self.supabase_client.link_bundle_to_conversation(
+                    user_id, 
+                    conversation_id, 
+                    str(bundle.bundle_id)
+                )
+                logger.info(f"Linked bundle {bundle.bundle_id} to conversation {conversation_id}")
             
-            # Always generate chart for workout analysis
-            chart_url = await self.graph_service.add_chart_to_bundle(
+            # Always generate charts for workout analysis
+            logger.info("Generating multiple charts")
+            chart_urls = await self.graph_service.add_charts_to_bundle(
                 bundle=bundle,
                 llm=self.llm
             )
             
-            if chart_url:
-                bundle.chart_url = chart_url
-                logger.info(f"Chart generated: {chart_url}")
+            if chart_urls:
+                logger.info(f"Generated {len(chart_urls)} charts")
+                # Update bundle with chart URLs
+                bundle.chart_urls = chart_urls
+                # For backward compatibility
+                bundle.chart_url = chart_urls.get("strength_progress")
             
             # First yield the data bundle
             yield {
@@ -518,3 +568,91 @@ class WorkoutAnalysisService:
                     "message": f"Failed to analyze workout: {str(e)}"
                 }
             }
+
+    async def _prepare_enhanced_bundle(self, workout_data, original_query, correlation_results=None):
+        """
+        Prepare an enhanced workout data bundle with consistency metrics and top performers.
+        
+        Args:
+            workout_data: The workout data dictionary
+            original_query: The original query or message
+            correlation_results: Optional correlation analysis results
+            
+        Returns:
+            An enhanced WorkoutDataBundle
+        """
+        # Generate a new bundle ID
+        bundle_id = await new_uuid()
+        
+        # Extract dates for consistency calculation
+        workout_dates = []
+        for workout in workout_data.get('workouts', []):
+            date_str = workout.get('date', '')
+            if date_str:
+                try:
+                    date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                    workout_dates.append(date)
+                except (ValueError, TypeError):
+                    # Skip invalid dates
+                    continue
+        
+        # Calculate consistency metrics
+        frequency_calculator = WorkoutFrequencyCalculator(workout_data)
+        consistency_data = frequency_calculator._calculate_consistency(workout_dates)
+        
+        # Process top performers
+        # Get top performers for strength and volume
+        top_strength = self.graph_service._get_top_performers(workout_data, metric="1rm_change", limit=3)
+        top_volume = self.graph_service._get_top_performers(workout_data, metric="volume_change", limit=3)
+        
+        # For top frequency exercises (simple count approach)
+        exercise_frequency = {}
+        for workout in workout_data.get('workouts', []):
+            for exercise in workout.get('exercises', []):
+                name = exercise.get('exercise_name', '')
+                if not name:
+                    continue
+                    
+                if name not in exercise_frequency:
+                    exercise_frequency[name] = 0
+                exercise_frequency[name] += 1
+        
+        # Convert to top performers format
+        top_frequency = []
+        for name, count in sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:3]:
+            top_frequency.append({
+                'name': name,
+                'first_value': float(count),
+                'last_value': float(count),
+                'change': 0.0,
+                'change_percent': 0.0
+            })
+        
+        # Create bundle
+        bundle = WorkoutDataBundle(
+            bundle_id=bundle_id,
+            metadata=BundleMetadata(
+                total_workouts=workout_data['metadata']['total_workouts'],
+                total_exercises=workout_data['metadata']['total_exercises'],
+                date_range=workout_data['metadata']['date_range'],
+                exercises_included=workout_data['metadata'].get('exercises_included', [])
+            ),
+            workout_data=workout_data,
+            original_query=original_query,
+            created_at=datetime.now(),
+            correlation_data=CorrelationData(**correlation_results) if correlation_results else None,
+            # Add enhanced data
+            chart_urls={},  # Will be populated by add_charts_to_bundle
+            consistency_metrics={
+                "score": consistency_data.get('score', 0) if hasattr(consistency_data, 'get') else consistency_data,
+                "streak": consistency_data.get('streak', 0) if hasattr(consistency_data, 'get') else 0,
+                "avg_gap": consistency_data.get('avg_gap', 0)
+            },
+            top_performers={
+                "strength": top_strength,
+                "volume": top_volume,
+                "frequency": top_frequency
+            }
+        )
+        
+        return bundle
