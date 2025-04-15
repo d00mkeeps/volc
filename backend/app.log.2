@@ -1,0 +1,64 @@
+2025-04-15 15:57:22,036 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=48.89, change=34.92, change_percent=250.0), TopPerformer(name='Face Pull', first_value=25.15, last_value=48.89, change=23.74, change_percent=94.4), TopPerformer(name='Hack Squat', first_value=167.95, last_value=195.58, change=27.63, change_percent=16.5)] volume=[TopPerformer(name='Face Pull', first_value=216.0, last_value=1260.0, change=1044.0, change_percent=483.3), TopPerformer(name='Dips', first_value=360.0, last_value=1540.0, change=1180.0, change_percent=327.8), TopPerformer(name='Hack Squat', first_value=1650.0, last_value=5040.0, change=3390.0, change_percent=205.5)] frequency=[]
+2025-04-15 15:57:22,037 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=8 avg_gap=0.7
+2025-04-15 15:57:22,038 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
+2025-04-15 15:57:22,040 - app.services.workout_analysis_service - INFO - {"bundle_id": "565a9441-31d5-4cde-b5ba-9a152d16e404", "metadata": {"total_workouts": 95, "total_exercises": 140, "date_range": {"latest": "2025-04-15T14:57:01.159000+00:00", "earliest": "2025-01-27T22:02:04.023375+00:00"}, "exercises_included": ["Dips", "Face pull", "Face Pull", "Face Pulls", "Hack squat", "Hack Squat"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-04-15T14:57:01.159+00:00", "earliest": "2025-01-27T22:02:04.023375+00:00"}, "total_workouts": 95, "total_exercises": 140, "exercises_included": ["Dips", "Face pull", "Face Pull", "Face Pulls", "Hack squat", "Hack Squat"]}, "workouts": [{"id": "55d8eb40-1a83-4003-955c-b17f0f47b2dd", "date": "2025-04-15T14:57:01.159+00:00", "name": "Test workout", "notes": "[\"\"]", "exercises": [{"id": "5417a508-77c9-4b56-857f-769784835cf1", "name": "Dips", "sets": [{"rpe": null, "reps": 10, "weight": 35, "distance": null, "duration": null, "set_number": 1}, {"rpe": null, "reps": 10, "weight": 35, "distance": null, "duration"... [truncated]
+2025-04-15 15:57:22,040 - app.services.workout_analysis_service - INFO - Complete bundle size: 62702 bytes
+2025-04-15 15:57:22,040 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-04-15 16:03:40,300 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 9a1e7ba4-9e87-47a7-a32b-f2447c666e27
+2025-04-15 16:03:42,796 - app - INFO - Logging has been set up
+2025-04-15 16:03:42,797 - app.main - INFO - Application starting
+2025-04-15 16:03:45,046 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-15 16:03:55,690 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: d7c521aa-1965-4fb3-b254-c0b755d93fd4
+2025-04-15 16:03:55,692 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-15 16:03:55,790 - app.api.endpoints.llm - INFO - Restoring conversation context for d7c521aa-1965-4fb3-b254-c0b755d93fd4
+2025-04-15 16:03:56,119 - app.api.endpoints.llm - INFO - Retrieved 1 messages for conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4
+2025-04-15 16:03:56,255 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-04-15 16:03:56,255 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-04-15 16:03:56,257 - app.services.workout_analysis_service - INFO - Initialized conversation with 1 messages
+2025-04-15 16:03:56,257 - app.api.endpoints.llm - INFO - Initialized conversation with 1 messages
+2025-04-15 16:03:57,920 - app.api.endpoints.llm - INFO - Processing message of type: analyze_workout
+2025-04-15 16:03:57,920 - app.services.workout_analysis_service - INFO - === WORKOUT ANALYSIS REQUEST RECEIVED ===
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Message keys: ['type', 'message', 'data', 'conversation_id']
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Using conversation ID: d7c521aa-1965-4fb3-b254-c0b755d93fd4 (client-provided: True)
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Data string length: 8481
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Data preview: {"id":"temp-1744729430079","user_id":"1e2d6190-5d52-4f48-974c-7a5a43a50bf3","program_id":null,"name":"Monday chest workout","notes":"[\"\"]","created_at":"2025-04-15T15:03:50.079Z","updated_at":"2025-...
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - ✅ Successfully parsed workout data
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Workout name: Monday chest workout
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Workout ID: temp-1744729430079
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Using user ID from workout: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-15 16:03:57,921 - app.services.workout_analysis_service - INFO - Extracted 8 exercise names: ['face pull', 'pull-ups', 'bench press', 'ez bar curl', 'dips', 'seated hammer curl', 'cable lateral raise', 'cable flye']
+2025-04-15 16:03:57,922 - app.services.workout_analysis_service - INFO - Fetching historical workout data for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-15 16:03:58,217 - app.services.workout_analysis_service - INFO - ✅ Retrieved 102 historical workouts
+2025-04-15 16:03:58,217 - app.services.workout_analysis_service - INFO - [35mCalculating workout metrics in message handler[0m
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - [35m✅ Successfully added metrics to workout data[0m
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - [35mMetrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - [35mSample exercise_progression: Face Pull = {'occurrences': 40, 'first_date': '2025-01-27T22:02:04.023375+00:00', 'last_date': '2025-04-15T15:03...[0m
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - [35mSample workout_frequency: total_workouts = 102...[0m
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - Starting workout analysis for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - Correlation analysis complete: found 0 significant correlations
+2025-04-15 16:03:58,218 - app.services.workout_analysis_service - INFO - [35mCalculating advanced workout metrics[0m
+2025-04-15 16:03:58,219 - app.services.workout_analysis_service - INFO - [35mAdded metrics to workout data: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
+2025-04-15 16:03:58,219 - app.services.workout_analysis_service - INFO - Creating enhanced workout bundle
+2025-04-15 16:03:58,219 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-04-15 16:03:58,220 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Face Pull', 'Pull-Ups']
+2025-04-15 16:03:58,220 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-04-15 16:03:58,221 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Face Pull', 'Face Pulls']
+2025-04-15 16:03:58,221 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
+2025-04-15 16:03:58,221 - app.services.chains.workout_analysis_chain - INFO - Bundle has 0 charts available
+2025-04-15 16:03:58,221 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
+2025-04-15 16:03:58,221 - app.services.workout_analysis_service - INFO - Generating multiple charts
+2025-04-15 16:03:58,221 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-04-15 16:03:58,224 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Face Pull', 'Pull-Ups']
+2025-04-15 16:03:58,225 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-04-15 16:03:58,226 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Face Pull', 'Face Pulls']
+2025-04-15 16:03:58,227 - app.services.workout_analysis.graph_service - INFO - Added 14 data points for Dips to strength chart
+2025-04-15 16:03:58,227 - app.services.workout_analysis.graph_service - INFO - Added 43 data points for Face Pull to strength chart
+2025-04-15 16:03:58,228 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Pull-Ups to strength chart
+2025-04-15 16:03:58,228 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
+2025-04-15 16:03:59,138 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
+2025-04-15 16:03:59,139 - app.services.workout_analysis.graph_service - INFO - Added 14 data points for Dips to volume chart
+2025-04-15 16:03:59,139 - app.services.workout_analysis.graph_service - INFO - Added 43 data points for Face Pull to volume chart
+2025-04-15 16:03:59,139 - app.services.workout_analysis.graph_service - INFO - Added 52 data points for Face Pulls to volume chart
+2025-04-15 16:03:59,139 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-04-15 16:04:00,941 - app.services.workout_analysis_service - INFO - Generated 3 charts
+2025-04-15 16:04:00,947 - app.core.supabase.client - INFO - Linking bundle 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b to conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4

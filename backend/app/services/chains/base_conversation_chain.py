@@ -22,10 +22,10 @@ class BaseConversationChain:
     def _initialize_prompt_template(self) -> None:
         """Sets up the base conversation prompt template."""
         self.prompt = ChatPromptTemplate.from_messages([
-            SystemMessage(content=self.system_prompt),
+            ("system", "{system_prompt}"),
             MessagesPlaceholder(variable_name="messages"),
-            HumanMessage(content="{current_message}"),
-        ]).partial(current_message="")
+            ("human", "{current_message}"),
+        ]).partial(system_prompt=self.system_prompt)
 
     async def extract_data(self) -> Any:
         """Optional data extraction - override if needed"""
@@ -47,10 +47,8 @@ class BaseConversationChain:
         }
     async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
         try:
-            # Add message to conversation history
-            self.messages.append(HumanMessage(content=message))
-            
             # Get prompt variables including any from child classes
+            # Note: We don't add the message to history yet to avoid duplication
             prompt_vars = await self.get_additional_prompt_vars()
             prompt_vars["current_message"] = message
             
@@ -69,8 +67,6 @@ class BaseConversationChain:
             async for chunk in self.chat_model.astream(
                 input=formatted_prompt
             ):
-                logger.info(f"Raw chunk from Anthropic: {chunk}")
-                logger.info(f"Chunk type: {type(chunk)}")
                 
                 # Check if this is a completion chunk
                 if (not chunk.content and 
@@ -89,11 +85,13 @@ class BaseConversationChain:
                         "data": chunk_content
                     }
 
+            # Only add both messages to history after successful processing
+            self.messages.append(HumanMessage(content=message))
             self.messages.append(AIMessage(content=full_response))
             
-            logger.info("\n=== Final Conversation State ===")
-            logger.info(f"Total messages: {len(self.messages)}")
-            logger.info("=====================")
+            logger.debug("\n=== Final Conversation State ===")
+            logger.debug(f"Total messages: {len(self.messages)}")
+            logger.debug("=====================")
                 
         except Exception as e:
             logger.error(f"Error processing message: {str(e)}", exc_info=True)

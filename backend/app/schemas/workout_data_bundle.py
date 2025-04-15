@@ -28,6 +28,14 @@ class ConsistencyMetrics(BaseModel):
 
     def get(self, key, default=None):
         return getattr(self, key, default)
+
+    def model_dump(self):
+       return {
+           "score": self.score,
+           "streak": self.streak,
+           "avg_gap": self.avg_gap
+       }
+
     
 class TopPerformer(BaseModel):
     """Data for a top performing exercise"""
@@ -36,6 +44,15 @@ class TopPerformer(BaseModel):
     last_value: float
     change: float
     change_percent: float
+
+    def model_dump(self):
+       return {
+           "name": self.name,
+           "first_value": self.first_value,
+           "last_value": self.last_value,
+           "change": self.change,
+           "change_percent": self.change_percent
+       }
     
 class TopPerformers(BaseModel):
     """Collection of top performing exercises by different metrics"""
@@ -46,17 +63,41 @@ class TopPerformers(BaseModel):
     def get(self, key, default=None):
         return getattr(self, key, default)
 
+    def model_dump(self):
+       return {
+           "strength": [performer.model_dump() for performer in self.strength],
+           "volume": [performer.model_dump() for performer in self.volume],
+           "frequency": [performer.model_dump() for performer in self.frequency]
+       }
+
 
 class WorkoutDataBundle(BaseModel):
     """Enhanced workout data bundle with multiple charts and metrics"""
     bundle_id: UUID
     metadata: BundleMetadata
-    workout_data: Dict
+    
+    workout_data: Dict[str, Any] = Field(
+        default_factory=dict, 
+        description="Complete workout data including exercises and metrics"
+    )
+    
+    # Keep these for backward compatibility but mark as deprecated
+    workout_ids: List[str] = Field(
+        default_factory=list, 
+        description="DEPRECATED: IDs of workouts included in this bundle - use workout_data instead"
+    )
+    exercise_ids: List[str] = Field(
+        default_factory=list, 
+        description="DEPRECATED: IDs of specific exercises analyzed - use workout_data instead"
+    )
+    exercise_mapping: Dict[str, List[str]] = Field(
+        default_factory=dict, 
+        description="DEPRECATED: Map of workout IDs to exercise IDs - use workout_data instead"
+    )
+    
     original_query: str
-    # Keep for backward compatibility
     chart_url: Optional[str] = None
-    # New fields for enhanced features
-    chart_urls: Dict[str, str] = Field(default_factory=dict, description="Multiple chart URLs by type")
+    chart_urls: Dict[str, str] = Field(default_factory=dict)
     correlation_data: Optional[CorrelationData] = None
     created_at: datetime = datetime.now()
     consistency_metrics: ConsistencyMetrics = Field(default_factory=ConsistencyMetrics)

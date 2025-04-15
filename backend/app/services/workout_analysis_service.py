@@ -53,9 +53,7 @@ class WorkoutAnalysisService:
     async def _send_json_safe(self, websocket: WebSocket, data: Dict[str, Any]):
         """Helper method to safely serialize and send JSON with datetime and UUID objects."""
         try:
-            logger.debug(f"Attempting to serialize data of type: {type(data)}")
             for key, value in data.items():
-                logger.debug(f"Key: {key}, Value type: {type(value)}")
                 if isinstance(value, dict) and key == "data":
                     logger.debug(f"Contents of data field (keys): {list(value.keys())}")
             
@@ -176,6 +174,11 @@ class WorkoutAnalysisService:
         logger.info(f"Message keys: {list(data.keys())}")
         
         data_str = data.get('data')
+        client_conversation_id = data.get('conversation_id')  # Extract client-provided conversation ID
+
+        conversation_id_to_use = client_conversation_id or conversation_id
+        logger.info(f"Using conversation ID: {conversation_id_to_use} (client-provided: {client_conversation_id is not None})")
+
         if data_str:
             try:
                 logger.info(f"Data string length: {len(data_str)}")
@@ -208,7 +211,7 @@ class WorkoutAnalysisService:
                     if ex.get('name'):
                         exercises.append(ex.get('name').lower())
                 
-                logger.info(f"Extracted {len(exercises)} exercise names: {exercises[:5]}")
+                logger.info(f"Extracted {len(exercises)} exercise names: {exercises}")
                 
                 if not exercises:
                     logger.error("❌ No exercises found in workout data")
@@ -276,7 +279,7 @@ class WorkoutAnalysisService:
                     user_id=user_id,
                     workout_data=workout_data,
                     message=message_text,
-                    conversation_id=conversation_id  # Add this parameter
+                    conversation_id=conversation_id_to_use  # Use the client-provided ID
                 ):
                     await self._send_json_safe(websocket, response)
 
@@ -343,7 +346,7 @@ class WorkoutAnalysisService:
         for msg in messages:
             if msg['sender'] == 'user':
                 self.conversation_chain.messages.append(HumanMessage(content=msg['content']))
-            else:
+            elif msg['sender'] == 'assistant':
                 self.conversation_chain.messages.append(AIMessage(content=msg['content']))
 
         logger.info(f"Initialized conversation with {len(messages)} messages")
@@ -485,10 +488,15 @@ class WorkoutAnalysisService:
         user_id: str,
         workout_data: Dict[str, Any],
         message: str,
-        conversation_id: str = None,  # Add this parameter
+        conversation_id: str = None,
         user_profile: Optional[Dict[str, Any]] = None
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Analyze workout with optional user profile data."""
+        bundle = None
+        response_count = 0
+        full_response = ""
+        link_success = False
+        
         try:
             logger.info(f"Starting workout analysis for user {user_id}")
             
@@ -524,18 +532,7 @@ class WorkoutAnalysisService:
             # Add bundle to conversation
             await self.conversation_chain.add_data_bundle(bundle)
 
-            # In your analyze_workout method, after creating the bundle:
-
-# Link bundle to conversation
-            if conversation_id:
-                await self.supabase_client.link_bundle_to_conversation(
-                    user_id, 
-                    conversation_id, 
-                    str(bundle.bundle_id)
-                )
-                logger.info(f"Linked bundle {bundle.bundle_id} to conversation {conversation_id}")
-            
-            # Always generate charts for workout analysis
+            # Generate charts - MOVED UP before database save
             logger.info("Generating multiple charts")
             chart_urls = await self.graph_service.add_charts_to_bundle(
                 bundle=bundle,
@@ -549,25 +546,130 @@ class WorkoutAnalysisService:
                 # For backward compatibility
                 bundle.chart_url = chart_urls.get("strength_progress")
             
-            # First yield the data bundle
+            # First yield the data bundle WITH charts
             yield {
                 "type": "workout_data_bundle", 
                 "data": bundle.model_dump()
             }
             
-            # Then generate analysis with LLM
-            async for response in self.conversation_chain.process_message(message):
-                yield response
-                    
+            # AFTER yielding to client, save to database
+            if conversation_id:
+                # Link bundle to conversation
+                result = await self.supabase_client.create_workout_bundle_with_link(
+                    bundle=bundle,
+                    user_id=user_id,
+                    conversation_id=conversation_id
+                )
+
+                link_success = result.get('success', False)
+                if link_success:
+                    logger.info(f"✅ Bundle {bundle.bundle_id} successfully linked to conversation {conversation_id}")
+                else:
+                    logger.warning(f"⚠️ Failed to link bundle {bundle.bundle_id} to conversation {conversation_id}: {result.get('error', 'Unknown error')}")
+                
         except Exception as e:
-            logger.error(f"Error analyzing workout: {str(e)}", exc_info=True)
+            logger.error(f"Error during bundle preparation: {str(e)}", exc_info=True)
             yield {
                 "type": "error", 
                 "data": {
-                    "code": "analysis_error",
-                    "message": f"Failed to analyze workout: {str(e)}"
+                    "code": "bundle_preparation_error",
+                    "message": f"Failed to prepare workout data: {str(e)}"
                 }
             }
+            return  # Exit early if bundle preparation fails
+                
+        # Separate try/except for LLM processing
+        try:
+            # Then generate analysis with LLM
+            async for chunk in self.conversation_chain.process_message(message):
+                try:
+                    # Handle AIMessageChunk objects from LangChain
+                    if hasattr(chunk, 'content'):
+                        content = chunk.content
+                        if content:  # Skip empty chunks
+                            yield {
+                                "type": "content",
+                                "data": {
+                                    "content": content
+                                }
+                            }
+                            full_response += content
+                    # Handle string responses
+                    elif isinstance(chunk, str):
+                        yield {
+                            "type": "content", 
+                            "data": {
+                                "content": chunk
+                            }
+                        }
+                        full_response += chunk
+                    # Handle dictionary responses
+                    elif isinstance(chunk, dict) and 'type' in chunk:
+                        yield chunk
+                        if chunk.get('type') == 'content' and 'data' in chunk:
+                            # The issue might be here - chunk['data'] could be a string
+                            data = chunk.get('data')
+                            if isinstance(data, dict):
+                                content = data.get('content', '')
+                            elif isinstance(data, str):
+                                content = data
+                            else:
+                                content = ''
+                                
+                            if content:
+                                full_response += content
+                    else:
+                        logger.warning(f"Skipping unexpected chunk type: {type(chunk)}")
+                        
+                    response_count += 1
+                except Exception as chunk_error:
+                    logger.error(f"Error processing individual chunk: {str(chunk_error)}")
+                    # Continue processing other chunks
+        except Exception as e:
+            logger.error(f"Error during LLM response streaming: {str(e)}", exc_info=True)
+            yield {
+                "type": "content",
+                "data": {
+                    "content": "I've analyzed your workout data but encountered an issue generating the detailed analysis. Your workout metrics and charts are still available for review."
+                }
+            }
+        
+        # Always log the bundle and response information, regardless of errors
+        try:
+            if bundle:
+                logger.info("="*80)
+                logger.info(f"WORKOUT ANALYSIS COMPLETE - SUMMARY:")
+                logger.info(f"User ID: {user_id}")
+                logger.info(f"Conversation ID: {conversation_id}")
+                logger.info(f"Bundle ID: {bundle.bundle_id}")
+                logger.info(f"Bundle-Conversation Link: {'✅ Established' if link_success else '❌ Failed'}")
+                logger.info(f"Total LLM response chunks: {response_count}")
+                
+                # Log the complete response text
+                logger.info("COMPLETE AI RESPONSE:")
+                logger.info("-"*40)
+                logger.info(full_response)
+                logger.info("-"*40)
+                logger.info(f"Response length: {len(full_response)} characters")
+                
+                # Log bundle details
+                logger.info("BUNDLE DETAILS:")
+                logger.info(f"Metrics categories: {list(bundle.workout_data.get('metrics', {}).keys())}")
+                logger.info(f"Chart URLs: {bundle.chart_urls}")
+                logger.info(f"Top performers: {bundle.top_performers}")
+                logger.info(f"Consistency metrics: {bundle.consistency_metrics}")
+                
+                # Dump the bundle to a separate log entry for complete reference
+                logger.info("COMPLETE BUNDLE JSON:")
+                try:
+                    bundle_json = json.dumps(bundle.model_dump(), cls=CustomJSONEncoder)
+                    logger.info(f"{bundle_json[:1000]}... [truncated]")
+                    logger.info(f"Complete bundle size: {len(bundle_json)} bytes")
+                except Exception as e:
+                    logger.error(f"Failed to serialize bundle for logging: {str(e)}")
+                logger.info("="*80)
+        except Exception as e:
+            logger.error(f"Error logging final bundle state: {str(e)}")
 
     async def _prepare_enhanced_bundle(self, workout_data, original_query, correlation_results=None):
         """
@@ -599,6 +701,7 @@ class WorkoutAnalysisService:
         # Calculate consistency metrics
         frequency_calculator = WorkoutFrequencyCalculator(workout_data)
         consistency_data = frequency_calculator._calculate_consistency(workout_dates)
+        avg_days_between = workout_data.get('metrics', {}).get('workout_frequency', {}).get('avg_days_between', 0)
         
         # Process top performers
         # Get top performers for strength and volume
@@ -627,6 +730,8 @@ class WorkoutAnalysisService:
                 'change': 0.0,
                 'change_percent': 0.0
             })
+
+            
         
         # Create bundle
         bundle = WorkoutDataBundle(
@@ -643,10 +748,14 @@ class WorkoutAnalysisService:
             correlation_data=CorrelationData(**correlation_results) if correlation_results else None,
             # Add enhanced data
             chart_urls={},  # Will be populated by add_charts_to_bundle
+# In _prepare_enhanced_bundle method
+
+
             consistency_metrics={
                 "score": consistency_data.get('score', 0) if hasattr(consistency_data, 'get') else consistency_data,
                 "streak": consistency_data.get('streak', 0) if hasattr(consistency_data, 'get') else 0,
-                "avg_gap": consistency_data.get('avg_gap', 0)
+                # Here's the fix - use avg_days_between instead of avg_gap
+                "avg_gap": avg_days_between
             },
             top_performers={
                 "strength": top_strength,

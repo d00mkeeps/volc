@@ -34,7 +34,6 @@ class WorkoutAnalysisChain(BaseConversationChain):
 5. Acknowledge correlations when available by highlighting significant relationships
 
 Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.
-
 """
 
         super().__init__(system_prompt=system_prompt, llm=llm)
@@ -46,112 +45,134 @@ Try to keep responses concise (under 100 tokens when possible) while still discu
     def data_bundles(self) -> List[WorkoutDataBundle]:
         return self._data_bundles
 
+    def _initialize_prompt_template(self) -> None:
+        """Sets up the workout-specific prompt template with consolidated context."""
+        self.prompt = ChatPromptTemplate.from_messages([
+            ("system", "{system_prompt}\n\n"
+                      "Current workout data context:\n{context}\n\n"
+                      "Visualizations and metrics:\n{visualization_context}"),
+            MessagesPlaceholder(variable_name="messages"),
+            ("human", "{current_message}")
+        ])
+
     async def add_data_bundle(self, bundle: WorkoutDataBundle) -> bool:
-        """Add workout data bundle to conversation context with enhanced details."""
+        """Add workout data bundle to conversation context without adding system messages."""
         try:
             # Store the bundle
             self._data_bundles.append(bundle)
             
-            # Format top performers for display
-            strength_highlights = []
-            volume_highlights = []
-            frequency_highlights = []
+            # Log success but don't add to message history
+            logger.info(f"Added workout data bundle to conversation context")
             
-            if hasattr(bundle, 'top_performers'):
-                # Process strength performers
-                for performer in bundle.top_performers.get('strength', []):
-                    if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
-                        strength_highlights.append(
-                            f"{performer.get('name')}: +{performer.get('change_percent')}%"
-                        )
-                
-                # Process volume performers
-                for performer in bundle.top_performers.get('volume', []):
-                    if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
-                        volume_highlights.append(
-                            f"{performer.get('name')}: +{performer.get('change_percent')}%"
-                        )
-                
-                # Process frequency performers
-                for performer in bundle.top_performers.get('frequency', []):
-                    if isinstance(performer, dict):
-                        frequency_highlights.append(
-                            f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
-                        )
-            
-            # Format consistency metrics
-            consistency_score = bundle.consistency_metrics.get('score', 0) if hasattr(bundle, 'consistency_metrics') else 0
-            consistency_streak = bundle.consistency_metrics.get('streak', 0) if hasattr(bundle, 'consistency_metrics') else 0
-            consistency_gap = bundle.consistency_metrics.get('avg_gap', 0) if hasattr(bundle, 'consistency_metrics') else 0
-            
-            # Format chart availability
+            # Log chart availability
             available_charts = []
             if hasattr(bundle, 'chart_urls') and bundle.chart_urls:
-                if 'strength_progress' in bundle.chart_urls:
-                    available_charts.append("Strength Progress Chart")
-                if 'volume_progress' in bundle.chart_urls:
-                    available_charts.append("Volume Progress Chart")
-                if 'weekly_frequency' in bundle.chart_urls:
-                    available_charts.append("Weekly Workout Frequency Chart")
-            
-            # Create the context message
-            context_message = f"""
-    The user is viewing their workout analysis with these visualizations and metrics:
-
-    CHARTS:
-    {', '.join(available_charts) if available_charts else 'No charts available'}
-
-    CONSISTENCY METRICS:
-    - Score: {consistency_score}/100
-    - Current streak: {consistency_streak} workouts
-    - Average frequency: Every {consistency_gap} days
-
-    TOP PERFORMERS:
-    - Strength gains: {', '.join(strength_highlights) if strength_highlights else 'No significant strength gains detected'}
-    - Volume increases: {', '.join(volume_highlights) if volume_highlights else 'No significant volume increases detected'}
-    - Most frequent exercises: {', '.join(frequency_highlights) if frequency_highlights else 'Not enough data'}
-
-    When discussing their workout progress, reference these specific metrics they can see in their interface.
-    Focus on their most significant improvements and patterns.
-    """
-            
-            # Add to conversation history
-            self.messages.append(SystemMessage(content=context_message))
-            
-            logger.info(f"Added workout data bundle to conversation context")
+                available_charts = list(bundle.chart_urls.keys())
             logger.info(f"Bundle has {len(available_charts)} charts available")
-            logger.info(f"Top strength performer: {strength_highlights[0] if strength_highlights else 'None'}")
+            
+            # Log top performers if available
+            if hasattr(bundle, 'top_performers') and bundle.top_performers:
+                strength_highlights = bundle.top_performers.get('strength', [])
+                if strength_highlights and len(strength_highlights) > 0:
+                    logger.info(f"Top strength performer: {strength_highlights[0].get('name') if isinstance(strength_highlights[0], dict) else 'None'}")
+                else:
+                    logger.info(f"Top strength performer: None")
             
             return True
         except Exception as e:
             logger.error(f"Failed to add workout data bundle: {str(e)}", exc_info=True)
             return False
-    def _initialize_prompt_template(self) -> None:
-        """Sets up the workout-specific prompt template with context."""
-        self.prompt = ChatPromptTemplate.from_messages([
-            ("system", self.system_prompt),
-            ("system", "Current workout data context:\n{context}"),
-            MessagesPlaceholder(variable_name="messages"),
-            ("human", "{current_message}")
-        ])
 
     def _format_date(self, dt: datetime) -> str:
         """Format datetime to string."""
         return dt.isoformat() if dt else None
 
+    def _format_visualization_context(self) -> str:
+        """Format the visualization context for the latest bundle."""
+        if not self._data_bundles:
+            return "No workout data available"
+        
+        latest_bundle = self._data_bundles[-1]
+        
+        # Format available charts
+        available_charts = []
+        if hasattr(latest_bundle, 'chart_urls') and latest_bundle.chart_urls:
+            if 'strength_progress' in latest_bundle.chart_urls:
+                available_charts.append("Strength Progress Chart")
+            if 'volume_progress' in latest_bundle.chart_urls:
+                available_charts.append("Volume Progress Chart")
+            if 'weekly_frequency' in latest_bundle.chart_urls:
+                available_charts.append("Weekly Workout Frequency Chart")
+        
+        # Format top performers 
+        strength_highlights = []
+        volume_highlights = []
+        frequency_highlights = []
+        
+        if hasattr(latest_bundle, 'top_performers'):
+            # Process strength performers
+            for performer in latest_bundle.top_performers.get('strength', []):
+                if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
+                    strength_highlights.append(
+                        f"{performer.get('name')}: +{performer.get('change_percent')}%"
+                    )
+            
+            # Process volume performers
+            for performer in latest_bundle.top_performers.get('volume', []):
+                if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
+                    volume_highlights.append(
+                        f"{performer.get('name')}: +{performer.get('change_percent')}%"
+                    )
+            
+            # Process frequency performers
+            for performer in latest_bundle.top_performers.get('frequency', []):
+                if isinstance(performer, dict):
+                    frequency_highlights.append(
+                        f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
+                    )
+        
+        # Format consistency metrics
+        consistency_score = latest_bundle.consistency_metrics.get('score', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
+        consistency_streak = latest_bundle.consistency_metrics.get('streak', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
+        consistency_gap = latest_bundle.consistency_metrics.get('avg_gap', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
+        
+        # Create the visualization context
+        context = f"""
+CHARTS:
+{', '.join(available_charts) if available_charts else 'No charts available'}
+
+CONSISTENCY METRICS:
+- Score: {consistency_score}/100
+- Current streak: {consistency_streak} workouts
+- Average frequency: Every {consistency_gap} days
+
+TOP PERFORMERS:
+- Strength gains: {', '.join(strength_highlights) if strength_highlights else 'No significant strength gains detected'}
+- Volume increases: {', '.join(volume_highlights) if volume_highlights else 'No significant volume increases detected'}
+- Most frequent exercises: {', '.join(frequency_highlights) if frequency_highlights else 'Not enough data'}
+"""
+        return context
+
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
-        """Get workout-specific context variables."""
+        """Get workout-specific context variables with consolidated formatting."""
         base_vars = await super().get_additional_prompt_vars()
 
         try:
+            # Include the system prompt explicitly
+            base_vars["system_prompt"] = self.system_prompt
+            
+            # Format the visualization context
+            base_vars["visualization_context"] = self._format_visualization_context()
+            
+            # Format workout data context
             workout_context = {
                 "available_data": []
             }
             
-            if self.data_bundles:
-                latest_bundle = self.data_bundles[-1]
+            if self._data_bundles:
+                latest_bundle = self._data_bundles[-1]
                 
-                # Include only the advanced metrics and minimal exercise data
+                # Include the advanced metrics and minimal exercise data
                 date_range = latest_bundle.metadata.date_range
                 
                 workout_context["available_data"] = {
@@ -175,7 +196,9 @@ Try to keep responses concise (under 100 tokens when possible) while still discu
         except Exception as e:
             self.logger.error(f"Error getting prompt variables: {str(e)}", exc_info=True)
             return {
+                "system_prompt": self.system_prompt,
                 "context": "No workout data available",
+                "visualization_context": "No visualizations available",
                 "messages": self.messages,
                 "current_message": ""
             }

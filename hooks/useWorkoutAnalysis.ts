@@ -1,4 +1,3 @@
-// hooks/useWorkoutAnalysis.ts
 import { useState } from 'react';
 import { useMessage } from '@/context/MessageContext';
 import { useRouter } from 'expo-router';
@@ -45,7 +44,8 @@ const analyzeWorkout = async (workout: CompleteWorkout) => {
     const payload = {
       type: 'analyze_workout',
       message,
-      data: workoutData
+      data: workoutData,
+      conversation_id: conversationId
     };
     
     console.log(`📤 Sending analyze_workout request`);

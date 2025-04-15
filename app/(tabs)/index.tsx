@@ -4,8 +4,6 @@ import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import WelcomeModal from "@/components/welcomeModal/WelcomeModal";
 import Toast from "react-native-toast-message";
 import ConversationList from "@/components/conversation/organisms/ConversationList";
-import { useMessage } from "@/context/MessageContext";
-import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 import { Ionicons } from "@expo/vector-icons";
 import WorkoutCreateModal from "@/components/workout/organisms/WorkoutCreateModal";
 import { useWorkout } from "@/context/WorkoutContext";
@@ -14,7 +12,6 @@ import { useAuth } from "@/context/AuthContext";
 export default function HomeScreen() {
   const { user } = useAuth(); // Get authenticated user
   const { workouts, createWorkout } = useWorkout();
-  const { startNewConversation, currentConversationId } = useMessage();
   const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
   const [openWorkoutModal, setOpenWorkoutModal] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
@@ -80,39 +77,6 @@ export default function HomeScreen() {
       pathname: "/conversation/[id]",
       params: { id },
     });
-  };
-
-  const handleNewMessage = async (message: string, config: ChatConfigKey) => {
-    console.log("📮 handleNewMessage called:", { message });
-
-    if (isCreatingConversation) {
-      console.log("⚠️ Already creating conversation, returning");
-      return;
-    }
-
-    try {
-      setIsCreatingConversation(true);
-      const newConversationId = await startNewConversation(message, config);
-      console.log("🚗 Routing to new conversation:", newConversationId);
-
-      router.push({
-        pathname: "/conversation/[id]",
-        params: {
-          id: newConversationId,
-        },
-      });
-    } catch (error) {
-      console.error("❌ handleNewMessage failed:", error);
-      Toast.show({
-        type: "error",
-        text1: "Failed to start conversation",
-        text2: "Please try again",
-      });
-    } finally {
-      setTimeout(() => {
-        setIsCreatingConversation(false);
-      }, 2000); // Prevent rapid re-submissions
-    }
   };
 
   return (

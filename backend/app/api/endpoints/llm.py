@@ -160,32 +160,53 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
                     
                     # Get messages and bundle data
                     messages = await supabase_client.fetch_conversation_messages(conversation_id)
-                    bundle_id = await supabase_client.get_conversation_bundle_id(conversation_id)
-                    bundle_data = None
+                    logger.info(f"Retrieved {len(messages)} messages for conversation {conversation_id}")
                     
+                    # Get bundle ID and data
+                    bundle_id = await supabase_client.get_conversation_bundle_id(conversation_id)
+                    logger.info(f"Conversation bundle ID: {bundle_id}")
+                    
+                    bundle_data = None
                     if bundle_id:
                         bundle_data = await supabase_client.get_workout_bundle(bundle_id)
+                        if bundle_data:
+                            logger.info(f"Bundle data retrieved, keys: {list(bundle_data.keys())}")
+                        else:
+                            logger.info(f"No bundle data found for bundle ID: {bundle_id}")
+                    else:
+                        logger.info("No bundle ID found for conversation")
                     
                     # Initialize conversation
                     await service._handle_initialization(messages, conversation_id)
+                    logger.info(f"Initialized conversation with {len(messages)} messages")
                     
                     # Add bundle to context if available
                     if bundle_data:
-
-                        print(f'generated bundle:{bundle_data}')
-                        from app.schemas.workout_data_bundle import WorkoutDataBundle
-                        workout_bundle = WorkoutDataBundle(**bundle_data)
-                        await service.conversation_chain.add_data_bundle(workout_bundle)
-                        
-                        # Send bundle to client
-                        await websocket.send_json({
-                            "type": "workout_data_bundle",
-                            "data": bundle_data
-                        })
+                        try:
+                            from app.schemas.workout_data_bundle import WorkoutDataBundle
+                            workout_bundle = WorkoutDataBundle(**bundle_data)
+                            logger.info(f"Initialized workout bundle: {workout_bundle.bundle_id}")
+                            
+                            success = await service.conversation_chain.add_data_bundle(workout_bundle)
+                            logger.info(f"Added workout bundle to conversation context: {success}")
+                            
+                            # Send bundle to client
+                            await websocket.send_json({
+                                "type": "workout_data_bundle",
+                                "data": bundle_data
+                            })
+                            logger.info("Sent workout bundle to client")
+                        except Exception as e:
+                            logger.error(f"Error processing workout bundle: {str(e)}", exc_info=True)
                     
-                    # Process initial message if present
-                    if initial_data.get('message'):
-                        await service.process_message(websocket, initial_data, conversation_id)
+                    # Send initialization complete notification instead of processing initial message
+                    await websocket.send_json({
+                        "type": "initialization_complete",
+                        "data": {
+                            "message_count": len(messages),
+                            "has_bundle": bundle_data is not None
+                        }
+                    })
                         
                 except Exception as e:
                     logger.error(f"Error restoring conversation: {str(e)}", exc_info=True)
@@ -204,6 +225,7 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
                     continue
                 
                 # Process message
+                logger.info(f"Processing message of type: {data.get('type')}")
                 await service.process_message(websocket, data, conversation_id)
                 
         else:
