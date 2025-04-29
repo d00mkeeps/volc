@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { WorkoutExercise } from '@/types/workout';
-import WorkoutExerciseItem from '../molecules/WorkoutExerciseItem';
-import WorkoutExerciseItemEdit from '../molecules/WorkoutExerciseItemEdit';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { WorkoutExercise } from "@/types/workout";
+import WorkoutExerciseItem from "../molecules/WorkoutExerciseItem";
+import WorkoutExerciseItemEdit from "../molecules/WorkoutExerciseItemEdit";
 
 // Update the interface in WorkoutExerciseList.tsx
 interface WorkoutExerciseListProps {
@@ -30,11 +30,21 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
   workoutId,
   templateId,
   modifiedFields,
-  onFieldModified
+  onFieldModified,
 }) => {
-  const sortedExercises = [...exercises].sort((a, b) => a.order_index - b.order_index);
+  const sortedExercises = [...exercises].sort(
+    (a, b) => a.order_index - b.order_index
+  );
 
-  const handleExerciseChange = (updatedExercise: WorkoutExercise, index: number) => {
+  const handleExerciseChange = (
+    updatedExercise: WorkoutExercise,
+    index: number
+  ) => {
+    console.log("Exercise changed in list:", {
+      name: updatedExercise.name,
+      definitionId: updatedExercise.definition_id,
+    });
+
     const newExercises = [...exercises];
     newExercises[index] = updatedExercise;
     onExercisesChange(newExercises);
@@ -57,11 +67,14 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
     const now = new Date().toISOString();
     const newExercise: WorkoutExercise = {
       id: `temp-${Date.now()}`,
-      workout_id: exercises.length > 0 ? exercises[0].workout_id : workoutId || `temp-workout-${Date.now()}`,
-      name: '',
+      workout_id:
+        exercises.length > 0
+          ? exercises[0].workout_id
+          : workoutId || `temp-workout-${Date.now()}`,
+      name: "",
       order_index: exercises.length,
-      weight_unit: 'kg',
-      distance_unit: 'm',
+      weight_unit: "kg",
+      distance_unit: "m",
       created_at: now,
       updated_at: now,
       workout_exercise_sets: [
@@ -75,43 +88,42 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
           distance: null,
           duration: null,
           created_at: now,
-          updated_at: now
-        }
-      ]
+          updated_at: now,
+        },
+      ],
     };
-  
+
     onExercisesChange([...exercises, newExercise]);
   };
-
 
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Exercises</Text>
-      {sortedExercises.map((exercise, index) => (
-  editMode ? (
-    <WorkoutExerciseItemEdit
-      key={exercise.id}
-      exercise={exercise}
-      isLastExercise={index === exercises.length - 1}
-      onExerciseChange={(updatedExercise) => 
-        handleExerciseChange(updatedExercise, index)
-      }
-      onDeleteExercise={() => handleDeleteExercise(index)}
-      templateId={templateId}
-      modifiedFields={modifiedFields}
-      onFieldModified={onFieldModified}
-    />
-  ) : (
-    <WorkoutExerciseItem
-      key={exercise.id}
-      exercise={exercise}
-      isLastExercise={index === exercises.length - 1}
-    />
-  )
-))}
+      {sortedExercises.map((exercise, index) =>
+        editMode ? (
+          <WorkoutExerciseItemEdit
+            key={exercise.id}
+            exercise={exercise}
+            isLastExercise={index === exercises.length - 1}
+            onExerciseChange={(updatedExercise) =>
+              handleExerciseChange(updatedExercise, index)
+            }
+            onDeleteExercise={() => handleDeleteExercise(index)}
+            templateId={templateId}
+            modifiedFields={modifiedFields}
+            onFieldModified={onFieldModified}
+          />
+        ) : (
+          <WorkoutExerciseItem
+            key={exercise.id}
+            exercise={exercise}
+            isLastExercise={index === exercises.length - 1}
+          />
+        )
+      )}
       {editMode && (
-        <TouchableOpacity 
-          style={styles.addExerciseButton} 
+        <TouchableOpacity
+          style={styles.addExerciseButton}
           onPress={addExercise}
         >
           <Ionicons name="add-circle-outline" size={20} color="#8cd884" />
@@ -127,22 +139,22 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   sectionTitle: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 12,
   },
   addExerciseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1a1a1a',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#1a1a1a",
     padding: 16,
     borderRadius: 8,
     marginTop: 12,
   },
   addExerciseText: {
-    color: '#8cd884',
+    color: "#8cd884",
     fontSize: 16,
     marginLeft: 8,
   },

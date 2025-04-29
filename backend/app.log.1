@@ -1,11 +1,54 @@
-2025-04-15 16:04:00,950 - app.core.supabase.client - INFO - Sending bundle-conversation link request: bundle_id=4ca9f0be-17fe-496e-8cd8-22e45cc3a34b, conversation_id=d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,013 - app.core.supabase.client - INFO - ✅ Successfully linked bundle 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b to conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,014 - app.services.workout_analysis_service - INFO - ✅ Bundle 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b successfully linked to conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-04-18 18:34:24,266 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-04-18 18:34:24,269 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-04-18 18:34:24,271 - app.services.workout_analysis_service - INFO - Initialized conversation with 1 messages
+2025-04-18 18:34:24,271 - app.api.endpoints.llm - INFO - Initialized conversation with 1 messages
+2025-04-18 18:34:26,036 - app.api.endpoints.llm - INFO - Processing message of type: analyze_workout
+2025-04-18 18:34:26,037 - app.services.workout_analysis_service - INFO - === WORKOUT ANALYSIS REQUEST RECEIVED ===
+2025-04-18 18:34:26,037 - app.services.workout_analysis_service - INFO - Message keys: ['type', 'message', 'data', 'conversation_id']
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Using conversation ID: 29763840-e207-49ff-8f0a-74a7dff1ba6a (client-provided: True)
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Data string length: 742
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Data preview: {"id":"temp-1744997635716","user_id":"1e2d6190-5d52-4f48-974c-7a5a43a50bf3","name":"Baloney","notes":"[\"\"]","created_at":"2025-04-18T17:33:55.716Z","updated_at":"2025-04-18T17:33:55.716Z","workout_e...
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - ✅ Successfully parsed workout data
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Workout name: Baloney
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Workout ID: temp-1744997635716
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Using user ID from workout: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Extracted 1 exercise names: ['weighted dip']
+2025-04-18 18:34:26,038 - app.services.workout_analysis_service - INFO - Fetching historical workout data for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-18 18:34:26,134 - app.services.workout_analysis_service - INFO - ✅ Retrieved 1 historical workouts
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35mCalculating workout metrics in message handler[0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35m✅ Successfully added metrics to workout data[0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35mMetrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35mSample workout_frequency: total_workouts = 1...[0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - Starting workout analysis for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - Correlation analysis complete: found 0 significant correlations
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35mCalculating advanced workout metrics[0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - [35mAdded metrics to workout data: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
+2025-04-18 18:34:26,135 - app.services.workout_analysis_service - INFO - Creating enhanced workout bundle
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - WARNING - No significant performers found for 1rm_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - WARNING - No significant performers found for volume_change
+2025-04-18 18:34:26,136 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
+2025-04-18 18:34:26,136 - app.services.chains.workout_analysis_chain - INFO - Bundle has 0 charts available
+2025-04-18 18:34:26,136 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
+2025-04-18 18:34:26,136 - app.services.workout_analysis_service - INFO - Generating multiple charts
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - WARNING - No significant performers found for 1rm_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - WARNING - No significant performers found for volume_change
+2025-04-18 18:34:26,136 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 0 exercises with data
+2025-04-18 18:34:26,881 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 0 exercises
+2025-04-18 18:34:26,881 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 0 exercises with data
+2025-04-18 18:34:28,388 - app.services.workout_analysis_service - INFO - Generated 3 charts
+2025-04-18 18:34:28,391 - app.core.supabase.client - INFO - Linking bundle 13101f51-7c42-422b-809c-f5094d6f42c5 to conversation 29763840-e207-49ff-8f0a-74a7dff1ba6a
+2025-04-18 18:34:28,391 - app.core.supabase.client - INFO - Sending bundle-conversation link request: bundle_id=13101f51-7c42-422b-809c-f5094d6f42c5, conversation_id=29763840-e207-49ff-8f0a-74a7dff1ba6a
+2025-04-18 18:34:28,526 - app.core.supabase.client - INFO - ✅ Successfully linked bundle 13101f51-7c42-422b-809c-f5094d6f42c5 to conversation 29763840-e207-49ff-8f0a-74a7dff1ba6a
+2025-04-18 18:34:28,526 - app.services.workout_analysis_service - INFO - ✅ Bundle 13101f51-7c42-422b-809c-f5094d6f42c5 successfully linked to conversation 29763840-e207-49ff-8f0a-74a7dff1ba6a
+2025-04-18 18:34:28,529 - app.services.chains.base_conversation_chain - INFO - 
 === Formatted Messages ===
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - 
 Message 1 (SystemMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
 
 1. Always check the available_data.workout_metrics in your context first
 2. Prioritize discussing the most significant insights from the metrics:
@@ -33,162 +76,29 @@ Current workout data context:
 Available workout data:
             {
   "available_data": {
-    "query": "Analyze my \"Monday chest workout\" workout and show how it relates to my previous workouts. Look for patterns and progress.",
+    "query": "Analyze my \"Baloney\" workout and show how it relates to my previous workouts. Look for patterns and progress.",
     "date_range": {
-      "start": "2025-01-18T22:00:00+00:00",
-      "end": "2025-04-15T15:03:51.396000+00:00"
+      "start": "2025-04-18T17:34:20.045000+00:00",
+      "end": "2025-04-18T17:34:20.045000+00:00"
     },
     "workout_metrics": {
-      "exercise_progression": {
-        "Face Pull": {
-          "occurrences": 40,
-          "first_date": "2025-01-27T22:02:04.023375+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 18.0,
-            "current": 25,
-            "change": 7.0,
-            "change_percent": 38.9
-          },
-          "volume_trend": "stable"
-        },
-        "Pull-ups": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 84,
-            "current": 88,
-            "change": 4,
-            "change_percent": 4.8
-          },
-          "volume_trend": "stable"
-        },
-        "Bench press": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 85,
-            "current": 90,
-            "change": 5,
-            "change_percent": 5.9
-          },
-          "volume_trend": "stable"
-        },
-        "Ez bar curl": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 31.5,
-            "current": 34,
-            "change": 2.5,
-            "change_percent": 7.9
-          },
-          "volume_trend": "stable"
-        },
-        "Dips": {
-          "occurrences": 14,
-          "first_date": "2025-02-06T18:55:00.61602+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 10,
-            "current": 95,
-            "change": 85,
-            "change_percent": 850.0
-          },
-          "volume_trend": "stable"
-        },
-        "Seated hammer curl": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 17.5,
-            "current": 17.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Cable lateral raise": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 7.5,
-            "current": 7.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Cable flye": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 15,
-            "current": 15,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Face pull": {
-          "occurrences": 3,
-          "first_date": "2025-04-15T14:11:42.091+00:00",
-          "last_date": "2025-04-15T14:57:01.159+00:00",
-          "weight_progression": {
-            "start": 35,
-            "current": 35,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Face Pulls": {
-          "occurrences": 52,
-          "first_date": "2025-02-28T19:01:53.53569+00:00",
-          "last_date": "2025-04-15T12:10:17.312+00:00",
-          "weight_progression": {
-            "start": 26.4,
-            "current": 26,
-            "change": -0.4,
-            "change_percent": -1.5
-          },
-          "volume_trend": "stable"
-        },
-        "Bench Press": {
-          "occurrences": 37,
-          "first_date": "2025-01-18T22:00:00+00:00",
-          "last_date": "2025-04-11T18:53:26.254+00:00",
-          "weight_progression": {
-            "start": 90,
-            "current": 110,
-            "change": 20,
-            "change_percent": 22.2
-          },
-          "volume_trend": "stable"
-        }
-      },
+      "exercise_progression": {},
       "strength_progression": {},
       "most_improved_exercises": [],
       "workout_frequency": {
-        "total_workouts": 102,
-        "first_workout": "2025-01-18",
-        "last_workout": "2025-04-15",
-        "total_days": 87,
-        "avg_days_between": 0.7,
-        "workouts_per_week": 10.2,
+        "total_workouts": 1,
+        "first_workout": "2025-04-18",
+        "last_workout": "2025-04-18",
+        "total_days": 1,
+        "avg_days_between": 0,
+        "workouts_per_week": 0,
         "consistency_score": {
           "score": 0,
-          "streak": 9
+          "streak": 0
         }
       }
     },
-    "total_workouts": 102,
+    "total_workouts": 1,
     "correlation_analysis": []
   }
 }
@@ -200,27 +110,21 @@ Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
 
 CONSISTENCY METRICS:
 - Score: 0/100
-- Current streak: 9 workouts
-- Average frequency: Every 0.7 days
+- Current streak: 0 workouts
+- Average frequency: Every 0.0 days
 
 TOP PERFORMERS:
 - Strength gains: No significant strength gains detected
 - Volume increases: No significant volume increases detected
 - Most frequent exercises: Not enough data
 
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Baloney" workout and show how it relates to my previous workouts. Look for patterns and progress.
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - 
 Message 3 (HumanMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-04-15 16:04:08,715 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Conversation ID: d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Bundle ID: 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 34
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-04-18 18:34:28,530 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Baloney" workout and show how it relates to my previous workouts. Look for patterns and progress.
+2025-04-18 18:34:28,531 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-04-18 18:34:32,129 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-04-18 18:34:32,129 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
+2025-04-18 18:34:32,130 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3

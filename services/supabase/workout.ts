@@ -1,9 +1,20 @@
-import { WorkoutInput, CompleteWorkout, WorkoutSet, WorkoutExercise,  } from '@/types/workout';
+import { WorkoutInput, CompleteWorkout, WorkoutSet, WorkoutExercise, ExerciseInput, SetInput,  } from '@/types/workout';
 import { BaseService } from './base';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export class WorkoutService extends BaseService {
   async createWorkout(userId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
+    // Add logging to see the input
+    console.log("createWorkout called with:", {
+      userId,
+      workoutName: workout.name,
+      exerciseCount: workout.exercises.length,
+      exerciseSample: workout.exercises.slice(0, 2).map((ex: ExerciseInput) => ({
+        name: ex.exercise_name,
+        definition_id: ex.definition_id
+      }))
+    });
+  
     const operation = async () => {
       const now = new Date().toISOString();
       
@@ -18,51 +29,71 @@ export class WorkoutService extends BaseService {
         })
         .select()
         .single();
-  
+    
       if (workoutError) {
         console.error('Error creating workout:', workoutError);
         throw workoutError;
       }
-  
-      const exercisePromises = workout.exercises.map(async (exercise) => {
+    
+      console.log("Workout created successfully, now creating exercises...");
+      
+      const exercisePromises = workout.exercises.map(async (exercise: ExerciseInput, index: number) => {
+        // Log each exercise before insertion
+        console.log(`Creating exercise ${index + 1}/${workout.exercises.length}:`, {
+          name: exercise.exercise_name,
+          definition_id: exercise.definition_id || "null", // Show "null" for null values
+          order: exercise.order_in_workout
+        });
+        
         const { data: exerciseData, error: exerciseError } = await this.supabase
           .from('workout_exercises')
           .insert({
             workout_id: workoutData.id,
             name: exercise.exercise_name,
+            definition_id: exercise.definition_id, // Make sure this gets included
             order_index: exercise.order_in_workout,
-            weight_unit: exercise.weight_unit,
-            distance_unit: exercise.distance_unit,
+            weight_unit: exercise.weight_unit || 'kg',
+            distance_unit: exercise.distance_unit || 'm',
           })
           .select()
           .single();
-  
-        if (exerciseError) throw exerciseError;
-  
-        const setPromises = exercise.set_data.sets.map(async (set, index) => {
+    
+        if (exerciseError) {
+          console.error(`Error creating exercise ${exercise.exercise_name}:`, exerciseError);
+          throw exerciseError;
+        }
+        
+        console.log(`Exercise created: ${exerciseData.name} with ID: ${exerciseData.id}, definition_id: ${exerciseData.definition_id || "null"}`);
+    
+        const setPromises = exercise.set_data.sets.map(async (set: SetInput, setIndex: number) => {
           const { error: setError } = await this.supabase
             .from('workout_exercise_sets')
             .insert({
               exercise_id: exerciseData.id,
-              set_number: index + 1,
+              set_number: setIndex + 1,
               weight: set.weight,
               reps: set.reps,
               rpe: set.rpe,
               distance: set.distance,
               duration: set.duration,
             });
-  
-          if (setError) throw setError;
+    
+          if (setError) {
+            console.error(`Error creating set ${setIndex + 1} for exercise ${exerciseData.name}:`, setError);
+            throw setError;
+          }
         });
-  
+    
         await Promise.all(setPromises);
+        console.log(`All sets created for exercise: ${exerciseData.name}`);
+        
         return exerciseData;
       });
-  
+    
       await Promise.all(exercisePromises);
-  
-      // Fetch the complete workout after creation - THIS IS WHERE THE ERROR OCCURS
-      // Instead of using complex ordering in the query, we'll sort in memory
+      console.log("All exercises created, fetching complete workout...");
+    
+      // Fetch the complete workout after creation
       const { data, error } = await this.supabase
         .from('workouts')
         .select(`
@@ -74,30 +105,43 @@ export class WorkoutService extends BaseService {
         `)
         .eq('id', workoutData.id)
         .single();
-  
-      if (error) throw error;
-      if (!data) throw new Error('Failed to fetch created workout');
-  
-      // Sort the data in memory
-// Fix for createWorkout method with proper type annotations
-const createdWorkout = {
-  ...data,
-  workout_exercises: data.workout_exercises
-    .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
-    .map((exercise: WorkoutExercise) => ({
-      ...exercise,
-      workout_exercise_sets: exercise.workout_exercise_sets.sort(
-        (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
-      )
-    }))
-};
-  
+    
+      if (error) {
+        console.error("Error fetching created workout:", error);
+        throw error;
+      }
+      if (!data) {
+        console.error("No data returned when fetching created workout");
+        throw new Error('Failed to fetch created workout');
+      }
+    
+      // Sort the data in memory with proper type annotations
+      console.log("Fetched workout, now sorting data...");
+      const createdWorkout = {
+        ...data,
+        workout_exercises: data.workout_exercises
+          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+          .map((exercise: WorkoutExercise) => ({
+            ...exercise,
+            workout_exercise_sets: exercise.workout_exercise_sets.sort(
+              (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+            )
+          }))
+      };
+      
+      // Log the definition_ids in the final workout
+      console.log("Workout creation complete. Definition IDs in created workout:", 
+        createdWorkout.workout_exercises.map((ex: WorkoutExercise) => ({
+          name: ex.name,
+          definition_id: ex.definition_id || "null"
+        }))
+      );
+    
       return { data: createdWorkout, error: null } as PostgrestSingleResponse<CompleteWorkout>;
     };
-  
+    
     return this.withRetry(operation);
   }
-
   async getWorkout(workoutId: string): Promise<CompleteWorkout> {
     const operation = async () => {
       // Fetch data without complex nested ordering
@@ -247,6 +291,7 @@ async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
           .insert({
             workout_id: workoutData.id,
             name: exercise.name,
+            definition_id: exercise.definition_id, // Add this line
             order_index: exercise.order_index,
             weight_unit: exercise.weight_unit,
             distance_unit: exercise.distance_unit,
@@ -360,6 +405,7 @@ async createWorkoutFromTemplate(userId: string, templateId: string): Promise<Com
           .insert({
             workout_id: workoutData.id,
             name: exercise.name,
+            definition_id: exercise.definition_id, 
             order_index: exercise.order_index,
             weight_unit: exercise.weight_unit,
             distance_unit: exercise.distance_unit,
@@ -544,6 +590,7 @@ async createWorkoutFromTemplate(userId: string, templateId: string): Promise<Com
                 .insert({
                   workout_id: workoutId,
                   name: exercise.name,
+                  definition_id: exercise.definition_id,
                   order_index: exercise.order_index,
                   weight_unit: exercise.weight_unit,
                   distance_unit: exercise.distance_unit,
@@ -576,6 +623,7 @@ async createWorkoutFromTemplate(userId: string, templateId: string): Promise<Com
                 .from('workout_exercises')
                 .update({
                   name: exercise.name,
+                  definition_id: exercise.definition_id, // Added definition_id
                   order_index: exercise.order_index,
                   weight_unit: exercise.weight_unit,
                   distance_unit: exercise.distance_unit,

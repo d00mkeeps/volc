@@ -1,25 +1,28 @@
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - # Monday Chest Workout Analysis
+2025-04-18 18:34:32,130 - app.services.workout_analysis_service - INFO - Conversation ID: 29763840-e207-49ff-8f0a-74a7dff1ba6a
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Bundle ID: 13101f51-7c42-422b-809c-f5094d6f42c5
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 15
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - I don't have sufficient data to provide a meaningful analysis of your "Baloney" workout. According to your workout metrics:
 
-Your Monday chest workout shows solid progress, particularly in your compound movements:
+- You've only completed 1 total workout (on April 18, 2025)
+- Your consistency score is 0/100 with no current streak
+- There's not enough data to show exercise progression, strength gains, or volume increases
 
-- **Bench Press** has improved significantly - up 20kg (22.2%) from 90kg to 110kg based on your named "Bench Press" tracking, with a consistent 5.9% improvement in the "Bench press" variant
-
-- **Dips** show remarkable progression - weight increased by 85kg (850%) from 10kg to 95kg, suggesting you've progressed from assisted to weighted dips
-
-- **Face Pulls** appear frequently (95 total occurrences across variants) with moderate weight increases (+7kg/38.9% for one variant)
-
-Your workout frequency is impressively high at 10.2 workouts per week, with only 0.7 days between sessions on average. You're currently on a 9-workout streak.
-
-Most exercises show "stable" volume trends, indicating consistent set/rep schemes while increasing weight - a good approach for strength building.
-2025-04-15 16:04:08,719 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-04-15 16:04:08,719 - app.services.workout_analysis_service - INFO - Response length: 908 characters
-2025-04-15 16:04:08,719 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
-2025-04-15 16:04:08,720 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
-2025-04-15 16:04:08,720 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-0f1a838c-9a13-45a5-a713-887cee4ee807', 'volume_progress': 'https://quickchart.io/chart/render/sf-5fe4ddf9-5b8b-4932-9e36-13537f8b0ab3', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-699bf1c7-e4c4-4068-a717-d31589318f5b'}
-2025-04-15 16:04:08,720 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.15, last_value=34.92, change=9.77, change_percent=38.8), TopPerformer(name='Pull-Ups', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=216.0, last_value=900.0, change=684.0, change_percent=316.7), TopPerformer(name='Face Pulls', first_value=264.0, last_value=780.0, change=516.0, change_percent=195.5)] frequency=[]
-2025-04-15 16:04:08,720 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=9 avg_gap=0.7
-2025-04-15 16:04:08,720 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
-2025-04-15 16:04:08,725 - app.services.workout_analysis_service - INFO - {"bundle_id": "4ca9f0be-17fe-496e-8cd8-22e45cc3a34b", "metadata": {"total_workouts": 102, "total_exercises": 206, "date_range": {"latest": "2025-04-15T15:03:51.396000+00:00", "earliest": "2025-01-18T22:00:00+00:00"}, "exercises_included": ["Bench press", "Bench Press", "Cable flye", "Cable lateral raise", "Dips", "Ez bar curl", "Face pull", "Face Pull", "Face Pulls", "Pull-ups", "Seated hammer curl"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-04-15T15:03:51.396+00:00", "earliest": "2025-01-18T22:00:00+00:00"}, "total_workouts": 102, "total_exercises": 206, "exercises_included": ["Bench press", "Bench Press", "Cable flye", "Cable lateral raise", "Dips", "Ez bar curl", "Face pull", "Face Pull", "Face Pulls", "Pull-ups", "Seated hammer curl"]}, "workouts": [{"id": "7f86e0c5-67ca-4a64-a7e5-f68577624a83", "date": "2025-04-15T15:03:51.396+00:00", "name": "Monday chest workout", "notes": "[\"\"]", "exercises": [{"id": "0ffaa894-6ddb-4446-a88b-f4b63f01117c", "name": "Face P... [truncated]
-2025-04-15 16:04:08,725 - app.services.workout_analysis_service - INFO - Complete bundle size: 90952 bytes
-2025-04-15 16:04:08,725 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-04-15 20:45:34,857 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: d7c521aa-1965-4fb3-b254-c0b755d93fd4
+Once you've completed more workouts, I'll be able to identify patterns, track your progress, and provide meaningful comparisons between your "Baloney" workout and others. Consider logging a few more sessions so I can generate insights on your performance trends.
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Response length: 597 characters
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-bffd2c6e-334d-48ef-97f8-510c1f4ee8dd', 'volume_progress': 'https://quickchart.io/chart/render/sf-740609d4-cf82-40c5-aa55-de958c00d7b9', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-65520f88-beea-4563-90cf-8ed5391069c5'}
+2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Top performers: strength=[] volume=[] frequency=[]
+2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=0 avg_gap=0.0
+2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
+2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - {"bundle_id": "13101f51-7c42-422b-809c-f5094d6f42c5", "metadata": {"total_workouts": 1, "total_exercises": 1, "date_range": {"latest": "2025-04-18T17:34:20.045000+00:00", "earliest": "2025-04-18T17:34:20.045000+00:00"}, "exercises_included": ["Weighted dip"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-04-18T17:34:20.045+00:00", "earliest": "2025-04-18T17:34:20.045+00:00"}, "total_workouts": 1, "total_exercises": 1, "exercises_included": ["Weighted dip"]}, "workouts": [{"id": "58dd6378-de15-4daf-bb6c-d505d53c3141", "date": "2025-04-18T17:34:20.045+00:00", "name": "Baloney", "notes": "[\"\"]", "exercises": [{"id": "80f6d7b5-dd83-412f-8bcd-fd71645edb02", "name": "Weighted dip", "sets": [{"rpe": null, "reps": null, "weight": null, "distance": null, "duration": null, "set_number": 1}], "order_index": 0, "weight_unit": "kg", "distance_unit": "m"}]}], "metrics": {"exercise_progression": {}, "strength_progression": {}, "most_improved_exercises": [], "workout_frequency": {"to... [truncated]
+2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - Complete bundle size: 2047 bytes
+2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-04-29 08:57:08,596 - app - INFO - Logging has been set up
+2025-04-29 08:57:08,597 - app.main - INFO - Application starting
+2025-04-29 09:24:56,688 - app - INFO - Logging has been set up
+2025-04-29 09:24:56,691 - app.main - INFO - Application starting

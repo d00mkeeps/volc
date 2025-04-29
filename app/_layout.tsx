@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message";
 import React from "react";
 import { WorkoutProvider } from "@/context/WorkoutContext";
 import { supabase } from "@/lib/supabaseClient";
+import { ExerciseProvider } from "@/context/ExerciseContext";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -64,72 +65,80 @@ function RootLayoutNav() {
     <>
       <AuthProvider>
         <UserProvider>
-          <WorkoutProvider>
-            <MessageProvider>
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <AuthGate>
-                  {supabaseStatus && (
-                    <View
-                      style={{
-                        position: "absolute",
-                        bottom: 40,
-                        right: 10,
-                        padding: 8,
-                        borderRadius: 4,
-                        backgroundColor: supabaseStatus.success
-                          ? "rgba(0, 255, 0, 0.2)"
-                          : "rgba(255, 0, 0, 0.2)",
-                        zIndex: 9999,
-                      }}
-                    >
-                      <Text
+          <ExerciseProvider>
+            <WorkoutProvider>
+              <MessageProvider>
+                <ThemeProvider
+                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                  <AuthGate>
+                    {supabaseStatus && (
+                      <View
                         style={{
-                          color: supabaseStatus.success ? "#155724" : "#721c24",
-                          fontSize: 12,
+                          position: "absolute",
+                          bottom: 40,
+                          right: 10,
+                          padding: 8,
+                          borderRadius: 4,
+                          backgroundColor: supabaseStatus.success
+                            ? "rgba(0, 255, 0, 0.2)"
+                            : "rgba(255, 0, 0, 0.2)",
+                          zIndex: 9999,
                         }}
                       >
-                        Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
-                        {supabaseStatus.message}
-                        {supabaseStatus.url &&
-                          `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
-                        {supabaseStatus.error &&
-                          `\nDetails: ${supabaseStatus.error}`}
-                      </Text>
-                    </View>
-                  )}
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen
-                      name="conversation/[id]"
-                      options={{
-                        headerShown: true,
-                        headerTitle: "Conversation",
-                        headerBackTitle: "Home",
-                        contentStyle: {
-                          backgroundColor: "#1f281f",
-                          flex: 1,
-                        },
-                        headerStyle: {
-                          backgroundColor: "#1f281f",
-                        },
-                        animation: "slide_from_right",
-                      }}
-                      getId={({ params }: { params?: Record<string, any> }) => {
-                        if (!params) return undefined;
-                        return String(params.id);
-                      }}
-                    />
-                    <Stack.Screen
-                      name="modal"
-                      options={{ presentation: "modal" }}
-                    />
-                  </Stack>
-                </AuthGate>
-              </ThemeProvider>
-            </MessageProvider>
-          </WorkoutProvider>
+                        <Text
+                          style={{
+                            color: supabaseStatus.success
+                              ? "#155724"
+                              : "#721c24",
+                            fontSize: 12,
+                          }}
+                        >
+                          Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
+                          {supabaseStatus.message}
+                          {supabaseStatus.url &&
+                            `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
+                          {supabaseStatus.error &&
+                            `\nDetails: ${supabaseStatus.error}`}
+                        </Text>
+                      </View>
+                    )}
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen
+                        name="conversation/[id]"
+                        options={{
+                          headerShown: true,
+                          headerTitle: "Conversation",
+                          headerBackTitle: "Home",
+                          contentStyle: {
+                            backgroundColor: "#1f281f",
+                            flex: 1,
+                          },
+                          headerStyle: {
+                            backgroundColor: "#1f281f",
+                          },
+                          animation: "slide_from_right",
+                        }}
+                        getId={({
+                          params,
+                        }: {
+                          params?: Record<string, any>;
+                        }) => {
+                          if (!params) return undefined;
+                          return String(params.id);
+                        }}
+                      />
+                      <Stack.Screen
+                        name="modal"
+                        options={{ presentation: "modal" }}
+                      />
+                    </Stack>
+                  </AuthGate>
+                </ThemeProvider>
+              </MessageProvider>
+            </WorkoutProvider>
+          </ExerciseProvider>
         </UserProvider>
       </AuthProvider>
       <Toast />

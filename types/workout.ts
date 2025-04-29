@@ -1,3 +1,28 @@
+export type ExerciseInput = {
+  exercise_name: string;
+  definition_id?: string; // Optional string (UUID)
+  set_data: {
+    sets: SetInput[];
+  };
+  order_in_workout: number;
+  weight_unit?: 'kg' | 'lbs';
+  distance_unit?: 'km' | 'm' | 'mi';
+};
+
+export type WorkoutInput = {
+  name: string;
+  description?: string;
+  exercises: ExerciseInput[];
+};
+
+export interface SetInput {
+  weight?: number;
+  reps?: number;
+  distance?: number;
+  duration?: any;
+  rpe?: number;
+}
+
 export type WorkoutSet = {
   id: string;
   exercise_id: string;
@@ -15,6 +40,7 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
   
   export type WorkoutExercise = {
     id: string;
+    definition_id?: string; // New field to link to exercise definitions
     workout_id: string;
     name: string;
     order_index: number;
@@ -25,15 +51,30 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     workout_exercise_sets: WorkoutSet[];
   };
 
-  // Add this to your types/workout.ts or at the top of both files
-  export interface SetInput {
-    weight?: number;
-    reps?: number;
-    distance?: number; 
-    duration?: number;
-    rpe?: number;
-  }
 
+
+  // types.ts (add this to your existing types file)
+export interface ExerciseDefinition {
+  id: string;
+  base_movement: string;
+  major_variation: string | null;
+  standard_name: string;
+  aliases: string[] | null;
+  equipment: string | null;
+  movement_pattern: string;
+  primary_muscles: string[];
+  secondary_muscles: string[] | null;
+  uses_weight: boolean;
+  uses_reps: boolean;
+  uses_duration: boolean;
+  uses_distance: boolean;
+  uses_rpe: boolean;
+  is_bodyweight: boolean;
+  description: string | null;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
 // In types/workout.ts
 export interface CompleteWorkout {
   id: string;
@@ -48,23 +89,6 @@ export interface CompleteWorkout {
   workout_exercises: WorkoutExercise[];
 }
   
-  export type ExerciseInput = {
-    exercise_name: string;
-    set_data: {
-      sets: SetInput[];
-    };
-    order_in_workout: number;
-    weight_unit?: 'kg' | 'lbs';
-    distance_unit?: 'km' | 'm' | 'mi';
-  };
-  
-  export type WorkoutInput = {
-    name: string;
-    description?: string;
-    exercises: ExerciseInput[];
-  };
-  
-  // types/workout.ts
 export type BundleMetadata = {
   total_workouts: number;
   total_exercises: number;
