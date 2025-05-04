@@ -12,15 +12,24 @@ class BaseMetricsCalculator:
 
 class PerformanceMetricsCalculator(BaseMetricsCalculator):
     def calculate(self) -> Dict:
-        """Calculate performance metrics for each exercise"""
+        """Calculate performance metrics for each exercise, now grouped by definition_id."""
         exercise_metrics = {}
         
         for workout in self.workout_data.get('workouts', []):
             for exercise in workout.get('exercises', []):
-                # Check if 'name' exists instead of 'exercise_name'
-                name = exercise.get('name', exercise.get('exercise_name', 'Unknown Exercise'))
-                if name not in exercise_metrics:
-                    exercise_metrics[name] = []
+                # Use definition_id as key if available, otherwise use name
+                definition_id = exercise.get('definition_id')
+                # Use standardized name from definition
+                name = exercise.get('exercise_name', 'Unknown Exercise')
+                
+                # Create consistent key for grouping
+                key = str(definition_id) if definition_id else name
+                
+                if key not in exercise_metrics:
+                    exercise_metrics[key] = {
+                        'display_name': name,
+                        'sessions': []
+                    }
                 
                 # Extract metrics for this session
                 metrics = {
@@ -30,12 +39,15 @@ class PerformanceMetricsCalculator(BaseMetricsCalculator):
                     'total_sets': exercise.get('metrics', {}).get('total_sets', 0)
                 }
                 
-                exercise_metrics[name].append(metrics)
+                exercise_metrics[key]['sessions'].append(metrics)
         
         # Calculate progression metrics
         progression_data = {}
         
-        for name, sessions in exercise_metrics.items():
+        for key, data in exercise_metrics.items():
+            display_name = data['display_name']
+            sessions = data['sessions']
+            
             if len(sessions) < 2:
                 continue
                 
@@ -57,7 +69,7 @@ class PerformanceMetricsCalculator(BaseMetricsCalculator):
                 weight_change = 0
                 weight_change_pct = 0
             
-            progression_data[name] = {
+            progression_data[display_name] = {
                 'occurrences': len(sessions),
                 'first_date': sessions[0]['date'],
                 'last_date': sessions[-1]['date'],
@@ -71,6 +83,8 @@ class PerformanceMetricsCalculator(BaseMetricsCalculator):
             }
         
         return {'exercise_progression': progression_data}
+    
+    # [_calculate_trend method remains unchanged]
     
     def _calculate_trend(self, values: List[float]) -> str:
         """Calculate the trend direction from a list of values"""
@@ -88,21 +102,30 @@ class PerformanceMetricsCalculator(BaseMetricsCalculator):
 
 class StrengthMetricsCalculator(BaseMetricsCalculator):
     def calculate(self) -> Dict:
-        """Calculate strength metrics based on 1RM estimates"""
+        """Calculate strength metrics based on 1RM estimates, grouped by definition_id."""
         exercise_1rm = {}
         
         for workout in self.workout_data.get('workouts', []):
             for exercise in workout.get('exercises', []):
-                # Check if 'name' exists instead of 'exercise_name'
-                name = exercise.get('name', exercise.get('exercise_name', 'Unknown Exercise'))
-                if name not in exercise_1rm:
-                    exercise_1rm[name] = []
+                # Use definition_id as key if available, otherwise use name
+                definition_id = exercise.get('definition_id')
+                # Use standardized name from definition
+                name = exercise.get('exercise_name', 'Unknown Exercise')
+                
+                # Create consistent key for grouping
+                key = str(definition_id) if definition_id else name
+                
+                if key not in exercise_1rm:
+                    exercise_1rm[key] = {
+                        'display_name': name,
+                        'sessions': []
+                    }
                 
                 # Get highest estimated 1RM for this session
                 highest_1rm = max([s.get('estimated_1rm', 0) or 0 for s in exercise.get('sets', [])])
                 
                 if highest_1rm > 0:
-                    exercise_1rm[name].append({
+                    exercise_1rm[key]['sessions'].append({
                         'date': workout.get('date', ''),
                         'estimated_1rm': highest_1rm
                     })
@@ -111,7 +134,10 @@ class StrengthMetricsCalculator(BaseMetricsCalculator):
         strength_data = {}
         most_improved = []
         
-        for name, sessions in exercise_1rm.items():
+        for key, data in exercise_1rm.items():
+            display_name = data['display_name']
+            sessions = data['sessions']
+            
             if len(sessions) < 2:
                 continue
                 
@@ -138,7 +164,7 @@ class StrengthMetricsCalculator(BaseMetricsCalculator):
             except (ValueError, TypeError):
                 monthly_rate = 0
             
-            strength_data[name] = {
+            strength_data[display_name] = {
                 'estimated_1rm': {
                     'start': round(start_1rm, 1),
                     'current': round(current_1rm, 1),
@@ -150,7 +176,7 @@ class StrengthMetricsCalculator(BaseMetricsCalculator):
             
             # Track for most improved
             most_improved.append({
-                'name': name,
+                'name': display_name,
                 'improvement': rm_change_pct
             })
         

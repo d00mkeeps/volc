@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 from pydantic import BaseModel, Field
 
 class ExerciseSelection(BaseModel):
@@ -6,37 +6,146 @@ class ExerciseSelection(BaseModel):
     exercises: List[str] = Field(description="Names of exercises relevant to the query")
     reasoning: str = Field(description="Explanation of why these exercises were selected")
 
-class ExerciseSelector:
-    SELECTION_PROMPT = """Given a user's query about their workout progress and a list of available exercises, select the exercises that are most relevant to their request.
-
-    USER QUERY: {query}
-
-    AVAILABLE EXERCISES:
-    {exercise_list}
-
-    REQUIREMENTS:
-    - Only select exercises that are directly relevant to the user's query
-    - If the query mentions specific exercises, prioritize exact matches
-    - If the query is general (e.g., "upper body progress"), select all relevant exercises
-    - Ignore exercises that don't match the query's intent
-    - Explain your selection reasoning
-    - Do not make assumptions about exercises not in the available list
-
-    IMPORTANT: Do not generate or hallucinate any data values. Your role is only to select relevant exercises from the provided list.
-
-    Select exercises and explain your reasoning using the ExerciseSelection schema."""
-
-    def __init__(self, llm):
-        self.llm = llm
-
-    async def select_exercises(self, query: str, available_exercises: List[str]) -> ExerciseSelection:
-        """Select relevant exercises based on user query."""
-        formatted_exercises = "\n".join([f"- {exercise}" for exercise in available_exercises])
+class DefinitionBasedSelector:
+    """
+    Selects exercises based on definition attributes without LLM.
+    Uses definition_id to group and select exercises.
+    """
+    def __init__(self):
+        self.movement_patterns = [
+            'push', 'pull', 'squat', 'hinge', 'carry', 'core', 'rotation'
+        ]
+        self.muscle_groups = [
+            'chest', 'back', 'shoulders', 'triceps', 'biceps', 'legs', 
+            'quads', 'hamstrings', 'glutes', 'calves', 'abs', 'core'
+        ]
+    
+    def select_exercises(self, query: str, available_exercises: List[Dict]) -> List[str]:
+        """
+        Select relevant exercises based on query keywords.
+        Groups by definition_id to avoid duplicates.
+        """
+        query = query.lower()
         
-        prompt = self.SELECTION_PROMPT.format(
-            query=query,
-            exercise_list=formatted_exercises
-        )
+        # Process exercises with definitions first (group by definition_id)
+        definition_groups = {}
+        undefined_exercises = []
         
-        structured_llm = self.llm.with_structured_output(ExerciseSelection)
-        return structured_llm.invoke(prompt)  
+        for exercise in available_exercises:
+            definition_id = exercise.get('definition_id')
+            name = exercise.get('exercise_name', '')
+            
+            if definition_id:
+                key = str(definition_id)
+                if key not in definition_groups:
+                    definition_groups[key] = []
+                definition_groups[key].append(exercise)
+            else:
+                undefined_exercises.append(exercise)
+        
+        # Extract query intent (pattern-based)
+        query_intents = self._extract_query_intent(query)
+        
+        # Select exercises based on intent
+        selected_exercises = []
+        
+        # Process defined exercises first (one per definition)
+        for key, exercises in definition_groups.items():
+            # Use the first exercise as representative
+            exercise = exercises[0]
+            name = exercise.get('exercise_name', '')
+            
+            # Check if this matches any of our intents
+            if self._matches_intent(exercise, query_intents):
+                selected_exercises.append(name)
+        
+        # Process any undefined exercises
+        for exercise in undefined_exercises:
+            name = exercise.get('exercise_name', '').lower()
+            
+            # Basic keyword matching for undefined exercises
+            if any(keyword in name for keyword in query_intents['keywords']):
+                selected_exercises.append(exercise.get('exercise_name', ''))
+        
+        # If nothing was selected, return exercises with explicit name matches
+        if not selected_exercises:
+            explicit_matches = []
+            for exercise in available_exercises:
+                name = exercise.get('exercise_name', '').lower()
+                if name in query or query in name:
+                    explicit_matches.append(exercise.get('exercise_name', ''))
+            
+            # Remove duplicates (preserving order)
+            seen = set()
+            unique_matches = [x for x in explicit_matches if not (x in seen or seen.add(x))]
+            return unique_matches[:5]  # Limit to 5 exercises
+            
+        return selected_exercises
+    
+    def _extract_query_intent(self, query: str) -> Dict:
+        """Extract the intent of the query into components."""
+        intent = {
+            'patterns': [],  # Movement patterns
+            'muscles': [],   # Muscle groups
+            'keywords': [],  # Generic keywords
+            'specific_exercises': []  # Explicitly mentioned exercises
+        }
+        
+        # Check for movement patterns
+        for pattern in self.movement_patterns:
+            if pattern in query:
+                intent['patterns'].append(pattern)
+                intent['keywords'].append(pattern)
+        
+        # Check for muscle groups
+        for muscle in self.muscle_groups:
+            if muscle in query:
+                intent['muscles'].append(muscle)
+                intent['keywords'].append(muscle)
+        
+        # Check for specific exercise types
+        specific_exercises = [
+            'bench press', 'squat', 'deadlift', 'shoulder press', 'overhead press',
+            'pull up', 'push up', 'row', 'curl', 'extension', 'lunge', 'dip',
+            'face pull', 'lat pulldown', 'leg press'
+        ]
+        
+        for exercise in specific_exercises:
+            if exercise in query:
+                intent['specific_exercises'].append(exercise)
+                intent['keywords'].append(exercise)
+        
+        # Add other relevant keywords
+        if 'strength' in query or 'stronger' in query:
+            intent['keywords'].append('strength')
+        
+        if 'progress' in query or 'improvement' in query:
+            intent['keywords'].append('progress')
+            
+        return intent
+    
+    def _matches_intent(self, exercise: Dict, intent: Dict) -> bool:
+        """Check if an exercise matches the query intent."""
+        # Get exercise attributes
+        name = exercise.get('exercise_name', '').lower()
+        movement_pattern = exercise.get('movement_pattern', '').lower()
+        primary_muscles = [m.lower() for m in exercise.get('primary_muscles', [])]
+        
+        # Check for specific exercise matches first
+        for specific in intent['specific_exercises']:
+            if specific in name:
+                return True
+        
+        # Check for movement pattern matches
+        if movement_pattern and any(pattern in movement_pattern for pattern in intent['patterns']):
+            return True
+        
+        # Check for muscle group matches
+        if primary_muscles and any(muscle in primary_muscles for muscle in intent['muscles']):
+            return True
+        
+        # Check for generic keyword matches in name
+        if any(keyword in name for keyword in intent['keywords']):
+            return True
+            
+        return False

@@ -1,9 +1,9 @@
-from typing import List, Dict, Any, TypedDict
+"""from typing import List, Dict, Any, TypedDict
 from datetime import datetime
 from .exercise_selector import ExerciseSelector, ExerciseSelection
 
 class ChartConfiguration(TypedDict):
-    """Complete configuration for a 1RM progress chart."""
+    Complete configuration for a 1RM progress chart.
     title: str
     datasets: List[Dict[str, Any]]  # Each dict contains label and data
     labels: List[str]
@@ -13,7 +13,7 @@ async def generate_chart_config(
     original_query: str,
     llm
 ) -> ChartConfiguration:
-    """Converts workout data into chart configuration using LLM only for exercise selection."""
+    Converts workout data into chart configuration using LLM only for exercise selection.
     
     # Extract all unique exercises
     available_exercises = set()
@@ -71,4 +71,4 @@ async def generate_chart_config(
         title=title,
         datasets=datasets,
         labels=all_dates
-    )
+    )"""

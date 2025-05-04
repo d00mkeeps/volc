@@ -17,28 +17,42 @@ class CorrelationService:
         self.max_lag = max_lag  # Maximum weeks to lag
         
     def _prepare_exercise_data(self, workout_data):
-        """Extract exercise data and organize by exercise name"""
+        """Extract exercise data and organize by definition ID or exercise name"""
         exercise_data = {}
         
         for workout in workout_data.get('workouts', []):
             workout_date = workout.get('date')
             for exercise in workout.get('exercises', []):
+                # Use definition_id as key if available, else use name
+                definition_id = exercise.get('definition_id')
                 name = exercise.get('exercise_name', '').lower()
+                
+                # Create a stable key for grouping
+                key = str(definition_id) if definition_id else name
+                
                 highest_1rm = exercise.get('metrics', {}).get('highest_1rm')
                 
-                if not name or highest_1rm is None or highest_1rm <= 0:
+                if not key or highest_1rm is None or highest_1rm <= 0:
                     continue
                 
-                if name not in exercise_data:
-                    exercise_data[name] = []
+                if key not in exercise_data:
+                    exercise_data[key] = {
+                        'display_name': name,
+                        'data_points': []
+                    }
                 
-                exercise_data[name].append((workout_date, highest_1rm))
+                exercise_data[key]['data_points'].append((workout_date, highest_1rm))
         
         # Sort by date
-        for name in exercise_data:
-            exercise_data[name].sort(key=lambda x: x[0])
+        for key in exercise_data:
+            exercise_data[key]['data_points'].sort(key=lambda x: x[0])
             
-        return exercise_data
+        # Convert to format expected by the rest of the correlation service
+        result = {}
+        for key, data in exercise_data.items():
+            result[key] = data['data_points']
+            
+        return result
 
     def _convert_to_weekly_series(self, data_points):
         """Convert date-value tuples to weekly time series"""
@@ -156,6 +170,7 @@ class CorrelationService:
         except Exception as e:
             logger.error(f"Error in correlation analysis: {str(e)}", exc_info=True)
             return {'summary': [], 'heatmap_base64': None, 'time_series': {}}
+            
     def generate_heatmap(self, correlation_matrix, exercises):
         """Generate correlation heatmap visualization"""
         try:

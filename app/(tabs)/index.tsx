@@ -37,7 +37,7 @@ export default function HomeScreen() {
       description: workout.notes,
       exercises: workout.workout_exercises.map((exercise) => ({
         exercise_name: exercise.name,
-        definition_id: exercise.definition_id, // Add this line to include definition_id
+        definition_id: exercise.definition_id,
         order_in_workout: exercise.order_index,
         weight_unit: exercise.weight_unit || "kg",
         distance_unit: exercise.distance_unit || "m",
