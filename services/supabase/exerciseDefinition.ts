@@ -1,68 +1,62 @@
-// services/exerciseDefinition.ts
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
+// services/supabase/exerciseDefinition.ts
 import { BaseService } from './base';
 import { ExerciseDefinition } from '@/types/workout';
+import { apiGet, apiPost } from '../api/apiClient';
 
 export class ExerciseDefinitionService extends BaseService {
+  /**
+   * Get all exercise definitions
+   */
   async getAllExerciseDefinitions(): Promise<ExerciseDefinition[]> {
-    const operation = async (): Promise<PostgrestSingleResponse<ExerciseDefinition[]>> => {
+    try {
       console.log('📤 Fetching all exercise definitions');
       
-      const response = await this.supabase
-        .from('exercise_definitions')
-        .select('*')
-        .order('standard_name', { ascending: true });
-
-      if (response.error) throw response.error;
+      // Call backend API to get all exercise definitions
+      const data = await apiGet<ExerciseDefinition[]>('/db/exercise-definitions');
       
-      console.log(`📥 Fetched ${response.data?.length || 0} exercise definitions`);
-      
-      return {
-        data: response.data || [],
-        error: null,
-        count: null,
-        status: 200,
-        statusText: 'OK'
-      } as PostgrestSingleResponse<ExerciseDefinition[]>;
-    };
-
-    return this.withRetry(operation);
+      console.log(`📥 Fetched ${data.length} exercise definitions`);
+      return data;
+    } catch (error) {
+      console.error('Error fetching exercise definitions:', error);
+      return this.handleError(error);
+    }
   }
-  
+
+  /**
+   * Create a new exercise definition
+   */
   async createExerciseDefinition(exercise: Omit<ExerciseDefinition, 'id' | 'created_at' | 'updated_at'>): Promise<ExerciseDefinition> {
-    const operation = async () => {
+    try {
       console.log('📤 Creating new exercise definition:', exercise);
       
-      const response = await this.supabase
-        .from('exercise_definitions')
-        .insert(exercise)
-        .select()
-        .single();
-
-      if (response.error) throw response.error;
-      if (!response.data) throw new Error('No data returned from insert');
+      // Call backend API to create exercise definition
+      const data = await apiPost<ExerciseDefinition>('/db/exercise-definitions', exercise);
       
-      console.log('📥 Exercise definition created:', response.data);
-      return response as PostgrestSingleResponse<ExerciseDefinition>;
-    };
-
-    return this.withRetry(operation);
+      console.log('📥 Exercise definition created:', data);
+      return data;
+    } catch (error) {
+      console.error('Error creating exercise definition:', error);
+      return this.handleError(error);
+    }
   }
 
+  /**
+   * Get an exercise definition by ID
+   */
   async getExerciseDefinitionById(id: string): Promise<ExerciseDefinition> {
-    const operation = async () => {
-      const response = await this.supabase
-        .from('exercise_definitions')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (response.error) throw response.error;
-      if (!response.data) throw new Error('Exercise definition not found');
+    try {
+      console.log(`Fetching exercise definition: ${id}`);
       
-      return response as PostgrestSingleResponse<ExerciseDefinition>;
-    };
-
-    return this.withRetry(operation);
+      // Call backend API to get exercise definition by ID
+      const data = await apiGet<ExerciseDefinition>(`/db/exercise-definitions/${id}`);
+      
+      console.log('Exercise definition retrieved:', data);
+      return data;
+    } catch (error) {
+      console.error(`Error fetching exercise definition ${id}:`, error);
+      return this.handleError(error);
+    }
   }
 }
+
+export const exerciseDefinitionService = new ExerciseDefinitionService();

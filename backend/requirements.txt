@@ -11,3 +11,4 @@ langchain-core
 pytest
 pytest-asyncio
 supabase
+pydantic[email]

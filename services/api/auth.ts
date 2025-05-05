@@ -1,5 +1,6 @@
+// services/api/authService.ts
 import { AuthError, SignInCredentials, SignUpCredentials } from '@/types/auth';
-import { apiRequest } from '../api/apiClient';
+import { apiRequest } from './apiClient';
 
 export const authService = {
   signIn: async ({ email, password }: SignInCredentials) => {
@@ -8,16 +9,6 @@ export const authService = {
         method: 'POST',
         body: JSON.stringify({ email, password })
       });
-
-      console.log('Sign-in response:', data); // Add this log
-    
-      // Check if the token is being extracted correctly
-      if (data.session?.access_token) {
-        console.log('Token found:', data.session.access_token.substring(0, 10) + '...');
-      } else {
-        console.log('No token in response:', data);
-      }
-      
       
       return data;
     } catch (error) {

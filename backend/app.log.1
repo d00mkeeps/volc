@@ -1,214 +1,82 @@
-2025-05-04 23:29:32,318 - app.core.supabase.client - INFO - Sending bundle-conversation link request: bundle_id=b844387a-986a-49be-ba24-e4bec3d6b737, conversation_id=53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,671 - app.core.supabase.client - INFO - ✅ Successfully linked bundle b844387a-986a-49be-ba24-e4bec3d6b737 to conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,672 - app.services.workout_analysis_service - INFO - ✅ Bundle b844387a-986a-49be-ba24-e4bec3d6b737 successfully linked to conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
-
-1. Always check the available_data.workout_metrics in your context first
-2. Prioritize discussing the most significant insights from the metrics:
-   - For exercise_progression: Focus on weight changes and volume trends
-   - For strength_progression: Highlight estimated 1RM improvements and monthly rates
-   - For workout_frequency: Mention consistency scores and workout patterns
-   - For most_improved_exercises: Always mention the top performers
-
-3. Be specific with numbers when discussing progress:
-   - "Your bench press 1RM has increased by 15kg (12%) over 3 months, at a rate of 5kg per month"
-   - "Your workout consistency score is 85/100, with an average of 3.2 workouts per week"
-   
-
-4. Interpret metrics in context:
-   - Explain what the numbers mean for the user's fitness journey
-   - Compare progress across different exercises when relevant
-   - Note any potential plateaus or exceptional improvements
-
-5. Acknowledge correlations when available by highlighting significant relationships
-
-Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": {
-    "query": "Analyze my \"Monday chest workout\" workout and show how it relates to my previous workouts. Look for patterns and progress.",
-    "date_range": {
-      "start": "2025-02-06T18:55:00.616020+00:00",
-      "end": "2025-05-04T22:29:20.215000+00:00"
-    },
-    "workout_metrics": {
-      "exercise_progression": {
-        "Face Pull": {
-          "occurrences": 103,
-          "first_date": "2025-02-06T22:02:04.023375+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 18.5,
-            "current": 25,
-            "change": 6.5,
-            "change_percent": 35.1
-          },
-          "volume_trend": "stable"
-        },
-        "Dips": {
-          "occurrences": 25,
-          "first_date": "2025-02-06T18:55:00.61602+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 10,
-            "current": 95,
-            "change": 85,
-            "change_percent": 850.0
-          },
-          "volume_trend": "stable"
-        },
-        "Hammer Curl": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 17.5,
-            "current": 17.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Cable Lateral Raise": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 7.5,
-            "current": 7.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Pull-Up": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 84,
-            "current": 88,
-            "change": 4,
-            "change_percent": 4.8
-          },
-          "volume_trend": "stable"
-        },
-        "Cable Fly": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 15,
-            "current": 15,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Arnold Press": {
-          "occurrences": 11,
-          "first_date": "2025-04-29T09:07:12.007+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 34,
-            "current": 34,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "45-Degree Back Extension": {
-          "occurrences": 11,
-          "first_date": "2025-04-18T17:39:52.743+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 0,
-            "current": 90,
-            "change": 0,
-            "change_percent": 0
-          },
-          "volume_trend": "stable"
-        }
-      },
-      "strength_progression": {},
-      "most_improved_exercises": [],
-      "workout_frequency": {
-        "total_workouts": 106,
-        "first_workout": "2025-02-06",
-        "last_workout": "2025-05-04",
-        "total_days": 88,
-        "avg_days_between": 0.7,
-        "workouts_per_week": 10.2,
-        "consistency_score": {
-          "score": 0,
-          "streak": 6
-        }
-      }
-    },
-    "total_workouts": 106,
-    "correlation_analysis": []
-  }
-}
-
-Visualizations and metrics:
-
-CHARTS:
-Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
-
-CONSISTENCY METRICS:
-- Score: 0/100
-- Current streak: 6 workouts
-- Average frequency: Every 0.7 days
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Not enough data
-
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-
-Several visualizations have been generated for this workout data and are available in the sidebar. Available charts include: strength_progress, volume_progress, weekly_frequency. You can reference these visualizations in your analysis and direct the user to check them in the sidebar for more detailed insights.
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-05-04 23:29:38,611 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Conversation ID: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Bundle ID: b844387a-986a-49be-ba24-e4bec3d6b737
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 41
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - # Monday Chest Workout Analysis
-
-Looking at your workout data from February to May 2025:
-
-## Key Progress Highlights:
-- **Dips**: Most impressive improvement with weight increasing by 85kg (850%) while maintaining stable volume
-- **Face Pull**: Consistent progression with a 6.5kg (35.1%) weight increase over 103 sessions
-
-## Workout Patterns:
-- You've been extremely active with 106 total workouts over 88 days
-- Your workout frequency averages 10.2 sessions per week (every 0.7 days)
-- Current workout streak: 6 consecutive sessions
-
-## Chest-Specific Exercises:
-- **Cable Fly**: Weight has remained consistent at 15kg across 21 sessions
-- **Dips**: Primary chest exercise showing substantial strength gains
-
-Your consistency is remarkable, though maintaining this frequency (10+ workouts weekly) may risk overtraining. The strength progress chart in the sidebar shows your impressive gains, particularly with Dips.
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Response length: 918 characters
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
+2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-83f4c435-a726-49a8-b9e4-d93774d71062', 'volume_progress': 'https://quickchart.io/chart/render/sf-dd406c7e-4a57-4eb1-bdfd-0e548940c83e', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-5ef1d4a3-4806-4282-90fc-030c065fb94d'}
+2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.84, last_value=34.92, change=9.08, change_percent=35.1), TopPerformer(name='Pull-Up', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=222.0, last_value=900.0, change=678.0, change_percent=305.4), TopPerformer(name='Pull-Up', first_value=252.0, last_value=264.0, change=12.0, change_percent=4.8)] frequency=[TopPerformer(name='Face Pull', first_value=103.0, last_value=103.0, change=0.0, change_percent=0.0), TopPerformer(name='Dips', first_value=25.0, last_value=25.0, change=0.0, change_percent=0.0), TopPerformer(name='Hammer Curl', first_value=21.0, last_value=21.0, change=0.0, change_percent=0.0)]
+2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=6 avg_gap=0.7
+2025-05-04 23:29:38,616 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - {"bundle_id": "b844387a-986a-49be-ba24-e4bec3d6b737", "metadata": {"total_workouts": 106, "total_exercises": 234, "date_range": {"latest": "2025-05-04T22:29:20.215000+00:00", "earliest": "2025-02-06T18:55:00.616020+00:00"}, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-05-04T22:29:20.215+00:00", "earliest": "2025-02-06T18:55:00.61602+00:00"}, "total_workouts": 106, "total_exercises": 234, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workouts": [{"id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3", "date": "2025-03-28T18:52:58.678+00:00", "name": "Week 4 - Workout B", "notes": "[\"\"]", "exercises": [{"sets": [{"rpe": 8.5, "reps": 12, "weight": 21, "distance": null, "duration": null, "set_number": 1}], "raw_name": "Face Pul... [truncated]
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - Complete bundle size: 125670 bytes
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-05-04 23:45:04,651 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:34:57,906 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:03,961 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:03,970 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:04,009 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:04,193 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-05-05 01:35:04,299 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:04,299 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:10,752 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:11,929 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:13,257 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:13,263 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,308 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,499 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,603 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-05-05 01:35:13,604 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-05-05 01:35:13,605 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:13,605 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-05 15:48:54,301 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 16:17:02,791 - app - INFO - Logging has been set up
+2025-05-05 16:17:02,791 - app.main - INFO - Application starting
+2025-05-05 16:18:45,230 - app - INFO - Logging has been set up
+2025-05-05 16:18:45,230 - app.main - INFO - Application starting
+2025-05-05 16:59:00,535 - app - INFO - Logging has been set up
+2025-05-05 16:59:00,536 - app.main - INFO - Application starting
+2025-05-05 17:00:13,426 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 17:07:32,217 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 20:03:39,066 - app - INFO - Logging has been set up
+2025-05-05 20:03:39,066 - app.main - INFO - Application starting
+2025-05-05 20:03:49,317 - app - INFO - Logging has been set up
+2025-05-05 20:03:49,317 - app.main - INFO - Application starting
+2025-05-05 21:30:44,692 - app - INFO - Logging has been set up
+2025-05-05 21:30:44,692 - app.main - INFO - Application starting
+2025-05-05 21:35:43,198 - app - INFO - Logging has been set up
+2025-05-05 21:35:43,198 - app.main - INFO - Application starting
+2025-05-05 21:35:46,393 - app - INFO - Logging has been set up
+2025-05-05 21:35:46,393 - app.main - INFO - Application starting
+2025-05-05 21:36:24,996 - app - INFO - Logging has been set up
+2025-05-05 21:36:24,996 - app.main - INFO - Application starting
+2025-05-05 21:40:58,297 - app - INFO - Logging has been set up
+2025-05-05 21:40:58,297 - app.main - INFO - Application starting
+2025-05-05 21:40:59,823 - app - INFO - Logging has been set up
+2025-05-05 21:40:59,823 - app.main - INFO - Application starting
+2025-05-05 21:41:39,139 - app - INFO - Logging has been set up
+2025-05-05 21:41:39,139 - app.main - INFO - Application starting
+2025-05-05 22:06:13,635 - app.api.endpoints.auth - ERROR - Sign in error: 'SupabaseClient' object has no attribute 'auth'
+2025-05-05 22:06:53,786 - app.api.endpoints.auth - ERROR - Sign in error: 'SupabaseClient' object has no attribute 'auth'
+2025-05-05 22:11:36,715 - app - INFO - Logging has been set up
+2025-05-05 22:11:36,715 - app.main - INFO - Application starting
+2025-05-05 22:11:45,253 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
+2025-05-05 22:12:28,301 - app - INFO - Logging has been set up
+2025-05-05 22:12:28,301 - app.main - INFO - Application starting
+2025-05-05 22:12:47,305 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
+2025-05-05 22:12:56,378 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
+2025-05-05 22:15:03,936 - app - INFO - Logging has been set up
+2025-05-05 22:15:03,936 - app.main - INFO - Application starting
+2025-05-05 22:16:49,487 - app - INFO - Logging has been set up
+2025-05-05 22:16:49,487 - app.main - INFO - Application starting
+2025-05-05 22:23:27,348 - app - INFO - Logging has been set up
+2025-05-05 22:23:27,348 - app.main - INFO - Application starting
+2025-05-05 23:15:01,486 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:15:01,488 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:15:01,605 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:15:01,605 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:15:51,759 - app - INFO - Logging has been set up
+2025-05-05 23:15:51,759 - app.main - INFO - Application starting
+2025-05-05 23:17:07,067 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:17:07,068 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:17:07,185 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:17:07,185 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:20:00,412 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:20:00,413 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:20:00,476 - app.core.supabase.auth - WARNING - Invalid authentication credentials

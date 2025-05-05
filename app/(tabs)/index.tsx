@@ -9,6 +9,8 @@ import WorkoutCreateModal from "@/components/workout/organisms/WorkoutCreateModa
 import { useWorkout } from "@/context/WorkoutContext";
 import { CompleteWorkout, WorkoutInput } from "@/types/workout";
 import { useAuth } from "@/context/AuthContext";
+import { getApiServices } from "@/services/api/serviceFactory";
+import { apiGet } from "@/services/api/apiClient";
 export default function HomeScreen() {
   const { user } = useAuth(); // Get authenticated user
   const { workouts, createWorkout } = useWorkout();
@@ -66,10 +68,37 @@ export default function HomeScreen() {
     await createWorkout(user.id, workoutInput);
   };
 
-  const handleAnalysisPress = () => {
-    console.log(
-      "Not yet implemented! Think about starting a workout analysis conversation here."
-    );
+  const handleAnalysisPress = async () => {
+    try {
+      console.log("Testing connection to backend API health check...");
+
+      // Call the health check endpoint directly
+      const response = await apiGet<{ status: string; service: string }>(
+        "/db/health"
+      );
+
+      console.log(`✅ API health check successful:`, response);
+      alert(`API health check successful! Status: ${response.status}`);
+
+      return response;
+    } catch (error: unknown) {
+      // Properly type the error as unknown
+      console.error("❌ API health check failed:", error);
+
+      // Type guard to safely access error properties
+      let errorMessage = "Unknown error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error && typeof error === "object" && "message" in error) {
+        errorMessage = (error as { message: string }).message;
+      }
+
+      alert(`API health check failed: ${errorMessage}`);
+
+      return null;
+    }
   };
 
   const handleConversationPress = (id: string) => {

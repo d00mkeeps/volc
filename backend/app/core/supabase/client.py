@@ -301,3 +301,8 @@ class SupabaseClient:
         except Exception as e:
             logger.error(f"Error fetching conversation messages: {str(e)}", exc_info=True)
             return []
+        
+    @property
+    def auth(self):
+        """Expose the auth namespace from the official Supabase client."""
+        return self.client.auth

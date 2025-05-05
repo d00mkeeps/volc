@@ -1,28 +1,33 @@
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-83f4c435-a726-49a8-b9e4-d93774d71062', 'volume_progress': 'https://quickchart.io/chart/render/sf-dd406c7e-4a57-4eb1-bdfd-0e548940c83e', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-5ef1d4a3-4806-4282-90fc-030c065fb94d'}
-2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.84, last_value=34.92, change=9.08, change_percent=35.1), TopPerformer(name='Pull-Up', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=222.0, last_value=900.0, change=678.0, change_percent=305.4), TopPerformer(name='Pull-Up', first_value=252.0, last_value=264.0, change=12.0, change_percent=4.8)] frequency=[TopPerformer(name='Face Pull', first_value=103.0, last_value=103.0, change=0.0, change_percent=0.0), TopPerformer(name='Dips', first_value=25.0, last_value=25.0, change=0.0, change_percent=0.0), TopPerformer(name='Hammer Curl', first_value=21.0, last_value=21.0, change=0.0, change_percent=0.0)]
-2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=6 avg_gap=0.7
-2025-05-04 23:29:38,616 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - {"bundle_id": "b844387a-986a-49be-ba24-e4bec3d6b737", "metadata": {"total_workouts": 106, "total_exercises": 234, "date_range": {"latest": "2025-05-04T22:29:20.215000+00:00", "earliest": "2025-02-06T18:55:00.616020+00:00"}, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-05-04T22:29:20.215+00:00", "earliest": "2025-02-06T18:55:00.61602+00:00"}, "total_workouts": 106, "total_exercises": 234, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workouts": [{"id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3", "date": "2025-03-28T18:52:58.678+00:00", "name": "Week 4 - Workout B", "notes": "[\"\"]", "exercises": [{"sets": [{"rpe": 8.5, "reps": 12, "weight": 21, "distance": null, "duration": null, "set_number": 1}], "raw_name": "Face Pul... [truncated]
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - Complete bundle size: 125670 bytes
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-05-04 23:45:04,651 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:34:57,906 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:03,961 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:03,970 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:04,009 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:04,193 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
-2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
-2025-05-05 01:35:04,299 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:04,299 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:10,752 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:11,929 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:13,257 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:13,263 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,308 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,499 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,603 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
-2025-05-05 01:35:13,604 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
-2025-05-05 01:35:13,605 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:13,605 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
-2025-05-05 15:48:54,301 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 23:20:00,477 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:22:24,889 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:22:24,890 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:22:24,989 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:22:24,989 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:24:55,345 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:24:55,346 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:24:55,455 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:24:55,455 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:27:00,705 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:27:00,706 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:27:00,815 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:27:00,815 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:28:50,330 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:28:50,333 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:28:51,227 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:28:51,228 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:29:30,653 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:29:30,654 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:29:30,767 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:29:30,767 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:29:44,714 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 23:29:44,859 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:29:44,859 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:31:23,717 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 23:31:26,833 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:31:26,833 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:31:27,225 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:31:27,225 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:31:31,466 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:31:31,469 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-05 23:31:31,558 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-05 23:31:31,558 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials

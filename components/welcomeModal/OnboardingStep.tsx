@@ -1,6 +1,6 @@
 // OnboardingStep.tsx
 import { useMessage } from "@/context/MessageContext";
-import { UserProfileService } from "@/services/supabase/onboarding";
+import { UserProfileService } from "@/services/supabase/userProfile";
 import { ConversationService } from "@/services/supabase/conversation";
 import { authService } from "@/services/supabase/auth";
 import { OnboardingStepProps } from "@/types/welcomeModal";

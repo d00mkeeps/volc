@@ -1,174 +1,152 @@
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
+// services/supabase/conversation.ts
 import { BaseService } from './base';
 import { Message, Conversation } from '@/types';
+import { apiGet, apiPost, apiDelete } from '../api/apiClient';
 
 export class ConversationService extends BaseService {
+  /**
+   * Create a new conversation with the first message
+   */
   async createConversation(params: {
     userId: string;
     title: string;
     firstMessage: string;
     configName: string;
   }): Promise<Conversation> {
-    const operation = async () => {
+    try {
       console.log('📤 Creating conversation with params:', params);
       
-      const { data: conversationId, error } = await this.supabase
-        .rpc('create_conversation_with_message', {
-          p_user_id: params.userId,
-          p_title: params.title,
-          p_first_message: params.firstMessage,
-          p_config_name: params.configName
-        });
-  
-      if (error) throw error;
-      if (!conversationId) throw new Error('No conversation ID returned');
-  
-      const response = await this.supabase
-        .from('conversations')
-        .select('*')
-        .eq('id', conversationId)
-        .single();
-  
-      if (response.error) throw response.error;
-      if (!response.data) throw new Error('Failed to fetch created conversation');
-  
-      console.log('📥 Conversation creation complete:', response.data);
-      return response as PostgrestSingleResponse<Conversation>;
-    };
-  
-    const result = await this.withRetry(operation);
-    return result as Conversation;
+      // Call backend API to create conversation
+      const data = await apiPost<Conversation>('/db/conversations', {
+        title: params.title,
+        firstMessage: params.firstMessage,
+        configName: params.configName
+      });
+      
+      console.log('📥 Conversation creation complete:', data);
+      return data;
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      return this.handleError(error);
+    }
   }
+
+  /**
+   * Get all messages for a conversation
+   */
   async getConversationMessages(conversationId: string): Promise<Message[]> {
-    const operation = async (): Promise<PostgrestSingleResponse<Message[]>> => {
-      const response = await this.supabase
-        .from('messages')
-        .select('*')
-        .eq('conversation_id', conversationId)
-        .order('conversation_sequence', { ascending: true });
-
-      if (response.error) throw response.error;
+    try {
+      console.log(`Getting messages for conversation: ${conversationId}`);
       
-      return {
-        data: response.data || [],
-        error: null,
-        count: null,
-        status: 200,
-        statusText: 'OK'
-      } as PostgrestSingleResponse<Message[]>;
-    };
-
-    return this.withRetry(operation);
+      // Call backend API to get conversation messages
+      const data = await apiGet<Message[]>(`/db/conversations/${conversationId}/messages`);
+      
+      return data;
+    } catch (error) {
+      console.error(`Error getting conversation messages: ${error}`);
+      return this.handleError(error);
+    }
   }
 
+  /**
+   * Get a conversation by ID
+   */
   async getConversation(conversationId: string): Promise<Conversation> {
-    const operation = async () => {
-      const response = await this.supabase
-        .from('conversations')
-        .select('*')
-        .eq('id', conversationId)
-        .single();
-  
-      if (response.error) throw response.error;
-      if (!response.data) throw new Error('No conversation found');
+    try {
+      console.log(`Getting conversation: ${conversationId}`);
       
-      return response as PostgrestSingleResponse<Conversation>;
-    };
-  
-    return this.withRetry(operation);
-  }  
+      // Call backend API to get conversation
+      const data = await apiGet<Conversation>(`/db/conversations/${conversationId}`);
+      
+      return data;
+    } catch (error) {
+      console.error(`Error getting conversation: ${error}`);
+      return this.handleError(error);
+    }
+  }
 
-  // In conversation.ts
-async createOnboardingConversation(params: {
-  userId: string;
-  sessionId: string;  // The UUID we generated
-  configName: string;
-}): Promise<Conversation> {
-  const operation = async () => {
-    console.log('📤 Creating onboarding conversation:', params);
-    
-    // Use a direct insert instead of the RPC since we need to specify the ID
-    const { data, error } = await this.supabase
-      .from('conversations')
-      .insert({
-        id: params.sessionId,
-        user_id: params.userId,
-        title: 'Onboarding Session',
-        config_name: params.configName,
-        status: 'active'
-      })
-      .select()
-      .single();
+  /**
+   * Create an onboarding conversation with a specific ID
+   */
+  async createOnboardingConversation(params: {
+    userId: string;
+    sessionId: string;
+    configName: string;
+  }): Promise<Conversation> {
+    try {
+      console.log('📤 Creating onboarding conversation:', params);
+      
+      // Call backend API to create onboarding conversation
+      const data = await apiPost<Conversation>('/db/conversations/onboarding', {
+        sessionId: params.sessionId,
+        configName: params.configName
+      });
+      
+      console.log('📥 Onboarding conversation created:', data);
+      return data;
+    } catch (error) {
+      console.error('Error creating onboarding conversation:', error);
+      return this.handleError(error);
+    }
+  }
 
-    if (error) throw error;
-    if (!data) throw new Error('Failed to create onboarding conversation');
+  /**
+   * Get all active conversations for a user
+   */
+  async getUserConversations(): Promise<Conversation[]> {
+    try {
+      console.log('Getting user conversations');
+      
+      // Call backend API to get user conversations
+      const data = await apiGet<Conversation[]>('/db/conversations');
+      
+      return data;
+    } catch (error) {
+      console.error('Error getting user conversations:', error);
+      return this.handleError(error);
+    }
+  }
 
-    console.log('📥 Onboarding conversation created:', data);
-    return { data, error: null, count: null, status: 200, statusText: 'OK' };
-  };
+  /**
+   * Soft delete a conversation by setting status to 'deleted'
+   */
+  async deleteConversation(conversationId: string): Promise<void> {
+    try {
+      console.log(`Deleting conversation: ${conversationId}`);
+      
+      // Call backend API to delete conversation
+      await apiDelete(`/db/conversations/${conversationId}`);
+      
+      console.log(`Successfully deleted conversation: ${conversationId}`);
+    } catch (error) {
+      console.error(`Error deleting conversation: ${error}`);
+      return this.handleError(error);
+    }
+  }
 
-  return this.withRetry(operation);
-}
-
-async getUserConversations(): Promise<Conversation[]> {
-  const operation = async () => {
-    const response = await this.supabase
-      .from('conversations')
-      .select('*')
-      .eq('status', 'active')
-      .not('config_name', 'eq', 'onboarding') 
-      .order('updated_at', { ascending: false });
-
-    if (response.error) throw response.error;
-    return {
-      data: response.data || [],
-      error: null,
-      count: null,
-      status: 200,
-      statusText: 'OK'
-    } as PostgrestSingleResponse<Conversation[]>;
-  };
-
-  return this.withRetry(operation);
-}
-async deleteConversation(conversationId: string): Promise<void> {
-  const operation = async (): Promise<PostgrestSingleResponse<any>> => {
-    const response = await this.supabase
-      .from('conversations')  
-      .update({ status: 'deleted' })
-      .eq('id', conversationId)
-      .select()
-      .single();
-
-    if (response.error) throw response.error;
-    return response;
-  };
-
-  await this.withRetry(operation);
-}
-
+  /**
+   * Save a message to a conversation
+   */
   async saveMessage(params: {
     conversationId: string;
     content: string;
     sender: 'user' | 'assistant';
   }): Promise<Message> {
-    const operation = async () => {
-      const response = await this.supabase
-        .from('messages')
-        .insert({
-          conversation_id: params.conversationId,
-          content: params.content,
-          sender: params.sender
-        })
-        .select()
-        .single();
-
-      if (response.error) throw response.error;
-      if (!response.data) throw new Error('No data returned from insert');
+    try {
+      console.log(`Saving ${params.sender} message to conversation: ${params.conversationId}`);
       
-      return response as PostgrestSingleResponse<Message>;
-    };
-
-    return this.withRetry(operation);
+      // Call backend API to save message
+      const data = await apiPost<Message>(`/db/conversations/${params.conversationId}/messages`, {
+        content: params.content,
+        sender: params.sender
+      });
+      
+      return data;
+    } catch (error) {
+      console.error('Error saving message:', error);
+      return this.handleError(error);
+    }
   }
 }
+
+export const conversationService = new ConversationService();

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { UserProfileService } from '@/services/supabase/onboarding';
+import { UserProfileService } from '@/services/supabase/userProfile';
 import type { UserOnboarding } from '@/types/onboarding';
 
 const onboardingService = new UserProfileService();

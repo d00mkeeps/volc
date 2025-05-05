@@ -6,7 +6,7 @@ import {
   ChatConfigName, 
   WebSocketMessage
 } from '@/types/index';
-import { getLocalIpAddress } from '@/utils/network';
+import { getWsBaseUrl } from '../api/apiClient';
 import { Message } from '@/types';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 
@@ -85,7 +85,6 @@ private getConnectionKey = (configName: string, id: string): string => `${config
    * Initialize the WebSocket service with optional queue persistence
    */
   public async initialize(enableQueuePersistence: boolean = false): Promise<void> {
-    this.baseUrl = await getLocalIpAddress();
     this.enableQueuePersistence = enableQueuePersistence;
     
     // Register app state listener for React Native
@@ -112,7 +111,7 @@ private getConnectionKey = (configName: string, id: string): string => `${config
         // Update internal app state
         this.appState = nextAppState as any;
         
-        // If app comes to foreground and we have queued messages, try to process them
+        // If app comes to foreground and we
         if (nextAppState === 'active' && this.messageQueue.length > 0) {
           console.log('App resumed with queued messages, attempting to process');
           this.reconnect();
@@ -220,6 +219,30 @@ private getConnectionKey = (configName: string, id: string): string => `${config
       data: messages  // Put the messages in the data field instead
     }, 'high', true); // High priority, persistent (important for reconnection)
   }
+
+  private async getWebSocketURL(configName: ChatConfigName, id: string): Promise<string> {
+    // Get the WS base URL from the updated apiClient
+    const baseUrl = await getWsBaseUrl();
+    
+    // Keep your existing URL building logic
+    let endpoint;
+    switch (configName) {
+      case 'base':
+        endpoint = `/base/${id}`;
+        break;
+      case 'onboarding':
+        endpoint = '/onboarding';
+        break;
+      case 'workout-analysis':
+      case 'default':
+        endpoint = `/${configName}/${id}`;
+        break;
+      default:
+        throw new Error('Invalid chat configuration');
+    }
+    
+    return `${baseUrl}${endpoint}`;
+  }
   /**
    * Connect to the WebSocket server
    */
@@ -248,29 +271,12 @@ private getConnectionKey = (configName: string, id: string): string => `${config
     this.isConnectionReady = false;
     
     try {
-      if (!this.baseUrl) {
-        await this.initialize();
-      }
-  
-      // Build WebSocket URL
-      let url;
-      switch (configName) {
-        case 'base':
-          url = `ws://${this.baseUrl}:8000/base/${id}`;
-          break;
-        case 'onboarding':
-          url = `ws://${this.baseUrl}:8000/onboarding`;
-          break;
-        case 'workout-analysis':
-        case 'default':
-          url = `ws://${this.baseUrl}:8000/${configName}/${id}`;
-          break;
-        default:
-          throw new Error('Invalid chat configuration');
-      }
+      // Use the new method to get the URL
+      const url = await this.getWebSocketURL(configName, id);
   
       console.log('WebSocketService: Attempting connection to:', url);
       this.socket = new WebSocket(url);
+  
   
       // Return a promise that resolves when connection is fully ready
       return new Promise<void>((resolve, reject) => {
@@ -850,7 +856,6 @@ private getConnectionKey = (configName: string, id: string): string => `${config
       this.reconnectTimeout = setTimeout(() => this.reconnect(), 60000);
     }
   }
-  
   public disconnect(): void {
     // Stop timers
     this.stopHeartbeat();

@@ -15,7 +15,6 @@ import { UserProvider } from "@/context/UserContext";
 import Toast from "react-native-toast-message";
 import React from "react";
 import { WorkoutProvider } from "@/context/WorkoutContext";
-import { supabase } from "@/lib/supabaseClient";
 import { ExerciseProvider } from "@/context/ExerciseContext";
 
 export { ErrorBoundary } from "expo-router";
@@ -58,8 +57,6 @@ function RootLayoutNav() {
     error?: string;
     url?: string;
   } | null>(null);
-
-  // In your RootLayoutNav function, modify the useEffect:
 
   return (
     <>
