@@ -48,21 +48,27 @@ function ConversationPage() {
       console.log(`⚠️ ConversationPage UNMOUNTED #${mountCount.current}`);
   }, []);
 
-  // Effect to load conversation with minimal dependencies
+  // In index.tsx
   useEffect(() => {
-    console.log(`🔄 Loading conversation: ${id}`);
+    console.log(`[ConversationPage] Loading conversation: ${id}`);
 
     const initializeConversation = async () => {
       if (id) {
         try {
+          console.log(`[ConversationPage] Initializing conversation: ${id}`);
           // Use ref version of function
           await loadConversationRef.current(id);
           // Then set the config
           const config = getConversationConfigRef.current(id);
-          console.log(`📋 Got config for conversation: ${config}`);
+          console.log(
+            `[ConversationPage] Got config for conversation: ${id}, config: ${config}`
+          );
           setConfigName(config);
         } catch (error) {
-          console.error("❌ Failed to initialize conversation:", error);
+          console.error(
+            "[ConversationPage] Failed to initialize conversation:",
+            error
+          );
         }
       }
     };

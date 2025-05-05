@@ -105,7 +105,6 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
         await websocket.accept()
         logger.info(f"WebSocket connection accepted for {conversation_type}: {conversation_id}")
         
-        # Initial connection confirmation
         await websocket.send_json({
             "type": "connection_status",
             "data": "connected"

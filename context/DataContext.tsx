@@ -1,4 +1,3 @@
-// context/DataContext.tsx
 import {
   createContext,
   useContext,
@@ -77,13 +76,15 @@ export function DataProvider({ children, conversationId }: Props) {
     attachmentServiceRef.current = attachmentService;
   }, [attachmentService]);
 
-  // Load saved attachments on mount or conversation change
   useEffect(() => {
     const loadSavedAttachments = async () => {
       try {
         const session = await authService.getSession();
         if (!session?.user?.id) return;
 
+        console.log(
+          `[DataContext] Loading attachments for conversation: ${conversationId}`
+        );
         setIsLoading(true);
 
         // Load saved workouts using the attachment service
@@ -92,6 +93,11 @@ export function DataProvider({ children, conversationId }: Props) {
           conversationId
         );
 
+        console.log(
+          `[DataContext] Loaded ${
+            savedWorkouts?.length || 0
+          } workouts for conversation ${conversationId}`
+        );
         if (savedWorkouts?.length) {
           const workoutMap = new Map();
           savedWorkouts.forEach((workout: WorkoutWithConversation) => {
@@ -107,6 +113,16 @@ export function DataProvider({ children, conversationId }: Props) {
             conversationId
           );
 
+        console.log(
+          `[DataContext] Loaded ${
+            savedBundles?.length || 0
+          } graph bundles for conversation ${conversationId}`
+        );
+        console.log(
+          `[DataContext] Bundle IDs:`,
+          savedBundles?.map((b) => b.bundle_id).join(", ")
+        );
+
         if (savedBundles?.length) {
           const bundleMap = new Map();
           savedBundles.forEach((bundle: WorkoutDataBundle) => {
@@ -115,7 +131,7 @@ export function DataProvider({ children, conversationId }: Props) {
           setGraphBundles(bundleMap);
         }
       } catch (error) {
-        console.error("Failed to load saved attachments:", error);
+        console.error("[DataContext] Failed to load saved attachments:", error);
       } finally {
         setIsLoading(false);
       }
@@ -128,6 +144,7 @@ export function DataProvider({ children, conversationId }: Props) {
     console.log("DataContext: Handling signal:", { type, data });
 
     // In the handleSignal method where workout_approved is processed
+    // In DataContext.tsx - handleSignal method for workout_approved
     if (type === "workout_approved") {
       let workoutId: string | null = null;
 
@@ -143,7 +160,7 @@ export function DataProvider({ children, conversationId }: Props) {
         const workoutWithMeta = {
           ...data,
           id: workoutId,
-          conversationId: conversationIdRef.current,
+          conversationId: conversationIdRef.current, // This will be stored directly in the workout
           created_at: new Date().toISOString(),
         };
 
@@ -178,38 +195,22 @@ export function DataProvider({ children, conversationId }: Props) {
         });
 
         try {
-          // Try to save workout and link it to the conversation
+          // Save workout directly with the conversation ID included
           console.log("Saving workout to database:", workoutId);
           await workoutServiceRef.current.createWorkout(
             session.user.id,
             workoutWithMeta
           );
 
-          console.log(
-            "Linking workout to conversation:",
-            workoutId,
-            conversationIdRef.current
-          );
-          await attachmentServiceRef.current.linkWorkoutToConversation(
-            session.user.id,
-            workoutId,
-            conversationIdRef.current
-          );
-
           console.log("Workout saved successfully:", workoutId);
         } catch (dbError: any) {
           // Log detailed error information
           console.error("Database error details:", dbError);
-          if (dbError && dbError.message && dbError.message.includes("order")) {
-            console.error(
-              "Order syntax error detected. Check .order() calls in Supabase queries."
-            );
-          }
           throw dbError;
         }
       } catch (error) {
+        // Error handling remains the same
         console.error("Failed to handle workout signal:", error);
-        // Remove from state if saving failed
         if (workoutId) {
           setWorkouts((prev) => {
             const newWorkouts = new Map(prev);
@@ -229,20 +230,14 @@ export function DataProvider({ children, conversationId }: Props) {
           throw new Error("No authenticated user found");
         }
 
-        console.log("Received workout_data_bundle:", data);
-        console.log("workout_data type:", typeof data.workout_data);
-        if (data.workout_data) {
-          console.log("workout_data keys:", Object.keys(data.workout_data));
-          // If it's a string, try to log parsed version too
-          if (typeof data.workout_data === "string") {
-            try {
-              const parsed = JSON.parse(data.workout_data);
-              console.log("Parsed workout_data:", parsed);
-            } catch (e) {
-              console.log("workout_data is not valid JSON string");
-            }
-          }
-        }
+        console.log(
+          "[DataContext] Received workout_data_bundle with ID:",
+          data.bundle_id
+        );
+        console.log(
+          "[DataContext] For conversation:",
+          conversationIdRef.current
+        );
 
         // Store the graph bundle with the current conversation ID
         const bundleWithConversation = {
@@ -250,18 +245,49 @@ export function DataProvider({ children, conversationId }: Props) {
           conversationId: conversationIdRef.current,
         };
 
+        // Add to local state only, don't save to database since the backend already did this
+        console.log(
+          "[DataContext] Adding bundle to local state:",
+          data.bundle_id
+        );
         addGraphBundle(bundleWithConversation, conversationIdRef.current);
 
-        // Save to database using the attachment service
-        await attachmentServiceRef.current.saveGraphBundle(
-          session.user.id,
-          bundleWithConversation
+        console.log(
+          "[DataContext] Bundle added to local state successfully:",
+          data.bundle_id
         );
 
-        console.log("Graph bundle saved successfully:", data.bundle_id);
+        // After receiving a bundle, refresh the graph bundles from the database
+        // This ensures we have the most up-to-date data including any transformations the backend did
+        console.log("[DataContext] Refreshing graph bundles from database");
+        const savedBundles =
+          await attachmentServiceRef.current.getGraphBundlesByConversation(
+            session.user.id,
+            conversationIdRef.current
+          );
+
+        console.log(
+          `[DataContext] Refreshed ${
+            savedBundles?.length || 0
+          } bundles from database`
+        );
+
+        if (savedBundles?.length) {
+          const bundleMap = new Map();
+          savedBundles.forEach((bundle: WorkoutDataBundle) => {
+            console.log(
+              `[DataContext] Retrieved bundle from DB: ${bundle.bundle_id}`
+            );
+            bundleMap.set(bundle.bundle_id, bundle);
+          });
+          setGraphBundles(bundleMap);
+        }
       } catch (error) {
-        console.error("Failed to handle graph bundle signal:", error);
-        // Remove from state if saving failed
+        console.error(
+          "[DataContext] Failed to handle graph bundle signal:",
+          error
+        );
+        // Remove from state if processing failed
         if (data?.bundle_id) {
           setGraphBundles((prev) => {
             const newBundles = new Map(prev);

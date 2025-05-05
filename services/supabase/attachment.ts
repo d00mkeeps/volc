@@ -9,35 +9,33 @@ export class AttachmentService extends BaseService {
    */
   async saveGraphBundle(userId: string, bundle: WorkoutDataBundle): Promise<void> {
     try {
-      // First, save the bundle to the graph_bundles table
+      console.log(`[AttachmentService] Saving graph bundle: ${bundle.bundle_id}`);
+      
+      // Save the bundle with conversation_id directly
       const { error: bundleError } = await this.supabase
         .from('graph_bundles')
         .insert({
           id: bundle.bundle_id,
           user_id: userId,
+          conversation_id: bundle.conversationId, // Store conversation ID directly
           metadata: bundle.metadata,
           workout_data: bundle.workout_data,
           original_query: bundle.original_query,
           chart_url: bundle.chart_url,
+          chart_urls: bundle.chart_urls,
+          top_performers: bundle.top_performers,
+          consistency_metrics: bundle.consistency_metrics,
           created_at: bundle.created_at || new Date().toISOString()
         });
-
-      if (bundleError) throw bundleError;
-
-      // Then create the link to the conversation
-      if (bundle.conversationId) {
-        const { error: linkError } = await this.supabase
-          .from('conversation_attachments')
-          .insert({
-            conversation_id: bundle.conversationId,
-            attachment_id: bundle.bundle_id,
-            attachment_type: 'graph_bundle',
-            user_id: userId
-          });
-
-        if (linkError) throw linkError;
+  
+      if (bundleError) {
+        console.error(`[AttachmentService] Error saving bundle:`, bundleError);
+        throw bundleError;
       }
+  
+      console.log(`[AttachmentService] Bundle saved successfully with conversation ID: ${bundle.conversationId}`);
     } catch (error) {
+      console.error(`[AttachmentService] Error in saveGraphBundle:`, error);
       return this.handleError(error);
     }
   }
@@ -47,110 +45,95 @@ export class AttachmentService extends BaseService {
    */
   async getGraphBundlesByConversation(userId: string, conversationId: string): Promise<WorkoutDataBundle[]> {
     try {
-      // Query the link table first
-      const { data: links, error: linkError } = await this.supabase
-        .from('conversation_attachments')
-        .select('attachment_id')
-        .eq('user_id', userId)
-        .eq('conversation_id', conversationId)
-        .eq('attachment_type', 'graph_bundle');
-
-      if (linkError) throw linkError;
-      if (!links || links.length === 0) return [];
-
-      // Get the bundle IDs
-      const bundleIds = links.map(link => link.attachment_id);
-
-      // Query the bundles
+      console.log(`[AttachmentService] Getting graph bundles for conversation: ${conversationId}`);
+      
+      // Direct query using conversation_id
       const { data: bundles, error: bundleError } = await this.supabase
         .from('graph_bundles')
         .select('*')
         .eq('user_id', userId)
-        .in('id', bundleIds);
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: false });
 
-      if (bundleError) throw bundleError;
-      if (!bundles) return [];
+      if (bundleError) {
+        console.error(`[AttachmentService] Error querying bundles:`, bundleError);
+        throw bundleError;
+      }
+      
+      if (!bundles || bundles.length === 0) {
+        console.log(`[AttachmentService] No graph bundles found for conversation: ${conversationId}`);
+        return [];
+      }
+
+      console.log(`[AttachmentService] Retrieved ${bundles.length} graph bundles directly by conversation ID`);
+      console.log(`[AttachmentService] Bundle IDs: ${bundles.map(b => b.id).join(', ')}`);
 
       // Map the data to the WorkoutDataBundle type
-      return bundles.map(bundle => ({
+      const formattedBundles = bundles.map(bundle => ({
         bundle_id: bundle.id,
-        metadata: bundle.metadata,
-        workout_data: bundle.workout_data,
-        original_query: bundle.original_query,
+        metadata: bundle.metadata || {},
+        workout_data: bundle.workout_data || {},
+        original_query: bundle.original_query || '',
         chart_url: bundle.chart_url,
+        chart_urls: bundle.chart_urls || {},
+        top_performers: bundle.top_performers || {},
+        consistency_metrics: bundle.consistency_metrics || {},
         created_at: bundle.created_at,
         conversationId
       }));
+
+      console.log(`[AttachmentService] Formatted ${formattedBundles.length} bundles`);
+      if (formattedBundles.length > 0) {
+        console.log(`[AttachmentService] First bundle ID: ${formattedBundles[0]?.bundle_id}`);
+      }
+      
+      return formattedBundles;
     } catch (error) {
+      console.error(`[AttachmentService] Error getting graph bundles:`, error);
       return this.handleError(error);
     }
   }
 
   /**
-   * Link a workout to a conversation
-   */
-  async linkWorkoutToConversation(
-    userId: string, 
-    workoutId: string, 
-    conversationId: string
-  ): Promise<void> {
-    try {
-      const { error } = await this.supabase
-        .from('conversation_attachments')
-        .insert({
-          conversation_id: conversationId,
-          attachment_id: workoutId,
-          attachment_type: 'workout',
-          user_id: userId
-        });
-
-      if (error) throw error;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  /**
-   * Get all workouts attached to a conversation
+   * Get all workouts for a specific conversation
    */
   async getWorkoutsByConversation(userId: string, conversationId: string): Promise<any[]> {
     try {
-      // Query the link table first
-      const { data: links, error: linkError } = await this.supabase
-        .from('conversation_attachments')
-        .select('attachment_id')
-        .eq('user_id', userId)
-        .eq('conversation_id', conversationId)
-        .eq('attachment_type', 'workout');
-
-      if (linkError) throw linkError;
-      if (!links || links.length === 0) return [];
-
-      // Get the workout IDs
-      const workoutIds = links.map(link => link.attachment_id);
-
-      // Query the workouts
+      console.log(`[AttachmentService] Getting workouts for conversation: ${conversationId}`);
+      
+      // Direct query using conversation_id
       const { data: workouts, error: workoutError } = await this.supabase
         .from('workouts')
         .select('*')
         .eq('user_id', userId)
-        .in('id', workoutIds);
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: false });
 
-      if (workoutError) throw workoutError;
-      if (!workouts) return [];
+      if (workoutError) {
+        console.error(`[AttachmentService] Error querying workouts:`, workoutError);
+        throw workoutError;
+      }
+      
+      if (!workouts || workouts.length === 0) {
+        console.log(`[AttachmentService] No workouts found for conversation: ${conversationId}`);
+        return [];
+      }
 
-      // Add conversation ID to each workout
+      console.log(`[AttachmentService] Retrieved ${workouts.length} workouts directly by conversation ID`);
+
+      // Add conversationId to the result objects for consistency
       return workouts.map(workout => ({
         ...workout,
         conversationId
       }));
     } catch (error) {
+      console.error(`[AttachmentService] Error getting workouts:`, error);
       return this.handleError(error);
     }
   }
 
   /**
-   * Delete an attachment and its link to conversations
+   * Delete an attachment
    */
   async deleteAttachment(
     userId: string, 
@@ -158,17 +141,9 @@ export class AttachmentService extends BaseService {
     type: 'workout' | 'graph_bundle'
   ): Promise<void> {
     try {
-      // Begin a transaction
-      const { error: linkError } = await this.supabase
-        .from('conversation_attachments')
-        .delete()
-        .eq('user_id', userId)
-        .eq('attachment_id', attachmentId)
-        .eq('attachment_type', type);
-
-      if (linkError) throw linkError;
-
-      // Delete from the appropriate table
+      console.log(`[AttachmentService] Deleting ${type}: ${attachmentId}`);
+      
+      // Delete directly from the appropriate table
       const table = type === 'workout' ? 'workouts' : 'graph_bundles';
       const { error: deleteError } = await this.supabase
         .from(table)
@@ -176,8 +151,14 @@ export class AttachmentService extends BaseService {
         .eq('user_id', userId)
         .eq('id', attachmentId);
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error(`[AttachmentService] Error deleting ${type}:`, deleteError);
+        throw deleteError;
+      }
+      
+      console.log(`[AttachmentService] Successfully deleted ${type}: ${attachmentId}`);
     } catch (error) {
+      console.error(`[AttachmentService] Error deleting attachment:`, error);
       return this.handleError(error);
     }
   }
@@ -187,14 +168,38 @@ export class AttachmentService extends BaseService {
    */
   async deleteConversationAttachments(userId: string, conversationId: string): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('conversation_attachments')
-        .delete()
-        .eq('user_id', userId)
-        .eq('conversation_id', conversationId);
-
-      if (error) throw error;
+      console.log(`[AttachmentService] Deleting all attachments for conversation: ${conversationId}`);
+      
+      // Delete from both tables
+      const deletePromises = [
+        this.supabase
+          .from('graph_bundles')
+          .delete()
+          .eq('user_id', userId)
+          .eq('conversation_id', conversationId),
+          
+        this.supabase
+          .from('workouts')
+          .delete()
+          .eq('user_id', userId)
+          .eq('conversation_id', conversationId)
+      ];
+      
+      const results = await Promise.allSettled(deletePromises);
+      
+      // Check for errors
+      const errors = results
+        .filter(result => result.status === 'rejected')
+        .map(result => (result as PromiseRejectedResult).reason);
+        
+      if (errors.length > 0) {
+        console.error(`[AttachmentService] Errors deleting conversation attachments:`, errors);
+        throw errors[0];
+      }
+      
+      console.log(`[AttachmentService] Successfully deleted all attachments for conversation: ${conversationId}`);
     } catch (error) {
+      console.error(`[AttachmentService] Error deleting conversation attachments:`, error);
       return this.handleError(error);
     }
   }

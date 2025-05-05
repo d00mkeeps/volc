@@ -52,7 +52,8 @@ export interface HeaderProps {
   onHomePress?: () => void,
   onBackPress?: () => void,
   onToggleSidebar?: () => void,
-  isSidebarOpen: boolean
+  isSidebarOpen: boolean,
+  hasNotification: boolean
 }
 
 export interface MessageListProps {

@@ -1,97 +1,122 @@
-import { WorkoutInput, CompleteWorkout, WorkoutSet, WorkoutExercise, ExerciseInput, SetInput,  } from '@/types/workout';
+import { WorkoutInput, CompleteWorkout, WorkoutSet, WorkoutExercise, ExerciseInput, SetInput, WorkoutWithConversation,  } from '@/types/workout';
 import { BaseService } from './base';
 import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export class WorkoutService extends BaseService {
-  async createWorkout(userId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
+  /**
+   * Create a new workout and store it in the database with direct conversation ID
+   */
+  async createWorkout(userId: string, workout: WorkoutInput | WorkoutWithConversation): Promise<CompleteWorkout> {
     // Add logging to see the input
-    console.log("createWorkout called with:", {
+    console.log("[WorkoutService] Creating workout:", {
       userId,
+      workoutId: 'id' in workout ? workout.id : 'N/A',
       workoutName: workout.name,
-      exerciseCount: workout.exercises.length,
-      exerciseSample: workout.exercises.slice(0, 2).map((ex: ExerciseInput) => ({
-        name: ex.exercise_name,
-        definition_id: ex.definition_id
-      }))
+      conversationId: 'conversationId' in workout ? workout.conversationId : 'N/A',
+      exerciseCount: workout.exercises?.length || 0
     });
   
     const operation = async () => {
       const now = new Date().toISOString();
       
+      // Prepare the workout data including the conversation_id if present
+      const workoutInsertData = {
+        id: 'id' in workout ? workout.id : undefined, // Use specific ID if provided
+        user_id: userId,
+        name: workout.name,
+        notes: workout.description || ('notes' in workout ? workout.notes : null),
+        conversation_id: 'conversationId' in workout ? workout.conversationId : null, // Store conversation ID directly
+        created_at: 'created_at' in workout ? workout.created_at : now,
+        used_as_template: now // Set this to creation date by default
+      };
+      
+      console.log("[WorkoutService] Inserting workout with data:", {
+        id: workoutInsertData.id,
+        name: workoutInsertData.name,
+        conversation_id: workoutInsertData.conversation_id
+      });
+
       const { data: workoutData, error: workoutError } = await this.supabase
         .from('workouts')
-        .insert({
-          user_id: userId,
-          name: workout.name,
-          notes: workout.description,
-          created_at: now,
-          used_as_template: now  // Set this to creation date by default
-        })
+        .insert(workoutInsertData)
         .select()
         .single();
     
       if (workoutError) {
-        console.error('Error creating workout:', workoutError);
+        console.error('[WorkoutService] Error creating workout:', workoutError);
         throw workoutError;
       }
     
-      console.log("Workout created successfully, now creating exercises...");
+      console.log("[WorkoutService] Workout created successfully with ID:", workoutData.id);
       
-      const exercisePromises = workout.exercises.map(async (exercise: ExerciseInput, index: number) => {
-        // Log each exercise before insertion
-        console.log(`Creating exercise ${index + 1}/${workout.exercises.length}:`, {
-          name: exercise.exercise_name,
-          definition_id: exercise.definition_id || "null", // Show "null" for null values
-          order: exercise.order_in_workout
-        });
+      // Only process exercises if they exist in the input
+      if (workout.exercises && workout.exercises.length > 0) {
+        console.log("[WorkoutService] Creating exercises for workout:", workoutData.id);
         
-        const { data: exerciseData, error: exerciseError } = await this.supabase
-          .from('workout_exercises')
-          .insert({
-            workout_id: workoutData.id,
-            name: exercise.exercise_name,
-            definition_id: exercise.definition_id, // Make sure this gets included
-            order_index: exercise.order_in_workout,
-            weight_unit: exercise.weight_unit || 'kg',
-            distance_unit: exercise.distance_unit || 'm',
-          })
-          .select()
-          .single();
-    
-        if (exerciseError) {
-          console.error(`Error creating exercise ${exercise.exercise_name}:`, exerciseError);
-          throw exerciseError;
-        }
-        
-        console.log(`Exercise created: ${exerciseData.name} with ID: ${exerciseData.id}, definition_id: ${exerciseData.definition_id || "null"}`);
-    
-        const setPromises = exercise.set_data.sets.map(async (set: SetInput, setIndex: number) => {
-          const { error: setError } = await this.supabase
-            .from('workout_exercise_sets')
-            .insert({
-              exercise_id: exerciseData.id,
-              set_number: setIndex + 1,
-              weight: set.weight,
-              reps: set.reps,
-              rpe: set.rpe,
-              distance: set.distance,
-              duration: set.duration,
-            });
-    
-          if (setError) {
-            console.error(`Error creating set ${setIndex + 1} for exercise ${exerciseData.name}:`, setError);
-            throw setError;
+// When processing exercises in createWorkout
+const exercisePromises = (workout.exercises || []).map(async (exercise: any, index: number) => {
+  // Type assertion to handle both ExerciseInput and WorkoutExercise
+  const exerciseName = 'exercise_name' in exercise ? exercise.exercise_name : exercise.name;
+  const definitionId = exercise.definition_id;
+  const orderIndex = 'order_in_workout' in exercise ? exercise.order_in_workout : exercise.order_index;
+  
+  console.log(`[WorkoutService] Creating exercise ${index + 1}/${workout.exercises.length}:`, {
+    name: exerciseName,
+    definition_id: definitionId || "null", 
+    order: orderIndex
+  });
+  
+  const { data: exerciseData, error: exerciseError } = await this.supabase
+    .from('workout_exercises')
+    .insert({
+      workout_id: workoutData.id,
+      name: exerciseName,
+      definition_id: definitionId,
+      order_index: orderIndex,
+      weight_unit: exercise.weight_unit || 'kg',
+      distance_unit: exercise.distance_unit || 'm',
+    })
+    .select()
+    .single();
+
+          if (exerciseError) {
+            console.error(`[WorkoutService] Error creating exercise ${exercise.exercise_name}:`, exerciseError);
+            throw exerciseError;
           }
-        });
-    
-        await Promise.all(setPromises);
-        console.log(`All sets created for exercise: ${exerciseData.name}`);
+          
+          console.log(`[WorkoutService] Exercise created: ${exerciseData.name} with ID: ${exerciseData.id}`);
+      
+          // Only process sets if they exist in the exercise input
+          if (exercise.set_data && exercise.set_data.sets) {
+            const setPromises = exercise.set_data.sets.map(async (set: SetInput, setIndex: number) => {
+              const { error: setError } = await this.supabase
+                .from('workout_exercise_sets')
+                .insert({
+                  exercise_id: exerciseData.id,
+                  set_number: setIndex + 1,
+                  weight: set.weight,
+                  reps: set.reps,
+                  rpe: set.rpe,
+                  distance: set.distance,
+                  duration: set.duration,
+                });
         
-        return exerciseData;
-      });
-    
-      await Promise.all(exercisePromises);
-      console.log("All exercises created, fetching complete workout...");
+              if (setError) {
+                console.error(`[WorkoutService] Error creating set ${setIndex + 1} for exercise ${exerciseData.name}:`, setError);
+                throw setError;
+              }
+            });
+        
+            await Promise.all(setPromises);
+            console.log(`[WorkoutService] All sets created for exercise: ${exerciseData.name}`);
+          }
+          
+          return exerciseData;
+        });
+      
+        await Promise.all(exercisePromises);
+        console.log("[WorkoutService] All exercises created, fetching complete workout...");
+      }
     
       // Fetch the complete workout after creation
       const { data, error } = await this.supabase
@@ -107,43 +132,45 @@ export class WorkoutService extends BaseService {
         .single();
     
       if (error) {
-        console.error("Error fetching created workout:", error);
+        console.error("[WorkoutService] Error fetching created workout:", error);
         throw error;
       }
       if (!data) {
-        console.error("No data returned when fetching created workout");
+        console.error("[WorkoutService] No data returned when fetching created workout");
         throw new Error('Failed to fetch created workout');
       }
     
       // Sort the data in memory with proper type annotations
-      console.log("Fetched workout, now sorting data...");
+      console.log("[WorkoutService] Fetched workout, now sorting data...");
       const createdWorkout = {
         ...data,
-        workout_exercises: data.workout_exercises
+        workout_exercises: (data.workout_exercises || [])
           .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
           .map((exercise: WorkoutExercise) => ({
             ...exercise,
-            workout_exercise_sets: exercise.workout_exercise_sets.sort(
+            workout_exercise_sets: (exercise.workout_exercise_sets || []).sort(
               (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
             )
-          }))
+          })),
+        // Add conversationId in the expected format for the frontend
+        conversationId: data.conversation_id
       };
       
-      // Log the definition_ids in the final workout
-      console.log("Workout creation complete. Definition IDs in created workout:", 
-        createdWorkout.workout_exercises.map((ex: WorkoutExercise) => ({
-          name: ex.name,
-          definition_id: ex.definition_id || "null"
-        }))
-      );
+      console.log("[WorkoutService] Workout creation complete for ID:", workoutData.id);
     
       return { data: createdWorkout, error: null } as PostgrestSingleResponse<CompleteWorkout>;
     };
     
     return this.withRetry(operation);
   }
+
+  /**
+   * Get a workout by ID
+   */
   async getWorkout(workoutId: string): Promise<CompleteWorkout> {
     const operation = async () => {
+      console.log(`[WorkoutService] Getting workout: ${workoutId}`);
+      
       // Fetch data without complex nested ordering
       const { data, error } = await this.supabase
         .from('workouts')
@@ -157,22 +184,32 @@ export class WorkoutService extends BaseService {
         .eq('id', workoutId)
         .single();
   
-      if (error) throw error;
-      if (!data) throw new Error('Workout not found');
+      if (error) {
+        console.error(`[WorkoutService] Error fetching workout ${workoutId}:`, error);
+        throw error;
+      }
+      if (!data) {
+        console.error(`[WorkoutService] Workout not found: ${workoutId}`);
+        throw new Error('Workout not found');
+      }
   
       // Sort nested data in-memory instead of relying on Postgrest's nested ordering
       const workout: CompleteWorkout = {
         ...data,
-        workout_exercises: data.workout_exercises
+        workout_exercises: (data.workout_exercises || [])
           .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
           .map((exercise: WorkoutExercise) => ({
             ...exercise,
-            workout_exercise_sets: exercise.workout_exercise_sets.sort(
+            workout_exercise_sets: (exercise.workout_exercise_sets || []).sort(
               (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
             )
-          }))
+          })),
+        // Add conversationId in the expected format for the frontend
+        conversationId: data.conversation_id
       };
   
+      console.log(`[WorkoutService] Successfully retrieved workout: ${workoutId}`);
+      
       return {
         data: workout,
         error: null,
@@ -184,6 +221,99 @@ export class WorkoutService extends BaseService {
   
     return this.withRetry(operation);
   }
+
+  /**
+   * Get all workouts for a specific user filtered by conversation ID
+   */
+  async getWorkoutsByConversation(userId: string, conversationId: string): Promise<WorkoutWithConversation[]> {
+    const operation = async () => {
+      console.log(`[WorkoutService] Getting workouts for conversation: ${conversationId}`);
+      
+      // Direct query using conversation_id
+      const { data, error } = await this.supabase
+        .from('workouts')
+        .select(`
+          *,
+          workout_exercises (
+            *,
+            workout_exercise_sets (*)
+          )
+        `)
+        .eq('user_id', userId)
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: false });
+  
+      if (error) {
+        console.error(`[WorkoutService] Error fetching workouts for conversation ${conversationId}:`, error);
+        throw error;
+      }
+      
+      // Format workouts with consistent structure
+      const workouts: WorkoutWithConversation[] = (data || []).map(workout => ({
+        ...workout,
+        workout_exercises: (workout.workout_exercises || [])
+          .sort((a: WorkoutExercise, b: WorkoutExercise) => a.order_index - b.order_index)
+          .map((exercise: WorkoutExercise) => ({
+            ...exercise,
+            workout_exercise_sets: (exercise.workout_exercise_sets || []).sort(
+              (a: WorkoutSet, b: WorkoutSet) => a.set_number - b.set_number
+            )
+          })),
+        conversationId: workout.conversation_id
+      }));
+  
+      // Return in PostgrestSingleResponse format
+      return {
+        data: workouts,
+        error: null,
+        count: workouts.length,
+        status: 200,
+        statusText: 'OK'
+      } as PostgrestSingleResponse<WorkoutWithConversation[]>;
+    };
+  
+    return this.withRetry(operation);
+  }
+
+  /**
+   * Delete all workouts for a specific conversation
+   */
+  async deleteConversationWorkouts(userId: string, conversationId: string): Promise<void> {
+    try {
+      console.log(`[WorkoutService] Deleting all workouts for conversation: ${conversationId}`);
+      
+      // Get all workout IDs for this conversation
+      const { data: workouts, error: fetchError } = await this.supabase
+        .from('workouts')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('conversation_id', conversationId);
+        
+      if (fetchError) {
+        console.error(`[WorkoutService] Error fetching workouts for deletion:`, fetchError);
+        throw fetchError;
+      }
+      
+      if (!workouts || workouts.length === 0) {
+        console.log(`[WorkoutService] No workouts found to delete for conversation: ${conversationId}`);
+        return;
+      }
+      
+      const workoutIds = workouts.map(w => w.id);
+      console.log(`[WorkoutService] Found ${workoutIds.length} workouts to delete for conversation: ${conversationId}`);
+      
+      // Delete each workout (which will cascade to exercises and sets)
+      for (const id of workoutIds) {
+        await this.deleteWorkout(id);
+      }
+      
+      console.log(`[WorkoutService] Successfully deleted all workouts for conversation: ${conversationId}`);
+    } catch (error) {
+      console.error(`[WorkoutService] Error deleting conversation workouts:`, error);
+      return this.handleError(error);
+    }
+  }
+
   async updateTemplateUsage(templateId: string): Promise<void> {
     const operation = async () => {
       const { error } = await this.supabase

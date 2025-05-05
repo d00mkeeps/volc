@@ -99,15 +99,58 @@ export type BundleMetadata = {
   exercises_included: string[];
 };
 
-export type WorkoutDataBundle = {
+export interface WorkoutDataBundle {
   bundle_id: string;
-  metadata: BundleMetadata;
-  workout_data: any;
-  original_query: string;
-  chart_url: string | null;
-  created_at: string;
   conversationId?: string;
-};
+  metadata: {
+    total_workouts?: number;
+    total_exercises?: number;
+    date_range?: {
+      earliest?: string;
+      latest?: string;
+    };
+    exercises_included?: string[];
+  };
+  workout_data: any; // You can define this more specifically if needed
+  original_query: string;
+  created_at: string;
+  chart_url?: string; // Keep for backward compatibility
+  chart_urls?: {
+    strength_progress?: string;
+    volume_progress?: string;
+    correlation_heatmap?: string;
+    weekly_frequency?: string;
+    [key: string]: string | undefined;
+  };
+  top_performers?: {
+    strength?: Array<{
+      name: string;
+      first_value: number;
+      last_value: number;
+      change: number;
+      change_percent: number;
+    }>;
+    volume?: Array<{
+      name: string;
+      first_value: number;
+      last_value: number;
+      change: number;
+      change_percent: number;
+    }>;
+    frequency?: Array<{
+      name: string;
+      first_value: number;
+      last_value: number;
+      change: number;
+      change_percent: number;
+    }>;
+  };
+  consistency_metrics?: {
+    score: number;
+    streak: number;
+    avg_gap: number;
+  };
+}
 
 export type Workout = {
   id: string;

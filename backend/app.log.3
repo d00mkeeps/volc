@@ -1,11 +1,4 @@
-2025-04-15 16:04:00,950 - app.core.supabase.client - INFO - Sending bundle-conversation link request: bundle_id=4ca9f0be-17fe-496e-8cd8-22e45cc3a34b, conversation_id=d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,013 - app.core.supabase.client - INFO - ✅ Successfully linked bundle 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b to conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,014 - app.services.workout_analysis_service - INFO - ✅ Bundle 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b successfully linked to conversation d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
+2025-05-04 23:27:43,359 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
 
 1. Always check the available_data.workout_metrics in your context first
 2. Prioritize discussing the most significant insights from the metrics:
@@ -35,63 +28,27 @@ Available workout data:
   "available_data": {
     "query": "Analyze my \"Monday chest workout\" workout and show how it relates to my previous workouts. Look for patterns and progress.",
     "date_range": {
-      "start": "2025-01-18T22:00:00+00:00",
-      "end": "2025-04-15T15:03:51.396000+00:00"
+      "start": "2025-02-06T18:55:00.616020+00:00",
+      "end": "2025-05-04T22:27:35.423000+00:00"
     },
     "workout_metrics": {
       "exercise_progression": {
         "Face Pull": {
-          "occurrences": 40,
-          "first_date": "2025-01-27T22:02:04.023375+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
+          "occurrences": 102,
+          "first_date": "2025-02-06T22:02:04.023375+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
-            "start": 18.0,
+            "start": 18.5,
             "current": 25,
-            "change": 7.0,
-            "change_percent": 38.9
-          },
-          "volume_trend": "stable"
-        },
-        "Pull-ups": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 84,
-            "current": 88,
-            "change": 4,
-            "change_percent": 4.8
-          },
-          "volume_trend": "stable"
-        },
-        "Bench press": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 85,
-            "current": 90,
-            "change": 5,
-            "change_percent": 5.9
-          },
-          "volume_trend": "stable"
-        },
-        "Ez bar curl": {
-          "occurrences": 10,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
-          "weight_progression": {
-            "start": 31.5,
-            "current": 34,
-            "change": 2.5,
-            "change_percent": 7.9
+            "change": 6.5,
+            "change_percent": 35.1
           },
           "volume_trend": "stable"
         },
         "Dips": {
-          "occurrences": 14,
+          "occurrences": 24,
           "first_date": "2025-02-06T18:55:00.61602+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
             "start": 10,
             "current": 95,
@@ -100,10 +57,10 @@ Available workout data:
           },
           "volume_trend": "stable"
         },
-        "Seated hammer curl": {
-          "occurrences": 10,
+        "Hammer Curl": {
+          "occurrences": 20,
           "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
             "start": 17.5,
             "current": 17.5,
@@ -112,10 +69,10 @@ Available workout data:
           },
           "volume_trend": "stable"
         },
-        "Cable lateral raise": {
-          "occurrences": 10,
+        "Cable Lateral Raise": {
+          "occurrences": 20,
           "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
             "start": 7.5,
             "current": 7.5,
@@ -124,10 +81,22 @@ Available workout data:
           },
           "volume_trend": "stable"
         },
-        "Cable flye": {
-          "occurrences": 10,
+        "Pull-Up": {
+          "occurrences": 20,
           "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-04-15T15:03:51.396+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
+          "weight_progression": {
+            "start": 84,
+            "current": 88,
+            "change": 4,
+            "change_percent": 4.8
+          },
+          "volume_trend": "stable"
+        },
+        "Cable Fly": {
+          "occurrences": 20,
+          "first_date": "2025-04-07T15:18:47.869+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
             "start": 15,
             "current": 15,
@@ -136,39 +105,27 @@ Available workout data:
           },
           "volume_trend": "stable"
         },
-        "Face pull": {
-          "occurrences": 3,
-          "first_date": "2025-04-15T14:11:42.091+00:00",
-          "last_date": "2025-04-15T14:57:01.159+00:00",
+        "Arnold Press": {
+          "occurrences": 10,
+          "first_date": "2025-04-29T09:07:12.007+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
-            "start": 35,
-            "current": 35,
+            "start": 34,
+            "current": 34,
             "change": 0,
             "change_percent": 0.0
           },
           "volume_trend": "stable"
         },
-        "Face Pulls": {
-          "occurrences": 52,
-          "first_date": "2025-02-28T19:01:53.53569+00:00",
-          "last_date": "2025-04-15T12:10:17.312+00:00",
+        "45-Degree Back Extension": {
+          "occurrences": 10,
+          "first_date": "2025-04-18T17:39:52.743+00:00",
+          "last_date": "2025-05-04T22:27:35.423+00:00",
           "weight_progression": {
-            "start": 26.4,
-            "current": 26,
-            "change": -0.4,
-            "change_percent": -1.5
-          },
-          "volume_trend": "stable"
-        },
-        "Bench Press": {
-          "occurrences": 37,
-          "first_date": "2025-01-18T22:00:00+00:00",
-          "last_date": "2025-04-11T18:53:26.254+00:00",
-          "weight_progression": {
-            "start": 90,
-            "current": 110,
-            "change": 20,
-            "change_percent": 22.2
+            "start": 0,
+            "current": 90,
+            "change": 0,
+            "change_percent": 0
           },
           "volume_trend": "stable"
         }
@@ -176,19 +133,19 @@ Available workout data:
       "strength_progression": {},
       "most_improved_exercises": [],
       "workout_frequency": {
-        "total_workouts": 102,
-        "first_workout": "2025-01-18",
-        "last_workout": "2025-04-15",
-        "total_days": 87,
+        "total_workouts": 105,
+        "first_workout": "2025-02-06",
+        "last_workout": "2025-05-04",
+        "total_days": 88,
         "avg_days_between": 0.7,
-        "workouts_per_week": 10.2,
+        "workouts_per_week": 10.1,
         "consistency_score": {
           "score": 0,
-          "streak": 9
+          "streak": 5
         }
       }
     },
-    "total_workouts": 102,
+    "total_workouts": 105,
     "correlation_analysis": []
   }
 }
@@ -200,7 +157,7 @@ Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
 
 CONSISTENCY METRICS:
 - Score: 0/100
-- Current streak: 9 workouts
+- Current streak: 5 workouts
 - Average frequency: Every 0.7 days
 
 TOP PERFORMERS:
@@ -208,19 +165,46 @@ TOP PERFORMERS:
 - Volume increases: No significant volume increases detected
 - Most frequent exercises: Not enough data
 
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-05-04 23:27:43,361 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - 
+2025-05-04 23:27:43,361 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
+2025-05-04 23:27:43,361 - app.services.chains.base_conversation_chain - INFO - 
 Message 3 (HumanMessage):
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-04-15 16:04:02,015 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-04-15 16:04:08,715 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Conversation ID: d7c521aa-1965-4fb3-b254-c0b755d93fd4
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Bundle ID: 4ca9f0be-17fe-496e-8cd8-22e45cc3a34b
-2025-04-15 16:04:08,716 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 34
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
-2025-04-15 16:04:08,717 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-05-04 23:27:43,361 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
+
+Several visualizations have been generated for this workout data and are available in the sidebar. Available charts include: strength_progress, volume_progress, weekly_frequency. You can reference these visualizations in your analysis and direct the user to check them in the sidebar for more detailed insights.
+2025-05-04 23:27:43,361 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-05-04 23:27:49,369 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - Conversation ID: 3b45c45d-28f1-479e-a967-33787e236b9a
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - Bundle ID: 54a5793f-5979-45e5-a3b1-ac66880e96e2
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 39
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
+2025-05-04 23:27:49,370 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - # Analysis of Your Monday Chest Workout
+
+Looking at your workout data from February to May, I've identified some key patterns:
+
+## Impressive Progress
+- **Dips**: Most dramatic improvement with weight increasing by 85kg (850%) while maintaining stable volume
+- **Face Pull**: Consistent performer with 35.1% weight increase (18.5kg → 25kg) across 102 sessions
+
+## Workout Frequency
+- Extremely high frequency at 10.1 workouts per week
+- Very short recovery periods (average 0.7 days between workouts)
+- Current streak of 5 consecutive workouts
+
+## Recent Additions
+- You've added exercises like Arnold Press and 45-Degree Back Extension in late April
+- Cable Fly has been a consistent part of your chest routine but weight has remained stable at 15kg
+
+Your consistency with Face Pulls suggests good attention to shoulder health alongside your chest training. Consider focusing on progressive overload for Cable Fly to complement your impressive gains on Dips.
+
+Check the strength and volume progress charts in the sidebar for a visual representation of your progress patterns.
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - ----------------------------------------
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - Response length: 1076 characters
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
+2025-05-04 23:27:49,371 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-674518c0-0db8-4a51-97c4-c66aedaeff05', 'volume_progress': 'https://quickchart.io/chart/render/sf-aa928658-c3bb-467d-8fb8-b24a42cd8190', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-911fad60-7386-44b9-9985-075b9afd6550'}

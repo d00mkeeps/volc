@@ -545,7 +545,13 @@ class WorkoutAnalysisService:
                 bundle.chart_urls = chart_urls
                 # For backward compatibility
                 bundle.chart_url = chart_urls.get("strength_progress")
-            
+                    # Enhance message with chart information
+                chart_types = ", ".join(chart_urls.keys())
+                charts_info = f"Several visualizations have been generated for this workout data and are available in the sidebar. Available charts include: {chart_types}. You can reference these visualizations in your analysis and direct the user to check them in the sidebar for more detailed insights."
+                enhanced_message = f"{message}\n\n{charts_info}"
+                message = enhanced_message
+            else:
+                logger.info("No charts were generated")
             # First yield the data bundle WITH charts
             yield {
                 "type": "workout_data_bundle", 

@@ -1,48 +1,28 @@
-2025-04-18 18:34:32,130 - app.services.workout_analysis_service - INFO - Conversation ID: 29763840-e207-49ff-8f0a-74a7dff1ba6a
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Bundle ID: 13101f51-7c42-422b-809c-f5094d6f42c5
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 15
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - I don't have sufficient data to provide a meaningful analysis of your "Baloney" workout. According to your workout metrics:
-
-- You've only completed 1 total workout (on April 18, 2025)
-- Your consistency score is 0/100 with no current streak
-- There's not enough data to show exercise progression, strength gains, or volume increases
-
-Once you've completed more workouts, I'll be able to identify patterns, track your progress, and provide meaningful comparisons between your "Baloney" workout and others. Consider logging a few more sessions so I can generate insights on your performance trends.
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Response length: 597 characters
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-bffd2c6e-334d-48ef-97f8-510c1f4ee8dd', 'volume_progress': 'https://quickchart.io/chart/render/sf-740609d4-cf82-40c5-aa55-de958c00d7b9', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-65520f88-beea-4563-90cf-8ed5391069c5'}
-2025-04-18 18:34:32,132 - app.services.workout_analysis_service - INFO - Top performers: strength=[] volume=[] frequency=[]
-2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=0 avg_gap=0.0
-2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
-2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - {"bundle_id": "13101f51-7c42-422b-809c-f5094d6f42c5", "metadata": {"total_workouts": 1, "total_exercises": 1, "date_range": {"latest": "2025-04-18T17:34:20.045000+00:00", "earliest": "2025-04-18T17:34:20.045000+00:00"}, "exercises_included": ["Weighted dip"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-04-18T17:34:20.045+00:00", "earliest": "2025-04-18T17:34:20.045+00:00"}, "total_workouts": 1, "total_exercises": 1, "exercises_included": ["Weighted dip"]}, "workouts": [{"id": "58dd6378-de15-4daf-bb6c-d505d53c3141", "date": "2025-04-18T17:34:20.045+00:00", "name": "Baloney", "notes": "[\"\"]", "exercises": [{"id": "80f6d7b5-dd83-412f-8bcd-fd71645edb02", "name": "Weighted dip", "sets": [{"rpe": null, "reps": null, "weight": null, "distance": null, "duration": null, "set_number": 1}], "order_index": 0, "weight_unit": "kg", "distance_unit": "m"}]}], "metrics": {"exercise_progression": {}, "strength_progression": {}, "most_improved_exercises": [], "workout_frequency": {"to... [truncated]
-2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - Complete bundle size: 2047 bytes
-2025-04-18 18:34:32,133 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-04-29 08:57:08,596 - app - INFO - Logging has been set up
-2025-04-29 08:57:08,597 - app.main - INFO - Application starting
-2025-04-29 09:24:56,688 - app - INFO - Logging has been set up
-2025-04-29 09:24:56,691 - app.main - INFO - Application starting
-2025-05-03 22:49:40,003 - app - INFO - Logging has been set up
-2025-05-03 22:49:40,004 - app.main - INFO - Application starting
-2025-05-03 23:38:02,036 - app - INFO - Logging has been set up
-2025-05-03 23:38:02,036 - app.main - INFO - Application starting
-2025-05-03 23:39:56,193 - app - INFO - Logging has been set up
-2025-05-03 23:39:56,194 - app.main - INFO - Application starting
-2025-05-03 23:40:10,885 - app - INFO - Logging has been set up
-2025-05-03 23:40:10,886 - app.main - INFO - Application starting
-2025-05-03 23:42:48,368 - app - INFO - Logging has been set up
-2025-05-03 23:42:48,368 - app.main - INFO - Application starting
-2025-05-03 23:43:09,801 - app - INFO - Logging has been set up
-2025-05-03 23:43:09,801 - app.main - INFO - Application starting
-2025-05-03 23:55:17,234 - app - INFO - Logging has been set up
-2025-05-03 23:55:17,234 - app.main - INFO - Application starting
-2025-05-03 23:58:19,192 - app - INFO - Logging has been set up
-2025-05-03 23:58:19,192 - app.main - INFO - Application starting
-2025-05-03 23:59:23,955 - app - INFO - Logging has been set up
-2025-05-03 23:59:23,955 - app.main - INFO - Application starting
-2025-05-04 13:06:57,292 - app - INFO - Logging has been set up
-2025-05-04 13:06:57,292 - app.main - INFO - Application starting
+2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-83f4c435-a726-49a8-b9e4-d93774d71062', 'volume_progress': 'https://quickchart.io/chart/render/sf-dd406c7e-4a57-4eb1-bdfd-0e548940c83e', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-5ef1d4a3-4806-4282-90fc-030c065fb94d'}
+2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.84, last_value=34.92, change=9.08, change_percent=35.1), TopPerformer(name='Pull-Up', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=222.0, last_value=900.0, change=678.0, change_percent=305.4), TopPerformer(name='Pull-Up', first_value=252.0, last_value=264.0, change=12.0, change_percent=4.8)] frequency=[TopPerformer(name='Face Pull', first_value=103.0, last_value=103.0, change=0.0, change_percent=0.0), TopPerformer(name='Dips', first_value=25.0, last_value=25.0, change=0.0, change_percent=0.0), TopPerformer(name='Hammer Curl', first_value=21.0, last_value=21.0, change=0.0, change_percent=0.0)]
+2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=6 avg_gap=0.7
+2025-05-04 23:29:38,616 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - {"bundle_id": "b844387a-986a-49be-ba24-e4bec3d6b737", "metadata": {"total_workouts": 106, "total_exercises": 234, "date_range": {"latest": "2025-05-04T22:29:20.215000+00:00", "earliest": "2025-02-06T18:55:00.616020+00:00"}, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-05-04T22:29:20.215+00:00", "earliest": "2025-02-06T18:55:00.61602+00:00"}, "total_workouts": 106, "total_exercises": 234, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workouts": [{"id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3", "date": "2025-03-28T18:52:58.678+00:00", "name": "Week 4 - Workout B", "notes": "[\"\"]", "exercises": [{"sets": [{"rpe": 8.5, "reps": 12, "weight": 21, "distance": null, "duration": null, "set_number": 1}], "raw_name": "Face Pul... [truncated]
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - Complete bundle size: 125670 bytes
+2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - ================================================================================
+2025-05-04 23:45:04,651 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:34:57,906 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:03,961 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:03,970 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:04,009 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:04,193 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-05-05 01:35:04,299 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:04,299 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:10,752 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:11,929 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:13,257 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-05 01:35:13,263 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,308 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,499 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-05 01:35:13,603 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-05-05 01:35:13,604 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-05-05 01:35:13,605 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-05 01:35:13,605 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-05 15:48:54,301 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c

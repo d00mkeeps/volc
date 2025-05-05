@@ -1,4 +1,3 @@
-// services/websocket/HandlerManager.ts
 import { WebSocketMessage } from '@/types/websocket';
 import { MessageContextHandlers, DataContextHandlers } from './GlobalWebsocketService';
 
@@ -108,6 +107,12 @@ class HandlerManager {
           console.error('HandlerManager: WebSocket error:', message.error);
           messageHandlerSets.forEach(handlers => handlers.handleLoadingDone());
           break;
+
+          case 'workout_data_bundle':
+            // Route workout data bundles to data handlers
+            dataHandlerSets.forEach(handlers => 
+              handlers.handleSignal('workout_data_bundle', message.data));
+            break;
           
         case 'signal':
           // Type safety for signal data
