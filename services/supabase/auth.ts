@@ -1,4 +1,3 @@
-// services/supabase/auth.ts
 import { supabase } from '@/lib/supabaseClient'
 import { AuthError, SignInCredentials, SignUpCredentials } from '@/types/auth'
 import { AuthError as SupabaseAuthError } from '@supabase/supabase-js'
@@ -53,6 +52,20 @@ export const authService = {
         message: authError.message || 'Sign out failed',
         status: authError.status || 500
       }
+    }
+  },
+  getSession: async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return data.session; // Return just the session object directly
+    } catch (error) {
+      console.error('Get session error:', error);
+      const authError = error as SupabaseAuthError;
+      throw {
+        message: authError.message || 'Failed to get session',
+        status: authError.status || 500
+      };
     }
   },
   

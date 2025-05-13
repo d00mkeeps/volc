@@ -340,3 +340,59 @@ class WorkoutService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting templates: {str(e)}")
             return await self.handle_error("get_templates", e)
+        
+    async def get_user_workouts(self, user_id: str) -> List[Dict[str, Any]]:
+        """
+        Get all workouts for a user (not filtered by conversation)
+        """
+        try:
+            logger.info(f"Getting all workouts for user: {user_id}")
+            
+            # 1. Fetch all workouts first
+            workout_result = self.supabase.table("workouts") \
+                .select("*") \
+                .eq("user_id", user_id) \
+                .order("created_at", desc=True) \
+                .execute()
+                
+            if hasattr(workout_result, 'error') and workout_result.error:
+                raise Exception(f"Failed to fetch workouts: {workout_result.error.message}")
+                
+            workouts = workout_result.data or []
+            
+            if not workouts:
+                logger.info(f"No workouts found for user: {user_id}")
+                return []
+                
+            # 2. Extract all workout IDs
+            workout_ids = [workout["id"] for workout in workouts]
+            
+            # 3. Fetch ALL exercises for these workouts in a single query
+            exercise_result = self.supabase.table("workout_exercises") \
+                .select("*") \
+                .in_("workout_id", workout_ids) \
+                .execute()
+                
+            if hasattr(exercise_result, 'error') and exercise_result.error:
+                logger.warning(f"Error fetching exercises: {exercise_result.error.message}")
+                exercises = []
+            else:
+                exercises = exercise_result.data or []
+            
+            # 4. Group exercises by workout_id
+            exercise_map = {}
+            for exercise in exercises:
+                workout_id = exercise["workout_id"]
+                if workout_id not in exercise_map:
+                    exercise_map[workout_id] = []
+                exercise_map[workout_id].append(exercise)
+            
+            # 5. Attach exercises to their respective workouts
+            for workout in workouts:
+                workout["exercises"] = exercise_map.get(workout["id"], [])
+            
+            logger.info(f"Retrieved {len(workouts)} workouts with {len(exercises)} exercises for user: {user_id}")
+            return workouts
+        except Exception as e:
+            logger.error(f"Error in get_user_workouts: {str(e)}")
+            return await self.handle_error("get_user_workouts", e)

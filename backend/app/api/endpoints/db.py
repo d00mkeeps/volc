@@ -135,7 +135,31 @@ async def create_workout(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+# In app/api/endpoints/db.py
+# Place this BEFORE the /workouts/{workout_id} route
 
+@router.get("/workouts/user")
+async def get_user_workouts(
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Get all workouts for a user (not filtered by conversation)
+    """
+    try:
+        logger.info(f"API request to get all workouts for user: {user.id}")
+        
+        workout_service = WorkoutService()
+        result = await workout_service.get_user_workouts(user.id)
+        
+        logger.info(f"Retrieved {len(result)} workouts for user: {user.id}")
+        return result
+    except Exception as e:
+        logger.error(f"Error getting user workouts: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.get("/workouts/{workout_id}")
 async def get_workout(
     workout_id: str,
@@ -188,7 +212,32 @@ async def get_workouts_by_conversation(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+# Add these to your existing FastAPI router
 
+@router.post("/workouts/template")
+async def save_workout_as_template(
+    request: Request,
+
+    user: Dict[str, Any] = Depends(get_current_user)
+,
+    workout: Dict[str, Any] = Body(...),
+):
+    """
+    Save a workout as a template
+    """
+    try:
+        logger.info(f"API request to save workout as template: {workout.get('id')}")
+        
+        workout_service = WorkoutService()
+        result = await workout_service.save_as_template(user.id, workout)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error saving workout as template: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.delete("/workouts/{workout_id}")
 async def delete_workout(
     workout_id: str,

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
-import { WorkoutService } from "@/services/supabase/workout";
+import { workoutService } from "@/services/supabase/workout"; // Import the singleton
 import { CompleteWorkout, WorkoutInput } from "@/types/workout";
 
 interface WorkoutContextType {
@@ -26,7 +26,8 @@ interface WorkoutContextType {
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
-const workoutService = new WorkoutService();
+// Remove this line as we're using the singleton export
+// const workoutService = new WorkoutService();
 
 export function WorkoutProvider({ children }: { children: ReactNode }) {
   const [workouts, setWorkouts] = useState<CompleteWorkout[]>([]);

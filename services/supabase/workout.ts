@@ -1,4 +1,5 @@
 // services/supabase/workout.ts
+
 import { BaseService } from './base';
 import { WorkoutInput, CompleteWorkout, WorkoutWithConversation } from '@/types/workout';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api/apiClient';
@@ -22,7 +23,6 @@ export class WorkoutService extends BaseService {
       
       console.log("[WorkoutService] Workout created successfully with ID:", data.id);
       
-      // Simply return the data directly
       return data;
     } catch (error) {
       console.error('[WorkoutService] Error creating workout:', error);
@@ -42,10 +42,28 @@ export class WorkoutService extends BaseService {
       
       console.log(`[WorkoutService] Successfully retrieved workout: ${workoutId}`);
       
-      // Simply return the data directly
       return data;
     } catch (error) {
       console.error(`[WorkoutService] Error fetching workout ${workoutId}:`, error);
+      return this.handleError(error);
+    }
+  }
+  
+  /**
+   * Get all workouts for a user
+   */
+  async getUserWorkouts(userId: string): Promise<CompleteWorkout[]> {
+    try {
+      console.log(`[WorkoutService] Getting all workouts for user: ${userId}`);
+      
+      // Call the endpoint to get all user workouts
+      const data = await apiGet<CompleteWorkout[]>('/db/workouts/user');
+      
+      console.log(`[WorkoutService] Retrieved ${data.length} workouts for user: ${userId}`);
+      
+      return data;
+    } catch (error) {
+      console.error(`[WorkoutService] Error fetching user workouts:`, error);
       return this.handleError(error);
     }
   }
@@ -62,7 +80,6 @@ export class WorkoutService extends BaseService {
       
       console.log(`[WorkoutService] Retrieved ${data.length} workouts for conversation: ${conversationId}`);
       
-      // Simply return the data directly
       return data;
     } catch (error) {
       console.error(`[WorkoutService] Error fetching workouts for conversation ${conversationId}:`, error);
@@ -98,8 +115,6 @@ export class WorkoutService extends BaseService {
       await apiPut(`/db/workouts/template/${templateId}`, {});
       
       console.log(`[WorkoutService] Successfully updated template usage for workout: ${templateId}`);
-      
-      // No value needs to be returned for this operation
     } catch (error) {
       console.error(`[WorkoutService] Error updating template usage:`, error);
       return this.handleError(error);
@@ -118,10 +133,28 @@ export class WorkoutService extends BaseService {
       
       console.log(`[WorkoutService] Retrieved ${data.length} templates for user: ${userId}`);
       
-      // Simply return the data directly
       return data;
     } catch (error) {
       console.error(`[WorkoutService] Error getting templates:`, error);
+      return this.handleError(error);
+    }
+  }
+  
+  /**
+   * Save a workout as a template
+   */
+  async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
+    try {
+      console.log(`[WorkoutService] Saving workout as template: ${workout.id}`);
+      
+      // Call the new endpoint to save a workout as a template
+      const data = await apiPost<CompleteWorkout>('/db/workouts/template', workout);
+      
+      console.log(`[WorkoutService] Successfully saved workout as template: ${data.id}`);
+      
+      return data;
+    } catch (error) {
+      console.error(`[WorkoutService] Error saving workout as template:`, error);
       return this.handleError(error);
     }
   }
@@ -137,8 +170,6 @@ export class WorkoutService extends BaseService {
       await apiDelete(`/db/workouts/${workoutId}`);
       
       console.log(`[WorkoutService] Successfully deleted workout: ${workoutId}`);
-      
-      // No return value needed
     } catch (error) {
       console.error(`[WorkoutService] Error deleting workout:`, error);
       return this.handleError(error);
