@@ -4,7 +4,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from ...services.onboarding_service import OnboardingService
-from ...services.conversation_service import ConversationService
+from ...services.llm_conversation_service import ConversationService
 from ...core.supabase.client import SupabaseClient
 from ...services.workout_analysis_service import WorkoutAnalysisService
 

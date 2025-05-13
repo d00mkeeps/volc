@@ -32,13 +32,13 @@ class WorkoutService(BaseDBService):
             
             logger.info(f"Inserting workout with data: {workout_insert_data.get('name')}, {workout_insert_data.get('conversation_id')}")
             
-            # Insert workout
-            result = await self.supabase.db.table("workouts") \
+            # Insert workout - REMOVED await
+            result = self.supabase.table("workouts") \
                 .insert(workout_insert_data) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to create workout: {result.error.message}")
+            if not hasattr(result, 'data') or not result.data:
+                raise Exception("Failed to create workout: No data returned")
                 
             workout_id = result.data[0]["id"]
             logger.info(f"Workout created with ID: {workout_id}")
@@ -55,8 +55,8 @@ class WorkoutService(BaseDBService):
                     
                     logger.info(f"Creating exercise {index + 1}/{len(workout_data['exercises'])}: {exercise_name}")
                     
-                    # Insert exercise
-                    exercise_result = await self.supabase.db.table("workout_exercises") \
+                    # Insert exercise - REMOVED await
+                    exercise_result = self.supabase.table("workout_exercises") \
                         .insert({
                             "workout_id": workout_id,
                             "name": exercise_name,
@@ -67,8 +67,8 @@ class WorkoutService(BaseDBService):
                         }) \
                         .execute()
                         
-                    if exercise_result.error:
-                        raise Exception(f"Failed to create exercise: {exercise_result.error.message}")
+                    if not hasattr(exercise_result, 'data') or not exercise_result.data:
+                        raise Exception(f"Failed to create exercise: No data returned")
                         
                     exercise_id = exercise_result.data[0]["id"]
                     logger.info(f"Exercise created: {exercise_name} with ID: {exercise_id}")
@@ -78,7 +78,8 @@ class WorkoutService(BaseDBService):
                         sets = exercise["set_data"]["sets"]
                         
                         for set_index, set_data in enumerate(sets):
-                            set_result = await self.supabase.db.table("workout_exercise_sets") \
+                            # REMOVED await
+                            set_result = self.supabase.table("workout_exercise_sets") \
                                 .insert({
                                     "exercise_id": exercise_id,
                                     "set_number": set_index + 1,
@@ -90,16 +91,16 @@ class WorkoutService(BaseDBService):
                                 }) \
                                 .execute()
                                 
-                            if set_result.error:
-                                raise Exception(f"Failed to create set: {set_result.error.message}")
+                            if not hasattr(set_result, 'data') or not set_result.data:
+                                raise Exception(f"Failed to create set: No data returned")
             
-            # Fetch the complete workout
-            complete_result = await self.supabase.db.table("workouts") \
+            # Fetch the complete workout - REMOVED await
+            complete_result = self.supabase.table("workouts") \
                 .select("*, workout_exercises(*, workout_exercise_sets(*))") \
                 .eq("id", workout_id) \
                 .execute()
                 
-            if complete_result.error or not complete_result.data:
+            if not hasattr(complete_result, 'data') or not complete_result.data:
                 raise Exception("Failed to fetch created workout")
                 
             # Format the response
@@ -129,15 +130,13 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting workout: {workout_id}")
             
-            result = await self.supabase.db.table("workouts") \
+            # REMOVED await
+            result = self.supabase.table("workouts") \
                 .select("*, workout_exercises(*, workout_exercise_sets(*))") \
                 .eq("id", workout_id) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to fetch workout: {result.error.message}")
-                
-            if not result.data:
+            if not hasattr(result, 'data') or not result.data:
                 raise Exception(f"Workout not found: {workout_id}")
                 
             # Format the response
@@ -167,17 +166,18 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting workouts for conversation: {conversation_id}")
             
-            result = await self.supabase.db.table("workouts") \
+            # REMOVED await
+            result = self.supabase.table("workouts") \
                 .select("*, workout_exercises(*, workout_exercise_sets(*))") \
                 .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
                 .order("created_at", desc=True) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to fetch workouts: {result.error.message}")
+            if not hasattr(result, 'data'):
+                raise Exception("Failed to fetch workouts: No data returned")
                 
-            workouts = result.data
+            workouts = result.data or []
             
             # Format each workout
             formatted_workouts = []
@@ -207,35 +207,35 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Deleting workout: {workout_id}")
             
-            # Get all exercise IDs for this workout
-            exercise_result = await self.supabase.db.table("workout_exercises") \
+            # Get all exercise IDs for this workout - REMOVED await
+            exercise_result = self.supabase.table("workout_exercises") \
                 .select("id") \
                 .eq("workout_id", workout_id) \
                 .execute()
                 
-            if not exercise_result.error and exercise_result.data:
+            if hasattr(exercise_result, 'data') and exercise_result.data:
                 exercise_ids = [e["id"] for e in exercise_result.data]
                 
-                # Delete all sets first
-                await self.supabase.db.table("workout_exercise_sets") \
+                # Delete all sets first - REMOVED await
+                self.supabase.table("workout_exercise_sets") \
                     .delete() \
                     .in_("exercise_id", exercise_ids) \
                     .execute()
                 
-                # Delete all exercises
-                await self.supabase.db.table("workout_exercises") \
+                # Delete all exercises - REMOVED await
+                self.supabase.table("workout_exercises") \
                     .delete() \
                     .eq("workout_id", workout_id) \
                     .execute()
             
-            # Delete the workout
-            result = await self.supabase.db.table("workouts") \
+            # Delete the workout - REMOVED await
+            result = self.supabase.table("workouts") \
                 .delete() \
                 .eq("id", workout_id) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to delete workout: {result.error.message}")
+            if not hasattr(result, 'data'):
+                raise Exception("Failed to delete workout: No data returned")
                 
             logger.info(f"Successfully deleted workout: {workout_id}")
             return {"success": True}
@@ -251,15 +251,15 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Deleting all workouts for conversation: {conversation_id}")
             
-            # Get workout IDs for this conversation
-            workout_result = await self.supabase.db.table("workouts") \
+            # Get workout IDs for this conversation - REMOVED await
+            workout_result = self.supabase.table("workouts") \
                 .select("id") \
                 .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
                 .execute()
                 
-            if workout_result.error:
-                raise Exception(f"Failed to fetch workouts for deletion: {workout_result.error.message}")
+            if not hasattr(workout_result, 'data'):
+                raise Exception("Failed to fetch workouts for deletion: No data returned")
                 
             if not workout_result.data:
                 logger.info(f"No workouts found to delete for conversation: {conversation_id}")
@@ -286,13 +286,14 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Updating template usage for workout: {template_id}")
             
-            result = await self.supabase.db.table("workouts") \
+            # REMOVED await
+            result = self.supabase.table("workouts") \
                 .update({"used_as_template": datetime.utcnow().isoformat()}) \
                 .eq("id", template_id) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to update template usage: {result.error.message}")
+            if not hasattr(result, 'data'):
+                raise Exception("Failed to update template usage: No data returned")
                 
             logger.info(f"Successfully updated template usage for workout: {template_id}")
             return {"success": True, "id": template_id}
@@ -308,17 +309,18 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting workout templates for user: {user_id}")
             
-            result = await self.supabase.db.table("workouts") \
+            # REMOVED await
+            result = self.supabase.table("workouts") \
                 .select("*, workout_exercises(*, workout_exercise_sets(*))") \
                 .eq("user_id", user_id) \
                 .order("used_as_template", desc=True) \
                 .limit(50) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to fetch templates: {result.error.message}")
+            if not hasattr(result, 'data'):
+                raise Exception("Failed to fetch templates: No data returned")
                 
-            templates = result.data
+            templates = result.data or []
             
             # Format each template
             formatted_templates = []

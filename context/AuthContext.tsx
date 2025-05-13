@@ -1,7 +1,14 @@
+// context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect } from "react";
-import { AuthState, AuthError, SignInCredentials } from "../types/auth";
+import {
+  AuthState,
+  AuthError,
+  SignInCredentials,
+  SignUpCredentials,
+} from "../types/auth";
 import { authService } from "../services/supabase/auth";
 import { supabase } from "@/lib/supabaseClient";
+import { Session, User } from "@supabase/supabase-js";
 import {
   getWebSocketService,
   connectBase,
@@ -28,33 +35,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Initialize auth state
-    authService
-      .getSession()
-      .then((session) => {
-        setState((prev) => ({
-          ...prev,
+    const initializeAuthState = async () => {
+      try {
+        // Get the session directly from Supabase
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        setState({
           session,
           user: session?.user ?? null,
           loading: false,
-        }));
+        });
 
-        // Connect WebSocket when user is authenticated
+        // Connect WebSocket if user is logged in
         if (session?.user) {
           connectBase(session.user.id);
         }
-      })
-      .catch((err) => setError(err));
+      } catch (err) {
+        console.error("Auth initialization error:", err);
+        setState((prev) => ({ ...prev, loading: false }));
+      }
+    };
+
+    initializeAuthState();
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      setState((prev) => ({
-        ...prev,
+      console.log("Auth state changed:", event);
+
+      setState({
         session,
         user: session?.user ?? null,
         loading: false,
-      }));
+      });
 
       // Handle WebSocket connections based on auth events
       if (event === "SIGNED_IN" && session?.user) {
@@ -74,43 +90,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     ...state,
     error,
     signIn: async (credentials: SignInCredentials) => {
-      // Add proper type here
       try {
-        console.log("Starting sign-in process...");
         const result = await authService.signIn(credentials);
-        console.log("Sign-in API call successful:", result);
-
-        // IMPORTANT: Manually update the state after sign-in
-        if (result && result.session) {
-          console.log("Updating auth state with new session");
-
-          setState({
-            session: result.session,
-            user: result.user,
-            loading: false,
-          });
-
-          // Connect WebSocket if needed
-          if (result.user) {
-            connectBase(result.user.id);
-          }
-        } else {
-          console.log("Sign-in successful but no session returned:", result);
-        }
-
         return result;
-      } catch (error) {
-        console.error("Sign-in failed:", error);
-        setError(error as AuthError); // Type cast the error
-        throw error;
+      } catch (err) {
+        setError(err as AuthError);
+        throw err;
       }
     },
-    signUp: authService.signUp,
-    signOut: async () => {
-      cleanup(); // Clean up WebSocket connections first
-      return authService.signOut();
+    signUp: async (credentials: SignUpCredentials) => {
+      try {
+        const result = await authService.signUp(credentials);
+        return result;
+      } catch (err) {
+        setError(err as AuthError);
+        throw err;
+      }
     },
-    resetPassword: authService.resetPassword,
+    signOut: async () => {
+      try {
+        await authService.signOut();
+      } catch (err) {
+        setError(err as AuthError);
+        throw err;
+      }
+    },
+    resetPassword: async (email: string) => {
+      try {
+        await authService.resetPassword(email);
+      } catch (err) {
+        setError(err as AuthError);
+        throw err;
+      }
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

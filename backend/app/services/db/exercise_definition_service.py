@@ -16,12 +16,12 @@ class ExerciseDefinitionService(BaseDBService):
         try:
             logger.info("Fetching all exercise definitions")
             
-            result = await self.supabase.db.table("exercise_definitions") \
+            result = self.supabase.table("exercise_definitions") \
                 .select("*") \
-                .order("standard_name", ascending=True) \
+                .order("standard_name") \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch exercise definitions: {result.error.message}")
                 
             definitions = result.data or []
@@ -48,11 +48,11 @@ class ExerciseDefinitionService(BaseDBService):
             if 'updated_at' in exercise_data:
                 del exercise_data['updated_at']
             
-            result = await self.supabase.db.table("exercise_definitions") \
+            result = self.supabase.table("exercise_definitions") \
                 .insert(exercise_data) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to create exercise definition: {result.error.message}")
                 
             if not result.data:
@@ -74,12 +74,12 @@ class ExerciseDefinitionService(BaseDBService):
         try:
             logger.info(f"Getting exercise definition: {definition_id}")
             
-            result = await self.supabase.db.table("exercise_definitions") \
+            result = self.supabase.table("exercise_definitions") \
                 .select("*") \
                 .eq("id", definition_id) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch exercise definition: {result.error.message}")
                 
             if not result.data or len(result.data) == 0:

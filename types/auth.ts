@@ -50,3 +50,5 @@ export interface AuthToggleProps {
     mode: 'signIn' | 'signUp'
     onToggle: () => void
   }
+
+export { Session }

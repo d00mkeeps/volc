@@ -1,214 +1,84 @@
-2025-05-04 23:29:32,318 - app.core.supabase.client - INFO - Sending bundle-conversation link request: bundle_id=b844387a-986a-49be-ba24-e4bec3d6b737, conversation_id=53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,671 - app.core.supabase.client - INFO - ✅ Successfully linked bundle b844387a-986a-49be-ba24-e4bec3d6b737 to conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,672 - app.services.workout_analysis_service - INFO - ✅ Bundle b844387a-986a-49be-ba24-e4bec3d6b737 successfully linked to conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-05-04 23:29:32,673 - app.services.chains.base_conversation_chain - INFO - Content: You are a workout analysis assistant with access to the user's workout data metrics. When responding:
-
-1. Always check the available_data.workout_metrics in your context first
-2. Prioritize discussing the most significant insights from the metrics:
-   - For exercise_progression: Focus on weight changes and volume trends
-   - For strength_progression: Highlight estimated 1RM improvements and monthly rates
-   - For workout_frequency: Mention consistency scores and workout patterns
-   - For most_improved_exercises: Always mention the top performers
-
-3. Be specific with numbers when discussing progress:
-   - "Your bench press 1RM has increased by 15kg (12%) over 3 months, at a rate of 5kg per month"
-   - "Your workout consistency score is 85/100, with an average of 3.2 workouts per week"
-   
-
-4. Interpret metrics in context:
-   - Explain what the numbers mean for the user's fitness journey
-   - Compare progress across different exercises when relevant
-   - Note any potential plateaus or exceptional improvements
-
-5. Acknowledge correlations when available by highlighting significant relationships
-
-Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": {
-    "query": "Analyze my \"Monday chest workout\" workout and show how it relates to my previous workouts. Look for patterns and progress.",
-    "date_range": {
-      "start": "2025-02-06T18:55:00.616020+00:00",
-      "end": "2025-05-04T22:29:20.215000+00:00"
-    },
-    "workout_metrics": {
-      "exercise_progression": {
-        "Face Pull": {
-          "occurrences": 103,
-          "first_date": "2025-02-06T22:02:04.023375+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 18.5,
-            "current": 25,
-            "change": 6.5,
-            "change_percent": 35.1
-          },
-          "volume_trend": "stable"
-        },
-        "Dips": {
-          "occurrences": 25,
-          "first_date": "2025-02-06T18:55:00.61602+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 10,
-            "current": 95,
-            "change": 85,
-            "change_percent": 850.0
-          },
-          "volume_trend": "stable"
-        },
-        "Hammer Curl": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 17.5,
-            "current": 17.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Cable Lateral Raise": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 7.5,
-            "current": 7.5,
-            "change": 0.0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Pull-Up": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 84,
-            "current": 88,
-            "change": 4,
-            "change_percent": 4.8
-          },
-          "volume_trend": "stable"
-        },
-        "Cable Fly": {
-          "occurrences": 21,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 15,
-            "current": 15,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "Arnold Press": {
-          "occurrences": 11,
-          "first_date": "2025-04-29T09:07:12.007+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 34,
-            "current": 34,
-            "change": 0,
-            "change_percent": 0.0
-          },
-          "volume_trend": "stable"
-        },
-        "45-Degree Back Extension": {
-          "occurrences": 11,
-          "first_date": "2025-04-18T17:39:52.743+00:00",
-          "last_date": "2025-05-04T22:29:20.215+00:00",
-          "weight_progression": {
-            "start": 0,
-            "current": 90,
-            "change": 0,
-            "change_percent": 0
-          },
-          "volume_trend": "stable"
-        }
-      },
-      "strength_progression": {},
-      "most_improved_exercises": [],
-      "workout_frequency": {
-        "total_workouts": 106,
-        "first_workout": "2025-02-06",
-        "last_workout": "2025-05-04",
-        "total_days": 88,
-        "avg_days_between": 0.7,
-        "workouts_per_week": 10.2,
-        "consistency_score": {
-          "score": 0,
-          "streak": 6
-        }
-      }
-    },
-    "total_workouts": 106,
-    "correlation_analysis": []
-  }
-}
-
-Visualizations and metrics:
-
-CHARTS:
-Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
-
-CONSISTENCY METRICS:
-- Score: 0/100
-- Current streak: 6 workouts
-- Average frequency: Every 0.7 days
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Not enough data
-
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my "Monday chest workout" workout and show how it relates to my previous workouts. Look for patterns and progress.
-
-Several visualizations have been generated for this workout data and are available in the sidebar. Available charts include: strength_progress, volume_progress, weekly_frequency. You can reference these visualizations in your analysis and direct the user to check them in the sidebar for more detailed insights.
-2025-05-04 23:29:32,674 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-05-04 23:29:38,611 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - WORKOUT ANALYSIS COMPLETE - SUMMARY:
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - User ID: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Conversation ID: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Bundle ID: b844387a-986a-49be-ba24-e4bec3d6b737
-2025-05-04 23:29:38,612 - app.services.workout_analysis_service - INFO - Bundle-Conversation Link: ✅ Established
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Total LLM response chunks: 41
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - COMPLETE AI RESPONSE:
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - # Monday Chest Workout Analysis
-
-Looking at your workout data from February to May 2025:
-
-## Key Progress Highlights:
-- **Dips**: Most impressive improvement with weight increasing by 85kg (850%) while maintaining stable volume
-- **Face Pull**: Consistent progression with a 6.5kg (35.1%) weight increase over 103 sessions
-
-## Workout Patterns:
-- You've been extremely active with 106 total workouts over 88 days
-- Your workout frequency averages 10.2 sessions per week (every 0.7 days)
-- Current workout streak: 6 consecutive sessions
-
-## Chest-Specific Exercises:
-- **Cable Fly**: Weight has remained consistent at 15kg across 21 sessions
-- **Dips**: Primary chest exercise showing substantial strength gains
-
-Your consistency is remarkable, though maintaining this frequency (10+ workouts weekly) may risk overtraining. The strength progress chart in the sidebar shows your impressive gains, particularly with Dips.
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - ----------------------------------------
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Response length: 918 characters
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - BUNDLE DETAILS:
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Metrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency']
+2025-05-13 16:10:30,559 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,562 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,618 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,618 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,619 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,671 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,671 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,731 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,731 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,788 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,789 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,789 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,790 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,792 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,851 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,851 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,909 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,910 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,006 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,007 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,088 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,089 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,144 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,144 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,238 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,240 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,241 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,305 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,305 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,368 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,369 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,448 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:31,449 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,449 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,450 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,506 - app.api.endpoints.db - INFO - API request to get conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,507 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,578 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,632 - app.api.endpoints.db - INFO - API request to get conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,632 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,704 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,705 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,705 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,768 - app.api.endpoints.db - INFO - API request to get conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,769 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,831 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:31,832 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,833 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,833 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 16:10:31,833 - app.main - INFO - Response status: 200
+2025-05-13 16:10:31,892 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:10:31,892 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 16:10:31,893 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 16:10:31,950 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 16:10:31,951 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 16:10:31,951 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:10:32,010 - app.services.db.conversation_service - INFO - Retrieved 6 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:10:32,011 - app.api.endpoints.db - INFO - Retrieved 6 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:10:32,012 - app.main - INFO - Response status: 200
+2025-05-13 16:10:32,096 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8/messages
+2025-05-13 16:10:32,155 - app.api.endpoints.db - INFO - API request to get messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,155 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,215 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,215 - app.services.db.conversation_service - INFO - Getting messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,277 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,277 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8/messages
+2025-05-13 16:10:32,277 - app.main - INFO - Request: GET /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8/messages
+2025-05-13 16:10:32,345 - app.api.endpoints.db - INFO - API request to get messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,345 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,399 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,400 - app.services.db.conversation_service - INFO - Getting messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,456 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,513 - app.api.endpoints.db - INFO - API request to get messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,513 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,579 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,579 - app.services.db.conversation_service - INFO - Getting messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,642 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,643 - app.main - INFO - Response status: 200
+2025-05-13 16:10:32,644 - app.main - INFO - Response status: 200
+2025-05-13 16:10:32,645 - app.main - INFO - Response status: 200
+2025-05-13 16:10:32,670 - app.api.endpoints.llm - INFO - WebSocket disconnected for default: ac61ea82-83a3-465d-84bb-37529028d758
+2025-05-13 16:10:32,675 - app.api.endpoints.llm - INFO - WebSocket connection accepted for default: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:32,773 - app.services.llm_conversation_service - INFO - Initialized conversation with 0 messages
+2025-05-13 16:10:33,186 - app.api.endpoints.llm - INFO - WebSocket disconnected for default: 87ec2303-0e54-4992-a583-2465adea42a8

@@ -5,7 +5,7 @@ import logging
 
 from app.services.db.graph_bundle_service import GraphBundleService
 from app.services.db.workout_service import WorkoutService
-from app.services.conversation_service import ConversationService
+from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
 from app.services.db.user_profile_service import UserProfileService
 
@@ -33,7 +33,7 @@ async def get_graph_bundles(
         logger.info(f"API request to get graph bundles for conversation: {conversation_id}")
         
         graph_bundle_service = GraphBundleService()
-        bundles = await graph_bundle_service.get_bundles_by_conversation(user["id"], conversation_id)
+        bundles = await graph_bundle_service.get_bundles_by_conversation(user.id, conversation_id)
         
         logger.info(f"Retrieved {len(bundles)} graph bundles for conversation: {conversation_id}")
         return bundles
@@ -57,7 +57,7 @@ async def save_graph_bundle(
         logger.info(f"API request to save graph bundle for conversation: {bundle.get('conversationId')}")
         
         graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.save_graph_bundle(user["id"], bundle)
+        result = await graph_bundle_service.save_graph_bundle(user.id, bundle)
         
         return result
     except Exception as e:
@@ -80,7 +80,7 @@ async def delete_graph_bundle(
         logger.info(f"API request to delete graph bundle: {bundle_id}")
         
         graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.delete_graph_bundle(user["id"], bundle_id)
+        result = await graph_bundle_service.delete_graph_bundle(user.id, bundle_id)
         
         return result
     except Exception as e:
@@ -103,7 +103,7 @@ async def delete_conversation_bundles(
         logger.info(f"API request to delete all graph bundles for conversation: {conversation_id}")
         
         graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.delete_conversation_bundles(user["id"], conversation_id)
+        result = await graph_bundle_service.delete_conversation_bundles(user.id, conversation_id)
         
         return result
     except Exception as e:
@@ -126,7 +126,7 @@ async def create_workout(
         logger.info(f"API request to create workout: {workout.get('name')}")
         
         workout_service = WorkoutService()
-        result = await workout_service.create_workout(user["id"], workout)
+        result = await workout_service.create_workout(user.id, workout)
         
         return result
     except Exception as e:
@@ -152,7 +152,7 @@ async def get_workout(
         result = await workout_service.get_workout(workout_id)
         
         # Check if the workout belongs to the user
-        if result["user_id"] != user["id"]:
+        if result["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this workout"
@@ -179,7 +179,7 @@ async def get_workouts_by_conversation(
         logger.info(f"API request to get workouts for conversation: {conversation_id}")
         
         workout_service = WorkoutService()
-        result = await workout_service.get_workouts_by_conversation(user["id"], conversation_id)
+        result = await workout_service.get_workouts_by_conversation(user.id, conversation_id)
         
         return result
     except Exception as e:
@@ -205,7 +205,7 @@ async def delete_workout(
         
         # First get the workout to verify ownership
         workout = await workout_service.get_workout(workout_id)
-        if workout["user_id"] != user["id"]:
+        if workout["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to delete this workout"
@@ -234,7 +234,7 @@ async def delete_conversation_workouts(
         logger.info(f"API request to delete all workouts for conversation: {conversation_id}")
         
         workout_service = WorkoutService()
-        result = await workout_service.delete_conversation_workouts(user["id"], conversation_id)
+        result = await workout_service.delete_conversation_workouts(user.id, conversation_id)
         
         return result
     except Exception as e:
@@ -260,7 +260,7 @@ async def update_template_usage(
         
         # First get the template to verify ownership
         template = await workout_service.get_workout(template_id)
-        if template["user_id"] != user["id"]:
+        if template["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to update this template"
@@ -285,10 +285,10 @@ async def get_templates(
     Get all workout templates for a user
     """
     try:
-        logger.info(f"API request to get workout templates for user: {user['id']}")
+        logger.info(f"API request to get workout templates for user: {user.id}")
         
         workout_service = WorkoutService()
-        result = await workout_service.get_templates(user["id"])
+        result = await workout_service.get_templates(user.id)
         
         return result
     except Exception as e:
@@ -311,7 +311,7 @@ async def create_conversation(
         
         conversation_service = ConversationService()
         result = await conversation_service.create_conversation(
-            user["id"], 
+            user.id, 
             data.get("title"), 
             data.get("firstMessage"), 
             data.get("configName")
@@ -339,7 +339,7 @@ async def create_onboarding_conversation(
         
         conversation_service = ConversationService()
         result = await conversation_service.create_onboarding_conversation(
-            user["id"], 
+            user.id, 
             data.get("sessionId"), 
             data.get("configName")
         )
@@ -368,7 +368,7 @@ async def get_conversation(
         result = await conversation_service.get_conversation(conversation_id)
         
         # Check if the conversation belongs to the user
-        if result["user_id"] != user["id"]:
+        if result["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this conversation"
@@ -398,7 +398,7 @@ async def get_conversation_messages(
         conversation_service = ConversationService()
         conversation = await conversation_service.get_conversation(conversation_id)
         
-        if conversation["user_id"] != user["id"]:
+        if conversation["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this conversation"
@@ -424,12 +424,62 @@ async def get_user_conversations(
     Get all active conversations for a user
     """
     try:
-        logger.info(f"API request to get active conversations for user: {user['id']}")
+        logger.info(f"API request to get active conversations for user: {user.id}")
         
+        # Create service with additional logging
+        logger.info("Creating ConversationService instance")
         conversation_service = ConversationService()
-        result = await conversation_service.get_user_conversations(user["id"])
         
+        # Explicitly log the Supabase client status
+        supabase = conversation_service.supabase
+        logger.info(f"Supabase client available: {hasattr(supabase, 'client')}")
+        
+        try:
+            # Explicitly test the client
+            test_result = supabase.client.table('conversations').select('count').limit(1).execute()
+            logger.info("Supabase client test query successful")
+        except Exception as e:
+            logger.error(f"Supabase client test query failed: {str(e)}")
+        
+        # Attempt to get conversations
+        logger.info("Calling get_user_conversations method")
+        result = await conversation_service.get_user_conversations(user.id)
+        
+        # Check if we got an error response
+        if isinstance(result, dict) and result.get('error'):
+            error_msg = result.get('error')
+            logger.error(f"Error response from service: {error_msg}")
+            
+            # If API key error, try direct query
+            if "API key is required" in error_msg:
+                logger.info("API key error detected, trying direct query")
+                
+                # Direct import to get a fresh client
+                from app.core.supabase.client import SupabaseClient
+                direct_client = SupabaseClient()
+                
+                # Try direct query
+                direct_result = direct_client.client.table("conversations") \
+                    .select("*") \
+                    .eq("user_id", user.id) \
+                    .eq("status", "active") \
+                    .neq("config_name", "onboarding") \
+                    .order("updated_at", {"ascending": False}) \
+                    .execute()
+                
+                conversations = direct_result.data or []
+                logger.info(f"Direct query retrieved {len(conversations)} conversations")
+                return conversations
+            
+            # If not an API key error, return a proper error response
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=error_msg
+            )
+        
+        logger.info(f"Retrieved {len(result)} active conversations for user: {user.id}")
         return result
+        
     except Exception as e:
         logger.error(f"Error getting user conversations: {str(e)}")
         raise HTTPException(
@@ -453,7 +503,7 @@ async def delete_conversation(
         conversation_service = ConversationService()
         conversation = await conversation_service.get_conversation(conversation_id)
         
-        if conversation["user_id"] != user["id"]:
+        if conversation["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to delete this conversation"
@@ -486,7 +536,7 @@ async def save_message(
         conversation_service = ConversationService()
         conversation = await conversation_service.get_conversation(conversation_id)
         
-        if conversation["user_id"] != user["id"]:
+        if conversation["user_id"] != user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You do not have permission to access this conversation"
@@ -583,10 +633,10 @@ async def get_user_profile(
     Get the current user's profile
     """
     try:
-        logger.info(f"API request to get profile for user: {user['id']}")
+        logger.info(f"API request to get profile for user: {user.id}")
         
         user_profile_service = UserProfileService()
-        result = await user_profile_service.get_user_profile(user["id"])
+        result = await user_profile_service.get_user_profile(user.id)
         
         if not result:
             # Return empty object rather than 404 to simplify client handling
@@ -610,10 +660,10 @@ async def save_user_profile(
     Save or update the current user's profile
     """
     try:
-        logger.info(f"API request to save profile for user: {user['id']}")
+        logger.info(f"API request to save profile for user: {user.id}")
         
         user_profile_service = UserProfileService()
-        result = await user_profile_service.save_user_profile(user["id"], data)
+        result = await user_profile_service.save_user_profile(user.id, data)
         
         return result
     except Exception as e:

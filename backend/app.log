@@ -1,33 +1,57 @@
-2025-05-05 23:20:00,477 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:22:24,889 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:22:24,890 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:22:24,989 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:22:24,989 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:24:55,345 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:24:55,346 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:24:55,455 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:24:55,455 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:27:00,705 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:27:00,706 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:27:00,815 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:27:00,815 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:28:50,330 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:28:50,333 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:28:51,227 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:28:51,228 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:29:30,653 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:29:30,654 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:29:30,767 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:29:30,767 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:29:44,714 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 23:29:44,859 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:29:44,859 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:31:23,717 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 23:31:26,833 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:31:26,833 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:31:27,225 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:31:27,225 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:31:31,466 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:31:31,469 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:31:31,558 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:31:31,558 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
+2025-05-13 16:11:24,008 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-13 16:11:24,010 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-13 16:11:24,169 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-13 16:11:24,183 - app.main - INFO - Response status: 200
+2025-05-13 16:11:24,184 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 16:11:24,258 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:24,258 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 16:11:24,258 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 16:11:24,323 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 16:11:24,323 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 16:11:24,323 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:24,390 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:24,390 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:24,390 - app.main - INFO - Response status: 200
+2025-05-13 16:11:28,856 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:29,916 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:29,917 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-13 16:11:30,018 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-13 16:11:30,018 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-13 16:11:30,146 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-13 16:11:30,153 - app.main - INFO - Response status: 200
+2025-05-13 16:11:30,153 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 16:11:30,213 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:30,214 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 16:11:30,214 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 16:11:30,280 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 16:11:30,281 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 16:11:30,281 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:30,337 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:30,338 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:30,338 - app.main - INFO - Response status: 200
+2025-05-13 16:11:32,688 - app.main - INFO - Request: GET /db/conversations/53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,758 - app.api.endpoints.db - INFO - API request to get conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,758 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,829 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,830 - app.main - INFO - Response status: 200
+2025-05-13 16:11:32,847 - app.main - INFO - Request: GET /db/conversations/53946475-84a3-4917-ad81-bf25ec453f0c/messages
+2025-05-13 16:11:32,915 - app.api.endpoints.db - INFO - API request to get messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,915 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,981 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:32,981 - app.services.db.conversation_service - INFO - Getting messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:33,050 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:33,051 - app.main - INFO - Response status: 200
+2025-05-13 16:11:33,066 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:33,068 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:33,153 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:33,226 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:11:33,301 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
+2025-05-13 16:11:33,302 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
+2025-05-13 16:11:33,306 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-13 16:11:33,306 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-13 16:31:16,023 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:31:18,745 - app - INFO - Logging has been set up
+2025-05-13 16:31:18,745 - app.main - INFO - Application starting
+2025-05-13 16:31:18,745 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 16:31:18,745 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 16:31:18,745 - app.main - INFO - SUPABASE_KEY present: True

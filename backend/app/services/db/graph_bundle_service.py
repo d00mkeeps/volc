@@ -17,14 +17,14 @@ class GraphBundleService(BaseDBService):
             logger.info(f"Getting graph bundles for conversation: {conversation_id}")
             
             # Query using Supabase client
-            result = await self.supabase.db.table("graph_bundles") \
+            result = self.supabase.table("graph_bundles") \
                 .select("*") \
                 .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
                 .order("created_at", desc=True) \
                 .execute()
                 
-            if not result.data:
+            if not hasattr(result, 'data') or not result.data:
                 logger.info(f"No graph bundles found for conversation: {conversation_id}")
                 return []
                 
@@ -49,7 +49,58 @@ class GraphBundleService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting graph bundles: {str(e)}")
             return await self.handle_error("get_bundles_by_conversation", e)
-    
+
+    async def delete_graph_bundle(self, user_id: str, bundle_id: str) -> Dict[str, Any]:
+        """
+        Delete a graph bundle
+        """
+        try:
+            logger.info(f"Deleting graph bundle: {bundle_id}")
+            
+            result = self.supabase.table("graph_bundles") \
+                .delete() \
+                .eq("id", bundle_id) \
+                .eq("user_id", user_id) \
+                .execute()
+                
+            # Check for data in response
+            if hasattr(result, 'data'):
+                logger.info(f"Successfully deleted graph bundle: {bundle_id}")
+                return {"success": True}
+            else:
+                logger.error(f"Failed to delete bundle: No data returned")
+                return {"success": False, "error": "No data returned"}
+                
+        except Exception as e:
+            logger.error(f"Error deleting graph bundle: {str(e)}")
+            return await self.handle_error("delete_graph_bundle", e)
+
+    async def delete_conversation_bundles(self, user_id: str, conversation_id: str) -> Dict[str, Any]:
+        """
+        Delete all graph bundles for a conversation
+        """
+        try:
+            logger.info(f"Deleting all graph bundles for conversation: {conversation_id}")
+            
+            result = self.supabase.table("graph_bundles") \
+                .delete() \
+                .eq("user_id", user_id) \
+                .eq("conversation_id", conversation_id) \
+                .execute()
+                
+            # Check for data in response
+            if hasattr(result, 'data'):
+                logger.info(f"Successfully deleted all graph bundles for conversation: {conversation_id}")
+                return {"success": True}
+            else:
+                logger.error(f"Failed to delete conversation bundles: No data returned")
+                return {"success": False, "error": "No data returned"}
+                
+        except Exception as e:
+            logger.error(f"Error deleting conversation bundles: {str(e)}")
+            return await self.handle_error("delete_conversation_bundles", e)
+        
+
     async def save_graph_bundle(self, user_id: str, bundle: Dict[str, Any]) -> Dict[str, Any]:
         """
         Save a workout data bundle to the database
@@ -73,59 +124,19 @@ class GraphBundleService(BaseDBService):
             }
             
             # Insert into database
-            result = await self.supabase.db.table("graph_bundles") \
+            result = self.supabase.table("graph_bundles") \
                 .insert(insert_data) \
                 .execute()
+            
+            # Check if the response has data (success)
+            if hasattr(result, 'data') and result.data:
+                logger.info(f"Bundle saved successfully with conversation ID: {bundle['conversationId']}")
+                return {"success": True, "bundle_id": bundle["bundle_id"]}
+            else:
+                # If we get here, something went wrong but didn't raise an exception
+                logger.error(f"Failed to save bundle, no data returned")
+                return {"success": False, "error": "No data returned"}
                 
-            if result.error:
-                raise Exception(f"Failed to save bundle: {result.error.message}")
-                
-            logger.info(f"Bundle saved successfully with conversation ID: {bundle['conversationId']}")
-            return {"success": True, "bundle_id": bundle["bundle_id"]}
         except Exception as e:
             logger.error(f"Error saving graph bundle: {str(e)}")
             return await self.handle_error("save_graph_bundle", e)
-    
-    async def delete_graph_bundle(self, user_id: str, bundle_id: str) -> Dict[str, Any]:
-        """
-        Delete a graph bundle
-        """
-        try:
-            logger.info(f"Deleting graph bundle: {bundle_id}")
-            
-            result = await self.supabase.db.table("graph_bundles") \
-                .delete() \
-                .eq("id", bundle_id) \
-                .eq("user_id", user_id) \
-                .execute()
-                
-            if result.error:
-                raise Exception(f"Failed to delete bundle: {result.error.message}")
-                
-            logger.info(f"Successfully deleted graph bundle: {bundle_id}")
-            return {"success": True}
-        except Exception as e:
-            logger.error(f"Error deleting graph bundle: {str(e)}")
-            return await self.handle_error("delete_graph_bundle", e)
-    
-    async def delete_conversation_bundles(self, user_id: str, conversation_id: str) -> Dict[str, Any]:
-        """
-        Delete all graph bundles for a conversation
-        """
-        try:
-            logger.info(f"Deleting all graph bundles for conversation: {conversation_id}")
-            
-            result = await self.supabase.db.table("graph_bundles") \
-                .delete() \
-                .eq("user_id", user_id) \
-                .eq("conversation_id", conversation_id) \
-                .execute()
-                
-            if result.error:
-                raise Exception(f"Failed to delete conversation bundles: {result.error.message}")
-                
-            logger.info(f"Successfully deleted all graph bundles for conversation: {conversation_id}")
-            return {"success": True}
-        except Exception as e:
-            logger.error(f"Error deleting conversation bundles: {str(e)}")
-            return await self.handle_error("delete_conversation_bundles", e)

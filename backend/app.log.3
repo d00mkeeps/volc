@@ -1,60 +1,82 @@
-2025-05-04 23:27:49,372 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.84, last_value=34.92, change=9.08, change_percent=35.1), TopPerformer(name='Pull-Up', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=222.0, last_value=900.0, change=678.0, change_percent=305.4), TopPerformer(name='Pull-Up', first_value=252.0, last_value=264.0, change=12.0, change_percent=4.8)] frequency=[TopPerformer(name='Face Pull', first_value=102.0, last_value=102.0, change=0.0, change_percent=0.0), TopPerformer(name='Dips', first_value=24.0, last_value=24.0, change=0.0, change_percent=0.0), TopPerformer(name='Hammer Curl', first_value=20.0, last_value=20.0, change=0.0, change_percent=0.0)]
-2025-05-04 23:27:49,373 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=5 avg_gap=0.7
-2025-05-04 23:27:49,374 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
-2025-05-04 23:27:49,376 - app.services.workout_analysis_service - INFO - {"bundle_id": "54a5793f-5979-45e5-a3b1-ac66880e96e2", "metadata": {"total_workouts": 105, "total_exercises": 226, "date_range": {"latest": "2025-05-04T22:27:35.423000+00:00", "earliest": "2025-02-06T18:55:00.616020+00:00"}, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-05-04T22:27:35.423+00:00", "earliest": "2025-02-06T18:55:00.61602+00:00"}, "total_workouts": 105, "total_exercises": 226, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workouts": [{"id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3", "date": "2025-03-28T18:52:58.678+00:00", "name": "Week 4 - Workout B", "notes": "[\"\"]", "exercises": [{"sets": [{"rpe": 8.5, "reps": 12, "weight": 21, "distance": null, "duration": null, "set_number": 1}], "raw_name": "Face Pul... [truncated]
-2025-05-04 23:27:49,376 - app.services.workout_analysis_service - INFO - Complete bundle size: 121739 bytes
-2025-05-04 23:27:49,376 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-05-04 23:29:27,857 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:27,858 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 3b45c45d-28f1-479e-a967-33787e236b9a
-2025-05-04 23:29:27,911 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:28,113 - app.api.endpoints.llm - INFO - Retrieved 1 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-04 23:29:28,170 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
-2025-05-04 23:29:28,171 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
-2025-05-04 23:29:28,174 - app.services.workout_analysis_service - INFO - Initialized conversation with 1 messages
-2025-05-04 23:29:28,174 - app.api.endpoints.llm - INFO - Initialized conversation with 1 messages
-2025-05-04 23:29:29,988 - app.api.endpoints.llm - INFO - Processing message of type: analyze_workout
-2025-05-04 23:29:29,988 - app.services.workout_analysis_service - INFO - === WORKOUT ANALYSIS REQUEST RECEIVED ===
-2025-05-04 23:29:29,989 - app.services.workout_analysis_service - INFO - Message keys: ['type', 'message', 'data', 'conversation_id']
-2025-05-04 23:29:29,989 - app.services.workout_analysis_service - INFO - Using conversation ID: 53946475-84a3-4917-ad81-bf25ec453f0c (client-provided: True)
-2025-05-04 23:29:29,989 - app.services.workout_analysis_service - INFO - Data string length: 8933
-2025-05-04 23:29:29,989 - app.services.workout_analysis_service - INFO - Data preview: {"id":"temp-1746397758689","user_id":"1e2d6190-5d52-4f48-974c-7a5a43a50bf3","program_id":null,"name":"Monday chest workout","notes":"[\"\"]","created_at":"2025-05-04T22:29:18.689Z","updated_at":"2025-...
-2025-05-04 23:29:29,990 - app.services.workout_analysis_service - INFO - ✅ Successfully parsed workout data
-2025-05-04 23:29:29,991 - app.services.workout_analysis_service - INFO - Workout name: Monday chest workout
-2025-05-04 23:29:29,992 - app.services.workout_analysis_service - INFO - Workout ID: temp-1746397758689
-2025-05-04 23:29:29,992 - app.services.workout_analysis_service - INFO - Using user ID from workout: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-04 23:29:29,992 - app.services.workout_analysis_service - INFO - Extracted 8 exercise names: ['face pull', 'pull-ups', '45-degree back extension', 'arnold press', 'dips', 'seated hammer curl', 'cable lateral raise', 'cable flye']
-2025-05-04 23:29:29,992 - app.services.workout_analysis_service - INFO - Fetching historical workout data for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - ✅ Retrieved 106 historical workouts
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35mCalculating workout metrics in message handler[0m
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35m✅ Successfully added metrics to workout data[0m
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35mMetrics categories: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35mSample exercise_progression: Face Pull = {'occurrences': 103, 'first_date': '2025-02-06T22:02:04.023375+00:00', 'last_date': '2025-05-04T22:2...[0m
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35mSample workout_frequency: total_workouts = 106...[0m
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - Starting workout analysis for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - Correlation analysis complete: found 0 significant correlations
-2025-05-04 23:29:30,194 - app.services.workout_analysis_service - INFO - [35mCalculating advanced workout metrics[0m
-2025-05-04 23:29:30,195 - app.services.workout_analysis_service - INFO - [35mAdded metrics to workout data: ['exercise_progression', 'strength_progression', 'most_improved_exercises', 'workout_frequency'][0m
-2025-05-04 23:29:30,195 - app.services.workout_analysis_service - INFO - Creating enhanced workout bundle
-2025-05-04 23:29:30,195 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-05-04 23:29:30,196 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Face Pull', 'Pull-Up']
-2025-05-04 23:29:30,196 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-05-04 23:29:30,196 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Face Pull', 'Pull-Up']
-2025-05-04 23:29:30,197 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
-2025-05-04 23:29:30,197 - app.services.chains.workout_analysis_chain - INFO - Bundle has 0 charts available
-2025-05-04 23:29:30,197 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
-2025-05-04 23:29:30,197 - app.services.workout_analysis_service - INFO - Generating multiple charts
-2025-05-04 23:29:30,197 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Face Pull', 'Pull-Up']
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Face Pull', 'Pull-Up']
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Added 25 data points for Dips to strength chart
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Added 103 data points for Face Pull to strength chart
-2025-05-04 23:29:30,198 - app.services.workout_analysis.graph_service - INFO - Added 21 data points for Pull-Up to strength chart
-2025-05-04 23:29:30,199 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
-2025-05-04 23:29:30,874 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
-2025-05-04 23:29:30,875 - app.services.workout_analysis.graph_service - INFO - Added 25 data points for Dips to volume chart
-2025-05-04 23:29:30,876 - app.services.workout_analysis.graph_service - INFO - Added 103 data points for Face Pull to volume chart
-2025-05-04 23:29:30,876 - app.services.workout_analysis.graph_service - INFO - Added 21 data points for Pull-Up to volume chart
-2025-05-04 23:29:30,877 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
-2025-05-04 23:29:32,307 - app.services.workout_analysis_service - INFO - Generated 3 charts
-2025-05-04 23:29:32,314 - app.core.supabase.client - INFO - Linking bundle b844387a-986a-49be-ba24-e4bec3d6b737 to conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-13 16:10:28,387 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,388 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,389 - app.main - INFO - Response status: 200
+2025-05-13 16:10:28,447 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,447 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,501 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,502 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,572 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,573 - app.main - INFO - Response status: 200
+2025-05-13 16:10:28,573 - app.main - INFO - Response status: 200
+2025-05-13 16:10:28,574 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,575 - app.main - INFO - Response status: 200
+2025-05-13 16:10:28,638 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,638 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,696 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,696 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,757 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,758 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,817 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,817 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,879 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,880 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,941 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,942 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:28,943 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,000 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,000 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,065 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,065 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,128 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,130 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,130 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,131 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,186 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,186 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,248 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,248 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,323 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,380 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,380 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,439 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,439 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,500 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,501 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,501 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,553 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,553 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,606 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,607 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,666 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,667 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,668 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,668 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,669 - app.main - INFO - Response status: 200
+2025-05-13 16:10:29,729 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,730 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,784 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,785 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,846 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,847 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,902 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,902 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,991 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:29,991 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,072 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,073 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,074 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,139 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,139 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,206 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,206 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,268 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,269 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,269 - app.main - INFO - Request: DELETE /db/conversations/bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,270 - app.main - INFO - Response status: 200
+2025-05-13 16:10:30,323 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,323 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,383 - app.services.db.conversation_service - INFO - Retrieved conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,384 - app.services.db.conversation_service - INFO - Deleting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,445 - app.services.db.conversation_service - INFO - Successfully deleted conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,502 - app.api.endpoints.db - INFO - API request to delete conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164
+2025-05-13 16:10:30,502 - app.services.db.conversation_service - INFO - Getting conversation: bf291bd6-c9b2-4e28-86e9-fb8c1053e164

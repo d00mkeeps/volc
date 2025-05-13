@@ -18,7 +18,7 @@ class ConversationService(BaseDBService):
             logger.info(f"Creating conversation with title: {title} for user: {user_id}")
             
             # Call RPC function to create conversation with message
-            result = await self.supabase.db.rpc(
+            result = self.supabase.rpc(
                 "create_conversation_with_message",
                 {
                     "p_user_id": user_id,
@@ -28,7 +28,7 @@ class ConversationService(BaseDBService):
                 }
             ).execute()
             
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to create conversation: {result.error.message}")
                 
             if not result.data:
@@ -37,12 +37,12 @@ class ConversationService(BaseDBService):
             conversation_id = result.data
             
             # Fetch the created conversation
-            conversation_result = await self.supabase.db.table("conversations") \
+            conversation_result = self.supabase.table("conversations") \
                 .select("*") \
                 .eq("id", conversation_id) \
                 .execute()
                 
-            if conversation_result.error or not conversation_result.data:
+            if hasattr(conversation_result, 'error') and conversation_result.error or not conversation_result.data:
                 raise Exception("Failed to fetch created conversation")
                 
             logger.info(f"Conversation created with ID: {conversation_id}")
@@ -60,7 +60,7 @@ class ConversationService(BaseDBService):
             logger.info(f"Creating onboarding conversation for user: {user_id}")
             
             # Direct insert with specified ID
-            result = await self.supabase.db.table("conversations") \
+            result = self.supabase.table("conversations") \
                 .insert({
                     "id": session_id,
                     "user_id": user_id,
@@ -70,7 +70,7 @@ class ConversationService(BaseDBService):
                 }) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to create onboarding conversation: {result.error.message}")
                 
             if not result.data:
@@ -90,13 +90,13 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Getting messages for conversation: {conversation_id}")
             
-            result = await self.supabase.db.table("messages") \
+            result = self.supabase.table("messages") \
                 .select("*") \
                 .eq("conversation_id", conversation_id) \
-                .order("conversation_sequence", ascending=True) \
+                .order("conversation_sequence") \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch messages: {result.error.message}")
                 
             messages = result.data or []
@@ -115,12 +115,12 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Getting conversation: {conversation_id}")
             
-            result = await self.supabase.db.table("conversations") \
+            result = self.supabase.table("conversations") \
                 .select("*") \
                 .eq("id", conversation_id) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch conversation: {result.error.message}")
                 
             if not result.data or len(result.data) == 0:
@@ -138,17 +138,17 @@ class ConversationService(BaseDBService):
         Get all active conversations for a user
         """
         try:
-            logger.info(f"Getting active conversations for user: {user_id}")
+            logger.info(f"Getting active conversations for user: {user_id}") 
             
-            result = await self.supabase.db.table("conversations") \
+            result = self.supabase.table("conversations") \
                 .select("*") \
                 .eq("user_id", user_id) \
                 .eq("status", "active") \
-                .not_("config_name", "eq", "onboarding") \
-                .order("updated_at", ascending=False) \
+                .neq("config_name", "onboarding") \
+                .order("updated_at", desc=True) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch conversations: {result.error.message}")
                 
             conversations = result.data or []
@@ -167,12 +167,12 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Deleting conversation: {conversation_id}")
             
-            result = await self.supabase.db.table("conversations") \
+            result = self.supabase.table("conversations") \
                 .update({"status": "deleted"}) \
                 .eq("id", conversation_id) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to delete conversation: {result.error.message}")
                 
             logger.info(f"Successfully deleted conversation: {conversation_id}")
@@ -189,7 +189,7 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Saving {sender} message to conversation: {conversation_id}")
             
-            result = await self.supabase.db.table("messages") \
+            result = self.supabase.table("messages") \
                 .insert({
                     "conversation_id": conversation_id,
                     "content": content,
@@ -197,7 +197,7 @@ class ConversationService(BaseDBService):
                 }) \
                 .execute()
                 
-            if result.error:
+            if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to save message: {result.error.message}")
                 
             if not result.data:

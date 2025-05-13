@@ -1,82 +1,82 @@
-2025-05-04 23:29:38,613 - app.services.workout_analysis_service - INFO - Chart URLs: {'strength_progress': 'https://quickchart.io/chart/render/sf-83f4c435-a726-49a8-b9e4-d93774d71062', 'volume_progress': 'https://quickchart.io/chart/render/sf-dd406c7e-4a57-4eb1-bdfd-0e548940c83e', 'weekly_frequency': 'https://quickchart.io/chart/render/sf-5ef1d4a3-4806-4282-90fc-030c065fb94d'}
-2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Top performers: strength=[TopPerformer(name='Dips', first_value=13.97, last_value=129.92, change=115.95, change_percent=830.0), TopPerformer(name='Face Pull', first_value=25.84, last_value=34.92, change=9.08, change_percent=35.1), TopPerformer(name='Pull-Up', first_value=94.07, last_value=98.55, change=4.48, change_percent=4.8)] volume=[TopPerformer(name='Dips', first_value=360.0, last_value=2731.0, change=2371.0, change_percent=658.6), TopPerformer(name='Face Pull', first_value=222.0, last_value=900.0, change=678.0, change_percent=305.4), TopPerformer(name='Pull-Up', first_value=252.0, last_value=264.0, change=12.0, change_percent=4.8)] frequency=[TopPerformer(name='Face Pull', first_value=103.0, last_value=103.0, change=0.0, change_percent=0.0), TopPerformer(name='Dips', first_value=25.0, last_value=25.0, change=0.0, change_percent=0.0), TopPerformer(name='Hammer Curl', first_value=21.0, last_value=21.0, change=0.0, change_percent=0.0)]
-2025-05-04 23:29:38,615 - app.services.workout_analysis_service - INFO - Consistency metrics: score=0 streak=6 avg_gap=0.7
-2025-05-04 23:29:38,616 - app.services.workout_analysis_service - INFO - COMPLETE BUNDLE JSON:
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - {"bundle_id": "b844387a-986a-49be-ba24-e4bec3d6b737", "metadata": {"total_workouts": 106, "total_exercises": 234, "date_range": {"latest": "2025-05-04T22:29:20.215000+00:00", "earliest": "2025-02-06T18:55:00.616020+00:00"}, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workout_data": {"metadata": {"date_range": {"latest": "2025-05-04T22:29:20.215+00:00", "earliest": "2025-02-06T18:55:00.61602+00:00"}, "total_workouts": 106, "total_exercises": 234, "exercises_included": ["45-Degree Back Extension", "Arnold Press", "Cable Fly", "Cable Lateral Raise", "Dips", "Face Pull", "Hammer Curl", "Pull-Up"]}, "workouts": [{"id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3", "date": "2025-03-28T18:52:58.678+00:00", "name": "Week 4 - Workout B", "notes": "[\"\"]", "exercises": [{"sets": [{"rpe": 8.5, "reps": 12, "weight": 21, "distance": null, "duration": null, "set_number": 1}], "raw_name": "Face Pul... [truncated]
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - Complete bundle size: 125670 bytes
-2025-05-04 23:29:38,620 - app.services.workout_analysis_service - INFO - ================================================================================
-2025-05-04 23:45:04,651 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:34:57,906 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:03,961 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:03,970 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:04,009 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:04,193 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
-2025-05-05 01:35:04,292 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
-2025-05-05 01:35:04,299 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:04,299 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:10,752 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:11,929 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:13,257 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 01:35:13,263 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,308 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,499 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 01:35:13,603 - app.api.endpoints.llm - INFO - Conversation bundle ID: None
-2025-05-05 01:35:13,604 - app.api.endpoints.llm - INFO - No bundle ID found for conversation
-2025-05-05 01:35:13,605 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
-2025-05-05 01:35:13,605 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
-2025-05-05 15:48:54,301 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-05 16:17:02,791 - app - INFO - Logging has been set up
-2025-05-05 16:17:02,791 - app.main - INFO - Application starting
-2025-05-05 16:18:45,230 - app - INFO - Logging has been set up
-2025-05-05 16:18:45,230 - app.main - INFO - Application starting
-2025-05-05 16:59:00,535 - app - INFO - Logging has been set up
-2025-05-05 16:59:00,536 - app.main - INFO - Application starting
-2025-05-05 17:00:13,426 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 17:07:32,217 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-05 20:03:39,066 - app - INFO - Logging has been set up
-2025-05-05 20:03:39,066 - app.main - INFO - Application starting
-2025-05-05 20:03:49,317 - app - INFO - Logging has been set up
-2025-05-05 20:03:49,317 - app.main - INFO - Application starting
-2025-05-05 21:30:44,692 - app - INFO - Logging has been set up
-2025-05-05 21:30:44,692 - app.main - INFO - Application starting
-2025-05-05 21:35:43,198 - app - INFO - Logging has been set up
-2025-05-05 21:35:43,198 - app.main - INFO - Application starting
-2025-05-05 21:35:46,393 - app - INFO - Logging has been set up
-2025-05-05 21:35:46,393 - app.main - INFO - Application starting
-2025-05-05 21:36:24,996 - app - INFO - Logging has been set up
-2025-05-05 21:36:24,996 - app.main - INFO - Application starting
-2025-05-05 21:40:58,297 - app - INFO - Logging has been set up
-2025-05-05 21:40:58,297 - app.main - INFO - Application starting
-2025-05-05 21:40:59,823 - app - INFO - Logging has been set up
-2025-05-05 21:40:59,823 - app.main - INFO - Application starting
-2025-05-05 21:41:39,139 - app - INFO - Logging has been set up
-2025-05-05 21:41:39,139 - app.main - INFO - Application starting
-2025-05-05 22:06:13,635 - app.api.endpoints.auth - ERROR - Sign in error: 'SupabaseClient' object has no attribute 'auth'
-2025-05-05 22:06:53,786 - app.api.endpoints.auth - ERROR - Sign in error: 'SupabaseClient' object has no attribute 'auth'
-2025-05-05 22:11:36,715 - app - INFO - Logging has been set up
-2025-05-05 22:11:36,715 - app.main - INFO - Application starting
-2025-05-05 22:11:45,253 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
-2025-05-05 22:12:28,301 - app - INFO - Logging has been set up
-2025-05-05 22:12:28,301 - app.main - INFO - Application starting
-2025-05-05 22:12:47,305 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
-2025-05-05 22:12:56,378 - app.api.endpoints.auth - ERROR - Sign in error: object AuthResponse can't be used in 'await' expression
-2025-05-05 22:15:03,936 - app - INFO - Logging has been set up
-2025-05-05 22:15:03,936 - app.main - INFO - Application starting
-2025-05-05 22:16:49,487 - app - INFO - Logging has been set up
-2025-05-05 22:16:49,487 - app.main - INFO - Application starting
-2025-05-05 22:23:27,348 - app - INFO - Logging has been set up
-2025-05-05 22:23:27,348 - app.main - INFO - Application starting
-2025-05-05 23:15:01,486 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:15:01,488 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:15:01,605 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:15:01,605 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:15:51,759 - app - INFO - Logging has been set up
-2025-05-05 23:15:51,759 - app.main - INFO - Application starting
-2025-05-05 23:17:07,067 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:17:07,068 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:17:07,185 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:17:07,185 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:20:00,412 - app.core.supabase.auth - WARNING - Invalid authentication credentials
-2025-05-05 23:20:00,413 - app.core.supabase.auth - ERROR - Authentication error: 401: Invalid authentication credentials
-2025-05-05 23:20:00,476 - app.core.supabase.auth - WARNING - Invalid authentication credentials
+2025-05-13 16:10:33,188 - app.api.endpoints.llm - INFO - WebSocket connection accepted for default: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:33,288 - app.services.llm_conversation_service - INFO - Initialized conversation with 0 messages
+2025-05-13 16:10:37,918 - app.main - INFO - Request: DELETE /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,036 - app.api.endpoints.db - INFO - API request to delete conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,036 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,144 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,145 - app.services.db.conversation_service - INFO - Deleting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,228 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,230 - app.main - INFO - Response status: 200
+2025-05-13 16:10:38,231 - app.main - INFO - Request: DELETE /db/conversations/87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,305 - app.api.endpoints.db - INFO - API request to delete conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,305 - app.services.db.conversation_service - INFO - Getting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,382 - app.services.db.conversation_service - INFO - Retrieved conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,383 - app.services.db.conversation_service - INFO - Deleting conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,471 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:10:38,471 - app.main - INFO - Response status: 200
+2025-05-13 16:10:39,026 - app.main - INFO - Request: DELETE /db/conversations/6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,093 - app.api.endpoints.db - INFO - API request to delete conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,093 - app.services.db.conversation_service - INFO - Getting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,158 - app.services.db.conversation_service - INFO - Retrieved conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,159 - app.services.db.conversation_service - INFO - Deleting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,402 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,403 - app.main - INFO - Request: DELETE /db/conversations/6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,404 - app.main - INFO - Response status: 200
+2025-05-13 16:10:39,524 - app.api.endpoints.db - INFO - API request to delete conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,524 - app.services.db.conversation_service - INFO - Getting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,634 - app.services.db.conversation_service - INFO - Retrieved conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,634 - app.services.db.conversation_service - INFO - Deleting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,800 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,801 - app.main - INFO - Response status: 200
+2025-05-13 16:10:39,802 - app.main - INFO - Request: DELETE /db/conversations/6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,857 - app.api.endpoints.db - INFO - API request to delete conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,858 - app.services.db.conversation_service - INFO - Getting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,916 - app.services.db.conversation_service - INFO - Retrieved conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,916 - app.services.db.conversation_service - INFO - Deleting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:39,999 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,000 - app.main - INFO - Request: DELETE /db/conversations/6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,055 - app.api.endpoints.db - INFO - API request to delete conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,055 - app.services.db.conversation_service - INFO - Getting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,107 - app.services.db.conversation_service - INFO - Retrieved conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,108 - app.services.db.conversation_service - INFO - Deleting conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,166 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 6795ffce-7c9b-4457-81b4-c91492e63103
+2025-05-13 16:10:40,166 - app.main - INFO - Response status: 200
+2025-05-13 16:10:40,167 - app.main - INFO - Request: DELETE /db/conversations/2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,167 - app.main - INFO - Response status: 200
+2025-05-13 16:10:40,219 - app.api.endpoints.db - INFO - API request to delete conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,220 - app.services.db.conversation_service - INFO - Getting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,280 - app.services.db.conversation_service - INFO - Retrieved conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,281 - app.services.db.conversation_service - INFO - Deleting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,337 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,338 - app.main - INFO - Request: DELETE /db/conversations/2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,338 - app.main - INFO - Response status: 200
+2025-05-13 16:10:40,407 - app.api.endpoints.db - INFO - API request to delete conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,407 - app.services.db.conversation_service - INFO - Getting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,457 - app.services.db.conversation_service - INFO - Retrieved conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,458 - app.services.db.conversation_service - INFO - Deleting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,511 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,512 - app.main - INFO - Request: DELETE /db/conversations/2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,512 - app.main - INFO - Response status: 200
+2025-05-13 16:10:40,570 - app.api.endpoints.db - INFO - API request to delete conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,570 - app.services.db.conversation_service - INFO - Getting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,647 - app.services.db.conversation_service - INFO - Retrieved conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,647 - app.services.db.conversation_service - INFO - Deleting conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,705 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 2aa61660-0954-4022-8236-93acef3569db
+2025-05-13 16:10:40,707 - app.main - INFO - Request: DELETE /db/conversations/93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,708 - app.main - INFO - Response status: 200
+2025-05-13 16:10:40,782 - app.api.endpoints.db - INFO - API request to delete conversation: 93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,782 - app.services.db.conversation_service - INFO - Getting conversation: 93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,838 - app.services.db.conversation_service - INFO - Retrieved conversation: 93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,839 - app.services.db.conversation_service - INFO - Deleting conversation: 93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,891 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 93430ffc-efd8-4bba-99a0-8a72857a3fc2
+2025-05-13 16:10:40,892 - app.main - INFO - Response status: 200
+2025-05-13 16:10:41,147 - app.main - INFO - Request: DELETE /db/conversations/d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,207 - app.api.endpoints.db - INFO - API request to delete conversation: d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,207 - app.services.db.conversation_service - INFO - Getting conversation: d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,266 - app.services.db.conversation_service - INFO - Retrieved conversation: d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,266 - app.services.db.conversation_service - INFO - Deleting conversation: d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,328 - app.services.db.conversation_service - INFO - Successfully deleted conversation: d75ccdd8-4b7d-44aa-99ba-2a62b2b8dcdd
+2025-05-13 16:10:41,328 - app.main - INFO - Response status: 200
+2025-05-13 16:11:22,526 - app.api.endpoints.llm - INFO - WebSocket disconnected for default: 87ec2303-0e54-4992-a583-2465adea42a8
+2025-05-13 16:11:23,879 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 16:11:23,882 - app.main - INFO - Request: GET /db/exercise-definitions

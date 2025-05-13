@@ -1,82 +1,72 @@
-import { AuthError, SignInCredentials, SignUpCredentials } from '@/types/auth';
-import { apiRequest } from '../api/apiClient';
+// services/supabase/auth.ts
+import { supabase } from '@/lib/supabaseClient'
+import { AuthError, SignInCredentials, SignUpCredentials } from '@/types/auth'
+import { AuthError as SupabaseAuthError } from '@supabase/supabase-js'
 
 export const authService = {
   signIn: async ({ email, password }: SignInCredentials) => {
     try {
-      const data = await apiRequest('/auth/sign-in', {
-        method: 'POST',
-        body: JSON.stringify({ email, password })
-      });
-
-      console.log('Sign-in response:', data); // Add this log
-    
-      // Check if the token is being extracted correctly
-      if (data.session?.access_token) {
-        console.log('Token found:', data.session.access_token.substring(0, 10) + '...');
-      } else {
-        console.log('No token in response:', data);
-      }
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
       
-      
-      return data;
+      if (error) throw error
+      return data
     } catch (error) {
-      throw handleAuthError(error);
+      console.error('Sign-in error:', error)
+      const authError = error as SupabaseAuthError
+      throw {
+        message: authError.message || 'Authentication failed',
+        status: authError.status || 500
+      }
     }
   },
   
   signUp: async ({ email, password }: SignUpCredentials) => {
     try {
-      const data = await apiRequest('/auth/sign-up', {
-        method: 'POST',
-        body: JSON.stringify({ email, password })
-      });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      })
       
-      return data;
+      if (error) throw error
+      return data
     } catch (error) {
-      throw handleAuthError(error);
+      console.error('Sign-up error:', error)
+      const authError = error as SupabaseAuthError
+      throw {
+        message: authError.message || 'Registration failed',
+        status: authError.status || 500
+      }
     }
   },
   
   signOut: async () => {
     try {
-      await apiRequest('/auth/sign-out', {
-        method: 'POST'
-      });
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
     } catch (error) {
-      throw handleAuthError(error);
+      console.error('Sign-out error:', error)
+      const authError = error as SupabaseAuthError
+      throw {
+        message: authError.message || 'Sign out failed',
+        status: authError.status || 500
+      }
     }
   },
   
   resetPassword: async (email: string) => {
     try {
-      await apiRequest('/auth/reset-password', {
-        method: 'POST',
-        body: JSON.stringify({ email })
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(email)
+      if (error) throw error
     } catch (error) {
-      throw handleAuthError(error);
-    }
-  },
-  
-  getSession: async () => {
-    try {
-      // The /auth/me endpoint will validate the token and return session data
-      const userData = await apiRequest('/auth/me');
-      return userData.session;
-    } catch (error) {
-      // For getSession, we'll handle errors quietly since this is often used
-      // to check if a user is logged in
-      console.error('Get session error:', error);
-      return null;
+      console.error('Reset password error:', error)
+      const authError = error as SupabaseAuthError
+      throw {
+        message: authError.message || 'Password reset failed',
+        status: authError.status || 500
+      }
     }
   }
-};
-
-function handleAuthError(error: any): AuthError {
-  console.error('Auth error:', error);
-  return {
-    message: error.message || 'An authentication error occurred',
-    status: error.status
-  };
 }

@@ -53,36 +53,34 @@ class UserProfileService(BaseDBService):
                     logger.warning(f"Invalid age group: {age_group}")
                     # We'll continue without the age group rather than failing the entire operation
             
-            # Update the user profile
-            result = await self.supabase.db.table("user_profiles") \
+            # Update the user profile - REMOVED await
+            result = self.supabase.table("user_profiles") \
                 .update(user_profile) \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to update user profile: {result.error.message}")
-                
-            if not result.data:
+            if not hasattr(result, 'data') or not result.data:
                 # If update didn't affect any rows, the profile might not exist yet, so try insert
                 logger.info(f"No existing profile found for user {user_id}, attempting to create")
                 
                 # Add the user ID to the profile data
                 user_profile["auth_user_uuid"] = user_id
                 
-                result = await self.supabase.db.table("user_profiles") \
+                # REMOVED await
+                result = self.supabase.table("user_profiles") \
                     .insert(user_profile) \
                     .execute()
                     
-                if result.error:
-                    raise Exception(f"Failed to create user profile: {result.error.message}")
+                if not hasattr(result, 'data') or not result.data:
+                    raise Exception("Failed to create user profile: No data returned")
             
-            # Fetch the updated profile
-            profile_result = await self.supabase.db.table("user_profiles") \
+            # Fetch the updated profile - REMOVED await
+            profile_result = self.supabase.table("user_profiles") \
                 .select("*") \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
                 
-            if profile_result.error or not profile_result.data:
+            if not hasattr(profile_result, 'data') or not profile_result.data:
                 raise Exception("Failed to fetch updated user profile")
                 
             logger.info(f"Successfully saved profile for user: {user_id}")
@@ -99,15 +97,13 @@ class UserProfileService(BaseDBService):
         try:
             logger.info(f"Getting profile for user: {user_id}")
             
-            result = await self.supabase.db.table("user_profiles") \
+            # REMOVED await
+            result = self.supabase.table("user_profiles") \
                 .select("*") \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
                 
-            if result.error:
-                raise Exception(f"Failed to fetch user profile: {result.error.message}")
-                
-            if not result.data or len(result.data) == 0:
+            if not hasattr(result, 'data') or not result.data or len(result.data) == 0:
                 logger.info(f"No profile found for user: {user_id}")
                 return None
                 
