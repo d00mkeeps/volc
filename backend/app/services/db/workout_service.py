@@ -1,7 +1,7 @@
 from app.services.db.base_service import BaseDBService
 from typing import Dict, List, Any, Optional
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -396,3 +396,55 @@ class WorkoutService(BaseDBService):
         except Exception as e:
             logger.error(f"Error in get_user_workouts: {str(e)}")
             return await self.handle_error("get_user_workouts", e)
+        
+    async def get_workout_history_by_exercises(
+        self, 
+        user_id: str, 
+        exercises: List[str], 
+        timeframe: str
+    ) -> Optional[Dict]:
+        """
+        Fetches workout data for specific exercises over a given timeframe.
+        """
+        try:
+            # Convert timeframe string to days
+            days = self._convert_timeframe_to_days(timeframe)
+            from_date = datetime.now() - timedelta(days=days)
+            
+            # Filter non-empty exercises
+            exercise_names = [ex.strip() for ex in exercises if ex.strip()]
+            
+            # Call the database function using supabase
+            result = self.supabase.rpc(
+                "search_workouts_by_exercises_with_definitions", 
+                {
+                    "user_id_param": user_id,
+                    "from_date_param": from_date.isoformat(),
+                    "exercise_names": exercise_names
+                }
+            ).execute()
+            
+            return result.data if hasattr(result, 'data') and result.data else None
+                
+        except Exception as e:
+            logger.error(f"Error fetching workout history: {str(e)}")
+            return await self.handle_error("get_workout_history_by_exercises", e)
+
+    def _convert_timeframe_to_days(self, timeframe: str) -> int:
+        """Convert a timeframe string to number of days."""
+        try:
+            number = int(timeframe.split()[0])
+            unit = timeframe.split()[1].lower()
+            
+            if unit in ['month', 'months']:
+                return number * 30
+            elif unit in ['year', 'years']:
+                return number * 365
+            elif unit in ['day', 'days']:
+                return number
+            else:
+                logger.warning(f"Unsupported time unit: {unit}")
+                return 90  # Default to 90 days
+        except Exception as e:
+            logger.error(f"Error converting timeframe: {str(e)}")
+            return 90  # Default to 90 days

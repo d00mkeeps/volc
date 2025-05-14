@@ -1,11 +1,11 @@
 from typing import Optional, Dict, List
 from datetime import datetime
 import logging
-from app.schemas.workout_data_bundle import CorrelationData, WorkoutDataBundle, BundleMetadata
+from app.schemas.workout_data_bundle import WorkoutDataBundle, BundleMetadata
+from app.services.db.graph_bundle_service import GraphBundleService
+from app.services.db.workout_service import WorkoutService
 from ...utils.one_rm_calc import OneRMCalculator
-from .query_builder import WorkoutQueryBuilder
 from ..chart_generator.chart_service import ChartService
-from ...core.supabase.client import SupabaseClient
 from ...core.utils.id_gen import new_uuid
 from .correlation_service import CorrelationService 
 
@@ -14,12 +14,19 @@ logger = logging.getLogger(__name__)
 class WorkoutGraphService:
     """Service for generating workout data graphs and associated data bundles."""
     
-    def __init__(self, supabase_client: SupabaseClient):
-        self.query_builder = WorkoutQueryBuilder(supabase_client)
+    def __init__(self, workout_service: WorkoutService, graph_bundle_service: GraphBundleService = None):
+        """
+        Initialize GraphService with required services
+        
+        Args:
+            workout_service: Service for workout data operations
+            graph_bundle_service: Optional service for bundle operations
+        """
+        self.workout_service = workout_service
+        self.graph_bundle_service = graph_bundle_service
         self.chart_service = ChartService()
         self.correlation_service = CorrelationService()
 
-    # [existing methods remain unchanged]
 
     def _get_top_performers(self, workout_data: Dict, metric: str, limit: int = 3) -> List[Dict]:
         """
@@ -493,3 +500,48 @@ class WorkoutGraphService:
         except Exception as e:
             logger.error(f"Error generating charts: {str(e)}")
             return {}
+        
+    async def create_workout_bundle(self, user_id: str, query_text: str) -> Optional[WorkoutDataBundle]:
+        """
+        Create a workout data bundle based on a query
+        """
+        try:
+            logger.info(f"Creating workout bundle for query: {query_text}")
+            
+            # Extract exercise names from query (keep your existing parsing logic)
+            exercise_names = self._extract_exercise_names(query_text)
+            if not exercise_names:
+                logger.warning("No exercise names extracted from query")
+                return None
+                
+            # Instead of using query_builder, use workout_service
+            workout_data = await self.workout_service.get_workout_history_by_exercises(
+                user_id=user_id,
+                exercises=exercise_names,
+                timeframe="3 months"  # Default timeframe
+            )
+            
+            if not workout_data:
+                logger.warning("No workout data found")
+                return None
+                
+            # Create bundle (keep your existing bundle creation logic)
+            bundle_id = await new_uuid()
+            bundle = WorkoutDataBundle(
+                bundle_id=bundle_id,
+                metadata=BundleMetadata(
+                    total_workouts=workout_data.get('metadata', {}).get('total_workouts', 0),
+                    total_exercises=workout_data.get('metadata', {}).get('total_exercises', 0),
+                    date_range=workout_data.get('metadata', {}).get('date_range', ""),
+                    exercises_included=workout_data.get('metadata', {}).get('exercises_included', [])
+                ),
+                workout_data=workout_data,
+                original_query=query_text,
+                created_at=datetime.now()
+            )
+            
+            return bundle
+            
+        except Exception as e:
+            logger.error(f"Error creating workout bundle: {str(e)}")
+            return None

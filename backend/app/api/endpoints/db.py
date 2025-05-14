@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any
 from app.core.supabase.auth import get_current_user
 import logging
-
 from app.services.db.graph_bundle_service import GraphBundleService
 from app.services.db.workout_service import WorkoutService
 from app.services.db.conversation_service import ConversationService
@@ -504,20 +503,20 @@ async def get_user_conversations(
                 logger.info("API key error detected, trying direct query")
                 
                 # Direct import to get a fresh client
-                from app.core.supabase.client import SupabaseClient
-                direct_client = SupabaseClient()
+
+                # direct_client = SupabaseClient()
                 
-                # Try direct query
-                direct_result = direct_client.client.table("conversations") \
-                    .select("*") \
-                    .eq("user_id", user.id) \
-                    .eq("status", "active") \
-                    .neq("config_name", "onboarding") \
-                    .order("updated_at", {"ascending": False}) \
-                    .execute()
+                # # Try direct query
+                # direct_result = direct_client.client.table("conversations") \
+                #     .select("*") \
+                #     .eq("user_id", user.id) \
+                #     .eq("status", "active") \
+                #     .neq("config_name", "onboarding") \
+                #     .order("updated_at", {"ascending": False}) \
+                #     .execute()
                 
-                conversations = direct_result.data or []
-                logger.info(f"Direct query retrieved {len(conversations)} conversations")
+                conversations = []
+                logger.info(f"Direct query retrieved {len(conversations)} conversations, maybe start debugging?")
                 return conversations
             
             # If not an API key error, return a proper error response

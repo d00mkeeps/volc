@@ -1,33 +1,85 @@
-2025-05-13 17:47:52,783 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:47:52,786 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:47:52,846 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:47:53,236 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:47:53,445 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:47:53,445 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:47:53,551 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:47:53,564 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:47:53,626 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,627 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,692 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,693 - app.main - INFO - Response status: 200
-2025-05-13 17:47:53,694 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:47:53,695 - app.main - INFO - Response status: 200
-2025-05-13 17:47:53,769 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,770 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:47:53,770 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:47:53,834 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:47:53,834 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:47:53,834 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,925 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,925 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,926 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:47:53,927 - app.main - INFO - Response status: 200
-2025-05-13 17:47:53,993 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:53,993 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:54,282 - app.services.db.workout_service - INFO - Retrieved 121 workouts with 881 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:54,283 - app.api.endpoints.db - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:54,312 - app.main - INFO - Response status: 200
+2025-05-14 16:16:58,303 - app - INFO - Logging has been set up
+2025-05-14 16:16:58,306 - app.main - INFO - Application starting
+2025-05-14 16:16:58,306 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 16:16:58,306 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 16:16:58,306 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 17:04:20,020 - app - INFO - Logging has been set up
+2025-05-14 17:04:20,020 - app.main - INFO - Application starting
+2025-05-14 17:04:20,020 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 17:04:20,020 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 17:04:20,020 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 17:29:32,278 - app - INFO - Logging has been set up
+2025-05-14 17:29:32,278 - app.main - INFO - Application starting
+2025-05-14 17:29:32,279 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 17:29:32,279 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 17:29:32,279 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:10:23,534 - app - INFO - Logging has been set up
+2025-05-14 18:10:23,534 - app.main - INFO - Application starting
+2025-05-14 18:10:23,534 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:10:23,534 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:10:23,534 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:32:29,079 - app - INFO - Logging has been set up
+2025-05-14 18:32:29,079 - app.main - INFO - Application starting
+2025-05-14 18:32:29,079 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:32:29,079 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:32:29,079 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:32:58,193 - app - INFO - Logging has been set up
+2025-05-14 18:32:58,193 - app.main - INFO - Application starting
+2025-05-14 18:32:58,194 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:32:58,194 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:32:58,194 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:33:09,598 - app - INFO - Logging has been set up
+2025-05-14 18:33:09,599 - app.main - INFO - Application starting
+2025-05-14 18:33:09,599 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:33:09,599 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:33:09,599 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:33:14,559 - app - INFO - Logging has been set up
+2025-05-14 18:33:14,559 - app.main - INFO - Application starting
+2025-05-14 18:33:14,559 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:33:14,559 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:33:14,559 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:36:55,504 - app - INFO - Logging has been set up
+2025-05-14 18:36:55,504 - app.main - INFO - Application starting
+2025-05-14 18:36:55,504 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:36:55,504 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:36:55,504 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:37:18,828 - app - INFO - Logging has been set up
+2025-05-14 18:37:18,828 - app.main - INFO - Application starting
+2025-05-14 18:37:18,828 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:37:18,828 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:37:18,828 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:37:58,664 - app - INFO - Logging has been set up
+2025-05-14 18:37:58,665 - app.main - INFO - Application starting
+2025-05-14 18:37:58,665 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:37:58,665 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:37:58,665 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:38:12,219 - app - INFO - Logging has been set up
+2025-05-14 18:38:12,219 - app.main - INFO - Application starting
+2025-05-14 18:38:12,219 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:38:12,220 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:38:12,220 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:41:01,910 - app - INFO - Logging has been set up
+2025-05-14 18:41:01,910 - app.main - INFO - Application starting
+2025-05-14 18:41:01,910 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:41:01,910 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:41:01,910 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:45:20,889 - app - INFO - Logging has been set up
+2025-05-14 18:45:20,889 - app.main - INFO - Application starting
+2025-05-14 18:45:20,889 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:45:20,889 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:45:20,889 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:46:23,942 - app - INFO - Logging has been set up
+2025-05-14 18:46:23,942 - app.main - INFO - Application starting
+2025-05-14 18:46:23,942 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:46:23,942 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:46:23,942 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:47:09,604 - app - INFO - Logging has been set up
+2025-05-14 18:47:09,604 - app.main - INFO - Application starting
+2025-05-14 18:47:09,604 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:47:09,605 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:47:09,605 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 18:47:24,254 - app - INFO - Logging has been set up
+2025-05-14 18:47:24,254 - app.main - INFO - Application starting
+2025-05-14 18:47:24,255 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 18:47:24,255 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 18:47:24,255 - app.main - INFO - SUPABASE_KEY present: True

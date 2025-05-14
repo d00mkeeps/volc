@@ -1,12 +1,9 @@
 from datetime import datetime
-import uuid
 from supabase import create_client
-from typing import Optional, Dict, Any, List
-import os
-import logging
+from typing import Optional, Dict, Any
+import os, logging
 from dotenv import load_dotenv
 from pathlib import Path
-from ...schemas.workout_data_bundle import WorkoutDataBundle
 
 logger = logging.getLogger(__name__)
 
@@ -195,180 +192,180 @@ class SupabaseClient:
             logger.error(f"Data deletion failed: {e}")
             return None
 
-    async def get_conversation_bundle_id(self, conversation_id: str) -> Optional[str]:
-        """Get bundle ID linked to conversation through attachments.
+    # async def get_conversation_bundle_id(self, conversation_id: str) -> Optional[str]:
+    #     """Get bundle ID linked to conversation through attachments.
         
-        Args:
-            conversation_id: ID of the conversation
+    #     Args:
+    #         conversation_id: ID of the conversation
             
-        Returns:
-            Bundle ID if found, None otherwise
-        """
-        try:
-            logger.debug(f"Getting bundle ID for conversation {conversation_id}")
-            result = self.execute_query(
-                table_name='conversation_attachments',
-                query_type='select',
-                columns='attachment_id',
-                filters={
-                    'conversation_id': conversation_id,
-                    'attachment_type': 'workout_bundle'
-                }
-            )
+    #     Returns:
+    #         Bundle ID if found, None otherwise
+    #     """
+    #     try:
+    #         logger.debug(f"Getting bundle ID for conversation {conversation_id}")
+    #         result = self.execute_query(
+    #             table_name='conversation_attachments',
+    #             query_type='select',
+    #             columns='attachment_id',
+    #             filters={
+    #                 'conversation_id': conversation_id,
+    #                 'attachment_type': 'workout_bundle'
+    #             }
+    #         )
             
-            if result and len(result) > 0:
-                logger.debug(f"Found bundle ID: {result[0]['attachment_id']}")
-                return result[0]['attachment_id']
-            logger.debug("No bundle ID found")
-            return None
-        except Exception as e:
-            logger.error(f"Error fetching bundle ID: {e}")
-            return None
+    #         if result and len(result) > 0:
+    #             logger.debug(f"Found bundle ID: {result[0]['attachment_id']}")
+    #             return result[0]['attachment_id']
+    #         logger.debug("No bundle ID found")
+    #         return None
+    #     except Exception as e:
+    #         logger.error(f"Error fetching bundle ID: {e}")
+    #         return None
 
-    async def get_workout_bundle(self, bundle_id: str) -> Optional[Dict]:
-        """Fetch workout bundle data by ID.
+    # async def get_workout_bundle(self, bundle_id: str) -> Optional[Dict]:
+    #     """Fetch workout bundle data by ID.
         
-        Args:
-            bundle_id: ID of the workout bundle
+    #     Args:
+    #         bundle_id: ID of the workout bundle
             
-        Returns:
-            Bundle data if found, None otherwise
-        """
-        try:
-            logger.debug(f"Getting workout bundle {bundle_id}")
-            result = self.execute_query(
-                table_name='graph_bundles',
-                query_type='select',
-                columns='*',
-                filters={'id': bundle_id}
-            )
+    #     Returns:
+    #         Bundle data if found, None otherwise
+    #     """
+    #     try:
+    #         logger.debug(f"Getting workout bundle {bundle_id}")
+    #         result = self.execute_query(
+    #             table_name='graph_bundles',
+    #             query_type='select',
+    #             columns='*',
+    #             filters={'id': bundle_id}
+    #         )
             
-            if result and len(result) > 0:
-                logger.debug("Bundle found, converting to expected format")
-                # Convert to format expected by WorkoutDataBundle
-                bundle_data = {
-                    'bundle_id': result[0]['id'],
-                    'metadata': result[0]['metadata'],
-                    'workout_data': result[0]['workout_data'],
-                    'original_query': result[0]['original_query'],
-                    'chart_url': result[0]['chart_url'],
-                    'created_at': result[0]['created_at'],
-                    # Initialize new fields to ensure compatibility
-                    'chart_urls': {},
-                    'correlation_data': None,
-                    'consistency_metrics': {'score': 0, 'streak': 0, 'avg_gap': 0},
-                    'top_performers': {'strength': [], 'volume': [], 'frequency': []}
-                }
-                return bundle_data
-            logger.debug("No bundle found")
-            return None
-        except Exception as e:
-            logger.error(f"Error fetching workout bundle: {e}")
-            return None
+    #         if result and len(result) > 0:
+    #             logger.debug("Bundle found, converting to expected format")
+    #             # Convert to format expected by WorkoutDataBundle
+    #             bundle_data = {
+    #                 'bundle_id': result[0]['id'],
+    #                 'metadata': result[0]['metadata'],
+    #                 'workout_data': result[0]['workout_data'],
+    #                 'original_query': result[0]['original_query'],
+    #                 'chart_url': result[0]['chart_url'],
+    #                 'created_at': result[0]['created_at'],
+    #                 # Initialize new fields to ensure compatibility
+    #                 'chart_urls': {},
+    #                 'correlation_data': None,
+    #                 'consistency_metrics': {'score': 0, 'streak': 0, 'avg_gap': 0},
+    #                 'top_performers': {'strength': [], 'volume': [], 'frequency': []}
+    #             }
+    #             return bundle_data
+    #         logger.debug("No bundle found")
+    #         return None
+    #     except Exception as e:
+    #         logger.error(f"Error fetching workout bundle: {e}")
+    #         return None
         
-    async def create_workout_bundle_with_link(self, bundle: WorkoutDataBundle, user_id: str, conversation_id: str) -> Dict[str, Any]:
-        try:
-            logger.info(f"Linking bundle {bundle.bundle_id} to conversation {conversation_id}")
-            # Extract user_id from workout data if not provided
-            if not user_id and bundle.workout_data.get('workouts'):
-                user_id = bundle.workout_data.get('workouts', [{}])[0].get('user_id', '')
+    # async def create_workout_bundle_with_link(self, bundle: WorkoutDataBundle, user_id: str, conversation_id: str) -> Dict[str, Any]:
+    #     try:
+    #         logger.info(f"Linking bundle {bundle.bundle_id} to conversation {conversation_id}")
+    #         # Extract user_id from workout data if not provided
+    #         if not user_id and bundle.workout_data.get('workouts'):
+    #             user_id = bundle.workout_data.get('workouts', [{}])[0].get('user_id', '')
             
-            if not user_id:
-                logger.error("No user ID provided for bundle creation")
-                return {'success': False, 'error': 'Missing user ID'}
+    #         if not user_id:
+    #             logger.error("No user ID provided for bundle creation")
+    #             return {'success': False, 'error': 'Missing user ID'}
             
-            # Store complete workout data instead of just references
-            processed_workout_data = _convert_datetime_to_iso(bundle.workout_data)
+    #         # Store complete workout data instead of just references
+    #         processed_workout_data = _convert_datetime_to_iso(bundle.workout_data)
             
-            # Prepare bundle data for RPC, converting datetime objects
-            params = {
-                'p_bundle_id': str(bundle.bundle_id),
-                'p_user_id': str(user_id),
-                'p_conversation_id': str(conversation_id),
-                'p_metadata': _convert_datetime_to_iso(bundle.metadata.model_dump() if hasattr(bundle.metadata, 'model_dump') else bundle.metadata),
-                'p_workout_data': processed_workout_data,  # Store the complete workout data
-                'p_original_query': bundle.original_query,
-                'p_chart_url': bundle.chart_url,
-                'p_chart_urls': bundle.chart_urls or {}
-            }
+    #         # Prepare bundle data for RPC, converting datetime objects
+    #         params = {
+    #             'p_bundle_id': str(bundle.bundle_id),
+    #             'p_user_id': str(user_id),
+    #             'p_conversation_id': str(conversation_id),
+    #             'p_metadata': _convert_datetime_to_iso(bundle.metadata.model_dump() if hasattr(bundle.metadata, 'model_dump') else bundle.metadata),
+    #             'p_workout_data': processed_workout_data,  # Store the complete workout data
+    #             'p_original_query': bundle.original_query,
+    #             'p_chart_url': bundle.chart_url,
+    #             'p_chart_urls': bundle.chart_urls or {}
+    #         }
             
-            # Handle additional optional fields
-            if hasattr(bundle, 'consistency_metrics') and bundle.consistency_metrics:
-                params['p_consistency_metrics'] = _convert_datetime_to_iso(bundle.consistency_metrics)
+    #         # Handle additional optional fields
+    #         if hasattr(bundle, 'consistency_metrics') and bundle.consistency_metrics:
+    #             params['p_consistency_metrics'] = _convert_datetime_to_iso(bundle.consistency_metrics)
             
-            if hasattr(bundle, 'top_performers') and bundle.top_performers:
-                params['p_top_performers'] = _convert_datetime_to_iso(bundle.top_performers)
+    #         if hasattr(bundle, 'top_performers') and bundle.top_performers:
+    #             params['p_top_performers'] = _convert_datetime_to_iso(bundle.top_performers)
 
-            logger.info(f"Sending bundle-conversation link request: bundle_id={bundle.bundle_id}, conversation_id={conversation_id}")
+    #         logger.info(f"Sending bundle-conversation link request: bundle_id={bundle.bundle_id}, conversation_id={conversation_id}")
             
-            # Execute RPC and log the response for debugging
-            response = self.client.rpc('create_workout_bundle_with_link', params).execute()
-            logger.debug(f"RPC response: {response.data if hasattr(response, 'data') else 'No data'}")
+    #         # Execute RPC and log the response for debugging
+    #         response = self.client.rpc('create_workout_bundle_with_link', params).execute()
+    #         logger.debug(f"RPC response: {response.data if hasattr(response, 'data') else 'No data'}")
             
-            # Process response
-            if hasattr(response, 'data') and response.data:
-                result = response.data
-                if isinstance(result, list) and len(result) > 0:
-                    result = result[0]
+    #         # Process response
+    #         if hasattr(response, 'data') and response.data:
+    #             result = response.data
+    #             if isinstance(result, list) and len(result) > 0:
+    #                 result = result[0]
                 
-                # Add detailed success logging
-                if result.get('success', False):
-                    logger.info(f"✅ Successfully linked bundle {bundle.bundle_id} to conversation {conversation_id}")
-                else:
-                    logger.error(f"❌ Failed to link bundle to conversation: {result.get('error', 'Unknown error')}")
+    #             # Add detailed success logging
+    #             if result.get('success', False):
+    #                 logger.info(f"✅ Successfully linked bundle {bundle.bundle_id} to conversation {conversation_id}")
+    #             else:
+    #                 logger.error(f"❌ Failed to link bundle to conversation: {result.get('error', 'Unknown error')}")
                 
-                return result
-            else:
-                logger.error(f"❌ Empty response when linking bundle {bundle.bundle_id} to conversation {conversation_id}")
-                return {'success': False, 'error': 'Empty response'}
+    #             return result
+    #         else:
+    #             logger.error(f"❌ Empty response when linking bundle {bundle.bundle_id} to conversation {conversation_id}")
+    #             return {'success': False, 'error': 'Empty response'}
         
-        except Exception as e:
-            logger.error(f"❌ Exception while linking bundle {bundle.bundle_id} to conversation {conversation_id}: {str(e)}", exc_info=True)
-            return {'success': False, 'error': str(e)}
+    #     except Exception as e:
+    #         logger.error(f"❌ Exception while linking bundle {bundle.bundle_id} to conversation {conversation_id}: {str(e)}", exc_info=True)
+    #         return {'success': False, 'error': str(e)}
         
-    async def fetch_conversation_messages(self, conversation_id: str) -> List[Dict]:
-        """Fetch conversation messages from the database.
+    # async def fetch_conversation_messages(self, conversation_id: str) -> List[Dict]:
+    #     """Fetch conversation messages from the database.
         
-        Args:
-            conversation_id: ID of the conversation
+    #     Args:
+    #         conversation_id: ID of the conversation
             
-        Returns:
-            List of message objects in conversation order
-        """
-        try:
-            logger.debug(f"Fetching messages for conversation {conversation_id}")
-            # Query messages table directly
-            result = self.execute_query(
-                table_name='messages',
-                query_type='select',
-                columns='*',
-                filters={'conversation_id': conversation_id}
-            )
+    #     Returns:
+    #         List of message objects in conversation order
+    #     """
+    #     try:
+    #         logger.debug(f"Fetching messages for conversation {conversation_id}")
+    #         # Query messages table directly
+    #         result = self.execute_query(
+    #             table_name='messages',
+    #             query_type='select',
+    #             columns='*',
+    #             filters={'conversation_id': conversation_id}
+    #         )
             
-            if not result:
-                logger.warning(f"No messages found for conversation {conversation_id}")
-                return []
+    #         if not result:
+    #             logger.warning(f"No messages found for conversation {conversation_id}")
+    #             return []
             
-            # Sort messages by conversation_sequence to ensure proper order
-            sorted_messages = sorted(result, key=lambda msg: msg.get('conversation_sequence', 0))
+    #         # Sort messages by conversation_sequence to ensure proper order
+    #         sorted_messages = sorted(result, key=lambda msg: msg.get('conversation_sequence', 0))
             
-            # Transform to the format expected by the conversation chain
-            formatted_messages = []
-            for msg in sorted_messages:
-                formatted_messages.append({
-                    'id': msg.get('id'),
-                    'conversation_id': conversation_id,
-                    'content': msg.get('content', ''),
-                    'sender': msg.get('sender', 'unknown'),
-                    'conversation_sequence': msg.get('conversation_sequence', 0),
-                    'timestamp': msg.get('timestamp')
-                })
+    #         # Transform to the format expected by the conversation chain
+    #         formatted_messages = []
+    #         for msg in sorted_messages:
+    #             formatted_messages.append({
+        #             'id': msg.get('id'),
+        #             'conversation_id': conversation_id,
+        #             'content': msg.get('content', ''),
+        #             'sender': msg.get('sender', 'unknown'),
+        #             'conversation_sequence': msg.get('conversation_sequence', 0),
+        #             'timestamp': msg.get('timestamp')
+        #         })
             
-            logger.debug(f"Retrieved {len(formatted_messages)} messages")
-            return formatted_messages
-        except Exception as e:
-            logger.error(f"Error fetching conversation messages: {str(e)}", exc_info=True)
-            return []
+        #     logger.debug(f"Retrieved {len(formatted_messages)} messages")
+        #     return formatted_messages
+        # except Exception as e:
+        #     logger.error(f"Error fetching conversation messages: {str(e)}", exc_info=True)
+        #     return []
         
     @property
     def auth(self):

@@ -1,94 +1,109 @@
-2025-05-13 17:40:50,633 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,751 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:40:50,752 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:40:50,752 - app.main - INFO - Response status: 500
-2025-05-13 17:42:40,776 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:43,252 - app - INFO - Logging has been set up
-2025-05-13 17:42:43,252 - app.main - INFO - Application starting
-2025-05-13 17:42:43,252 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:42:48,868 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:48,878 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:42:48,945 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:42:49,292 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:42:49,511 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:42:49,512 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:42:49,647 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:42:49,660 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:42:49,750 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,751 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,854 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,855 - app.main - INFO - Response status: 200
-2025-05-13 17:42:49,855 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:42:49,856 - app.main - INFO - Response status: 200
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:42:50,108 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,199 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,200 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,200 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:42:50,200 - app.main - INFO - Response status: 200
-2025-05-13 17:42:50,286 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,287 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,359 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:42:50,360 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:42:50,361 - app.main - INFO - Response status: 500
-2025-05-13 17:44:47,831 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:50,591 - app - INFO - Logging has been set up
-2025-05-13 17:44:50,591 - app.main - INFO - Application starting
-2025-05-13 17:44:50,591 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:44:58,689 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:58,712 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:44:58,714 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:44:58,717 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:44:58,791 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:44:59,318 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:44:59,479 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,479 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,551 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,553 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:44:59,661 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:44:59,661 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:44:59,836 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:44:59,842 - app.main - INFO - Response status: 200
-2025-05-13 17:44:59,843 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:44:59,843 - app.main - INFO - Response status: 200
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:45:00,037 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,143 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,144 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,145 - app.main - INFO - Response status: 200
-2025-05-13 17:45:01,906 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:45:02,005 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:02,006 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:02,100 - app.services.db.workout_service - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:13,073 - app.api.endpoints.db - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:13,110 - app.main - INFO - Response status: 200
-2025-05-13 17:47:47,304 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:49,940 - app - INFO - Logging has been set up
-2025-05-13 17:47:49,940 - app.main - INFO - Application starting
-2025-05-13 17:47:49,940 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:47:52,762 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:52,781 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-13 17:47:52,783 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
+2025-05-13 17:47:52,786 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
+2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase API key present: True
+2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-05-13 17:47:52,787 - app.core.supabase.client - INFO - Supabase key length: 208 characters
+2025-05-13 17:47:52,846 - app.core.supabase.client - INFO - Supabase client created successfully
+2025-05-13 17:47:53,236 - app.core.supabase.client - INFO - Test query successful: 1
+2025-05-13 17:47:53,445 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-13 17:47:53,445 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-13 17:47:53,551 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-13 17:47:53,564 - app.main - INFO - Request: GET /db/user-profile
+2025-05-13 17:47:53,626 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,627 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,692 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,693 - app.main - INFO - Response status: 200
+2025-05-13 17:47:53,694 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 17:47:53,695 - app.main - INFO - Response status: 200
+2025-05-13 17:47:53,769 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,770 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 17:47:53,770 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 17:47:53,834 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 17:47:53,834 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 17:47:53,834 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,925 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,925 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,926 - app.main - INFO - Request: GET /db/workouts/user
+2025-05-13 17:47:53,927 - app.main - INFO - Response status: 200
+2025-05-13 17:47:53,993 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:53,993 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:54,282 - app.services.db.workout_service - INFO - Retrieved 121 workouts with 881 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:54,283 - app.api.endpoints.db - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:54,312 - app.main - INFO - Response status: 200
+2025-05-13 18:11:33,663 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 18:11:36,245 - app - INFO - Logging has been set up
+2025-05-13 18:11:36,245 - app.main - INFO - Application starting
+2025-05-13 18:11:36,245 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:11:36,245 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:11:36,245 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:11:43,727 - app - INFO - Logging has been set up
+2025-05-13 18:11:43,727 - app.main - INFO - Application starting
+2025-05-13 18:11:43,727 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:11:43,727 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:11:43,727 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:12:00,959 - app - INFO - Logging has been set up
+2025-05-13 18:12:00,959 - app.main - INFO - Application starting
+2025-05-13 18:12:00,959 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:12:00,959 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:12:00,959 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:12:04,497 - app - INFO - Logging has been set up
+2025-05-13 18:12:04,497 - app.main - INFO - Application starting
+2025-05-13 18:12:04,497 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:12:04,497 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:12:04,497 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:12:23,358 - app - INFO - Logging has been set up
+2025-05-13 18:12:23,359 - app.main - INFO - Application starting
+2025-05-13 18:12:23,359 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:12:23,359 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:12:23,359 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:12:41,569 - app - INFO - Logging has been set up
+2025-05-13 18:12:41,570 - app.main - INFO - Application starting
+2025-05-13 18:12:41,570 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:12:41,570 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:12:41,570 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 18:13:13,879 - app - INFO - Logging has been set up
+2025-05-13 18:13:13,879 - app.main - INFO - Application starting
+2025-05-13 18:13:13,879 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 18:13:13,879 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 18:13:13,879 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 13:31:31,774 - app - INFO - Logging has been set up
+2025-05-14 13:31:31,774 - app.main - INFO - Application starting
+2025-05-14 13:31:31,774 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 13:31:31,774 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 13:31:31,774 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 14:28:27,299 - app - INFO - Logging has been set up
+2025-05-14 14:28:27,300 - app.main - INFO - Application starting
+2025-05-14 14:28:27,300 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 14:28:27,300 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 14:28:27,300 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 14:53:01,432 - app - INFO - Logging has been set up
+2025-05-14 14:53:01,432 - app.main - INFO - Application starting
+2025-05-14 14:53:01,432 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 14:53:01,432 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 14:53:01,432 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 14:58:56,438 - app - INFO - Logging has been set up
+2025-05-14 14:58:56,438 - app.main - INFO - Application starting
+2025-05-14 14:58:56,439 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 14:58:56,439 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 14:58:56,439 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 14:59:28,854 - app - INFO - Logging has been set up
+2025-05-14 14:59:28,854 - app.main - INFO - Application starting
+2025-05-14 14:59:28,854 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 14:59:28,854 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 14:59:28,854 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 14:59:52,411 - app - INFO - Logging has been set up
+2025-05-14 14:59:52,411 - app.main - INFO - Application starting
+2025-05-14 14:59:52,411 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 14:59:52,411 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 14:59:52,411 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 15:08:58,550 - app - INFO - Logging has been set up
+2025-05-14 15:08:58,551 - app.main - INFO - Application starting
+2025-05-14 15:08:58,551 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 15:08:58,551 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 15:08:58,551 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-14 16:10:35,553 - app - INFO - Logging has been set up
+2025-05-14 16:10:35,554 - app.main - INFO - Application starting
+2025-05-14 16:10:35,554 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-14 16:10:35,554 - app.main - INFO - SUPABASE_URL present: True
+2025-05-14 16:10:35,554 - app.main - INFO - SUPABASE_KEY present: True

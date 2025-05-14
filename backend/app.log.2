@@ -1,95 +1,94 @@
-2025-05-13 17:37:43,659 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:37:43,842 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:37:43,843 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:37:43,843 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:37:43,977 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:37:43,978 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:37:43,979 - app.main - INFO - Response status: 200
-2025-05-13 17:37:46,017 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:37:46,127 - app.api.endpoints.db - INFO - API request to get workout: user
-2025-05-13 17:37:46,127 - app.services.db.workout_service - INFO - Getting workout: user
-2025-05-13 17:37:46,250 - app.services.db.workout_service - ERROR - Error getting workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "user"'}
-2025-05-13 17:37:46,251 - app.services.db.base_service - ERROR - Error in get_workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "user"'}
-2025-05-13 17:37:46,251 - app.api.endpoints.db - ERROR - Error getting workout: 'user_id'
-2025-05-13 17:37:46,251 - app.main - INFO - Response status: 500
-2025-05-13 17:39:16,854 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:19,344 - app - INFO - Logging has been set up
-2025-05-13 17:39:19,344 - app.main - INFO - Application starting
-2025-05-13 17:39:19,344 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:39:19,344 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:39:19,344 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:39:40,143 - app - INFO - Logging has been set up
-2025-05-13 17:39:40,143 - app.main - INFO - Application starting
-2025-05-13 17:39:40,143 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:39:40,143 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:39:40,143 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:39:44,148 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:44,165 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:39:44,167 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:39:44,168 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:39:44,168 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:39:44,168 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:39:44,169 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:39:44,169 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:39:44,233 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:39:44,674 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:39:44,838 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:39:44,839 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:39:45,027 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:39:45,040 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:39:45,101 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,102 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,201 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,202 - app.main - INFO - Response status: 200
-2025-05-13 17:39:45,203 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:39:45,203 - app.main - INFO - Response status: 200
-2025-05-13 17:39:45,268 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,269 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:39:45,269 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:39:45,382 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:39:45,383 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:39:45,383 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,440 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,440 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:45,442 - app.main - INFO - Response status: 200
-2025-05-13 17:39:48,767 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:39:48,874 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:39:48,874 - app.services.db.workout_service - ERROR - Error in get_user_workouts: BaseSelectRequestBuilder.order() takes 2 positional arguments but 3 were given
-2025-05-13 17:39:48,874 - app.api.endpoints.db - ERROR - Error getting user workouts: BaseSelectRequestBuilder.order() takes 2 positional arguments but 3 were given
-2025-05-13 17:39:48,875 - app.main - INFO - Response status: 500
-2025-05-13 17:40:41,670 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:44,240 - app - INFO - Logging has been set up
-2025-05-13 17:40:44,240 - app.main - INFO - Application starting
-2025-05-13 17:40:44,241 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:40:44,241 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:40:44,241 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:40:48,701 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:48,712 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:40:48,717 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:40:48,718 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:40:48,719 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:40:48,719 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:40:48,719 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:40:48,719 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:40:48,775 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:40:49,167 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:40:49,458 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:40:49,459 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:40:49,641 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:40:49,653 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:40:49,763 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:49,763 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:49,908 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:49,909 - app.main - INFO - Response status: 200
-2025-05-13 17:40:49,910 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:40:49,911 - app.main - INFO - Response status: 200
-2025-05-13 17:40:50,055 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,055 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:40:50,055 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:40:50,137 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:40:50,138 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:40:50,138 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,213 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,214 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,215 - app.main - INFO - Response status: 200
-2025-05-13 17:40:50,526 - app.main - INFO - Request: GET /db/workouts/user
+2025-05-13 17:40:50,633 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:40:50,751 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
+2025-05-13 17:40:50,752 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
+2025-05-13 17:40:50,752 - app.main - INFO - Response status: 500
+2025-05-13 17:42:40,776 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:43,252 - app - INFO - Logging has been set up
+2025-05-13 17:42:43,252 - app.main - INFO - Application starting
+2025-05-13 17:42:43,252 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 17:42:48,868 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:48,878 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
+2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
+2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase API key present: True
+2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase key length: 208 characters
+2025-05-13 17:42:48,945 - app.core.supabase.client - INFO - Supabase client created successfully
+2025-05-13 17:42:49,292 - app.core.supabase.client - INFO - Test query successful: 1
+2025-05-13 17:42:49,511 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-13 17:42:49,512 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-13 17:42:49,647 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-13 17:42:49,660 - app.main - INFO - Request: GET /db/user-profile
+2025-05-13 17:42:49,750 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:49,751 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:49,854 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:49,855 - app.main - INFO - Response status: 200
+2025-05-13 17:42:49,855 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 17:42:49,856 - app.main - INFO - Response status: 200
+2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 17:42:50,108 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,199 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,200 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,200 - app.main - INFO - Request: GET /db/workouts/user
+2025-05-13 17:42:50,200 - app.main - INFO - Response status: 200
+2025-05-13 17:42:50,286 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,287 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:42:50,359 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
+2025-05-13 17:42:50,360 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
+2025-05-13 17:42:50,361 - app.main - INFO - Response status: 500
+2025-05-13 17:44:47,831 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:50,591 - app - INFO - Logging has been set up
+2025-05-13 17:44:50,591 - app.main - INFO - Application starting
+2025-05-13 17:44:50,591 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 17:44:58,689 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:58,712 - app.main - INFO - Request: GET /db/user-profile
+2025-05-13 17:44:58,714 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
+2025-05-13 17:44:58,717 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
+2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase API key present: True
+2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase key length: 208 characters
+2025-05-13 17:44:58,791 - app.core.supabase.client - INFO - Supabase client created successfully
+2025-05-13 17:44:59,318 - app.core.supabase.client - INFO - Test query successful: 1
+2025-05-13 17:44:59,479 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:59,479 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:59,551 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:59,553 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-13 17:44:59,661 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-13 17:44:59,661 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-13 17:44:59,836 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-13 17:44:59,842 - app.main - INFO - Response status: 200
+2025-05-13 17:44:59,843 - app.main - INFO - Request: GET /db/conversations
+2025-05-13 17:44:59,843 - app.main - INFO - Response status: 200
+2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-13 17:45:00,037 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:00,143 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:00,144 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:00,145 - app.main - INFO - Response status: 200
+2025-05-13 17:45:01,906 - app.main - INFO - Request: GET /db/workouts/user
+2025-05-13 17:45:02,005 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:02,006 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:02,100 - app.services.db.workout_service - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:13,073 - app.api.endpoints.db - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:45:13,110 - app.main - INFO - Response status: 200
+2025-05-13 17:47:47,304 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:49,940 - app - INFO - Logging has been set up
+2025-05-13 17:47:49,940 - app.main - INFO - Application starting
+2025-05-13 17:47:49,940 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_URL present: True
+2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-13 17:47:52,762 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-13 17:47:52,781 - app.main - INFO - Request: GET /db/exercise-definitions

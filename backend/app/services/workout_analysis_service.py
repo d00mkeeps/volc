@@ -9,8 +9,8 @@ from fastapi import WebSocket, WebSocketDisconnect
 from langchain_anthropic import ChatAnthropic
 from app.services.workout_analysis.graph_service import WorkoutGraphService
 from app.services.chains.workout_analysis_chain import WorkoutAnalysisChain
-from ..core.supabase.client import SupabaseClient
-from .workout_analysis.query_builder import WorkoutQueryBuilder
+from app.services.db.graph_bundle_service import GraphBundleService
+from app.services.db.workout_service import WorkoutService
 from ..core.utils.id_gen import new_uuid
 from ..schemas.workout_data_bundle import BundleMetadata, CorrelationData, WorkoutDataBundle
 from .workout_analysis.correlation_service import CorrelationService
@@ -44,9 +44,18 @@ class WorkoutAnalysisService:
     and conversational analysis.
     """
     
-    def __init__(self, llm: ChatAnthropic, supabase_client: SupabaseClient):
-        self.graph_service = WorkoutGraphService(supabase_client)
-        self.supabase_client = supabase_client
+    def __init__(
+        self, 
+        llm: ChatAnthropic, 
+        workout_service: WorkoutService,
+        graph_bundle_service: GraphBundleService
+    ):
+        self.workout_service = workout_service
+        self.graph_bundle_service = graph_bundle_service
+        
+        # Pass workout_service to graph_service
+        self.graph_service = WorkoutGraphService(workout_service)
+        
         self.llm = llm
         self.conversation_chain = None
 
@@ -224,21 +233,12 @@ class WorkoutAnalysisService:
                     })
                     return
                 
-                # Initialize query builder
-                query_builder = WorkoutQueryBuilder(self.supabase_client)
-                
-                # Create query parameters - fetch 3 months of data by default
-                from app.schemas.exercise_query import ExerciseQuery
-                query = ExerciseQuery(
+                # Fetch historical workout data using WorkoutService
+                logger.info(f"Fetching historical workout data for user {user_id}")
+                workout_data = await self.workout_service.get_workout_history_by_exercises(
+                    user_id=user_id,
                     exercises=exercises,
                     timeframe="3 months"
-                )
-                
-                # Fetch historical workout data using the actual user ID
-                logger.info(f"Fetching historical workout data for user {user_id}")
-                workout_data = await query_builder.fetch_exercise_data(
-                    user_id=user_id,
-                    query_params=query
                 )
                 
                 if not workout_data:
@@ -279,7 +279,7 @@ class WorkoutAnalysisService:
                     user_id=user_id,
                     workout_data=workout_data,
                     message=message_text,
-                    conversation_id=conversation_id_to_use  # Use the client-provided ID
+                    conversation_id=conversation_id_to_use  # Pass the conversation ID for linking
                 ):
                     await self._send_json_safe(websocket, response)
 
@@ -545,13 +545,14 @@ class WorkoutAnalysisService:
                 bundle.chart_urls = chart_urls
                 # For backward compatibility
                 bundle.chart_url = chart_urls.get("strength_progress")
-                    # Enhance message with chart information
+                # Enhance message with chart information
                 chart_types = ", ".join(chart_urls.keys())
                 charts_info = f"Several visualizations have been generated for this workout data and are available in the sidebar. Available charts include: {chart_types}. You can reference these visualizations in your analysis and direct the user to check them in the sidebar for more detailed insights."
                 enhanced_message = f"{message}\n\n{charts_info}"
                 message = enhanced_message
             else:
                 logger.info("No charts were generated")
+                
             # First yield the data bundle WITH charts
             yield {
                 "type": "workout_data_bundle", 
@@ -560,11 +561,21 @@ class WorkoutAnalysisService:
             
             # AFTER yielding to client, save to database
             if conversation_id:
-                # Link bundle to conversation
-                result = await self.supabase_client.create_workout_bundle_with_link(
-                    bundle=bundle,
+                # Convert bundle to dictionary for saving
+                if hasattr(bundle, "model_dump"):
+                    bundle_dict = bundle.model_dump()
+                elif hasattr(bundle, "dict"):
+                    bundle_dict = bundle.dict()
+                else:
+                    bundle_dict = dict(bundle)
+                    
+                # Set the conversationId field explicitly
+                bundle_dict["conversationId"] = conversation_id
+                
+                # Use the service to save the bundle
+                result = await self.graph_bundle_service.save_graph_bundle(
                     user_id=user_id,
-                    conversation_id=conversation_id
+                    bundle=bundle_dict
                 )
 
                 link_success = result.get('success', False)
@@ -676,7 +687,6 @@ class WorkoutAnalysisService:
                 logger.info("="*80)
         except Exception as e:
             logger.error(f"Error logging final bundle state: {str(e)}")
-
     async def _prepare_enhanced_bundle(self, workout_data, original_query, correlation_results=None):
         """
         Prepare an enhanced workout data bundle with consistency metrics and top performers.

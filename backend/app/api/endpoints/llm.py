@@ -4,8 +4,9 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from ...services.onboarding_service import OnboardingService
-from ...services.llm_conversation_service import ConversationService
-from ...core.supabase.client import SupabaseClient
+from ...services.llm_conversation_service import ConversationService as LLMConversationService
+from ...services.db.conversation_service import ConversationService
+from ...services.db.graph_bundle_service import GraphBundleService
 from ...services.workout_analysis_service import WorkoutAnalysisService
 
 router = APIRouter()
@@ -62,7 +63,6 @@ async def onboarding_websocket(websocket: WebSocket):
             "data": "connected"
         })
         
-        
         # Initialize LLM instance
         llm = ChatAnthropic(
             model="claude-3-7-sonnet-20250219",
@@ -74,7 +74,7 @@ async def onboarding_websocket(websocket: WebSocket):
         # Create service with LLM
         service = OnboardingService(llm=llm)
 
-             # Process WebSocket messages
+        # Process WebSocket messages
         while True:
             data = await websocket.receive_json()
             
@@ -113,10 +113,13 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
         # Get API key
         api_key = os.getenv("ANTHROPIC_API_KEY")
         
+        # Initialize services
+        conversation_service = ConversationService()
+        
         # Handle different conversation types
         if conversation_type == "default":
             # Default conversation handling (unchanged)
-            service = ConversationService(api_key=api_key)
+            service = LLMConversationService(api_key=api_key)
             
             # Process messages directly
             while True:
@@ -134,15 +137,23 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
                 await service.process_message(websocket, data)
                 
         elif conversation_type == "workout-analysis":
-            # Initialize LLM and services
+            # Initialize services
+            graph_bundle_service = GraphBundleService()
+            
+            # Initialize LLM
             llm = ChatAnthropic(
                 model="claude-3-7-sonnet-20250219",
                 streaming=True,
                 api_key=api_key,
                 max_retries=0
             )
-            supabase_client = SupabaseClient()
-            service = WorkoutAnalysisService(llm=llm, supabase_client=supabase_client)
+            
+            # Get conversation to extract user_id
+            conversation = await conversation_service.get_conversation(conversation_id)
+            user_id = conversation["user_id"]
+            
+            # Initialize service with LLM
+            service = WorkoutAnalysisService(llm=llm, graph_bundle_service=graph_bundle_service)
             
             # Wait for first message to determine if new or existing conversation
             initial_data = await websocket.receive_json()
@@ -157,23 +168,20 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
                 try:
                     logger.info(f"Restoring conversation context for {conversation_id}")
                     
-                    # Get messages and bundle data
-                    messages = await supabase_client.fetch_conversation_messages(conversation_id)
+                    # Get messages from conversation service
+                    messages = await conversation_service.get_conversation_messages(conversation_id)
                     logger.info(f"Retrieved {len(messages)} messages for conversation {conversation_id}")
                     
-                    # Get bundle ID and data
-                    bundle_id = await supabase_client.get_conversation_bundle_id(conversation_id)
-                    logger.info(f"Conversation bundle ID: {bundle_id}")
+                    # Get bundles for this conversation
+                    bundles = await graph_bundle_service.get_bundles_by_conversation(user_id, conversation_id)
                     
+                    # Use the first bundle (most recent) if available
                     bundle_data = None
-                    if bundle_id:
-                        bundle_data = await supabase_client.get_workout_bundle(bundle_id)
-                        if bundle_data:
-                            logger.info(f"Bundle data retrieved, keys: {list(bundle_data.keys())}")
-                        else:
-                            logger.info(f"No bundle data found for bundle ID: {bundle_id}")
+                    if bundles and len(bundles) > 0:
+                        bundle_data = bundles[0]
+                        logger.info(f"Bundle data retrieved, keys: {list(bundle_data.keys())}")
                     else:
-                        logger.info("No bundle ID found for conversation")
+                        logger.info(f"No bundles found for conversation {conversation_id}")
                     
                     # Initialize conversation
                     await service._handle_initialization(messages, conversation_id)
