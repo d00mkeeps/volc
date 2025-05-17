@@ -2,6 +2,7 @@ from app.services.db.base_service import BaseDBService
 from typing import Dict, List, Any, Optional
 import logging
 from datetime import datetime, timedelta
+from ...core.utils.id_gen import new_uuid
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class WorkoutService(BaseDBService):
             
             # Prepare the workout data including the conversation_id if present
             workout_insert_data = {
-                "id": workout_data.get("id"),
+                "id": workout_data.get("id") or str(await new_uuid()),
                 "user_id": user_id,
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),

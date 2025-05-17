@@ -18,7 +18,27 @@ async def health_check():
     """
     return {"status": "ok", "service": "db-api"}
 
-
+@router.get("/workouts/templates")
+async def get_templates(
+    request: Request,
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Get all workout templates for a user
+    """
+    try:
+        logger.info(f"API request to get workout templates for user: {user.id}")
+        
+        workout_service = WorkoutService()
+        result = await workout_service.get_templates(user.id)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error getting templates: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.get("/graph-bundles")
 async def get_graph_bundles(
     conversation_id: str, 
@@ -319,28 +339,6 @@ async def update_template_usage(
         return result
     except Exception as e:
         logger.error(f"Error updating template usage: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.get("/workouts/templates")
-async def get_templates(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get all workout templates for a user
-    """
-    try:
-        logger.info(f"API request to get workout templates for user: {user.id}")
-        
-        workout_service = WorkoutService()
-        result = await workout_service.get_templates(user.id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting templates: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)

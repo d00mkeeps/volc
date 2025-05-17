@@ -17,23 +17,33 @@ interface WorkoutExerciseListProps {
   onFieldModified?: (fieldId: string) => void;
   // Keep the existing templateValues for backward compatibility
   templateValues?: {
-    exerciseIds: Set<string>;
-    setIds: Set<string>;
-  };
+    exerciseIds?: Set<string>;
+    setIds?: Set<string>;
+  } | null;
 }
 
 const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
   exercises,
   editMode,
   onExercisesChange,
-  templateValues,
   workoutId,
-  templateId,
-  modifiedFields,
-  onFieldModified,
+  // Add default values for all optional props
+  templateId = null,
+  modifiedFields = {},
+  onFieldModified = () => {},
+  templateValues = null,
 }) => {
-  const sortedExercises = [...exercises].sort(
-    (a, b) => a.order_index - b.order_index
+  // Ensure exercises is always an array
+  const safeExercises = exercises || [];
+
+  // Create safe templateValues with all required properties
+  const safeTemplateValues = {
+    exerciseIds: new Set<string>(templateValues?.exerciseIds || []),
+    setIds: new Set<string>(templateValues?.setIds || []),
+  };
+
+  const sortedExercises = [...safeExercises].sort(
+    (a, b) => (a.order_index || 0) - (b.order_index || 0)
   );
 
   const handleExerciseChange = (
@@ -45,17 +55,17 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
       definitionId: updatedExercise.definition_id,
     });
 
-    const newExercises = [...exercises];
+    const newExercises = [...safeExercises];
     newExercises[index] = updatedExercise;
     onExercisesChange(newExercises);
   };
 
   const handleDeleteExercise = (index: number) => {
-    if (exercises.length === 1) {
+    if (safeExercises.length <= 1) {
       return; // Don't allow deleting the last exercise
     }
 
-    const newExercises = exercises.filter((_, i) => i !== index);
+    const newExercises = safeExercises.filter((_, i) => i !== index);
     // Reorder exercise indices
     newExercises.forEach((exercise, i) => {
       exercise.order_index = i;
@@ -68,11 +78,11 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
     const newExercise: WorkoutExercise = {
       id: `temp-${Date.now()}`,
       workout_id:
-        exercises.length > 0
-          ? exercises[0].workout_id
+        safeExercises.length > 0
+          ? safeExercises[0].workout_id
           : workoutId || `temp-workout-${Date.now()}`,
       name: "",
-      order_index: exercises.length,
+      order_index: safeExercises.length,
       weight_unit: "kg",
       distance_unit: "m",
       created_at: now,
@@ -93,7 +103,7 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
       ],
     };
 
-    onExercisesChange([...exercises, newExercise]);
+    onExercisesChange([...safeExercises, newExercise]);
   };
 
   return (
@@ -102,22 +112,24 @@ const WorkoutExerciseList: React.FC<WorkoutExerciseListProps> = ({
       {sortedExercises.map((exercise, index) =>
         editMode ? (
           <WorkoutExerciseItemEdit
-            key={exercise.id}
+            key={exercise.id || `exercise-${index}`}
             exercise={exercise}
-            isLastExercise={index === exercises.length - 1}
+            isLastExercise={index === safeExercises.length - 1}
             onExerciseChange={(updatedExercise) =>
               handleExerciseChange(updatedExercise, index)
             }
             onDeleteExercise={() => handleDeleteExercise(index)}
             templateId={templateId}
-            modifiedFields={modifiedFields}
-            onFieldModified={onFieldModified}
+            // Ensure modifiedFields is always an object, never undefined
+            modifiedFields={modifiedFields || {}}
+            // Ensure onFieldModified is always a function, never undefined
+            onFieldModified={onFieldModified || (() => {})}
           />
         ) : (
           <WorkoutExerciseItem
-            key={exercise.id}
+            key={exercise.id || `exercise-${index}`}
             exercise={exercise}
-            isLastExercise={index === exercises.length - 1}
+            isLastExercise={index === safeExercises.length - 1}
           />
         )
       )}

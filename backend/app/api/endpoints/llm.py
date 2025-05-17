@@ -3,6 +3,8 @@ import os
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
+
+from app.services.db.workout_service import WorkoutService
 from ...services.onboarding_service import OnboardingService
 from ...services.llm_conversation_service import ConversationService as LLMConversationService
 from ...services.db.conversation_service import ConversationService
@@ -139,6 +141,7 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
         elif conversation_type == "workout-analysis":
             # Initialize services
             graph_bundle_service = GraphBundleService()
+            workout_service = WorkoutService()
             
             # Initialize LLM
             llm = ChatAnthropic(
@@ -153,7 +156,8 @@ async def conversation_websocket(websocket: WebSocket, conversation_type: str, c
             user_id = conversation["user_id"]
             
             # Initialize service with LLM
-            service = WorkoutAnalysisService(llm=llm, graph_bundle_service=graph_bundle_service)
+            service = WorkoutAnalysisService(llm=llm, graph_bundle_service=graph_bundle_service,
+            workout_service=workout_service)  # Add this parameter)
             
             # Wait for first message to determine if new or existing conversation
             initial_data = await websocket.receive_json()

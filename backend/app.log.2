@@ -1,94 +1,89 @@
-2025-05-13 17:40:50,633 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:40:50,751 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:40:50,752 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:40:50,752 - app.main - INFO - Response status: 500
-2025-05-13 17:42:40,776 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:43,252 - app - INFO - Logging has been set up
-2025-05-13 17:42:43,252 - app.main - INFO - Application starting
-2025-05-13 17:42:43,252 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:42:43,252 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:42:48,868 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:48,878 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:42:48,879 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:42:48,880 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:42:48,945 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:42:49,292 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:42:49,511 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:42:49,512 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:42:49,647 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:42:49,660 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:42:49,750 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,751 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,854 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:49,855 - app.main - INFO - Response status: 200
-2025-05-13 17:42:49,855 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:42:49,856 - app.main - INFO - Response status: 200
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:42:50,010 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:42:50,108 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:42:50,108 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,199 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,200 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,200 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:42:50,200 - app.main - INFO - Response status: 200
-2025-05-13 17:42:50,286 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,287 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:42:50,359 - app.services.db.workout_service - ERROR - Error in get_user_workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:42:50,360 - app.api.endpoints.db - ERROR - Error getting user workouts: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-05-13 17:42:50,361 - app.main - INFO - Response status: 500
-2025-05-13 17:44:47,831 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:50,591 - app - INFO - Logging has been set up
-2025-05-13 17:44:50,591 - app.main - INFO - Application starting
-2025-05-13 17:44:50,591 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:44:50,591 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:44:58,689 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:58,712 - app.main - INFO - Request: GET /db/user-profile
-2025-05-13 17:44:58,714 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-05-13 17:44:58,717 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-05-13 17:44:58,719 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-05-13 17:44:58,791 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-05-13 17:44:59,318 - app.core.supabase.client - INFO - Test query successful: 1
-2025-05-13 17:44:59,479 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,479 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,551 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,553 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-13 17:44:59,661 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-13 17:44:59,661 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-13 17:44:59,836 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-13 17:44:59,842 - app.main - INFO - Response status: 200
-2025-05-13 17:44:59,843 - app.main - INFO - Request: GET /db/conversations
-2025-05-13 17:44:59,843 - app.main - INFO - Response status: 200
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-13 17:44:59,933 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-13 17:45:00,037 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-13 17:45:00,037 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,143 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,144 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:00,145 - app.main - INFO - Response status: 200
-2025-05-13 17:45:01,906 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-13 17:45:02,005 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:02,006 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:02,100 - app.services.db.workout_service - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:13,073 - app.api.endpoints.db - INFO - Retrieved 121 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:45:13,110 - app.main - INFO - Response status: 200
-2025-05-13 17:47:47,304 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:49,940 - app - INFO - Logging has been set up
-2025-05-13 17:47:49,940 - app.main - INFO - Application starting
-2025-05-13 17:47:49,940 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_URL present: True
-2025-05-13 17:47:49,941 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-13 17:47:52,762 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-13 17:47:52,781 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-15 11:09:21,994 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,061 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,062 - app.services.db.conversation_service - INFO - Getting messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,154 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,155 - app.main - INFO - Response status: 200
+2025-05-15 11:09:22,156 - app.main - INFO - Response status: 200
+2025-05-15 11:09:22,178 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:22,182 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,270 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,331 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,332 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,332 - app.services.db.conversation_service - INFO - Getting messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,388 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,388 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,388 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,448 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,448 - app.api.endpoints.llm - INFO - No bundles found for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:22,450 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
+2025-05-15 11:09:22,451 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
+2025-05-15 11:09:22,451 - app.main - INFO - Request: GET /db/conversations
+2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-15 11:09:22,579 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-15 11:09:22,579 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-15 11:09:22,579 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:22,641 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:22,641 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:22,642 - app.main - INFO - Response status: 200
+2025-05-15 11:09:23,389 - app.main - INFO - Request: DELETE /db/conversations/53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,460 - app.api.endpoints.db - INFO - API request to delete conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,460 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,523 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,523 - app.services.db.conversation_service - INFO - Deleting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,584 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:09:23,585 - app.main - INFO - Response status: 200
+2025-05-15 11:09:25,020 - app.main - INFO - Request: GET /db/health
+2025-05-15 11:09:25,021 - app.main - INFO - Response status: 200
+2025-05-15 11:09:28,375 - app.main - INFO - Request: GET /db/health
+2025-05-15 11:09:28,377 - app.main - INFO - Response status: 200
+2025-05-15 11:09:35,332 - app.main - INFO - Request: GET /db/user-profile
+2025-05-15 11:09:35,455 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:35,456 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:35,565 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:35,565 - app.main - INFO - Response status: 200
+2025-05-15 11:09:37,857 - app.main - INFO - Request: GET /db/user-profile
+2025-05-15 11:09:37,918 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:37,918 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:37,991 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:09:37,991 - app.main - INFO - Response status: 200
+2025-05-15 11:10:15,969 - app.main - INFO - Request: GET /db/user-profile
+2025-05-15 11:10:16,096 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,096 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,226 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,227 - app.main - INFO - Response status: 200
+2025-05-15 11:10:16,235 - app.main - INFO - Request: POST /db/user-profile
+2025-05-15 11:10:16,289 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,289 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,433 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,434 - app.main - INFO - Response status: 200
+2025-05-15 11:10:16,456 - app.main - INFO - Request: GET /db/user-profile
+2025-05-15 11:10:16,512 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,512 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,573 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:10:16,574 - app.main - INFO - Response status: 200
+2025-05-15 11:11:23,154 - app.main - INFO - Request: GET /db/workouts/user
+2025-05-15 11:11:23,443 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:23,443 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:23,723 - app.services.db.workout_service - INFO - Retrieved 123 workouts with 897 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:23,723 - app.api.endpoints.db - INFO - Retrieved 123 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:23,755 - app.main - INFO - Response status: 200
+2025-05-15 11:11:31,235 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
+2025-05-15 11:11:40,173 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:40,177 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-15 11:11:40,284 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-15 11:11:40,284 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-15 11:11:40,422 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-15 11:11:40,434 - app.main - INFO - Request: GET /db/user-profile
+2025-05-15 11:11:40,487 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:40,487 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:40,547 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:40,548 - app.main - INFO - Response status: 200
+2025-05-15 11:11:40,549 - app.main - INFO - Request: GET /db/conversations
+2025-05-15 11:11:40,550 - app.main - INFO - Response status: 200
+2025-05-15 11:11:40,612 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-15 11:11:40,612 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-05-15 11:11:40,613 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-05-15 11:11:40,690 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-05-15 11:11:40,691 - app.api.endpoints.db - INFO - Calling get_user_conversations method
