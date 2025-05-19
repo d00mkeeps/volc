@@ -1,27 +1,82 @@
+# app/api/endpoints/llm.py
+
 import logging
 import os
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+import json
+from typing import Dict, Any, Optional
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
+from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
+from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
+from ...services.chains.workout_analysis_chain import WorkoutAnalysisChain
 
-from app.services.db.workout_service import WorkoutService
-from ...services.onboarding_service import OnboardingService
-from ...services.llm_conversation_service import ConversationService as LLMConversationService
-from ...services.db.conversation_service import ConversationService
-from ...services.db.graph_bundle_service import GraphBundleService
-from ...services.workout_analysis_service import WorkoutAnalysisService
-
-router = APIRouter()
+# Load environment variables
 load_dotenv()
 
-# Base user connection
-@router.websocket("/base/{user_id}")
-async def user_base_websocket(websocket: WebSocket, user_id: str):
-    logger = logging.getLogger(__name__)
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Create router
+router = APIRouter()
+
+# Dependency for WebSocket authentication (placeholder - implement as needed)
+async def verify_token(token: str) -> Optional[str]:
+    """Verify token and return user_id if valid"""
+    # Implement your authentication logic here
+    # This is a placeholder that always returns success
+    return "test_user"
+
+# Dependency to get Anthropic API key
+def get_anthropic_api_key():
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        logger.error("ANTHROPIC_API_KEY environment variable not set")
+        raise HTTPException(status_code=500, detail="API configuration error")
+    return api_key
+
+# Dependency to get LLM instance
+def get_llm(api_key: str = Depends(get_anthropic_api_key)):
+    return ChatAnthropic(
+        model="claude-3-7-sonnet-20250219",
+        streaming=True,
+        api_key=api_key,
+        max_retries=0
+    )
+
+# Dependency to get workout LLM service
+def get_workout_llm_service(api_key: str = Depends(get_anthropic_api_key)):
+    return WorkoutAnalysisLLMService(api_key=api_key)
+
+# Custom JSON encoder that handles datetime objects
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        from datetime import datetime
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+# Helper to safely send JSON with datetime objects
+async def send_json_safe(websocket: WebSocket, data: Dict[str, Any]):
+    try:
+        json_str = json.dumps(data, cls=DateTimeEncoder)
+        await websocket.send_text(json_str)
+    except Exception as e:
+        logger.error(f"Error sending JSON: {str(e)}")
+        # Fallback to simple error response
+        await websocket.send_json({
+            "type": "error",
+            "data": {"message": "Error sending response"}
+        })
+
+# Base user connection for all LLM WebSockets
+@router.websocket("/api/llm/base/{user_id}")
+async def base_llm_websocket(websocket: WebSocket, user_id: str):
+    """Base WebSocket endpoint for LLM interactions"""
     
     try:
         await websocket.accept()
-        logger.info(f"Base WebSocket connection accepted for user: {user_id}")
+        logger.info(f"Base LLM WebSocket connection accepted for user: {user_id}")
         
         # Send connection confirmation
         await websocket.send_json({
@@ -29,10 +84,11 @@ async def user_base_websocket(websocket: WebSocket, user_id: str):
             "data": "connected"
         })
         
-        # Handle user-level events
+        # Handle basic messages
         while True:
             data = await websocket.receive_json()
-
+            
+            # Handle heartbeat
             if data.get('type') == 'heartbeat':
                 await websocket.send_json({
                     "type": "heartbeat_ack",
@@ -40,214 +96,214 @@ async def user_base_websocket(websocket: WebSocket, user_id: str):
                 })
                 continue
             
+            # Echo back non-heartbeat messages (placeholder)
+            await websocket.send_json({
+                "type": "echo",
+                "data": data
+            })
+            
     except WebSocketDisconnect:
-        logger.info(f"Base WebSocket disconnected for user: {user_id}")
+        logger.info(f"Base LLM WebSocket disconnected for user: {user_id}")
     except Exception as e:
-        logger.error(f"Error in base user websocket: {str(e)}", exc_info=True)
+        logger.error(f"Error in base LLM websocket: {str(e)}", exc_info=True)
         try:
             await websocket.close(code=1011)
         except:
             pass
 
-
-@router.websocket("/onboarding")
-async def onboarding_websocket(websocket: WebSocket):
-    """Handles the onboarding chat flow"""
-    logger = logging.getLogger(__name__)
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+# General conversation endpoint
+@router.websocket("/api/llm/conversation/{conversation_id}")
+async def conversation_websocket(
+    websocket: WebSocket, 
+    conversation_id: str,
+    llm: ChatAnthropic = Depends(get_llm)
+):
+    """WebSocket endpoint for general LLM conversations"""
     
     try:
         await websocket.accept()
-        logger.info("WebSocket connection accepted")
-
+        logger.info(f"Conversation WebSocket connection accepted: {conversation_id}")
+        
+        # Send connection confirmation
         await websocket.send_json({
             "type": "connection_status",
             "data": "connected"
         })
         
-        # Initialize LLM instance
-        llm = ChatAnthropic(
-            model="claude-3-7-sonnet-20250219",
-            streaming=True,
-            api_key=api_key,
-            max_retries=0
-        )
+        # Initialize conversation history
+        conversation_history = []
         
-        # Create service with LLM
-        service = OnboardingService(llm=llm)
-
-        # Process WebSocket messages
+        # Process messages
         while True:
             data = await websocket.receive_json()
             
-            # Handle heartbeat messages
+            # Handle heartbeat
             if data.get('type') == 'heartbeat':
                 await websocket.send_json({
                     "type": "heartbeat_ack",
                     "timestamp": data.get('timestamp')
                 })
                 continue
-            await service.process_message(websocket, data)
-        
+            
+            # Handle conversation message
+            if data.get('type') == 'message' or 'message' in data:
+                message = data.get('message', '')
+                
+                # Add user message to history
+                conversation_history.append({"role": "user", "content": message})
+                
+                try:
+                    # Stream response
+                    response_content = ""
+                    
+                    with llm.stream(conversation_history) as stream:
+                        for chunk in stream:
+                            chunk_content = chunk.content
+                            if chunk_content:
+                                response_content += chunk_content
+                                await websocket.send_json({
+                                    "type": "content",
+                                    "data": {"content": chunk_content}
+                                })
+                    
+                    # Add assistant response to history
+                    conversation_history.append({"role": "assistant", "content": response_content})
+                    
+                    # Send completion notification
+                    await websocket.send_json({
+                        "type": "complete",
+                        "data": {"message_id": len(conversation_history) // 2}
+                    })
+                    
+                except Exception as e:
+                    logger.error(f"Error processing message: {str(e)}", exc_info=True)
+                    await websocket.send_json({
+                        "type": "error",
+                        "data": {"message": f"Error generating response: {str(e)}"}
+                    })
+            
     except WebSocketDisconnect:
-        logger.info("WebSocket disconnected")
+        logger.info(f"Conversation WebSocket disconnected: {conversation_id}")
+    except Exception as e:
+        logger.error(f"Error in conversation websocket: {str(e)}", exc_info=True)
+        try:
+            await websocket.close(code=1011)
+        except:
+            pass
+
+# Onboarding conversation endpoint
+@router.websocket("/api/llm/onboarding")
+async def onboarding_websocket(
+    websocket: WebSocket,
+    llm: ChatAnthropic = Depends(get_llm)
+):
+    """WebSocket endpoint for onboarding conversations"""
+    
+    try:
+        await websocket.accept()
+        logger.info("Onboarding WebSocket connection accepted")
+        
+        # Send connection confirmation
+        await websocket.send_json({
+            "type": "connection_status",
+            "data": "connected"
+        })
+        
+        # Initialize conversation with system prompt
+        conversation_history = [{
+            "role": "system", 
+            "content": """You are a fitness assistant helping a new user set up their 
+            fitness profile. Guide them through questions about their fitness goals, 
+            experience level, preferred workout types, and any limitations they have. 
+            Be conversational, friendly, and helpful."""
+        }]
+        
+        # Process messages
+        while True:
+            data = await websocket.receive_json()
+            
+            # Handle heartbeat
+            if data.get('type') == 'heartbeat':
+                await websocket.send_json({
+                    "type": "heartbeat_ack",
+                    "timestamp": data.get('timestamp')
+                })
+                continue
+            
+            # Handle message
+            if data.get('type') == 'message' or 'message' in data:
+                message = data.get('message', '')
+                
+                # Add user message to history
+                conversation_history.append({"role": "user", "content": message})
+                
+                try:
+                    # Stream response
+                    response_content = ""
+                    
+                    with llm.stream(conversation_history) as stream:
+                        for chunk in stream:
+                            chunk_content = chunk.content
+                            if chunk_content:
+                                response_content += chunk_content
+                                await websocket.send_json({
+                                    "type": "content",
+                                    "data": {"content": chunk_content}
+                                })
+                    
+                    # Add assistant response to history
+                    conversation_history.append({"role": "assistant", "content": response_content})
+                    
+                    # Send completion notification
+                    await websocket.send_json({
+                        "type": "complete",
+                        "data": {"message_id": len(conversation_history) // 2}
+                    })
+                    
+                except Exception as e:
+                    logger.error(f"Error processing onboarding message: {str(e)}", exc_info=True)
+                    await websocket.send_json({
+                        "type": "error",
+                        "data": {"message": f"Error generating response: {str(e)}"}
+                    })
+            
+    except WebSocketDisconnect:
+        logger.info("Onboarding WebSocket disconnected")
     except Exception as e:
         logger.error(f"Error in onboarding websocket: {str(e)}", exc_info=True)
         try:
             await websocket.close(code=1011)
         except:
             pass
-        raise
 
-@router.websocket("/{conversation_type}/{conversation_id}")
-async def conversation_websocket(websocket: WebSocket, conversation_type: str, conversation_id: str):
-    logger = logging.getLogger(__name__)
+# Workout analysis interpretation endpoint
+@router.websocket("/api/llm/workout-analysis/{conversation_id}")
+async def llm_workout_analysis(
+    websocket: WebSocket, 
+    conversation_id: str,
+    llm_service: WorkoutAnalysisLLMService = Depends(get_workout_llm_service)
+):
+    """
+    WebSocket endpoint for LLM-based workout analysis interpretation.
     
+    This endpoint handles:
+    - Connecting to the workout analysis service
+    - Processing analysis bundle data
+    - Streaming AI interpretation responses
+    
+    The client should send a message with:
+    - type: 'analysis_bundle'
+    - bundle: The workout analysis bundle object
+    - message: The user's query about the workout data
+    
+    The server streams back responses with:
+    - type: 'content' for content chunks
+    - type: 'error' for error messages
+    - type: 'complete' when the response is complete
+    """
     try:
-        await websocket.accept()
-        logger.info(f"WebSocket connection accepted for {conversation_type}: {conversation_id}")
-        
-        await websocket.send_json({
-            "type": "connection_status",
-            "data": "connected"
-        })
-        
-        # Get API key
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        
-        # Initialize services
-        conversation_service = ConversationService()
-        
-        # Handle different conversation types
-        if conversation_type == "default":
-            # Default conversation handling (unchanged)
-            service = LLMConversationService(api_key=api_key)
-            
-            # Process messages directly
-            while True:
-                data = await websocket.receive_json()
-                
-                # Handle heartbeat
-                if data.get('type') == 'heartbeat':
-                    await websocket.send_json({
-                        "type": "heartbeat_ack",
-                        "timestamp": data.get('timestamp')
-                    })
-                    continue
-                
-                # Process message
-                await service.process_message(websocket, data)
-                
-        elif conversation_type == "workout-analysis":
-            # Initialize services
-            graph_bundle_service = GraphBundleService()
-            workout_service = WorkoutService()
-            
-            # Initialize LLM
-            llm = ChatAnthropic(
-                model="claude-3-7-sonnet-20250219",
-                streaming=True,
-                api_key=api_key,
-                max_retries=0
-            )
-            
-            # Get conversation to extract user_id
-            conversation = await conversation_service.get_conversation(conversation_id)
-            user_id = conversation["user_id"]
-            
-            # Initialize service with LLM
-            service = WorkoutAnalysisService(llm=llm, graph_bundle_service=graph_bundle_service,
-            workout_service=workout_service)  # Add this parameter)
-            
-            # Wait for first message to determine if new or existing conversation
-            initial_data = await websocket.receive_json()
-            
-            # Handle new conversation with workout data
-            if initial_data.get('type') == 'analyze_workout' and initial_data.get('data'):
-                logger.info("Processing new workout analysis")
-                await service.process_message(websocket, initial_data, conversation_id)
-                
-            # Handle existing conversation - restore context
-            else:
-                try:
-                    logger.info(f"Restoring conversation context for {conversation_id}")
-                    
-                    # Get messages from conversation service
-                    messages = await conversation_service.get_conversation_messages(conversation_id)
-                    logger.info(f"Retrieved {len(messages)} messages for conversation {conversation_id}")
-                    
-                    # Get bundles for this conversation
-                    bundles = await graph_bundle_service.get_bundles_by_conversation(user_id, conversation_id)
-                    
-                    # Use the first bundle (most recent) if available
-                    bundle_data = None
-                    if bundles and len(bundles) > 0:
-                        bundle_data = bundles[0]
-                        logger.info(f"Bundle data retrieved, keys: {list(bundle_data.keys())}")
-                    else:
-                        logger.info(f"No bundles found for conversation {conversation_id}")
-                    
-                    # Initialize conversation
-                    await service._handle_initialization(messages, conversation_id)
-                    logger.info(f"Initialized conversation with {len(messages)} messages")
-                    
-                    # Add bundle to context if available
-                    if bundle_data:
-                        try:
-                            from app.schemas.workout_data_bundle import WorkoutDataBundle
-                            workout_bundle = WorkoutDataBundle(**bundle_data)
-                            logger.info(f"Initialized workout bundle: {workout_bundle.bundle_id}")
-                            
-                            success = await service.conversation_chain.add_data_bundle(workout_bundle)
-                            logger.info(f"Added workout bundle to conversation context: {success}")
-                            
-                            # Send bundle to client
-                            await websocket.send_json({
-                                "type": "workout_data_bundle",
-                                "data": bundle_data
-                            })
-                            logger.info("Sent workout bundle to client")
-                        except Exception as e:
-                            logger.error(f"Error processing workout bundle: {str(e)}", exc_info=True)
-                    
-                    # Send initialization complete notification instead of processing initial message
-                    await websocket.send_json({
-                        "type": "initialization_complete",
-                        "data": {
-                            "message_count": len(messages),
-                            "has_bundle": bundle_data is not None
-                        }
-                    })
-                        
-                except Exception as e:
-                    logger.error(f"Error restoring conversation: {str(e)}", exc_info=True)
-                    # Continue with empty context
-            
-            # Process subsequent messages
-            while True:
-                data = await websocket.receive_json()
-                
-                # Handle heartbeat
-                if data.get('type') == 'heartbeat':
-                    await websocket.send_json({
-                        "type": "heartbeat_ack",
-                        "timestamp": data.get('timestamp')
-                    })
-                    continue
-                
-                # Process message
-                logger.info(f"Processing message of type: {data.get('type')}")
-                await service.process_message(websocket, data, conversation_id)
-                
-        else:
-            await websocket.close(code=1008, reason="Invalid conversation type")
-            return
-            
+        await llm_service.process_websocket(websocket, conversation_id)
     except WebSocketDisconnect:
-        logger.info(f"WebSocket disconnected for {conversation_type}: {conversation_id}")
+        logger.info(f"Workout analysis WebSocket disconnected: {conversation_id}")
     except Exception as e:
-        logger.error(f"Error in {conversation_type} websocket: {str(e)}", exc_info=True)
-        try:
-            await websocket.close(code=1011)
-        except:
-            pass
+        logger.error(f"Error in workout analysis websocket: {str(e)}", exc_info=True)

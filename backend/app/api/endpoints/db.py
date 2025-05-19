@@ -16,7 +16,7 @@ async def health_check():
     """
     Basic health check endpoint to verify the API is running
     """
-    return {"status": "ok", "service": "db-api"}
+    return {"status": "ok", "service": "db-api"}    
 
 @router.get("/workouts/templates")
 async def get_templates(

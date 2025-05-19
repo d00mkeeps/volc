@@ -1,3 +1,5 @@
+from datetime import datetime
+import uuid
 from app.services.db.base_service import BaseDBService
 from typing import Dict, List, Any, Optional
 import logging
@@ -100,43 +102,71 @@ class GraphBundleService(BaseDBService):
             logger.error(f"Error deleting conversation bundles: {str(e)}")
             return await self.handle_error("delete_conversation_bundles", e)
         
-
-    async def save_graph_bundle(self, user_id: str, bundle: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Save a workout data bundle to the database
-        """
+    async def save_graph_bundle(self, user_id: str, bundle: dict) -> dict:
+        """Save a graph bundle to the database and link it to a conversation."""
         try:
-            logger.info(f"Saving graph bundle: {bundle.get('bundle_id')}")
+            # Generate a bundle_id if not provided
+            bundle_id = bundle.get('bundle_id')
+            if not bundle_id:
+                bundle_id = str(uuid.uuid4())
+                bundle['bundle_id'] = bundle_id
+            elif isinstance(bundle_id, uuid.UUID):
+                # Convert UUID to string if it's a UUID object
+                bundle['bundle_id'] = str(bundle_id)
+                bundle_id = str(bundle_id)
             
-            # Prepare insert data
+            logger.info(f"Saving graph bundle: {bundle_id}")
+            
+            # Convert objects to JSON-serializable types
+            def convert_for_json(data):
+                """Recursively convert objects to JSON-serializable types."""
+                if isinstance(data, dict):
+                    return {k: convert_for_json(v) for k, v in data.items()}
+                elif isinstance(data, list):
+                    return [convert_for_json(item) for item in data]
+                elif isinstance(data, uuid.UUID):
+                    return str(data)
+                elif isinstance(data, datetime):
+                    return data.isoformat()
+                # Handle NumPy types if present
+                elif hasattr(data, "item"):  # Catches np.float64, np.int64, np.bool_, etc.
+                    return data.item()  # Converts to native Python types
+                else:
+                    return data
+            
+            # Convert bundle for JSON serialization
+            converted_bundle = convert_for_json(bundle)
+            
+            # Extract fields from bundle to match schema structure
             insert_data = {
-                "id": bundle["bundle_id"],
+                "id": bundle_id,
                 "user_id": user_id,
-                "conversation_id": bundle["conversationId"],
-                "metadata": bundle.get("metadata", {}),
-                "workout_data": bundle.get("workout_data", {}),
-                "original_query": bundle.get("original_query", ""),
-                "chart_url": bundle.get("chart_url"),
-                "chart_urls": bundle.get("chart_urls", {}),
-                "top_performers": bundle.get("top_performers", {}),
-                "consistency_metrics": bundle.get("consistency_metrics", {}),
-                "created_at": bundle.get("created_at") or None  # Will use server timestamp if None
+                "metadata": converted_bundle.get("metadata", {}),
+                "workout_data": converted_bundle.get("workout_data", {}),
+                "original_query": converted_bundle.get("original_query", "Workout analysis"),
+                "chart_url": converted_bundle.get("chart_url"),
+                "chart_urls": converted_bundle.get("chart_urls", {}),
+                "consistency_metrics": converted_bundle.get("consistency_metrics", {}),
+                "top_performers": converted_bundle.get("top_performers", {}),
+                "created_at": datetime.now().isoformat()
             }
             
-            # Insert into database
-            result = self.supabase.table("graph_bundles") \
-                .insert(insert_data) \
-                .execute()
+            # Add conversation_id if provided
+            conversation_id = bundle.get("conversationId")
+            if conversation_id:
+                insert_data["conversation_id"] = conversation_id
             
-            # Check if the response has data (success)
+            # Save to database with matching schema columns
+            result = await self.supabase.table("graph_bundles").insert(insert_data).execute()
+            
+            # Check for successful response
             if hasattr(result, 'data') and result.data:
-                logger.info(f"Bundle saved successfully with conversation ID: {bundle['conversationId']}")
-                return {"success": True, "bundle_id": bundle["bundle_id"]}
+                logger.info(f"Bundle saved successfully with ID: {bundle_id}")
+                return {"success": True, "bundle_id": bundle_id}
             else:
-                # If we get here, something went wrong but didn't raise an exception
-                logger.error(f"Failed to save bundle, no data returned")
-                return {"success": False, "error": "No data returned"}
+                logger.warning(f"Bundle may not have been saved properly. Result: {result}")
+                return {"success": False, "error": "Database insertion yielded no data", "bundle_id": bundle_id}
                 
         except Exception as e:
             logger.error(f"Error saving graph bundle: {str(e)}")
-            return await self.handle_error("save_graph_bundle", e)
+            return {"success": False, "error": str(e)}

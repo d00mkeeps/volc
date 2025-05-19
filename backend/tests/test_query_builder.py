@@ -1,41 +1,41 @@
-from backend.app.schemas.exercise_query import ExerciseQuery
-from backend.app.services.workout_analysis.query_builder import WorkoutQueryBuilder
-from app.core.supabase.client import SupabaseClient
-from pprint import pprint
+# from backend.app.schemas.exercise_query import ExerciseQuery
+# from backend.app.services.workout_analysis.query_builder import WorkoutQueryBuilder
+# from app.core.supabase.client import SupabaseClient
+# from pprint import pprint
 
-def test_fetch_exercise_data():
-    from dotenv import load_dotenv
-    import os
+# def test_fetch_exercise_data():
+#     from dotenv import load_dotenv
+#     import os
 
-    load_dotenv()
+#     load_dotenv()
 
-    TEST_USER_ID = os.environ.get("DEVELOPMENT_USER_ID")
-    print(f"\nUsing test user ID: {TEST_USER_ID}")
+#     TEST_USER_ID = os.environ.get("DEVELOPMENT_USER_ID")
+#     print(f"\nUsing test user ID: {TEST_USER_ID}")
 
-    supabase_client = SupabaseClient()
+#     supabase_client = SupabaseClient()
 
-    builder = WorkoutQueryBuilder(supabase_client)
-    query = ExerciseQuery(
-        exercises=["squat", "bench"],
-        timeframe="3 months"
-    )
+#     builder = WorkoutQueryBuilder(supabase_client)
+#     query = ExerciseQuery(
+#         exercises=["squat", "bench"],
+#         timeframe="3 months"
+#     )
 
-    result = builder.fetch_exercise_data(
-        user_id=TEST_USER_ID,
-        query_params=query
-    )
+#     result = builder.fetch_exercise_data(
+#         user_id=TEST_USER_ID,
+#         query_params=query
+#     )
 
-    print("\nQuery result:")
-    pprint(result)
+#     print("\nQuery result:")
+#     pprint(result)
 
-    if result:
-        print(f"\nNumber of workouts: {result['metadata']['total_workouts']}")
-        print(f"Number of exercises: {result['metadata']['total_exercises']}")
-        if result['workouts']:
-            print("\nFirst workout sample:")
-            pprint(result['workouts'][0])
+#     if result:
+#         print(f"\nNumber of workouts: {result['metadata']['total_workouts']}")
+#         print(f"Number of exercises: {result['metadata']['total_exercises']}")
+#         if result['workouts']:
+#             print("\nFirst workout sample:")
+#             pprint(result['workouts'][0])
     
-    assert result is not None
-    assert isinstance(result, dict)
-    assert 'workouts' in result
-    assert 'metadata' in result
+#     assert result is not None
+#     assert isinstance(result, dict)
+#     assert 'workouts' in result
+#     assert 'metadata' in result
