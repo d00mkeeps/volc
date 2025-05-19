@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ExerciseDefinition } from "@/types/workout";
-import { ExerciseDefinitionService } from "@/services/supabase/exerciseDefinition";
+import { ExerciseDefinitionService } from "@/services/db/exerciseDefinition";
 import MuscleGroupSelector from "../molecules/MuscleGroupSelector";
 
 interface ExerciseCreationModalProps {

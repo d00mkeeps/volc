@@ -8,9 +8,9 @@ import {
   useMemo,
 } from "react";
 import { uuidv4 } from "@/utils/uuid";
-import { WorkoutService } from "../services/supabase/workout";
-import { attachmentService } from "../services/supabase/attachment";
-import { authService } from "@/services/supabase/auth";
+import { WorkoutService } from "../services/db/workout";
+import { attachmentService } from "../services/db/attachment";
+import { authService } from "@/services/db/auth";
 import {
   WorkoutDataBundle,
   WorkoutWithConversation,

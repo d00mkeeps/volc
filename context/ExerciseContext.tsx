@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { ExerciseDefinition } from "@/types/workout";
-import { ExerciseDefinitionService } from "@/services/supabase/exerciseDefinition";
+import { ExerciseDefinitionService } from "@/services/db/exerciseDefinition";
 
 interface ExerciseContextType {
   exercises: ExerciseDefinition[];

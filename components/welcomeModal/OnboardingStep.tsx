@@ -1,8 +1,8 @@
 // OnboardingStep.tsx
 import { useMessage } from "@/context/MessageContext";
-import { UserProfileService } from "@/services/supabase/userProfile";
-import { ConversationService } from "@/services/supabase/conversation";
-import { authService } from "@/services/supabase/auth";
+import { UserProfileService } from "@/services/db/userProfile";
+import { ConversationService } from "@/services/db/conversation";
+import { authService } from "@/services/db/auth";
 import { OnboardingStepProps } from "@/types/welcomeModal";
 import { useEffect, useCallback, useState, useRef } from "react";
 import { View, StyleSheet, Text } from "react-native";

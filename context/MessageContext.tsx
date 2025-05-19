@@ -1,8 +1,8 @@
 // MessageContext.tsx
 import { ChatConfigKey } from "@/constants/ChatConfigMaps";
 import { LLMService } from "@/services/llm/base";
-import { authService } from "@/services/supabase/auth";
-import { ConversationService } from "@/services/supabase/conversation";
+import { authService } from "@/services/db/auth";
+import { ConversationService } from "@/services/db/conversation";
 import {
   getWebSocketService,
   resolveConfig,

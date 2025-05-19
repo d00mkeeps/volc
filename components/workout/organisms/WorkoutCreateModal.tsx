@@ -16,7 +16,7 @@ import WorkoutNotesList from "../molecules/WorkoutNotesList";
 import WorkoutExerciseList from "./WorkoutExerciseList";
 import TemplateSelector from "../molecules/TemplateSelector";
 import { useAuth } from "@/context/AuthContext";
-import { WorkoutService } from "@/services/supabase/workout";
+import { WorkoutService } from "@/services/db/workout";
 import { useWorkout } from "@/context/WorkoutContext";
 import { useWorkoutAnalysis } from "@/hooks/useWorkoutAnalysis";
 

@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import type { UserProfile } from "@/types";
 import { UserOnboarding } from "@/types/onboarding";
 import { UserContextType } from "@/types/context";
-import { userProfileService } from "@/services/supabase/userProfile";
+import { userProfileService } from "@/services/db/userProfile";
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 

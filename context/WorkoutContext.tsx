@@ -5,7 +5,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
-import { workoutService } from "@/services/supabase/workout"; // Import the singleton
+import { workoutService } from "@/services/db/workout"; // Import the singleton
 import { CompleteWorkout, WorkoutInput } from "@/types/workout";
 
 interface WorkoutContextType {
