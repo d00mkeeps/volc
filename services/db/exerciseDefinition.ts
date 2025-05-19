@@ -1,7 +1,7 @@
 // services/supabase/exerciseDefinition.ts
 import { BaseService } from './base';
 import { ExerciseDefinition } from '@/types/workout';
-import { apiGet, apiPost } from '../api/apiClient';
+import { apiGet, apiPost } from '../api/core/apiClient';
 
 export class ExerciseDefinitionService extends BaseService {
   /**

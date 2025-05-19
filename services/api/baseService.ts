@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiDelete, apiPatch } from './apiClient';
+import { apiGet, apiPost, apiDelete, apiPatch } from './core/apiClient';
 
 /**
  * Base API service to be extended by specific domain services

@@ -1,7 +1,7 @@
 // services/supabase/userProfile.ts
 import { BaseService } from './base';
 import { UserOnboarding } from '@/types/onboarding';
-import { apiGet, apiPost } from '../api/apiClient';
+import { apiGet, apiPost } from '../api/core/apiClient';
 
 const AGE_GROUP_MAP = {
   '18-24': 1,

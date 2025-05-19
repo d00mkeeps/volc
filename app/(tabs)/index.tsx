@@ -10,7 +10,7 @@ import { useWorkout } from "@/context/WorkoutContext";
 import { CompleteWorkout, WorkoutInput } from "@/types/workout";
 import { useAuth } from "@/context/AuthContext";
 import { getApiServices } from "@/services/api/serviceFactory";
-import { apiGet } from "@/services/api/apiClient";
+import { apiGet } from "@/services/api/core/apiClient";
 export default function HomeScreen() {
   const { user } = useAuth(); // Get authenticated user
   const { workouts, createWorkout } = useWorkout();

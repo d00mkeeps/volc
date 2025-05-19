@@ -55,7 +55,8 @@
     "react-native-web": "~0.19.13",
     "react-native-wizard": "^2.1.1",
     "uuid": "^11.0.3",
-    "victory-native": "^37.1.2"
+    "victory-native": "^37.1.2",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

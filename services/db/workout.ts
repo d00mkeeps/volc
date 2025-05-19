@@ -2,7 +2,7 @@
 
 import { BaseService } from './base';
 import { WorkoutInput, CompleteWorkout, WorkoutWithConversation } from '@/types/workout';
-import { apiGet, apiPost, apiPut, apiDelete } from '../api/apiClient';
+import { apiGet, apiPost, apiPut, apiDelete } from '../api/core/apiClient';
 
 export class WorkoutService extends BaseService {
   /**

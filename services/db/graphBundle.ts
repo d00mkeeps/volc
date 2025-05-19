@@ -1,7 +1,7 @@
 // services/supabase/graphBundle.ts
 import { BaseService } from './base';
 import { WorkoutDataBundle } from '@/types/workout';
-import { apiGet, apiPost, apiDelete } from '../api/apiClient';
+import { apiGet, apiPost, apiDelete } from '../api/core/apiClient';
 
 export class GraphBundleService extends BaseService {
   /**

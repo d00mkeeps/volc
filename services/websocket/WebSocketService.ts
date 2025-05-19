@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import { getWsBaseUrl } from '../api/apiClient';
+import { getWsBaseUrl } from '../api/core/apiClient';
 import { ChatConfigName, Message } from '@/types';
 
 // Simplified types
@@ -10,11 +10,12 @@ export type ErrorCallback = (error: Error) => void;
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected' | 'error';
 
-// Message types we'll send
 export type WebSocketSendMessage = 
   | { type: 'message', data: string }
-  | { type: 'initialize', data: Message[] };
-
+  | { type: 'initialize', data: Message[] }
+  | { type: string, [key: string]: any }  // Generic format for other message types
+  | { message: string, [key: string]: any }; // Format for d
+  
 // Message types we'll receive
 export type WebSocketReceiveMessage = 
   | { type: 'content', data: string }
@@ -179,20 +180,29 @@ export class WebSocketService {
    * Send a message to the current conversation
    * @param content The message content
    */
-  public sendMessage(content: string): void {
+  public sendMessage(content: string | WebSocketSendMessage): void {
     if (!this.isConnected()) {
       throw new Error('Cannot send message: not connected');
     }
     
-    const payload: WebSocketSendMessage = {
-      type: 'message',
-      data: content
-    };
+    // Handle string content by wrapping it in a message object
+    let payload: WebSocketSendMessage;
+    if (typeof content === 'string') {
+      payload = {
+        type: 'message',
+        data: content
+      };
+    } else {
+      payload = content;
+    }
     
     this.socket!.send(JSON.stringify(payload));
-    console.log('Message sent:', content.substring(0, 50) + (content.length > 50 ? '...' : ''));
+    console.log('Message sent:', 
+      typeof content === 'string' 
+        ? content.substring(0, 50) + (content.length > 50 ? '...' : '') 
+        : 'Object message'
+    );
   }
-  
   /**
    * Send conversation history
    * @param messages Array of messages to initialize the conversation

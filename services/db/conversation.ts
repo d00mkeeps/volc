@@ -1,7 +1,7 @@
 // services/supabase/conversation.ts
 import { BaseService } from './base';
 import { Message, Conversation } from '@/types';
-import { apiGet, apiPost, apiDelete } from '../api/apiClient';
+import { apiGet, apiPost, apiDelete } from '../api/core/apiClient';
 
 export class ConversationService extends BaseService {
   /**
