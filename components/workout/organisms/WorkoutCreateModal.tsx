@@ -18,7 +18,7 @@ import TemplateSelector from "../molecules/TemplateSelector";
 import { useAuth } from "@/context/AuthContext";
 import { WorkoutService } from "@/services/db/workout";
 import { useWorkout } from "@/context/WorkoutContext";
-import { useWorkoutAnalysis } from "@/hooks/useWorkoutAnalysis";
+import { useWorkoutAnalysis } from "@/hooks/useWorkoutAnalysisConversation";
 
 interface WorkoutCreateModalProps {
   isVisible: boolean;
