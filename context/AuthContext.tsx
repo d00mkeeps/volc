@@ -8,9 +8,7 @@ import {
 } from "../types/auth";
 import { authService } from "../services/db/auth";
 import { supabase } from "@/lib/supabaseClient";
-import { Session, User } from "@supabase/supabase-js";
 import {
-  getWebSocketService,
   connectBase,
   cleanup,
 } from "@/services/websocket/GlobalWebsocketService";
