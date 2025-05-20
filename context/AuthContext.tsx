@@ -9,9 +9,9 @@ import {
 import { authService } from "../services/db/auth";
 import { supabase } from "@/lib/supabaseClient";
 import {
-  connectBase,
+  getWebSocketService,
   cleanup,
-} from "@/services/websocket/GlobalWebsocketService";
+} from "@/services/websocket/WebSocketService";
 
 interface AuthContextType extends AuthState {
   signIn: typeof authService.signIn;
@@ -48,7 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Connect WebSocket if user is logged in
         if (session?.user) {
-          connectBase(session.user.id);
+          // Connect to base using WebSocketService directly
+          getWebSocketService().connectBase(session.user.id);
         }
       } catch (err) {
         console.error("Auth initialization error:", err);
@@ -72,9 +73,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Handle WebSocket connections based on auth events
       if (event === "SIGNED_IN" && session?.user) {
-        connectBase(session.user.id);
+        getWebSocketService().connectBase(session.user.id);
       } else if (event === "SIGNED_OUT") {
-        cleanup();
+        cleanup(); // Use the cleanup function imported from WebSocketService
       }
     });
 

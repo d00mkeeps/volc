@@ -1,6 +1,8 @@
+// WebSocketService.ts
 import EventEmitter from 'eventemitter3';
 import { getWsBaseUrl } from '../api/core/apiClient';
 import { ChatConfigName, Message } from '@/types';
+import { ConversationService } from '@/services/db/conversation';
 
 // Simplified types
 export type MessageCallback = (content: string) => void;
@@ -14,7 +16,7 @@ export type WebSocketSendMessage =
   | { type: 'message', data: string }
   | { type: 'initialize', data: Message[] }
   | { type: string, [key: string]: any }  // Generic format for other message types
-  | { message: string, [key: string]: any }; // Format for d
+  | { message: string, [key: string]: any }; // Format for data
   
 // Message types we'll receive
 export type WebSocketReceiveMessage = 
@@ -24,16 +26,14 @@ export type WebSocketReceiveMessage =
   | { type: 'connection_status', data: 'connected' | 'disconnected' };
 
 /**
- * WebSocketService - Simplified WebSocket service for chat messaging
+ * WebSocketService - Handles WebSocket connections for chat messaging
  * 
- * This service handles WebSocket connections specifically for chat message streaming.
- * It provides a clean interface for:
+ * This service manages WebSocket connections for chat message streaming,
+ * providing an interface for:
  * - Connecting to chat conversations
  * - Sending messages
  * - Receiving streamed responses
  * - Monitoring connection state
- * 
- * Non-chat functionality (analysis, data visualization, etc.) has been moved to HTTP endpoints.
  */
 export class WebSocketService {
   private socket: WebSocket | null = null;
@@ -45,6 +45,37 @@ export class WebSocketService {
   private reconnectInterval = 1000;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private isReconnecting = false;
+  private messages: Message[] | null = null;
+  
+  // Configuration cache for faster lookups
+  private configCache: Record<string, ChatConfigName> = {};
+  
+  /**
+   * Initialize the WebSocketService
+   */
+  public initialize(): void {
+    console.log('WebSocketService initialized');
+  }
+  
+  /**
+   * Resolve configuration for a conversation
+   * @param conversationId The conversation ID
+   * @returns The resolved configuration
+   */
+  public async resolveConfig(conversationId: string): Promise<ChatConfigName> {
+    if (this.configCache[conversationId]) return this.configCache[conversationId];
+    
+    try {
+      const conversationService = new ConversationService();
+      const conversation = await conversationService.getConversation(conversationId);
+      const config = conversation.config_name as ChatConfigName;
+      this.configCache[conversationId] = config;
+      return config;
+    } catch (error) {
+      console.error(`Failed to resolve config for ${conversationId}:`, error);
+      return 'default';
+    }
+  }
   
   /**
    * Connect to a specific conversation
@@ -68,6 +99,7 @@ export class WebSocketService {
       this.socket = new WebSocket(url);
       this.currentConversationId = conversationId;
       this.currentConfigName = configName;
+      this.messages = messages || null;
       
       // Set up a connection timeout
       const connectionPromise = new Promise<void>((resolve, reject) => {
@@ -158,6 +190,30 @@ export class WebSocketService {
   }
   
   /**
+   * Connect to a conversation using its ID, automatically resolving the config
+   * @param conversationId The conversation identifier
+   * @param messages Optional array of messages to initialize
+   */
+  public async connectToConversation(
+    conversationId: string,
+    messages?: Message[]
+  ): Promise<void> {
+    const config = await this.resolveConfig(conversationId);
+    return this.connect(config, conversationId, messages);
+  }
+  
+  /**
+   * Disconnect a specific conversation
+   * @param configName The config name
+   * @param conversationId The conversation ID
+   */
+  public disconnectFrom(configName: string, conversationId: string): void {
+    if (this.currentConfigName === configName && this.currentConversationId === conversationId) {
+      this.disconnect();
+    }
+  }
+  
+  /**
    * Disconnect from the current conversation
    */
   public disconnect(): void {
@@ -173,12 +229,13 @@ export class WebSocketService {
     
     this.currentConversationId = null;
     this.currentConfigName = null;
+    this.messages = null;
     this.setConnectionState('disconnected');
   }
   
   /**
-   * Send a message to the current conversation
-   * @param content The message content
+   * Send a message
+   * @param content The message content or message object
    */
   public sendMessage(content: string | WebSocketSendMessage): void {
     if (!this.isConnected()) {
@@ -203,6 +260,7 @@ export class WebSocketService {
         : 'Object message'
     );
   }
+  
   /**
    * Send conversation history
    * @param messages Array of messages to initialize the conversation
@@ -241,7 +299,7 @@ export class WebSocketService {
     let attempts = 0;
     while (attempts < this.reconnectAttempts) {
       try {
-        await this.connect(connectionInfo.configName, connectionInfo.conversationId);
+        await this.connect(connectionInfo.configName, connectionInfo.conversationId, this.messages || undefined);
         console.log('Reconnection successful');
         break;
       } catch (error) {
@@ -305,6 +363,18 @@ export class WebSocketService {
   }
   
   /**
+   * Clear configuration cache
+   * @param conversationId Optional conversation ID to clear specific cache entry
+   */
+  public clearConfigCache(conversationId?: string): void {
+    if (conversationId) {
+      delete this.configCache[conversationId];
+    } else {
+      this.configCache = {};
+    }
+  }
+  
+  /**
    * Get the current connection state
    * @returns The connection state
    */
@@ -316,11 +386,12 @@ export class WebSocketService {
    * Get information about the current connection
    * @returns Connection information or null if not connected
    */
-  public getCurrentConnectionInfo(): { configName: ChatConfigName, conversationId: string } | null {
+  public getCurrentConnectionInfo(): { configName: ChatConfigName, conversationId: string, messages: Message[] | null } | null {
     if (this.currentConfigName && this.currentConversationId) {
       return {
         configName: this.currentConfigName,
-        conversationId: this.currentConversationId
+        conversationId: this.currentConversationId,
+        messages: this.messages
       };
     }
     return null;
@@ -345,7 +416,83 @@ export class WebSocketService {
       console.log('WebSocket connection state changed:', state);
     }
   }
+  
+  /**
+   * Connect with conversation history
+   * @param configName Chat configuration name
+   * @param conversationId Conversation ID
+   * @param messages Optional array of messages to initialize
+   */
+  public async connectWithHistory(
+    configName: ChatConfigName, 
+    conversationId: string, 
+    messages?: Message[]
+  ): Promise<void> {
+    return this.connect(configName, conversationId, messages);
+  }
+  
+  /**
+   * Connect to base user notifications channel
+   * @param userId User ID
+   */
+  public async connectBase(userId: string): Promise<void> {
+    return this.connect('base', userId);
+  }
 }
 
-// Export singleton instance
-export const webSocketService = new WebSocketService();
+// Singleton instance
+let webSocketServiceInstance: WebSocketService | null = null;
+
+/**
+ * Get WebSocket service singleton instance
+ * @returns The WebSocketService instance
+ */
+export const getWebSocketService = (): WebSocketService => {
+  if (!webSocketServiceInstance) {
+    webSocketServiceInstance = new WebSocketService();
+    webSocketServiceInstance.initialize();
+  }
+  return webSocketServiceInstance;
+};
+
+/**
+ * Cleanup function for logout/app termination
+ */
+export const cleanup = (): void => {
+  if (webSocketServiceInstance) {
+    webSocketServiceInstance.disconnect();
+    webSocketServiceInstance = null;
+  }
+};
+
+/**
+ * Helper function to reconnect a disconnected socket
+ */
+export const reconnect = async (): Promise<void> => {
+  const service = getWebSocketService();
+  if (!service.isConnected()) {
+    await service.reconnect();
+  }
+};
+
+/**
+ * Connect to a conversation with proper config
+ * @param conversationId The conversation ID
+ * @param messages Optional array of messages to initialize
+ */
+export const connectToConversation = async (
+  conversationId: string, 
+  messages?: Message[]
+): Promise<void> => {
+  const service = getWebSocketService();
+  return service.connectToConversation(conversationId, messages);
+};
+
+/**
+ * Release a connection
+ * @param configName The config name
+ * @param id The conversation ID
+ */
+export const releaseConnection = (configName: string, id: string): void => {
+  getWebSocketService().disconnectFrom(configName, id);
+};
