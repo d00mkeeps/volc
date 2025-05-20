@@ -1,6 +1,6 @@
 // stores/JobStore.ts
 import { create } from 'zustand';
-import { jobService } from '../services/api/JobService';
+import { jobService } from '../../services/api/JobService';
 
 interface JobInfo {
   status: string;

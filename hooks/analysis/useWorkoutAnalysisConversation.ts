@@ -1,8 +1,8 @@
 // hooks/useWorkoutAnalysisConversation.ts
 import { useState } from 'react';
-import { useConversationStore } from '@/stores/ConversationStore';
-import { useMessageStore } from '@/stores/MessageStore';
-import { useWorkoutAnalysisStore } from '@/stores/WorkoutAnalysisStore';
+import { useConversationStore } from '@/stores/chat/ConversationStore';
+import { useMessageStore } from '@/stores/chat/MessageStore';
+import { useWorkoutAnalysisStore } from '@/stores/analysis/WorkoutAnalysisStore';
 
 interface AnalysisOptions {
   title?: string;

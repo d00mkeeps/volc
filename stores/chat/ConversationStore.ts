@@ -1,6 +1,6 @@
 // stores/ConversationStore.ts
 import { create } from 'zustand';
-import { conversationService } from '../services/db/conversation';
+import { conversationService } from '../../services/db/conversation';
 import { Conversation, ChatConfigName } from '@/types';
 import { authService } from '@/services/db/auth';
 

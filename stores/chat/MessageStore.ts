@@ -1,8 +1,8 @@
 // stores/MessageStore.ts
 import { create } from 'zustand';
-import { conversationService } from '../services/db/conversation';
+import { conversationService } from '../../services/db/conversation';
 import { Message } from '@/types';
-import { getWebSocketService } from '../services/websocket/GlobalWebsocketService';
+import { getWebSocketService } from '../../services/websocket/GlobalWebsocketService';
 import { ChatConfigName } from '@/types';
 
 // Type for streaming message state

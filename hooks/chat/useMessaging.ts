@@ -1,7 +1,7 @@
 // hooks/useMessaging.ts
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useMessageStore } from '@/stores/MessageStore';
-import { useConversationStore } from '@/stores/ConversationStore';
+import { useMessageStore } from '@/stores/chat/MessageStore';
+import { useConversationStore } from '@/stores/chat/ConversationStore';
 import { Message } from '@/types';
 
 /**

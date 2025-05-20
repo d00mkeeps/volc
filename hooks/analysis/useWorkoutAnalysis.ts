@@ -1,8 +1,8 @@
 // hooks/useWorkoutAnalysis.ts
 import { useState, useCallback } from 'react';
-import { useWorkoutAnalysisStore } from '@/stores/WorkoutAnalysisStore';
-import { useWorkoutStore } from '@/stores/WorkoutStore';
-import { useGraphBundleStore } from '@/stores/GraphBundleStore';
+import { useWorkoutAnalysisStore } from '@/stores/analysis/WorkoutAnalysisStore';
+import { useWorkoutStore } from '@/stores/attachments/WorkoutStore';
+import { useGraphBundleStore } from '@/stores/attachments/GraphBundleStore';
 import { WorkoutDataBundle } from '@/types/workout';
 
 interface AnalysisOptions {

@@ -1,6 +1,6 @@
 // stores/WorkoutAnalysisStore.ts
 import { create } from 'zustand';
-import { workoutAnalysisService } from '../services/api/workoutAnalysisService';
+import { workoutAnalysisService } from '../../services/api/workoutAnalysisService';
 import { useJobStore } from './JobStore';
 
 interface AnalysisStatus {

@@ -1,7 +1,7 @@
 // hooks/useWorkoutAttachments.ts
 import { useState, useEffect } from 'react';
-import { useWorkoutStore } from '@/stores/WorkoutStore';
-import { useGraphBundleStore } from '@/stores/GraphBundleStore';
+import { useWorkoutStore } from '@/stores/attachments/WorkoutStore';
+import { useGraphBundleStore } from '@/stores/attachments/GraphBundleStore';
 import { AttachmentType, WorkoutDataBundle, WorkoutWithConversation } from '@/types/workout';
 
 /**
