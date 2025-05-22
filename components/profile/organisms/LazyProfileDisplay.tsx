@@ -1,15 +1,15 @@
-import React, { Suspense } from 'react';
-import { useUser } from '@/context/UserContext';
-import { ProfileSkeleton } from '../atoms/ProfileSkeleton';
+// import React, { Suspense } from 'react';
+// import { useUser } from '@/context/UserContext';
+// import { ProfileSkeleton } from '../atoms/ProfileSkeleton';
 
-const ProfileDisplay = React.lazy(() => import('./ProfileDisplay'));
+// const ProfileDisplay = React.lazy(() => import('./ProfileDisplay'));
 
-export function     LazyProfileDisplay() {
-  const { userProfile } = useUser();
+// export function     LazyProfileDisplay() {
+//   const { userProfile } = useUser();
 
-  return (
-    <Suspense fallback={<ProfileSkeleton />}>
-      {userProfile ? <ProfileDisplay /> : <ProfileSkeleton />}
-    </Suspense>
-  );
-}
+//   return (
+//     <Suspense fallback={<ProfileSkeleton />}>
+//       {userProfile ? <ProfileDisplay /> : <ProfileSkeleton />}
+//     </Suspense>
+//   );
+// }

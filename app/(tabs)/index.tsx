@@ -1,213 +1,82 @@
-import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import WelcomeModal from "@/components/welcomeModal/WelcomeModal";
-import Toast from "react-native-toast-message";
-import ConversationList from "@/components/conversation/organisms/ConversationList";
+import React from "react";
+import { Stack, Button, Text } from "tamagui";
+import Dashboard from "@/components/organisms/Dashboard";
+import WorkoutList from "@/components/molecules/WorkoutList";
+import ConversationList from "@/components/molecules/ConversationList";
+import Header from "@/components/molecules/HomeScreenHeader";
 import { Ionicons } from "@expo/vector-icons";
-import WorkoutCreateModal from "@/components/workout/organisms/WorkoutCreateModal";
-import { useWorkout } from "@/context/WorkoutContext";
-import { CompleteWorkout, WorkoutInput } from "@/types/workout";
-import { useAuth } from "@/context/AuthContext";
-import { getApiServices } from "@/services/api/serviceFactory";
-import { apiGet } from "@/services/api/core/apiClient";
+
 export default function HomeScreen() {
-  const { user } = useAuth(); // Get authenticated user
-  const { workouts, createWorkout } = useWorkout();
-  const [openWelcomeModal, setOpenWelcomeModal] = useState(false);
-  const [openWorkoutModal, setOpenWorkoutModal] = useState(false);
-  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
-  const router = useRouter();
-  const params = useLocalSearchParams<{ openWelcomeModal?: string }>();
-
-  useEffect(() => {
-    if (params.openWelcomeModal === "true") {
-      setOpenWelcomeModal(true);
-      // Reset the parameter after opening the modal
-      router.setParams({ openWelcomeModal: undefined });
-    }
-  }, [params.openWelcomeModal]);
-
-  const handleWorkoutPress = () => {
-    setOpenWorkoutModal(true);
+  const handleSettingsPress = () => {
+    console.log("Settings pressed");
   };
 
-  const templates: CompleteWorkout[] = [];
-  const handleSaveWorkout = async (workout: CompleteWorkout) => {
-    const workoutInput: WorkoutInput = {
-      name: workout.name,
-      description: workout.notes,
-      exercises: workout.workout_exercises.map((exercise) => ({
-        exercise_name: exercise.name,
-        definition_id: exercise.definition_id,
-        order_in_workout: exercise.order_index,
-        weight_unit: exercise.weight_unit || "kg",
-        distance_unit: exercise.distance_unit || "m",
-        set_data: {
-          sets: exercise.workout_exercise_sets.map((set) => ({
-            weight: set.weight || undefined,
-            reps: set.reps || undefined,
-            rpe: set.rpe || undefined,
-            distance: set.distance || undefined,
-            duration: set.duration ? parseInt(set.duration) : undefined,
-          })),
-        },
-      })),
-    };
-
-    if (!user?.id) {
-      Toast.show({
-        type: "error",
-        text1: "Authentication required",
-        text2: "Please sign in to create a workout",
-      });
-      return;
-    }
-    console.log(`calling createWorkout with ${workout.name} as workout`);
-
-    await createWorkout(user.id, workoutInput);
+  const handleCreateWorkout = () => {
+    console.log("Create workout pressed");
   };
 
-  const handleAnalysisPress = async () => {
-    try {
-      console.log("Testing connection to backend API health check...");
-
-      // Call the health check endpoint directly
-      const response = await apiGet<{ status: string; service: string }>(
-        "/db/health"
-      );
-
-      console.log(`✅ API health check successful:`, response);
-      alert(`API health check successful! Status: ${response.status}`);
-
-      return response;
-    } catch (error: unknown) {
-      // Properly type the error as unknown
-      console.error("❌ API health check failed:", error);
-
-      // Type guard to safely access error properties
-      let errorMessage = "Unknown error occurred";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error && typeof error === "object" && "message" in error) {
-        errorMessage = (error as { message: string }).message;
-      }
-
-      alert(`API health check failed: ${errorMessage}`);
-
-      return null;
-    }
-  };
-
-  const handleConversationPress = (id: string) => {
-    console.log(`Routing to conversation ${id}`);
-    router.push({
-      pathname: "/conversation/[id]",
-      params: { id },
-    });
+  const handleCreateConversation = () => {
+    console.log("Create conversation pressed");
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recent Chats</Text>
-      <Text style={styles.subtitle}>
-        Send a message to start a new conversation
-      </Text>
-      <View style={styles.conversationContainer}>
-        <ConversationList onConversationPress={handleConversationPress} />
-      </View>
-      <View style={styles.navigationContainer}>
-        <TouchableOpacity style={styles.navButton} onPress={handleWorkoutPress}>
-          <Ionicons name="fitness-outline" size={24} color="#fff" />
-          <Text style={styles.navButtonText}>Workout</Text>
-        </TouchableOpacity>
+    <Stack flex={1} backgroundColor="$background" padding="$4">
+      <Header greeting="Welcome!" onSettingsPress={handleSettingsPress} />
 
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={handleAnalysisPress}
-        >
-          <Ionicons name="bar-chart-outline" size={24} color="#fff" />
-          <Text style={styles.navButtonText}>Analysis</Text>
-        </TouchableOpacity>
-      </View>
-      {/* Modals */}
-      <WelcomeModal
-        isVisible={openWelcomeModal}
-        onClose={() => setOpenWelcomeModal(false)}
-      />
+      <Dashboard />
 
-      <WorkoutCreateModal
-        isVisible={openWorkoutModal}
-        onClose={() => setOpenWorkoutModal(false)}
-        templates={templates}
-        onSave={handleSaveWorkout}
-      />
+      <WorkoutList />
 
-      <Toast />
-    </View>
+      {/* Conversation section with side buttons */}
+      <Stack flex={1} flexDirection="row" gap="$3">
+        {/* Conversation list - takes up most space */}
+        <Stack flex={1}>
+          <ConversationList />
+        </Stack>
+
+        {/* Full-height action buttons on the right */}
+        <Stack width={100} gap="$3">
+          <Button
+            flex={1} // 👈 Add this - makes button take half the height
+            backgroundColor="$primary"
+            borderRadius="$4"
+            pressStyle={{ backgroundColor: "$primaryLight" }}
+            onPress={handleCreateWorkout}
+          >
+            <Stack alignItems="center" gap="$1">
+              <Ionicons name="fitness-outline" size={20} color="white" />
+              <Text
+                color="white"
+                fontSize="$2"
+                fontWeight="500"
+                textAlign="center"
+              >
+                Workout
+              </Text>
+            </Stack>
+          </Button>
+
+          <Button
+            flex={1} // 👈 Add this - makes button take other half the height
+            backgroundColor="$primary"
+            borderRadius="$4"
+            pressStyle={{ backgroundColor: "$primaryLight" }}
+            onPress={handleCreateConversation}
+          >
+            <Stack alignItems="center" gap="$1">
+              <Ionicons name="chatbubble-outline" size={20} color="white" />
+              <Text
+                color="white"
+                fontSize="$2"
+                fontWeight="500"
+                textAlign="center"
+              >
+                Chat
+              </Text>
+            </Stack>
+          </Button>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingBottom: 20,
-    paddingHorizontal: 12,
-    paddingTop: 12,
-    backgroundColor: "#222",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "left",
-    color: "#ddd",
-    paddingLeft: 18,
-    paddingBottom: 4,
-  },
-  separator: {
-    marginVertical: 20,
-    height: 1,
-    width: "100%",
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
-  conversationContainer: {
-    flex: 1,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontWeight: "light",
-    paddingLeft: 18,
-    paddingBottom: 10,
-    color: "#ddd",
-  },
-  navigationContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "#222",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopColor: "#446044",
-    borderTopWidth: 0,
-  },
-  navButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#4a854a",
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginHorizontal: 8,
-    flexDirection: "row",
-  },
-  navButtonText: {
-    color: "#fff",
-    marginLeft: 12,
-    fontWeight: "500",
-  },
-});

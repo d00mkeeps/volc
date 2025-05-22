@@ -4,10 +4,14 @@
     "strict": true,
     "module": "esnext",
     "jsx": "react-native",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "types": ["react-native"],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -16,6 +20,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "components/conversation/mockData.js",
-    "app.config.js"
+    "app.config.js",
+    "tamagui.config.ts"
   ]
 }

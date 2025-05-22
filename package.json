@@ -20,6 +20,7 @@
     "@react-navigation/drawer": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "@supabase/supabase-js": "^2.49.4",
+    "@tamagui/config": "^1.126.13",
     "axios": "^1.7.7",
     "eventemitter3": "^5.0.1",
     "expo": "^52.0.44",
@@ -54,6 +55,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.13",
     "react-native-wizard": "^2.1.1",
+    "tamagui": "^1.126.13",
     "uuid": "^11.0.3",
     "victory-native": "^37.1.2",
     "zustand": "^5.0.4"

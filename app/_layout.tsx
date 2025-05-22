@@ -8,14 +8,13 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { useColorScheme, Text, View } from "react-native";
-import { MessageProvider } from "@/context/MessageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthGate } from "@/components/auth/AuthGate";
-import { UserProvider } from "@/context/UserContext";
 import Toast from "react-native-toast-message";
 import React from "react";
-import { WorkoutProvider } from "@/context/WorkoutContext";
-import { ExerciseProvider } from "@/context/ExerciseContext";
+// Add these Tamagui imports
+import { TamaguiProvider, Theme } from "@tamagui/core";
+import config from "../tamagui.config";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -60,84 +59,74 @@ function RootLayoutNav() {
 
   return (
     <>
-      <AuthProvider>
-        <UserProvider>
-          <ExerciseProvider>
-            <WorkoutProvider>
-              <MessageProvider>
-                <ThemeProvider
-                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                >
-                  <AuthGate>
-                    {supabaseStatus && (
-                      <View
-                        style={{
-                          position: "absolute",
-                          bottom: 40,
-                          right: 10,
-                          padding: 8,
-                          borderRadius: 4,
-                          backgroundColor: supabaseStatus.success
-                            ? "rgba(0, 255, 0, 0.2)"
-                            : "rgba(255, 0, 0, 0.2)",
-                          zIndex: 9999,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: supabaseStatus.success
-                              ? "#155724"
-                              : "#721c24",
-                            fontSize: 12,
-                          }}
-                        >
-                          Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
-                          {supabaseStatus.message}
-                          {supabaseStatus.url &&
-                            `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
-                          {supabaseStatus.error &&
-                            `\nDetails: ${supabaseStatus.error}`}
-                        </Text>
-                      </View>
-                    )}
-                    <Stack screenOptions={{ headerShown: false }}>
-                      <Stack.Screen name="(tabs)" />
-                      <Stack.Screen
-                        name="conversation/[id]"
-                        options={{
-                          headerShown: true,
-                          headerTitle: "Conversation",
-                          headerBackTitle: "Home",
-                          contentStyle: {
-                            backgroundColor: "#1f281f",
-                            flex: 1,
-                          },
-                          headerStyle: {
-                            backgroundColor: "#1f281f",
-                          },
-                          animation: "slide_from_right",
-                        }}
-                        getId={({
-                          params,
-                        }: {
-                          params?: Record<string, any>;
-                        }) => {
-                          if (!params) return undefined;
-                          return String(params.id);
-                        }}
-                      />
-                      <Stack.Screen
-                        name="modal"
-                        options={{ presentation: "modal" }}
-                      />
-                    </Stack>
-                  </AuthGate>
-                </ThemeProvider>
-              </MessageProvider>
-            </WorkoutProvider>
-          </ExerciseProvider>
-        </UserProvider>
-      </AuthProvider>
+      <TamaguiProvider config={config}>
+        <Theme name={colorScheme === "dark" ? "dark" : "light"}>
+          <AuthProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <AuthGate>
+                {supabaseStatus && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      bottom: 40,
+                      right: 10,
+                      padding: 8,
+                      borderRadius: 4,
+                      backgroundColor: supabaseStatus.success
+                        ? "rgba(0, 255, 0, 0.2)"
+                        : "rgba(255, 0, 0, 0.2)",
+                      zIndex: 9999,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: supabaseStatus.success ? "#155724" : "#721c24",
+                        fontSize: 12,
+                      }}
+                    >
+                      Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
+                      {supabaseStatus.message}
+                      {supabaseStatus.url &&
+                        `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
+                      {supabaseStatus.error &&
+                        `\nDetails: ${supabaseStatus.error}`}
+                    </Text>
+                  </View>
+                )}
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen
+                    name="conversation/[id]"
+                    options={{
+                      headerShown: true,
+                      headerTitle: "Conversation",
+                      headerBackTitle: "Home",
+                      contentStyle: {
+                        backgroundColor: "#1f281f",
+                        flex: 1,
+                      },
+                      headerStyle: {
+                        backgroundColor: "#1f281f",
+                      },
+                      animation: "slide_from_right",
+                    }}
+                    getId={({ params }: { params?: Record<string, any> }) => {
+                      if (!params) return undefined;
+                      return String(params.id);
+                    }}
+                  />
+                  <Stack.Screen
+                    name="modal"
+                    options={{ presentation: "modal" }}
+                  />
+                </Stack>
+              </AuthGate>
+            </ThemeProvider>
+          </AuthProvider>
+        </Theme>
+      </TamaguiProvider>
       <Toast />
     </>
   );
