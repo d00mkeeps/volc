@@ -16,17 +16,12 @@ export default function Header({
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
-      marginBottom="$4"
+      marginBottom="$3" // This stays $3 as it's the gap from header to dashboard content
     >
-      <Text fontSize="$8" fontWeight="700" color="$text">
+      <Text fontSize="$9" fontWeight="700" color="$text">
         {greeting}
       </Text>
-      <Button
-        size="$3"
-        circular
-        backgroundColor="$primary"
-        onPress={onSettingsPress}
-      >
+      <Button size="$3" circular onPress={onSettingsPress}>
         <Ionicons name="settings-outline" size={20} color="white" />
       </Button>
     </Stack>

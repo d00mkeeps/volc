@@ -1,81 +1,146 @@
-import React from "react";
-import { Stack, Button, Text } from "tamagui";
+import React, { useState } from "react";
+import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
-import WorkoutList from "@/components/molecules/WorkoutList";
-import ConversationList from "@/components/molecules/ConversationList";
 import Header from "@/components/molecules/HomeScreenHeader";
-import { Ionicons } from "@expo/vector-icons";
+import WorkoutPreview from "@/components/molecules/WorkoutPreview";
+import { CompleteWorkout } from "@/types/workout";
 
 export default function HomeScreen() {
-  const handleSettingsPress = () => {
-    console.log("Settings pressed");
+  const [countdownTime, setCountdownTime] = useState("00:05:00");
+
+  // Mock workout data
+  const mockWorkout: CompleteWorkout = {
+    id: "test-workout-1",
+    user_id: "test-user",
+    name: "Upper Body Power",
+    notes: JSON.stringify([""]),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    is_template: true,
+    workout_exercises: [
+      {
+        id: "ex-1",
+        workout_id: "test-workout-1",
+        name: "Bench Press",
+        order_index: 0,
+        weight_unit: "kg",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        workout_exercise_sets: [
+          {
+            id: "set-1",
+            exercise_id: "ex-1",
+            set_number: 1,
+            weight: 80,
+            reps: 8,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: "set-2",
+            exercise_id: "ex-1",
+            set_number: 2,
+            weight: 80,
+            reps: 8,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: "set-3",
+            exercise_id: "ex-1",
+            set_number: 3,
+            weight: 80,
+            reps: 8,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      },
+      {
+        id: "ex-2",
+        workout_id: "test-workout-1",
+        name: "Overhead Press",
+        order_index: 1,
+        weight_unit: "kg",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        workout_exercise_sets: [
+          {
+            id: "set-4",
+            exercise_id: "ex-2",
+            set_number: 1,
+            weight: 50,
+            reps: 10,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      },
+      {
+        id: "ex-3",
+        workout_id: "test-workout-1",
+        name: "Incline Dumbbell Press",
+        order_index: 2,
+        weight_unit: "kg",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        workout_exercise_sets: [
+          {
+            id: "set-7",
+            exercise_id: "ex-3",
+            set_number: 1,
+            weight: 30,
+            reps: 12,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      },
+      {
+        id: "ex-4",
+        workout_id: "test-workout-1",
+        name: "Tricep Dips",
+        order_index: 3,
+        weight_unit: "kg",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        workout_exercise_sets: [
+          {
+            id: "set-9",
+            exercise_id: "ex-4",
+            set_number: 1,
+            reps: 15,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ],
+      },
+    ],
   };
 
-  const handleCreateWorkout = () => {
-    console.log("Create workout pressed");
-  };
-
-  const handleCreateConversation = () => {
-    console.log("Create conversation pressed");
+  const handleStartWorkout = () => {
+    console.log("Starting workout!");
+    // Later this will open the full tracking modal
   };
 
   return (
-    <Stack flex={1} backgroundColor="$background" padding="$4">
-      <Header greeting="Welcome!" onSettingsPress={handleSettingsPress} />
+    <Stack flex={1} backgroundColor="$background">
+      <Stack flex={1} padding="$4">
+        <Header
+          greeting="Welcome to Volc!"
+          onSettingsPress={() => console.log("Settings pressed")}
+        />
 
-      <Dashboard />
-
-      <WorkoutList />
-
-      {/* Conversation section with side buttons */}
-      <Stack flex={1} flexDirection="row" gap="$3">
-        {/* Conversation list - takes up most space */}
-        <Stack flex={1}>
-          <ConversationList />
+        <Stack marginBottom="$5">
+          <Dashboard />
         </Stack>
-
-        {/* Full-height action buttons on the right */}
-        <Stack width={100} gap="$3">
-          <Button
-            flex={1} // 👈 Add this - makes button take half the height
-            backgroundColor="$primary"
-            borderRadius="$4"
-            pressStyle={{ backgroundColor: "$primaryLight" }}
-            onPress={handleCreateWorkout}
-          >
-            <Stack alignItems="center" gap="$1">
-              <Ionicons name="fitness-outline" size={20} color="white" />
-              <Text
-                color="white"
-                fontSize="$2"
-                fontWeight="500"
-                textAlign="center"
-              >
-                Workout
-              </Text>
-            </Stack>
-          </Button>
-
-          <Button
-            flex={1} // 👈 Add this - makes button take other half the height
-            backgroundColor="$primary"
-            borderRadius="$4"
-            pressStyle={{ backgroundColor: "$primaryLight" }}
-            onPress={handleCreateConversation}
-          >
-            <Stack alignItems="center" gap="$1">
-              <Ionicons name="chatbubble-outline" size={20} color="white" />
-              <Text
-                color="white"
-                fontSize="$2"
-                fontWeight="500"
-                textAlign="center"
-              >
-                Chat
-              </Text>
-            </Stack>
-          </Button>
-        </Stack>
+      </Stack>
+      <Stack flex={1} marginTop="$4">
+        <WorkoutPreview
+          workout={mockWorkout}
+          countdownTime={countdownTime}
+          onStartWorkout={handleStartWorkout}
+        />
       </Stack>
     </Stack>
   );

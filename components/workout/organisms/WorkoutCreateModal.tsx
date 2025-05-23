@@ -10,9 +10,9 @@
 //   Text,
 // } from "react-native";
 // import { Ionicons } from "@expo/vector-icons";
-// import { CompleteWorkout } from "@/types/workout";
-// import WorkoutModalHeader from "../molecules/WorkoutModalHeader";
-// import WorkoutNotesList from "../molecules/WorkoutNotesList";
+import { CompleteWorkout } from "@/types/workout";
+import WorkoutModalHeader from "../molecules/WorkoutModalHeader";
+import WorkoutNotesList from "../molecules/WorkoutNotesList";
 // import WorkoutExerciseList from "./WorkoutExerciseList";
 // import TemplateSelector from "../molecules/TemplateSelector";
 // import { useAuth } from "@/context/AuthContext";

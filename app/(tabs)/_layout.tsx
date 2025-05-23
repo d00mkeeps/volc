@@ -48,6 +48,24 @@ export default function TabLayout() {
               ),
             }}
           />
+          <Tabs.Screen
+            name="chats"
+            options={{
+              title: "Chats",
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="chatbubble-outline" size={size} color={color} />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="workouts"
+            options={{
+              title: "Workouts",
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="barbell-outline" size={size} color={color} />
+              ),
+            }}
+          />
         </Tabs>
       </SafeAreaView>
     </GestureHandlerRootView>

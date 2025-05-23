@@ -1,45 +1,23 @@
+// Dashboard.tsx
 import React from "react";
-import { Stack, Text } from "tamagui";
+import { Stack, ScrollView } from "tamagui";
+import GoalProgressRing from "@/components/molecules/dashboard/GoalProgressRing";
+import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
+import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
 
 export default function Dashboard() {
   return (
-    <Stack
-      flex={1}
-      backgroundColor="$backgroundSoft"
-      borderRadius="$4"
-      padding="$3"
-      marginBottom="$4"
-      gap="$3"
-    >
-      <Text fontSize="$5" fontWeight="600" color="$text" marginBottom="$2">
-        Dashboard
-      </Text>
-
-      <Stack flexDirection="row" flex={1} gap="$3">
-        {/* Large card - takes up half */}
-        <Stack
-          flex={1}
-          backgroundColor="$primaryLight"
-          borderRadius="$3"
-          padding="$3"
-        />
-
-        {/* Two smaller cards sharing the other half */}
-        <Stack flex={1} gap="$3">
-          <Stack
-            flex={1}
-            backgroundColor="$primaryLight"
-            borderRadius="$3"
-            padding="$3"
-          />
-          <Stack
-            flex={1}
-            backgroundColor="$primaryLight"
-            borderRadius="$3"
-            padding="$3"
-          />
+    <Stack marginBottom="$2" gap="$3">
+      {/* Top row - Goal Ring and Spider Chart */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <Stack flexDirection="row" gap="$3">
+          <GoalProgressRing percentage={22} label="100kg→120kg Bench Press" />
+          <MuscleGroupSpider />
         </Stack>
-      </Stack>
+      </ScrollView>
+
+      {/* Bottom row - Consistency Calendar */}
+      <ConsistencyCalendar />
     </Stack>
   );
 }

@@ -1,0 +1,12 @@
+import ConversationList from "@/components/molecules/ConversationList";
+import React from "react";
+import { Stack, Text } from "tamagui";
+
+export default function ChatScreen() {
+  return (
+    <Stack flex={1} backgroundColor="$background" padding="$4">
+      <Text>Chat Screen</Text>
+      <ConversationList />
+    </Stack>
+  );
+}
