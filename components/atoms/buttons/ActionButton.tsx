@@ -1,3 +1,4 @@
+// components/atoms/ActionButton.tsx
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Button, Stack, Text } from "tamagui";
@@ -15,7 +16,9 @@ export default function ActionButton({
 }: ActionButtonProps) {
   return (
     <Button
-      flex={1}
+      width="70%"
+      height={60}
+      alignSelf="center"
       backgroundColor="$primary"
       borderRadius="$4"
       pressStyle={{ backgroundColor: "$primaryLight" }}
@@ -23,7 +26,7 @@ export default function ActionButton({
     >
       <Stack alignItems="center" gap="$1">
         <Ionicons name={icon as any} size={20} color="white" />
-        <Text color="white" fontSize="$2" fontWeight="500" textAlign="center">
+        <Text color="white" fontSize="$4" fontWeight="500" textAlign="center">
           {label}
         </Text>
       </Stack>

@@ -22,6 +22,18 @@ export interface SetInput {
   duration?: any;
   rpe?: number;
 }
+export interface WorkoutExerciseSet {
+  id: string;
+  exercise_id: string;
+  set_number: number;
+  weight?: number;
+  reps?: number;
+  time?: number;
+  distance?: number;
+  is_completed?: boolean; // Add this
+  created_at: string;
+  updated_at: string;
+}
 
 export type WorkoutSet = {
   id: string;
@@ -48,7 +60,7 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     distance_unit?: 'km' | 'm' | 'mi';
     created_at: string;
     updated_at: string;
-    workout_exercise_sets: WorkoutSet[];
+    workout_exercise_sets: WorkoutExerciseSet[];
   };
 
 
@@ -87,6 +99,8 @@ export interface CompleteWorkout {
   template_id?: string;
   used_as_template?: string; // Add this field
   workout_exercises: WorkoutExercise[];
+  scheduled_time?: string; // Format: "HH:MM" in 24-hour time
+  description?: string;
 }
   
 export type BundleMetadata = {

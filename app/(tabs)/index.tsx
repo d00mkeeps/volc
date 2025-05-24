@@ -2,129 +2,21 @@ import React, { useState } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/HomeScreenHeader";
-import WorkoutPreview from "@/components/molecules/WorkoutPreview";
-import { CompleteWorkout } from "@/types/workout";
+import WorkoutTracker from "@/components/organisms/WorkoutTracker";
+import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
+import { mockWorkout } from "@/mockdata";
 
 export default function HomeScreen() {
   const [countdownTime, setCountdownTime] = useState("00:05:00");
+  const [isWorkoutActive, setIsWorkoutActive] = useState(false);
 
-  // Mock workout data
-  const mockWorkout: CompleteWorkout = {
-    id: "test-workout-1",
-    user_id: "test-user",
-    name: "Upper Body Power",
-    notes: JSON.stringify([""]),
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    is_template: true,
-    workout_exercises: [
-      {
-        id: "ex-1",
-        workout_id: "test-workout-1",
-        name: "Bench Press",
-        order_index: 0,
-        weight_unit: "kg",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        workout_exercise_sets: [
-          {
-            id: "set-1",
-            exercise_id: "ex-1",
-            set_number: 1,
-            weight: 80,
-            reps: 8,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: "set-2",
-            exercise_id: "ex-1",
-            set_number: 2,
-            weight: 80,
-            reps: 8,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          {
-            id: "set-3",
-            exercise_id: "ex-1",
-            set_number: 3,
-            weight: 80,
-            reps: 8,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ],
-      },
-      {
-        id: "ex-2",
-        workout_id: "test-workout-1",
-        name: "Overhead Press",
-        order_index: 1,
-        weight_unit: "kg",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        workout_exercise_sets: [
-          {
-            id: "set-4",
-            exercise_id: "ex-2",
-            set_number: 1,
-            weight: 50,
-            reps: 10,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ],
-      },
-      {
-        id: "ex-3",
-        workout_id: "test-workout-1",
-        name: "Incline Dumbbell Press",
-        order_index: 2,
-        weight_unit: "kg",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        workout_exercise_sets: [
-          {
-            id: "set-7",
-            exercise_id: "ex-3",
-            set_number: 1,
-            weight: 30,
-            reps: 12,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ],
-      },
-      {
-        id: "ex-4",
-        workout_id: "test-workout-1",
-        name: "Tricep Dips",
-        order_index: 3,
-        weight_unit: "kg",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        workout_exercise_sets: [
-          {
-            id: "set-9",
-            exercise_id: "ex-4",
-            set_number: 1,
-            reps: 15,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ],
-      },
-    ],
-  };
-
-  const handleStartWorkout = () => {
-    console.log("Starting workout!");
-    // Later this will open the full tracking modal
+  const handleToggleWorkout = () => {
+    setIsWorkoutActive(!isWorkoutActive);
   };
 
   return (
     <Stack flex={1} backgroundColor="$background">
+      {/* Main content - Dashboard and Header */}
       <Stack flex={1} padding="$4">
         <Header
           greeting="Welcome to Volc!"
@@ -135,13 +27,20 @@ export default function HomeScreen() {
           <Dashboard />
         </Stack>
       </Stack>
-      <Stack flex={1} marginTop="$4">
-        <WorkoutPreview
-          workout={mockWorkout}
-          countdownTime={countdownTime}
-          onStartWorkout={handleStartWorkout}
-        />
-      </Stack>
+
+      {/* WorkoutTracker - no button logic needed */}
+      <WorkoutTracker
+        workout={mockWorkout}
+        isActive={isWorkoutActive}
+        countdownTime={countdownTime}
+      />
+
+      {/* Floating button - START or FINISH based on state */}
+      <FloatingActionButton
+        icon={isWorkoutActive ? "checkmark-circle" : "play"}
+        label={isWorkoutActive ? "FINISH" : "START"}
+        onPress={handleToggleWorkout}
+      />
     </Stack>
   );
 }
