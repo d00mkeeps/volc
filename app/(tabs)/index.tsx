@@ -1,43 +1,63 @@
-import React, { useState } from "react";
+// index.tsx
+import React, { useState, useRef } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/HomeScreenHeader";
-import WorkoutTracker from "@/components/organisms/WorkoutTracker";
+import WorkoutTracker, {
+  WorkoutTrackerRef,
+} from "@/components/organisms/WorkoutTracker";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
+import { useWorkoutTimer } from "@/hooks/useWorkoutTimer";
 import { mockWorkout } from "@/mockdata";
 
 export default function HomeScreen() {
-  const [countdownTime, setCountdownTime] = useState("00:05:00");
   const [isWorkoutActive, setIsWorkoutActive] = useState(false);
+  const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
+
+  const { timeString, isPaused, togglePause, resetTimer } = useWorkoutTimer({
+    scheduledTime: mockWorkout.scheduled_time,
+    isActive: isWorkoutActive,
+  });
 
   const handleToggleWorkout = () => {
-    setIsWorkoutActive(!isWorkoutActive);
+    if (isWorkoutActive) {
+      // Finishing workout
+      resetTimer();
+      console.log("workout finished!");
+      workoutTrackerRef.current?.finishWorkout(); // Snap to peek instead of closing
+    } else {
+      // Starting workout
+      workoutTrackerRef.current?.startWorkout();
+    }
+  };
+
+  const handleActiveChange = (active: boolean) => {
+    setIsWorkoutActive(active);
   };
 
   return (
     <Stack flex={1} backgroundColor="$background">
-      {/* Main content - Dashboard and Header */}
       <Stack flex={1} padding="$4">
         <Header
           greeting="Welcome to Volc!"
           onSettingsPress={() => console.log("Settings pressed")}
         />
-
         <Stack marginBottom="$5">
           <Dashboard />
         </Stack>
       </Stack>
 
-      {/* WorkoutTracker - no button logic needed */}
       <WorkoutTracker
+        ref={workoutTrackerRef}
         workout={mockWorkout}
         isActive={isWorkoutActive}
-        countdownTime={countdownTime}
+        timeString={timeString}
+        isPaused={isPaused}
+        togglePause={togglePause}
+        onActiveChange={handleActiveChange}
       />
 
-      {/* Floating button - START or FINISH based on state */}
       <FloatingActionButton
-        icon={isWorkoutActive ? "checkmark-circle" : "play"}
         label={isWorkoutActive ? "FINISH" : "START"}
         onPress={handleToggleWorkout}
       />

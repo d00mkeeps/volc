@@ -4,7 +4,7 @@ import React from "react";
 import { Button, Stack, Text } from "tamagui";
 
 interface ActionButtonProps {
-  icon: string;
+  icon?: string;
   label: string;
   onPress: () => void;
 }
@@ -16,7 +16,7 @@ export default function ActionButton({
 }: ActionButtonProps) {
   return (
     <Button
-      width="70%"
+      width="60%"
       height={60}
       alignSelf="center"
       backgroundColor="$primary"
@@ -24,9 +24,14 @@ export default function ActionButton({
       pressStyle={{ backgroundColor: "$primaryLight" }}
       onPress={onPress}
     >
-      <Stack alignItems="center" gap="$1">
-        <Ionicons name={icon as any} size={20} color="white" />
-        <Text color="white" fontSize="$4" fontWeight="500" textAlign="center">
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        gap={icon ? "$1" : 0}
+        flex={1}
+      >
+        {icon && <Ionicons name={icon as any} size={20} color="white" />}
+        <Text color="white" fontSize="$9" fontWeight="700" textAlign="center">
           {label}
         </Text>
       </Stack>

@@ -1,5 +1,5 @@
 // hooks/useWorkoutTimer.tsx
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 interface UseWorkoutTimerProps {
   scheduledTime?: string; // Format: "HH:MM" (24-hour)
@@ -83,10 +83,10 @@ export function useWorkoutTimer({ scheduledTime, isActive }: UseWorkoutTimerProp
     setIsPaused(!isPaused);
   };
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     setElapsedSeconds(0);
     setIsPaused(false);
-  };
+  }, []);
 
   return {
     timeString,

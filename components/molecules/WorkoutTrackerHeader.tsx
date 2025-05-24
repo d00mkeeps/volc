@@ -1,27 +1,24 @@
-// components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
 import { YStack, XStack, Text, Stack } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import { useWorkoutTimer } from "@/hooks/useWorkoutTimer";
 
 interface WorkoutTrackerHeaderProps {
   workoutName: string;
   workoutDescription?: string;
-  scheduledTime?: string; // Format: "HH:MM"
   isActive: boolean;
+  timeString: string;
+  isPaused: boolean;
+  togglePause: () => void;
 }
 
 export default function WorkoutTrackerHeader({
   workoutName,
   workoutDescription,
-  scheduledTime,
   isActive,
+  timeString,
+  isPaused,
+  togglePause,
 }: WorkoutTrackerHeaderProps) {
-  const { timeString, isPaused, togglePause } = useWorkoutTimer({
-    scheduledTime,
-    isActive,
-  });
-
   const handleNotesPress = () => {
     console.log("Opening notes interface");
   };
@@ -34,94 +31,92 @@ export default function WorkoutTrackerHeader({
       borderBottomWidth={1}
       borderBottomColor="$borderSoft"
     >
-      {/* Timer and Controls */}
-      <XStack justifyContent="center" alignItems="center" gap="$3">
-        {/* Notes button - only when active */}
-        {isActive && (
-          <Stack
-            width={40}
-            height={40}
-            backgroundColor="$primaryLight"
-            borderRadius="$3"
-            justifyContent="center"
-            alignItems="center"
-            pressStyle={{
-              backgroundColor: "$backgroundPress",
-            }}
-            onPress={handleNotesPress}
-          >
-            <Ionicons name="document-text-outline" size={20} color="$color" />
-          </Stack>
-        )}
-
-        {/* Timer */}
+      {/* Timer */}
+      <XStack justifyContent="center" alignItems="center">
         <Text
-          fontSize="$9"
+          fontSize="$10"
           fontWeight="bold"
           color="$color"
           fontFamily="$heading"
-          animation="quick"
         >
           {timeString}
         </Text>
-
-        {/* Pause/Play button - only when active */}
-        {isActive && (
-          <Stack
-            width={40}
-            height={40}
-            backgroundColor="$primaryLight"
-            borderRadius="$3"
-            justifyContent="center"
-            alignItems="center"
-            pressStyle={{
-              backgroundColor: "$backgroundPress",
-            }}
-            onPress={togglePause}
-          >
-            <Ionicons
-              name={isPaused ? "play" : "pause"}
-              size={20}
-              color="$color"
-            />
-          </Stack>
-        )}
       </XStack>
 
-      {/* Workout Info */}
-      <YStack gap="$1.5" alignItems="center">
-        <Text
-          fontSize={isActive ? "$5" : "$6"}
-          fontWeight="600"
-          color="$color"
-          textAlign="center"
-          animation="quick"
+      {/* Bottom row with buttons and workout info */}
+      <XStack alignItems="center" justifyContent="space-between" width="100%">
+        {/* Notes button - left side */}
+        <Stack
+          width={40}
+          height={40}
+          backgroundColor={isActive ? "$primaryLight" : "$backgroundSoft"}
+          borderRadius="$3"
+          justifyContent="center"
+          alignItems="center"
+          pressStyle={
+            isActive
+              ? {
+                  backgroundColor: "$backgroundPress",
+                }
+              : {}
+          }
+          onPress={isActive ? handleNotesPress : undefined}
+          opacity={isActive ? 1 : 0.4}
+          animation="medium"
         >
-          {workoutName}
-        </Text>
+          <Ionicons
+            name="document-text-outline"
+            size={20}
+            color={isActive ? "$color" : "$textSoft"}
+          />
+        </Stack>
 
-        {/* Description - show when inactive or if no status shown when active */}
-        {workoutDescription && (
+        {/* Center - Workout Info */}
+        <YStack gap="$1.5" alignItems="center" flex={1} paddingHorizontal="$3">
           <Text
-            fontSize="$4"
-            color="$textSoft"
+            fontSize="$6"
+            fontWeight="600"
+            color="$color"
             textAlign="center"
             animation="quick"
           >
-            {workoutDescription}
+            {workoutName}
           </Text>
-        )}
 
-        {/* Status indicators when active */}
-        {isActive && (
+          {workoutDescription && (
+            <Text
+              fontSize="$4"
+              color="$textSoft"
+              textAlign="center"
+              animation="medium"
+            >
+              {workoutDescription}
+            </Text>
+          )}
+
+          {/* Status indicators - always shown */}
           <XStack gap="$1.5" alignItems="center">
-            {isPaused ? (
+            {!isActive ? (
+              <>
+                <Stack
+                  width={8}
+                  height={8}
+                  borderRadius={4}
+                  backgroundColor="$textSoft"
+                  animation="quick"
+                />
+                <Text fontSize="$3" color="$textSoft">
+                  Workout not started
+                </Text>
+              </>
+            ) : isPaused ? (
               <>
                 <Stack
                   width={8}
                   height={8}
                   borderRadius={4}
                   backgroundColor="$yellow8"
+                  animation="quick"
                 />
                 <Text fontSize="$3" color="$textSoft">
                   Workout paused
@@ -134,6 +129,7 @@ export default function WorkoutTrackerHeader({
                   height={8}
                   borderRadius={4}
                   backgroundColor="$primary"
+                  animation="quick"
                 />
                 <Text fontSize="$3" color="$textSoft">
                   Workout in progress
@@ -141,8 +137,34 @@ export default function WorkoutTrackerHeader({
               </>
             )}
           </XStack>
-        )}
-      </YStack>
+        </YStack>
+
+        {/* Pause/Play button - right side */}
+        <Stack
+          width={40}
+          height={40}
+          backgroundColor={isActive ? "$primaryLight" : "$backgroundSoft"}
+          borderRadius="$3"
+          justifyContent="center"
+          alignItems="center"
+          pressStyle={
+            isActive
+              ? {
+                  backgroundColor: "$backgroundPress",
+                }
+              : {}
+          }
+          onPress={isActive ? togglePause : undefined}
+          opacity={isActive ? 1 : 0.4}
+          animation="quick"
+        >
+          <Ionicons
+            name={isPaused ? "play" : "pause"}
+            size={20}
+            color={isActive ? "$color" : "$textSoft"}
+          />
+        </Stack>
+      </XStack>
     </YStack>
   );
 }

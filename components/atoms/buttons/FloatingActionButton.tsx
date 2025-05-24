@@ -2,7 +2,7 @@ import { Stack } from "tamagui";
 import ActionButton from "./ActionButton";
 
 interface FloatingActionButtonProps {
-  icon: string;
+  icon?: string;
   label: string;
   onPress: () => void;
 }
@@ -15,7 +15,7 @@ export default function FloatingActionButton({
   return (
     <Stack
       position="absolute"
-      bottom="$4" // Adjust vertical position (e.g., "$6", "$8", 20, 40)
+      bottom="$5" // Adjust vertical position (e.g., "$6", "$8", 20, 40)
       left="$4" // Adjust left margin
       right="$4" // Adjust right margin
       // Or use specific positioning:
