@@ -5,3 +5,13 @@
 2025-05-26 12:48:20,928 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
 2025-05-26 12:48:21,206 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
 2025-05-26 12:48:21,210 - app.main - INFO - Response status: 200
+2025-05-26 12:54:48,845 - app.main - INFO - Request: GET /db/user-profile
+2025-05-26 12:54:49,260 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:49,261 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:49,426 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:49,427 - app.main - INFO - Response status: 200
+2025-05-26 12:54:55,406 - app.main - INFO - Request: GET /db/user-profile
+2025-05-26 12:54:55,564 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:55,564 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:55,717 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:54:55,718 - app.main - INFO - Response status: 200

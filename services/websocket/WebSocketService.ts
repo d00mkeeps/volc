@@ -430,14 +430,6 @@ export class WebSocketService {
   ): Promise<void> {
     return this.connect(configName, conversationId, messages);
   }
-  
-  /**
-   * Connect to base user notifications channel
-   * @param userId User ID
-   */
-  public async connectBase(userId: string): Promise<void> {
-    return this.connect('base', userId);
-  }
 }
 
 // Singleton instance
