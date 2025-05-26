@@ -75,14 +75,14 @@ function RootLayoutNav() {
                       padding: 8,
                       borderRadius: 4,
                       backgroundColor: supabaseStatus.success
-                        ? "rgba(0, 255, 0, 0.2)"
+                        ? "rgba(248, 79, 62, 0.2)" // Volc orange instead of green
                         : "rgba(255, 0, 0, 0.2)",
                       zIndex: 9999,
                     }}
                   >
                     <Text
                       style={{
-                        color: supabaseStatus.success ? "#155724" : "#721c24",
+                        color: supabaseStatus.success ? "#d4412f" : "#721c24", // Volc orange text
                         fontSize: 12,
                       }}
                     >
@@ -104,12 +104,16 @@ function RootLayoutNav() {
                       headerTitle: "Conversation",
                       headerBackTitle: "Home",
                       contentStyle: {
-                        backgroundColor: "#1f281f",
+                        backgroundColor:
+                          colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc colors
                         flex: 1,
                       },
                       headerStyle: {
-                        backgroundColor: "#1f281f",
+                        backgroundColor:
+                          colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc colors
                       },
+                      headerTintColor:
+                        colorScheme === "dark" ? "#ffffff" : "#231f20", // Volc text colors
                       animation: "slide_from_right",
                     }}
                     getId={({ params }: { params?: Record<string, any> }) => {

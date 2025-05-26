@@ -1,19 +1,22 @@
-// components/molecules/GoalProgressRing.tsx
 import React from "react";
-import { Stack, Text } from "tamagui";
+import { Stack, Text, YStack } from "tamagui";
 import Svg, { Circle } from "react-native-svg";
 
 interface GoalProgressRingProps {
   percentage: number;
   label?: string;
+  currentValue?: string;
+  targetValue?: string;
 }
 
 export default function GoalProgressRing({
   percentage,
   label = "Weekly Goal",
+  currentValue,
+  targetValue,
 }: GoalProgressRingProps) {
-  const size = 160;
-  const strokeWidth = 36;
+  const size = 140;
+  const strokeWidth = 12;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDasharray = circumference;
@@ -22,14 +25,15 @@ export default function GoalProgressRing({
   return (
     <Stack
       width={240}
-      height={240}
+      height={200}
       backgroundColor="$backgroundSoft"
-      borderRadius="$4"
-      padding="$4"
+      borderRadius="$3"
+      padding="$3"
       justifyContent="center"
       alignItems="center"
-      gap="$2"
+      gap="$1.5"
     >
+      {/* Progress Ring */}
       <Stack position="relative" justifyContent="center" alignItems="center">
         <Svg width={size} height={size}>
           {/* Background circle */}
@@ -46,7 +50,7 @@ export default function GoalProgressRing({
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#007AFF"
+            stroke="#f84f3e"
             strokeWidth={strokeWidth}
             fill="transparent"
             strokeDasharray={strokeDasharray}
@@ -56,15 +60,37 @@ export default function GoalProgressRing({
           />
         </Svg>
 
-        {/* Percentage text in center */}
-        <Stack position="absolute" justifyContent="center" alignItems="center">
-          <Text fontSize="$6" fontWeight="600" color="$color">
+        {/* Center content */}
+        <YStack
+          position="absolute"
+          justifyContent="center"
+          alignItems="center"
+          gap="$1"
+        >
+          <Text fontSize="$6" fontWeight="700" color="$primary">
             {Math.round(percentage)}%
           </Text>
-        </Stack>
+          {currentValue && targetValue && (
+            <YStack alignItems="center" gap="$0.5">
+              <Text fontSize="$3" fontWeight="600" color="$color">
+                {currentValue}
+              </Text>
+              <Text fontSize="$2" color="$textSoft">
+                of {targetValue}
+              </Text>
+            </YStack>
+          )}
+        </YStack>
       </Stack>
 
-      <Text fontSize="$3" color="$colorPress" textAlign="center">
+      {/* Label */}
+      <Text
+        fontSize="$3"
+        color="$textSoft"
+        textAlign="center"
+        fontWeight="500"
+        numberOfLines={2}
+      >
         {label}
       </Text>
     </Stack>

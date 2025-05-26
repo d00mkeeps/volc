@@ -1,19 +1,22 @@
+// components/molecules/ExerciseTracker.tsx
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Text, Separator } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import SetRow from "./SetRow";
-import { WorkoutExercise } from "@/types/workout";
+import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
   isInitiallyExpanded?: boolean;
-  isActive?: boolean; // New prop for dormant state
+  isActive?: boolean;
+  onExerciseUpdate?: (updatedExercise: WorkoutExercise) => void;
 }
 
 export default function ExerciseTracker({
   exercise,
   isInitiallyExpanded = false,
-  isActive = true, // Default to active
+  isActive = true,
+  onExerciseUpdate,
 }: ExerciseTrackerProps) {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
 
@@ -23,22 +26,58 @@ export default function ExerciseTracker({
   const totalSets = exercise.workout_exercise_sets.length;
 
   const toggleExpanded = () => {
-    if (!isActive) return; // Don't allow expansion when inactive
+    if (!isActive) return;
     setIsExpanded(!isExpanded);
+  };
+
+  const handleSetUpdate = (updatedSet: WorkoutExerciseSet) => {
+    if (!isActive || !onExerciseUpdate) return;
+
+    const updatedExercise = {
+      ...exercise,
+      workout_exercise_sets: exercise.workout_exercise_sets.map((set) =>
+        set.id === updatedSet.id ? updatedSet : set
+      ),
+    };
+
+    onExerciseUpdate(updatedExercise);
+  };
+
+  const handleAddSet = () => {
+    if (!isActive || !onExerciseUpdate) return;
+
+    const newSet: WorkoutExerciseSet = {
+      id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      exercise_id: exercise.id,
+      set_number: exercise.workout_exercise_sets.length + 1,
+      weight: undefined,
+      reps: undefined,
+      distance: undefined,
+      is_completed: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const updatedExercise = {
+      ...exercise,
+      workout_exercise_sets: [...exercise.workout_exercise_sets, newSet],
+    };
+
+    onExerciseUpdate(updatedExercise);
   };
 
   return (
     <YStack
       backgroundColor={isActive ? "$backgroundSoft" : "$backgroundMuted"}
-      borderRadius="$4"
+      borderRadius="$3"
       overflow="hidden"
       animation="quick"
       opacity={isActive ? 1 : 0.6}
     >
-      {/* Header - Always visible */}
+      {/* Header */}
       <Stack
-        paddingHorizontal="$4"
-        paddingVertical="$3"
+        paddingHorizontal="$3"
+        paddingVertical="$1.5"
         onPress={toggleExpanded}
         pressStyle={
           isActive
@@ -52,14 +91,14 @@ export default function ExerciseTracker({
         <XStack justifyContent="space-between" alignItems="center">
           <YStack flex={1} gap="$1">
             <Text
-              fontSize="$7"
+              fontSize="$5"
               fontWeight="600"
               color={isActive ? "$color" : "$textMuted"}
             >
               {exercise.name}
             </Text>
             {!isExpanded && (
-              <Text fontSize="$3" color={isActive ? "$textSoft" : "$textMuted"}>
+              <Text fontSize="$2" color={isActive ? "$textSoft" : "$textMuted"}>
                 {completedSets}/{totalSets} sets completed
               </Text>
             )}
@@ -82,12 +121,12 @@ export default function ExerciseTracker({
       {/* Expanded Content */}
       {isExpanded && (
         <>
-          <Separator marginHorizontal="$4" />
+          <Separator marginHorizontal="$3" borderColor="$borderSoft" />
 
           <YStack padding="$1.5" gap="$1.5">
             {/* Column Headers */}
-            <XStack gap="$3" alignItems="center" paddingBottom="$2">
-              <Stack width={30} alignItems="center" justifyContent="center">
+            <XStack gap="$3" alignItems="center" paddingBottom="$1">
+              <Stack width={30} alignItems="center">
                 <Text
                   fontSize="$2"
                   fontWeight="600"
@@ -97,10 +136,10 @@ export default function ExerciseTracker({
                 </Text>
               </Stack>
 
-              <XStack flex={1} gap="$2">
-                <Stack flex={1} alignItems="center" justifyContent="center">
+              <XStack flex={1} gap="$1.5">
+                <Stack flex={1} alignItems="center">
                   <Text
-                    fontSize="$3"
+                    fontSize="$2"
                     fontWeight="600"
                     color={isActive ? "$textSoft" : "$textMuted"}
                     textAlign="center"
@@ -108,9 +147,9 @@ export default function ExerciseTracker({
                     {exercise.weight_unit || "kg"}
                   </Text>
                 </Stack>
-                <Stack flex={1} alignItems="center" justifyContent="center">
+                <Stack flex={1} alignItems="center">
                   <Text
-                    fontSize="$3"
+                    fontSize="$2"
                     fontWeight="600"
                     color={isActive ? "$textSoft" : "$textMuted"}
                     textAlign="center"
@@ -120,7 +159,7 @@ export default function ExerciseTracker({
                 </Stack>
               </XStack>
 
-              <Stack width={40} alignItems="center" justifyContent="center">
+              <Stack width={40} alignItems="center">
                 <Text
                   fontSize="$2"
                   fontWeight="600"
@@ -141,43 +180,42 @@ export default function ExerciseTracker({
                   set={set}
                   exerciseName={exercise.name}
                   weightUnit={exercise.weight_unit}
-                  isActive={isActive} // Pass down active state
-                  onUpdate={(updatedSet) => {
-                    if (!isActive) return; // Don't allow updates when inactive
-                    console.log("Set updated:", updatedSet);
-                  }}
+                  isActive={isActive}
+                  onUpdate={handleSetUpdate}
                 />
               ))}
 
             {/* Add Set Button */}
             <Stack
-              marginTop="$2"
-              paddingVertical="$3"
+              marginTop="$1.5"
+              paddingVertical="$1.5"
               borderRadius="$3"
               borderWidth={1}
               borderColor={isActive ? "$borderSoft" : "$borderMuted"}
               borderStyle="dashed"
               alignItems="center"
-              backgroundColor={isActive ? "transparent" : "$backgroundMuted"}
+              backgroundColor="transparent"
               pressStyle={
                 isActive
                   ? {
-                      backgroundColor: "$backgroundPress",
+                      backgroundColor: "$primaryTint",
+                      borderColor: "$primary",
                     }
                   : undefined
               }
-              onPress={isActive ? () => console.log("Add set") : undefined}
+              onPress={isActive ? handleAddSet : undefined}
               cursor={isActive ? "pointer" : "default"}
             >
-              <XStack gap="$2" alignItems="center">
+              <XStack gap="$1.5" alignItems="center">
                 <Ionicons
                   name="add"
-                  size={20}
-                  color={isActive ? "$textSoft" : "$textMuted"}
+                  size={18}
+                  color={isActive ? "$primary" : "$textMuted"}
                 />
                 <Text
                   fontSize="$3"
-                  color={isActive ? "$textSoft" : "$textMuted"}
+                  color={isActive ? "$primary" : "$textMuted"}
+                  fontWeight="500"
                 >
                   Add Set
                 </Text>

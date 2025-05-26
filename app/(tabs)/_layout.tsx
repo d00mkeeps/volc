@@ -2,8 +2,11 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useColorScheme } from "react-native";
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -11,14 +14,15 @@ export default function TabLayout() {
           screenOptions={{
             headerShown: false,
             tabBarStyle: {
-              backgroundColor: "#1f281f",
-              borderTopColor: "#446044",
+              backgroundColor: colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc charcoal/white
+              borderTopColor: "#f84f3e", // Volc orange border
               borderTopWidth: 2,
               paddingBottom: 0,
               height: 60,
             },
-            tabBarActiveTintColor: "#4a854a",
-            tabBarInactiveTintColor: "#999",
+            tabBarActiveTintColor: "#f84f3e", // Volc orange active
+            tabBarInactiveTintColor:
+              colorScheme === "dark" ? "#6b6466" : "#999999", // Volc warm gray
             tabBarLabelStyle: {
               fontSize: 12,
               fontWeight: "500",

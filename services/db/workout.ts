@@ -1,8 +1,7 @@
-// services/supabase/workout.ts
-
 import { BaseService } from './base';
 import { WorkoutInput, CompleteWorkout, WorkoutWithConversation } from '@/types/workout';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api/core/apiClient';
+import { convertCompleteToInput } from '@/utils/workoutConversion';
 
 export class WorkoutService extends BaseService {
   /**
@@ -26,6 +25,27 @@ export class WorkoutService extends BaseService {
       return data;
     } catch (error) {
       console.error('[WorkoutService] Error creating workout:', error);
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Save a completed workout (convenience method that handles conversion)
+   */
+  async saveCompletedWorkout(userId: string, workout: CompleteWorkout): Promise<CompleteWorkout> {
+    try {
+      console.log("[WorkoutService] Saving completed workout:", workout.id);
+      
+      // Convert CompleteWorkout to WorkoutInput format
+      const workoutInput = convertCompleteToInput(workout);
+      
+      // Use existing createWorkout method
+      const result = await this.createWorkout(userId, workoutInput);
+      
+      console.log("[WorkoutService] Completed workout saved with ID:", result.id);
+      return result;
+    } catch (error) {
+      console.error('[WorkoutService] Error saving completed workout:', error);
       return this.handleError(error);
     }
   }
@@ -147,8 +167,11 @@ export class WorkoutService extends BaseService {
     try {
       console.log(`[WorkoutService] Saving workout as template: ${workout.id}`);
       
-      // Call the new endpoint to save a workout as a template
-      const data = await apiPost<CompleteWorkout>('/db/workouts/template', workout);
+      // Convert CompleteWorkout to WorkoutInput format for the API
+      const workoutInput = convertCompleteToInput(workout);
+      
+      // Call the template endpoint
+      const data = await apiPost<CompleteWorkout>('/db/workouts/template', workoutInput);
       
       console.log(`[WorkoutService] Successfully saved workout as template: ${data.id}`);
       

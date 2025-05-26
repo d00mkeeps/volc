@@ -1,4 +1,4 @@
-// index.tsx
+// app/(tabs)/index.tsx
 import React, { useState, useRef } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
@@ -7,26 +7,33 @@ import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
-import { useWorkoutTimer } from "@/hooks/useWorkoutTimer";
+import { useWorkoutTimer } from "@/hooks/core/useWorkoutTimer";
 import { mockWorkout } from "@/mockdata";
+import { useUserSession } from "@/hooks/useUserSession";
 
 export default function HomeScreen() {
   const [isWorkoutActive, setIsWorkoutActive] = useState(false);
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
 
-  const { timeString, isPaused, togglePause, resetTimer } = useWorkoutTimer({
-    scheduledTime: mockWorkout.scheduled_time,
-    isActive: isWorkoutActive,
-  });
+  const {
+    isActive,
+    timeString,
+    isPaused,
+    startWorkout,
+    finishWorkout,
+    togglePause,
+  } = useUserSession();
 
-  const handleToggleWorkout = () => {
-    if (isWorkoutActive) {
-      // Finishing workout
-      resetTimer();
-      console.log("workout finished!");
-      workoutTrackerRef.current?.finishWorkout(); // Snap to peek instead of closing
+  const handleToggleWorkout = async () => {
+    if (isActive) {
+      try {
+        await finishWorkout();
+        workoutTrackerRef.current?.finishWorkout();
+      } catch (error) {
+        console.error("Failed to finish workout:", error);
+      }
     } else {
-      // Starting workout
+      startWorkout(mockWorkout);
       workoutTrackerRef.current?.startWorkout();
     }
   };

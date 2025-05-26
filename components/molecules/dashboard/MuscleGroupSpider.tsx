@@ -1,6 +1,5 @@
-// components/molecules/MuscleGroupSpider.tsx
 import React from "react";
-import { Stack, Text } from "tamagui";
+import { Stack, Text, YStack } from "tamagui";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 
 interface MuscleData {
@@ -18,21 +17,16 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
     { muscle: "Chest", sets: 24 },
     { muscle: "Back", sets: 28 },
     { muscle: "Shoulders", sets: 18 },
-    { muscle: "Biceps", sets: 16 },
-    { muscle: "Triceps", sets: 20 },
-    { muscle: "Quads", sets: 14 },
-    { muscle: "Hamstrings", sets: 12 },
-    { muscle: "Glutes", sets: 10 },
-    { muscle: "Abs", sets: 22 },
-    { muscle: "Forearms", sets: 8 },
-    { muscle: "Cardio", sets: 6 },
+    { muscle: "Arms", sets: 22 },
+    { muscle: "Legs", sets: 16 },
+    { muscle: "Core", sets: 20 },
   ];
 
   const muscleData = data || defaultData;
   const maxSets = Math.max(...muscleData.map((d) => d.sets));
-  const size = 220; // Increased SVG size to accommodate labels
+  const size = 180;
   const center = size / 2;
-  const maxRadius = size / 2 - 35; // Increased margin for labels
+  const maxRadius = size / 2 - 30;
 
   // Calculate points for each muscle group
   const points = muscleData.map((item, index) => {
@@ -48,22 +42,24 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
   return (
     <Stack
       width={240}
-      height={240}
+      height={200}
       backgroundColor="$backgroundSoft"
-      borderRadius="$4"
+      borderRadius="$3"
       padding="$3"
       justifyContent="center"
       alignItems="center"
-      gap="$2"
+      gap="$1.5"
     >
+      {/* Title */}
       <Text fontSize="$4" fontWeight="600" color="$color" textAlign="center">
         Muscle Balance
       </Text>
 
+      {/* Spider Chart */}
       <Stack justifyContent="center" alignItems="center">
         <Svg width={size} height={size}>
           {/* Background grid circles */}
-          {[0.2, 0.4, 0.6, 0.8, 1.0].map((ratio, i) => (
+          {[0.25, 0.5, 0.75, 1.0].map((ratio, i) => (
             <Circle
               key={i}
               cx={center}
@@ -99,9 +95,9 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
           {/* Data polygon */}
           <Polygon
             points={polygonPoints}
-            fill="#007AFF"
+            fill="#f84f3e"
             fillOpacity={0.15}
-            stroke="#007AFF"
+            stroke="#f84f3e"
             strokeWidth={2}
           />
 
@@ -111,8 +107,8 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
               key={index}
               cx={point.x}
               cy={point.y}
-              r={2.5}
-              fill="#007AFF"
+              r={3}
+              fill="#f84f3e"
             />
           ))}
 
@@ -120,7 +116,7 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
           {points.map((point, index) => {
             const angle =
               (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-            const labelRadius = maxRadius + 20; // Slightly increased label distance
+            const labelRadius = maxRadius + 18;
             const labelX = center + labelRadius * Math.cos(angle);
             const labelY = center + labelRadius * Math.sin(angle);
 
@@ -129,10 +125,11 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
                 key={index}
                 x={labelX}
                 y={labelY}
-                fontSize="8"
-                fill="#666666"
+                fontSize="9"
+                fill="#6b6466"
                 textAnchor="middle"
                 alignmentBaseline="middle"
+                fontWeight="500"
               >
                 {point.label}
               </SvgText>
@@ -140,6 +137,16 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
           })}
         </Svg>
       </Stack>
+
+      {/* Summary stats */}
+      <YStack alignItems="center" gap="$0.5">
+        <Text fontSize="$2" color="$colorPress" textAlign="center">
+          Last 2 weeks
+        </Text>
+        <Text fontSize="$2" color="$textSoft" textAlign="center">
+          {muscleData.reduce((sum, m) => sum + m.sets, 0)} total sets
+        </Text>
+      </YStack>
     </Stack>
   );
 }

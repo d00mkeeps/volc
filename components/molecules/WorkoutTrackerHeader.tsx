@@ -1,5 +1,6 @@
+// components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
-import { YStack, XStack, Text, Stack } from "tamagui";
+import { YStack, XStack, Text, Circle } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 
 interface WorkoutTrackerHeaderProps {
@@ -25,132 +26,60 @@ export default function WorkoutTrackerHeader({
 
   return (
     <YStack
-      padding="$4"
-      gap="$3"
+      paddingHorizontal="$3"
+      paddingVertical="$1.5"
       backgroundColor="$backgroundSoft"
       borderBottomWidth={1}
       borderBottomColor="$borderSoft"
     >
-      {/* Timer */}
-      <XStack justifyContent="center" alignItems="center">
-        <Text
-          fontSize="$10"
-          fontWeight="bold"
-          color="$color"
-          fontFamily="$heading"
-        >
-          {timeString}
-        </Text>
-      </XStack>
-
-      {/* Bottom row with buttons and workout info */}
-      <XStack alignItems="center" justifyContent="space-between" width="100%">
-        {/* Notes button - left side */}
-        <Stack
-          width={40}
-          height={40}
-          backgroundColor={isActive ? "$primaryLight" : "$backgroundSoft"}
-          borderRadius="$3"
+      {/* Timer and Controls Row */}
+      <XStack justifyContent="center" alignItems="center" gap="$3">
+        {/* Info button - left side */}
+        <Circle
+          size={28}
+          backgroundColor="transparent"
           justifyContent="center"
           alignItems="center"
           pressStyle={
             isActive
               ? {
                   backgroundColor: "$backgroundPress",
+                  scale: 0.9,
                 }
               : {}
           }
           onPress={isActive ? handleNotesPress : undefined}
           opacity={isActive ? 1 : 0.4}
-          animation="medium"
+          animation="quick"
         >
           <Ionicons
-            name="document-text-outline"
+            name="information-circle-outline"
             size={20}
-            color={isActive ? "$color" : "$textSoft"}
+            color={isActive ? "$textSoft" : "$textMuted"}
           />
-        </Stack>
+        </Circle>
 
-        {/* Center - Workout Info */}
-        <YStack gap="$1.5" alignItems="center" flex={1} paddingHorizontal="$3">
-          <Text
-            fontSize="$6"
-            fontWeight="600"
-            color="$color"
-            textAlign="center"
-            animation="quick"
-          >
-            {workoutName}
-          </Text>
+        {/* Timer - center, smaller */}
+        <Text
+          fontSize="$7"
+          fontWeight="700"
+          color="$color"
+          fontFamily="$heading"
+        >
+          {timeString}
+        </Text>
 
-          {workoutDescription && (
-            <Text
-              fontSize="$4"
-              color="$textSoft"
-              textAlign="center"
-              animation="medium"
-            >
-              {workoutDescription}
-            </Text>
-          )}
-
-          {/* Status indicators - always shown */}
-          <XStack gap="$1.5" alignItems="center">
-            {!isActive ? (
-              <>
-                <Stack
-                  width={8}
-                  height={8}
-                  borderRadius={4}
-                  backgroundColor="$textSoft"
-                  animation="quick"
-                />
-                <Text fontSize="$3" color="$textSoft">
-                  Workout not started
-                </Text>
-              </>
-            ) : isPaused ? (
-              <>
-                <Stack
-                  width={8}
-                  height={8}
-                  borderRadius={4}
-                  backgroundColor="$yellow8"
-                  animation="quick"
-                />
-                <Text fontSize="$3" color="$textSoft">
-                  Workout paused
-                </Text>
-              </>
-            ) : (
-              <>
-                <Stack
-                  width={8}
-                  height={8}
-                  borderRadius={4}
-                  backgroundColor="$primary"
-                  animation="quick"
-                />
-                <Text fontSize="$3" color="$textSoft">
-                  Workout in progress
-                </Text>
-              </>
-            )}
-          </XStack>
-        </YStack>
-
-        {/* Pause/Play button - right side */}
-        <Stack
-          width={40}
-          height={40}
-          backgroundColor={isActive ? "$primaryLight" : "$backgroundSoft"}
-          borderRadius="$3"
+        {/* Pause/Play button - right side, orange background when active */}
+        <Circle
+          size={28}
+          backgroundColor={isActive ? "$primary" : "transparent"}
           justifyContent="center"
           alignItems="center"
           pressStyle={
             isActive
               ? {
-                  backgroundColor: "$backgroundPress",
+                  backgroundColor: "$primaryMuted",
+                  scale: 0.9,
                 }
               : {}
           }
@@ -160,10 +89,33 @@ export default function WorkoutTrackerHeader({
         >
           <Ionicons
             name={isPaused ? "play" : "pause"}
-            size={20}
-            color={isActive ? "$color" : "$textSoft"}
+            size={16}
+            color={isActive ? "$volcWhite" : "$textMuted"}
           />
-        </Stack>
+        </Circle>
+      </XStack>
+
+      {/* Status indicator - smaller and cleaner */}
+      <XStack
+        justifyContent="center"
+        alignItems="center"
+        gap="$1.5"
+        marginTop="$1"
+      >
+        <Circle
+          size={6}
+          backgroundColor={
+            !isActive ? "$textMuted" : isPaused ? "$primaryLight" : "$primary"
+          }
+          animation="quick"
+        />
+        <Text fontSize="$2" color="$textSoft" fontWeight="500">
+          {!isActive
+            ? "Workout not started"
+            : isPaused
+            ? "Workout paused"
+            : "Workout in progress"}
+        </Text>
       </XStack>
     </YStack>
   );

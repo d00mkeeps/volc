@@ -18,7 +18,7 @@ import {
 } from "@/types/workout";
 import { WorkoutDataModal } from "../../data/table/WorkoutDataModal";
 import WorkoutDetailModal from "@/components/workout/organisms/WorkoutDetailModal";
-import { convertToCompleteWorkout } from "@/utils/workout";
+import { convertToCompleteWorkout } from "@/utils/workoutConversion";
 
 interface MessageItemProps {
   message: Message;

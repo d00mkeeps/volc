@@ -16,20 +16,21 @@ export type WorkoutInput = {
 };
 
 export interface SetInput {
-  weight?: number;
-  reps?: number;
-  distance?: number;
-  duration?: any;
-  rpe?: number;
+  weight?: number | null;
+  reps?: number | null;
+  distance?: number| null;
+  duration?: any| null;
+  rpe?: number| null;
 }
 export interface WorkoutExerciseSet {
   id: string;
   exercise_id: string;
   set_number: number;
-  weight?: number;
-  reps?: number;
-  time?: number;
-  distance?: number;
+  weight?: number | null;
+  reps?: number | null;
+  distance?: number| null;
+  duration?: any| null;
+  rpe?: number| null;
   is_completed?: boolean; // Add this
   created_at: string;
   updated_at: string;

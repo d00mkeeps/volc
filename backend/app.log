@@ -1,20 +1,7 @@
-2025-05-15 11:21:48,429 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:21:48,647 - app.services.db.workout_service - INFO - Retrieved 123 workouts with 897 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:21:48,647 - app.api.endpoints.db - INFO - Retrieved 123 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:21:48,681 - app.main - INFO - Response status: 200
-2025-05-15 16:40:13,679 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-19 13:49:10,396 - app - INFO - Logging has been set up
-2025-05-19 13:49:10,396 - app.main - INFO - Application starting
-2025-05-19 13:49:10,397 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-19 13:49:10,397 - app.main - INFO - SUPABASE_URL present: True
-2025-05-19 13:49:10,397 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-19 13:53:06,649 - app - INFO - Logging has been set up
-2025-05-19 13:53:06,650 - app.main - INFO - Application starting
-2025-05-19 13:53:06,650 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-19 13:53:06,650 - app.main - INFO - SUPABASE_URL present: True
-2025-05-19 13:53:06,650 - app.main - INFO - SUPABASE_KEY present: True
-2025-05-19 13:53:17,248 - app - INFO - Logging has been set up
-2025-05-19 13:53:17,248 - app.main - INFO - Application starting
-2025-05-19 13:53:17,248 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-05-19 13:53:17,248 - app.main - INFO - SUPABASE_URL present: True
-2025-05-19 13:53:17,248 - app.main - INFO - SUPABASE_KEY present: True
+2025-05-26 12:45:47,876 - app.services.db.workout_service - INFO - Workout creation complete for ID: 6eafce64-f93a-4317-be7b-17a74c660c37
+2025-05-26 12:45:47,881 - app.main - INFO - Response status: 200
+2025-05-26 12:48:20,533 - app.main - INFO - Request: GET /db/user-profile
+2025-05-26 12:48:20,928 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:48:20,928 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:48:21,206 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 12:48:21,210 - app.main - INFO - Response status: 200

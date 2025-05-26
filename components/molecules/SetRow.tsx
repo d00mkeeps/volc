@@ -1,3 +1,4 @@
+// components/molecules/SetRow.tsx
 import React, { useState } from "react";
 import { XStack, Stack, Text, Input, Checkbox } from "tamagui";
 import { WorkoutExerciseSet } from "@/types/workout";
@@ -7,7 +8,7 @@ interface SetRowProps {
   set: WorkoutExerciseSet;
   exerciseName: string;
   weightUnit?: string;
-  isActive?: boolean; // New prop for dormant state
+  isActive?: boolean;
   onUpdate: (set: WorkoutExerciseSet) => void;
 }
 
@@ -15,44 +16,64 @@ export default function SetRow({
   set,
   exerciseName,
   weightUnit = "kg",
-  isActive = true, // Default to active
+  isActive = true,
   onUpdate,
 }: SetRowProps) {
   const [weight, setWeight] = useState(set.weight?.toString() || "");
   const [reps, setReps] = useState(set.reps?.toString() || "");
-  const [time, setTime] = useState(set.time?.toString() || "");
-  const [distance, setDistance] = useState(set.distance?.toString() || "");
   const [isCompleted, setIsCompleted] = useState(set.is_completed || false);
 
   const handleCompletionToggle = () => {
-    if (!isActive) return; // Don't allow toggle when inactive
+    if (!isActive) return;
     const newValue = !isCompleted;
     setIsCompleted(newValue);
-    onUpdate({ ...set, is_completed: newValue });
+    onUpdate({
+      ...set,
+      is_completed: newValue,
+      updated_at: new Date().toISOString(),
+    });
   };
 
   const handleWeightChange = (value: string) => {
-    if (!isActive) return; // Don't allow changes when inactive
+    if (!isActive) return;
     setWeight(value);
   };
 
+  const handleWeightBlur = () => {
+    if (!isActive) return;
+    const numericValue = parseFloat(weight) || undefined;
+    if (numericValue !== set.weight) {
+      onUpdate({
+        ...set,
+        weight: numericValue,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
+
   const handleRepsChange = (value: string) => {
-    if (!isActive) return; // Don't allow changes when inactive
+    if (!isActive) return;
     setReps(value);
   };
 
-  // Determine which inputs to show based on exercise type
-  const showWeight = true;
-  const showReps = true;
-  const showTime = false;
-  const showDistance = false;
+  const handleRepsBlur = () => {
+    if (!isActive) return;
+    const numericValue = parseInt(reps) || undefined;
+    if (numericValue !== set.reps) {
+      onUpdate({
+        ...set,
+        reps: numericValue,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
 
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
-      {/* Set number - centered both horizontally and vertically */}
+      {/* Set number */}
       <Stack width={30} alignItems="center" justifyContent="center" height={40}>
         <Text
-          fontSize="$4"
+          fontSize="$3"
           fontWeight="600"
           color={isActive ? "$textSoft" : "$textMuted"}
         >
@@ -61,49 +82,53 @@ export default function SetRow({
       </Stack>
 
       {/* Input fields */}
-      <XStack flex={1} gap="$2">
-        {showWeight && (
-          <Stack flex={1}>
-            <Input
-              size="$4"
-              value={weight}
-              onChangeText={handleWeightChange}
-              placeholder="0"
-              keyboardType="numeric"
-              textAlign="center"
-              backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-              borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-              color={isActive ? "$color" : "$textMuted"}
-              editable={isActive}
-              cursor={isActive ? "text" : "default"}
-            />
-          </Stack>
-        )}
-        {showReps && (
-          <Stack flex={1}>
-            <Input
-              size="$4"
-              value={reps}
-              onChangeText={handleRepsChange}
-              placeholder="0"
-              keyboardType="numeric"
-              textAlign="center"
-              backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-              borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-              color={isActive ? "$color" : "$textMuted"}
-              editable={isActive}
-              cursor={isActive ? "text" : "default"}
-            />
-          </Stack>
-        )}
+      <XStack flex={1} gap="$1.5">
+        <Stack flex={1}>
+          <Input
+            size="$3"
+            value={weight}
+            onChangeText={handleWeightChange}
+            onBlur={handleWeightBlur}
+            placeholder="0"
+            keyboardType="numeric"
+            textAlign="center"
+            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
+            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+            color={isActive ? "$color" : "$textMuted"}
+            editable={isActive}
+            cursor={isActive ? "text" : "default"}
+            focusStyle={{
+              borderColor: "$primary",
+            }}
+          />
+        </Stack>
+        <Stack flex={1}>
+          <Input
+            size="$3"
+            value={reps}
+            onChangeText={handleRepsChange}
+            onBlur={handleRepsBlur}
+            placeholder="0"
+            keyboardType="numeric"
+            textAlign="center"
+            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
+            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+            color={isActive ? "$color" : "$textMuted"}
+            editable={isActive}
+            cursor={isActive ? "text" : "default"}
+            focusStyle={{
+              borderColor: "$primary",
+            }}
+          />
+        </Stack>
       </XStack>
 
-      {/* Completion checkbox - 40px square */}
+      {/* Completion checkbox */}
       <Stack width={40} alignItems="center" justifyContent="center">
         <Checkbox
-          size="$5"
-          width={40}
-          height={40}
+          size="$4"
+          width={36}
+          height={36}
           checked={isCompleted}
           onCheckedChange={isActive ? handleCompletionToggle : undefined}
           borderColor={
@@ -123,11 +148,7 @@ export default function SetRow({
           cursor={isActive ? "pointer" : "default"}
         >
           <Checkbox.Indicator>
-            <Ionicons
-              name="checkmark"
-              size={16}
-              color={isActive ? "white" : "$textMuted"}
-            />
+            <Ionicons name="checkmark" size={16} color="white" />
           </Checkbox.Indicator>
         </Checkbox>
       </Stack>

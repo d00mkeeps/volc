@@ -1,29 +1,47 @@
-import { Stack } from "tamagui";
-import ActionButton from "./ActionButton";
+// components/atoms/buttons/ActionButton.tsx
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Button, Stack, Text } from "tamagui";
 
-interface FloatingActionButtonProps {
+interface ActionButtonProps {
   icon?: string;
   label: string;
   onPress: () => void;
 }
-// components/molecules/FloatingActionButton.tsx
-export default function FloatingActionButton({
+
+export default function ActionButton({
   icon,
   label,
   onPress,
-}: FloatingActionButtonProps) {
+}: ActionButtonProps) {
   return (
-    <Stack
-      position="absolute"
-      bottom="$5" // Adjust vertical position (e.g., "$6", "$8", 20, 40)
-      left="$4" // Adjust left margin
-      right="$4" // Adjust right margin
-      // Or use specific positioning:
-      // bottom={60}     // Specific pixel values
-      // left={20}
-      // right={20}
+    <Button
+      width="60%"
+      height={60}
+      alignSelf="center"
+      backgroundColor="$primary"
+      borderRadius="$4"
+      pressStyle={{
+        backgroundColor: "$primaryMuted",
+        scale: 0.98,
+      }}
+      hoverStyle={{
+        backgroundColor: "$primaryLight",
+      }}
+      onPress={onPress}
+      animation="quick"
     >
-      <ActionButton icon={icon} label={label} onPress={onPress} />
-    </Stack>
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        gap={icon ? "$1" : 0}
+        flex={1}
+      >
+        {icon && <Ionicons name={icon as any} size={20} color="white" />}
+        <Text color="white" fontSize="$6" fontWeight="700" textAlign="center">
+          {label}
+        </Text>
+      </Stack>
+    </Button>
   );
 }

@@ -1,55 +1,75 @@
 // tamagui.config.ts
-import { config } from '@tamagui/config/v3' // Note: Use v3, not v4
+import { config } from '@tamagui/config/v3'
 import { createTamagui } from 'tamagui'
 
 const tamaguiConfig = createTamagui({
- ...config,
- fonts: {
-   ...config.fonts,
-   // Override to use system fonts that support more weights
-   body: {
-     family: 'System', // iOS will use SF Pro, Android uses Roboto
-     size: config.fonts.body.size,
-     lineHeight: config.fonts.body.lineHeight,
-     weight: config.fonts.body.weight,
-     letterSpacing: config.fonts.body.letterSpacing,
-   },
-   heading: {
-     family: 'System',
-     size: config.fonts.heading.size,
-     lineHeight: config.fonts.heading.lineHeight,
-     weight: config.fonts.heading.weight,
-     letterSpacing: config.fonts.heading.letterSpacing,
-   },
- },
- themes: {
-   ...config.themes,
-   dark: {
-     ...config.themes.dark,
-     backgroundSoft: '#1f281f',
-     primary: '#4a854a',
-     primaryLight: '#559e55',
-     textSoft: '#999',
-     border: '#446044',
-     borderSoft: 'rgba(255,255,255,0.1)',
-   },
-   light: {
-     ...config.themes.light,
-     backgroundSoft: '#f5f5f5',
-     primary: '#4a854a',
-     primaryLight: '#6fa06f',
-     textSoft: '#666',
-     border: '#cccccc',
-     borderSoft: '#e0e0e0',
-   }
- },
+  ...config,
+  fonts: {
+    ...config.fonts,
+    body: {
+      family: 'System',
+      size: config.fonts.body.size,
+      lineHeight: config.fonts.body.lineHeight,
+      weight: config.fonts.body.weight,
+      letterSpacing: config.fonts.body.letterSpacing,
+    },
+    heading: {
+      family: 'System',
+      size: config.fonts.heading.size,
+      lineHeight: config.fonts.heading.lineHeight,
+      weight: config.fonts.heading.weight,
+      letterSpacing: config.fonts.heading.letterSpacing,
+    },
+  },
+  themes: {
+    ...config.themes,
+    dark: {
+      ...config.themes.dark,
+      // Pure Volc dark theme - no green!
+      background: '#231f20',           // Volc dark charcoal
+      backgroundSoft: '#2a2629',       // Slightly lighter charcoal
+      backgroundMuted: '#1a1718',      // Darker charcoal
+      backgroundPress: '#3a3539',      // Pressed state
+      
+      primary: '#f84f3e',              // Volc orange
+      primaryLight: '#f86b5c',         // Light orange
+      primaryMuted: '#d4412f',         // Muted orange
+      primaryTint: '#2b1f1e',          // Dark orange tint
+      
+      color: '#ffffff',                // White text
+      textSoft: '#b0abac',             // Warm light gray
+      textMuted: '#6b6466',            // Warm gray
+      
+      borderSoft: 'rgba(248, 79, 62, 0.1)',   // Orange border
+      borderMuted: 'rgba(255, 255, 255, 0.05)', // Subtle white border
+    },
+    light: {
+      ...config.themes.light,
+      // Pure Volc light theme - clean and bright
+      background: '#ffffff',           // Pure white
+      backgroundSoft: '#f5f4f4',       // Light gray (not green!)
+      backgroundMuted: '#ebebeb',      // Lighter gray
+      backgroundPress: '#e8e8e8',      // Pressed state
+      
+      primary: '#f84f3e',              // Volc orange
+      primaryLight: '#f86b5c',         // Light orange
+      primaryMuted: '#d4412f',         // Muted orange
+      primaryTint: '#fef7f6',          // Orange tint
+      
+      color: '#231f20',                // Volc dark charcoal text
+      textSoft: '#6b6466',             // Warm gray
+      textMuted: '#999999',            // Medium gray
+      
+      borderSoft: '#f0f0f0',           // Light gray border
+      borderMuted: '#f8f8f8',          // Very light gray border
+    }
+  },
 })
 
-// This is the crucial part - the type and declaration
 export type AppConfig = typeof tamaguiConfig
 
 declare module 'tamagui' {
- interface TamaguiCustomConfig extends AppConfig {}
+  interface TamaguiCustomConfig extends AppConfig {}
 }
 
 export default tamaguiConfig
