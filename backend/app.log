@@ -1,13 +1,22 @@
-2025-05-27 12:58:55,322 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-27 12:58:55,327 - app.main - INFO - Response status: 200
-2025-05-27 12:58:55,328 - app.main - INFO - Response status: 200
-2025-05-27 13:15:58,637 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-27 13:15:59,190 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-27 13:15:59,190 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-27 13:15:59,641 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-27 13:15:59,648 - app.main - INFO - Request: GET /db/user-profile
-2025-05-27 13:15:59,756 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-27 13:15:59,756 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-27 13:15:59,909 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-27 13:15:59,910 - app.main - INFO - Response status: 200
-2025-05-27 13:15:59,912 - app.main - INFO - Response status: 200
+2025-05-27 16:04:14,294 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-27 16:04:14,305 - app.main - INFO - Response status: 200
+2025-05-27 16:04:14,402 - app.main - INFO - Request: GET /db/workouts/templates
+2025-05-27 16:04:14,461 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:04:14,462 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:04:14,621 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:04:14,636 - app.main - INFO - Response status: 200
+2025-05-27 16:05:56,294 - app.main - INFO - Request: GET /db/user-profile
+2025-05-27 16:05:56,560 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:56,560 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:56,699 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:56,699 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-05-27 16:05:56,795 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-05-27 16:05:56,795 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-05-27 16:05:56,906 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-05-27 16:05:56,912 - app.main - INFO - Response status: 200
+2025-05-27 16:05:56,912 - app.main - INFO - Response status: 200
+2025-05-27 16:05:57,007 - app.main - INFO - Request: GET /db/workouts/templates
+2025-05-27 16:05:57,083 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:57,083 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:57,252 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-27 16:05:57,270 - app.main - INFO - Response status: 200

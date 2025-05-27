@@ -3,7 +3,6 @@ import { Stack, Text, ScrollView } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
-import ViewMoreCard from "../atoms/ViewMoreCard";
 
 interface WorkoutListProps {
   limit?: number;
@@ -71,15 +70,6 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
                 />
               </Stack>
             ))}
-            {hasMore && (
-              <Stack width={280} flex={1}>
-                <ViewMoreCard
-                  title="View All Workouts"
-                  subtitle={`${allWorkouts.length} total workouts`}
-                  onPress={handleViewAllPress}
-                />
-              </Stack>
-            )}
           </Stack>
         </ScrollView>
       </Stack>

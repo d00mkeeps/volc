@@ -1,27 +1,33 @@
 // components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
-import { YStack, XStack, Text, Circle } from "tamagui";
+import { YStack, XStack, Text, Circle, Stack, Button } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutTrackerHeaderProps {
   workoutName: string;
   workoutDescription?: string;
   isActive: boolean;
-  timeString: string;
-  isPaused: boolean;
-  togglePause: () => void;
+  currentTemplateName?: string;
+  // Removed: timeString, isPaused, togglePause - getting from store
 }
 
 export default function WorkoutTrackerHeader({
   workoutName,
   workoutDescription,
   isActive,
-  timeString,
-  isPaused,
-  togglePause,
+  currentTemplateName,
 }: WorkoutTrackerHeaderProps) {
+  // Get everything from store - no more prop drilling!
+  const { openTemplateSelector, getTimeString, isPaused, togglePause } =
+    useUserSessionStore();
+
   const handleNotesPress = () => {
     console.log("Opening notes interface");
+  };
+
+  const handleTemplatePress = () => {
+    openTemplateSelector();
   };
 
   return (
@@ -34,7 +40,7 @@ export default function WorkoutTrackerHeader({
     >
       {/* Timer and Controls Row */}
       <XStack justifyContent="center" alignItems="center" gap="$3">
-        {/* Info button - left side */}
+        {/* Info button */}
         <Circle
           size={28}
           backgroundColor="transparent"
@@ -59,17 +65,17 @@ export default function WorkoutTrackerHeader({
           />
         </Circle>
 
-        {/* Timer - center, smaller */}
+        {/* Timer - from store */}
         <Text
           fontSize="$7"
           fontWeight="700"
           color="$color"
           fontFamily="$heading"
         >
-          {timeString}
+          {getTimeString()}
         </Text>
 
-        {/* Pause/Play button - right side, orange background when active */}
+        {/* Pause/Play button - using store methods */}
         <Circle
           size={28}
           backgroundColor={isActive ? "$primary" : "transparent"}
@@ -90,12 +96,12 @@ export default function WorkoutTrackerHeader({
           <Ionicons
             name={isPaused ? "play" : "pause"}
             size={16}
-            color={isActive ? "$volcWhite" : "$textMuted"}
+            color={isActive ? "white" : "$textMuted"}
           />
         </Circle>
       </XStack>
 
-      {/* Status indicator - smaller and cleaner */}
+      {/* Status indicator - using store state */}
       <XStack
         justifyContent="center"
         alignItems="center"
@@ -116,6 +122,50 @@ export default function WorkoutTrackerHeader({
             ? "Workout paused"
             : "Workout in progress"}
         </Text>
+      </XStack>
+
+      {/* Template Selection Row */}
+      <XStack
+        justifyContent="space-between"
+        alignItems="center"
+        marginTop="$3"
+        paddingTop="$2"
+        borderTopWidth={1}
+        borderTopColor="$borderSoft"
+      >
+        <YStack flex={1} marginRight="$3">
+          <Text fontSize="$2" color="$textMuted" fontWeight="500">
+            Template
+          </Text>
+          <Text
+            fontSize="$3"
+            color="$textSoft"
+            numberOfLines={1}
+            marginTop="$0.5"
+          >
+            {currentTemplateName || "No template selected"}
+          </Text>
+        </YStack>
+
+        <Button
+          size="$2"
+          backgroundColor="transparent"
+          borderColor="$borderSoft"
+          borderWidth={1}
+          paddingHorizontal="$3"
+          pressStyle={{
+            backgroundColor: "$backgroundPress",
+            borderColor: "$primary",
+          }}
+          onPress={handleTemplatePress}
+        >
+          <XStack alignItems="center" gap="$1.5">
+            <Text fontSize="$2" color="$textSoft">
+              Change
+            </Text>
+            <Ionicons name="chevron-down" size={14} color="$textSoft" />
+          </XStack>
+        </Button>
       </XStack>
     </YStack>
   );

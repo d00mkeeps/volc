@@ -1,5 +1,5 @@
 // hooks/useWorkoutDetail.ts
-import { useWorkoutStore } from '@/stores/workout/WorkoutStore';
+import { useWorkoutStore } from '@/stores/workout/workoutStore';
 
 export const useWorkoutDetail = () => {
   const { 

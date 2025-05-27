@@ -61,7 +61,8 @@
     "tamagui": "^1.126.13",
     "uuid": "^11.0.3",
     "victory-native": "^37.1.2",
-    "zustand": "^5.0.4"
+    "zustand": "^5.0.4",
+    "undefined": "tamagui/portal"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

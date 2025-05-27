@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { useWorkoutStore } from "@/stores/workout/workoutStore";
 import { CompleteWorkout } from "@/types/workout";
 
 export function useUserSession() {

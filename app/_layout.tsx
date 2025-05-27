@@ -1,3 +1,4 @@
+// _layout.tsx - revert back to original
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -13,7 +14,7 @@ import { AuthGate } from "@/components/auth/AuthGate";
 import Toast from "react-native-toast-message";
 import React from "react";
 // Add these Tamagui imports
-import { TamaguiProvider, Theme } from "@tamagui/core";
+import { TamaguiProvider, Theme } from "@tamagui/core"; // Removed PortalProvider
 import config from "../tamagui.config";
 
 export { ErrorBoundary } from "expo-router";
@@ -66,6 +67,7 @@ function RootLayoutNav() {
               value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
               <AuthGate>
+                {/* rest of your existing code stays the same */}
                 {supabaseStatus && (
                   <View
                     style={{
@@ -75,14 +77,14 @@ function RootLayoutNav() {
                       padding: 8,
                       borderRadius: 4,
                       backgroundColor: supabaseStatus.success
-                        ? "rgba(248, 79, 62, 0.2)" // Volc orange instead of green
+                        ? "rgba(248, 79, 62, 0.2)"
                         : "rgba(255, 0, 0, 0.2)",
                       zIndex: 9999,
                     }}
                   >
                     <Text
                       style={{
-                        color: supabaseStatus.success ? "#d4412f" : "#721c24", // Volc orange text
+                        color: supabaseStatus.success ? "#d4412f" : "#721c24",
                         fontSize: 12,
                       }}
                     >
@@ -105,15 +107,15 @@ function RootLayoutNav() {
                       headerBackTitle: "Home",
                       contentStyle: {
                         backgroundColor:
-                          colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc colors
+                          colorScheme === "dark" ? "#231f20" : "#ffffff",
                         flex: 1,
                       },
                       headerStyle: {
                         backgroundColor:
-                          colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc colors
+                          colorScheme === "dark" ? "#231f20" : "#ffffff",
                       },
                       headerTintColor:
-                        colorScheme === "dark" ? "#ffffff" : "#231f20", // Volc text colors
+                        colorScheme === "dark" ? "#ffffff" : "#231f20",
                       animation: "slide_from_right",
                     }}
                     getId={({ params }: { params?: Record<string, any> }) => {

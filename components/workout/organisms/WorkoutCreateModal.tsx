@@ -14,7 +14,7 @@ import { CompleteWorkout } from "@/types/workout";
 import WorkoutModalHeader from "../molecules/WorkoutModalHeader";
 import WorkoutNotesList from "../molecules/WorkoutNotesList";
 // import WorkoutExerciseList from "./WorkoutExerciseList";
-// import TemplateSelector from "../molecules/TemplateSelector";
+import TemplateSelector from "../molecules/TemplateSelector";
 // import { useAuth } from "@/context/AuthContext";
 // import { WorkoutService } from "@/services/db/workout";
 // import { useWorkout } from "@/context/WorkoutContext";

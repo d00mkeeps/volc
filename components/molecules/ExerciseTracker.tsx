@@ -1,4 +1,3 @@
-// components/molecules/ExerciseTracker.tsx
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Text, Separator } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";

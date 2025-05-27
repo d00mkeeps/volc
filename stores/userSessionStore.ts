@@ -1,4 +1,4 @@
-// stores/UserSessionStore.ts
+// stores/userSessionStore.ts
 import { create } from 'zustand';
 import { CompleteWorkout, WorkoutExercise } from '@/types/workout';
 import { workoutService } from '@/services/db/workout';
@@ -16,14 +16,25 @@ interface UserSessionState {
   elapsedSeconds: number;
   scheduledTime?: string;
   
+  // Template selection state
+  selectedTemplate: CompleteWorkout | null;
+  showTemplateSelector: boolean;
+  
   // Actions
   startWorkout: (workout: CompleteWorkout) => void;
   pauseWorkout: () => void;
   resumeWorkout: () => void;
+  togglePause: () => void; // This was missing!
   finishWorkout: () => Promise<void>;
   updateElapsedTime: () => void;
-  updateCurrentWorkout: (workout: CompleteWorkout) => void; // NEW
-  updateExercise: (exerciseId: string, updatedExercise: WorkoutExercise) => void; 
+  updateCurrentWorkout: (workout: CompleteWorkout) => void;
+  updateExercise: (exerciseId: string, updatedExercise: WorkoutExercise) => void;
+  
+  // Template actions
+  setSelectedTemplate: (template: CompleteWorkout | null) => void;
+  openTemplateSelector: () => void;
+  closeTemplateSelector: () => void;
+  selectTemplate: (template: CompleteWorkout) => void;
   
   // Computed values
   getTimeString: () => string;
@@ -38,6 +49,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   startTime: null,
   elapsedSeconds: 0,
   scheduledTime: undefined,
+  selectedTemplate: null,
+  showTemplateSelector: false,
   
   // Actions
   startWorkout: (workout) => {
@@ -62,7 +75,18 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ isPaused: false });
   },
 
-  // NEW: Update the entire current workout
+  // ADD THIS MISSING METHOD:
+  togglePause: () => {
+    const { isPaused } = get();
+    if (isPaused) {
+      console.log('[UserSession] Resuming workout');
+      set({ isPaused: false });
+    } else {
+      console.log('[UserSession] Pausing workout');
+      set({ isPaused: true });
+    }
+  },
+
   updateCurrentWorkout: (workout) => {
     const { isActive } = get();
     if (!isActive) return;
@@ -71,7 +95,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ currentWorkout: workout });
   },
 
-  // NEW: Update a specific exercise within the current workout
   updateExercise: (exerciseId, updatedExercise) => {
     const { currentWorkout, isActive } = get();
     if (!isActive || !currentWorkout) return;
@@ -94,7 +117,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     
     try {
       if (currentWorkout) {
-        // Get current user ID from user store
         const userProfile = useUserStore.getState().userProfile;
         if (!userProfile?.user_id) {
           console.error('Cannot finish workout: No user profile found');
@@ -108,7 +130,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
           exerciseCount: currentWorkout.workout_exercises?.length || 0
         });
         
-        // Save the completed workout
         const savedWorkout = await workoutService.saveCompletedWorkout(
           userProfile.user_id.toString(), 
           currentWorkout
@@ -116,12 +137,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
         
         console.log('[UserSession] Workout saved successfully with ID:', savedWorkout.id);
         
-        // Trigger dashboard refresh
         console.log('[UserSession] Triggering dashboard refresh...');
         useDashboardStore.getState().refreshDashboard();
       }
       
-      // Reset session state
       console.log('[UserSession] Resetting session state...');
       set({
         currentWorkout: null,
@@ -129,24 +148,24 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
         isPaused: false,
         startTime: null,
         elapsedSeconds: 0,
-        scheduledTime: undefined
+        scheduledTime: undefined,
+        selectedTemplate: null
       });
       
       console.log('[UserSession] Workout finished successfully');
     } catch (error) {
       console.error('[UserSession] Failed to finish workout:', error);
       
-      // Still reset UI state even if save fails
       set({
         currentWorkout: null,
         isActive: false,
         isPaused: false,
         startTime: null,
         elapsedSeconds: 0,
-        scheduledTime: undefined
+        scheduledTime: undefined,
+        selectedTemplate: null
       });
       
-      // Re-throw the error so calling code can handle it
       throw error;
     }
   },
@@ -160,12 +179,67 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     }
   },
   
+  // Template actions
+  setSelectedTemplate: (template) => {
+    console.log('[UserSession] Setting selected template:', template?.name);
+    set({ selectedTemplate: template });
+  },
+  
+  openTemplateSelector: () => {
+    console.log('[UserSession] Opening template selector');
+    set({ showTemplateSelector: true });
+  },
+  
+  closeTemplateSelector: () => {
+    console.log('[UserSession] Closing template selector');
+    set({ showTemplateSelector: false });
+  },
+  
+  selectTemplate: (template) => {
+    console.log('[UserSession] Selecting template:', template.name);
+    
+    const userProfile = useUserStore.getState().userProfile;
+    if (!userProfile?.user_id) {
+      console.error('Cannot select template: No user profile found');
+      return;
+    }
+    
+    // Create a new workout based on the selected template
+    const now = new Date().toISOString();
+    const newWorkout: CompleteWorkout = {
+      ...template,
+      id: `temp-${Date.now()}`,
+      user_id: userProfile.user_id.toString(),
+      template_id: template.id,
+      is_template: false,
+      created_at: now,
+      updated_at: now,
+      // Reset workout exercise IDs and set states
+      workout_exercises: template.workout_exercises.map((exercise, index) => ({
+        ...exercise,
+        id: `exercise-${Date.now()}-${index}`,
+        workout_id: `temp-${Date.now()}`,
+        workout_exercise_sets: exercise.workout_exercise_sets.map((set, setIndex) => ({
+          ...set,
+          id: `set-${Date.now()}-${index}-${setIndex}`,
+          exercise_id: `exercise-${Date.now()}-${index}`,
+          is_completed: false, // Reset completion status
+        })),
+      })),
+    };
+    
+    set({ 
+      currentWorkout: newWorkout,
+      selectedTemplate: template,
+      showTemplateSelector: false 
+    });
+  },
+  
   // Computed values
   getTimeString: () => {
     const { isActive, elapsedSeconds, scheduledTime } = get();
     
     if (!isActive && scheduledTime) {
-      // Countdown mode - calculate time until scheduled
       const now = new Date();
       const [hours, minutes] = scheduledTime.split(':').map(Number);
       const scheduled = new Date();
@@ -179,7 +253,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       return formatTime(secondsUntil);
     }
     
-    // Active mode - show elapsed time
     return formatTime(elapsedSeconds);
   },
   

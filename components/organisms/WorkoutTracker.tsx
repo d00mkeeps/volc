@@ -1,3 +1,4 @@
+// components/organisms/WorkoutTracker.tsx
 import React, {
   useCallback,
   useMemo,
@@ -26,10 +27,9 @@ import { Ionicons } from "@expo/vector-icons";
 interface WorkoutTrackerProps {
   workout: CompleteWorkout;
   isActive: boolean;
-  timeString: string;
-  isPaused: boolean;
-  togglePause: () => void;
   onActiveChange: (active: boolean) => void;
+  currentTemplateName?: string;
+  // Removed: timeString, isPaused, togglePause - header gets from store
 }
 
 export interface WorkoutTrackerRef {
@@ -40,10 +40,7 @@ export interface WorkoutTrackerRef {
 }
 
 const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
-  (
-    { workout, isActive, timeString, isPaused, togglePause, onActiveChange },
-    ref
-  ) => {
+  ({ workout, isActive, onActiveChange, currentTemplateName }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     // Local state for workout data updates
@@ -59,7 +56,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const animatedPosition = useSharedValue(0);
 
     // Snap points: peek view and full view
-    const snapPoints = useMemo(() => ["38%", "90%"], []);
+    const snapPoints = useMemo(() => ["45%", "90%"], []);
 
     // Handle sheet position changes
     const handleSheetChanges = useCallback(
@@ -174,7 +171,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       [isActive, workoutData]
     );
 
-    // Add this handler after handleExerciseDelete
+    // Add exercise handler
     const handleAddExercise = useCallback(() => {
       if (!isActive) return;
 
@@ -189,9 +186,9 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       // Create a new exercise with a temporary ID
       const newExercise: WorkoutExercise = {
         id: `exercise-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        definition_id: undefined, // Will be set when user selects exercise
+        definition_id: undefined,
         workout_id: workoutData.id,
-        name: "", // Start with blank name
+        name: "",
         order_index: maxOrderIndex + 1,
         weight_unit: "kg",
         workout_exercise_sets: [],
@@ -244,9 +241,8 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
             workoutName={workoutData.name}
             workoutDescription={workoutData.notes}
             isActive={isActive}
-            timeString={timeString}
-            isPaused={isPaused}
-            togglePause={togglePause}
+            currentTemplateName={currentTemplateName || workoutData.name}
+            // Removed: timeString, isPaused, togglePause
           />
         </GestureDetector>
 
@@ -269,7 +265,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                   isActive={isActive}
                   onExerciseUpdate={handleExerciseUpdate}
                   onExerciseDelete={handleExerciseDelete}
-                  startInEditMode={exercise.name === ""} // Start in edit mode if name is blank
+                  startInEditMode={exercise.name === ""}
                 />
               ))}
 
@@ -313,7 +309,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                   No exercises in this workout
                 </Text>
                 <Text fontSize="$3" color="$textMuted" textAlign="center">
-                  Add exercises to get started with your workout
+                  Select a template or add exercises to get started
                 </Text>
               </YStack>
             )}

@@ -1,28 +1,38 @@
 // app/(tabs)/index.tsx
 import React, { useState, useRef } from "react";
-import { Stack } from "tamagui";
+import { Stack, Text } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
-import { useWorkoutTimer } from "@/hooks/core/useWorkoutTimer";
+import TemplateSelector from "@/components/molecules/TemplateSelector";
+import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { mockWorkout } from "@/mockdata";
-import { useUserSession } from "@/hooks/useUserSession";
+import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useUserStore } from "@/stores/userProfileStore";
 
 export default function HomeScreen() {
   const [isWorkoutActive, setIsWorkoutActive] = useState(false);
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
+  const { userProfile } = useUserStore();
 
   const {
     isActive,
-    timeString,
-    isPaused,
     startWorkout,
     finishWorkout,
-    togglePause,
-  } = useUserSession();
+    currentWorkout,
+    // Template state from store
+    showTemplateSelector,
+    selectedTemplate,
+    closeTemplateSelector,
+    selectTemplate,
+    // Removed: timeString, isPaused, togglePause - header gets these from store
+  } = useUserSessionStore();
+
+  // Get templates
+  const { templates } = useWorkoutTemplates(userProfile?.user_id?.toString());
 
   const handleToggleWorkout = async () => {
     if (isActive) {
@@ -33,7 +43,8 @@ export default function HomeScreen() {
         console.error("Failed to finish workout:", error);
       }
     } else {
-      startWorkout(mockWorkout);
+      const workoutToStart = currentWorkout || mockWorkout;
+      startWorkout(workoutToStart);
       workoutTrackerRef.current?.startWorkout();
     }
   };
@@ -56,19 +67,28 @@ export default function HomeScreen() {
 
       <WorkoutTracker
         ref={workoutTrackerRef}
-        workout={mockWorkout}
+        workout={currentWorkout || mockWorkout}
         isActive={isWorkoutActive}
-        timeString={timeString}
-        isPaused={isPaused}
-        togglePause={togglePause}
         onActiveChange={handleActiveChange}
+        currentTemplateName={selectedTemplate?.name}
+        // Removed: timeString, isPaused, togglePause
       />
+
       <Stack paddingBottom="$5">
         <FloatingActionButton
           label={isWorkoutActive ? "FINISH" : "START"}
           onPress={handleToggleWorkout}
         />
       </Stack>
+
+      {/* Template Selector Modal - managed by store state */}
+      <TemplateSelector
+        isVisible={showTemplateSelector}
+        templates={templates}
+        selectedTemplateId={selectedTemplate?.id || null}
+        onSelectTemplate={selectTemplate}
+        onClose={closeTemplateSelector}
+      />
     </Stack>
   );
 }
