@@ -1,89 +1,84 @@
-2025-05-15 11:09:21,994 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,061 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,062 - app.services.db.conversation_service - INFO - Getting messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,154 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,155 - app.main - INFO - Response status: 200
-2025-05-15 11:09:22,156 - app.main - INFO - Response status: 200
-2025-05-15 11:09:22,178 - app.api.endpoints.llm - INFO - Base WebSocket disconnected for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:22,182 - app.api.endpoints.llm - INFO - WebSocket connection accepted for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,270 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,331 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,332 - app.api.endpoints.llm - INFO - Restoring conversation context for 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,332 - app.services.db.conversation_service - INFO - Getting messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,388 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,388 - app.api.endpoints.llm - INFO - Retrieved 2 messages for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,388 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,448 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,448 - app.api.endpoints.llm - INFO - No bundles found for conversation 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:22,450 - app.services.workout_analysis_service - INFO - Initialized conversation with 2 messages
-2025-05-15 11:09:22,451 - app.api.endpoints.llm - INFO - Initialized conversation with 2 messages
-2025-05-15 11:09:22,451 - app.main - INFO - Request: GET /db/conversations
-2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-15 11:09:22,516 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-15 11:09:22,579 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-15 11:09:22,579 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-05-15 11:09:22,579 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:22,641 - app.services.db.conversation_service - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:22,641 - app.api.endpoints.db - INFO - Retrieved 1 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:22,642 - app.main - INFO - Response status: 200
-2025-05-15 11:09:23,389 - app.main - INFO - Request: DELETE /db/conversations/53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,460 - app.api.endpoints.db - INFO - API request to delete conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,460 - app.services.db.conversation_service - INFO - Getting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,523 - app.services.db.conversation_service - INFO - Retrieved conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,523 - app.services.db.conversation_service - INFO - Deleting conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,584 - app.services.db.conversation_service - INFO - Successfully deleted conversation: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:09:23,585 - app.main - INFO - Response status: 200
-2025-05-15 11:09:25,020 - app.main - INFO - Request: GET /db/health
-2025-05-15 11:09:25,021 - app.main - INFO - Response status: 200
-2025-05-15 11:09:28,375 - app.main - INFO - Request: GET /db/health
-2025-05-15 11:09:28,377 - app.main - INFO - Response status: 200
-2025-05-15 11:09:35,332 - app.main - INFO - Request: GET /db/user-profile
-2025-05-15 11:09:35,455 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:35,456 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:35,565 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:35,565 - app.main - INFO - Response status: 200
-2025-05-15 11:09:37,857 - app.main - INFO - Request: GET /db/user-profile
-2025-05-15 11:09:37,918 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:37,918 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:37,991 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:09:37,991 - app.main - INFO - Response status: 200
-2025-05-15 11:10:15,969 - app.main - INFO - Request: GET /db/user-profile
-2025-05-15 11:10:16,096 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,096 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,226 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,227 - app.main - INFO - Response status: 200
-2025-05-15 11:10:16,235 - app.main - INFO - Request: POST /db/user-profile
-2025-05-15 11:10:16,289 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,289 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,433 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,434 - app.main - INFO - Response status: 200
-2025-05-15 11:10:16,456 - app.main - INFO - Request: GET /db/user-profile
-2025-05-15 11:10:16,512 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,512 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,573 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:10:16,574 - app.main - INFO - Response status: 200
-2025-05-15 11:11:23,154 - app.main - INFO - Request: GET /db/workouts/user
-2025-05-15 11:11:23,443 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:23,443 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:23,723 - app.services.db.workout_service - INFO - Retrieved 123 workouts with 897 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:23,723 - app.api.endpoints.db - INFO - Retrieved 123 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:23,755 - app.main - INFO - Response status: 200
-2025-05-15 11:11:31,235 - app.api.endpoints.llm - INFO - WebSocket disconnected for workout-analysis: 53946475-84a3-4917-ad81-bf25ec453f0c
-2025-05-15 11:11:40,173 - app.api.endpoints.llm - INFO - Base WebSocket connection accepted for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:40,177 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-15 11:11:40,284 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-15 11:11:40,284 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-15 11:11:40,422 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-15 11:11:40,434 - app.main - INFO - Request: GET /db/user-profile
-2025-05-15 11:11:40,487 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:40,487 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:40,547 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:40,548 - app.main - INFO - Response status: 200
-2025-05-15 11:11:40,549 - app.main - INFO - Request: GET /db/conversations
-2025-05-15 11:11:40,550 - app.main - INFO - Response status: 200
-2025-05-15 11:11:40,612 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-15 11:11:40,612 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-05-15 11:11:40,613 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-05-15 11:11:40,690 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-05-15 11:11:40,691 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-05-26 15:45:55,800 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 1a7839ce-bd3d-42a2-877f-e6f0da7ed798
+2025-05-26 15:45:55,807 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-05-26 15:45:55,920 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 1ae6c5dd-a565-4573-bc4b-952d6a87738a
+2025-05-26 15:45:56,245 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-05-26 15:45:56,344 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: f1f924f0-c9c7-4223-acc0-521a9d89e8f2
+2025-05-26 15:45:56,409 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-05-26 15:45:56,473 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 999f5039-64d4-4ebe-8f05-972d556cc7d3
+2025-05-26 15:45:56,538 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-05-26 15:45:56,600 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 31cf0fe2-804d-4b80-9207-5b78ef271c16
+2025-05-26 15:45:56,767 - app.services.db.workout_service - INFO - Workout creation complete for ID: 1a7839ce-bd3d-42a2-877f-e6f0da7ed798
+2025-05-26 15:45:56,769 - app.main - INFO - Response status: 200
+2025-05-26 15:45:56,769 - app.main - INFO - Request: POST /db/workouts
+2025-05-26 15:45:56,771 - app.main - INFO - Request: POST /db/workouts
+2025-05-26 15:45:56,830 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-05-26 15:45:56,831 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:45:56,831 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-05-26 15:45:56,893 - app.services.db.workout_service - INFO - Workout created with ID: 2b9948ac-6bb3-4da8-b9e4-f8bb66e987bc
+2025-05-26 15:45:56,894 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 2b9948ac-6bb3-4da8-b9e4-f8bb66e987bc
+2025-05-26 15:45:56,894 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-05-26 15:45:57,003 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: fabb5526-cce5-48ab-b29b-297b2099dbe3
+2025-05-26 15:45:57,209 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-05-26 15:45:57,272 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 14740888-4920-4239-90c4-26ec1fde7f38
+2025-05-26 15:45:57,339 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-05-26 15:45:57,409 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 9ce54d8a-e9f6-4a68-9f3a-b80a2d14fd69
+2025-05-26 15:45:57,470 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-05-26 15:45:57,536 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: d1270ae1-41ed-46fb-ab0f-3d0c667053a6
+2025-05-26 15:45:57,668 - app.services.db.workout_service - INFO - Workout creation complete for ID: 2b9948ac-6bb3-4da8-b9e4-f8bb66e987bc
+2025-05-26 15:45:57,734 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-05-26 15:45:57,734 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:45:57,735 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-05-26 15:45:57,797 - app.services.db.workout_service - INFO - Workout created with ID: cc21a524-5693-4df9-ae72-1e328e8ac681
+2025-05-26 15:45:57,797 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: cc21a524-5693-4df9-ae72-1e328e8ac681
+2025-05-26 15:45:57,798 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-05-26 15:45:57,866 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: f86156aa-7d58-4637-a0f6-62fb37a67951
+2025-05-26 15:45:58,064 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-05-26 15:45:58,126 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 2d1800b1-6444-4d1f-b279-f8432eaa4938
+2025-05-26 15:45:58,195 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-05-26 15:45:58,260 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 7402c302-6ad0-4cd9-81e2-d24fe55374b5
+2025-05-26 15:45:58,332 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-05-26 15:45:58,391 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 3731d201-d051-44fe-b015-6a496f01aaed
+2025-05-26 15:45:58,526 - app.services.db.workout_service - INFO - Workout creation complete for ID: cc21a524-5693-4df9-ae72-1e328e8ac681
+2025-05-26 15:45:58,527 - app.main - INFO - Response status: 200
+2025-05-26 15:45:58,528 - app.main - INFO - Request: POST /db/workouts
+2025-05-26 15:45:58,529 - app.main - INFO - Response status: 200
+2025-05-26 15:45:58,592 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-05-26 15:45:58,592 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:45:58,592 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-05-26 15:45:58,648 - app.services.db.workout_service - INFO - Workout created with ID: 4c0def75-0a57-4aad-85ab-9e67a60c6b6e
+2025-05-26 15:45:58,648 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 4c0def75-0a57-4aad-85ab-9e67a60c6b6e
+2025-05-26 15:45:58,648 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-05-26 15:45:58,714 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: f0bdf5ee-8f52-45a7-82b7-10a43a184169
+2025-05-26 15:45:58,906 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-05-26 15:45:58,966 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: c57716f1-82ed-49ac-b766-3fe5b16b4460
+2025-05-26 15:45:59,029 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-05-26 15:45:59,100 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: d38dbbf4-553a-49fd-ac1e-99b1c4af9883
+2025-05-26 15:45:59,159 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-05-26 15:45:59,218 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: bcba08a3-fab8-43ed-bf75-57faecfe1d69
+2025-05-26 15:45:59,343 - app.services.db.workout_service - INFO - Workout creation complete for ID: 4c0def75-0a57-4aad-85ab-9e67a60c6b6e
+2025-05-26 15:45:59,344 - app.main - INFO - Response status: 200
+2025-05-26 15:46:03,474 - app.main - INFO - Request: GET /db/user-profile
+2025-05-26 15:46:03,556 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:46:03,556 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:46:03,618 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:46:03,619 - app.main - INFO - Response status: 200
+2025-05-26 15:46:15,430 - app.main - INFO - Request: POST /db/workouts
+2025-05-26 15:46:15,600 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-05-26 15:46:15,600 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-05-26 15:46:15,600 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-05-26 15:46:15,704 - app.services.db.workout_service - INFO - Workout created with ID: c33b16a0-4abd-4464-a0f4-1d740751579c
+2025-05-26 15:46:15,704 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: c33b16a0-4abd-4464-a0f4-1d740751579c
+2025-05-26 15:46:15,705 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-05-26 15:46:15,774 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: aba60b5e-c2c9-4b79-859a-7627d13ebeb7
+2025-05-26 15:46:15,956 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-05-26 15:46:16,015 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 471f9762-6f0f-4574-bc58-434965e6cf6a
+2025-05-26 15:46:16,070 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-05-26 15:46:16,134 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 6028674d-49f2-444a-9d61-8c4fc3a4255e
+2025-05-26 15:46:16,196 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-05-26 15:46:16,253 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 4fe24c48-64e2-4f8f-8eab-fc7383ca1343
+2025-05-26 15:46:16,371 - app.services.db.workout_service - INFO - Workout creation complete for ID: c33b16a0-4abd-4464-a0f4-1d740751579c
+2025-05-26 15:46:16,373 - app.main - INFO - Response status: 200
+2025-05-26 18:41:46,394 - app - INFO - Logging has been set up
+2025-05-26 18:41:46,394 - app.main - INFO - Application starting
+2025-05-26 18:41:46,394 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-05-26 18:41:46,395 - app.main - INFO - SUPABASE_URL present: True

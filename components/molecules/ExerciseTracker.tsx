@@ -4,12 +4,16 @@ import { Stack, YStack, XStack, Text, Separator } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import SetRow from "./SetRow";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
-
+import { Alert } from "react-native";
+import ExerciseSearchInput from "./ExerciseSearchInput";
+import { useExerciseStore } from "@/stores/workout/exerciseStore";
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
   isInitiallyExpanded?: boolean;
   isActive?: boolean;
   onExerciseUpdate?: (updatedExercise: WorkoutExercise) => void;
+  onExerciseDelete?: (exerciseId: string) => void;
+  startInEditMode?: boolean;
 }
 
 export default function ExerciseTracker({
@@ -17,19 +21,82 @@ export default function ExerciseTracker({
   isInitiallyExpanded = false,
   isActive = true,
   onExerciseUpdate,
+  onExerciseDelete, // Add this
+  startInEditMode,
 }: ExerciseTrackerProps) {
   const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
+  const [isEditing, setIsEditing] = useState(
+    startInEditMode || exercise.name === ""
+  );
+  const [selectedExercise, setSelectedExercise] = useState(exercise.name); // Track selected exercise
 
+  // Your existing logic...
   const completedSets = exercise.workout_exercise_sets.filter(
     (set) => set.is_completed
   ).length;
   const totalSets = exercise.workout_exercise_sets.length;
 
+  // Check if exercise has data (simpler version)
+  const hasExerciseData =
+    exercise.workout_exercise_sets.length > 0 &&
+    (exercise.workout_exercise_sets[0].weight !== undefined ||
+      exercise.workout_exercise_sets[0].reps !== undefined ||
+      exercise.workout_exercise_sets[0].is_completed);
+
   const toggleExpanded = () => {
-    if (!isActive) return;
+    if (!isActive || isEditing) return; // Don't expand when editing
     setIsExpanded(!isExpanded);
   };
 
+  const handleEditPress = () => {
+    setIsEditing(true);
+    setSelectedExercise(exercise.name); // Pre-fill with current exercise
+  };
+
+  const handleSavePress = () => {
+    if (!onExerciseUpdate) return;
+
+    // Find the selected exercise definition
+    const { exercises } = useExerciseStore.getState();
+    const selectedDefinition = exercises.find(
+      (ex) => ex.standard_name === selectedExercise
+    );
+
+    // Update exercise with new name AND definition ID
+    const updatedExercise = {
+      ...exercise,
+      name: selectedExercise,
+      definition_id: selectedDefinition?.id, // Link to definition
+    };
+
+    onExerciseUpdate(updatedExercise);
+    setIsEditing(false);
+  };
+  const handleDelete = () => {
+    if (!onExerciseDelete) return;
+
+    if (hasExerciseData) {
+      Alert.alert(
+        "Delete Exercise",
+        `Remove ${exercise.name} and all set data from workout?`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: () => {
+              onExerciseDelete(exercise.id);
+            },
+          },
+        ]
+      );
+    } else {
+      // No data to lose, delete immediately
+      onExerciseDelete(exercise.id);
+    }
+  };
+
+  // Your existing handlers...
   const handleSetUpdate = (updatedSet: WorkoutExerciseSet) => {
     if (!isActive || !onExerciseUpdate) return;
 
@@ -78,43 +145,91 @@ export default function ExerciseTracker({
       <Stack
         paddingHorizontal="$3"
         paddingVertical="$1.5"
-        onPress={toggleExpanded}
+        onPress={isEditing ? undefined : toggleExpanded} // Disable click when editing
         pressStyle={
-          isActive
+          isActive && !isEditing
             ? {
                 backgroundColor: "$backgroundPress",
               }
             : undefined
         }
-        cursor={isActive ? "pointer" : "default"}
+        cursor={isActive && !isEditing ? "pointer" : "default"}
       >
         <XStack justifyContent="space-between" alignItems="center">
           <YStack flex={1} gap="$1">
-            <Text
-              fontSize="$5"
-              fontWeight="600"
-              color={isActive ? "$color" : "$textMuted"}
-            >
-              {exercise.name}
-            </Text>
-            {!isExpanded && (
-              <Text fontSize="$2" color={isActive ? "$textSoft" : "$textMuted"}>
-                {completedSets}/{totalSets} sets completed
-              </Text>
+            {isEditing ? (
+              // Show search input when editing
+              <ExerciseSearchInput
+                value={selectedExercise}
+                onSelect={setSelectedExercise}
+                placeholder="Search exercises..."
+              />
+            ) : (
+              // Show exercise name normally
+              <>
+                <Text
+                  fontSize="$5"
+                  fontWeight="600"
+                  color={isActive ? "$color" : "$textMuted"}
+                >
+                  {exercise.name}
+                </Text>
+                {!isExpanded && (
+                  <Text
+                    fontSize="$2"
+                    color={isActive ? "$textSoft" : "$textMuted"}
+                  >
+                    {completedSets}/{totalSets} sets completed
+                  </Text>
+                )}
+              </>
             )}
           </YStack>
 
-          <Stack
-            animation="quick"
-            rotate={isExpanded ? "180deg" : "0deg"}
-            opacity={isActive ? 1 : 0.4}
-          >
-            <Ionicons
-              name="chevron-down"
-              size={20}
-              color={isActive ? "$textSoft" : "$textMuted"}
-            />
-          </Stack>
+          <XStack gap="$2" alignItems="center">
+            {/* Edit/Save Button - only show when collapsed and active */}
+            {!isExpanded && isActive && (
+              <Stack
+                paddingHorizontal="$2"
+                paddingVertical="$1"
+                borderRadius="$2"
+                backgroundColor="transparent"
+                pressStyle={{ backgroundColor: "$backgroundPress" }}
+                onPress={isEditing ? handleSavePress : handleEditPress}
+                cursor="pointer"
+              >
+                <Text fontSize="$2" color="$textSoft" fontWeight="500">
+                  {isEditing ? "Save" : "Edit"}
+                </Text>
+              </Stack>
+            )}
+
+            {/* Chevron/Delete Button */}
+            <Stack
+              onPress={isEditing ? handleDelete : undefined}
+              cursor={isEditing ? "pointer" : "default"}
+            >
+              {isEditing ? (
+                <Ionicons
+                  name="close"
+                  size={20}
+                  color="#ef4444" // Red color for delete
+                />
+              ) : (
+                <Stack
+                  animation="quick"
+                  rotate={isExpanded ? "180deg" : "0deg"}
+                  opacity={isActive ? 1 : 0.4}
+                >
+                  <Ionicons
+                    name="chevron-down"
+                    size={20}
+                    color={isActive ? "$textSoft" : "$textMuted"}
+                  />
+                </Stack>
+              )}
+            </Stack>
+          </XStack>
         </XStack>
       </Stack>
 

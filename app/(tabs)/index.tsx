@@ -63,11 +63,12 @@ export default function HomeScreen() {
         togglePause={togglePause}
         onActiveChange={handleActiveChange}
       />
-
-      <FloatingActionButton
-        label={isWorkoutActive ? "FINISH" : "START"}
-        onPress={handleToggleWorkout}
-      />
+      <Stack paddingBottom="$5">
+        <FloatingActionButton
+          label={isWorkoutActive ? "FINISH" : "START"}
+          onPress={handleToggleWorkout}
+        />
+      </Stack>
     </Stack>
   );
 }

@@ -1,4 +1,3 @@
-// components/organisms/WorkoutTracker.tsx
 import React, {
   useCallback,
   useMemo,
@@ -7,7 +6,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { YStack, Text } from "tamagui";
+import { YStack, Text, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Animated, {
   useAnimatedStyle,
@@ -21,6 +20,8 @@ import ExerciseTracker from "@/components/molecules/ExerciseTracker";
 import GradientBlur from "@/components/atoms/GradientBlur";
 import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 interface WorkoutTrackerProps {
   workout: CompleteWorkout;
@@ -137,6 +138,83 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       [isActive, workoutData]
     );
 
+    const handleExerciseDelete = useCallback(
+      (exerciseId: string) => {
+        if (!isActive) return;
+
+        // Don't allow deleting the last exercise
+        if (workoutData.workout_exercises.length <= 1) {
+          Alert.alert(
+            "Cannot Delete Exercise",
+            "You must have at least one exercise in your workout.",
+            [{ text: "OK" }]
+          );
+          return;
+        }
+
+        // Update local state for immediate UI response
+        setWorkoutData((prev) => ({
+          ...prev,
+          workout_exercises: prev.workout_exercises.filter(
+            (exercise) => exercise.id !== exerciseId
+          ),
+        }));
+
+        // Sync to session store
+        const updatedWorkout = {
+          ...workoutData,
+          workout_exercises: workoutData.workout_exercises.filter(
+            (exercise) => exercise.id !== exerciseId
+          ),
+        };
+        useUserSessionStore.getState().updateCurrentWorkout(updatedWorkout);
+
+        console.log("Exercise deleted:", exerciseId);
+      },
+      [isActive, workoutData]
+    );
+
+    // Add this handler after handleExerciseDelete
+    const handleAddExercise = useCallback(() => {
+      if (!isActive) return;
+
+      // Find the highest order_index and add 1 to put it at the bottom
+      const maxOrderIndex =
+        workoutData.workout_exercises.length > 0
+          ? Math.max(
+              ...workoutData.workout_exercises.map((ex) => ex.order_index)
+            )
+          : -1;
+
+      // Create a new exercise with a temporary ID
+      const newExercise: WorkoutExercise = {
+        id: `exercise-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        definition_id: undefined, // Will be set when user selects exercise
+        workout_id: workoutData.id,
+        name: "", // Start with blank name
+        order_index: maxOrderIndex + 1,
+        weight_unit: "kg",
+        workout_exercise_sets: [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      // Update local state
+      setWorkoutData((prev) => ({
+        ...prev,
+        workout_exercises: [...prev.workout_exercises, newExercise],
+      }));
+
+      // Sync to session store
+      const updatedWorkout = {
+        ...workoutData,
+        workout_exercises: [...workoutData.workout_exercises, newExercise],
+      };
+      useUserSessionStore.getState().updateCurrentWorkout(updatedWorkout);
+
+      console.log("New exercise added:", newExercise);
+    }, [isActive, workoutData]);
+
     return (
       <BottomSheet
         ref={bottomSheetRef}
@@ -187,11 +265,39 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 <ExerciseTracker
                   key={exercise.id}
                   exercise={exercise}
-                  isInitiallyExpanded={index === 0}
+                  isInitiallyExpanded={false}
                   isActive={isActive}
                   onExerciseUpdate={handleExerciseUpdate}
+                  onExerciseDelete={handleExerciseDelete}
+                  startInEditMode={exercise.name === ""} // Start in edit mode if name is blank
                 />
               ))}
+
+            {/* Add Exercise Button */}
+            {isActive && (
+              <Stack
+                marginTop="$2"
+                padding="$3"
+                borderRadius="$3"
+                borderWidth={1}
+                borderColor="$borderSoft"
+                borderStyle="dashed"
+                alignItems="center"
+                backgroundColor="transparent"
+                pressStyle={{
+                  backgroundColor: "$primaryTint",
+                  borderColor: "$primary",
+                }}
+                onPress={handleAddExercise}
+              >
+                <XStack gap="$2" alignItems="center">
+                  <Ionicons name="add" size={20} color="$primary" />
+                  <Text color="$primary" fontSize="$4" fontWeight="500">
+                    Add Exercise
+                  </Text>
+                </XStack>
+              </Stack>
+            )}
 
             {/* Empty state if no exercises */}
             {workoutData.workout_exercises.length === 0 && (

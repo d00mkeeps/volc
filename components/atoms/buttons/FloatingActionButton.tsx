@@ -16,7 +16,7 @@ export default function ActionButton({
 }: ActionButtonProps) {
   return (
     <Button
-      width="60%"
+      width="50%"
       height={60}
       alignSelf="center"
       backgroundColor="$primary"
@@ -38,7 +38,7 @@ export default function ActionButton({
         flex={1}
       >
         {icon && <Ionicons name={icon as any} size={20} color="white" />}
-        <Text color="white" fontSize="$6" fontWeight="700" textAlign="center">
+        <Text color="white" fontSize="$8" fontWeight="700" textAlign="center">
           {label}
         </Text>
       </Stack>

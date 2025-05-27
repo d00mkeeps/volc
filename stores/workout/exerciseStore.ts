@@ -1,4 +1,3 @@
-// stores/exerciseStore.ts
 import { create } from 'zustand';
 import { ExerciseDefinition } from "@/types/workout";
 import { ExerciseDefinitionService } from "@/services/db/exerciseDefinition";

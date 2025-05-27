@@ -23,7 +23,7 @@ interface UserSessionState {
   finishWorkout: () => Promise<void>;
   updateElapsedTime: () => void;
   updateCurrentWorkout: (workout: CompleteWorkout) => void; // NEW
-  updateExercise: (exerciseId: string, updatedExercise: WorkoutExercise) => void; // NEW
+  updateExercise: (exerciseId: string, updatedExercise: WorkoutExercise) => void; 
   
   // Computed values
   getTimeString: () => string;
