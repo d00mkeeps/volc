@@ -61,7 +61,8 @@ export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
     distance_unit?: 'km' | 'm' | 'mi';
     created_at: string;
     updated_at: string;
-    workout_exercise_sets: WorkoutExerciseSet[];
+    workout_exercise_sets: WorkoutExerciseSet[]
+    notes?: string
   };
 
 

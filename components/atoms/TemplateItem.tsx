@@ -1,4 +1,3 @@
-// components/molecules/TemplateItem.tsx
 import React from "react";
 import { YStack, XStack, Text, Button } from "tamagui";
 import { CompleteWorkout } from "@/types/workout";

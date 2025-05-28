@@ -56,7 +56,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const animatedPosition = useSharedValue(0);
 
     // Snap points: peek view and full view
-    const snapPoints = useMemo(() => ["45%", "90%"], []);
+    const snapPoints = useMemo(() => ["39%", "90%"], []);
 
     // Handle sheet position changes
     const handleSheetChanges = useCallback(

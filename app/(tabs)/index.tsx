@@ -7,7 +7,7 @@ import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
-import TemplateSelector from "@/components/molecules/TemplateSelector";
+import TemplateSelector from "@/components/molecules/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { mockWorkout } from "@/mockdata";
 import { useUserSessionStore } from "@/stores/userSessionStore";
