@@ -1,52 +1,5 @@
-2025-05-28 13:46:54,433 - app.main - INFO - Response status: 200
-2025-05-28 13:46:54,621 - app.main - INFO - Request: GET /db/workouts/templates
-2025-05-28 13:46:54,721 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 13:46:54,722 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 13:46:54,958 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 13:46:54,986 - app.main - INFO - Response status: 200
-2025-05-28 14:25:45,838 - app.main - INFO - Request: POST /db/workouts
-2025-05-28 14:25:46,288 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-05-28 14:25:46,289 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:25:46,291 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-05-28 14:25:46,466 - app.services.db.workout_service - INFO - Workout created with ID: d12dfbe6-2831-44eb-a899-be1fac8e4d2c
-2025-05-28 14:25:46,467 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: d12dfbe6-2831-44eb-a899-be1fac8e4d2c
-2025-05-28 14:25:46,467 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-05-28 14:25:46,525 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 8ae0136d-10a2-4adb-866a-68045f068ab4
-2025-05-28 14:25:46,713 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
-2025-05-28 14:25:46,777 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 3c1f5e82-486e-4543-92ec-b5b234d3f3c9
-2025-05-28 14:25:46,883 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
-2025-05-28 14:25:46,942 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 5aaa9b10-1528-4c6a-9cc1-82ee8774e611
-2025-05-28 14:25:47,004 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-05-28 14:25:47,107 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 1a68b560-0b1a-43d9-a6e0-1ed426643cac
-2025-05-28 14:25:47,238 - app.services.db.workout_service - INFO - Workout creation complete for ID: d12dfbe6-2831-44eb-a899-be1fac8e4d2c
-2025-05-28 14:25:47,240 - app.main - INFO - Response status: 200
-2025-05-28 14:26:55,004 - app.main - INFO - Request: GET /db/user-profile
-2025-05-28 14:26:55,109 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:55,109 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:55,258 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:55,259 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-28 14:26:55,321 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-28 14:26:55,322 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-28 14:26:55,492 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-28 14:26:55,498 - app.main - INFO - Response status: 200
-2025-05-28 14:26:55,502 - app.main - INFO - Response status: 200
-2025-05-28 14:26:55,627 - app.main - INFO - Request: GET /db/workouts/templates
-2025-05-28 14:26:55,707 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:55,707 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:56,024 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:26:56,042 - app.main - INFO - Response status: 200
-2025-05-28 14:29:28,097 - app.main - INFO - Request: GET /db/user-profile
-2025-05-28 14:29:28,502 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:28,502 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:28,655 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:28,656 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-05-28 14:29:28,756 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-05-28 14:29:28,757 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-05-28 14:29:28,892 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-05-28 14:29:28,900 - app.main - INFO - Response status: 200
-2025-05-28 14:29:28,901 - app.main - INFO - Response status: 200
-2025-05-28 14:29:29,128 - app.main - INFO - Request: GET /db/workouts/templates
-2025-05-28 14:29:29,271 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:29,272 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:29,487 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-05-28 14:29:29,520 - app.main - INFO - Response status: 200
+2025-06-03 16:41:24,239 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 3515d9ef-5066-4fba-807b-fa787c3f13fd
+2025-06-03 16:41:24,300 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-06-03 16:41:24,358 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 1c2ef744-af17-4a35-ba41-fa87776d5def
+2025-06-03 16:41:24,487 - app.services.db.workout_service - INFO - Workout creation complete for ID: b3bb447c-c406-48ef-9ca9-11e962fd10f0
+2025-06-03 16:41:24,488 - app.main - INFO - Response status: 200

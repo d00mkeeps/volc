@@ -1,35 +1,22 @@
-// components/organisms/WorkoutTracker.tsx
 import React, {
   useCallback,
   useMemo,
   useRef,
   forwardRef,
   useImperativeHandle,
-  useState,
 } from "react";
 import { YStack, Text, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-  useSharedValue,
-  runOnJS,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useSharedValue } from "react-native-reanimated";
 import WorkoutTrackerHeader from "@/components/molecules/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/ExerciseTracker";
-import GradientBlur from "@/components/atoms/GradientBlur";
-import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
+import { WorkoutExercise } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 interface WorkoutTrackerProps {
-  workout: CompleteWorkout;
-  isActive: boolean;
-  onActiveChange: (active: boolean) => void;
   currentTemplateName?: string;
-  // Removed: timeString, isPaused, togglePause - header gets from store
 }
 
 export interface WorkoutTrackerRef {
@@ -40,107 +27,61 @@ export interface WorkoutTrackerRef {
 }
 
 const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
-  ({ workout, isActive, onActiveChange, currentTemplateName }, ref) => {
+  ({ currentTemplateName }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
-    // Local state for workout data updates
-    const [workoutData, setWorkoutData] = useState<CompleteWorkout>(workout);
+    const { currentWorkout, isActive, updateCurrentWorkout, updateExercise } =
+      useUserSessionStore();
 
-    // Update local state when workout prop changes
-    React.useEffect(() => {
-      setWorkoutData(workout);
-    }, [workout]);
-
-    // Animated values for tracking sheet position
+    // Simplified animated values - just like the working test
     const animatedIndex = useSharedValue(0);
     const animatedPosition = useSharedValue(0);
 
-    // Snap points: peek view and full view
-    const snapPoints = useMemo(() => ["39%", "90%"], []);
+    // Use your working percentages
+    const snapPoints = useMemo(() => ["36%", "91%"], []);
 
-    // Handle sheet position changes
     const handleSheetChanges = useCallback(
       (index: number) => {
-        const newIsActive = index > 0;
-        onActiveChange(newIsActive);
         animatedIndex.value = index;
+        console.log("📊 WorkoutTracker sheet index:", index);
       },
-      [onActiveChange, animatedIndex]
+      [animatedIndex]
     );
 
-    // Expand sheet programmatically
+    // Simplified expand/collapse methods
     const expandSheet = useCallback(() => {
-      bottomSheetRef.current?.expand();
+      bottomSheetRef.current?.snapToIndex(2); // 91%
     }, []);
 
-    // Snap to peek view
     const snapToPeek = useCallback(() => {
-      bottomSheetRef.current?.snapToIndex(0);
+      bottomSheetRef.current?.snapToIndex(1); // 40%
     }, []);
 
     // Expose imperative methods
     useImperativeHandle(
       ref,
       () => ({
-        startWorkout: () => {
-          bottomSheetRef.current?.expand();
-        },
-        finishWorkout: () => {
-          bottomSheetRef.current?.snapToIndex(0);
-        },
+        startWorkout: snapToPeek, // Keep at 40% when starting
+        finishWorkout: snapToPeek, // Return to 40% when finishing
         expandToFull: expandSheet,
         snapToPeek: snapToPeek,
       }),
       [expandSheet, snapToPeek]
     );
 
-    // Custom gesture for expanding on swipe up
-    const panGesture = Gesture.Pan().onEnd((event) => {
-      // Only expand if swiping up with sufficient velocity and currently at peek
-      if (event.velocityY < -500 && animatedIndex.value === 0) {
-        runOnJS(expandSheet)();
-      }
-    });
-
-    // Animated style for the blur overlay
-    const blurAnimatedStyle = useAnimatedStyle(() => {
-      const opacity = interpolate(animatedIndex.value, [0, 1], [1, 0], "clamp");
-      return { opacity };
-    });
-
-    // Handle exercise updates
+    // Simplified exercise handlers (same logic, cleaner structure)
     const handleExerciseUpdate = useCallback(
       (updatedExercise: WorkoutExercise) => {
-        if (!isActive) return;
-
-        // Update local state for immediate UI response
-        setWorkoutData((prev) => ({
-          ...prev,
-          workout_exercises: prev.workout_exercises.map((exercise) =>
-            exercise.id === updatedExercise.id ? updatedExercise : exercise
-          ),
-        }));
-
-        // Sync to session store
-        const updatedWorkout = {
-          ...workoutData,
-          workout_exercises: workoutData.workout_exercises.map((exercise) =>
-            exercise.id === updatedExercise.id ? updatedExercise : exercise
-          ),
-        };
-        useUserSessionStore.getState().updateCurrentWorkout(updatedWorkout);
-
-        console.log("Exercise updated:", updatedExercise);
+        updateExercise(updatedExercise.id, updatedExercise);
       },
-      [isActive, workoutData]
+      [updateExercise]
     );
 
     const handleExerciseDelete = useCallback(
       (exerciseId: string) => {
-        if (!isActive) return;
+        if (!isActive || !currentWorkout) return;
 
-        // Don't allow deleting the last exercise
-        if (workoutData.workout_exercises.length <= 1) {
+        if (currentWorkout.workout_exercises.length <= 1) {
           Alert.alert(
             "Cannot Delete Exercise",
             "You must have at least one exercise in your workout.",
@@ -149,45 +90,31 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           return;
         }
 
-        // Update local state for immediate UI response
-        setWorkoutData((prev) => ({
-          ...prev,
-          workout_exercises: prev.workout_exercises.filter(
-            (exercise) => exercise.id !== exerciseId
-          ),
-        }));
-
-        // Sync to session store
         const updatedWorkout = {
-          ...workoutData,
-          workout_exercises: workoutData.workout_exercises.filter(
+          ...currentWorkout,
+          workout_exercises: currentWorkout.workout_exercises.filter(
             (exercise) => exercise.id !== exerciseId
           ),
         };
-        useUserSessionStore.getState().updateCurrentWorkout(updatedWorkout);
-
-        console.log("Exercise deleted:", exerciseId);
+        updateCurrentWorkout(updatedWorkout);
       },
-      [isActive, workoutData]
+      [isActive, currentWorkout, updateCurrentWorkout]
     );
 
-    // Add exercise handler
     const handleAddExercise = useCallback(() => {
-      if (!isActive) return;
+      if (!isActive || !currentWorkout) return;
 
-      // Find the highest order_index and add 1 to put it at the bottom
       const maxOrderIndex =
-        workoutData.workout_exercises.length > 0
+        currentWorkout.workout_exercises.length > 0
           ? Math.max(
-              ...workoutData.workout_exercises.map((ex) => ex.order_index)
+              ...currentWorkout.workout_exercises.map((ex) => ex.order_index)
             )
           : -1;
 
-      // Create a new exercise with a temporary ID
       const newExercise: WorkoutExercise = {
         id: `exercise-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         definition_id: undefined,
-        workout_id: workoutData.id,
+        workout_id: currentWorkout.id,
         name: "",
         order_index: maxOrderIndex + 1,
         weight_unit: "kg",
@@ -196,31 +123,22 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         updated_at: new Date().toISOString(),
       };
 
-      // Update local state
-      setWorkoutData((prev) => ({
-        ...prev,
-        workout_exercises: [...prev.workout_exercises, newExercise],
-      }));
-
-      // Sync to session store
       const updatedWorkout = {
-        ...workoutData,
-        workout_exercises: [...workoutData.workout_exercises, newExercise],
+        ...currentWorkout,
+        workout_exercises: [...currentWorkout.workout_exercises, newExercise],
       };
-      useUserSessionStore.getState().updateCurrentWorkout(updatedWorkout);
-
-      console.log("New exercise added:", newExercise);
-    }, [isActive, workoutData]);
+      updateCurrentWorkout(updatedWorkout);
+    }, [isActive, currentWorkout, updateCurrentWorkout]);
 
     return (
       <BottomSheet
         ref={bottomSheetRef}
-        index={0}
+        index={1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose={false}
-        enableHandlePanningGesture={false}
-        enableContentPanningGesture={false}
+        enableHandlePanningGesture={true}
+        enableContentPanningGesture={true}
         animatedIndex={animatedIndex}
         animatedPosition={animatedPosition}
         backgroundStyle={{
@@ -235,29 +153,25 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           paddingVertical: 8,
         }}
       >
-        {/* Header with gesture detector for swipe up */}
-        <GestureDetector gesture={panGesture}>
-          <WorkoutTrackerHeader
-            workoutName={workoutData.name}
-            workoutDescription={workoutData.notes}
-            isActive={isActive}
-            currentTemplateName={currentTemplateName || workoutData.name}
-            // Removed: timeString, isPaused, togglePause
-          />
-        </GestureDetector>
+        {/* Simplified header - remove complex gesture detection for now */}
+        <WorkoutTrackerHeader
+          workoutName={currentWorkout?.name}
+          workoutDescription={currentWorkout?.notes}
+          isActive={isActive}
+          currentTemplateName={currentTemplateName || currentWorkout?.name}
+        />
 
-        {/* Scrollable content */}
         <BottomSheetScrollView
           contentContainerStyle={{
             padding: 12,
-            paddingBottom: 120, // Extra space for FAB
+            paddingBottom: 120,
           }}
           showsVerticalScrollIndicator={false}
         >
           <YStack gap="$3">
-            {workoutData.workout_exercises
+            {currentWorkout?.workout_exercises
               .sort((a, b) => a.order_index - b.order_index)
-              .map((exercise, index) => (
+              .map((exercise) => (
                 <ExerciseTracker
                   key={exercise.id}
                   exercise={exercise}
@@ -269,7 +183,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 />
               ))}
 
-            {/* Add Exercise Button */}
             {isActive && (
               <Stack
                 marginTop="$2"
@@ -295,8 +208,8 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
               </Stack>
             )}
 
-            {/* Empty state if no exercises */}
-            {workoutData.workout_exercises.length === 0 && (
+            {(!currentWorkout?.workout_exercises ||
+              currentWorkout.workout_exercises.length === 0) && (
               <YStack
                 padding="$5"
                 alignItems="center"
@@ -314,23 +227,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
               </YStack>
             )}
           </YStack>
-
-          {/* Blur overlay that fades based on sheet position */}
-          <Animated.View
-            style={[
-              {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-              },
-              blurAnimatedStyle,
-            ]}
-            pointerEvents="none"
-          >
-            <GradientBlur />
-          </Animated.View>
         </BottomSheetScrollView>
       </BottomSheet>
     );

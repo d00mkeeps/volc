@@ -1,4 +1,3 @@
-// _layout.tsx - revert back to original
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -16,6 +15,7 @@ import React from "react";
 // Add these Tamagui imports
 import { TamaguiProvider, Theme } from "@tamagui/core"; // Removed PortalProvider
 import config from "../tamagui.config";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -60,80 +60,82 @@ function RootLayoutNav() {
 
   return (
     <>
-      <TamaguiProvider config={config}>
-        <Theme name={colorScheme === "dark" ? "dark" : "light"}>
-          <AuthProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <AuthGate>
-                {/* rest of your existing code stays the same */}
-                {supabaseStatus && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      bottom: 40,
-                      right: 10,
-                      padding: 8,
-                      borderRadius: 4,
-                      backgroundColor: supabaseStatus.success
-                        ? "rgba(248, 79, 62, 0.2)"
-                        : "rgba(255, 0, 0, 0.2)",
-                      zIndex: 9999,
-                    }}
-                  >
-                    <Text
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <TamaguiProvider config={config}>
+          <Theme name={colorScheme === "dark" ? "dark" : "light"}>
+            <AuthProvider>
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <AuthGate>
+                  {/* rest of your existing code stays the same */}
+                  {supabaseStatus && (
+                    <View
                       style={{
-                        color: supabaseStatus.success ? "#d4412f" : "#721c24",
-                        fontSize: 12,
+                        position: "absolute",
+                        bottom: 40,
+                        right: 10,
+                        padding: 8,
+                        borderRadius: 4,
+                        backgroundColor: supabaseStatus.success
+                          ? "rgba(248, 79, 62, 0.2)"
+                          : "rgba(255, 0, 0, 0.2)",
+                        zIndex: 9999,
                       }}
                     >
-                      Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
-                      {supabaseStatus.message}
-                      {supabaseStatus.url &&
-                        `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
-                      {supabaseStatus.error &&
-                        `\nDetails: ${supabaseStatus.error}`}
-                    </Text>
-                  </View>
-                )}
-                <Stack screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen
-                    name="conversation/[id]"
-                    options={{
-                      headerShown: true,
-                      headerTitle: "Conversation",
-                      headerBackTitle: "Home",
-                      contentStyle: {
-                        backgroundColor:
-                          colorScheme === "dark" ? "#231f20" : "#ffffff",
-                        flex: 1,
-                      },
-                      headerStyle: {
-                        backgroundColor:
-                          colorScheme === "dark" ? "#231f20" : "#ffffff",
-                      },
-                      headerTintColor:
-                        colorScheme === "dark" ? "#ffffff" : "#231f20",
-                      animation: "slide_from_right",
-                    }}
-                    getId={({ params }: { params?: Record<string, any> }) => {
-                      if (!params) return undefined;
-                      return String(params.id);
-                    }}
-                  />
-                  <Stack.Screen
-                    name="modal"
-                    options={{ presentation: "modal" }}
-                  />
-                </Stack>
-              </AuthGate>
-            </ThemeProvider>
-          </AuthProvider>
-        </Theme>
-      </TamaguiProvider>
-      <Toast />
+                      <Text
+                        style={{
+                          color: supabaseStatus.success ? "#d4412f" : "#721c24",
+                          fontSize: 12,
+                        }}
+                      >
+                        Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
+                        {supabaseStatus.message}
+                        {supabaseStatus.url &&
+                          `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
+                        {supabaseStatus.error &&
+                          `\nDetails: ${supabaseStatus.error}`}
+                      </Text>
+                    </View>
+                  )}
+                  <Stack screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen
+                      name="conversation/[id]"
+                      options={{
+                        headerShown: true,
+                        headerTitle: "Conversation",
+                        headerBackTitle: "Home",
+                        contentStyle: {
+                          backgroundColor:
+                            colorScheme === "dark" ? "#231f20" : "#ffffff",
+                          flex: 1,
+                        },
+                        headerStyle: {
+                          backgroundColor:
+                            colorScheme === "dark" ? "#231f20" : "#ffffff",
+                        },
+                        headerTintColor:
+                          colorScheme === "dark" ? "#ffffff" : "#231f20",
+                        animation: "slide_from_right",
+                      }}
+                      getId={({ params }: { params?: Record<string, any> }) => {
+                        if (!params) return undefined;
+                        return String(params.id);
+                      }}
+                    />
+                    <Stack.Screen
+                      name="modal"
+                      options={{ presentation: "modal" }}
+                    />
+                  </Stack>
+                </AuthGate>
+              </ThemeProvider>
+            </AuthProvider>
+          </Theme>
+        </TamaguiProvider>
+        <Toast />
+      </GestureHandlerRootView>
     </>
   );
 }

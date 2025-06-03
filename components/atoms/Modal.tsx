@@ -27,7 +27,7 @@ export default function BaseModal({
       <TouchableOpacity
         style={{
           flex: 1,
-          backgroundColor: "rgba(0,0,0,0.6)",
+          backgroundColor: "rgba(0,0,0,0.8)",
           justifyContent: "center",
           alignItems: "center",
           padding: 20,

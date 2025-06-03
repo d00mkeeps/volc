@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutTrackerHeaderProps {
-  workoutName: string;
+  workoutName?: string;
   workoutDescription?: string;
   isActive: boolean;
   currentTemplateName?: string;
@@ -13,14 +13,17 @@ interface WorkoutTrackerHeaderProps {
 }
 
 export default function WorkoutTrackerHeader({
-  workoutName,
-  workoutDescription,
   isActive,
   currentTemplateName,
 }: WorkoutTrackerHeaderProps) {
   // Get everything from store - no more prop drilling!
-  const { openTemplateSelector, getTimeString, isPaused, togglePause } =
-    useUserSessionStore();
+  const {
+    openTemplateSelector,
+    getTimeString,
+    isPaused,
+    togglePause,
+    updateElapsedTime,
+  } = useUserSessionStore();
 
   const handleNotesPress = () => {
     console.log("Opening notes interface");
@@ -29,6 +32,16 @@ export default function WorkoutTrackerHeader({
   const handleTemplatePress = () => {
     openTemplateSelector();
   };
+
+  React.useEffect(() => {
+    if (!isActive) return;
+
+    const interval = setInterval(() => {
+      updateElapsedTime();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isActive, updateElapsedTime]);
 
   return (
     <YStack

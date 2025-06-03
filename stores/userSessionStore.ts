@@ -29,7 +29,7 @@ interface UserSessionState {
   updateElapsedTime: () => void;
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
   updateExercise: (exerciseId: string, updatedExercise: WorkoutExercise) => void;
-  
+  resetSession: () => void;
   // Template actions
   setSelectedTemplate: (template: CompleteWorkout | null) => void;
   openTemplateSelector: () => void;
@@ -107,68 +107,42 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
         exercise.id === exerciseId ? updatedExercise : exercise
       ),
       updated_at: new Date().toISOString()
-    };
-
+    }; 
+    
     set({ currentWorkout: updatedWorkout });
   },
   
-  finishWorkout: async () => {
-    const { currentWorkout } = get();
-    
-    try {
-      if (currentWorkout) {
-        const userProfile = useUserStore.getState().userProfile;
-        if (!userProfile?.user_id) {
-          console.error('Cannot finish workout: No user profile found');
-          throw new Error('No user profile found');
-        }
-        
-        console.log('[UserSession] Finishing workout:', {
-          workoutId: currentWorkout.id,
-          workoutName: currentWorkout.name,
-          userId: userProfile.user_id,
-          exerciseCount: currentWorkout.workout_exercises?.length || 0
-        });
-        
-        const savedWorkout = await workoutService.saveCompletedWorkout(
-          userProfile.user_id.toString(), 
-          currentWorkout
-        );
-        
-        console.log('[UserSession] Workout saved successfully with ID:', savedWorkout.id);
-        
-        console.log('[UserSession] Triggering dashboard refresh...');
-        useDashboardStore.getState().refreshDashboard();
-      }
-      
-      console.log('[UserSession] Resetting session state...');
-      set({
-        currentWorkout: null,
-        isActive: false,
-        isPaused: false,
-        startTime: null,
-        elapsedSeconds: 0,
-        scheduledTime: undefined,
-        selectedTemplate: null
-      });
-      
-      console.log('[UserSession] Workout finished successfully');
-    } catch (error) {
-      console.error('[UserSession] Failed to finish workout:', error);
-      
-      set({
-        currentWorkout: null,
-        isActive: false,
-        isPaused: false,
-        startTime: null,
-        elapsedSeconds: 0,
-        scheduledTime: undefined,
-        selectedTemplate: null
-      });
-      
-      throw error;
-    }
-  },
+ // In userSessionStore.ts
+finishWorkout: async () => {
+  const { currentWorkout } = get();
+  
+  if (!currentWorkout) return;
+  
+  const userProfile = useUserStore.getState().userProfile;
+  if (!userProfile?.user_id) {
+    throw new Error('No user profile found');
+  }
+  
+  // Save workout and refresh dashboard
+  const savedWorkout = await workoutService.saveCompletedWorkout(
+    userProfile.user_id.toString(), 
+    currentWorkout
+  );
+  
+  useDashboardStore.getState().refreshDashboard();
+},
+
+resetSession: () => {
+  set({
+    currentWorkout: null,
+    isActive: false,
+    isPaused: false,
+    startTime: null,
+    elapsedSeconds: 0,
+    scheduledTime: undefined,
+    selectedTemplate: null
+  });
+},
   
   updateElapsedTime: () => {
     const { startTime, isPaused } = get();
