@@ -1,5 +1,15 @@
-2025-06-03 16:41:24,239 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 3515d9ef-5066-4fba-807b-fa787c3f13fd
-2025-06-03 16:41:24,300 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-06-03 16:41:24,358 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 1c2ef744-af17-4a35-ba41-fa87776d5def
-2025-06-03 16:41:24,487 - app.services.db.workout_service - INFO - Workout creation complete for ID: b3bb447c-c406-48ef-9ca9-11e962fd10f0
-2025-06-03 16:41:24,488 - app.main - INFO - Response status: 200
+2025-06-05 12:30:36,051 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Barbell Bench Press']
+2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Barbell Bench Press']
+2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Added 28 data points for Dips to strength chart
+2025-06-05 12:30:36,056 - app.services.workout_analysis.graph_service - INFO - Added 37 data points for Barbell Bench Press to strength chart
+2025-06-05 12:30:36,056 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 2 exercises with data
+2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 2 exercises
+2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Added 28 data points for Dips to volume chart
+2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Added 37 data points for Barbell Bench Press to volume chart
+2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 2 exercises with data
+2025-06-05 12:30:38,302 - app.main - INFO - Response status: 202
+2025-06-05 12:30:39,353 - app.main - INFO - Request: GET /api/workout-analysis/3ea630f2-15e2-4c24-b776-9ffaab84e727
+2025-06-05 12:30:39,363 - app.main - INFO - Response status: 200
+2025-06-05 12:30:59,791 - app.services.job_store - INFO - Cleaned up 1 expired jobs

@@ -1,4 +1,3 @@
-// stores/userSessionStore.ts
 import { create } from 'zustand';
 import { CompleteWorkout, WorkoutExercise } from '@/types/workout';
 import { workoutService } from '@/services/db/workout';
@@ -39,6 +38,22 @@ interface UserSessionState {
   // Computed values
   getTimeString: () => string;
   getProgress: () => { completed: number; total: number };
+}
+
+
+// At the top of the file, outside the store
+export function createEmptyWorkout(userId: string): CompleteWorkout {
+  const now = new Date().toISOString();
+  return {
+    id: `temp-${Date.now()}`,
+    user_id: userId,
+    name: 'Quick Workout',
+    notes: '',
+    is_template: false,
+    workout_exercises: [],
+    created_at: now,
+    updated_at: now,
+  };
 }
 
 export const useUserSessionStore = create<UserSessionState>((set, get) => ({

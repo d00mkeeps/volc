@@ -1,6 +1,5 @@
 // services/api/WorkoutAnalysisService.ts
 import { BaseService } from '../db/base';
-import { jobService } from './JobService';
 import { apiGet } from './core/apiClient';
 
 export class WorkoutAnalysisService extends BaseService {
@@ -9,62 +8,32 @@ export class WorkoutAnalysisService extends BaseService {
   /**
    * Format workout data for analysis
    * @param workoutData Raw workout data
+   * @param userId The authenticated user's UUID
    */
-  formatAnalysisData(workoutData: any): any {
+  formatAnalysisData(workoutData: any, userId: string): any {
     // Ensure we have a valid workout object
     if (!workoutData) {
       throw new Error('No workout data provided');
     }
     
-    // Return a formatted payload for the API
-    return {
-      user_id: workoutData.user_id || 'anonymous',
-      workout_data: workoutData,
-      exercise_names: workoutData.workout_exercises?.map((ex: any) => ex.name) || []
-    };
-  }
-  
-  /**
-   * Submit workout data for analysis
-   * @param workoutData The workout data to analyze
-   */
-  async submitWorkoutAnalysis(workoutData: any): Promise<string> {
-    try {
-      console.log('[WorkoutAnalysisService] Submitting workout for analysis');
-      
-      // Format the data for submission
-      const formattedData = this.formatAnalysisData(workoutData);
-      
-      // Create a new analysis job
-      return await jobService.createJob(this.ANALYSIS_ENDPOINT, formattedData);
-    } catch (error) {
-      console.error('[WorkoutAnalysisService] Error submitting workout analysis:', error);
-      return this.handleError(error);
+    if (!userId) {
+      throw new Error('User ID is required');
     }
-  }
-  
-  /**
-   * Get job status for a workout analysis
-   * @param jobId The job ID
-   */
-  async getAnalysisJobStatus(jobId: string): Promise<any> {
-    return jobService.getJobStatus(this.ANALYSIS_ENDPOINT, jobId);
-  }
-  
-  /**
-   * Poll for workout analysis completion
-   * @param jobId The job ID
-   * @param options Polling options
-   */
-  async pollAnalysisCompletion(
-    jobId: string,
-    options: {
-      interval?: number;
-      timeout?: number;
-      onProgress?: (progress: number) => void;
-    } = {}
-  ): Promise<any> {
-    return jobService.pollJobStatus(this.ANALYSIS_ENDPOINT, jobId, options);
+    
+    // Extract exercise names from the workout
+    const exerciseNames = workoutData.workout_exercises?.map((ex: any) => ex.name) || [];
+    
+    if (exerciseNames.length === 0) {
+      throw new Error('No exercises found in workout data');
+    }
+    
+    // Return payload for historical analysis
+    return {
+      user_id: userId,
+      exercise_names: exerciseNames,
+      timeframe: "3 months",
+      message: `Analyze progress for: ${exerciseNames.join(', ')}`
+    };
   }
   
   /**

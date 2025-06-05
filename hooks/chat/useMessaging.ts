@@ -103,14 +103,14 @@ export function useMessaging(conversationId: string) {
   // Send a message with options
   const sendMessage = useCallback(async (
     content: string,
-    options?: { detailedAnalysis?: boolean }
+    analysisBundle?: any
   ) => {
     if (!conversationId || !isConnected) {
       throw new Error('Cannot send message: not connected');
     }
     
     try {
-      await messageStore.sendMessage(conversationId, content, options);
+      await messageStore.sendMessage(conversationId, content);
       return true;
     } catch (error) {
       console.error('[useMessaging] Error sending message:', error);

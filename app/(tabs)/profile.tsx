@@ -1,130 +1,177 @@
 // app/(tabs)/profile.tsx
-import React, { useMemo, useCallback, useRef } from "react";
-import { Stack, Text } from "tamagui";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useSharedValue } from "react-native-reanimated";
-import { Dimensions } from "react-native";
-
-const { height: screenHeight } = Dimensions.get("window");
+import React, { useState } from "react";
+import { Stack, Text, Button } from "tamagui";
+import { useWorkoutAnalysis } from "@/hooks/analysis/useWorkoutAnalysis";
+import { useUserStore } from "@/stores/userProfileStore";
+import { mockWorkout } from "@/mockdata";
 
 export default function ProfileScreen() {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [testResult, setTestResult] = useState<string | null>(null);
+  const { userProfile } = useUserStore();
 
-  const animatedIndex = useSharedValue(0);
-  const animatedPosition = useSharedValue(0);
+  const {
+    analyzeWorkout,
+    isAnalyzing,
+    analysisProgress,
+    analysisResult,
+    analysisError,
+    resetAnalysis,
+  } = useWorkoutAnalysis();
 
-  const snapPoints = useMemo(() => {
-    console.log("Testing higher percentages");
-    return ["50%", "70%", "95%"];
-  }, []);
+  const handleTestAnalysis = async () => {
+    try {
+      setTestResult("Starting analysis...");
 
-  const handleSheetChanges = useCallback(
-    (index: number) => {
-      console.log("Profile BottomSheet index:", index);
-      console.log("Animated position:", animatedPosition.value);
-      animatedIndex.value = index;
-    },
-    [animatedIndex, animatedPosition]
-  );
+      // Just pass the mock workout - store will handle user ID automatically
+      await analyzeWorkout(mockWorkout, {
+        onProgress: (progress) => {
+          setTestResult(`Analysis progress: ${progress}%`);
+        },
+      });
 
-  const testSnap = (index: number) => {
-    console.log(`Trying to snap to index ${index} (${snapPoints[index]})`);
-    bottomSheetRef.current?.snapToIndex(index);
+      setTestResult("Analysis completed! Check result below.");
+    } catch (err) {
+      setTestResult(
+        `Error: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    }
+  };
+
+  const handleReset = () => {
+    resetAnalysis();
+    setTestResult(null);
   };
 
   return (
-    <>
-      {/* Content WITHOUT Stack container - positioned absolutely */}
-      <Stack
-        position="absolute"
-        top={100}
-        left={20}
-        right={20}
-        zIndex={1}
-        backgroundColor="$background"
-        padding="$4"
-        borderRadius="$3"
-      >
-        <Text fontSize="$6" color="$color">
-          Profile Screen
-        </Text>
-        <Text fontSize="$3" color="$textSoft">
-          Screen height: {screenHeight}
-        </Text>
+    <Stack flex={1} backgroundColor="$background">
+      <Text fontSize="$6" color="$color" padding="$4" fontWeight="bold">
+        Profile & Testing
+      </Text>
 
-        {/* Test buttons */}
-        <Stack gap="$2" marginTop="$4">
-          <Text
-            onPress={() => testSnap(0)}
-            style={{ color: "blue", padding: 10 }}
-          >
-            Snap to 25% ({Math.round(screenHeight * 0.25)}px)
+      <Stack flex={1} paddingHorizontal="$4" gap="$4">
+        {/* User Info Section */}
+        <Stack backgroundColor="$backgroundSoft" padding="$3" borderRadius="$4">
+          <Text fontSize="$5" fontWeight="600" marginBottom="$2">
+            Current User
           </Text>
-          <Text
-            onPress={() => testSnap(1)}
-            style={{ color: "blue", padding: 10 }}
-          >
-            Snap to 50% ({Math.round(screenHeight * 0.5)}px)
+          <Text color="$colorPress">
+            Display ID: {userProfile?.user_id?.toString() || "Not logged in"}
           </Text>
-          <Text
-            onPress={() => testSnap(2)}
-            style={{ color: "blue", padding: 10 }}
-          >
-            Snap to 75% ({Math.round(screenHeight * 0.75)}px)
+          <Text color="$colorPress">
+            Auth UUID: {userProfile?.auth_user_uuid || "Not logged in"}
+          </Text>
+          <Text color="$colorPress">
+            Name: {userProfile?.first_name || "Unknown"}
+          </Text>
+        </Stack>
+
+        {/* Analysis Test Section */}
+        <Stack
+          backgroundColor="$backgroundSoft"
+          padding="$3"
+          borderRadius="$4"
+          gap="$3"
+        >
+          <Text fontSize="$5" fontWeight="600">
+            Workout Analysis Test
+          </Text>
+
+          <Text color="$colorPress" fontSize="$3">
+            This will analyze historical data for: Barbell Bench Press, Dumbbell
+            Shoulder Press, Push-ups, Tricep Dips, Treadmill Sprint Intervals
+          </Text>
+
+          <Stack flexDirection="row" gap="$2">
+            <Button
+              onPress={handleTestAnalysis}
+              disabled={isAnalyzing || !userProfile?.auth_user_uuid}
+              backgroundColor="$blue10"
+              flex={1}
+            >
+              {isAnalyzing
+                ? `Analyzing... ${analysisProgress}%`
+                : "Test Workout Analysis"}
+            </Button>
+
+            <Button
+              onPress={handleReset}
+              disabled={isAnalyzing}
+              backgroundColor="$gray8"
+              variant="outlined"
+            >
+              Reset
+            </Button>
+          </Stack>
+
+          {!userProfile?.auth_user_uuid && (
+            <Text color="$red10" fontSize="$3">
+              ⚠️ No authenticated user found. Please log in to test analysis.
+            </Text>
+          )}
+
+          {/* Progress/Status Display */}
+          {testResult && (
+            <Stack backgroundColor="$background" padding="$2" borderRadius="$2">
+              <Text color="$color" fontSize="$3">
+                Status: {testResult}
+              </Text>
+            </Stack>
+          )}
+
+          {/* Error Display */}
+          {analysisError && (
+            <Stack backgroundColor="$red2" padding="$2" borderRadius="$2">
+              <Text color="$red11" fontSize="$3" fontWeight="600">
+                Error: {analysisError.message}
+              </Text>
+            </Stack>
+          )}
+
+          {/* Results Display */}
+          {analysisResult && (
+            <Stack
+              backgroundColor="$green2"
+              padding="$3"
+              borderRadius="$2"
+              maxHeight={300}
+            >
+              <Text
+                color="$green11"
+                fontSize="$4"
+                fontWeight="600"
+                marginBottom="$2"
+              >
+                Analysis Result:
+              </Text>
+              <Stack
+                backgroundColor="$background"
+                padding="$2"
+                borderRadius="$2"
+              >
+                <Text color="$color" fontSize="$2" fontFamily="$mono">
+                  {JSON.stringify(analysisResult, null, 2)}
+                </Text>
+              </Stack>
+            </Stack>
+          )}
+        </Stack>
+
+        {/* Mock Data Info */}
+        <Stack backgroundColor="$backgroundSoft" padding="$3" borderRadius="$4">
+          <Text fontSize="$4" fontWeight="600" marginBottom="$2">
+            Mock Workout Info
+          </Text>
+          <Text color="$colorPress" fontSize="$3">
+            Name: {mockWorkout.name}
+          </Text>
+          <Text color="$colorPress" fontSize="$3">
+            Exercises: {mockWorkout.workout_exercises.length}
+          </Text>
+          <Text color="$colorPress" fontSize="$3">
+            Uses current user's auth_user_uuid automatically
           </Text>
         </Stack>
       </Stack>
-
-      {/* BottomSheet WITHOUT parent Stack wrapper */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enablePanDownToClose={false}
-        enableHandlePanningGesture={true}
-        enableContentPanningGesture={false}
-        animatedIndex={animatedIndex}
-        animatedPosition={animatedPosition}
-        backgroundStyle={{
-          backgroundColor: "#1a1a1a",
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: "#666",
-          width: 40,
-          height: 4,
-        }}
-        handleStyle={{
-          paddingVertical: 8,
-        }}
-      >
-        <BottomSheetScrollView
-          contentContainerStyle={{
-            padding: 12,
-            paddingBottom: 120,
-          }}
-          showsVerticalScrollIndicator={false}
-          onLayout={(event) => {
-            const { height, width } = event.nativeEvent.layout;
-            console.log(
-              "BottomSheet actual rendered size:",
-              width,
-              "x",
-              height
-            );
-          }}
-        >
-          <Text fontSize="$6" color="white" fontWeight="bold">
-            BOTTOM SHEET DEBUG
-          </Text>
-          <Text fontSize="$4" color="white">
-            Expected heights: 219px, 437px, 656px
-          </Text>
-          <Text fontSize="$4" color="white">
-            Current positions: 499, 476, 281
-          </Text>
-        </BottomSheetScrollView>
-      </BottomSheet>
-    </>
+    </Stack>
   );
 }

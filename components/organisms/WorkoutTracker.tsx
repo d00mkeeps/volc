@@ -1,15 +1,22 @@
+// components/organisms/WorkoutTracker.tsx
 import React, {
   useCallback,
   useMemo,
   useRef,
   forwardRef,
   useImperativeHandle,
+  useEffect,
 } from "react";
 import { YStack, Text, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  useSharedValue,
+} from "react-native-reanimated";
 import WorkoutTrackerHeader from "@/components/molecules/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/ExerciseTracker";
+import GradientBlur from "@/components/atoms/GradientBlur";
 import { WorkoutExercise } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
@@ -33,28 +40,36 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const { currentWorkout, isActive, updateCurrentWorkout, updateExercise } =
       useUserSessionStore();
 
-    // Simplified animated values - just like the working test
-    const animatedIndex = useSharedValue(0);
+    // Animated values for tracking sheet position
+    const animatedIndex = useSharedValue(1);
     const animatedPosition = useSharedValue(0);
 
-    // Use your working percentages
-    const snapPoints = useMemo(() => ["36%", "91%"], []);
+    // Define snap points - using index 1 and 2 to avoid auto-generated index 0
+    const snapPoints = useMemo(() => ["40%", "91%"], []);
 
     const handleSheetChanges = useCallback(
       (index: number) => {
         animatedIndex.value = index;
-        console.log("📊 WorkoutTracker sheet index:", index);
+        // console.log("📊 WorkoutTracker sheet index:", index);
       },
       [animatedIndex]
     );
 
-    // Simplified expand/collapse methods
-    const expandSheet = useCallback(() => {
-      bottomSheetRef.current?.snapToIndex(2); // 91%
+    // Force start at index 1 (40%) to avoid auto-generated index 0
+    useEffect(() => {
+      setTimeout(() => {
+        bottomSheetRef.current?.snapToIndex(1);
+      }, 100);
     }, []);
 
+    // Expand to 91% (index 2)
+    const expandSheet = useCallback(() => {
+      bottomSheetRef.current?.snapToIndex(2);
+    }, []);
+
+    // Snap to 40% (index 1)
     const snapToPeek = useCallback(() => {
-      bottomSheetRef.current?.snapToIndex(1); // 40%
+      bottomSheetRef.current?.snapToIndex(1);
     }, []);
 
     // Expose imperative methods
@@ -69,7 +84,13 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       [expandSheet, snapToPeek]
     );
 
-    // Simplified exercise handlers (same logic, cleaner structure)
+    // Animated style for the blur overlay - fades when expanding
+    const blurAnimatedStyle = useAnimatedStyle(() => {
+      const opacity = interpolate(animatedIndex.value, [1, 2], [1, 0], "clamp");
+      return { opacity };
+    });
+
+    // Exercise update handlers
     const handleExerciseUpdate = useCallback(
       (updatedExercise: WorkoutExercise) => {
         updateExercise(updatedExercise.id, updatedExercise);
@@ -133,7 +154,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     return (
       <BottomSheet
         ref={bottomSheetRef}
-        index={1}
+        index={1} // Start at index 1 (40%) to avoid auto-generated index 0
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose={false}
@@ -153,7 +174,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           paddingVertical: 8,
         }}
       >
-        {/* Simplified header - remove complex gesture detection for now */}
+        {/* Header - always visible, no blur */}
         <WorkoutTrackerHeader
           workoutName={currentWorkout?.name}
           workoutDescription={currentWorkout?.notes}
@@ -161,6 +182,25 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           currentTemplateName={currentTemplateName || currentWorkout?.name}
         />
 
+        {/* Blur overlay covering everything below header */}
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 108, // Covers from top of content area (below header)
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1, // Above content but below any modals
+            },
+            blurAnimatedStyle,
+          ]}
+          pointerEvents="none"
+        >
+          <GradientBlur />
+        </Animated.View>
+
+        {/* Scrollable content - gets blurred when inactive */}
         <BottomSheetScrollView
           contentContainerStyle={{
             padding: 12,

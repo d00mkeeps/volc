@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { workoutAnalysisService } from '../../services/api/workoutAnalysisService';
 import { useJobStore } from './JobStore';
+import { useUserStore } from '@/stores/userProfileStore';
 
 interface AnalysisStatus {
   jobId: string | null;
@@ -60,8 +61,21 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
         }
       });
       
-      // Submit workout for analysis
-      const jobId = await workoutAnalysisService.submitWorkoutAnalysis(workoutData);
+      // Get current user ID from user store
+      const userProfile = useUserStore.getState().userProfile;
+      const currentUserId = userProfile?.auth_user_uuid;
+      
+      if (!currentUserId) {
+        throw new Error('No authenticated user found');
+      }
+      
+      console.log('[WorkoutAnalysisStore] Using user ID:', currentUserId);
+      
+      // Format the data using the service (now with userId parameter)
+      const formattedData = workoutAnalysisService.formatAnalysisData(workoutData, currentUserId);
+      
+      // Create job using JobStore
+      const jobId = await useJobStore.getState().createJob('/api/workout-analysis', formattedData);
       
       // Update state with job ID
       set((state) => ({
@@ -71,7 +85,7 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
         }
       }));
       
-      // Start polling for completion
+      // Start polling using JobStore
       useJobStore.getState().pollJob(
         '/api/workout-analysis',
         jobId,

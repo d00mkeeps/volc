@@ -1,89 +1,93 @@
-2025-06-03 16:36:27,139 - app.main - INFO - Response status: 200
-2025-06-03 16:36:31,322 - app.main - INFO - Request: GET /db/user-profile
-2025-06-03 16:36:31,373 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,373 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,430 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,430 - app.main - INFO - Response status: 200
-2025-06-03 16:36:31,430 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-03 16:36:31,489 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-03 16:36:31,489 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-03 16:36:31,570 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-03 16:36:31,577 - app.main - INFO - Response status: 200
-2025-06-03 16:36:31,685 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-03 16:36:31,744 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,744 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,889 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:31,904 - app.main - INFO - Response status: 200
-2025-06-03 16:36:37,714 - app.main - INFO - Request: POST /db/workouts
-2025-06-03 16:36:37,843 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-03 16:36:37,843 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:36:37,847 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-06-03 16:36:37,944 - app.services.db.workout_service - INFO - Workout created with ID: 2d0b140e-c6c0-4a23-837a-50f96ee44af0
-2025-06-03 16:36:37,944 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 2d0b140e-c6c0-4a23-837a-50f96ee44af0
-2025-06-03 16:36:37,944 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-06-03 16:36:38,037 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 7c8aedc5-a60e-4d6b-aeed-169969cb19a7
-2025-06-03 16:36:38,207 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
-2025-06-03 16:36:38,258 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: aadc8f13-df07-4c92-9e4a-cbe0a0e0eda1
-2025-06-03 16:36:38,325 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
-2025-06-03 16:36:38,380 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: d583600c-b33a-4d09-9f98-752d6b841f7e
-2025-06-03 16:36:38,439 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-06-03 16:36:38,494 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: cb00f916-7fba-43d6-b43d-ea8ff4687c86
-2025-06-03 16:36:38,610 - app.services.db.workout_service - INFO - Workout creation complete for ID: 2d0b140e-c6c0-4a23-837a-50f96ee44af0
-2025-06-03 16:36:38,611 - app.main - INFO - Response status: 200
-2025-06-03 16:37:44,900 - app.main - INFO - Request: GET /db/user-profile
-2025-06-03 16:37:45,004 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,004 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,149 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,150 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-03 16:37:45,150 - app.main - INFO - Response status: 200
-2025-06-03 16:37:45,246 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-03 16:37:45,246 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-03 16:37:45,379 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-03 16:37:45,385 - app.main - INFO - Response status: 200
-2025-06-03 16:37:45,459 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-03 16:37:45,518 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,518 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,662 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:45,672 - app.main - INFO - Response status: 200
-2025-06-03 16:37:49,571 - app.main - INFO - Request: POST /db/workouts
-2025-06-03 16:37:49,643 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-03 16:37:49,643 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:37:49,644 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-06-03 16:37:49,747 - app.services.db.workout_service - INFO - Workout created with ID: c009bdf6-abef-4227-b0f9-196be5f305c9
-2025-06-03 16:37:49,747 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: c009bdf6-abef-4227-b0f9-196be5f305c9
-2025-06-03 16:37:49,747 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-06-03 16:37:49,806 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: b0bfdd36-f147-4c0c-bc67-bcf820392cfd
-2025-06-03 16:37:50,000 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
-2025-06-03 16:37:50,100 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 68e83dee-0888-4739-8852-799e370605b0
-2025-06-03 16:37:50,163 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
-2025-06-03 16:37:50,273 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 4a4d9495-e7a8-4836-8263-453491be142a
-2025-06-03 16:37:50,337 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-06-03 16:37:50,388 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 647bf26b-9c6b-43dc-a6ea-f68426e0c59d
-2025-06-03 16:37:50,501 - app.services.db.workout_service - INFO - Workout creation complete for ID: c009bdf6-abef-4227-b0f9-196be5f305c9
-2025-06-03 16:37:50,503 - app.main - INFO - Response status: 200
-2025-06-03 16:38:58,310 - app.main - INFO - Request: GET /db/user-profile
-2025-06-03 16:38:58,554 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:58,554 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:58,715 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:58,716 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-03 16:38:58,774 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-03 16:38:58,774 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-03 16:38:58,902 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-03 16:38:58,911 - app.main - INFO - Response status: 200
-2025-06-03 16:38:58,911 - app.main - INFO - Response status: 200
-2025-06-03 16:38:58,979 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-03 16:38:59,034 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:59,034 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:59,176 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:38:59,185 - app.main - INFO - Response status: 200
-2025-06-03 16:41:23,323 - app.main - INFO - Request: POST /db/workouts
-2025-06-03 16:41:23,594 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-03 16:41:23,594 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-03 16:41:23,595 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-06-03 16:41:23,752 - app.services.db.workout_service - INFO - Workout created with ID: b3bb447c-c406-48ef-9ca9-11e962fd10f0
-2025-06-03 16:41:23,752 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: b3bb447c-c406-48ef-9ca9-11e962fd10f0
-2025-06-03 16:41:23,753 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-06-03 16:41:23,859 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 25cefdb4-5658-4088-9718-dbed31582416
-2025-06-03 16:41:24,045 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
-2025-06-03 16:41:24,109 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: ea8acd50-b05d-447c-a5bf-dae4deda5d20
-2025-06-03 16:41:24,168 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-06-05 12:07:41,863 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 12:07:41,979 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:07:41,979 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:07:42,133 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:07:42,141 - app.main - INFO - Response status: 200
+2025-06-05 12:07:46,446 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 12:07:46,456 - app.main - INFO - Response status: 202
+2025-06-05 12:07:47,488 - app.main - INFO - Request: GET /api/workout-analysis/4dbb551d-9e17-46a7-9c2d-c0c1bed8bfb4
+2025-06-05 12:07:47,490 - app.main - INFO - Response status: 200
+2025-06-05 12:08:03,327 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 12:08:03,489 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:03,489 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:03,603 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:03,604 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 12:08:03,703 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 12:08:03,703 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 12:08:03,810 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 12:08:03,817 - app.main - INFO - Response status: 200
+2025-06-05 12:08:03,818 - app.main - INFO - Response status: 200
+2025-06-05 12:08:03,887 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 12:08:03,941 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:03,941 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:04,121 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:08:04,130 - app.main - INFO - Response status: 200
+2025-06-05 12:08:09,292 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 12:08:09,294 - app.main - INFO - Response status: 202
+2025-06-05 12:08:10,340 - app.main - INFO - Request: GET /api/workout-analysis/7f4adb1f-a401-48c7-8d1a-5440d083e23b
+2025-06-05 12:08:10,342 - app.main - INFO - Response status: 200
+2025-06-05 12:11:59,777 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 12:15:16,468 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 12:15:16,967 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:16,967 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:17,251 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:17,252 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 12:15:17,396 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 12:15:17,396 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 12:15:17,549 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 12:15:17,555 - app.main - INFO - Response status: 200
+2025-06-05 12:15:17,556 - app.main - INFO - Response status: 200
+2025-06-05 12:15:17,678 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 12:15:17,774 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:17,774 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:18,003 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:15:18,024 - app.main - INFO - Response status: 200
+2025-06-05 12:15:22,483 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 12:15:22,632 - app.services.db.workout_service - ERROR - Error fetching workout history: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "user-987fcdeb-51a2-43d7-8f9e-123456789000"'}
+2025-06-05 12:15:22,632 - app.services.db.base_service - ERROR - Error in get_workout_history_by_exercises: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "user-987fcdeb-51a2-43d7-8f9e-123456789000"'}
+2025-06-05 12:15:22,633 - app.main - INFO - Response status: 202
+2025-06-05 12:15:23,669 - app.main - INFO - Request: GET /api/workout-analysis/cac0d5e2-e2d8-4d45-ae0b-87a24c494fef
+2025-06-05 12:15:23,673 - app.main - INFO - Response status: 200
+2025-06-05 12:18:49,960 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 12:18:50,344 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:50,344 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:50,601 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:50,602 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 12:18:50,692 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 12:18:50,693 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 12:18:50,878 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 12:18:50,882 - app.main - INFO - Response status: 200
+2025-06-05 12:18:50,883 - app.main - INFO - Response status: 200
+2025-06-05 12:18:51,018 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 12:18:51,122 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:51,123 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:51,313 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:18:51,329 - app.main - INFO - Response status: 200
+2025-06-05 12:19:15,989 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 12:19:16,226 - app.services.db.workout_service - ERROR - Error fetching workout history: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "1"'}
+2025-06-05 12:19:16,227 - app.services.db.base_service - ERROR - Error in get_workout_history_by_exercises: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "1"'}
+2025-06-05 12:19:16,227 - app.main - INFO - Response status: 202
+2025-06-05 12:19:17,272 - app.main - INFO - Request: GET /api/workout-analysis/cfdaeaad-e30e-4e0e-bac1-eb0c71ae973c
+2025-06-05 12:19:17,274 - app.main - INFO - Response status: 200
+2025-06-05 12:22:59,782 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 12:23:59,792 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 12:30:04,907 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 12:30:05,327 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:05,327 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:05,508 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:05,509 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 12:30:05,607 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 12:30:05,607 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 12:30:05,737 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 12:30:05,746 - app.main - INFO - Response status: 200
+2025-06-05 12:30:05,748 - app.main - INFO - Response status: 200
+2025-06-05 12:30:06,008 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 12:30:06,063 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:06,063 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:06,227 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 12:30:06,235 - app.main - INFO - Response status: 200
+2025-06-05 12:30:35,846 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 12:30:36,049 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-05 12:30:36,051 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Barbell Bench Press']
+2025-06-05 12:30:36,051 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-05 12:30:36,051 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Barbell Bench Press']
