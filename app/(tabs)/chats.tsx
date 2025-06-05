@@ -1,12 +1,26 @@
+// chats.tsx
+import React, { useState } from "react";
+import { Stack } from "tamagui";
 import ConversationList from "@/components/molecules/ConversationList";
-import React from "react";
-import { Stack, Text } from "tamagui";
+import { ExistingConversationChat } from "@/components/organisms/ExistingConversationChat";
 
 export default function ChatScreen() {
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
+
+  if (selectedConversationId) {
+    return (
+      <ExistingConversationChat
+        conversationId={selectedConversationId}
+        onBack={() => setSelectedConversationId(null)}
+      />
+    );
+  }
+
   return (
     <Stack flex={1} backgroundColor="$background" padding="$4">
-      <Text>Chat Screen</Text>
-      <ConversationList />
+      <ConversationList onSelectConversation={setSelectedConversationId} />
     </Stack>
   );
 }

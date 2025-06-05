@@ -1,18 +1,11 @@
-2025-06-05 18:20:27,239 - app.main - INFO - Request: POST /db/conversations/79cdeb27-eb04-41b4-9244-01adc396c863/messages
-2025-06-05 18:20:27,358 - app.api.endpoints.db - INFO - API request to save message to conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
-2025-06-05 18:20:27,358 - app.services.db.conversation_service - INFO - Getting conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
-2025-06-05 18:20:27,491 - app.services.db.conversation_service - INFO - Retrieved conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
-2025-06-05 18:20:27,491 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
-2025-06-05 18:20:27,587 - app.services.db.conversation_service - INFO - Message saved with ID: 28122b68-1d4c-4652-8360-27c0cc5a095f
-2025-06-05 18:20:27,588 - app.main - INFO - Response status: 200
-2025-06-05 18:29:08,675 - app.services.job_store - INFO - Cleaned up 1 expired jobs
-2025-06-05 18:30:14,140 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-06-05 22:39:24,364 - app.services.db.conversation_service - INFO - Getting messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,427 - app.services.db.conversation_service - INFO - Retrieved 7 messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,428 - app.main - INFO - Request: GET /db/graph-bundles
+2025-06-05 22:39:24,428 - app.main - INFO - Response status: 200
+2025-06-05 22:39:24,489 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,490 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,594 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,594 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-05 22:39:24,595 - app.main - INFO - Response status: 200
+2025-06-05 22:39:24,595 - app.main - INFO - Response status: 200
+2025-06-05 22:39:24,625 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 1e94a416-3257-4eac-826f-505f48541b49

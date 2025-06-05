@@ -1,57 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Stack, Text, ScrollView } from "tamagui";
-import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
-import ViewMoreCard from "../atoms/ViewMoreCard";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface ConversationListProps {
   limit?: number;
+  onSelectConversation: (conversationId: string) => void;
 }
 
-export default function ConversationList({ limit = 3 }: ConversationListProps) {
-  const router = useRouter();
+export default function ConversationList({
+  limit = 3,
+  onSelectConversation,
+}: ConversationListProps) {
+  const { conversations, isLoading, getConversations } = useConversationStore();
 
-  // Mock data - replace with real data later
-  const allConversations = [
-    {
-      id: "conv-1",
-      title: "Workout Planning",
-      subtitle:
-        "Discussion about next week's training split and progression targets",
-      date: new Date("2024-05-23"),
-    },
-    {
-      id: "conv-2",
-      title: "Nutrition Advice",
-      subtitle: "Meal prep ideas and macro calculations for cutting phase",
-      date: new Date("2024-05-22"),
-    },
-    {
-      id: "conv-3",
-      title: "Form Check",
-      subtitle: "Video analysis of deadlift technique and mobility work",
-      date: new Date("2024-05-21"),
-    },
-    {
-      id: "conv-4",
-      title: "Recovery Tips",
-      subtitle: "Sleep optimization and active recovery strategies",
-      date: new Date("2024-05-19"),
-    },
-  ];
+  useEffect(() => {
+    getConversations();
+  }, []);
+
+  const allConversations = Array.from(conversations.values()).sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
   const displayedConversations = allConversations.slice(0, limit);
-  const hasMore = allConversations.length > limit;
 
   const handleConversationPress = (conversationId: string) => {
-    console.log("Open conversation:", conversationId);
-    // TODO: Navigate to conversation detail or open modal
+    onSelectConversation(conversationId);
   };
 
-  const handleViewAllPress = () => {
-    //router.push('/conversations'); Navigate to dedicated conversations page
-    console.log("Routing to /conversations!");
-  };
+  if (isLoading && allConversations.length === 0) {
+    return (
+      <Stack flex={1}>
+        <Text>Loading conversations...</Text>
+      </Stack>
+    );
+  }
 
   return (
     <Stack flex={1}>
@@ -64,8 +48,8 @@ export default function ConversationList({ limit = 3 }: ConversationListProps) {
             <ContentCard
               key={conversation.id}
               title={conversation.title}
-              subtitle={conversation.subtitle}
-              date={conversation.date}
+              subtitle={`${conversation.message_count} messages`}
+              date={new Date(conversation.created_at)}
               onPress={() => handleConversationPress(conversation.id)}
             />
           ))}
