@@ -26,7 +26,6 @@ export function WorkoutCompletionModal({
   // Workout analysis store
   const workoutAnalysisStore = useWorkoutAnalysisStore();
   const analysisProgress = workoutAnalysisStore.getProgress();
-  const analysisResult = workoutAnalysisStore.getResult();
 
   // Reset slide when modal opens
   useEffect(() => {
@@ -53,7 +52,6 @@ export function WorkoutCompletionModal({
         },
         onError: (error) => {
           console.error("[WorkoutCompletionModal] Analysis error:", error);
-          // Analysis errors will be handled by the store
         },
       });
     }
@@ -64,14 +62,10 @@ export function WorkoutCompletionModal({
     console.error("[WorkoutCompletionModal] Chat error:", error);
 
     if (retryCount === 0) {
-      // First error: show toast with retry option, go back to summary
-      // TODO: Replace with your toast system
       console.log("Toast: Error connecting to workout analysis. Tap to retry.");
       setCurrentSlide("summary");
       setRetryCount(1);
     } else {
-      // Second error: close modal, show unavailable message
-      // TODO: Replace with your toast system
       console.log("Toast: Workout analysis chat unavailable");
       handleClose();
     }
@@ -96,7 +90,7 @@ export function WorkoutCompletionModal({
     <BaseModal
       isVisible={isVisible}
       onClose={handleClose}
-      widthPercent={90}
+      widthPercent={98}
       heightPercent={80}
     >
       <YStack flex={1} padding="$3">
@@ -106,11 +100,7 @@ export function WorkoutCompletionModal({
             onContinue={handleContinueToChat}
           />
         ) : (
-          <WorkoutAnalysisChat
-            analysisBundle={analysisResult}
-            analysisLoading={analysisProgress.status === "loading"}
-            onError={handleChatError}
-          />
+          <WorkoutAnalysisChat onError={handleChatError} />
         )}
 
         {/* Analysis Progress Bar - shows at bottom when loading */}

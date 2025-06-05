@@ -1,15 +1,3 @@
-2025-06-05 12:30:36,051 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Dips', 'Barbell Bench Press']
-2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Dips', 'Barbell Bench Press']
-2025-06-05 12:30:36,055 - app.services.workout_analysis.graph_service - INFO - Added 28 data points for Dips to strength chart
-2025-06-05 12:30:36,056 - app.services.workout_analysis.graph_service - INFO - Added 37 data points for Barbell Bench Press to strength chart
-2025-06-05 12:30:36,056 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 2 exercises with data
-2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 2 exercises
-2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Added 28 data points for Dips to volume chart
-2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Added 37 data points for Barbell Bench Press to volume chart
-2025-06-05 12:30:36,866 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 2 exercises with data
-2025-06-05 12:30:38,302 - app.main - INFO - Response status: 202
-2025-06-05 12:30:39,353 - app.main - INFO - Request: GET /api/workout-analysis/3ea630f2-15e2-4c24-b776-9ffaab84e727
-2025-06-05 12:30:39,363 - app.main - INFO - Response status: 200
-2025-06-05 12:30:59,791 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 15:42:16,980 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:42:16,993 - app.main - INFO - Response status: 200
+2025-06-05 15:52:02,556 - app.services.job_store - INFO - Cleaned up 1 expired jobs

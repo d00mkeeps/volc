@@ -242,3 +242,40 @@ export const mockWorkout: CompleteWorkout = {
     }
   ]
 };
+
+// Create a file: mockData/analysisBundle.ts
+export const mockAnalysisBundle = {
+  id: "0a84dd47-1bb8-4087-bc2d-334d48eb17df",
+  user_id: "1e2d6190-5d52-4f48-974c-7a5a43a50bf3",
+  metadata: {
+    date_range: "2025-04-01 to 2025-05-01",
+    total_workouts: 10,
+    total_exercises: 5,
+    exercises_included: ["squat", "bench press", "deadlift"]
+  },
+  workout_data: {
+    workouts: [
+      {
+        id: "338339aa-6253-46a1-b6ac-b14a34676d0c",
+        date: "2025-05-13T10:42:06.260669",
+        name: "Test Workout"
+      }
+    ]
+  },
+  original_query: "Show my workout progress",
+  chart_url: "https://example.com/chart.png",
+  chart_urls: {
+    volume_progress: "https://example.com/volume.png",
+    strength_progress: "https://example.com/strength.png"
+  },
+  consistency_metrics: {
+    score: 85,
+    streak: 3,
+    avg_gap: 2.5
+  },
+  top_performers: {
+    volume: [{ name: "bench press", change: 15, change_percent: 8 }],
+    strength: [{ name: "squat", change: 20, change_percent: 10 }]
+  },
+  conversation_id: "12fb5333-09c7-4532-ac2c-9eccb37a1da1"
+};

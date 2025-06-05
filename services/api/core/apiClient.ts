@@ -15,7 +15,7 @@ export async function initializeApiClient(): Promise<void> {
     try {
       const ipAddress = await getLocalIpAddress()
       API_BASE_URL = `http://${ipAddress}:8000`
-      WS_BASE_URL = `ws://${ipAddress}:8000`
+      WS_BASE_URL = `ws://${ipAddress}:8000/api/llm`
       console.log(`[apiClient] Initialized with base URL: ${API_BASE_URL}`)
     } catch (error) {
       console.error('[apiClient] Failed to initialize:', error)

@@ -5,11 +5,15 @@ import { Message } from '@/types';
 import { getWebSocketService } from '../../services/websocket/WebSocketService';
 import { ChatConfigName } from '@/types';
 
+// Stable empty array reference to prevent infinite re-renders
+const EMPTY_MESSAGES: Message[] = [];
+
 // Type for streaming message state
 interface StreamingMessageState {
   conversationId: string;
   content: string;
   isComplete: boolean;
+isProcessing?: boolean; // Add this line
 }
 
 // MessageStore state and actions
@@ -22,6 +26,7 @@ interface MessageStoreState {
   
   // Basic message operations
   getMessages: (conversationId: string) => Message[];
+  getEmptyMessages: () => Message[]; // Stable empty array reference
   loadMessages: (conversationId: string) => Promise<Message[]>;
   addUserMessage: (conversationId: string, content: string) => Promise<Message>;
   addAssistantMessage: (conversationId: string, content: string) => Promise<Message>;
@@ -51,9 +56,12 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
   isLoading: false,
   error: null,
   
+  // Return stable empty array reference
+  getEmptyMessages: () => EMPTY_MESSAGES,
+  
   // Get messages for a conversation from local state
   getMessages: (conversationId) => {
-    return get().messages.get(conversationId) || [];
+    return get().messages.get(conversationId) || EMPTY_MESSAGES;
   },
   
   // Load messages from server
@@ -191,34 +199,40 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
         }
       };
       
-      // Set up completion handler
-      const completeHandler = async () => {
-        const { streamingMessage } = get();
-        
-        if (streamingMessage && streamingMessage.conversationId === conversationId && streamingMessage.content) {
-          console.log(`[MessageStore] Completing streaming message for conversation: ${conversationId}`);
-          
-          // Mark as complete to prevent duplicate processing
-          set((state) => ({
-            streamingMessage: {
-              ...state.streamingMessage!,
-              isComplete: true
-            }
-          }));
-          
-          try {
-            // Save the complete message
-            await get().addAssistantMessage(conversationId, streamingMessage.content);
-            
-            // Clear streaming message state
-            set({ streamingMessage: null });
-          } catch (error) {
-            console.error('[MessageStore] Error saving completed message:', error);
-            // Still clear streaming state even if save fails
-            set({ streamingMessage: null });
-          }
-        }
-      };
+// stores/MessageStore.ts - Just the completion handler fix
+// Set up completion handler with duplicate prevention
+const completeHandler = async () => {
+  const { streamingMessage } = get();
+  
+  if (streamingMessage && 
+      streamingMessage.conversationId === conversationId && 
+      streamingMessage.content &&
+      !streamingMessage.isComplete &&
+      !streamingMessage.isProcessing) {
+    
+    console.log(`[MessageStore] Completing streaming message for conversation: ${conversationId}`);
+    
+    // Mark as processing to prevent duplicate execution
+    set((state) => ({
+      streamingMessage: {
+        ...state.streamingMessage!,
+        isProcessing: true
+      }
+    }));
+    
+    try {
+      // Save the complete message
+      await get().addAssistantMessage(conversationId, streamingMessage.content);
+      
+      // Clear streaming message state
+      set({ streamingMessage: null });
+    } catch (error) {
+      console.error('[MessageStore] Error saving completed message:', error);
+      // Still clear streaming state even if save fails
+      set({ streamingMessage: null });
+    }
+  }
+};
       
       // Set up error handler
       const errorHandler = (error: Error) => {

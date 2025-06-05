@@ -1,96 +1,88 @@
-2025-06-05 11:16:36,020 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:16:36,032 - app.main - INFO - Response status: 200
-2025-06-05 11:18:46,328 - app.main - INFO - Request: POST /api/workout-analysis
-2025-06-05 11:18:46,331 - app.main - INFO - Request: POST /db/workouts
-2025-06-05 11:18:46,332 - app.main - INFO - Response status: 404
-2025-06-05 11:18:46,622 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
-2025-06-05 11:18:46,623 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:18:46,624 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
-2025-06-05 11:18:46,841 - app.services.db.workout_service - INFO - Workout created with ID: 758b1e83-235a-4ec4-9c16-07d21b749bee
-2025-06-05 11:18:46,841 - app.services.db.workout_service - INFO - Creating 3 exercises for workout: 758b1e83-235a-4ec4-9c16-07d21b749bee
-2025-06-05 11:18:46,841 - app.services.db.workout_service - INFO - Creating exercise 1/3: Barbell Bench Press
-2025-06-05 11:18:46,943 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: ebca991c-5ea6-4730-9fbe-a52bf324c610
-2025-06-05 11:18:47,191 - app.services.db.workout_service - INFO - Creating exercise 2/3: Barbell Bent-Over Row
-2025-06-05 11:18:47,287 - app.services.db.workout_service - INFO - Exercise created: Barbell Bent-Over Row with ID: 488e0635-631c-4343-b7ec-035c7f642a9f
-2025-06-05 11:18:47,514 - app.services.db.workout_service - INFO - Creating exercise 3/3: Dumbbell Lateral Raise
-2025-06-05 11:18:47,617 - app.services.db.workout_service - INFO - Exercise created: Dumbbell Lateral Raise with ID: 1045765e-8e88-4230-8ef8-1fb1613fdcde
-2025-06-05 11:18:48,024 - app.services.db.workout_service - INFO - Workout creation complete for ID: 758b1e83-235a-4ec4-9c16-07d21b749bee
-2025-06-05 11:18:48,027 - app.main - INFO - Response status: 200
-2025-06-05 11:28:10,037 - app - INFO - Logging has been set up
-2025-06-05 11:28:10,038 - app.main - INFO - Application starting
-2025-06-05 11:28:10,038 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-05 11:28:10,038 - app.main - INFO - SUPABASE_URL present: True
-2025-06-05 11:28:10,038 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-05 11:29:01,683 - app.main - INFO - Request: GET /db/user-profile
-2025-06-05 11:29:01,684 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-05 11:29:01,685 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-05 11:29:01,686 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-05 11:29:01,686 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-05 11:29:01,686 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-05 11:29:01,686 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-05 11:29:01,752 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-05 11:29:02,082 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-05 11:29:02,234 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,234 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,295 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,296 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-05 11:29:02,297 - app.main - INFO - Response status: 200
-2025-06-05 11:29:02,403 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-05 11:29:02,403 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-05 11:29:02,497 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-05 11:29:02,506 - app.main - INFO - Response status: 200
-2025-06-05 11:29:02,670 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-05 11:29:02,770 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,770 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,916 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:29:02,933 - app.main - INFO - Response status: 200
-2025-06-05 11:53:59,727 - app - INFO - Logging has been set up
-2025-06-05 11:53:59,729 - app.main - INFO - Application starting
-2025-06-05 11:53:59,729 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-05 11:53:59,729 - app.main - INFO - SUPABASE_URL present: True
-2025-06-05 11:53:59,729 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-05 11:55:34,479 - app.main - INFO - Request: GET /db/user-profile
-2025-06-05 11:55:34,485 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-05 11:55:34,485 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-05 11:55:34,486 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-05 11:55:34,486 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-05 11:55:34,486 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-05 11:55:34,486 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-05 11:55:34,598 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-05 11:55:35,000 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-05 11:55:35,155 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:35,155 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:35,254 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:35,255 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-05 11:55:35,357 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-05 11:55:35,357 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-05 11:55:35,496 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-05 11:55:35,501 - app.main - INFO - Response status: 200
-2025-06-05 11:55:35,502 - app.main - INFO - Response status: 200
-2025-06-05 11:55:52,367 - app.main - INFO - Request: GET /db/user-profile
-2025-06-05 11:55:52,536 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:52,536 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:52,651 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:52,652 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-05 11:55:52,750 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-05 11:55:52,750 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-05 11:55:52,842 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-05 11:55:52,851 - app.main - INFO - Response status: 200
-2025-06-05 11:55:52,851 - app.main - INFO - Response status: 200
-2025-06-05 11:55:52,968 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-05 11:55:53,060 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:53,060 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:53,209 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 11:55:53,218 - app.main - INFO - Response status: 200
-2025-06-05 11:56:04,112 - app.main - INFO - Request: POST /api/workout-analysis
-2025-06-05 11:56:04,132 - app.main - INFO - Response status: 202
-2025-06-05 12:07:40,903 - app.main - INFO - Request: GET /db/user-profile
-2025-06-05 12:07:41,272 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 12:07:41,273 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 12:07:41,438 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 12:07:41,440 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-05 12:07:41,505 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-05 12:07:41,506 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-05 12:07:41,644 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-05 12:07:41,652 - app.main - INFO - Response status: 200
-2025-06-05 12:07:41,655 - app.main - INFO - Response status: 200
+2025-06-05 14:55:14,204 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-06-05 14:55:15,744 - app.main - INFO - Response status: 202
+2025-06-05 14:55:16,780 - app.main - INFO - Request: GET /api/workout-analysis/779b90f2-49f1-47bc-ab8c-ee7ae2eb4cba
+2025-06-05 14:55:16,790 - app.main - INFO - Response status: 200
+2025-06-05 14:55:24,501 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 14:55:24,674 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:24,675 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:24,787 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:24,788 - app.main - INFO - Response status: 200
+2025-06-05 14:55:24,788 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 14:55:24,845 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 14:55:24,846 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 14:55:24,929 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 14:55:24,939 - app.main - INFO - Response status: 200
+2025-06-05 14:55:25,010 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 14:55:25,113 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:25,114 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:25,246 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:25,254 - app.main - INFO - Response status: 200
+2025-06-05 14:55:41,926 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 14:55:42,049 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,050 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,153 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,154 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 14:55:42,154 - app.main - INFO - Response status: 200
+2025-06-05 14:55:42,210 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 14:55:42,210 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 14:55:42,299 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 14:55:42,306 - app.main - INFO - Response status: 200
+2025-06-05 14:55:42,388 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 14:55:42,444 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,445 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,580 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 14:55:42,589 - app.main - INFO - Response status: 200
+2025-06-05 15:11:02,587 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 15:36:34,987 - app.main - INFO - Request: GET /db/user-profile
+2025-06-05 15:36:35,310 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:35,310 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:35,486 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:35,487 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-05 15:36:35,596 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-05 15:36:35,596 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-05 15:36:35,734 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-05 15:36:35,739 - app.main - INFO - Response status: 200
+2025-06-05 15:36:35,740 - app.main - INFO - Response status: 200
+2025-06-05 15:36:35,965 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-05 15:36:36,064 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:36,064 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:36,258 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:36,270 - app.main - INFO - Response status: 200
+2025-06-05 15:36:46,343 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-05 15:36:46,355 - app.main - INFO - Request: POST /db/workouts
+2025-06-05 15:36:46,477 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-06-05 15:36:46,478 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-05 15:36:46,479 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-06-05 15:36:46,587 - app.services.db.workout_service - INFO - Workout created with ID: 544feedc-ad21-4d22-82ea-4d9f60971781
+2025-06-05 15:36:46,587 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 544feedc-ad21-4d22-82ea-4d9f60971781
+2025-06-05 15:36:46,588 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-06-05 15:36:46,658 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: fff8cefa-4069-40d2-a205-c1a642c3a8c4
+2025-06-05 15:36:46,854 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-06-05 15:36:46,917 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: ca15ea4c-aec4-4508-a710-e28acafdd62c
+2025-06-05 15:36:46,981 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-06-05 15:36:47,130 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 3b1b0ccb-297e-44bd-aebc-0adf9f0f46ad
+2025-06-05 15:36:47,190 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-06-05 15:36:47,267 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: c283dfbe-0e43-48e7-acc6-d5772dc4aa15
+2025-06-05 15:36:47,402 - app.services.db.workout_service - INFO - Workout creation complete for ID: 544feedc-ad21-4d22-82ea-4d9f60971781
+2025-06-05 15:36:47,403 - app.main - INFO - Response status: 200
+2025-06-05 15:36:47,535 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-05 15:36:47,536 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-05 15:36:47,536 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-05 15:36:47,536 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-05 15:36:47,537 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-05 15:36:47,537 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-05 15:36:47,537 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-05 15:36:47,537 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-05 15:36:47,538 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Overhead Press to strength chart
+2025-06-05 15:36:47,538 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Incline Dumbbell Press to strength chart
+2025-06-05 15:36:47,538 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Bench Press to strength chart
+2025-06-05 15:36:47,538 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
+2025-06-05 15:36:48,269 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
+2025-06-05 15:36:48,270 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Overhead Press to volume chart
+2025-06-05 15:36:48,271 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Incline Dumbbell Press to volume chart
+2025-06-05 15:36:48,272 - app.services.workout_analysis.graph_service - INFO - Added 51 data points for Bench Press to volume chart
+2025-06-05 15:36:48,272 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-06-05 15:36:49,810 - app.main - INFO - Response status: 202
+2025-06-05 15:36:50,851 - app.main - INFO - Request: GET /api/workout-analysis/a5ec85a4-d7ce-4c34-85d8-bd5005371fcd
+2025-06-05 15:36:50,864 - app.main - INFO - Response status: 200
+2025-06-05 15:37:06,430 - app.main - INFO - Request: POST /db/conversations
