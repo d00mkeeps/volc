@@ -1,11 +1,11 @@
 // components/WorkoutCompletionModal.tsx
 import React, { useState, useEffect } from "react";
-import { YStack, XStack, Text, Button, Progress } from "tamagui";
+import { YStack, XStack, Text, Progress } from "tamagui";
 import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "../molecules/WorkoutSummarySlide";
-import { WorkoutAnalysisChat } from "../organisms/WorkoutAnalysisChat";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { CompleteWorkout } from "@/types/workout";
+import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
 
 interface WorkoutCompletionModalProps {
   isVisible: boolean;
@@ -27,7 +27,6 @@ export function WorkoutCompletionModal({
   const workoutAnalysisStore = useWorkoutAnalysisStore();
   const analysisProgress = workoutAnalysisStore.getProgress();
 
-  // Reset slide when modal opens
   useEffect(() => {
     if (isVisible) {
       setCurrentSlide("summary");
@@ -100,7 +99,7 @@ export function WorkoutCompletionModal({
             onContinue={handleContinueToChat}
           />
         ) : (
-          <WorkoutAnalysisChat onError={handleChatError} />
+          <WorkoutAnalysisSlide onError={handleChatError} />
         )}
 
         {/* Analysis Progress Bar - shows at bottom when loading */}

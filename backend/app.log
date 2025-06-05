@@ -1,3 +1,18 @@
-2025-06-05 15:42:16,980 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 15:42:16,993 - app.main - INFO - Response status: 200
-2025-06-05 15:52:02,556 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 18:20:27,239 - app.main - INFO - Request: POST /db/conversations/79cdeb27-eb04-41b4-9244-01adc396c863/messages
+2025-06-05 18:20:27,358 - app.api.endpoints.db - INFO - API request to save message to conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
+2025-06-05 18:20:27,358 - app.services.db.conversation_service - INFO - Getting conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
+2025-06-05 18:20:27,491 - app.services.db.conversation_service - INFO - Retrieved conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
+2025-06-05 18:20:27,491 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 79cdeb27-eb04-41b4-9244-01adc396c863
+2025-06-05 18:20:27,587 - app.services.db.conversation_service - INFO - Message saved with ID: 28122b68-1d4c-4652-8360-27c0cc5a095f
+2025-06-05 18:20:27,588 - app.main - INFO - Response status: 200
+2025-06-05 18:29:08,675 - app.services.job_store - INFO - Cleaned up 1 expired jobs
+2025-06-05 18:30:14,140 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, '')

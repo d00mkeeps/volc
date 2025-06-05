@@ -1,5 +1,11 @@
 // components/chat/molecules/MessageList.tsx
-import React, { useCallback, useRef, useEffect, useMemo } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { FlatList } from "react-native";
 import { YStack, Button, Text } from "tamagui";
 import { ChevronDown } from "@tamagui/lucide-icons";
@@ -16,7 +22,6 @@ export const MessageList = ({
   streamingMessage,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
-  const [showScrollButton, setShowScrollButton] = React.useState(false);
 
   // Combine messages with streaming message
   const allMessages = useMemo(() => {
@@ -34,34 +39,13 @@ export const MessageList = ({
     return [...messages, tempStreamingMessage];
   }, [messages, streamingMessage]);
 
-  // Auto-scroll to bottom
-  const scrollToBottom = useCallback(
-    (animated = true) => {
-      if (allMessages.length > 0) {
-        listRef.current?.scrollToEnd({ animated });
-      }
-    },
-    [allMessages.length]
-  );
-
-  // Auto-scroll when new messages arrive
+  // Only auto-scroll for new actual messages, not streaming
   useEffect(() => {
-    scrollToBottom(false);
-  }, [allMessages.length, scrollToBottom]);
+    if (allMessages.length > 0) {
+      listRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [allMessages.length]);
 
-  // Handle scroll events to show/hide scroll button
-  const handleScroll = useCallback(
-    (event: any) => {
-      const { contentOffset, contentSize, layoutMeasurement } =
-        event.nativeEvent;
-      const isNearBottom =
-        contentOffset.y + layoutMeasurement.height >= contentSize.height - 100;
-      setShowScrollButton(!isNearBottom && allMessages.length > 5);
-    },
-    [allMessages.length]
-  );
-
-  // Render individual message
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => (
       <MessageItem message={item} isStreaming={item.id === "streaming"} />
@@ -69,7 +53,7 @@ export const MessageList = ({
     []
   );
 
-  // Item separator for more gap between messages
+  // Item separator
   const ItemSeparator = useCallback(() => <YStack height="$2" />, []);
 
   // Key extractor
@@ -88,38 +72,19 @@ export const MessageList = ({
   return (
     <YStack flex={1} position="relative">
       <FlatList
+        style={{ flex: 1 }}
         ref={listRef}
         data={allMessages}
         renderItem={renderMessage}
         ItemSeparatorComponent={ItemSeparator}
         keyExtractor={keyExtractor}
-        onScroll={handleScroll}
         scrollEventThrottle={400}
-        onContentSizeChange={() => scrollToBottom(false)}
-        onLayout={() => scrollToBottom(false)}
         removeClippedSubviews={true}
         contentContainerStyle={{
           paddingVertical: 16,
         }}
         showsVerticalScrollIndicator={false}
       />
-
-      {/* Scroll to bottom button */}
-      {showScrollButton && (
-        <Button
-          position="absolute"
-          bottom="$4"
-          right="$4"
-          size="$3"
-          circular
-          backgroundColor="$primary"
-          onPress={() => scrollToBottom(true)}
-          elevation="$4"
-          pressStyle={{ scale: 0.95 }}
-        >
-          <ChevronDown size="$1" color="white" />
-        </Button>
-      )}
     </YStack>
   );
 };

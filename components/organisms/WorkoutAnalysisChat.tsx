@@ -1,5 +1,5 @@
 // components/chat/organisms/WorkoutAnalysisChat.tsx
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { YStack, Text } from "tamagui";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
@@ -14,7 +14,10 @@ interface WorkoutAnalysisChatProps {
 export const WorkoutAnalysisChat = React.memo(
   ({ onError }: WorkoutAnalysisChatProps) => {
     const [conversationId, setConversationId] = useState<string>("");
-
+    const [pendingMessage, setPendingMessage] = useState<{
+      content: string;
+      analysisBundle: any;
+    } | null>(null);
     const conversationStore = useConversationStore();
     const { getResult } = useWorkoutAnalysisStore();
     const messaging = useMessaging(conversationId);
@@ -22,13 +25,11 @@ export const WorkoutAnalysisChat = React.memo(
     const handleSendMessage = useCallback(
       async (content: string) => {
         try {
-          // First message - create conversation and send with bundle
           if (!conversationId) {
             console.log(
               "[WorkoutAnalysisChat] Creating conversation for first message"
             );
 
-            // Create conversation
             const newConversationId =
               await conversationStore.createConversation({
                 title: "Workout Analysis",
@@ -38,18 +39,12 @@ export const WorkoutAnalysisChat = React.memo(
 
             setConversationId(newConversationId);
 
-            // Get analysis bundle from store
+            // Store pending message instead of setTimeout
             const analysisBundle = getResult();
-
-            // Send message with bundle (useMessaging will handle connection)
             if (analysisBundle) {
-              // Wait a moment for useMessaging to connect
-              setTimeout(() => {
-                messaging?.sendMessage(content, { analysisBundle });
-              }, 1000);
+              setPendingMessage({ content, analysisBundle });
             }
           } else {
-            // Subsequent messages - send normally
             await messaging?.sendMessage(content);
           }
         } catch (error) {
@@ -59,6 +54,15 @@ export const WorkoutAnalysisChat = React.memo(
       },
       [conversationId, conversationStore, getResult, messaging, onError]
     );
+
+    useEffect(() => {
+      if (messaging?.isConnected && pendingMessage) {
+        messaging.sendMessage(pendingMessage.content, {
+          analysisBundle: pendingMessage.analysisBundle,
+        });
+        setPendingMessage(null);
+      }
+    }, [messaging?.isConnected, pendingMessage, messaging]);
 
     // Handle messaging errors
     React.useEffect(() => {
