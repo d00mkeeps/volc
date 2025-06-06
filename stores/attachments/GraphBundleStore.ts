@@ -4,6 +4,7 @@ import { graphBundleService } from '@/services/db/graphBundle';
 import { authService } from '@/services/db/auth';
 import { WorkoutDataBundle } from '@/types/workout';
 
+// GraphBundleStore.ts - Update the interface:
 interface GraphBundleState {
   bundles: Map<string, WorkoutDataBundle>;
   isLoading: boolean;
@@ -15,6 +16,7 @@ interface GraphBundleState {
   addBundle: (bundle: WorkoutDataBundle, conversationId: string) => Promise<void>;
   deleteBundle: (bundleId: string) => Promise<void>;
   clearBundlesForConversation: (conversationId: string) => Promise<void>;
+  updateBundleConversation: (oldConversationId: string, newConversationId: string) => Promise<void>; // Add this line
 }
 
 const MAX_BUNDLES_PER_CONVERSATION = 20;
@@ -143,6 +145,48 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
       set({ isLoading: false });
     }
   },
+  // GraphBundleStore.ts - Update updateBundleConversation method:
+updateBundleConversation: async (oldConversationId: string, newConversationId: string) => {
+  try {
+    set({ isLoading: true, error: null });
+    
+    const session = await authService.getSession();
+    if (!session?.user?.id) {
+      throw new Error("No authenticated user found");
+    }
+    
+    // Get pending bundles
+    const pendingBundles = await graphBundleService.getGraphBundlesByConversation(
+      session.user.id, 
+      oldConversationId
+    );
+    
+    if (pendingBundles.length > 0) {
+      const bundle = pendingBundles[0];
+      
+      // Create updated bundle
+      const updatedBundle = {
+        ...bundle,
+        conversationId: newConversationId
+      };
+      
+      // Delete old bundle and save new one
+      await graphBundleService.deleteGraphBundle(session.user.id, bundle.bundle_id);
+      await graphBundleService.saveGraphBundle(session.user.id, updatedBundle);
+      
+      // Update local state
+      const newBundles = new Map(get().bundles);
+      newBundles.delete(bundle.bundle_id);
+      newBundles.set(bundle.bundle_id, updatedBundle);
+      set({ bundles: newBundles });
+    }
+  } catch (error) {
+    console.error("[GraphBundleStore] Failed to update bundle conversation:", error);
+    set({ error: error instanceof Error ? error : new Error(String(error)) });
+  } finally {
+    set({ isLoading: false });
+  }
+},
   
   clearBundlesForConversation: async (conversationId: string) => {
     try {
@@ -172,3 +216,4 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
     }
   }
 }));
+

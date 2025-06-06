@@ -2,12 +2,12 @@
 import React, { useState, useRef, useMemo } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
-import Header from "@/components/molecules/HomeScreenHeader";
+import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
-import TemplateSelector from "@/components/molecules/TemplateModal";
+import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import {
   createEmptyWorkout,

@@ -1,4 +1,4 @@
-import WorkoutList from "@/components/molecules/WorkoutList";
+import WorkoutList from "@/components/molecules/workout/WorkoutList";
 import React from "react";
 import { Stack, Text } from "tamagui";
 

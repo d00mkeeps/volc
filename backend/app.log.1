@@ -1,90 +1,178 @@
-2025-06-05 22:39:10,613 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:10,615 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:10,667 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:10,667 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:10,668 - app.main - INFO - Response status: 200
-2025-06-05 22:39:10,669 - app.main - INFO - Response status: 200
-2025-06-05 22:39:10,669 - app.main - INFO - Response status: 200
-2025-06-05 22:39:10,670 - app.main - INFO - Response status: 200
-2025-06-05 22:39:10,704 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:12,886 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-05 22:39:12,903 - app.main - INFO - Request: GET /db/conversations
-2025-06-05 22:39:12,964 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:12,965 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-05 22:39:12,965 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-05 22:39:13,023 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-05 22:39:13,024 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-05 22:39:13,024 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:13,079 - app.services.db.conversation_service - INFO - Retrieved 20 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:13,079 - app.api.endpoints.db - INFO - Retrieved 20 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:13,081 - app.main - INFO - Response status: 200
-2025-06-05 22:39:13,465 - app.main - INFO - Request: GET /db/conversations/f2f42323-dee9-43af-9675-903646ca0a4e/messages
-2025-06-05 22:39:13,529 - app.api.endpoints.db - INFO - API request to get messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,530 - app.services.db.conversation_service - INFO - Getting conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,585 - app.services.db.conversation_service - INFO - Retrieved conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,585 - app.services.db.conversation_service - INFO - Getting messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,645 - app.services.db.conversation_service - INFO - Retrieved 3 messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,645 - app.main - INFO - Request: GET /db/conversations/f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,646 - app.main - INFO - Request: GET /db/conversations/f2f42323-dee9-43af-9675-903646ca0a4e/messages
-2025-06-05 22:39:13,646 - app.main - INFO - Request: GET /db/graph-bundles
-2025-06-05 22:39:13,701 - app.api.endpoints.db - INFO - API request to get conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,701 - app.services.db.conversation_service - INFO - Getting conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,754 - app.services.db.conversation_service - INFO - Retrieved conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,824 - app.api.endpoints.db - INFO - API request to get messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,824 - app.services.db.conversation_service - INFO - Getting conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,877 - app.services.db.conversation_service - INFO - Retrieved conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,877 - app.services.db.conversation_service - INFO - Getting messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,930 - app.services.db.conversation_service - INFO - Retrieved 3 messages for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,990 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:13,990 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:14,045 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:14,046 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:14,047 - app.main - INFO - Response status: 200
-2025-06-05 22:39:14,047 - app.main - INFO - Response status: 200
-2025-06-05 22:39:14,048 - app.main - INFO - Response status: 200
-2025-06-05 22:39:14,048 - app.main - INFO - Response status: 200
-2025-06-05 22:39:14,150 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: f2f42323-dee9-43af-9675-903646ca0a4e
-2025-06-05 22:39:15,306 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-05 22:39:15,324 - app.main - INFO - Request: GET /db/conversations
-2025-06-05 22:39:15,393 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:15,394 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-05 22:39:15,394 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-05 22:39:15,456 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-05 22:39:15,456 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-05 22:39:15,456 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:15,509 - app.services.db.conversation_service - INFO - Retrieved 20 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:15,509 - app.api.endpoints.db - INFO - Retrieved 20 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-05 22:39:15,511 - app.main - INFO - Response status: 200
-2025-06-05 22:39:23,687 - app.main - INFO - Request: GET /db/conversations/1e94a416-3257-4eac-826f-505f48541b49/messages
-2025-06-05 22:39:23,824 - app.api.endpoints.db - INFO - API request to get messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:23,824 - app.services.db.conversation_service - INFO - Getting conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:23,972 - app.services.db.conversation_service - INFO - Retrieved conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:23,972 - app.services.db.conversation_service - INFO - Getting messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,040 - app.services.db.conversation_service - INFO - Retrieved 7 messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,041 - app.main - INFO - Request: GET /db/conversations/1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,041 - app.main - INFO - Response status: 200
-2025-06-05 22:39:24,101 - app.api.endpoints.db - INFO - API request to get conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,101 - app.services.db.conversation_service - INFO - Getting conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,196 - app.services.db.conversation_service - INFO - Retrieved conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,198 - app.main - INFO - Request: GET /db/conversations/1e94a416-3257-4eac-826f-505f48541b49/messages
-2025-06-05 22:39:24,266 - app.api.endpoints.db - INFO - API request to get messages for conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,266 - app.services.db.conversation_service - INFO - Getting conversation: 1e94a416-3257-4eac-826f-505f48541b49
-2025-06-05 22:39:24,363 - app.services.db.conversation_service - INFO - Retrieved conversation: 1e94a416-3257-4eac-826f-505f48541b49
+2025-06-06 02:01:40,162 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-06-06 02:01:40,163 - app.core.supabase.client - INFO - Supabase key length: 208 characters
+2025-06-06 02:01:40,215 - app.core.supabase.client - INFO - Supabase client created successfully
+2025-06-06 02:01:40,340 - app.core.supabase.client - INFO - Test query successful: 1
+2025-06-06 02:01:40,442 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 02:01:40,442 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-06-06 02:01:40,442 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-06-06 02:01:40,496 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-06-06 02:01:40,497 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-06-06 02:01:40,497 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 02:01:40,554 - app.services.db.conversation_service - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 02:01:40,554 - app.api.endpoints.db - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 02:01:40,557 - app.main - INFO - Response status: 200
+2025-06-06 02:01:40,895 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
+2025-06-06 02:01:40,959 - app.api.endpoints.db - INFO - API request to get messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:40,959 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,015 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,015 - app.services.db.conversation_service - INFO - Getting messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,069 - app.services.db.conversation_service - INFO - Retrieved 15 messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,070 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
+2025-06-06 02:01:41,071 - app.main - INFO - Response status: 200
+2025-06-06 02:01:41,122 - app.api.endpoints.db - INFO - API request to get messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,123 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,176 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,176 - app.services.db.conversation_service - INFO - Getting messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,229 - app.services.db.conversation_service - INFO - Retrieved 15 messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,229 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,285 - app.api.endpoints.db - INFO - API request to get conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,285 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,339 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,339 - app.main - INFO - Request: GET /db/graph-bundles
+2025-06-06 02:01:41,340 - app.main - INFO - Response status: 200
+2025-06-06 02:01:41,392 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,393 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,447 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,447 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:41,448 - app.main - INFO - Response status: 200
+2025-06-06 02:01:41,449 - app.main - INFO - Response status: 200
+2025-06-06 02:01:41,475 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,368 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
+2025-06-06 02:01:43,428 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,428 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,486 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,487 - app.services.db.conversation_service - INFO - Saving user message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,544 - app.services.db.conversation_service - INFO - Message saved with ID: ea50d1f2-3a6c-43e9-9267-6a14fb9a70ba
+2025-06-06 02:01:43,544 - app.main - INFO - Response status: 200
+2025-06-06 02:01:43,606 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
+2025-06-06 02:01:43,606 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
+2025-06-06 02:01:43,606 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
+2025-06-06 02:01:43,606 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:43,608 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-06-06 02:01:43,608 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-06-06 02:01:43,609 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+
+
+Current workout data context:
+Available workout data:
+            {
+  "available_data": {
+    "query": "Analyze progress for: Bench Press, Overhead Press, Incline Dumbbell Press, Tricep Dips",
+    "date_range": {
+      "start": "2025-03-28T16:51:04.357000+00:00",
+      "end": "2025-06-06T00:56:57.962600+00:00"
+    },
+    "workout_metrics": {
+      "exercise_progression": {
+        "Barbell Bench Press": {
+          "occurrences": 38,
+          "first_date": "2025-03-28T16:51:04.357+00:00",
+          "last_date": "2025-06-05T10:18:46.62358+00:00",
+          "weight_progression": {
+            "start": 95,
+            "current": 90,
+            "change": -5,
+            "change_percent": -5.3
+          },
+          "volume_trend": "stable"
+        },
+        "Tricep Dips": {
+          "occurrences": 66,
+          "first_date": "2025-05-26T11:45:46.446271+00:00",
+          "last_date": "2025-06-06T00:56:57.9626+00:00",
+          "weight_progression": {
+            "start": 0,
+            "current": 0,
+            "change": 0,
+            "change_percent": 0
+          },
+          "volume_trend": "stable"
+        },
+        "Overhead Press": {
+          "occurrences": 67,
+          "first_date": "2025-05-26T11:45:46.446271+00:00",
+          "last_date": "2025-06-06T00:56:57.9626+00:00",
+          "weight_progression": {
+            "start": 50,
+            "current": 50,
+            "change": 0,
+            "change_percent": 0
+          },
+          "volume_trend": "stable"
+        },
+        "Incline Dumbbell Press": {
+          "occurrences": 67,
+          "first_date": "2025-05-26T11:45:46.446271+00:00",
+          "last_date": "2025-06-06T00:56:57.9626+00:00",
+          "weight_progression": {
+            "start": 30,
+            "current": 30,
+            "change": 0,
+            "change_percent": 0
+          },
+          "volume_trend": "stable"
+        },
+        "Bench Press": {
+          "occurrences": 67,
+          "first_date": "2025-05-26T11:45:46.446271+00:00",
+          "last_date": "2025-06-06T00:56:57.9626+00:00",
+          "weight_progression": {
+            "start": 80,
+            "current": 80,
+            "change": 0,
+            "change_percent": 0
+          },
+          "volume_trend": "stable"
+        },
+        "Dips": {
+          "occurrences": 29,
+          "first_date": "2025-04-07T15:18:47.869+00:00",
+          "last_date": "2025-06-05T23:39:47.013619+00:00",
+          "weight_progression": {
+            "start": 95,
+            "current": 95,
+            "change": 0,
+            "change_percent": 0
+          },
+          "volume_trend": "stable"
+        }
+      },
+      "strength_progression": {},
+      "most_improved_exercises": [],
+      "workout_frequency": {
+        "total_workouts": 123,
+        "first_workout": "2025-03-28",
+        "last_workout": "2025-06-06",
+        "total_days": 70,
+        "avg_days_between": 0.5,
+        "workouts_per_week": 15.2,
+        "consistency_score": {
+          "score": 0,
+          "streak": 31
+        }
+      }
+    },
+    "total_workouts": 123,
+    "correlation_analysis": []
+  }
+}
+
+Visualizations and metrics:
+
+CHARTS:
+Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
+
+CONSISTENCY METRICS:
+- Score: 0/100
+- Current streak: 31 workouts
+- Average frequency: Every 0.5 days
+
+TOP PERFORMERS:
+- Strength gains: No significant strength gains detected
+- Volume increases: No significant volume increases detected
+- Most frequent exercises: Not enough data
+
+2025-06-06 02:01:43,609 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):

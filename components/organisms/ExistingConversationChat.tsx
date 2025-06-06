@@ -54,6 +54,8 @@ export const ExistingConversationChat = ({
 
   const handleSend = useCallback(
     async (content: string) => {
+      console.log("Sending with bundle:", latestBundle);
+
       try {
         await messaging?.sendMessage(content, {
           analysisBundle: latestBundle,

@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { workoutAnalysisService } from '../../services/api/workoutAnalysisService';
 import { useJobStore } from './JobStore';
 import { useUserStore } from '@/stores/userProfileStore';
+import { useGraphBundleStore } from '../attachments/GraphBundleStore';
 
 interface AnalysisStatus {
   jobId: string | null;
@@ -171,19 +172,33 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
     });
   },
   
-  _handleAnalysisComplete: (result) => {
-    console.log('[WorkoutAnalysisStore] Analysis completed successfully:', result);
+// WorkoutAnalysisStore.ts - Update _handleAnalysisComplete:
+_handleAnalysisComplete: (result) => {
+  console.log('[WorkoutAnalysisStore] Analysis completed successfully:', result);
+  
+  // Update state with result
+  set((state) => ({
+    currentAnalysis: {
+      ...state.currentAnalysis,
+      status: 'success',
+      progress: 100,
+      result
+    }
+  }));
+  
+  // Save bundle immediately with temporary ID
+  const userProfile = useUserStore.getState().userProfile;
+  const userId = userProfile?.auth_user_uuid;
+  if (userId) {
+    const tempId = `pending-${userId}`;
+    const bundleStore = useGraphBundleStore.getState();
     
-    // Update state with result
-    set((state) => ({
-      currentAnalysis: {
-        ...state.currentAnalysis,
-        status: 'success',
-        progress: 100,
-        result
-      }
-    }));
-  },
+    // Clear any existing pending bundle first
+    bundleStore.clearBundlesForConversation(tempId);
+    // Save new bundle with temporary ID
+    bundleStore.addBundle(result, tempId);
+  }
+},
   
   _handleAnalysisError: (error) => {
     console.error('[WorkoutAnalysisStore] Analysis failed:', error);

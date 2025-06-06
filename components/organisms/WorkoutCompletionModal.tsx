@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { YStack, XStack, Text, Progress } from "tamagui";
 import BaseModal from "../atoms/Modal";
-import { WorkoutSummarySlide } from "../molecules/WorkoutSummarySlide";
+import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { CompleteWorkout } from "@/types/workout";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";

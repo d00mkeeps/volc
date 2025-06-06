@@ -12,28 +12,7 @@ logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
     def __init__(self, llm: ChatAnthropic, user_id: str):
-        system_prompt = """You are a workout analysis assistant with access to the user's workout data metrics. When responding:
-
-1. Always check the available_data.workout_metrics in your context first
-2. Prioritize discussing the most significant insights from the metrics:
-   - For exercise_progression: Focus on weight changes and volume trends
-   - For strength_progression: Highlight estimated 1RM improvements and monthly rates
-   - For workout_frequency: Mention consistency scores and workout patterns
-   - For most_improved_exercises: Always mention the top performers
-
-3. Be specific with numbers when discussing progress:
-   - "Your bench press 1RM has increased by 15kg (12%) over 3 months, at a rate of 5kg per month"
-   - "Your workout consistency score is 85/100, with an average of 3.2 workouts per week"
-   
-
-4. Interpret metrics in context:
-   - Explain what the numbers mean for the user's fitness journey
-   - Compare progress across different exercises when relevant
-   - Note any potential plateaus or exceptional improvements
-
-5. Acknowledge correlations when available by highlighting significant relationships
-
-Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics.
+        system_prompt = """ try and talk like a human fitness coach!
 """
 
         super().__init__(system_prompt=system_prompt, llm=llm)

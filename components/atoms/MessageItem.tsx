@@ -18,9 +18,9 @@ export const MessageItem = memo(
     const markdownStyles = StyleSheet.create({
       body: {
         fontSize: 16,
-        fontWeight: "500", // Increased from default
+        fontWeight: "400", // Increased from default
         lineHeight: 22,
-        color: isUser ? "#ffffff" : "#ffffff", // White text for assistant messages too
+        color: "#ffffff", // White text for assistant messages too
         margin: 0,
         padding: 0,
       },
@@ -63,13 +63,13 @@ export const MessageItem = memo(
         width="100%"
         justifyContent={isUser ? "flex-end" : "flex-start"}
         paddingHorizontal="$4"
-        paddingVertical="$1"
+        paddingVertical="$2"
       >
         <YStack
-          maxWidth="80%"
+          maxWidth="90%"
           backgroundColor={isUser ? "$primary" : "$backgroundSoft"}
           paddingHorizontal="$3"
-          paddingVertical="$1.5" // Reduced from $2.5 (about 30% reduction)
+          paddingVertical="$2" // Reduced from $2.5 (about 30% reduction)
           borderRadius="$4"
           opacity={isStreaming ? 0.7 : 1}
         >

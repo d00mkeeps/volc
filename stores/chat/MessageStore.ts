@@ -175,29 +175,29 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
       console.log(`[MessageStore] Connecting to conversation: ${conversationId} with config: ${configName}`);
       
       // Set up message content handler
-      const contentHandler = (content: string) => {
-        const { streamingMessage } = get();
-        
-        // If this is the first content chunk, start a new streaming message
-        if (!streamingMessage || streamingMessage.conversationId !== conversationId) {
-          console.log(`[MessageStore] Starting streaming message for conversation: ${conversationId}`);
-          set({
-            streamingMessage: {
-              conversationId,
-              content,
-              isComplete: false
-            }
-          });
-        } else {
-          // Append to existing streaming message
-          set((state) => ({
-            streamingMessage: {
-              ...state.streamingMessage!,
-              content: state.streamingMessage!.content + content
-            }
-          }));
-        }
-      };
+// In MessageStore.ts contentHandler:
+const contentHandler = (content: string) => {
+  const { streamingMessage } = get();
+  
+  if (!streamingMessage || streamingMessage.conversationId !== conversationId) {
+    console.log('Starting new streaming message');
+    set({
+      streamingMessage: {
+        conversationId,
+        content,
+        isComplete: false
+      }
+    });
+  } else {
+    console.log('Appending to existing streaming message');
+    set((state) => ({
+      streamingMessage: {
+        ...state.streamingMessage!,
+        content: state.streamingMessage!.content + content
+      }
+    }));
+  }
+};
       
 // stores/MessageStore.ts - Just the completion handler fix
 // Set up completion handler with duplicate prevention

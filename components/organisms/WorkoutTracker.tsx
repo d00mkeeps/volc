@@ -14,8 +14,8 @@ import Animated, {
   interpolate,
   useSharedValue,
 } from "react-native-reanimated";
-import WorkoutTrackerHeader from "@/components/molecules/WorkoutTrackerHeader";
-import ExerciseTracker from "@/components/molecules/ExerciseTracker";
+import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
+import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
 import GradientBlur from "@/components/atoms/GradientBlur";
 import { WorkoutExercise } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";

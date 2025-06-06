@@ -1,7 +1,7 @@
 // components/chat/molecules/ChatInterface.tsx
 import React from "react";
 import { YStack } from "tamagui";
-import { MessageList } from "../molecules/MessageList";
+import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/InputArea";
 import { Message } from "@/types";
 

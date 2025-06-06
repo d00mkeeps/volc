@@ -5,10 +5,10 @@ import SetRow from "./SetRow";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { Alert } from "react-native";
 import ExerciseSearchInput from "./ExerciseSearchInput";
-import ExerciseTrackerHeader from "./headers/ExerciseTrackerHeader";
+import ExerciseTrackerHeader from "../headers/ExerciseTrackerHeader";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
-import NewSetButton from "../atoms/buttons/NewSetButton";
-import SetHeader from "./headers/SetHeader";
+import NewSetButton from "../../atoms/buttons/NewSetButton";
+import SetHeader from "../headers/SetHeader";
 import NotesModal from "./NotesModal";
 
 interface ExerciseTrackerProps {

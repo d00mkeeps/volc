@@ -7,9 +7,8 @@ import React, {
   useState,
 } from "react";
 import { FlatList } from "react-native";
-import { YStack, Button, Text } from "tamagui";
-import { ChevronDown } from "@tamagui/lucide-icons";
-import { MessageItem } from "../atoms/MessageItem";
+import { YStack, Text } from "tamagui";
+import { MessageItem } from "../../atoms/MessageItem";
 import { Message } from "@/types";
 
 interface MessageListProps {
@@ -23,20 +22,34 @@ export const MessageList = ({
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
 
-  // Combine messages with streaming message
   const allMessages = useMemo(() => {
-    if (!streamingMessage) return messages;
+    let filteredMessages = messages;
+
+    // Filter out initial user message(s)
+    if (messages.length > 0 && messages[0].sender === "user") {
+      filteredMessages = messages.slice(1);
+
+      // If there's still a duplicate user message, remove it too
+      if (
+        filteredMessages.length > 0 &&
+        filteredMessages[0].sender === "user"
+      ) {
+        filteredMessages = filteredMessages.slice(1);
+      }
+    }
+
+    if (!streamingMessage) return filteredMessages;
 
     const tempStreamingMessage: Message = {
       id: "streaming",
       content: streamingMessage.content,
       sender: "assistant",
-      conversation_id: messages[0]?.conversation_id || "",
-      conversation_sequence: messages.length + 1,
+      conversation_id: messages[0]?.conversation_id || "", // Use original messages
+      conversation_sequence: filteredMessages.length + 1,
       timestamp: new Date(),
     };
 
-    return [...messages, tempStreamingMessage];
+    return [...filteredMessages, tempStreamingMessage];
   }, [messages, streamingMessage]);
 
   // Only auto-scroll for new actual messages, not streaming
@@ -52,10 +65,6 @@ export const MessageList = ({
     ),
     []
   );
-
-  // Item separator
-  const ItemSeparator = useCallback(() => <YStack height="$2" />, []);
-
   // Key extractor
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
@@ -76,14 +85,13 @@ export const MessageList = ({
         ref={listRef}
         data={allMessages}
         renderItem={renderMessage}
-        ItemSeparatorComponent={ItemSeparator}
         keyExtractor={keyExtractor}
         scrollEventThrottle={400}
         removeClippedSubviews={true}
         contentContainerStyle={{
           paddingVertical: 16,
         }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       />
     </YStack>
   );

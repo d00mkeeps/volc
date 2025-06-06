@@ -1,10 +1,11 @@
-// components/chat/organisms/WorkoutAnalysisSlide.tsx
 import React, { useState, useCallback, useEffect } from "react";
-import { YStack } from "tamagui";
+import { YStack, Text } from "tamagui";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { ChatInterface } from "./ChatInterface";
+import { useGraphBundleStore } from "@/stores/attachments/GraphBundleStore";
+import { InputArea } from "../atoms/InputArea";
 
 interface WorkoutAnalysisSlideProps {
   onError?: (error: Error) => void;
@@ -19,8 +20,10 @@ export const WorkoutAnalysisSlide = ({
     analysisBundle: any;
   } | null>(null);
 
+  const [hasAutoSent, setHasAutoSent] = useState(false);
   const conversationStore = useConversationStore();
   const { getResult } = useWorkoutAnalysisStore();
+  const bundleStore = useGraphBundleStore();
   const messaging = useMessaging(conversationId);
 
   const handleSend = useCallback(
@@ -32,7 +35,7 @@ export const WorkoutAnalysisSlide = ({
           );
 
           const newConversationId = await conversationStore.createConversation({
-            title: "Workout Analysis",
+            title: "Workout Analysis 1",
             firstMessage: content,
             configName: "workout-analysis",
           });
@@ -41,6 +44,8 @@ export const WorkoutAnalysisSlide = ({
 
           const analysisBundle = getResult();
           if (analysisBundle) {
+            // Save bundle to database
+            await bundleStore.addBundle(analysisBundle, newConversationId);
             setPendingMessage({ content, analysisBundle });
           }
         } else {
@@ -51,8 +56,22 @@ export const WorkoutAnalysisSlide = ({
         onError?.(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    [conversationId, conversationStore, getResult, messaging, onError]
+    [
+      conversationId,
+      conversationStore,
+      getResult,
+      messaging,
+      onError,
+      bundleStore,
+    ]
   );
+
+  useEffect(() => {
+    if (!conversationId && !hasAutoSent) {
+      setHasAutoSent(true);
+      handleSend("Analyze my workout");
+    }
+  }, [conversationId, hasAutoSent, handleSend]);
 
   // Handle pending message when connection is ready
   useEffect(() => {
@@ -83,13 +102,29 @@ export const WorkoutAnalysisSlide = ({
 
   return (
     <YStack flex={1}>
-      <ChatInterface
-        messages={messaging?.messages || []}
-        streamingMessage={messaging?.streamingMessage}
-        isConnected={messaging?.isConnected}
-        onSend={handleSend}
-        placeholder="Ask about your workout analysis..."
-      />
+      {!conversationId ? (
+        // No conversation yet - show ready state
+        <>
+          <YStack flex={1} justifyContent="center" alignItems="center">
+            <Text color="$textMuted" fontSize="$4">
+              Ready to analyze your workout
+            </Text>
+          </YStack>
+          <InputArea
+            placeholder="Ask about your workout analysis..."
+            onSendMessage={handleSend}
+          />
+        </>
+      ) : (
+        // Has conversation - use ChatInterface
+        <ChatInterface
+          messages={messaging?.messages || []}
+          streamingMessage={messaging?.streamingMessage}
+          isConnected={messaging?.isConnected}
+          onSend={handleSend}
+          placeholder="Ask about your workout analysis..."
+        />
+      )}
     </YStack>
   );
 };

@@ -1,7 +1,7 @@
 // chats.tsx
 import React, { useState } from "react";
 import { Stack } from "tamagui";
-import ConversationList from "@/components/molecules/ConversationList";
+import ConversationList from "@/components/molecules/chat/ConversationList";
 import { ExistingConversationChat } from "@/components/organisms/ExistingConversationChat";
 
 export default function ChatScreen() {
