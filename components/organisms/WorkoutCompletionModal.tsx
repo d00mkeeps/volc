@@ -4,18 +4,16 @@ import { YStack, XStack, Text, Progress } from "tamagui";
 import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
-import { CompleteWorkout } from "@/types/workout";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {
   isVisible: boolean;
-  workout: CompleteWorkout | null;
   onClose: () => void;
 }
 
 export function WorkoutCompletionModal({
   isVisible,
-  workout,
   onClose,
 }: WorkoutCompletionModalProps) {
   const [currentSlide, setCurrentSlide] = useState<"summary" | "chat">(
@@ -23,7 +21,7 @@ export function WorkoutCompletionModal({
   );
   const [retryCount, setRetryCount] = useState(0);
 
-  // Workout analysis store
+  const { currentWorkout } = useUserSessionStore();
   const workoutAnalysisStore = useWorkoutAnalysisStore();
   const analysisProgress = workoutAnalysisStore.getProgress();
 
@@ -35,14 +33,15 @@ export function WorkoutCompletionModal({
   }, [isVisible]);
 
   // Trigger workout analysis when modal opens
+  // Trigger workout analysis when modal opens
   useEffect(() => {
-    if (isVisible && workout) {
+    if (isVisible && currentWorkout) {
       console.log(
         "[WorkoutCompletionModal] Triggering workout analysis for:",
-        workout.name
+        currentWorkout.name
       );
 
-      workoutAnalysisStore.submitAnalysis(workout, {
+      workoutAnalysisStore.submitAnalysis(currentWorkout, {
         onProgress: (progress) => {
           console.log("[WorkoutCompletionModal] Analysis progress:", progress);
         },
@@ -54,9 +53,8 @@ export function WorkoutCompletionModal({
         },
       });
     }
-  }, [isVisible, workout]);
+  }, [isVisible]); // Only trigger when modal opens
 
-  // Handle chat errors (connection, conversation, etc.)
   const handleChatError = (error: Error) => {
     console.error("[WorkoutCompletionModal] Chat error:", error);
 
@@ -70,7 +68,6 @@ export function WorkoutCompletionModal({
     }
   };
 
-  // Handle modal close with cleanup
   const handleClose = () => {
     console.log(
       "[WorkoutCompletionModal] Closing modal and resetting analysis"
@@ -80,7 +77,6 @@ export function WorkoutCompletionModal({
     onClose();
   };
 
-  // Continue to chat slide
   const handleContinueToChat = () => {
     setCurrentSlide("chat");
   };
@@ -94,15 +90,11 @@ export function WorkoutCompletionModal({
     >
       <YStack flex={1} padding="$3">
         {currentSlide === "summary" ? (
-          <WorkoutSummarySlide
-            workout={workout}
-            onContinue={handleContinueToChat}
-          />
+          <WorkoutSummarySlide onContinue={handleContinueToChat} />
         ) : (
           <WorkoutAnalysisSlide onError={handleChatError} />
         )}
 
-        {/* Analysis Progress Bar - shows at bottom when loading */}
         {analysisProgress.status === "loading" && (
           <YStack
             position="absolute"

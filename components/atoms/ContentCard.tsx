@@ -1,11 +1,14 @@
 import React from "react";
 import { Stack, Text } from "tamagui";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ContentCardProps {
   title: string;
   subtitle: string;
   date: Date;
   onPress: () => void;
+  showDelete?: boolean;
+  onDelete?: () => void;
 }
 
 export default function ContentCard({
@@ -13,7 +16,14 @@ export default function ContentCard({
   subtitle,
   date,
   onPress,
+  showDelete = false,
+  onDelete,
 }: ContentCardProps) {
+  const handleDelete = (e: any) => {
+    e.stopPropagation();
+    onDelete?.();
+  };
+
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
       month: "short",
@@ -41,7 +51,6 @@ export default function ContentCard({
       cursor="pointer"
       onPress={onPress}
     >
-      {/* Header with date */}
       <Stack
         flexDirection="row"
         justifyContent="space-between"
@@ -53,12 +62,27 @@ export default function ContentCard({
             {title}
           </Text>
         </Stack>
-        <Text fontSize="$2" color="$textSoft" fontWeight={800}>
-          {formatDate(date)}
-        </Text>
+
+        <Stack flexDirection="row" alignItems="center" gap="$2">
+          {!showDelete && (
+            <Text fontSize="$2" color="$textSoft" fontWeight={800}>
+              {formatDate(date)}
+            </Text>
+          )}
+
+          {showDelete && (
+            <Stack
+              padding="$1"
+              borderRadius="$2"
+              pressStyle={{ backgroundColor: "$backgroundHover" }}
+              onPress={handleDelete}
+            >
+              <Ionicons name="trash-outline" size={16} color="#dc2626" />
+            </Stack>
+          )}
+        </Stack>
       </Stack>
 
-      {/* Subtitle */}
       <Text fontSize="$3" color="$textSoft" numberOfLines={2} fontWeight="500">
         {subtitle}
       </Text>

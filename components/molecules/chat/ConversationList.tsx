@@ -12,7 +12,8 @@ export default function ConversationList({
   limit = 3,
   onSelectConversation,
 }: ConversationListProps) {
-  const { conversations, isLoading, getConversations } = useConversationStore();
+  const { conversations, isLoading, getConversations, deleteConversation } =
+    useConversationStore();
 
   useEffect(() => {
     getConversations();
@@ -27,6 +28,14 @@ export default function ConversationList({
 
   const handleConversationPress = (conversationId: string) => {
     onSelectConversation(conversationId);
+  };
+
+  const handleDeleteConversation = async (conversationId: string) => {
+    try {
+      await deleteConversation(conversationId);
+    } catch (error) {
+      console.error("Failed to delete conversation:", error);
+    }
   };
 
   if (isLoading && allConversations.length === 0) {
@@ -51,6 +60,8 @@ export default function ConversationList({
               subtitle={`${conversation.message_count} messages`}
               date={new Date(conversation.created_at)}
               onPress={() => handleConversationPress(conversation.id)}
+              showDelete={true}
+              onDelete={() => handleDeleteConversation(conversation.id)}
             />
           ))}
         </Stack>

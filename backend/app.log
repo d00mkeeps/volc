@@ -1,62 +1,79 @@
-2025-06-06 14:53:41,956 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 14:53:41,957 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 15:02:15,594 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-06 15:02:15,598 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-06 15:02:15,598 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-06 15:02:15,599 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-06 15:02:15,599 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-06 15:02:15,599 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-06 15:02:15,599 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-06 15:02:15,687 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-06 15:02:16,036 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-06 15:02:16,189 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:16,190 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:16,379 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:16,395 - app.main - INFO - Response status: 200
-2025-06-06 15:02:16,775 - app.main - INFO - Request: GET /db/workouts/user
-2025-06-06 15:02:16,849 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:16,850 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:17,166 - app.services.db.workout_service - INFO - Retrieved 195 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:17,166 - app.api.endpoints.db - INFO - Retrieved 195 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:02:17,240 - app.main - INFO - Response status: 200
-2025-06-06 15:04:49,054 - app.main - INFO - Request: PUT /db/workouts/6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:04:49,060 - app.main - INFO - Response status: 405
-2025-06-06 15:06:15,046 - app - INFO - Logging has been set up
-2025-06-06 15:06:15,046 - app.main - INFO - Application starting
-2025-06-06 15:06:15,047 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 15:06:15,047 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 15:06:15,047 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 15:06:19,991 - app.main - INFO - Request: PUT /db/workouts/6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:06:19,992 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-06 15:06:19,992 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-06 15:06:19,993 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-06 15:06:19,993 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-06 15:06:19,993 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-06 15:06:19,993 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-06 15:06:20,030 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-06 15:06:20,369 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-06 15:06:20,525 - app.api.endpoints.db - INFO - API request to update workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:06:20,526 - app.services.db.workout_service - INFO - Getting workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:06:20,637 - app.services.db.workout_service - INFO - Successfully retrieved workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:06:20,638 - app.api.endpoints.db - ERROR - Error updating workout: 'WorkoutService' object has no attribute 'update_workout'
-2025-06-06 15:06:20,638 - app.main - INFO - Response status: 500
-2025-06-06 15:08:04,548 - app - INFO - Logging has been set up
-2025-06-06 15:08:04,548 - app.main - INFO - Application starting
-2025-06-06 15:08:04,548 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 15:08:04,548 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 15:08:04,548 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 15:11:05,598 - app.main - INFO - Request: PUT /db/workouts/6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:05,603 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-06 15:11:05,604 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-06 15:11:05,605 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-06 15:11:05,605 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-06 15:11:05,605 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-06 15:11:05,605 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-06 15:11:05,690 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-06 15:11:06,084 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-06 15:11:06,261 - app.api.endpoints.db - INFO - API request to update workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:06,261 - app.services.db.workout_service - INFO - Getting workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:06,325 - app.services.db.workout_service - INFO - Successfully retrieved workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:06,325 - app.services.db.workout_service - INFO - Updating workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:07,399 - app.services.db.workout_service - INFO - Successfully updated workout: 6c10fa85-b44e-435b-b6ea-3f85c677dcfc
-2025-06-06 15:11:07,402 - app.main - INFO - Response status: 200
+2025-06-06 15:53:03,792 - app.api.endpoints.db - INFO - API request to delete workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
+2025-06-06 15:53:03,794 - app.services.db.workout_service - INFO - Getting workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
+2025-06-06 15:53:03,861 - app.services.db.workout_service - INFO - Successfully retrieved workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
+2025-06-06 15:53:03,861 - app.services.db.workout_service - INFO - Deleting workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
+2025-06-06 15:53:04,118 - app.services.db.workout_service - INFO - Successfully deleted workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
+2025-06-06 15:53:04,120 - app.main - INFO - Response status: 200
+2025-06-06 15:53:04,595 - app.main - INFO - Request: DELETE /db/workouts/d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,666 - app.api.endpoints.db - INFO - API request to delete workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,666 - app.services.db.workout_service - INFO - Getting workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,727 - app.services.db.workout_service - INFO - Successfully retrieved workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,727 - app.services.db.workout_service - INFO - Deleting workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,984 - app.services.db.workout_service - INFO - Successfully deleted workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
+2025-06-06 15:53:04,985 - app.main - INFO - Response status: 200
+2025-06-06 15:53:05,455 - app.main - INFO - Request: DELETE /db/workouts/87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,517 - app.api.endpoints.db - INFO - API request to delete workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,517 - app.services.db.workout_service - INFO - Getting workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,575 - app.services.db.workout_service - INFO - Successfully retrieved workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,576 - app.services.db.workout_service - INFO - Deleting workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,829 - app.services.db.workout_service - INFO - Successfully deleted workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
+2025-06-06 15:53:05,831 - app.main - INFO - Response status: 200
+2025-06-06 15:53:06,337 - app.main - INFO - Request: DELETE /db/workouts/51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,400 - app.api.endpoints.db - INFO - API request to delete workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,400 - app.services.db.workout_service - INFO - Getting workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,459 - app.services.db.workout_service - INFO - Successfully retrieved workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,460 - app.services.db.workout_service - INFO - Deleting workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,702 - app.services.db.workout_service - INFO - Successfully deleted workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
+2025-06-06 15:53:06,703 - app.main - INFO - Response status: 200
+2025-06-06 15:53:07,270 - app.main - INFO - Request: DELETE /db/workouts/0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,337 - app.api.endpoints.db - INFO - API request to delete workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,338 - app.services.db.workout_service - INFO - Getting workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,409 - app.services.db.workout_service - INFO - Successfully retrieved workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,409 - app.services.db.workout_service - INFO - Deleting workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,651 - app.services.db.workout_service - INFO - Successfully deleted workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
+2025-06-06 15:53:07,652 - app.main - INFO - Response status: 200
+2025-06-06 15:53:08,110 - app.main - INFO - Request: DELETE /db/workouts/ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,179 - app.api.endpoints.db - INFO - API request to delete workout: ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,179 - app.services.db.workout_service - INFO - Getting workout: ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,239 - app.services.db.workout_service - INFO - Successfully retrieved workout: ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,239 - app.services.db.workout_service - INFO - Deleting workout: ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,475 - app.services.db.workout_service - INFO - Successfully deleted workout: ed6edd56-f0c4-4eda-8582-ad931489e809
+2025-06-06 15:53:08,476 - app.main - INFO - Response status: 200
+2025-06-06 15:53:09,002 - app.main - INFO - Request: DELETE /db/workouts/d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,067 - app.api.endpoints.db - INFO - API request to delete workout: d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,067 - app.services.db.workout_service - INFO - Getting workout: d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,128 - app.services.db.workout_service - INFO - Successfully retrieved workout: d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,128 - app.services.db.workout_service - INFO - Deleting workout: d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,373 - app.services.db.workout_service - INFO - Successfully deleted workout: d816f881-e448-4cfd-b499-2d073372e65d
+2025-06-06 15:53:09,374 - app.main - INFO - Response status: 200
+2025-06-06 15:53:09,801 - app.main - INFO - Request: DELETE /db/workouts/e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:09,863 - app.api.endpoints.db - INFO - API request to delete workout: e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:09,863 - app.services.db.workout_service - INFO - Getting workout: e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:09,938 - app.services.db.workout_service - INFO - Successfully retrieved workout: e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:09,939 - app.services.db.workout_service - INFO - Deleting workout: e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:10,193 - app.services.db.workout_service - INFO - Successfully deleted workout: e6822093-e4be-47ea-bfc0-89de54ef010f
+2025-06-06 15:53:10,194 - app.main - INFO - Response status: 200
+2025-06-06 15:53:10,514 - app.main - INFO - Request: DELETE /db/workouts/6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,593 - app.api.endpoints.db - INFO - API request to delete workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,593 - app.services.db.workout_service - INFO - Getting workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,651 - app.services.db.workout_service - INFO - Successfully retrieved workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,651 - app.services.db.workout_service - INFO - Deleting workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,909 - app.services.db.workout_service - INFO - Successfully deleted workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
+2025-06-06 15:53:10,911 - app.main - INFO - Response status: 200
+2025-06-06 15:53:11,386 - app.main - INFO - Request: DELETE /db/workouts/28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,453 - app.api.endpoints.db - INFO - API request to delete workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,453 - app.services.db.workout_service - INFO - Getting workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,514 - app.services.db.workout_service - INFO - Successfully retrieved workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,514 - app.services.db.workout_service - INFO - Deleting workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,748 - app.services.db.workout_service - INFO - Successfully deleted workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
+2025-06-06 15:53:11,749 - app.main - INFO - Response status: 200
+2025-06-06 15:53:13,068 - app.main - INFO - Request: GET /db/conversations
+2025-06-06 15:53:13,126 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 15:53:13,127 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-06-06 15:53:13,127 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-06-06 15:53:13,184 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-06-06 15:53:13,184 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-06-06 15:53:13,184 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 15:53:13,240 - app.services.db.conversation_service - INFO - Retrieved 0 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 15:53:13,240 - app.api.endpoints.db - INFO - Retrieved 0 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 15:53:13,240 - app.main - INFO - Response status: 200

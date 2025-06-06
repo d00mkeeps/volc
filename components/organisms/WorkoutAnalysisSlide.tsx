@@ -6,6 +6,7 @@ import { useMessaging } from "@/hooks/chat/useMessaging";
 import { ChatInterface } from "./ChatInterface";
 import { useGraphBundleStore } from "@/stores/attachments/GraphBundleStore";
 import { InputArea } from "../atoms/InputArea";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutAnalysisSlideProps {
   onError?: (error: Error) => void;
@@ -21,6 +22,7 @@ export const WorkoutAnalysisSlide = ({
   } | null>(null);
 
   const [hasAutoSent, setHasAutoSent] = useState(false);
+  const { currentWorkout } = useUserSessionStore();
   const conversationStore = useConversationStore();
   const { getResult } = useWorkoutAnalysisStore();
   const bundleStore = useGraphBundleStore();
@@ -34,8 +36,11 @@ export const WorkoutAnalysisSlide = ({
             "[WorkoutAnalysisSlide] Creating conversation for first message"
           );
 
+          const workoutName = currentWorkout?.name || "Workout";
+          const title = `${workoutName} analysis`;
+
           const newConversationId = await conversationStore.createConversation({
-            title: "Workout Analysis 1",
+            title,
             firstMessage: content,
             configName: "workout-analysis",
           });
@@ -58,6 +63,7 @@ export const WorkoutAnalysisSlide = ({
     },
     [
       conversationId,
+      currentWorkout,
       conversationStore,
       getResult,
       messaging,

@@ -12,7 +12,7 @@ interface WorkoutListProps {
 
 export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
   const router = useRouter();
-  const { workouts, loading, loadWorkouts } = useWorkoutStore();
+  const { workouts, loading, loadWorkouts, deleteWorkout } = useWorkoutStore();
   const { userProfile } = useUserStore();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
     null
@@ -28,6 +28,14 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
 
   const handleWorkoutPress = (workoutId: string) => {
     setSelectedWorkoutId(workoutId);
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    try {
+      await deleteWorkout(workoutId);
+    } catch (error) {
+      console.error("Failed to delete workout:", error);
+    }
   };
 
   const formatWorkoutSubtitle = (workout: any) => {
@@ -65,6 +73,8 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
               subtitle={formatWorkoutSubtitle(workout)}
               date={new Date(workout.created_at)}
               onPress={() => handleWorkoutPress(workout.id)}
+              showDelete={true}
+              onDelete={() => handleDeleteWorkout(workout.id)}
             />
           ))}
         </Stack>

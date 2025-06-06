@@ -118,7 +118,6 @@ export default function HomeScreen() {
         />
         <WorkoutCompletionModal
           isVisible={showCompletionModal}
-          workout={currentWorkout}
           onClose={() => {
             setShowCompletionModal(false);
             resetSession();

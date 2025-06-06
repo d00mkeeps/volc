@@ -1,22 +1,30 @@
 // components/WorkoutSummarySlide.tsx
 import React, { useState } from "react";
 import { YStack, Text, Input, Button, ScrollView } from "tamagui";
-import { CompleteWorkout } from "@/types/workout";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutSummarySlideProps {
-  workout: CompleteWorkout | null;
   onContinue: () => void;
 }
 
-export function WorkoutSummarySlide({
-  workout,
-  onContinue,
-}: WorkoutSummarySlideProps) {
-  const [workoutName, setWorkoutName] = useState(workout?.name || "");
+export function WorkoutSummarySlide({ onContinue }: WorkoutSummarySlideProps) {
+  const { currentWorkout, updateCurrentWorkout } = useUserSessionStore();
+  const [workoutName, setWorkoutName] = useState(currentWorkout?.name || "");
+
+  const handleNameChange = (name: string) => {
+    setWorkoutName(name);
+    if (currentWorkout) {
+      updateCurrentWorkout({
+        ...currentWorkout,
+        name,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
 
   // Group notes by exercise
   const exerciseNotes =
-    workout?.workout_exercises
+    currentWorkout?.workout_exercises
       .filter((ex) => ex.notes)
       .map((ex) => ({
         name: ex.name,
@@ -31,8 +39,8 @@ export function WorkoutSummarySlide({
 
       <Input
         value={workoutName}
-        onChangeText={setWorkoutName}
-        placeholder={workout?.name || "Name your workout..."}
+        onChangeText={handleNameChange}
+        placeholder={currentWorkout?.name || "Name your workout..."}
         placeholderTextColor="$textMuted"
         size="$4"
       />
@@ -41,6 +49,7 @@ export function WorkoutSummarySlide({
         <Text fontSize="$5" fontWeight="600" marginBottom="$2">
           Notes
         </Text>
+
         <ScrollView f={1} showsVerticalScrollIndicator={false}>
           <YStack gap="$3">
             {exerciseNotes.length > 0 ? (
