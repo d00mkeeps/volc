@@ -1,5 +1,6 @@
 // stores/dashboardStore.ts
 import { create } from 'zustand';
+import { dashboardService } from '@/services/api/dashboard';
 
 interface GoalProgressData {
   percentage: number;
@@ -50,38 +51,12 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   refreshDashboard: async () => {
     set({ isLoading: true, error: null });
     try {
-      // TODO: Replace with actual API call
-      // For now, using mock data to test the flow
-      const mockData = {
-        goalProgress: {
-          percentage: 75,
-          currentValue: "90kg",
-          targetValue: "120kg",
-          label: "30kg to goal"
-        },
-        muscleBalance: [
-          { muscle: "Chest", sets: 24 },
-          { muscle: "Back", sets: 28 },
-          { muscle: "Shoulders", sets: 18 },
-          { muscle: "Arms", sets: 22 },
-          { muscle: "Legs", sets: 16 },
-          { muscle: "Core", sets: 20 }
-        ],
-        consistency: {
-          workoutDays: [1, 3, 5, 8, 10, 12, 14],
-          streak: 3,
-          totalWorkouts: 7,
-          score: 85
-        }
-      };
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const data = await dashboardService.getDashboardData();
       
       set({ 
-        goalProgress: mockData.goalProgress,
-        muscleBalance: mockData.muscleBalance,
-        consistency: mockData.consistency,
+        goalProgress: data.goalProgress,
+        muscleBalance: data.muscleBalance,
+        consistency: data.consistency,
         isLoading: false,
         lastUpdated: new Date()
       });

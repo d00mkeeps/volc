@@ -1,50 +1,22 @@
-2025-06-06 02:00:07,408 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-06 02:00:07,411 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:00:07,473 - app.services.db.conversation_service - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:00:07,474 - app.api.endpoints.db - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:00:07,476 - app.main - INFO - Response status: 200
-2025-06-06 02:00:07,781 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
-2025-06-06 02:00:07,884 - app.api.endpoints.db - INFO - API request to get messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:07,884 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:07,945 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:07,945 - app.services.db.conversation_service - INFO - Getting messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,010 - app.services.db.conversation_service - INFO - Retrieved 11 messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,013 - app.main - INFO - Response status: 200
-2025-06-06 02:00:08,013 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
-2025-06-06 02:00:08,111 - app.api.endpoints.db - INFO - API request to get messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,111 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,166 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,166 - app.services.db.conversation_service - INFO - Getting messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,226 - app.services.db.conversation_service - INFO - Retrieved 11 messages for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,226 - app.main - INFO - Request: GET /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,291 - app.api.endpoints.db - INFO - API request to get conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,291 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,358 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,359 - app.main - INFO - Request: GET /db/graph-bundles
-2025-06-06 02:00:08,359 - app.main - INFO - Response status: 200
-2025-06-06 02:00:08,466 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,466 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,528 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,528 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:08,529 - app.main - INFO - Response status: 200
-2025-06-06 02:00:08,535 - app.main - INFO - Response status: 200
-2025-06-06 02:00:08,551 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,553 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
-2025-06-06 02:00:19,666 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,667 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,766 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,767 - app.services.db.conversation_service - INFO - Saving user message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,825 - app.services.db.conversation_service - INFO - Message saved with ID: 67ba8473-2cfb-43a0-90f5-64095fa9fd13
-2025-06-06 02:00:19,826 - app.main - INFO - Response status: 200
-2025-06-06 02:00:19,887 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
-2025-06-06 02:00:19,888 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
-2025-06-06 02:00:19,888 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
-2025-06-06 02:00:19,888 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:19,888 - app.services.chains.base_conversation_chain - INFO - 
+2025-06-06 02:00:27,426 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:00:27,493 - app.services.db.conversation_service - INFO - Message saved with ID: 410d7dde-1bc8-4814-9e3c-625e42b9fe7c
+2025-06-06 02:00:27,494 - app.main - INFO - Response status: 200
+2025-06-06 02:01:04,648 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
+2025-06-06 02:01:04,897 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:04,898 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:05,055 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:05,055 - app.services.db.conversation_service - INFO - Saving user message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:05,121 - app.services.db.conversation_service - INFO - Message saved with ID: 39b3472b-b9e1-4d0b-972a-821c151d2c05
+2025-06-06 02:01:05,122 - app.main - INFO - Response status: 200
+2025-06-06 02:01:05,212 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
+2025-06-06 02:01:05,212 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
+2025-06-06 02:01:05,212 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
+2025-06-06 02:01:05,212 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - 
 === Formatted Messages ===
-2025-06-06 02:00:19,889 - app.services.chains.base_conversation_chain - INFO - 
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - 
 Message 1 (SystemMessage):
-2025-06-06 02:00:19,889 - app.services.chains.base_conversation_chain - INFO - Content: 
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - Content: 
 Try to keep responses concise (under 100 tokens when possible) while still discussing the most relevant metrics. try and talk like a human fitness coach!
 
 
@@ -167,11 +139,60 @@ TOP PERFORMERS:
 - Volume increases: No significant volume increases detected
 - Most frequent exercises: Not enough data
 
-2025-06-06 02:00:19,889 - app.services.chains.base_conversation_chain - INFO - 
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-06-06 02:00:19,889 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-06 02:00:19,889 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-06 02:00:27,200 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
-2025-06-06 02:00:27,315 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:27,315 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:00:27,425 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - 
+Message 3 (AIMessage):
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - Content: # Upper Body Progress Analysis
+
+Looking at your chest and pushing exercises over the past couple months:
+
+## Key Findings
+- **Consistency is impressive!** You're working out about 15 times per week with a current 31-workout streak 💪
+- **Bench Press variations**: You're tracking both "Bench Press" (80 lbs) and "Barbell Bench Press" (down from 95 to 90 lbs)
+- **Stable performance**: Most exercises show stable volume, but no significant progression in weights
+
+## Exercise Notes
+- **Overhead Press**: Maintained at 50 lbs consistently
+- **Incline Dumbbell Press**: Holding steady at 30 lbs
+- **Tricep Dips**: Regular bodyweight work
+
+## Recommendations
+1. Try progressive overload - increase weight by 2.5-5 lbs every 1-2 weeks
+2. Consider periodization to break plateaus
+3. Ensure you're allowing adequate recovery between pushing sessions
+
+Need more focused strategies to drive strength gains in these movements?
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - 
+Message 4 (HumanMessage):
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
+2025-06-06 02:01:05,214 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-06-06 02:01:10,444 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
+2025-06-06 02:01:10,548 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:10,549 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:10,654 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:10,655 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
+2025-06-06 02:01:10,707 - app.services.db.conversation_service - INFO - Message saved with ID: a2767794-f10a-451f-8673-6bfc8ba38516
+2025-06-06 02:01:10,707 - app.main - INFO - Response status: 200
+2025-06-06 02:01:24,662 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1012, None)
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1012, None)
+2025-06-06 02:01:26,795 - app - INFO - Logging has been set up
+2025-06-06 02:01:26,795 - app.main - INFO - Application starting
+2025-06-06 02:01:26,795 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-06 02:01:26,795 - app.main - INFO - SUPABASE_URL present: True
+2025-06-06 02:01:26,795 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-06 02:01:40,160 - app.main - INFO - Request: GET /db/conversations
+2025-06-06 02:01:40,161 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
+2025-06-06 02:01:40,162 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
+2025-06-06 02:01:40,162 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-06-06 02:01:40,162 - app.core.supabase.client - INFO - Supabase API key present: True
