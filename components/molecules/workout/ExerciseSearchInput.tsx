@@ -1,6 +1,7 @@
 // components/molecules/ExerciseSearchInput.tsx
 import React, { useState, useEffect } from "react";
-import { Input, YStack, Text, ScrollView, Stack, XStack } from "tamagui";
+import { Input, YStack, Text, Stack, ScrollView } from "tamagui";
+import { View, TouchableOpacity } from "react-native"; // Use native components
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,7 +10,7 @@ interface ExerciseSearchInputProps {
   value: string;
   onSelect: (exerciseName: string) => void;
   placeholder?: string;
-  onValidationChange?: (isValid: boolean) => void; // Add this
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
@@ -30,7 +31,6 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
     onValidationChange?.(valid);
   }, [value, exercises]);
 
-  // Filter exercises based on search text
   const filteredExercises = exercises
     .filter((exercise) => {
       const searchLower = searchText.toLowerCase();
@@ -42,11 +42,10 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
       );
       return nameMatch || aliasMatch;
     })
-    .slice(0, 8); // Show up to 8 results
+    .slice(0, 8);
 
   const validateExercise = (text: string) => {
     if (!text.trim()) return false;
-
     return exercises.some(
       (exercise) =>
         exercise.standard_name.toLowerCase() === text.toLowerCase() ||
@@ -56,18 +55,16 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
     );
   };
 
-  // Update handleTextChange
   const handleTextChange = (text: string) => {
     setSearchText(text);
     setShowDropdown(text.length > 0);
-
-    // Real-time validation
     const valid = validateExercise(text);
     setIsValid(valid);
-    onValidationChange?.(valid); // Pass back to parent
+    onValidationChange?.(valid);
   };
 
   const handleSelectExercise = (exercise: ExerciseDefinition) => {
+    console.log("🎯 Exercise selected:", exercise.standard_name);
     setSearchText(exercise.standard_name);
     setShowDropdown(false);
     onSelect(exercise.standard_name);
@@ -80,9 +77,33 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
   };
 
   const handleBlur = () => {
-    // Delay hiding dropdown to allow for selection
-    setTimeout(() => setShowDropdown(false), 150);
+    // Don't hide dropdown on blur - let user tap
   };
+
+  const renderExerciseItem = ({
+    item,
+    index,
+  }: {
+    item: ExerciseDefinition;
+    index: number;
+  }) => (
+    <TouchableOpacity
+      onPress={() => {
+        console.log("🔥 TouchableOpacity pressed:", item.standard_name);
+        handleSelectExercise(item);
+      }}
+      style={{
+        padding: 12,
+        borderBottomWidth: index < filteredExercises.length - 1 ? 1 : 0,
+        borderBottomColor: "#333",
+        backgroundColor: "#222",
+      }}
+    >
+      <Text color="$color" fontSize="$4" fontWeight="500">
+        {item.standard_name}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <YStack flex={1}>
@@ -102,94 +123,59 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
           borderRadius="$3"
           paddingHorizontal="$3"
           paddingVertical="$2"
-          paddingRight={searchText.trim() ? "$6" : "$3"} // Make room for icon
+          paddingRight={searchText.trim() ? "$6" : "$3"}
           onFocus={handleFocus}
           onBlur={handleBlur}
           autoCorrect={false}
           autoCapitalize="words"
         />
 
-        {/* Validation Icon - positioned inside input */}
         {searchText.trim() && (
           <Stack
             position="absolute"
             right="$2"
             top="50%"
-            transform={[{ translateY: -10 }]} // Half icon height
+            transform={[{ translateY: -10 }]}
             zIndex={1}
           >
             <Ionicons
               name={isValid ? "checkmark" : "close"}
               size={20}
-              color={isValid ? "#22c55e" : "#ef4444"} // Bold green/red
+              color={isValid ? "#22c55e" : "#ef4444"}
             />
           </Stack>
         )}
       </Stack>
 
-      {/* Dropdown Results */}
+      {/* Replace the FlatList section with: */}
       {showDropdown && !loading && filteredExercises.length > 0 && (
-        <YStack
-          backgroundColor="$backgroundStrong"
-          borderColor="$borderSoft"
-          borderWidth={1}
-          borderRadius="$3"
-          maxHeight={240}
-          marginTop="$1"
+        <View
+          style={{
+            backgroundColor: "#222",
+            borderColor: "#333",
+            borderWidth: 1,
+            borderRadius: 12,
+            marginTop: 4,
+          }}
         >
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {filteredExercises.map((exercise, index) => (
-              <Stack
-                key={exercise.id}
-                padding="$3"
-                borderBottomWidth={index < filteredExercises.length - 1 ? 1 : 0}
-                borderBottomColor="$borderSoft"
-                pressStyle={{ backgroundColor: "$backgroundPress" }}
-                onPress={() => handleSelectExercise(exercise)}
-              >
-                <Text color="$color" fontSize="$4" fontWeight="500">
-                  {exercise.standard_name}
-                </Text>
-              </Stack>
-            ))}
-          </ScrollView>
-        </YStack>
+          {filteredExercises.map((exercise, index) => (
+            <TouchableOpacity
+              key={exercise.id}
+              onPress={() => handleSelectExercise(exercise)}
+              style={{
+                padding: 12,
+                borderBottomWidth: index < filteredExercises.length - 1 ? 1 : 0,
+                borderBottomColor: "#333",
+                backgroundColor: "#222",
+              }}
+            >
+              <Text color="$color" fontSize="$4" fontWeight="500">
+                {exercise.standard_name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
-
-      {/* Loading state */}
-      {showDropdown && loading && (
-        <YStack
-          backgroundColor="$backgroundStrong"
-          borderColor="$borderSoft"
-          borderWidth={1}
-          borderRadius="$3"
-          padding="$3"
-          marginTop="$1"
-        >
-          <Text color="$textSoft" fontSize="$3" textAlign="center">
-            Loading exercises...
-          </Text>
-        </YStack>
-      )}
-
-      {/* No results state */}
-      {showDropdown &&
-        !loading &&
-        searchText.length > 0 &&
-        filteredExercises.length === 0 && (
-          <YStack
-            backgroundColor="$backgroundStrong"
-            borderColor="$borderSoft"
-            borderWidth={1}
-            borderRadius="$3"
-            padding="$3"
-            marginTop="$1"
-          >
-            <Text color="$textSoft" fontSize="$3" textAlign="center">
-              No exercises found
-            </Text>
-          </YStack>
-        )}
     </YStack>
   );
 };

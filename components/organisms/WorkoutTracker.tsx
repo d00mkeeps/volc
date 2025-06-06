@@ -50,7 +50,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const handleSheetChanges = useCallback(
       (index: number) => {
         animatedIndex.value = index;
-        // console.log("📊 WorkoutTracker sheet index:", index);
       },
       [animatedIndex]
     );
@@ -215,7 +214,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 <ExerciseTracker
                   key={exercise.id}
                   exercise={exercise}
-                  isInitiallyExpanded={false}
                   isActive={isActive}
                   onExerciseUpdate={handleExerciseUpdate}
                   onExerciseDelete={handleExerciseDelete}

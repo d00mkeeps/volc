@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Stack, YStack, XStack, Text, Separator } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
 import SetRow from "./SetRow";
-import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
+import {
+  WorkoutExercise,
+  WorkoutExerciseSet,
+  ExerciseDefinition,
+} from "@/types/workout";
 import { Alert } from "react-native";
 import ExerciseSearchInput from "./ExerciseSearchInput";
 import ExerciseTrackerHeader from "../headers/ExerciseTrackerHeader";
@@ -13,7 +17,6 @@ import NotesModal from "./NotesModal";
 
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
-  isInitiallyExpanded?: boolean;
   isActive?: boolean;
   onExerciseUpdate?: (updatedExercise: WorkoutExercise) => void;
   onExerciseDelete?: (exerciseId: string) => void;
@@ -22,34 +25,21 @@ interface ExerciseTrackerProps {
 
 export default function ExerciseTracker({
   exercise,
-  isInitiallyExpanded = false,
   isActive = true,
   onExerciseUpdate,
   onExerciseDelete,
   startInEditMode,
 }: ExerciseTrackerProps) {
-  const [isExpanded, setIsExpanded] = useState(isInitiallyExpanded);
   const [isEditing, setIsEditing] = useState(
     startInEditMode || exercise.name === ""
   );
   const [selectedExercise, setSelectedExercise] = useState(exercise.name);
   const [notesModalVisible, setNotesModalVisible] = useState(false);
 
-  const completedSets = exercise.workout_exercise_sets.filter(
-    (set) => set.is_completed
-  ).length;
-  const totalSets = exercise.workout_exercise_sets.length;
-
-  const hasExerciseData =
-    exercise.workout_exercise_sets.length > 0 &&
-    (exercise.workout_exercise_sets[0].weight !== undefined ||
-      exercise.workout_exercise_sets[0].reps !== undefined ||
-      exercise.workout_exercise_sets[0].is_completed);
-
-  const toggleExpanded = () => {
-    if (!isActive || isEditing) return;
-    setIsExpanded(!isExpanded);
-  };
+  const { exercises } = useExerciseStore();
+  const exerciseDefinition = exercises.find(
+    (ex: ExerciseDefinition) => ex.id === exercise.definition_id
+  );
 
   const handleEditPress = () => {
     setIsEditing(true);
@@ -63,17 +53,16 @@ export default function ExerciseTracker({
     onExerciseUpdate({ ...exercise, notes });
   };
 
-  const handleSavePress = () => {
+  const handleExerciseSelect = (exerciseName: string) => {
     if (!onExerciseUpdate) return;
 
-    const { exercises } = useExerciseStore.getState();
     const selectedDefinition = exercises.find(
-      (ex) => ex.standard_name === selectedExercise
+      (ex: ExerciseDefinition) => ex.standard_name === exerciseName
     );
 
     const updatedExercise = {
       ...exercise,
-      name: selectedExercise,
+      name: exerciseName,
       definition_id: selectedDefinition?.id,
     };
 
@@ -84,6 +73,11 @@ export default function ExerciseTracker({
   const handleDelete = () => {
     if (!onExerciseDelete) return;
 
+    const hasExerciseData =
+      exercise.workout_exercise_sets.length > 0 &&
+      (exercise.workout_exercise_sets[0].weight !== undefined ||
+        exercise.workout_exercise_sets[0].reps !== undefined);
+
     if (hasExerciseData) {
       Alert.alert(
         "Delete Exercise",
@@ -93,15 +87,31 @@ export default function ExerciseTracker({
           {
             text: "Delete",
             style: "destructive",
-            onPress: () => {
-              onExerciseDelete(exercise.id);
-            },
+            onPress: () => onExerciseDelete(exercise.id),
           },
         ]
       );
     } else {
       onExerciseDelete(exercise.id);
     }
+  };
+
+  const handleSetDelete = (setId: string) => {
+    if (!isActive || !onExerciseUpdate) return;
+
+    const updatedSets = exercise.workout_exercise_sets
+      .filter((set) => set.id !== setId)
+      .map((set, index) => ({
+        ...set,
+        set_number: index + 1, // Renumber sets
+      }));
+
+    const updatedExercise = {
+      ...exercise,
+      workout_exercise_sets: updatedSets,
+    };
+
+    onExerciseUpdate(updatedExercise);
   };
 
   const handleSetUpdate = (updatedSet: WorkoutExerciseSet) => {
@@ -127,6 +137,8 @@ export default function ExerciseTracker({
       weight: undefined,
       reps: undefined,
       distance: undefined,
+      duration: undefined,
+      rpe: undefined,
       is_completed: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -146,66 +158,30 @@ export default function ExerciseTracker({
         backgroundColor={isActive ? "$backgroundSoft" : "$backgroundMuted"}
         borderRadius="$3"
         overflow="hidden"
-        animation="quick"
         opacity={isActive ? 1 : 0.6}
       >
-        {/* Header */}
-        <Stack
-          paddingHorizontal="$3"
-          paddingVertical="$1.5"
-          onPress={isEditing ? undefined : toggleExpanded}
-          pressStyle={
-            isActive && !isEditing
-              ? {
-                  backgroundColor: "$backgroundPress",
-                }
-              : undefined
-          }
-          cursor={isActive && !isEditing ? "pointer" : "default"}
-        >
+        <Stack paddingHorizontal="$3" paddingVertical="$1.5">
           {isEditing ? (
             <ExerciseSearchInput
               value={selectedExercise}
-              onSelect={setSelectedExercise}
+              onSelect={handleExerciseSelect}
               placeholder="Search exercises..."
             />
           ) : (
-            <>
-              <ExerciseTrackerHeader
-                hasNotes={!!exercise.notes}
-                exerciseName={exercise.name}
-                isActive={isActive}
-                isEditing={false}
-                isExpanded={isExpanded}
-                onEditPress={handleEditPress}
-                onNotesPress={handleNotesPress}
-                onToggleExpanded={toggleExpanded}
-                onDelete={handleDelete}
-                onSave={handleSavePress}
-              />
-              {!isExpanded && (
-                <Text fontSize="$2" color={"$textSoft"} marginTop="$1">
-                  {completedSets}/{totalSets} sets completed
-                </Text>
-              )}
-            </>
+            <ExerciseTrackerHeader
+              hasNotes={!!exercise.notes}
+              exerciseName={exercise.name}
+              isActive={isActive}
+              isEditing={false}
+              onEditPress={handleEditPress}
+              onNotesPress={handleNotesPress}
+              onDelete={handleDelete}
+              onSave={() => {}}
+            />
           )}
 
           {isEditing && (
             <XStack justifyContent="flex-end" gap="$2" marginTop="$2">
-              <Stack
-                paddingHorizontal="$2"
-                paddingVertical="$1"
-                borderRadius="$2"
-                backgroundColor="transparent"
-                pressStyle={{ backgroundColor: "$backgroundPress" }}
-                onPress={handleSavePress}
-                cursor="pointer"
-              >
-                <Text fontSize="$2" color="$textSoft" fontWeight="500">
-                  Save
-                </Text>
-              </Stack>
               <Stack onPress={handleDelete} cursor="pointer">
                 <Ionicons name="close" size={20} color="#ef4444" />
               </Stack>
@@ -213,36 +189,34 @@ export default function ExerciseTracker({
           )}
         </Stack>
 
-        {/* Expanded Content */}
-        {isExpanded && (
-          <>
-            <Separator marginHorizontal="$3" borderColor="$borderSoft" />
+        <Separator marginHorizontal="$3" borderColor="$borderSoft" />
+        <YStack padding="$1.5" gap="$1.5">
+          <SetHeader
+            isActive={isActive}
+            exerciseDefinition={exerciseDefinition}
+            weightUnit={exercise.weight_unit}
+            distanceUnit={exercise.distance_unit}
+          />
 
-            <YStack padding="$1.5" gap="$1.5">
-              <SetHeader
-                isActive={isActive}
+          {exercise.workout_exercise_sets
+            .sort((a, b) => a.set_number - b.set_number)
+            .map((set) => (
+              <SetRow
+                key={set.id}
+                set={set}
+                exerciseDefinition={exerciseDefinition}
                 weightUnit={exercise.weight_unit}
+                distanceUnit={exercise.distance_unit}
+                isActive={isActive}
+                onDelete={handleSetDelete}
+                onUpdate={handleSetUpdate}
               />
+            ))}
 
-              {/* Sets */}
-              {exercise.workout_exercise_sets
-                .sort((a, b) => a.set_number - b.set_number)
-                .map((set) => (
-                  <SetRow
-                    key={set.id}
-                    set={set}
-                    exerciseName={exercise.name}
-                    weightUnit={exercise.weight_unit}
-                    isActive={isActive}
-                    onUpdate={handleSetUpdate}
-                  />
-                ))}
-
-              <NewSetButton isActive={isActive} onPress={handleAddSet} />
-            </YStack>
-          </>
-        )}
+          <NewSetButton isActive={isActive} onPress={handleAddSet} />
+        </YStack>
       </YStack>
+
       <NotesModal
         isVisible={notesModalVisible}
         exerciseName={exercise.name}

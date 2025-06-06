@@ -1,79 +1,33 @@
-2025-06-06 15:53:03,792 - app.api.endpoints.db - INFO - API request to delete workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
-2025-06-06 15:53:03,794 - app.services.db.workout_service - INFO - Getting workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
-2025-06-06 15:53:03,861 - app.services.db.workout_service - INFO - Successfully retrieved workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
-2025-06-06 15:53:03,861 - app.services.db.workout_service - INFO - Deleting workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
-2025-06-06 15:53:04,118 - app.services.db.workout_service - INFO - Successfully deleted workout: 9207eebb-cb34-41c5-9de3-122cdfb6d759
-2025-06-06 15:53:04,120 - app.main - INFO - Response status: 200
-2025-06-06 15:53:04,595 - app.main - INFO - Request: DELETE /db/workouts/d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,666 - app.api.endpoints.db - INFO - API request to delete workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,666 - app.services.db.workout_service - INFO - Getting workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,727 - app.services.db.workout_service - INFO - Successfully retrieved workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,727 - app.services.db.workout_service - INFO - Deleting workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,984 - app.services.db.workout_service - INFO - Successfully deleted workout: d5950485-3b8a-4415-9065-db4a4e5f58bb
-2025-06-06 15:53:04,985 - app.main - INFO - Response status: 200
-2025-06-06 15:53:05,455 - app.main - INFO - Request: DELETE /db/workouts/87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,517 - app.api.endpoints.db - INFO - API request to delete workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,517 - app.services.db.workout_service - INFO - Getting workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,575 - app.services.db.workout_service - INFO - Successfully retrieved workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,576 - app.services.db.workout_service - INFO - Deleting workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,829 - app.services.db.workout_service - INFO - Successfully deleted workout: 87354233-ced9-4394-8ed5-77e5c6c72b7f
-2025-06-06 15:53:05,831 - app.main - INFO - Response status: 200
-2025-06-06 15:53:06,337 - app.main - INFO - Request: DELETE /db/workouts/51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,400 - app.api.endpoints.db - INFO - API request to delete workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,400 - app.services.db.workout_service - INFO - Getting workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,459 - app.services.db.workout_service - INFO - Successfully retrieved workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,460 - app.services.db.workout_service - INFO - Deleting workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,702 - app.services.db.workout_service - INFO - Successfully deleted workout: 51cc98ea-a6d1-4250-80ba-459c0b0f0353
-2025-06-06 15:53:06,703 - app.main - INFO - Response status: 200
-2025-06-06 15:53:07,270 - app.main - INFO - Request: DELETE /db/workouts/0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,337 - app.api.endpoints.db - INFO - API request to delete workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,338 - app.services.db.workout_service - INFO - Getting workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,409 - app.services.db.workout_service - INFO - Successfully retrieved workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,409 - app.services.db.workout_service - INFO - Deleting workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,651 - app.services.db.workout_service - INFO - Successfully deleted workout: 0a9c3e41-8752-49f9-b046-4fbc390e8dc7
-2025-06-06 15:53:07,652 - app.main - INFO - Response status: 200
-2025-06-06 15:53:08,110 - app.main - INFO - Request: DELETE /db/workouts/ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,179 - app.api.endpoints.db - INFO - API request to delete workout: ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,179 - app.services.db.workout_service - INFO - Getting workout: ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,239 - app.services.db.workout_service - INFO - Successfully retrieved workout: ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,239 - app.services.db.workout_service - INFO - Deleting workout: ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,475 - app.services.db.workout_service - INFO - Successfully deleted workout: ed6edd56-f0c4-4eda-8582-ad931489e809
-2025-06-06 15:53:08,476 - app.main - INFO - Response status: 200
-2025-06-06 15:53:09,002 - app.main - INFO - Request: DELETE /db/workouts/d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,067 - app.api.endpoints.db - INFO - API request to delete workout: d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,067 - app.services.db.workout_service - INFO - Getting workout: d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,128 - app.services.db.workout_service - INFO - Successfully retrieved workout: d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,128 - app.services.db.workout_service - INFO - Deleting workout: d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,373 - app.services.db.workout_service - INFO - Successfully deleted workout: d816f881-e448-4cfd-b499-2d073372e65d
-2025-06-06 15:53:09,374 - app.main - INFO - Response status: 200
-2025-06-06 15:53:09,801 - app.main - INFO - Request: DELETE /db/workouts/e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:09,863 - app.api.endpoints.db - INFO - API request to delete workout: e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:09,863 - app.services.db.workout_service - INFO - Getting workout: e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:09,938 - app.services.db.workout_service - INFO - Successfully retrieved workout: e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:09,939 - app.services.db.workout_service - INFO - Deleting workout: e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:10,193 - app.services.db.workout_service - INFO - Successfully deleted workout: e6822093-e4be-47ea-bfc0-89de54ef010f
-2025-06-06 15:53:10,194 - app.main - INFO - Response status: 200
-2025-06-06 15:53:10,514 - app.main - INFO - Request: DELETE /db/workouts/6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,593 - app.api.endpoints.db - INFO - API request to delete workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,593 - app.services.db.workout_service - INFO - Getting workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,651 - app.services.db.workout_service - INFO - Successfully retrieved workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,651 - app.services.db.workout_service - INFO - Deleting workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,909 - app.services.db.workout_service - INFO - Successfully deleted workout: 6b42dfd6-c36f-4cb8-8cea-f416b57a0108
-2025-06-06 15:53:10,911 - app.main - INFO - Response status: 200
-2025-06-06 15:53:11,386 - app.main - INFO - Request: DELETE /db/workouts/28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,453 - app.api.endpoints.db - INFO - API request to delete workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,453 - app.services.db.workout_service - INFO - Getting workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,514 - app.services.db.workout_service - INFO - Successfully retrieved workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,514 - app.services.db.workout_service - INFO - Deleting workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,748 - app.services.db.workout_service - INFO - Successfully deleted workout: 28e4ea9d-827f-4df4-a411-44c20ba8ac6f
-2025-06-06 15:53:11,749 - app.main - INFO - Response status: 200
-2025-06-06 15:53:13,068 - app.main - INFO - Request: GET /db/conversations
-2025-06-06 15:53:13,126 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:53:13,127 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-06 15:53:13,127 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-06 15:53:13,184 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-06 15:53:13,184 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-06 15:53:13,184 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:53:13,240 - app.services.db.conversation_service - INFO - Retrieved 0 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:53:13,240 - app.api.endpoints.db - INFO - Retrieved 0 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 15:53:13,240 - app.main - INFO - Response status: 200
+2025-06-06 20:07:22,693 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-06 20:07:22,698 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-06 20:07:22,698 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-06 20:07:22,699 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-06 20:07:22,700 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-06 20:07:22,700 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-06 20:07:22,700 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-06 20:07:22,700 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
+2025-06-06 20:07:22,701 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Overhead Press to strength chart
+2025-06-06 20:07:22,701 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to strength chart
+2025-06-06 20:07:22,701 - app.services.workout_analysis.graph_service - INFO - Added 11 data points for Bench Press to strength chart
+2025-06-06 20:07:22,701 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
+2025-06-06 20:07:23,488 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
+2025-06-06 20:07:23,488 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Overhead Press to volume chart
+2025-06-06 20:07:23,488 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to volume chart
+2025-06-06 20:07:23,488 - app.services.workout_analysis.graph_service - INFO - Added 11 data points for Bench Press to volume chart
+2025-06-06 20:07:23,488 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-06-06 20:07:24,864 - app.main - INFO - Response status: 202
+2025-06-06 20:07:24,865 - app.main - INFO - Request: GET /api/dashboard
+2025-06-06 20:07:24,866 - app.main - INFO - Response status: 200
+2025-06-06 20:07:25,920 - app.main - INFO - Request: GET /api/workout-analysis/d7b01aac-459e-4cb1-84f4-727aacc2e453
+2025-06-06 20:07:25,929 - app.main - INFO - Response status: 200
+2025-06-06 20:07:26,023 - app.main - INFO - Request: DELETE /db/graph-bundles/conversation/pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 20:07:26,089 - app.api.endpoints.db - INFO - API request to delete all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 20:07:26,090 - app.services.db.graph_bundle_service - INFO - Deleting all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 20:07:26,145 - app.services.db.graph_bundle_service - ERROR - Error deleting conversation bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-06 20:07:26,145 - app.services.db.base_service - ERROR - Error in delete_conversation_bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-06 20:07:26,146 - app.main - INFO - Request: POST /db/graph-bundles
+2025-06-06 20:07:26,146 - app.main - INFO - Response status: 200
+2025-06-06 20:07:26,279 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 20:07:26,280 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 8389d66b-3b9e-4b82-bb84-1c8c7e8512f0
+2025-06-06 20:07:26,414 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-06 20:07:26,416 - app.main - INFO - Response status: 200
