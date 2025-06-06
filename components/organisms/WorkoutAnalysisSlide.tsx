@@ -20,8 +20,8 @@ export const WorkoutAnalysisSlide = ({
     content: string;
     analysisBundle: any;
   } | null>(null);
-
   const [hasAutoSent, setHasAutoSent] = useState(false);
+
   const { currentWorkout } = useUserSessionStore();
   const conversationStore = useConversationStore();
   const { getResult } = useWorkoutAnalysisStore();
@@ -32,10 +32,6 @@ export const WorkoutAnalysisSlide = ({
     async (content: string) => {
       try {
         if (!conversationId) {
-          console.log(
-            "[WorkoutAnalysisSlide] Creating conversation for first message"
-          );
-
           const workoutName = currentWorkout?.name || "Workout";
           const title = `${workoutName} analysis`;
 
@@ -49,7 +45,6 @@ export const WorkoutAnalysisSlide = ({
 
           const analysisBundle = getResult();
           if (analysisBundle) {
-            // Save bundle to database
             await bundleStore.addBundle(analysisBundle, newConversationId);
             setPendingMessage({ content, analysisBundle });
           }
@@ -57,7 +52,6 @@ export const WorkoutAnalysisSlide = ({
           await messaging?.sendMessage(content);
         }
       } catch (error) {
-        console.error("[WorkoutAnalysisSlide] Error sending message:", error);
         onError?.(error instanceof Error ? error : new Error(String(error)));
       }
     },
@@ -79,7 +73,6 @@ export const WorkoutAnalysisSlide = ({
     }
   }, [conversationId, hasAutoSent, handleSend]);
 
-  // Handle pending message when connection is ready
   useEffect(() => {
     if (messaging?.isConnected && pendingMessage) {
       messaging.sendMessage(pendingMessage.content, {
@@ -89,14 +82,12 @@ export const WorkoutAnalysisSlide = ({
     }
   }, [messaging?.isConnected, pendingMessage, messaging]);
 
-  // Handle messaging errors
   useEffect(() => {
     if (messaging?.error) {
       onError?.(messaging.error);
     }
   }, [messaging?.error, onError]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (conversationId) {
@@ -107,9 +98,8 @@ export const WorkoutAnalysisSlide = ({
   }, [conversationId]);
 
   return (
-    <YStack flex={1}>
+    <YStack flex={1} padding="$3">
       {!conversationId ? (
-        // No conversation yet - show ready state
         <>
           <YStack flex={1} justifyContent="center" alignItems="center">
             <Text color="$textMuted" fontSize="$4">
@@ -122,7 +112,6 @@ export const WorkoutAnalysisSlide = ({
           />
         </>
       ) : (
-        // Has conversation - use ChatInterface
         <ChatInterface
           messages={messaging?.messages || []}
           streamingMessage={messaging?.streamingMessage}
@@ -134,5 +123,3 @@ export const WorkoutAnalysisSlide = ({
     </YStack>
   );
 };
-
-WorkoutAnalysisSlide.displayName = "WorkoutAnalysisSlide";

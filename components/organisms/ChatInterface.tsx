@@ -1,5 +1,5 @@
-// components/chat/molecules/ChatInterface.tsx
 import React from "react";
+import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack } from "tamagui";
 import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/InputArea";
@@ -21,9 +21,15 @@ export const ChatInterface = ({
   placeholder = "Type a message...",
 }: ChatInterfaceProps) => {
   return (
-    <YStack flex={1}>
-      <MessageList messages={messages} streamingMessage={streamingMessage} />
-      <InputArea placeholder={placeholder} onSendMessage={onSend} />
-    </YStack>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      style={{ flex: 1 }}
+    >
+      <YStack flex={1}>
+        <MessageList messages={messages} streamingMessage={streamingMessage} />
+        <InputArea placeholder={placeholder} onSendMessage={onSend} />
+      </YStack>
+    </KeyboardAvoidingView>
   );
 };

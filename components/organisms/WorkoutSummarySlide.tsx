@@ -1,6 +1,5 @@
-// components/WorkoutSummarySlide.tsx
 import React, { useState } from "react";
-import { YStack, Text, Input, Button, ScrollView } from "tamagui";
+import { YStack, Text, Input, Button, TextArea, Card } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutSummarySlideProps {
@@ -22,17 +21,24 @@ export function WorkoutSummarySlide({ onContinue }: WorkoutSummarySlideProps) {
     }
   };
 
-  // Group notes by exercise
-  const exerciseNotes =
-    currentWorkout?.workout_exercises
-      .filter((ex) => ex.notes)
-      .map((ex) => ({
-        name: ex.name,
-        notes: ex.notes,
-      })) || [];
+  const handleNotesChange = (exerciseIndex: number, notes: string) => {
+    if (currentWorkout) {
+      const updatedExercises = [...currentWorkout.workout_exercises];
+      updatedExercises[exerciseIndex] = {
+        ...updatedExercises[exerciseIndex],
+        notes,
+      };
+
+      updateCurrentWorkout({
+        ...currentWorkout,
+        workout_exercises: updatedExercises,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
 
   return (
-    <YStack f={1} gap="$4">
+    <YStack gap="$4" paddingBottom="$4">
       <Text fontSize="$6" fontWeight="bold">
         Workout Complete!
       </Text>
@@ -45,29 +51,29 @@ export function WorkoutSummarySlide({ onContinue }: WorkoutSummarySlideProps) {
         size="$4"
       />
 
-      <YStack f={1}>
-        <Text fontSize="$5" fontWeight="600" marginBottom="$2">
+      <YStack gap="$2">
+        <Text fontSize="$5" fontWeight="600">
           Notes
         </Text>
 
-        <ScrollView f={1} showsVerticalScrollIndicator={false}>
-          <YStack gap="$3">
-            {exerciseNotes.length > 0 ? (
-              exerciseNotes.map((item, index) => (
-                <YStack key={index} gap="$1">
-                  <Text fontSize="$3" fontWeight="600">
-                    {item.name}
-                  </Text>
-                  <Text fontSize="$3" color="$textSoft">
-                    {item.notes}
-                  </Text>
-                </YStack>
-              ))
-            ) : (
-              <Text color="$textMuted">No notes for this workout</Text>
-            )}
-          </YStack>
-        </ScrollView>
+        <YStack gap="$3">
+          {currentWorkout?.workout_exercises?.map((exercise, index) => (
+            <Card key={index} padding="$3" backgroundColor="$backgroundSoft">
+              <YStack gap="$2">
+                <Text fontSize="$4" fontWeight="bold">
+                  {exercise.name}
+                </Text>
+                <TextArea
+                  placeholder="Add notes for this exercise..."
+                  value={exercise.notes || ""}
+                  onChangeText={(notes) => handleNotesChange(index, notes)}
+                  minHeight={80}
+                  backgroundColor="$background"
+                />
+              </YStack>
+            </Card>
+          )) || <Text color="$textMuted">No exercises found</Text>}
+        </YStack>
       </YStack>
 
       <Button size="$4" backgroundColor="$primary" onPress={onContinue}>

@@ -16,11 +16,13 @@ import {
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { EMPTY_WORKOUT_TEMPLATE } from "@/mockdata";
+import { CompleteWorkout } from "@/types/workout";
 
 export default function HomeScreen() {
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [intendedToStart, setIntendedToStart] = useState(false);
 
   const {
     isActive,
@@ -48,6 +50,26 @@ export default function HomeScreen() {
     return [emptyTemplate, ...templates];
   }, [templates, userProfile?.user_id]);
 
+  const handleTemplateSelect = (template: CompleteWorkout) => {
+    selectTemplate(template);
+
+    if (intendedToStart) {
+      setIntendedToStart(false);
+      // Get the workout directly from store after selection
+      setTimeout(() => {
+        const { currentWorkout } = useUserSessionStore.getState();
+        if (currentWorkout) {
+          startWorkout(currentWorkout);
+          workoutTrackerRef.current?.expandToFull();
+        }
+      }, 100);
+    }
+  };
+  const handleTemplateClose = () => {
+    setIntendedToStart(false); // RESET INTENT
+    closeTemplateSelector();
+  };
+
   const handleToggleWorkout = async () => {
     if (isActive) {
       setShowCompletionModal(true);
@@ -60,7 +82,7 @@ export default function HomeScreen() {
       }
     } else {
       if (!currentWorkout && !selectedTemplate) {
-        // Encourage template use first
+        setIntendedToStart(true);
         openTemplateSelector();
         return;
       }
@@ -113,13 +135,14 @@ export default function HomeScreen() {
           isVisible={showTemplateSelector}
           templates={templatesWithEmpty}
           selectedTemplateId={selectedTemplate?.id || null}
-          onSelectTemplate={selectTemplate}
-          onClose={closeTemplateSelector}
+          onSelectTemplate={handleTemplateSelect}
+          onClose={handleTemplateClose}
         />
         <WorkoutCompletionModal
           isVisible={showCompletionModal}
           onClose={() => {
             setShowCompletionModal(false);
+            setIntendedToStart(false);
             resetSession();
           }}
         />

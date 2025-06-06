@@ -1,6 +1,6 @@
-// components/WorkoutCompletionModal.tsx
 import React, { useState, useEffect } from "react";
-import { YStack, XStack, Text, Progress } from "tamagui";
+import { Platform, Keyboard, KeyboardAvoidingView } from "react-native";
+import { YStack, XStack, Text, Progress, Button, ScrollView } from "tamagui";
 import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
@@ -20,6 +20,7 @@ export function WorkoutCompletionModal({
     "summary"
   );
   const [retryCount, setRetryCount] = useState(0);
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 
   const { currentWorkout } = useUserSessionStore();
   const workoutAnalysisStore = useWorkoutAnalysisStore();
@@ -29,18 +30,12 @@ export function WorkoutCompletionModal({
     if (isVisible) {
       setCurrentSlide("summary");
       setRetryCount(0);
+      setShowCloseConfirmation(false);
     }
   }, [isVisible]);
 
-  // Trigger workout analysis when modal opens
-  // Trigger workout analysis when modal opens
   useEffect(() => {
     if (isVisible && currentWorkout) {
-      console.log(
-        "[WorkoutCompletionModal] Triggering workout analysis for:",
-        currentWorkout.name
-      );
-
       workoutAnalysisStore.submitAnalysis(currentWorkout, {
         onProgress: (progress) => {
           console.log("[WorkoutCompletionModal] Analysis progress:", progress);
@@ -53,25 +48,32 @@ export function WorkoutCompletionModal({
         },
       });
     }
-  }, [isVisible]); // Only trigger when modal opens
+  }, [isVisible]);
+
+  const handleCloseAttempt = () => {
+    setShowCloseConfirmation(true);
+  };
+
+  const handleConfirmClose = () => {
+    setShowCloseConfirmation(false);
+    handleClose();
+  };
+
+  const handleCancelClose = () => {
+    setShowCloseConfirmation(false);
+  };
 
   const handleChatError = (error: Error) => {
     console.error("[WorkoutCompletionModal] Chat error:", error);
-
     if (retryCount === 0) {
-      console.log("Toast: Error connecting to workout analysis. Tap to retry.");
       setCurrentSlide("summary");
       setRetryCount(1);
     } else {
-      console.log("Toast: Workout analysis chat unavailable");
       handleClose();
     }
   };
 
   const handleClose = () => {
-    console.log(
-      "[WorkoutCompletionModal] Closing modal and resetting analysis"
-    );
     workoutAnalysisStore.resetAnalysis();
     setRetryCount(0);
     onClose();
@@ -84,13 +86,20 @@ export function WorkoutCompletionModal({
   return (
     <BaseModal
       isVisible={isVisible}
-      onClose={handleClose}
+      onClose={handleCloseAttempt}
       widthPercent={98}
       heightPercent={80}
     >
-      <YStack flex={1} padding="$3">
+      <YStack flex={1}>
         {currentSlide === "summary" ? (
-          <WorkoutSummarySlide onContinue={handleContinueToChat} />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={{ flex: 1 }}
+          >
+            <ScrollView flex={1} padding="$3">
+              <WorkoutSummarySlide onContinue={handleContinueToChat} />
+            </ScrollView>
+          </KeyboardAvoidingView>
         ) : (
           <WorkoutAnalysisSlide onError={handleChatError} />
         )}
@@ -116,7 +125,6 @@ export function WorkoutCompletionModal({
                   {Math.round(analysisProgress.progress)}%
                 </Text>
               </XStack>
-
               <Progress
                 value={analysisProgress.progress}
                 backgroundColor="$backgroundMuted"
@@ -126,12 +134,50 @@ export function WorkoutCompletionModal({
                   backgroundColor="$primary"
                 />
               </Progress>
-
               {analysisProgress.progress >= 100 && (
                 <Text fontSize="$3" color="$primary" textAlign="center">
                   Analysis ready!
                 </Text>
               )}
+            </YStack>
+          </YStack>
+        )}
+
+        {showCloseConfirmation && (
+          <YStack
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            backgroundColor="rgba(0,0,0,0.8)"
+            justifyContent="center"
+            alignItems="center"
+            zIndex={1000}
+          >
+            <YStack
+              backgroundColor="$background"
+              padding="$4"
+              borderRadius="$4"
+              maxWidth={300}
+              gap="$3"
+            >
+              <Text fontSize="$4" fontWeight="bold" textAlign="center">
+                Exit Workout Summary?
+              </Text>
+              <XStack gap="$3" justifyContent="center">
+                <Button onPress={handleCancelClose} variant="outlined" flex={1}>
+                  Stay
+                </Button>
+                <Button
+                  onPress={handleConfirmClose}
+                  backgroundColor="$red9"
+                  color="white"
+                  flex={1}
+                >
+                  Exit
+                </Button>
+              </XStack>
             </YStack>
           </YStack>
         )}

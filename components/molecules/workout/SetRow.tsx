@@ -41,6 +41,7 @@ export default function SetRow({
     if (!isActive) return;
 
     if (pendingDelete) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // Strong haptic
       onDelete?.(set.id);
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
