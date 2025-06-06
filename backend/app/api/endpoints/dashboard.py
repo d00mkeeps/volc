@@ -36,8 +36,7 @@ def get_muscle_balance_data():
         "Legs": ["Calves", "Quads", "Hamstrings", "Glutes"],
         "Cardio": ["Cardio"]
     }
-    
-    # Mock detailed muscle data (replace with actual DB query)
+
     raw_muscle_data = {
         "Chest": 24,
         "Front delts": 6, "Side delts": 8, "Rear delts": 4,
