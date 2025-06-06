@@ -141,6 +141,7 @@ export interface Conversation {
   message_count: number;
 }
 export interface UserProfile {
+  preferences: unknown;
   goals: any;
   current_stats: any;
   age_group: number;

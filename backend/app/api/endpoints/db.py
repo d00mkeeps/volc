@@ -257,6 +257,37 @@ async def save_workout_as_template(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+    
+@router.put("/workouts/{workout_id}")
+async def update_workout(
+    workout_id: str,
+    workout: Dict[str, Any] = Body(...),
+    user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Update an existing workout
+    """
+    try:
+        logger.info(f"API request to update workout: {workout_id}")
+        
+        workout_service = WorkoutService()
+        
+        # Verify ownership
+        existing_workout = await workout_service.get_workout(workout_id)
+        if existing_workout["user_id"] != user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to update this workout"
+            )
+        
+        result = await workout_service.update_workout(workout_id, workout)
+        return result
+    except Exception as e:
+        logger.error(f"Error updating workout: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.delete("/workouts/{workout_id}")
 async def delete_workout(
     workout_id: str,

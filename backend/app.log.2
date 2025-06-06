@@ -1,101 +1,96 @@
-2025-06-06 02:01:43,609 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-06 02:01:43,611 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-06 02:01:56,795 - app.main - INFO - Request: POST /db/conversations/37ca91d1-0475-4685-9701-4ac30df842a2/messages
-2025-06-06 02:01:56,897 - app.api.endpoints.db - INFO - API request to save message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:01:56,897 - app.services.db.conversation_service - INFO - Getting conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:01:57,016 - app.services.db.conversation_service - INFO - Retrieved conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:01:57,016 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 37ca91d1-0475-4685-9701-4ac30df842a2
-2025-06-06 02:01:57,080 - app.services.db.conversation_service - INFO - Message saved with ID: 76dbcef4-a38b-46c0-86d2-04ad2340027e
-2025-06-06 02:01:57,081 - app.main - INFO - Response status: 200
-2025-06-06 02:02:29,870 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-06 02:02:29,891 - app.main - INFO - Request: GET /db/conversations
-2025-06-06 02:02:29,997 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:02:29,998 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-06 02:02:29,998 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-06 02:02:30,127 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-06 02:02:30,128 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-06 02:02:30,128 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:02:30,193 - app.services.db.conversation_service - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:02:30,193 - app.api.endpoints.db - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 02:02:30,196 - app.main - INFO - Response status: 200
-2025-06-06 12:02:32,200 - app - INFO - Logging has been set up
-2025-06-06 12:02:32,200 - app.main - INFO - Application starting
-2025-06-06 12:02:32,200 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 12:02:32,200 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 12:02:32,200 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 12:03:01,378 - app - INFO - Logging has been set up
-2025-06-06 12:03:01,378 - app.main - INFO - Application starting
-2025-06-06 12:03:01,378 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 12:03:01,378 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 12:03:01,378 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 12:05:04,186 - app - INFO - Logging has been set up
-2025-06-06 12:05:04,186 - app.main - INFO - Application starting
-2025-06-06 12:05:04,187 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 12:05:04,187 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 12:05:04,187 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 12:06:44,134 - app.main - INFO - Request: GET /db/user-profile
-2025-06-06 12:06:44,139 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-06 12:06:44,139 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-06 12:06:44,145 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-06 12:06:44,145 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-06 12:06:44,145 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-06 12:06:44,145 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-06 12:06:44,276 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-06 12:06:44,913 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-06 12:06:45,108 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:45,109 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:45,264 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:45,265 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-06 12:06:45,368 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-06 12:06:45,368 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-06 12:06:45,562 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-06 12:06:45,569 - app.main - INFO - Response status: 200
-2025-06-06 12:06:45,570 - app.main - INFO - Response status: 200
-2025-06-06 12:06:45,667 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-06 12:06:45,727 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:45,727 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:46,112 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:06:46,122 - app.main - INFO - Response status: 200
-2025-06-06 12:09:40,157 - app - INFO - Logging has been set up
-2025-06-06 12:09:40,158 - app.main - INFO - Application starting
-2025-06-06 12:09:40,158 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 12:09:40,158 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 12:09:40,158 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 12:09:45,774 - app - INFO - Logging has been set up
-2025-06-06 12:09:45,774 - app.main - INFO - Application starting
-2025-06-06 12:09:45,775 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-06-06 12:09:45,775 - app.main - INFO - SUPABASE_URL present: True
-2025-06-06 12:09:45,775 - app.main - INFO - SUPABASE_KEY present: True
-2025-06-06 12:09:45,792 - app.main - INFO - Request: GET /db/user-profile
-2025-06-06 12:09:45,793 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-06-06 12:09:45,793 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
-2025-06-06 12:09:45,793 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-06-06 12:09:45,793 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-06-06 12:09:45,794 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-06-06 12:09:45,794 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-06-06 12:09:45,830 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-06-06 12:09:46,152 - app.core.supabase.client - INFO - Test query successful: 1
-2025-06-06 12:09:46,325 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:46,325 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:46,438 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:46,439 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-06 12:09:46,544 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-06 12:09:46,544 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-06 12:09:46,699 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-06-06 12:09:46,711 - app.main - INFO - Response status: 200
-2025-06-06 12:09:46,712 - app.main - INFO - Response status: 200
-2025-06-06 12:09:46,820 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-06 12:09:46,924 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:46,925 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:47,139 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 12:09:47,159 - app.main - INFO - Response status: 200
+2025-06-06 12:51:33,533 - app.main - INFO - SUPABASE_URL present: True
+2025-06-06 12:51:33,534 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-06 14:14:30,434 - app.main - INFO - Request: GET /db/user-profile
+2025-06-06 14:14:30,440 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
+2025-06-06 14:14:30,441 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Documents/supreme-octo-doodle/backend/.env
+2025-06-06 14:14:30,443 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-06-06 14:14:30,443 - app.core.supabase.client - INFO - Supabase API key present: True
+2025-06-06 14:14:30,443 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-06-06 14:14:30,443 - app.core.supabase.client - INFO - Supabase key length: 208 characters
+2025-06-06 14:14:30,546 - app.core.supabase.client - INFO - Supabase client created successfully
+2025-06-06 14:14:31,483 - app.core.supabase.client - INFO - Test query successful: 1
+2025-06-06 14:14:32,876 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:32,877 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:32,968 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:32,970 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-06 14:14:32,971 - app.main - INFO - Response status: 200
+2025-06-06 14:14:33,076 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-06 14:14:33,077 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-06 14:14:33,386 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-06 14:14:33,398 - app.main - INFO - Request: GET /api/dashboard
+2025-06-06 14:14:33,400 - app.main - INFO - Response status: 200
+2025-06-06 14:14:33,400 - app.main - INFO - Response status: 200
+2025-06-06 14:14:33,576 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-06 14:14:33,714 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:33,715 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:34,082 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:34,103 - app.main - INFO - Response status: 200
+2025-06-06 14:14:55,955 - app.main - INFO - Request: GET /db/user-profile
+2025-06-06 14:14:56,161 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:56,162 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:56,366 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:56,367 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-06 14:14:56,492 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-06 14:14:56,493 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-06 14:14:56,776 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-06 14:14:56,781 - app.main - INFO - Response status: 200
+2025-06-06 14:14:56,782 - app.main - INFO - Request: GET /api/dashboard
+2025-06-06 14:14:56,782 - app.main - INFO - Response status: 200
+2025-06-06 14:14:56,783 - app.main - INFO - Response status: 200
+2025-06-06 14:14:56,991 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-06 14:14:57,104 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:57,105 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:57,402 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:14:57,423 - app.main - INFO - Response status: 200
+2025-06-06 14:16:32,792 - app.main - INFO - Request: GET /db/user-profile
+2025-06-06 14:16:33,215 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,216 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,336 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,338 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-06 14:16:33,396 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-06 14:16:33,397 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-06 14:16:33,494 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-06 14:16:33,502 - app.main - INFO - Response status: 200
+2025-06-06 14:16:33,503 - app.main - INFO - Request: GET /api/dashboard
+2025-06-06 14:16:33,503 - app.main - INFO - Response status: 200
+2025-06-06 14:16:33,506 - app.main - INFO - Response status: 200
+2025-06-06 14:16:33,656 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-06 14:16:33,719 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,719 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,873 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:16:33,883 - app.main - INFO - Response status: 200
+2025-06-06 14:24:52,648 - app.main - INFO - Request: GET /db/user-profile
+2025-06-06 14:24:53,002 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,003 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,137 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,138 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-06 14:24:53,199 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-06 14:24:53,199 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-06 14:24:53,310 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-06 14:24:53,321 - app.main - INFO - Response status: 200
+2025-06-06 14:24:53,321 - app.main - INFO - Request: GET /api/dashboard
+2025-06-06 14:24:53,322 - app.main - INFO - Response status: 200
+2025-06-06 14:24:53,325 - app.main - INFO - Response status: 200
+2025-06-06 14:24:53,507 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-06 14:24:53,564 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,566 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,749 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:53,758 - app.main - INFO - Response status: 200
+2025-06-06 14:24:55,054 - app.main - INFO - Request: GET /db/workouts/user
+2025-06-06 14:24:55,120 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:55,121 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:55,355 - app.services.db.workout_service - INFO - Retrieved 195 workouts with 1000 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:55,355 - app.api.endpoints.db - INFO - Retrieved 195 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:24:55,388 - app.main - INFO - Response status: 200
+2025-06-06 14:25:45,608 - app.main - INFO - Request: GET /db/workouts/user
+2025-06-06 14:25:45,754 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:25:45,760 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:25:46,293 - app.services.db.workout_service - INFO - Retrieved 195 workouts with 1000 exercises for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:25:46,293 - app.api.endpoints.db - INFO - Retrieved 195 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:25:46,325 - app.main - INFO - Response status: 200
+2025-06-06 14:26:46,927 - app.main - INFO - Request: GET /db/conversations
+2025-06-06 14:26:47,219 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-06 14:26:47,220 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-06-06 14:26:47,220 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-06-06 14:26:47,361 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-06-06 14:26:47,361 - app.api.endpoints.db - INFO - Calling get_user_conversations method

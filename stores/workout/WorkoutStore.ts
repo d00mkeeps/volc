@@ -15,6 +15,7 @@ interface WorkoutState {
   loadWorkouts: (userId: string) => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (userId: string, workout: WorkoutInput) => Promise<void>;
+  updateWorkout: (workoutId: string, updates: WorkoutInput) => Promise<void>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
   fetchTemplates: (userId: string) => Promise<void>;
@@ -146,6 +147,22 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
       await workoutService.deleteConversationWorkouts(userId, conversationId);
     } catch (err) {
       set({ error: err instanceof Error ? err : new Error("Failed to delete conversation workouts") });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  updateWorkout: async (workoutId: string, updates: WorkoutInput) => {
+    try {
+      set({ loading: true, error: null });
+      const updatedWorkout = await workoutService.updateWorkout(workoutId, updates);
+      set((state) => ({
+        workouts: state.workouts.map(w => w.id === workoutId ? updatedWorkout : w),
+        currentWorkout: state.currentWorkout?.id === workoutId ? updatedWorkout : state.currentWorkout
+      }));
+    } catch (err) {
+      set({ error: err instanceof Error ? err : new Error("Failed to update workout") });
+      throw err;
     } finally {
       set({ loading: false });
     }

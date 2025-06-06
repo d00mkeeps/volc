@@ -108,6 +108,24 @@ export class WorkoutService extends BaseService {
   }
 
   /**
+ * Update an existing workout
+ */
+async updateWorkout(workoutId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
+  try {
+    console.log(`[WorkoutService] Updating workout: ${workoutId}`);
+    
+    const data = await apiPut<CompleteWorkout>(`/db/workouts/${workoutId}`, workout);
+    
+    console.log(`[WorkoutService] Successfully updated workout: ${workoutId}`);
+    
+    return data;
+  } catch (error) {
+    console.error(`[WorkoutService] Error updating workout:`, error);
+    return this.handleError(error);
+  }
+}
+
+  /**
    * Delete all workouts for a specific conversation
    */
   async deleteConversationWorkouts(userId: string, conversationId: string): Promise<void> {

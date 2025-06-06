@@ -1,23 +1,41 @@
-// app/(tabs)/profile.tsx
 import React from "react";
-import {
-  YStack,
-  XStack,
-  Text,
-  Card,
-  ScrollView,
-  Avatar,
-  Separator,
-} from "tamagui";
+import { YStack, Text, ScrollView } from "tamagui";
 import { useUserStore } from "@/stores/userProfileStore";
+import ProfileHeader from "@/components/molecules/headers/ProfileHeader";
+import PersonalInfoCard from "@/components/molecules/PersonalInfoCard";
+import DataCard from "@/components/molecules/ProfileDataCard";
 
 export default function ProfileScreen() {
-  // Get user profile from store
-  const { userProfile } = useUserStore();
+  const { userProfile, loading, error } = useUserStore();
+
+  if (loading) {
+    return (
+      <YStack
+        flex={1}
+        backgroundColor="$background"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$textSoft">Loading profile...</Text>
+      </YStack>
+    );
+  }
+
+  if (error || !userProfile) {
+    return (
+      <YStack
+        flex={1}
+        backgroundColor="$background"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$textSoft">Unable to load profile</Text>
+      </YStack>
+    );
+  }
 
   return (
     <YStack flex={1} backgroundColor="$background">
-      {/* Header */}
       <YStack
         padding="$4"
         backgroundColor="$backgroundStrong"
@@ -31,6 +49,19 @@ export default function ProfileScreen() {
           Your account information
         </Text>
       </YStack>
+
+      <ScrollView flex={1} padding="$3">
+        <YStack gap="$3">
+          <ProfileHeader profile={userProfile} />
+          <PersonalInfoCard profile={userProfile} />
+          <DataCard title="Goals" data={userProfile.goals} />
+          <DataCard title="Current Stats" data={userProfile.current_stats} />
+          <DataCard
+            title="Training Preferences"
+            data={userProfile.preferences}
+          />
+        </YStack>
+      </ScrollView>
     </YStack>
   );
 }

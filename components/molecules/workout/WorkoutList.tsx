@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, Text, ScrollView } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
+import WorkoutDetail from "@/components/organisms/WorkoutDetail";
+import { useWorkoutStore } from "@/stores/workout/workoutStore";
+import { useUserStore } from "@/stores/userProfileStore";
 
 interface WorkoutListProps {
   limit?: number;
@@ -10,69 +12,69 @@ interface WorkoutListProps {
 
 export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
   const router = useRouter();
+  const { workouts, loading, loadWorkouts } = useWorkoutStore();
+  const { userProfile } = useUserStore();
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
+    null
+  );
 
-  // Mock data - replace with real data later
-  const allWorkouts = [
-    {
-      id: "workout-1",
-      title: "Push Day",
-      subtitle: "Chest, shoulders, triceps • 45 min",
-      date: new Date("2024-05-22"),
-    },
-    {
-      id: "workout-2",
-      title: "Pull Day",
-      subtitle: "Back, biceps, rear delts • 50 min",
-      date: new Date("2024-05-20"),
-    },
-    {
-      id: "workout-3",
-      title: "Leg Day",
-      subtitle: "Quads, hamstrings, glutes • 60 min",
-      date: new Date("2024-05-18"),
-    },
-    {
-      id: "workout-4",
-      title: "Upper Body",
-      subtitle: "Full upper body • 55 min",
-      date: new Date("2024-05-16"),
-    },
-  ];
+  useEffect(() => {
+    if (userProfile?.auth_user_uuid) {
+      loadWorkouts(userProfile.auth_user_uuid);
+    }
+  }, [userProfile?.auth_user_uuid, loadWorkouts]);
 
-  const displayedWorkouts = allWorkouts.slice(0, limit);
-  const hasMore = allWorkouts.length > limit;
+  const displayedWorkouts = workouts.slice(0, limit);
 
   const handleWorkoutPress = (workoutId: string) => {
-    console.log("Open workout:", workoutId);
-    // TODO: Navigate to workout detail or open modal
+    setSelectedWorkoutId(workoutId);
   };
 
-  const handleViewAllPress = () => {
-    //router.push('/workouts'); Navigate to dedicated workouts page
-    console.log("Routing to /workouts!");
+  const formatWorkoutSubtitle = (workout: any) => {
+    const exerciseCount = workout.workout_exercises?.length || 0;
+    const exerciseText = `${exerciseCount} exercise${
+      exerciseCount !== 1 ? "s" : ""
+    }`;
+    return workout.description
+      ? `${exerciseText} • ${workout.description}`
+      : exerciseText;
   };
+
+  if (loading && workouts.length === 0) {
+    return (
+      <Stack flex={1}>
+        <Text fontSize="$4" fontWeight="500" color="$text" marginBottom="$2">
+          Workouts
+        </Text>
+        <Text color="$textSoft">Loading workouts...</Text>
+      </Stack>
+    );
+  }
 
   return (
-    <Stack marginBottom="$4">
+    <Stack flex={1}>
       <Text fontSize="$4" fontWeight="500" color="$text" marginBottom="$2">
-        Workouts
+        Recent Workouts
       </Text>
-      <Stack height={70}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <Stack flexDirection="row" gap="$2" height="100%">
-            {displayedWorkouts.map((workout) => (
-              <Stack key={workout.id} width={240} flex={1}>
-                <ContentCard
-                  title={workout.title}
-                  subtitle={workout.subtitle}
-                  date={workout.date}
-                  onPress={() => handleWorkoutPress(workout.id)}
-                />
-              </Stack>
-            ))}
-          </Stack>
-        </ScrollView>
-      </Stack>
+      <ScrollView flex={1} showsVerticalScrollIndicator={false}>
+        <Stack gap="$2">
+          {displayedWorkouts.map((workout) => (
+            <ContentCard
+              key={workout.id}
+              title={workout.name}
+              subtitle={formatWorkoutSubtitle(workout)}
+              date={new Date(workout.created_at)}
+              onPress={() => handleWorkoutPress(workout.id)}
+            />
+          ))}
+        </Stack>
+      </ScrollView>
+
+      <WorkoutDetail
+        workoutId={selectedWorkoutId || ""}
+        visible={!!selectedWorkoutId}
+        onClose={() => setSelectedWorkoutId(null)}
+      />
     </Stack>
   );
 }
