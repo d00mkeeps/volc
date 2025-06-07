@@ -1,84 +1,79 @@
-2025-06-06 22:07:38,324 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-06 22:07:38,389 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:07:38,389 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:07:38,548 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:07:38,580 - app.main - INFO - Response status: 200
-2025-06-06 22:08:26,045 - app.main - INFO - Request: POST /api/workout-analysis
-2025-06-06 22:08:26,056 - app.main - INFO - Request: POST /db/workouts
-2025-06-06 22:08:26,226 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-06 22:08:26,227 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:26,228 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-06-06 22:08:26,374 - app.services.db.workout_service - INFO - Workout created with ID: 6b215623-44aa-43e6-bbcf-71565b85400c
-2025-06-06 22:08:26,374 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 6b215623-44aa-43e6-bbcf-71565b85400c
-2025-06-06 22:08:26,374 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-06-06 22:08:26,446 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: d2ec2c2e-cc8f-4b1f-92ce-02bb98773bbb
-2025-06-06 22:08:26,514 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
-2025-06-06 22:08:26,578 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 6c7347e4-d000-49c1-b849-5d24de0d943e
-2025-06-06 22:08:26,578 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
-2025-06-06 22:08:26,639 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: ee9d3795-f1b5-48b2-b1b0-690273d192a5
-2025-06-06 22:08:26,641 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-06-06 22:08:26,701 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: fda1f3ba-f2e0-4322-bc57-1b1063988175
-2025-06-06 22:08:26,773 - app.services.db.workout_service - INFO - Workout creation complete for ID: 6b215623-44aa-43e6-bbcf-71565b85400c
-2025-06-06 22:08:26,776 - app.main - INFO - Response status: 200
-2025-06-06 22:08:26,872 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-06-06 22:08:26,872 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
-2025-06-06 22:08:26,873 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-06-06 22:08:26,873 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
-2025-06-06 22:08:26,874 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-06-06 22:08:26,874 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
-2025-06-06 22:08:26,874 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-06-06 22:08:26,875 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Incline Dumbbell Press', 'Bench Press']
-2025-06-06 22:08:26,875 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Overhead Press to strength chart
-2025-06-06 22:08:26,875 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to strength chart
-2025-06-06 22:08:26,876 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Bench Press to strength chart
-2025-06-06 22:08:26,876 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
-2025-06-06 22:08:27,594 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
-2025-06-06 22:08:27,595 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Overhead Press to volume chart
-2025-06-06 22:08:27,595 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to volume chart
-2025-06-06 22:08:27,595 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Bench Press to volume chart
-2025-06-06 22:08:27,595 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
-2025-06-06 22:08:40,975 - app.main - INFO - Response status: 202
-2025-06-06 22:08:40,976 - app.main - INFO - Request: GET /api/dashboard
-2025-06-06 22:08:40,976 - app.services.job_store - INFO - Cleaned up 1 expired jobs
-2025-06-06 22:08:40,977 - app.main - INFO - Request: POST /db/conversations
-2025-06-06 22:08:40,978 - app.main - INFO - Response status: 200
-2025-06-06 22:08:41,096 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
-2025-06-06 22:08:41,096 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:41,272 - app.services.db.conversation_service - INFO - Conversation created with ID: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,274 - app.main - INFO - Response status: 200
-2025-06-06 22:08:41,316 - app.main - INFO - Request: GET /db/conversations/d02d4c8d-1e1f-4fba-a667-cf702b773955/messages
-2025-06-06 22:08:41,376 - app.api.endpoints.db - INFO - API request to get messages for conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,377 - app.services.db.conversation_service - INFO - Getting conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,438 - app.services.db.conversation_service - INFO - Retrieved conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,439 - app.services.db.conversation_service - INFO - Getting messages for conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,500 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,502 - app.main - INFO - Response status: 200
-2025-06-06 22:08:41,559 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: d02d4c8d-1e1f-4fba-a667-cf702b773955
-2025-06-06 22:08:41,798 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-06 22:08:42,096 - app.main - INFO - Request: GET /api/workout-analysis/f1b7b2d4-0149-49ff-8713-49d0d5aa407e
-2025-06-06 22:08:42,099 - app.main - INFO - Response status: 200
-2025-06-06 22:08:42,164 - app.main - INFO - Request: DELETE /db/graph-bundles/conversation/pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:42,223 - app.api.endpoints.db - INFO - API request to delete all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:42,223 - app.services.db.graph_bundle_service - INFO - Deleting all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:42,281 - app.services.db.graph_bundle_service - ERROR - Error deleting conversation bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-06 22:08:42,281 - app.services.db.base_service - ERROR - Error in delete_conversation_bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-06 22:08:42,281 - app.main - INFO - Request: POST /db/graph-bundles
-2025-06-06 22:08:42,282 - app.main - INFO - Response status: 200
-2025-06-06 22:08:42,341 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:08:42,342 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 11621aea-6ef1-436a-bc15-35bce15e4baf
-2025-06-06 22:08:42,584 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-06 22:08:42,587 - app.main - INFO - Response status: 200
-2025-06-06 22:08:45,076 - app.main - INFO - Request: POST /db/workouts
-2025-06-06 22:08:45,077 - app.main - INFO - Request: POST /api/workout-analysis
-2025-06-06 22:08:45,077 - app.main - INFO - Request: POST /db/conversations
-2025-06-06 22:08:45,146 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-06 22:08:45,146 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:15:33,459 - app.api.endpoints.db - INFO - API request to get messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,462 - app.services.db.conversation_service - INFO - Getting conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,559 - app.services.db.conversation_service - INFO - Retrieved conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,560 - app.services.db.conversation_service - INFO - Getting messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,614 - app.services.db.conversation_service - INFO - Retrieved 11 messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,720 - app.api.endpoints.db - INFO - API request to get conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,720 - app.services.db.conversation_service - INFO - Getting conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,779 - app.services.db.conversation_service - INFO - Retrieved conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,873 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,873 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,928 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,928 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:15:33,928 - app.main - INFO - Response status: 200
+2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
+2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
+2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
+2025-06-07 10:15:33,969 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
+2025-06-07 10:17:36,465 - app.main - INFO - Request: POST /db/workouts
+2025-06-07 10:17:36,467 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-07 10:17:36,467 - app.main - INFO - Request: POST /db/conversations
+2025-06-07 10:17:36,738 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-06-07 10:17:36,739 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:36,739 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Workout created with ID: b1667867-30e3-4619-a868-647f9391e7f5
+2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Creating 3 exercises for workout: b1667867-30e3-4619-a868-647f9391e7f5
+2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Creating exercise 1/3: Bench Press
+2025-06-07 10:17:36,939 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 0792667f-57b3-44e3-9d89-ffce24c3fd71
+2025-06-07 10:17:37,104 - app.services.db.workout_service - INFO - Creating exercise 2/3: Overhead Press
+2025-06-07 10:17:37,170 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 4fbc570b-83f8-4719-9a92-4d20f0f4947f
+2025-06-07 10:17:37,384 - app.services.db.workout_service - INFO - Creating exercise 3/3: Dumbbell Lateral Raise
+2025-06-07 10:17:37,440 - app.services.db.workout_service - INFO - Exercise created: Dumbbell Lateral Raise with ID: e41e7a30-6fc8-445b-bc54-e5c9b524c1c3
+2025-06-07 10:17:37,847 - app.services.db.workout_service - INFO - Workout creation complete for ID: b1667867-30e3-4619-a868-647f9391e7f5
+2025-06-07 10:17:37,908 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
+2025-06-07 10:17:37,908 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:38,034 - app.services.db.conversation_service - INFO - Conversation created with ID: 3e82f3b8-6f55-4b99-948c-38d9b0291847
+2025-06-07 10:17:38,034 - app.main - INFO - Response status: 200
+2025-06-07 10:17:38,036 - app.main - INFO - Response status: 200
+2025-06-07 10:17:38,118 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-07 10:17:38,120 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Dumbbell Lateral Raise']
+2025-06-07 10:17:38,120 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-07 10:17:38,121 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Dumbbell Lateral Raise', 'Bench Press']
+2025-06-07 10:17:38,121 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Dumbbell Lateral Raise']
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Dumbbell Lateral Raise', 'Bench Press']
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to strength chart
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 16 data points for Bench Press to strength chart
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 2 data points for Dumbbell Lateral Raise to strength chart
+2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
+2025-06-07 10:17:38,946 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
+2025-06-07 10:17:38,947 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to volume chart
+2025-06-07 10:17:38,947 - app.services.workout_analysis.graph_service - INFO - Added 2 data points for Dumbbell Lateral Raise to volume chart
+2025-06-07 10:17:38,948 - app.services.workout_analysis.graph_service - INFO - Added 16 data points for Bench Press to volume chart
+2025-06-07 10:17:38,948 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-06-07 10:17:40,382 - app.main - INFO - Response status: 202
+2025-06-07 10:17:40,383 - app.main - INFO - Request: GET /api/dashboard
+2025-06-07 10:17:40,385 - app.main - INFO - Response status: 200
+2025-06-07 10:17:41,416 - app.main - INFO - Request: GET /api/workout-analysis/7cef9486-9919-4153-b4de-219afe03c421
+2025-06-07 10:17:41,423 - app.main - INFO - Response status: 200
+2025-06-07 10:17:41,531 - app.main - INFO - Request: DELETE /db/graph-bundles/conversation/pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:41,531 - app.main - INFO - Request: POST /db/graph-bundles
+2025-06-07 10:17:41,595 - app.api.endpoints.db - INFO - API request to delete all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:41,596 - app.services.db.graph_bundle_service - INFO - Deleting all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:41,648 - app.services.db.graph_bundle_service - ERROR - Error deleting conversation bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:17:41,649 - app.services.db.base_service - ERROR - Error in delete_conversation_bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:17:41,650 - app.main - INFO - Response status: 200
+2025-06-07 10:17:41,721 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:41,721 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: e8de77e1-fa2d-46ee-8778-108bb83b3f0a
+2025-06-07 10:17:41,837 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:17:41,838 - app.main - INFO - Response status: 200
+2025-06-07 10:17:55,418 - app.main - INFO - Request: POST /db/conversations
+2025-06-07 10:17:55,537 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
+2025-06-07 10:17:55,538 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:17:55,712 - app.services.db.conversation_service - INFO - Conversation created with ID: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
+2025-06-07 10:17:55,714 - app.main - INFO - Response status: 200
+2025-06-07 10:17:55,826 - app.main - INFO - Request: GET /db/conversations/d7df51e9-b8f7-41b6-ba16-6dab19fde4f1/messages
+2025-06-07 10:17:55,877 - app.api.endpoints.db - INFO - API request to get messages for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
+2025-06-07 10:17:55,877 - app.services.db.conversation_service - INFO - Getting conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
+2025-06-07 10:17:55,931 - app.services.db.conversation_service - INFO - Retrieved conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1

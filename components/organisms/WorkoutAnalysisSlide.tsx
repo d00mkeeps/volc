@@ -98,7 +98,7 @@ export const WorkoutAnalysisSlide = ({
   }, [conversationId]);
 
   return (
-    <YStack flex={1} padding="$3">
+    <YStack flex={1}>
       {!conversationId ? (
         <>
           <YStack flex={1} justifyContent="center" alignItems="center">

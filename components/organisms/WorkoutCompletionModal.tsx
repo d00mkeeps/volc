@@ -26,6 +26,12 @@ export function WorkoutCompletionModal({
   const workoutAnalysisStore = useWorkoutAnalysisStore();
   const analysisProgress = workoutAnalysisStore.getProgress();
 
+  // Determine if analysis is ready
+  const isAnalysisReady =
+    analysisProgress.status === "completed" ||
+    analysisProgress.status === "error" ||
+    analysisProgress.progress >= 100;
+
   useEffect(() => {
     if (isVisible) {
       setCurrentSlide("summary");
@@ -97,14 +103,17 @@ export function WorkoutCompletionModal({
             style={{ flex: 1 }}
           >
             <ScrollView flex={1} padding="$3">
-              <WorkoutSummarySlide onContinue={handleContinueToChat} />
+              <WorkoutSummarySlide
+                onContinue={handleContinueToChat}
+                showContinueButton={isAnalysisReady}
+              />
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (
           <WorkoutAnalysisSlide onError={handleChatError} />
         )}
 
-        {analysisProgress.status === "loading" && (
+        {!isAnalysisReady && (
           <YStack
             position="absolute"
             bottom="$3"
@@ -134,11 +143,6 @@ export function WorkoutCompletionModal({
                   backgroundColor="$primary"
                 />
               </Progress>
-              {analysisProgress.progress >= 100 && (
-                <Text fontSize="$3" color="$primary" textAlign="center">
-                  Analysis ready!
-                </Text>
-              )}
             </YStack>
           </YStack>
         )}

@@ -1,4 +1,16 @@
-2025-06-06 22:10:41,258 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+2025-06-07 10:18:48,138 - app.services.db.conversation_service - INFO - Retrieved conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:48,140 - app.services.db.conversation_service - INFO - Saving user message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:48,200 - app.services.db.conversation_service - INFO - Message saved with ID: 7a04dcc8-f506-4a04-bb29-2c2169b4808a
+2025-06-07 10:18:48,200 - app.main - INFO - Response status: 200
+2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
+2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
+2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
+2025-06-07 10:18:48,244 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
 
 
 Current workout data context:
@@ -8,7 +20,7 @@ Available workout data:
     "query": "Analyze progress for: Bench Press, Overhead Press, Incline Dumbbell Press, Tricep Dips",
     "date_range": {
       "start": "2025-03-28T16:51:04.357000+00:00",
-      "end": "2025-06-06T21:08:45.146715+00:00"
+      "end": "2025-06-07T09:18:35.569295+00:00"
     },
     "workout_metrics": {
       "exercise_progression": {
@@ -25,9 +37,9 @@ Available workout data:
           "volume_trend": "stable"
         },
         "Tricep Dips": {
-          "occurrences": 20,
+          "occurrences": 23,
           "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
+          "last_date": "2025-06-07T09:18:35.569295+00:00",
           "weight_progression": {
             "start": 0,
             "current": 0,
@@ -37,9 +49,9 @@ Available workout data:
           "volume_trend": "stable"
         },
         "Overhead Press": {
-          "occurrences": 20,
+          "occurrences": 25,
           "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
+          "last_date": "2025-06-07T09:18:35.569295+00:00",
           "weight_progression": {
             "start": 50,
             "current": 0,
@@ -49,9 +61,9 @@ Available workout data:
           "volume_trend": "stable"
         },
         "Incline Dumbbell Press": {
-          "occurrences": 20,
+          "occurrences": 23,
           "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
+          "last_date": "2025-06-07T09:18:35.569295+00:00",
           "weight_progression": {
             "start": 30,
             "current": 0,
@@ -61,14 +73,14 @@ Available workout data:
           "volume_trend": "stable"
         },
         "Bench Press": {
-          "occurrences": 20,
+          "occurrences": 25,
           "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
+          "last_date": "2025-06-07T09:18:35.569295+00:00",
           "weight_progression": {
             "start": 80,
-            "current": 0,
-            "change": -80,
-            "change_percent": -100
+            "current": 85,
+            "change": 5,
+            "change_percent": 6.2
           },
           "volume_trend": "stable"
         },
@@ -88,19 +100,19 @@ Available workout data:
       "strength_progression": {},
       "most_improved_exercises": [],
       "workout_frequency": {
-        "total_workouts": 58,
+        "total_workouts": 63,
         "first_workout": "2025-03-28",
-        "last_workout": "2025-06-06",
+        "last_workout": "2025-06-07",
         "total_days": 71,
-        "avg_days_between": 1.1,
-        "workouts_per_week": 6.5,
+        "avg_days_between": 1,
+        "workouts_per_week": 7.1,
         "consistency_score": {
           "score": 0,
-          "streak": 11
+          "streak": 16
         }
       }
     },
-    "total_workouts": 58,
+    "total_workouts": 63,
     "correlation_analysis": []
   }
 }
@@ -112,90 +124,34 @@ Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
 
 CONSISTENCY METRICS:
 - Score: 0/100
-- Current streak: 11 workouts
-- Average frequency: Every 1.1 days
+- Current streak: 16 workouts
+- Average frequency: Every 1.0 days
 
 TOP PERFORMERS:
 - Strength gains: No significant strength gains detected
 - Volume increases: No significant volume increases detected
 - Most frequent exercises: Not enough data
 
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - 
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (AIMessage):
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - Content: # Chest & Triceps Progress Analysis
-
-Hey there! I've looked at your workout data for the chest and tricep exercises you requested. Let's break down what I'm seeing over this ~2 month period (March 28 to June 6).
-
-## Consistency - Absolutely Crushing It! 💪
-- You're working out nearly every day (every 1.1 days on average)
-- That's about 6.5 workouts per week - extremely dedicated!
-- You're currently on an 11-workout streak
-- Total of 58 workouts over 71 days is impressive commitment
-
-## Exercise Analysis
-
-### Bench Press Variations
-I notice you've shifted between different pressing movements:
-- **Barbell Bench Press**: 34 sessions in the early period, but stopped after April 18
-- **Bench Press**: 20 sessions in the later period
-- **Incline Dumbbell Press**: 20 sessions in the later period
-
-The data shows some weight decreases, but this might be due to switching between variations or because you're tracking differently in your app.
-
-### Overhead Press & Tricep Work
-- **Overhead Press**: 20 sessions
-- **Tricep Dips**: 20 sessions
-- **Dips**: 15 sessions
-
-## Recommendations
-
-1. **Track Your Progress More Consistently**: The data shows some unusual drops to 0 weight - this is likely a tracking issue rather than actual performance.
-
-2. **Consider a Deload Week**: With your high training frequency, scheduling a lighter week every 4-6 weeks could help prevent burnout.
-
-3. **Focus on Progressive Overload**: Try increasing weight by small increments (2.5-5 lbs) or adding 1-2 reps each week on your key lifts.
-
-4. **Variation Is Good**: You're already mixing up bench variations which is great for targeting different parts of the chest and preventing plateaus.
-
-Your consistency is truly exceptional! Let me know if you'd like more specific recommendations for any of these exercises.
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (HumanMessage):
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - Content: Ok! Thanks
-2025-06-06 22:10:41,261 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-06 22:10:44,871 - app.main - INFO - Request: POST /db/conversations/66c58771-a5db-4993-bd60-6a810630b307/messages
-2025-06-06 22:10:44,942 - app.api.endpoints.db - INFO - API request to save message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:44,943 - app.services.db.conversation_service - INFO - Getting conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:45,004 - app.services.db.conversation_service - INFO - Retrieved conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:45,004 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:45,073 - app.services.db.conversation_service - INFO - Message saved with ID: e33db8f9-39d4-4a01-8055-22b35817c3ec
-2025-06-06 22:10:45,075 - app.main - INFO - Response status: 200
-2025-06-06 22:14:18,589 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
+2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-06-07 10:18:55,510 - app.main - INFO - Request: POST /db/conversations/07f3602e-254c-4726-b032-b2c1556b0e6d/messages
+2025-06-07 10:18:55,627 - app.api.endpoints.db - INFO - API request to save message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:55,627 - app.services.db.conversation_service - INFO - Getting conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:55,741 - app.services.db.conversation_service - INFO - Retrieved conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:55,741 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:55,804 - app.services.db.conversation_service - INFO - Message saved with ID: 4d128a56-b409-49f4-a329-17ab212bf507
+2025-06-07 10:18:55,805 - app.main - INFO - Response status: 200
+2025-06-07 10:38:47,605 - app.services.job_store - INFO - Cleaned up 2 expired jobs
+2025-06-07 10:48:28,010 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
 Traceback (most recent call last):
   File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
     data = await websocket.receive_json()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
     self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
     raise WebSocketDisconnect(message["code"], message.get("reason"))
 starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-06 22:14:19,972 - app.main - INFO - Request: GET /db/workouts/user
-2025-06-06 22:14:20,252 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:20,253 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:20,612 - app.services.db.workout_service - INFO - Retrieved 127 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:20,612 - app.api.endpoints.db - INFO - Retrieved 127 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:20,673 - app.main - INFO - Response status: 200
-2025-06-06 22:14:23,406 - app.main - INFO - Request: GET /db/conversations
-2025-06-06 22:14:23,471 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:23,471 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-06 22:14:23,471 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-06 22:14:23,547 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-06 22:14:23,548 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-06 22:14:23,548 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:23,618 - app.services.db.conversation_service - INFO - Retrieved 11 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:23,618 - app.api.endpoints.db - INFO - Retrieved 11 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-06 22:14:23,620 - app.main - INFO - Response status: 200
-2025-06-06 22:19:41,108 - app.services.job_store - INFO - Cleaned up 1 expired jobs

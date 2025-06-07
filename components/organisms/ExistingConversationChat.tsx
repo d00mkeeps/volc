@@ -106,14 +106,15 @@ export const ExistingConversationChat = ({
           Workout Analysis
         </Text>
       </XStack>
-
-      <ChatInterface
-        messages={messages}
-        streamingMessage={messaging?.streamingMessage}
-        isConnected={messaging?.isConnected}
-        onSend={handleSend}
-        placeholder="Continue the conversation..."
-      />
+      <YStack flex={1} backgroundColor="$background">
+        <ChatInterface
+          messages={messages}
+          streamingMessage={messaging?.streamingMessage}
+          isConnected={messaging?.isConnected}
+          onSend={handleSend}
+          placeholder="Continue the conversation..."
+        />
+      </YStack>
     </YStack>
   );
 };

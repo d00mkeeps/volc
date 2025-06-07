@@ -14,31 +14,30 @@ export const MessageItem = memo(
   ({ message, isStreaming = false }: MessageItemProps) => {
     const isUser = message.sender === "user";
 
-    // Markdown styles with StyleSheet (better text color for assistant, increased weight)
     const markdownStyles = StyleSheet.create({
       body: {
         fontSize: 16,
-        fontWeight: "400", // Increased from default
-        lineHeight: 22,
-        color: "#ffffff", // White text for assistant messages too
+        fontWeight: "400",
+        lineHeight: 18,
+        color: "#ffffff",
         margin: 0,
         padding: 0,
       },
       paragraph: {
-        marginVertical: 2,
-        marginTop: 0,
-        marginBottom: 4,
+        marginVertical: 8,
       },
       heading1: {
         fontSize: 20,
+        lineHeight: 24,
         fontWeight: "700",
-        marginVertical: 4,
+        paddingVertical: 8,
         color: "#ffffff",
       },
       heading2: {
         fontSize: 18,
+        lineHeight: 22,
         fontWeight: "700",
-        marginVertical: 3,
+        paddingVertical: 8,
         color: "#ffffff",
       },
       strong: { fontWeight: "800" },
@@ -66,11 +65,11 @@ export const MessageItem = memo(
         paddingVertical="$2"
       >
         <YStack
-          maxWidth="90%"
-          backgroundColor={isUser ? "$primary" : "$backgroundSoft"}
-          paddingHorizontal="$3"
-          paddingVertical="$2" // Reduced from $2.5 (about 30% reduction)
-          borderRadius="$4"
+          maxWidth={"90%"} // Full width for assistant
+          backgroundColor={isUser ? "$primary" : "transparent"} // No background for assistant
+          paddingHorizontal={isUser ? "$3" : "$0"} // No horizontal padding for assistant
+          paddingVertical="$1" // Minimal padding for assistant
+          borderRadius={isUser ? "$4" : "$0"} // No border radius for assistant
           opacity={isStreaming ? 0.7 : 1}
         >
           <Markdown style={markdownStyles}>

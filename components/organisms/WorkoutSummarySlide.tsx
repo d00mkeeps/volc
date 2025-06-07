@@ -4,9 +4,13 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
+  showContinueButton?: boolean; // Add this prop
 }
 
-export function WorkoutSummarySlide({ onContinue }: WorkoutSummarySlideProps) {
+export function WorkoutSummarySlide({
+  onContinue,
+  showContinueButton = true,
+}: WorkoutSummarySlideProps) {
   const { currentWorkout, updateCurrentWorkout } = useUserSessionStore();
   const [workoutName, setWorkoutName] = useState(currentWorkout?.name || "");
 
@@ -76,9 +80,11 @@ export function WorkoutSummarySlide({ onContinue }: WorkoutSummarySlideProps) {
         </YStack>
       </YStack>
 
-      <Button size="$4" backgroundColor="$primary" onPress={onContinue}>
-        Continue to Coach
-      </Button>
+      {showContinueButton && (
+        <Button size="$4" backgroundColor="$primary" onPress={onContinue}>
+          Continue to Coach
+        </Button>
+      )}
     </YStack>
   );
 }

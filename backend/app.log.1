@@ -1,151 +1,80 @@
-2025-06-06 22:09:10,459 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
-2025-06-06 22:09:10,460 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": {
-    "query": "Analyze progress for: Bench Press, Overhead Press, Incline Dumbbell Press, Tricep Dips",
-    "date_range": {
-      "start": "2025-03-28T16:51:04.357000+00:00",
-      "end": "2025-06-06T21:08:45.146715+00:00"
-    },
-    "workout_metrics": {
-      "exercise_progression": {
-        "Barbell Bench Press": {
-          "occurrences": 34,
-          "first_date": "2025-03-28T16:51:04.357+00:00",
-          "last_date": "2025-04-18T17:39:29.41+00:00",
-          "weight_progression": {
-            "start": 95,
-            "current": 90,
-            "change": -5,
-            "change_percent": -5.3
-          },
-          "volume_trend": "stable"
-        },
-        "Tricep Dips": {
-          "occurrences": 20,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
-          "weight_progression": {
-            "start": 0,
-            "current": 0,
-            "change": 0,
-            "change_percent": 0
-          },
-          "volume_trend": "stable"
-        },
-        "Overhead Press": {
-          "occurrences": 20,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
-          "weight_progression": {
-            "start": 50,
-            "current": 0,
-            "change": -50,
-            "change_percent": -100
-          },
-          "volume_trend": "stable"
-        },
-        "Incline Dumbbell Press": {
-          "occurrences": 20,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
-          "weight_progression": {
-            "start": 30,
-            "current": 0,
-            "change": -30,
-            "change_percent": -100
-          },
-          "volume_trend": "stable"
-        },
-        "Bench Press": {
-          "occurrences": 20,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-06T21:08:45.146715+00:00",
-          "weight_progression": {
-            "start": 80,
-            "current": 0,
-            "change": -80,
-            "change_percent": -100
-          },
-          "volume_trend": "stable"
-        },
-        "Dips": {
-          "occurrences": 15,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-27T12:22:10.128012+00:00",
-          "weight_progression": {
-            "start": 95,
-            "current": 12.5,
-            "change": -82.5,
-            "change_percent": -86.8
-          },
-          "volume_trend": "stable"
-        }
-      },
-      "strength_progression": {},
-      "most_improved_exercises": [],
-      "workout_frequency": {
-        "total_workouts": 58,
-        "first_workout": "2025-03-28",
-        "last_workout": "2025-06-06",
-        "total_days": 71,
-        "avg_days_between": 1.1,
-        "workouts_per_week": 6.5,
-        "consistency_score": {
-          "score": 0,
-          "streak": 11
-        }
-      }
-    },
-    "total_workouts": 58,
-    "correlation_analysis": []
-  }
-}
-
-Visualizations and metrics:
-
-CHARTS:
-Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
-
-CONSISTENCY METRICS:
-- Score: 0/100
-- Current streak: 11 workouts
-- Average frequency: Every 1.1 days
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Not enough data
-
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-06 22:09:10,461 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-06 22:09:20,103 - app.main - INFO - Request: POST /db/conversations/66c58771-a5db-4993-bd60-6a810630b307/messages
-2025-06-06 22:09:20,353 - app.api.endpoints.db - INFO - API request to save message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:09:20,353 - app.services.db.conversation_service - INFO - Getting conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:09:20,457 - app.services.db.conversation_service - INFO - Retrieved conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:09:20,458 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:09:20,528 - app.services.db.conversation_service - INFO - Message saved with ID: 1917510f-b4bc-4924-aadf-ec0f9455d6f5
-2025-06-06 22:09:20,529 - app.main - INFO - Response status: 200
-2025-06-06 22:09:40,977 - app.services.job_store - INFO - Cleaned up 2 expired jobs
-2025-06-06 22:10:40,764 - app.main - INFO - Request: POST /db/conversations/66c58771-a5db-4993-bd60-6a810630b307/messages
-2025-06-06 22:10:40,934 - app.api.endpoints.db - INFO - API request to save message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:40,935 - app.services.db.conversation_service - INFO - Getting conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:41,056 - app.services.db.conversation_service - INFO - Retrieved conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:41,057 - app.services.db.conversation_service - INFO - Saving user message to conversation: 66c58771-a5db-4993-bd60-6a810630b307
-2025-06-06 22:10:41,126 - app.services.db.conversation_service - INFO - Message saved with ID: 60eaf6e4-8d70-497f-871a-db0f2774e8c8
-2025-06-06 22:10:41,128 - app.main - INFO - Response status: 200
-2025-06-06 22:10:41,257 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-06 22:10:41,257 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
+2025-06-07 10:18:04,120 - app.main - INFO - Response status: 200
+2025-06-07 10:18:04,122 - app.main - INFO - Response status: 200
+2025-06-07 10:18:04,122 - app.main - INFO - Request: GET /api/dashboard
+2025-06-07 10:18:04,125 - app.main - INFO - Response status: 200
+2025-06-07 10:18:04,195 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-07 10:18:04,248 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:04,248 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:04,401 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:04,412 - app.main - INFO - Response status: 200
+2025-06-07 10:18:35,427 - app.main - INFO - Request: POST /api/workout-analysis
+2025-06-07 10:18:35,429 - app.main - INFO - Request: POST /db/workouts
+2025-06-07 10:18:35,568 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-06-07 10:18:35,569 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:35,569 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-06-07 10:18:35,955 - app.services.db.workout_service - INFO - Workout created with ID: 42e128c7-368a-449c-8bff-675231830751
+2025-06-07 10:18:35,955 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 42e128c7-368a-449c-8bff-675231830751
+2025-06-07 10:18:35,955 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-06-07 10:18:36,022 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: b9d558c6-4c9d-4fbd-ae68-1709c422ad09
+2025-06-07 10:18:36,207 - app.services.db.workout_service - INFO - Creating exercise 2/4: Overhead Press
+2025-06-07 10:18:36,268 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 2f895844-c2fc-4475-b60f-e53e99477720
+2025-06-07 10:18:36,330 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-06-07 10:18:36,394 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: a0c613d7-e1fc-44c3-84bb-634200af18e1
+2025-06-07 10:18:36,395 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-06-07 10:18:36,453 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: d1407781-aaf4-4828-aaea-7bc766d0288e
+2025-06-07 10:18:36,512 - app.services.db.workout_service - INFO - Workout creation complete for ID: 42e128c7-368a-449c-8bff-675231830751
+2025-06-07 10:18:36,513 - app.main - INFO - Response status: 200
+2025-06-07 10:18:36,618 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-07 10:18:36,619 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Incline Dumbbell Press']
+2025-06-07 10:18:36,620 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-07 10:18:36,620 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Bench Press', 'Incline Dumbbell Press']
+2025-06-07 10:18:36,620 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Incline Dumbbell Press']
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Bench Press', 'Incline Dumbbell Press']
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to strength chart
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Added 17 data points for Bench Press to strength chart
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to strength chart
+2025-06-07 10:18:36,621 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
+2025-06-07 10:18:37,252 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
+2025-06-07 10:18:37,252 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to volume chart
+2025-06-07 10:18:37,253 - app.services.workout_analysis.graph_service - INFO - Added 17 data points for Bench Press to volume chart
+2025-06-07 10:18:37,253 - app.services.workout_analysis.graph_service - INFO - Added 10 data points for Incline Dumbbell Press to volume chart
+2025-06-07 10:18:37,254 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
+2025-06-07 10:18:38,649 - app.main - INFO - Response status: 202
+2025-06-07 10:18:38,650 - app.main - INFO - Request: GET /api/dashboard
+2025-06-07 10:18:38,652 - app.main - INFO - Response status: 200
+2025-06-07 10:18:39,688 - app.main - INFO - Request: GET /api/workout-analysis/e2c7b600-f8b4-4373-819a-006921b072be
+2025-06-07 10:18:39,693 - app.main - INFO - Response status: 200
+2025-06-07 10:18:39,776 - app.main - INFO - Request: DELETE /db/graph-bundles/conversation/pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:39,845 - app.api.endpoints.db - INFO - API request to delete all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:39,845 - app.services.db.graph_bundle_service - INFO - Deleting all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:39,905 - app.services.db.graph_bundle_service - ERROR - Error deleting conversation bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:18:39,905 - app.services.db.base_service - ERROR - Error in delete_conversation_bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:18:39,905 - app.main - INFO - Request: POST /db/graph-bundles
+2025-06-07 10:18:39,905 - app.main - INFO - Response status: 200
+2025-06-07 10:18:39,964 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:39,965 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 7e2ef9cd-83dc-4da4-a0b0-8e1e466da28a
+2025-06-07 10:18:40,137 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
+2025-06-07 10:18:40,138 - app.main - INFO - Response status: 200
+2025-06-07 10:18:47,016 - app.main - INFO - Request: POST /db/conversations
+2025-06-07 10:18:47,132 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
+2025-06-07 10:18:47,132 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 10:18:47,302 - app.services.db.conversation_service - INFO - Conversation created with ID: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,303 - app.main - INFO - Response status: 200
+2025-06-07 10:18:47,355 - app.main - INFO - Request: GET /db/conversations/07f3602e-254c-4726-b032-b2c1556b0e6d/messages
+2025-06-07 10:18:47,412 - app.api.endpoints.db - INFO - API request to get messages for conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,413 - app.services.db.conversation_service - INFO - Getting conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,472 - app.services.db.conversation_service - INFO - Retrieved conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,472 - app.services.db.conversation_service - INFO - Getting messages for conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,535 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,537 - app.main - INFO - Response status: 200
+2025-06-07 10:18:47,538 - app.main - INFO - Request: POST /db/graph-bundles
+2025-06-07 10:18:47,601 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:47,601 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 7e2ef9cd-83dc-4da4-a0b0-8e1e466da28a
+2025-06-07 10:18:47,891 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "graph_bundles"'}
+2025-06-07 10:18:47,893 - app.main - INFO - Response status: 200
+2025-06-07 10:18:47,897 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:48,018 - app.main - INFO - Request: POST /db/conversations/07f3602e-254c-4726-b032-b2c1556b0e6d/messages
+2025-06-07 10:18:48,076 - app.api.endpoints.db - INFO - API request to save message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
+2025-06-07 10:18:48,076 - app.services.db.conversation_service - INFO - Getting conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
