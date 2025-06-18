@@ -1,157 +1,37 @@
-2025-06-07 10:18:48,138 - app.services.db.conversation_service - INFO - Retrieved conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:48,140 - app.services.db.conversation_service - INFO - Saving user message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:48,200 - app.services.db.conversation_service - INFO - Message saved with ID: 7a04dcc8-f506-4a04-bb29-2c2169b4808a
-2025-06-07 10:18:48,200 - app.main - INFO - Response status: 200
-2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
-2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
-2025-06-07 10:18:48,244 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
-2025-06-07 10:18:48,244 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": {
-    "query": "Analyze progress for: Bench Press, Overhead Press, Incline Dumbbell Press, Tricep Dips",
-    "date_range": {
-      "start": "2025-03-28T16:51:04.357000+00:00",
-      "end": "2025-06-07T09:18:35.569295+00:00"
-    },
-    "workout_metrics": {
-      "exercise_progression": {
-        "Barbell Bench Press": {
-          "occurrences": 34,
-          "first_date": "2025-03-28T16:51:04.357+00:00",
-          "last_date": "2025-04-18T17:39:29.41+00:00",
-          "weight_progression": {
-            "start": 95,
-            "current": 90,
-            "change": -5,
-            "change_percent": -5.3
-          },
-          "volume_trend": "stable"
-        },
-        "Tricep Dips": {
-          "occurrences": 23,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:18:35.569295+00:00",
-          "weight_progression": {
-            "start": 0,
-            "current": 0,
-            "change": 0,
-            "change_percent": 0
-          },
-          "volume_trend": "stable"
-        },
-        "Overhead Press": {
-          "occurrences": 25,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:18:35.569295+00:00",
-          "weight_progression": {
-            "start": 50,
-            "current": 0,
-            "change": -50,
-            "change_percent": -100
-          },
-          "volume_trend": "stable"
-        },
-        "Incline Dumbbell Press": {
-          "occurrences": 23,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:18:35.569295+00:00",
-          "weight_progression": {
-            "start": 30,
-            "current": 0,
-            "change": -30,
-            "change_percent": -100
-          },
-          "volume_trend": "stable"
-        },
-        "Bench Press": {
-          "occurrences": 25,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:18:35.569295+00:00",
-          "weight_progression": {
-            "start": 80,
-            "current": 85,
-            "change": 5,
-            "change_percent": 6.2
-          },
-          "volume_trend": "stable"
-        },
-        "Dips": {
-          "occurrences": 15,
-          "first_date": "2025-04-07T15:18:47.869+00:00",
-          "last_date": "2025-05-27T12:22:10.128012+00:00",
-          "weight_progression": {
-            "start": 95,
-            "current": 12.5,
-            "change": -82.5,
-            "change_percent": -86.8
-          },
-          "volume_trend": "stable"
-        }
-      },
-      "strength_progression": {},
-      "most_improved_exercises": [],
-      "workout_frequency": {
-        "total_workouts": 63,
-        "first_workout": "2025-03-28",
-        "last_workout": "2025-06-07",
-        "total_days": 71,
-        "avg_days_between": 1,
-        "workouts_per_week": 7.1,
-        "consistency_score": {
-          "score": 0,
-          "streak": 16
-        }
-      }
-    },
-    "total_workouts": 63,
-    "correlation_analysis": []
-  }
-}
-
-Visualizations and metrics:
-
-CHARTS:
-Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
-
-CONSISTENCY METRICS:
-- Score: 0/100
-- Current streak: 16 workouts
-- Average frequency: Every 1.0 days
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Not enough data
-
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-07 10:18:48,245 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-07 10:18:55,510 - app.main - INFO - Request: POST /db/conversations/07f3602e-254c-4726-b032-b2c1556b0e6d/messages
-2025-06-07 10:18:55,627 - app.api.endpoints.db - INFO - API request to save message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:55,627 - app.services.db.conversation_service - INFO - Getting conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:55,741 - app.services.db.conversation_service - INFO - Retrieved conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:55,741 - app.services.db.conversation_service - INFO - Saving assistant message to conversation: 07f3602e-254c-4726-b032-b2c1556b0e6d
-2025-06-07 10:18:55,804 - app.services.db.conversation_service - INFO - Message saved with ID: 4d128a56-b409-49f4-a329-17ab212bf507
-2025-06-07 10:18:55,805 - app.main - INFO - Response status: 200
-2025-06-07 10:38:47,605 - app.services.job_store - INFO - Cleaned up 2 expired jobs
-2025-06-07 10:48:28,010 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-06-13 10:32:14,845 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 10:52:44 BST)" was missed by 0:09:30.719231
+2025-06-13 11:07:13,757 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 11:22:44 BST)" was missed by 0:14:29.631485
+2025-06-13 11:23:25,693 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 11:52:44 BST)" was missed by 0:00:41.567870
+2025-06-13 11:54:35,803 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 12:22:44 BST)" was missed by 0:01:51.677518
+2025-06-13 12:24:03,797 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 12:52:44 BST)" was missed by 0:01:19.671806
+2025-06-13 13:07:10,370 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 13:22:44 BST)" was missed by 0:14:26.244516
+2025-06-13 13:23:57,330 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 13:52:44 BST)" was missed by 0:01:13.204430
+2025-06-13 14:08:16,193 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 14:22:44 BST)" was missed by 0:15:32.067930
+2025-06-13 14:25:57,158 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 14:52:44 BST)" was missed by 0:03:13.032318
+2025-06-13 14:52:52,078 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 15:22:44 BST)" was missed by 0:00:07.952299
+2025-06-13 15:29:01,950 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 15:52:44 BST)" was missed by 0:06:17.824304
+2025-06-13 15:53:52,920 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 16:22:44 BST)" was missed by 0:01:08.794887
+2025-06-13 16:31:39,837 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 16:52:44 BST)" was missed by 0:08:55.711175
+2025-06-13 16:54:53,765 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 17:22:44 BST)" was missed by 0:02:09.639842
+2025-06-13 17:34:53,623 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 17:52:44 BST)" was missed by 0:12:09.497604
+2025-06-13 17:55:54,582 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 18:22:44 BST)" was missed by 0:03:10.456472
+2025-06-13 18:36:14,465 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 18:52:44 BST)" was missed by 0:13:30.339646
+2025-06-13 18:56:54,432 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 19:22:44 BST)" was missed by 0:04:10.306926
+2025-06-13 19:27:11,323 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 19:52:44 BST)" was missed by 0:04:27.197125
+2025-06-13 19:57:54,219 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-13 20:22:44 BST)" was missed by 0:05:10.093722
+2025-06-16 21:35:47,605 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 21:52:44 BST)" was missed by 0:13:03.478477
+2025-06-16 22:05:28,299 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 22:22:44 BST)" was missed by 0:12:44.174026
+2025-06-16 22:22:44,136 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 22:52:44 BST)" (scheduled at 2025-06-16 22:22:44.125832+01:00)
+2025-06-16 22:22:44,140 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 22:52:44 BST)" executed successfully
+2025-06-16 22:52:44,133 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 23:22:44 BST)" (scheduled at 2025-06-16 22:52:44.125832+01:00)
+2025-06-16 22:52:44,137 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 23:22:44 BST)" executed successfully
+2025-06-16 23:22:44,134 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 23:52:44 BST)" (scheduled at 2025-06-16 23:22:44.125832+01:00)
+2025-06-16 23:22:44,138 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-16 23:52:44 BST)" executed successfully
+2025-06-16 23:52:44,133 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 00:22:44 BST)" (scheduled at 2025-06-16 23:52:44.125832+01:00)
+2025-06-16 23:52:44,136 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 00:22:44 BST)" executed successfully
+2025-06-17 00:22:44,131 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 00:52:44 BST)" (scheduled at 2025-06-17 00:22:44.125832+01:00)
+2025-06-17 00:22:44,135 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 00:52:44 BST)" executed successfully
+2025-06-17 00:54:01,996 - apscheduler.executors.default - WARNING - Run time of job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 01:22:44 BST)" was missed by 0:01:17.870183
+2025-06-17 01:22:44,177 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 01:52:44 BST)" (scheduled at 2025-06-17 01:22:44.125832+01:00)
+2025-06-17 01:22:44,179 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 01:52:44 BST)" executed successfully
+2025-06-17 01:52:44,130 - apscheduler.executors.default - INFO - Running job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 02:22:44 BST)" (scheduled at 2025-06-17 01:52:44.125832+01:00)
+2025-06-17 01:52:44,132 - apscheduler.executors.default - INFO - Job "ConversationAttachmentsCache.cleanup_expired (trigger: interval[0:30:00], next run at: 2025-06-17 02:22:44 BST)" executed successfully

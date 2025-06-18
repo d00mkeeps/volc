@@ -1,12 +1,4 @@
-2025-06-07 10:17:55,931 - app.services.db.conversation_service - INFO - Getting messages for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:55,986 - app.services.db.conversation_service - INFO - Retrieved 1 messages for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:55,987 - app.main - INFO - Response status: 200
-2025-06-07 10:17:55,987 - app.main - INFO - Request: POST /db/graph-bundles
-2025-06-07 10:17:56,043 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,044 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: e8de77e1-fa2d-46ee-8778-108bb83b3f0a
-2025-06-07 10:17:56,156 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "graph_bundles"'}
-2025-06-07 10:17:56,157 - app.main - INFO - Response status: 200
-2025-06-07 10:17:56,163 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+2025-06-07 23:29:20,113 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
 Traceback (most recent call last):
   File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
     data = await websocket.receive_json()
@@ -16,162 +8,105 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
   File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
     raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-06-07 10:17:56,166 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,215 - app.main - INFO - Request: POST /db/conversations/d7df51e9-b8f7-41b6-ba16-6dab19fde4f1/messages
-2025-06-07 10:17:56,276 - app.api.endpoints.db - INFO - API request to save message to conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,276 - app.services.db.conversation_service - INFO - Getting conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,326 - app.services.db.conversation_service - INFO - Retrieved conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,326 - app.services.db.conversation_service - INFO - Saving user message to conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,428 - app.services.db.conversation_service - INFO - Message saved with ID: e11b692a-3dab-423e-a320-aa4d86df1352
-2025-06-07 10:17:56,429 - app.main - INFO - Response status: 200
-2025-06-07 10:17:56,469 - app.services.chains.workout_analysis_chain - INFO - Added workout data bundle to conversation context
-2025-06-07 10:17:56,469 - app.services.chains.workout_analysis_chain - INFO - Bundle has 3 charts available
-2025-06-07 10:17:56,469 - app.services.chains.workout_analysis_chain - INFO - Top strength performer: None
-2025-06-07 10:17:56,469 - app.services.llm.workout_analysis - INFO - Added analysis bundle to conversation d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:56,469 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-07 10:17:56,469 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-07 10:17:56,470 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": {
-    "query": "Analyze progress for: Bench Press, Overhead Press, Dumbbell Lateral Raise",
-    "date_range": {
-      "start": "2025-03-28T16:51:04.357000+00:00",
-      "end": "2025-06-07T09:17:36.739510+00:00"
-    },
-    "workout_metrics": {
-      "exercise_progression": {
-        "Barbell Bench Press": {
-          "occurrences": 34,
-          "first_date": "2025-03-28T16:51:04.357+00:00",
-          "last_date": "2025-04-18T17:39:29.41+00:00",
-          "weight_progression": {
-            "start": 95,
-            "current": 90,
-            "change": -5,
-            "change_percent": -5.3
-          },
-          "volume_trend": "stable"
-        },
-        "Overhead Press": {
-          "occurrences": 24,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:17:36.73951+00:00",
-          "weight_progression": {
-            "start": 50,
-            "current": 62.5,
-            "change": 12.5,
-            "change_percent": 25
-          },
-          "volume_trend": "stable"
-        },
-        "Bench Press": {
-          "occurrences": 24,
-          "first_date": "2025-05-26T14:45:57.73513+00:00",
-          "last_date": "2025-06-07T09:17:36.73951+00:00",
-          "weight_progression": {
-            "start": 80,
-            "current": 85,
-            "change": 5,
-            "change_percent": 6.2
-          },
-          "volume_trend": "stable"
-        },
-        "Dumbbell Lateral Raise": {
-          "occurrences": 2,
-          "first_date": "2025-06-06T21:25:19.554434+00:00",
-          "last_date": "2025-06-07T09:17:36.73951+00:00",
-          "weight_progression": {
-            "start": 12,
-            "current": 12,
-            "change": 0,
-            "change_percent": 0
-          },
-          "volume_trend": "stable"
-        }
-      },
-      "strength_progression": {},
-      "most_improved_exercises": [],
-      "workout_frequency": {
-        "total_workouts": 58,
-        "first_workout": "2025-03-28",
-        "last_workout": "2025-06-07",
-        "total_days": 71,
-        "avg_days_between": 1.1,
-        "workouts_per_week": 6.5,
-        "consistency_score": {
-          "score": 0,
-          "streak": 15
-        }
-      }
-    },
-    "total_workouts": 58,
-    "correlation_analysis": []
-  }
-}
-
-Visualizations and metrics:
-
-CHARTS:
-Strength Progress Chart, Volume Progress Chart, Weekly Workout Frequency Chart
-
-CONSISTENCY METRICS:
-- Score: 0/100
-- Current streak: 15 workouts
-- Average frequency: Every 1.1 days
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Not enough data
-
-2025-06-07 10:17:56,470 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-07 10:17:56,470 - app.services.chains.base_conversation_chain - INFO - Content: Analyze this workout data
-2025-06-07 10:17:56,470 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-07 10:18:02,416 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 331, in asgi_send
-    await self.send(data)  # type: ignore[arg-type]
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 620, in send
-    await self.ensure_open()
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
-    raise self.connection_closed_exc()
-websockets.exceptions.ConnectionClosedOK: received 1000 (OK); then sent 1000 (OK)
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 85, in send
-    await self._send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 39, in sender
-    await send(message)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 344, in asgi_send
-    raise ClientDisconnected from exc
-uvicorn.protocols.utils.ClientDisconnected
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 94, in process_websocket
-    await websocket.send_json(response)
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 175, in send_json
-    await self.send({"type": "websocket.send", "text": text})
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 88, in send
-    raise WebSocketDisconnect(code=1006)
-starlette.websockets.WebSocketDisconnect
-2025-06-07 10:18:03,704 - app.main - INFO - Request: GET /db/user-profile
-2025-06-07 10:18:03,811 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:18:03,811 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:18:03,941 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:18:03,942 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-06-07 10:18:04,004 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-06-07 10:18:04,004 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-06-07 10:18:04,112 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-06-09 14:36:51,070 - app.main - INFO - Request: GET /db/user-profile
+2025-06-09 14:36:51,468 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:51,469 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:51,935 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:51,937 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-09 14:36:52,058 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-09 14:36:52,059 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-09 14:36:52,330 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-09 14:36:52,345 - app.main - INFO - Response status: 200
+2025-06-09 14:36:52,346 - app.main - INFO - Request: GET /api/dashboard
+2025-06-09 14:36:52,346 - app.main - INFO - Response status: 200
+2025-06-09 14:36:52,350 - app.main - INFO - Response status: 200
+2025-06-09 14:36:52,698 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-09 14:36:52,770 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:52,770 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:53,114 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-09 14:36:53,132 - app.main - INFO - Response status: 200
+2025-06-12 15:20:04,944 - app.main - INFO - Request: GET /db/user-profile
+2025-06-12 15:20:05,025 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-12 15:20:05,028 - app.main - INFO - Response status: 403
+2025-06-12 15:20:05,034 - app.main - INFO - Response status: 403
+2025-06-12 15:20:22,309 - app.main - INFO - Request: GET /api/dashboard
+2025-06-12 15:20:22,324 - app.main - INFO - Response status: 200
+2025-06-12 15:20:34,588 - app.main - INFO - Request: GET /db/user-profile
+2025-06-12 15:20:34,799 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:34,804 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:35,213 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:35,213 - app.main - INFO - Response status: 200
+2025-06-12 15:20:35,214 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-06-12 15:20:35,277 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-06-12 15:20:35,277 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-06-12 15:20:35,489 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-06-12 15:20:35,494 - app.main - INFO - Request: GET /api/dashboard
+2025-06-12 15:20:35,495 - app.main - INFO - Response status: 200
+2025-06-12 15:20:35,496 - app.main - INFO - Response status: 200
+2025-06-12 15:20:35,634 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-12 15:20:35,744 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:35,744 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:36,135 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-12 15:20:36,162 - app.main - INFO - Response status: 200
+2025-06-12 15:48:54,065 - app - INFO - Logging has been set up
+2025-06-12 15:48:54,065 - app.main - INFO - Application starting
+2025-06-12 15:48:54,066 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:48:54,066 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:48:54,066 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:48:55,939 - app - INFO - Logging has been set up
+2025-06-12 15:48:55,939 - app.main - INFO - Application starting
+2025-06-12 15:48:55,939 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:48:55,939 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:48:55,939 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:49:04,367 - app - INFO - Logging has been set up
+2025-06-12 15:49:04,367 - app.main - INFO - Application starting
+2025-06-12 15:49:04,368 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:49:04,368 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:49:04,368 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:50:46,040 - app - INFO - Logging has been set up
+2025-06-12 15:50:46,041 - app.main - INFO - Application starting
+2025-06-12 15:50:46,041 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:50:46,041 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:50:46,041 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:51:05,968 - app - INFO - Logging has been set up
+2025-06-12 15:51:05,968 - app.main - INFO - Application starting
+2025-06-12 15:51:05,968 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:51:05,968 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:51:05,968 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:54:05,058 - app - INFO - Logging has been set up
+2025-06-12 15:54:05,058 - app.main - INFO - Application starting
+2025-06-12 15:54:05,058 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:54:05,058 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:54:05,058 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:54:12,572 - app - INFO - Logging has been set up
+2025-06-12 15:54:12,572 - app.main - INFO - Application starting
+2025-06-12 15:54:12,572 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:54:12,572 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:54:12,572 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 15:54:18,556 - app - INFO - Logging has been set up
+2025-06-12 15:54:18,556 - app.main - INFO - Application starting
+2025-06-12 15:54:18,556 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 15:54:18,557 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 15:54:18,557 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 16:04:05,829 - app - INFO - Logging has been set up
+2025-06-12 16:04:05,830 - app.main - INFO - Application starting
+2025-06-12 16:04:05,830 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 16:04:05,830 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 16:04:05,830 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 16:09:11,986 - app - INFO - Logging has been set up
+2025-06-12 16:09:11,986 - app.main - INFO - Application starting
+2025-06-12 16:09:11,986 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 16:09:11,986 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 16:09:11,986 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 16:09:16,456 - app - INFO - Logging has been set up
+2025-06-12 16:09:16,456 - app.main - INFO - Application starting
+2025-06-12 16:09:16,456 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 16:09:16,456 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 16:09:16,457 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 16:20:38,018 - app - INFO - Logging has been set up
+2025-06-12 16:20:38,019 - app.main - INFO - Application starting
+2025-06-12 16:20:38,019 - app.main - INFO - Loading .env from: /Users/mileshillary/Documents/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-06-12 16:20:38,019 - app.main - INFO - SUPABASE_URL present: True
+2025-06-12 16:20:38,019 - app.main - INFO - SUPABASE_KEY present: True
+2025-06-12 16:20:38,031 - apscheduler.scheduler - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts

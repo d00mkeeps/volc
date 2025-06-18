@@ -110,12 +110,11 @@ async def base_llm_websocket(websocket: WebSocket, user_id: str):
             await websocket.close(code=1011)
         except:
             pass
-
-# General conversation endpoint
-@router.websocket("/api/llm/conversation/{conversation_id}")
+@router.websocket("/api/llm/conversation/{conversation_id}/{user_id}")
 async def conversation_websocket(
     websocket: WebSocket, 
     conversation_id: str,
+    user_id: str,
     llm: ChatAnthropic = Depends(get_llm)
 ):
     """WebSocket endpoint for general LLM conversations"""
@@ -124,20 +123,48 @@ async def conversation_websocket(
         await websocket.accept()
         logger.info(f"Conversation WebSocket connection accepted: {conversation_id}")
         
-        # Send connection confirmation
+        # Load conversation context from cache
+        from app.services.cache.conversation_attachments_cache import conversation_cache
+        from app.services.db.message_service import MessageService
+        
+        try:
+            context = await conversation_cache.get_conversation_context(conversation_id, user_id)
+        except Exception as e:
+            logger.error(f"Cache error, using empty context: {e}")
+            context = {"messages": [], "analysis_bundles": []}
+        
+        message_service = MessageService()
+        
+        # Build conversation history from loaded messages + analysis context
+        conversation_history = []
+        
+        # Add analysis bundles as system context if present
+        if context["analysis_bundles"]:
+            analysis_context = "Available workout analysis data:\n"
+            for bundle in context["analysis_bundles"]:
+                analysis_context += f"- Query: {bundle.get('original_query', 'Analysis')}\n"
+                if bundle.get('top_performers'):
+                    analysis_context += f"  Top performers: {bundle.get('top_performers')}\n"
+                if bundle.get('consistency_metrics'):
+                    analysis_context += f"  Metrics: {bundle.get('consistency_metrics')}\n"
+            conversation_history.append({"role": "system", "content": analysis_context})
+        
+        # Add existing messages
+        for msg in context["messages"]:
+            conversation_history.append({
+                "role": msg["sender"], 
+                "content": msg["content"]
+            })
+        
         await websocket.send_json({
             "type": "connection_status",
             "data": "connected"
         })
         
-        # Initialize conversation history
-        conversation_history = []
-        
         # Process messages
         while True:
             data = await websocket.receive_json()
             
-            # Handle heartbeat
             if data.get('type') == 'heartbeat':
                 await websocket.send_json({
                     "type": "heartbeat_ack",
@@ -145,11 +172,14 @@ async def conversation_websocket(
                 })
                 continue
             
-            # Handle conversation message
             if data.get('type') == 'message' or 'message' in data:
                 message = data.get('message', '')
                 
-                # Add user message to history
+                # Save user message to database
+                user_msg = await message_service.save_message(conversation_id, message, "user")
+                if user_msg.get('success') != False:
+                    context["messages"].append(user_msg)
+                
                 conversation_history.append({"role": "user", "content": message})
                 
                 try:
@@ -166,10 +196,13 @@ async def conversation_websocket(
                                     "data": {"content": chunk_content}
                                 })
                     
-                    # Add assistant response to history
+                    # Save complete assistant response to database
+                    assistant_msg = await message_service.save_message(conversation_id, response_content, "assistant")
+                    if assistant_msg.get('success') != False:
+                        context["messages"].append(assistant_msg)
+                    
                     conversation_history.append({"role": "assistant", "content": response_content})
                     
-                    # Send completion notification
                     await websocket.send_json({
                         "type": "complete",
                         "data": {"message_id": len(conversation_history) // 2}
@@ -191,7 +224,6 @@ async def conversation_websocket(
         except:
             pass
 
-# Onboarding conversation endpoint
 @router.websocket("/api/llm/onboarding")
 async def onboarding_websocket(
     websocket: WebSocket,

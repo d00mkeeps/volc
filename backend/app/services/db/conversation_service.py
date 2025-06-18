@@ -83,31 +83,6 @@ class ConversationService(BaseDBService):
             logger.error(f"Error creating onboarding conversation: {str(e)}")
             return await self.handle_error("create_onboarding_conversation", e)
     
-    async def get_conversation_messages(self, conversation_id: str) -> List[Dict[str, Any]]:
-        """
-        Get all messages for a conversation
-        """
-        try:
-            logger.info(f"Getting messages for conversation: {conversation_id}")
-            
-            result = self.supabase.table("messages") \
-                .select("*") \
-                .eq("conversation_id", conversation_id) \
-                .order("conversation_sequence") \
-                .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to fetch messages: {result.error.message}")
-                
-            messages = result.data or []
-            
-            logger.info(f"Retrieved {len(messages)} messages for conversation: {conversation_id}")
-            return messages
-            
-        except Exception as e:
-            logger.error(f"Error getting conversation messages: {str(e)}")
-            return await self.handle_error("get_conversation_messages", e)
-    
     async def get_conversation(self, conversation_id: str) -> Dict[str, Any]:
         """
         Get a conversation by ID
@@ -182,32 +157,4 @@ class ConversationService(BaseDBService):
             logger.error(f"Error deleting conversation: {str(e)}")
             return await self.handle_error("delete_conversation", e)
     
-    async def save_message(self, conversation_id: str, content: str, sender: str) -> Dict[str, Any]:
-        """
-        Save a message to a conversation
-        """
-        try:
-            logger.info(f"Saving {sender} message to conversation: {conversation_id}")
-            
-            result = self.supabase.table("messages") \
-                .insert({
-                    "conversation_id": conversation_id,
-                    "content": content,
-                    "sender": sender
-                }) \
-                .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to save message: {result.error.message}")
-                
-            if not result.data:
-                raise Exception("No data returned from insert")
-                
-            message = result.data[0]
-            
-            logger.info(f"Message saved with ID: {message.get('id')}")
-            return message
-            
-        except Exception as e:
-            logger.error(f"Error saving message: {str(e)}")
-            return await self.handle_error("save_message", e)
+   

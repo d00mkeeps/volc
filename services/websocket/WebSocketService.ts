@@ -1,490 +1,294 @@
 // WebSocketService.ts
 import EventEmitter from 'eventemitter3';
+import Toast from 'react-native-toast-message';
 import { getWsBaseUrl } from '../api/core/apiClient';
 import { ChatConfigName, Message } from '@/types';
-import { ConversationService } from '@/services/db/conversation';
 
-// Simplified types
 export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
-export type ConnectionStateChange = (state: ConnectionState) => void;
+export type TerminationCallback = (reason: string) => void;
 export type ErrorCallback = (error: Error) => void;
 
-export type ConnectionState = 'connecting' | 'connected' | 'disconnected' | 'error';
+export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
 
 export type WebSocketSendMessage = 
   | { type: 'message', data: string }
   | { type: 'initialize', data: Message[] }
-  | { type: string, [key: string]: any }  // Generic format for other message types
-  | { message: string, [key: string]: any }; // Format for data
+  | { type: string, [key: string]: any }
+  | { message: string, [key: string]: any };
   
-// Message types we'll receive
 export type WebSocketReceiveMessage = 
   | { type: 'content', data: string }
-  | { type: 'done' }
-  | { type: 'error', error: string }
-  | { type: 'connection_status', data: 'connected' | 'disconnected' };
+  | { type: 'done', reason?: string }
+  | { type: 'error', error: string };
 
-/**
- * WebSocketService - Handles WebSocket connections for chat messaging
- * 
- * This service manages WebSocket connections for chat message streaming,
- * providing an interface for:
- * - Connecting to chat conversations
- * - Sending messages
- * - Receiving streamed responses
- * - Monitoring connection state
+let connectionCounter = 0;
+  /**
+ * Ephemeral WebSocket service - connects per message, disconnects after completion
  */
 export class WebSocketService {
+  private connectionId = ++connectionCounter;
+
   private socket: WebSocket | null = null;
   private events = new EventEmitter();
   private connectionState: ConnectionState = 'disconnected';
-  private currentConversationId: string | null = null;
-  private currentConfigName: ChatConfigName | null = null;
-  private reconnectAttempts = 3;
-  private reconnectInterval = 1000;
-  private reconnectTimeout: NodeJS.Timeout | null = null;
-  private isReconnecting = false;
-  private messages: Message[] | null = null;
-  
-  // Configuration cache for faster lookups
-  private configCache: Record<string, ChatConfigName> = {};
+  private streamStartTime: number | null = null;
+  private lastContentTime: number | null = null;
+  private retryAttempts = 0;
+  private maxRetries = 3;
+  private retryDelays = [1000, 3000, 5000]; // 1s, 3s, 5s
+  private retryTimeout: ReturnType<typeof setTimeout> | null = null;
   
   /**
-   * Initialize the WebSocketService
+   * Connect and send complete message bundle
    */
-  public initialize(): void {
-    console.log('WebSocketService initialized');
+  public async connectAndSend(
+    configName: ChatConfigName, 
+    conversationId: string, 
+    payload: any
+  ): Promise<void> {
+    this.retryAttempts = 0;
+    return this.attemptConnectionAndSend(configName, conversationId, payload);
   }
-  
-  /**
-   * Resolve configuration for a conversation
-   * @param conversationId The conversation ID
-   * @returns The resolved configuration
-   */
-  public async resolveConfig(conversationId: string): Promise<ChatConfigName> {
-    if (this.configCache[conversationId]) return this.configCache[conversationId];
-    
+
+  private async attemptConnectionAndSend(
+    configName: ChatConfigName,
+    conversationId: string, 
+    payload: any
+  ): Promise<void> {
     try {
-      const conversationService = new ConversationService();
-      const conversation = await conversationService.getConversation(conversationId);
-      const config = conversation.config_name as ChatConfigName;
-      this.configCache[conversationId] = config;
-      return config;
+      await this.connect(configName, conversationId);
+      this.sendMessage(payload);
     } catch (error) {
-      console.error(`Failed to resolve config for ${conversationId}:`, error);
-      return 'default';
+      await this.handleRetry(configName, conversationId, payload, error);
     }
   }
-  
-  /**
-   * Connect to a specific conversation
-   * @param configName The chat configuration type
-   * @param conversationId The conversation identifier
-   * @param messages Optional array of messages to initialize the conversation
-   */
-  public async connect(configName: ChatConfigName, conversationId: string, messages?: Message[]): Promise<void> {
-    if (this.isConnected()) {
-      this.disconnect();
-    }
+
+  private async handleRetry(
+    configName: ChatConfigName,
+    conversationId: string,
+    payload: any,
+    error: any
+  ): Promise<void> {
+    this.retryAttempts++;
     
-    this.setConnectionState('connecting');
-    
-    try {
-      const baseUrl = await getWsBaseUrl();
-      const url = `${baseUrl}/${configName}/${conversationId}`;
-      
-      console.log('WebSocketService: Connecting to', url);
-      
-      this.socket = new WebSocket(url);
-      this.currentConversationId = conversationId;
-      this.currentConfigName = configName;
-      this.messages = messages || null;
-      
-      // Set up a connection timeout
-      const connectionPromise = new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('Connection timeout'));
-        }, 10000);
-        
-        if (!this.socket) {
-          clearTimeout(timeout);
-          reject(new Error('Socket creation failed'));
-          return;
-        }
-        
-        this.socket.onopen = () => {
-          clearTimeout(timeout);
-          console.log('WebSocket connection opened');
-          this.setConnectionState('connected');
-          
-          // Send initial messages if provided
-          if (messages?.length) {
-            this.sendInitialMessages(messages);
-          }
-          
-          resolve();
-        };
-        
-        this.socket.onclose = (event) => {
-          clearTimeout(timeout);
-          console.log('WebSocket closed:', {
-            code: event.code,
-            reason: event.reason,
-            wasClean: event.wasClean
-          });
-          this.setConnectionState('disconnected');
-          reject(new Error('Connection closed'));
-        };
-        
-        this.socket.onerror = (error) => {
-          clearTimeout(timeout);
-          console.error('WebSocket error:', error);
-          this.setConnectionState('error');
-          this.events.emit('error', new Error('WebSocket connection error'));
-          reject(new Error('Connection error'));
-        };
+    if (this.retryAttempts > this.maxRetries) {
+      Toast.show({
+        type: 'error',
+        text1: 'Connection Failed',
+        text2: 'Please check your network connection',
+        visibilityTime: 5000
       });
-      
-      // Set up message handling
-      if (this.socket) {
-        this.socket.onmessage = (event) => {
-          try {
-            const message = JSON.parse(event.data) as WebSocketReceiveMessage;
-            
-            switch (message.type) {
-              case 'content':
-                this.events.emit('message', message.data);
-                break;
-              case 'done':
-                this.events.emit('complete');
-                break;
-              case 'error':
-                this.events.emit('error', new Error(message.error));
-                break;
-              case 'connection_status':
-                if (message.data === 'connected') {
-                  this.setConnectionState('connected');
-                } else {
-                  this.setConnectionState('disconnected');
-                }
-                break;
-              default:
-                console.warn('Unknown message type:', message);
-            }
-          } catch (error) {
-            console.error('Failed to parse WebSocket message:', error);
-            this.events.emit('error', new Error('Failed to parse WebSocket message'));
-          }
-        };
-      }
-      
-      // Wait for connection to be established
-      await connectionPromise;
-      
-    } catch (error) {
-      console.error('WebSocket connection error:', error);
-      this.setConnectionState('error');
       throw error;
     }
-  }
-  
-  /**
-   * Connect to a conversation using its ID, automatically resolving the config
-   * @param conversationId The conversation identifier
-   * @param messages Optional array of messages to initialize
-   */
-  public async connectToConversation(
-    conversationId: string,
-    messages?: Message[]
-  ): Promise<void> {
-    const config = await this.resolveConfig(conversationId);
-    return this.connect(config, conversationId, messages);
-  }
-  
-  /**
-   * Disconnect a specific conversation
-   * @param configName The config name
-   * @param conversationId The conversation ID
-   */
-  public disconnectFrom(configName: string, conversationId: string): void {
-    if (this.currentConfigName === configName && this.currentConversationId === conversationId) {
-      this.disconnect();
-    }
-  }
-  
-  /**
-   * Disconnect from the current conversation
-   */
-  public disconnect(): void {
-    if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout);
-      this.reconnectTimeout = null;
-    }
+
+    const delay = this.retryDelays[this.retryAttempts - 1];
+    const attemptText = this.retryAttempts === 1 ? 'Retrying connection...' : 
+                      this.retryAttempts === 2 ? 'Still trying to connect...' : 
+                      'Final connection attempt...';
     
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
-    }
-    
-    this.currentConversationId = null;
-    this.currentConfigName = null;
-    this.messages = null;
-    this.setConnectionState('disconnected');
+    Toast.show({
+      type: 'info',
+      text1: 'Connection Issue',
+      text2: attemptText,
+      visibilityTime: 3000
+    });
+
+    this.retryTimeout = setTimeout(async () => {
+      try {
+        await this.attemptConnectionAndSend(configName, conversationId, payload);
+      } catch (retryError) {
+        // Will trigger another retry or final failure
+      }
+    }, delay);
   }
-  
-  /**
-   * Send a message
-   * @param content The message content or message object
-   */
-  public sendMessage(content: string | WebSocketSendMessage): void {
+
+  private async connect(configName: ChatConfigName, conversationId: string): Promise<void> {
+    this.cleanup();
+    this.setConnectionState('connecting');
+    
+    const baseUrl = await getWsBaseUrl();
+    const url = `${baseUrl}/${configName}/${conversationId}`;
+    const connectionId = ++connectionCounter;
+    
+    this.socket = new WebSocket(url);
+    this.streamStartTime = null;
+    this.lastContentTime = null;
+    
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Connection timeout'));
+      }, 10000);
+
+      this.socket!.onopen = () => {
+        clearTimeout(timeout);
+        this.setConnectionState('connected');
+        
+console.log(`[ws_${connectionId.toString().padStart(2, '0')}] Connection established for ${configName}/${conversationId}`);
+
+        resolve();
+      };
+
+      this.socket!.onclose = (event) => {
+        clearTimeout(timeout);
+        this.setConnectionState('disconnected');
+        
+        if (this.streamStartTime && !event.wasClean) {
+          this.events.emit('terminated', 'connection_lost');
+        }
+        
+        reject(new Error(`Connection closed: ${event.code}`));
+      };
+
+      this.socket!.onerror = () => {
+        clearTimeout(timeout);
+        this.setConnectionState('error');
+        reject(new Error('WebSocket connection error'));
+      };
+
+      this.socket!.onmessage = (event) => {
+        this.handleMessage(event);
+      };
+    });
+  }
+
+  private handleMessage(event: MessageEvent): void {
+    try {
+      const message = JSON.parse(event.data) as WebSocketReceiveMessage;
+      const now = Date.now();
+      
+      switch (message.type) {
+        case 'content':
+          if (!this.streamStartTime) {
+            this.streamStartTime = now;
+          }
+          this.lastContentTime = now;
+          this.events.emit('message', message.data);
+          break;
+          
+        case 'done':
+          this.handleCompletion(message.reason);
+          break;
+          
+        case 'error':
+          this.events.emit('error', new Error(message.error));
+          this.disconnect();
+          break;
+      }
+    } catch (error) {
+      this.events.emit('error', new Error('Failed to parse WebSocket message'));
+    }
+  }
+
+  private handleCompletion(reason?: string): void {
+    const now = Date.now();
+    let wasTerminated = false;
+    
+    // Detect premature termination
+    if (reason === 'token_limit' || reason === 'length_limit') {
+      wasTerminated = true;
+    } else if (this.streamStartTime && this.lastContentTime) {
+      const streamDuration = now - this.streamStartTime;
+      const timeSinceLastContent = now - this.lastContentTime;
+      
+      if (streamDuration < 500 || timeSinceLastContent > 5000) {
+        wasTerminated = true;
+        reason = reason || 'timeout';
+      }
+    }
+
+    this.streamStartTime = null;
+    this.lastContentTime = null;
+
+    if (wasTerminated) {
+      this.events.emit('terminated', reason || 'unknown');
+    } else {
+      this.events.emit('complete');
+    }
+
+    // Auto-disconnect after completion
+    setTimeout(() => this.disconnect(), 100);
+  }
+
+  public sendMessage(payload: any): void {
     if (!this.isConnected()) {
       throw new Error('Cannot send message: not connected');
     }
     
-    // Handle string content by wrapping it in a message object
-    let payload: WebSocketSendMessage;
-    if (typeof content === 'string') {
-      payload = {
-        type: 'message',
-        data: content
-      };
-    } else {
-      payload = content;
-    }
-    
     this.socket!.send(JSON.stringify(payload));
-    console.log('Message sent:', 
-      typeof content === 'string' 
-        ? content.substring(0, 50) + (content.length > 50 ? '...' : '') 
-        : 'Object message'
-    );
+    console.log(`[ws_${this.connectionId.toString().padStart(2, '0')}] Sending ${JSON.stringify(payload).length} characters to WebSocket`);
   }
-  
-  /**
-   * Send conversation history
-   * @param messages Array of messages to initialize the conversation
-   */
-  public sendInitialMessages(messages: Message[]): void {
-    if (!this.isConnected()) {
-      throw new Error('Cannot send initial messages: not connected');
-    }
-    
-    const payload: WebSocketSendMessage = {
-      type: 'initialize',
-      data: messages
-    };
-    
-    this.socket!.send(JSON.stringify(payload));
-    console.log('Sent conversation history:', messages.length, 'messages');
+
+  public disconnect(): void {
+    this.cleanup();
+    this.setConnectionState('disconnected');
   }
-  
-  /**
-   * Attempt to reconnect after connection failure
-   */
-  public async reconnect(): Promise<void> {
-    if (this.isReconnecting || this.isConnected()) return;
-    
-    this.isReconnecting = true;
-    
-    // Only reconnect if we have connection info
-    const connectionInfo = this.getCurrentConnectionInfo();
-    if (!connectionInfo) {
-      this.isReconnecting = false;
-      return;
+
+  private cleanup(): void {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
     }
     
-    console.log('Attempting to reconnect...');
-    
-    let attempts = 0;
-    while (attempts < this.reconnectAttempts) {
-      try {
-        await this.connect(connectionInfo.configName, connectionInfo.conversationId, this.messages || undefined);
-        console.log('Reconnection successful');
-        break;
-      } catch (error) {
-        console.error(`Reconnection attempt ${attempts + 1} failed:`, error);
-        attempts++;
-        
-        if (attempts < this.reconnectAttempts) {
-          // Exponential backoff
-          const delay = this.reconnectInterval * Math.pow(2, attempts - 1);
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
+    if (this.socket) {
+      this.socket.close(1000, 'Normal closure');
+      this.socket = null;
     }
     
-    this.isReconnecting = false;
-    
-    if (!this.isConnected() && attempts >= this.reconnectAttempts) {
-      console.log('Maximum reconnection attempts reached');
-      this.reconnectTimeout = setTimeout(() => this.reconnect(), 60000); // Try again after a minute
-    }
+    // Auto-cleanup: remove all event listeners
+    this.events.removeAllListeners();
   }
-  
-  /**
-   * Register a callback for message content chunks
-   * @param callback Function to call with each content chunk
-   * @returns Function to unregister the callback
-   */
+
+  // Event registration
   public onMessage(callback: MessageCallback): () => void {
     this.events.on('message', callback);
     return () => this.events.off('message', callback);
   }
-  
-  /**
-   * Register a callback for message completion events
-   * @param callback Function to call when a message is complete
-   * @returns Function to unregister the callback
-   */
+
   public onComplete(callback: CompletionCallback): () => void {
     this.events.on('complete', callback);
     return () => this.events.off('complete', callback);
   }
-  
-  /**
-   * Register a callback for connection state changes
-   * @param callback Function to call when connection state changes
-   * @returns Function to unregister the callback
-   */
-  public onConnectionStateChange(callback: ConnectionStateChange): () => void {
-    this.events.on('connectionStateChange', callback);
-    return () => this.events.off('connectionStateChange', callback);
+
+  public onTerminated(callback: TerminationCallback): () => void {
+    this.events.on('terminated', callback);
+    return () => this.events.off('terminated', callback);
   }
-  
-  /**
-   * Register a callback for error events
-   * @param callback Function to call when an error occurs
-   * @returns Function to unregister the callback
-   */
+
   public onError(callback: ErrorCallback): () => void {
     this.events.on('error', callback);
     return () => this.events.off('error', callback);
   }
-  
-  /**
-   * Clear configuration cache
-   * @param conversationId Optional conversation ID to clear specific cache entry
-   */
-  public clearConfigCache(conversationId?: string): void {
-    if (conversationId) {
-      delete this.configCache[conversationId];
-    } else {
-      this.configCache = {};
-    }
-  }
-  
-  /**
-   * Get the current connection state
-   * @returns The connection state
-   */
-  public getConnectionState(): ConnectionState {
-    return this.connectionState;
-  }
-  
-  /**
-   * Get information about the current connection
-   * @returns Connection information or null if not connected
-   */
-  public getCurrentConnectionInfo(): { configName: ChatConfigName, conversationId: string, messages: Message[] | null } | null {
-    if (this.currentConfigName && this.currentConversationId) {
-      return {
-        configName: this.currentConfigName,
-        conversationId: this.currentConversationId,
-        messages: this.messages
-      };
-    }
-    return null;
-  }
-  
-  /**
-   * Check if currently connected
-   * @returns True if connected, false otherwise
-   */
+
+  // Status methods
   public isConnected(): boolean {
     return this.socket?.readyState === WebSocket.OPEN;
   }
-  
-  /**
-   * Update connection state and notify listeners
-   * @param state The new connection state
-   */
+
+  public getConnectionState(): ConnectionState {
+    return this.connectionState;
+  }
+
   private setConnectionState(state: ConnectionState): void {
     if (this.connectionState !== state) {
       this.connectionState = state;
-      this.events.emit('connectionStateChange', state);
-      console.log('WebSocket connection state changed:', state);
     }
-  }
-  
-  /**
-   * Connect with conversation history
-   * @param configName Chat configuration name
-   * @param conversationId Conversation ID
-   * @param messages Optional array of messages to initialize
-   */
-  public async connectWithHistory(
-    configName: ChatConfigName, 
-    conversationId: string, 
-    messages?: Message[]
-  ): Promise<void> {
-    return this.connect(configName, conversationId, messages);
   }
 }
 
 // Singleton instance
 let webSocketServiceInstance: WebSocketService | null = null;
 
-/**
- * Get WebSocket service singleton instance
- * @returns The WebSocketService instance
- */
 export const getWebSocketService = (): WebSocketService => {
   if (!webSocketServiceInstance) {
     webSocketServiceInstance = new WebSocketService();
-    webSocketServiceInstance.initialize();
   }
   return webSocketServiceInstance;
 };
 
-/**
- * Cleanup function for logout/app termination
- */
 export const cleanup = (): void => {
   if (webSocketServiceInstance) {
     webSocketServiceInstance.disconnect();
     webSocketServiceInstance = null;
   }
-};
-
-/**
- * Helper function to reconnect a disconnected socket
- */
-export const reconnect = async (): Promise<void> => {
-  const service = getWebSocketService();
-  if (!service.isConnected()) {
-    await service.reconnect();
-  }
-};
-
-/**
- * Connect to a conversation with proper config
- * @param conversationId The conversation ID
- * @param messages Optional array of messages to initialize
- */
-export const connectToConversation = async (
-  conversationId: string, 
-  messages?: Message[]
-): Promise<void> => {
-  const service = getWebSocketService();
-  return service.connectToConversation(conversationId, messages);
-};
-
-/**
- * Release a connection
- * @param configName The config name
- * @param id The conversation ID
- */
-export const releaseConnection = (configName: string, id: string): void => {
-  getWebSocketService().disconnectFrom(configName, id);
 };

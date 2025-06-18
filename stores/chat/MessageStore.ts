@@ -4,88 +4,116 @@ import { conversationService } from '../../services/db/conversation';
 import { Message } from '@/types';
 import { getWebSocketService } from '../../services/websocket/WebSocketService';
 import { ChatConfigName } from '@/types';
+import { useWorkoutAnalysisStore } from '../analysis/WorkoutAnalysisStore';
+import { useGraphBundleStore } from '../attachments/GraphBundleStore';
+import { useConversationStore } from './ConversationStore';
+import Toast from 'react-native-toast-message';
 
-// Stable empty array reference to prevent infinite re-renders
-const EMPTY_MESSAGES: Message[] = [];
+const EMPTY_MESSAGES: Message[] = []
 
-// Type for streaming message state
+let conversationCounter = 0;
+const conversationNumbers = new Map<string, number>();
+const getConversationNumber = (conversationId: string): string => {
+  if (!conversationNumbers.has(conversationId)) {
+    conversationNumbers.set(conversationId, ++conversationCounter);
+  }
+  return `conversation ${conversationNumbers.get(conversationId)}`;
+};
+
+
 interface StreamingMessageState {
   conversationId: string;
   content: string;
   isComplete: boolean;
-isProcessing?: boolean; // Add this line
+  isProcessing?: boolean;
 }
 
-// MessageStore state and actions
 interface MessageStoreState {
   // State
-  messages: Map<string, Message[]>; // conversationId -> messages[]
-  streamingMessage: StreamingMessageState | null;
+  messages: Map<string, Message[]>;
+  streamingMessages: Map<string, StreamingMessageState>;
   isLoading: boolean;
   error: Error | null;
+
   
-  // Basic message operations
+  // Core message operations
   getMessages: (conversationId: string) => Message[];
-  getEmptyMessages: () => Message[]; // Stable empty array reference
+  getEmptyMessages: () => Message[];
   loadMessages: (conversationId: string) => Promise<Message[]>;
   addUserMessage: (conversationId: string, content: string) => Promise<Message>;
   addAssistantMessage: (conversationId: string, content: string) => Promise<Message>;
   clearMessages: (conversationId: string) => void;
   
-  // WebSocket integration
-  connectToConversation: (
-    conversationId: string, 
-    configName: ChatConfigName, 
-    messages?: Message[]
-  ) => Promise<() => void>;
+  // Streaming state management
+  getStreamingMessage: (conversationId: string) => StreamingMessageState | null;
+  setStreamingMessage: (conversationId: string, state: StreamingMessageState | null) => void;
+  isConversationStreaming: (conversationId: string) => boolean;
+
   
+  // Main orchestration method
   sendMessage: (
     conversationId: string, 
     content: string, 
-    options?: { detailedAnalysis?: boolean; analysisBundle?: any }
+    options?: { detailedAnalysis?: boolean }
   ) => Promise<void>;
   
-  // Utility methods
+  // Utility
   clearError: () => void;
 }
 
 export const useMessageStore = create<MessageStoreState>((set, get) => ({
   // Initial state
   messages: new Map(),
-  streamingMessage: null,
+  streamingMessages: new Map(),
   isLoading: false,
   error: null,
   
-  // Return stable empty array reference
   getEmptyMessages: () => EMPTY_MESSAGES,
   
-  // Get messages for a conversation from local state
   getMessages: (conversationId) => {
-    return get().messages.get(conversationId) || EMPTY_MESSAGES;
+    const messages = get().messages.get(conversationId) || EMPTY_MESSAGES;
+    console.log(`[${getConversationNumber(conversationId)}] Retrieved ${messages.length} messages from store`);
+    return messages;
   },
   
-  // Load messages from server
+  
+  
+  getStreamingMessage: (conversationId) => {
+    return get().streamingMessages.get(conversationId) || null;
+  },
+  
+  setStreamingMessage: (conversationId, streamingState) => {
+    set((state) => {
+      const newStreamingMessages = new Map(state.streamingMessages);
+      if (streamingState === null) {
+        newStreamingMessages.delete(conversationId);
+      } else {
+        newStreamingMessages.set(conversationId, streamingState);
+      }
+      return { streamingMessages: newStreamingMessages };
+    });
+  },
+  
+  isConversationStreaming: (conversationId) => {
+    const streamingState = get().getStreamingMessage(conversationId);
+    return streamingState !== null && !streamingState.isComplete;
+  },
+  
+  // Load messages from database
   loadMessages: async (conversationId) => {
     try {
       set({ isLoading: true, error: null });
       
-      // Get messages from API
       const messages = await conversationService.getConversationMessages(conversationId);
       
-      // Update state
       set((state) => {
         const newMessages = new Map(state.messages);
         newMessages.set(conversationId, messages);
-        
-        return {
-          messages: newMessages,
-          isLoading: false
-        };
+        return { messages: newMessages, isLoading: false };
       });
       
       return messages;
     } catch (error) {
-      console.error('[MessageStore] Error loading messages:', error);
       set({
         isLoading: false,
         error: error instanceof Error ? error : new Error(String(error))
@@ -94,28 +122,24 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     }
   },
   
-  // Add a user message
+  // Add user message to database and state
   addUserMessage: async (conversationId, content) => {
     try {
-      // Save message to database
       const message = await conversationService.saveMessage({
         conversationId,
         content,
         sender: 'user'
       });
       
-      // Update state
       set((state) => {
         const conversationMessages = state.messages.get(conversationId) || [];
         const newMessages = new Map(state.messages);
         newMessages.set(conversationId, [...conversationMessages, message]);
-        
         return { messages: newMessages };
       });
       
       return message;
     } catch (error) {
-      console.error('[MessageStore] Error adding user message:', error);
       set({
         error: error instanceof Error ? error : new Error(String(error))
       });
@@ -123,28 +147,24 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     }
   },
   
-  // Add an assistant message
+  // Add assistant message to database and state
   addAssistantMessage: async (conversationId, content) => {
     try {
-      // Save message to database
       const message = await conversationService.saveMessage({
         conversationId,
         content,
         sender: 'assistant'
       });
       
-      // Update state
       set((state) => {
         const conversationMessages = state.messages.get(conversationId) || [];
         const newMessages = new Map(state.messages);
         newMessages.set(conversationId, [...conversationMessages, message]);
-        
         return { messages: newMessages };
       });
       
       return message;
     } catch (error) {
-      console.error('[MessageStore] Error adding assistant message:', error);
       set({
         error: error instanceof Error ? error : new Error(String(error))
       });
@@ -152,7 +172,6 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     }
   },
   
-  // Clear messages for a conversation
   clearMessages: (conversationId) => {
     set((state) => {
       const newMessages = new Map(state.messages);
@@ -161,166 +180,169 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     });
   },
   
-  // Clear error
   clearError: () => {
     set({ error: null });
   },
   
-  // Connect to a conversation WebSocket
-  connectToConversation: async (conversationId, configName, messages = []) => {
-    const webSocketService = getWebSocketService();
-    const unsubscribeFunctions: (() => void)[] = [];
-    
+  // Main orchestration method - auto-gathers data and sends
+  sendMessage: async (conversationId, content, options = {}) => {
     try {
-      console.log(`[MessageStore] Connecting to conversation: ${conversationId} with config: ${configName}`);
+      // Add user message first
+      await get().addUserMessage(conversationId, content);
       
-      // Set up message content handler
-// In MessageStore.ts contentHandler:
-const contentHandler = (content: string) => {
-  const { streamingMessage } = get();
-  
-  if (!streamingMessage || streamingMessage.conversationId !== conversationId) {
-    console.log('Starting new streaming message');
-    set({
-      streamingMessage: {
-        conversationId,
-        content,
-        isComplete: false
-      }
-    });
-  } else {
-    console.log('Appending to existing streaming message');
-    set((state) => ({
-      streamingMessage: {
-        ...state.streamingMessage!,
-        content: state.streamingMessage!.content + content
-      }
-    }));
-  }
-};
+      // Get conversation config
+      const configName = await useConversationStore.getState().getConversationConfig(conversationId);
       
-// stores/MessageStore.ts - Just the completion handler fix
-// Set up completion handler with duplicate prevention
-const completeHandler = async () => {
-  const { streamingMessage } = get();
-  
-  if (streamingMessage && 
-      streamingMessage.conversationId === conversationId && 
-      streamingMessage.content &&
-      !streamingMessage.isComplete &&
-      !streamingMessage.isProcessing) {
-    
-    console.log(`[MessageStore] Completing streaming message for conversation: ${conversationId}`);
-    
-    // Mark as processing to prevent duplicate execution
-    set((state) => ({
-      streamingMessage: {
-        ...state.streamingMessage!,
-        isProcessing: true
-      }
-    }));
-    
-    try {
-      // Save the complete message
-      await get().addAssistantMessage(conversationId, streamingMessage.content);
+      // Auto-gather all data
+      const messages = get().getMessages(conversationId);
+      const analysisResult = useWorkoutAnalysisStore.getState().getResult();
+      const graphBundles = useGraphBundleStore.getState().getBundlesByConversation(conversationId);
       
-      // Clear streaming message state
-      set({ streamingMessage: null });
-    } catch (error) {
-      console.error('[MessageStore] Error saving completed message:', error);
-      // Still clear streaming state even if save fails
-      set({ streamingMessage: null });
-    }
-  }
-};
+      // Build complete payload
+      const payload = {
+        message: content,
+        conversation_history: messages,
+        analysis_bundle: analysisResult,
+        graph_bundles: graphBundles,
+        generate_graph: options.detailedAnalysis || false
+      };
       
-      // Set up error handler
+      // Set up WebSocket handlers
+      const webSocketService = getWebSocketService();
+      const unsubscribeFunctions: (() => void)[] = [];
+      
+      // Content handler
+      const contentHandler = (contentChunk: string) => {
+        const currentStreaming = get().getStreamingMessage(conversationId);
+        
+        if (!currentStreaming) {
+          get().setStreamingMessage(conversationId, {
+            conversationId,
+            content: contentChunk,
+            isComplete: false
+          });
+        } else {
+          get().setStreamingMessage(conversationId, {
+            ...currentStreaming,
+            content: currentStreaming.content + contentChunk
+          });
+        }
+      };
+      
+      // Completion handler
+      const completeHandler = async () => {
+        const streamingState = get().getStreamingMessage(conversationId);
+        
+        if (streamingState && 
+            !streamingState.isComplete && 
+            !streamingState.isProcessing &&
+            streamingState.content) {
+          
+          // Mark as processing
+          get().setStreamingMessage(conversationId, {
+            ...streamingState,
+            isProcessing: true
+          });
+          
+          try {
+            // Save completed message
+            await get().addAssistantMessage(conversationId, streamingState.content);
+            
+            // Clear streaming state
+            get().setStreamingMessage(conversationId, null);
+            
+          } catch (error) {
+            console.error('Error saving completed message:', error);
+            get().setStreamingMessage(conversationId, null);
+            
+            Toast.show({
+              type: 'error',
+              text1: 'Save Error',
+              text2: 'Failed to save message'
+            });
+          }
+        }
+        
+        // Cleanup handlers
+        unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+      };
+      
+      // Termination handler
+      const terminationHandler = (reason: string) => {
+        const streamingState = get().getStreamingMessage(conversationId);
+        
+        if (streamingState && !streamingState.isComplete) {
+          // Show appropriate toast
+          const messages = {
+            token_limit: 'Response cut off due to length limits',
+            length_limit: 'Response cut off due to length limits', 
+            timeout: 'Response timed out',
+            connection_lost: 'Connection lost during response'
+          };
+          
+          Toast.show({
+            type: 'warning',
+            text1: 'Message Cut Off',
+            text2: messages[reason as keyof typeof messages] || 'Response was interrupted'
+          });
+          
+          // Save partial message with indicator
+          if (streamingState.content.trim()) {
+            const partialContent = streamingState.content + '\n\n*[Response was cut off]*';
+            get().addAssistantMessage(conversationId, partialContent)
+              .catch(console.error);
+          }
+          
+          // Clear streaming state
+          get().setStreamingMessage(conversationId, null);
+        }
+        
+        // Cleanup handlers
+        unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+      };
+      
+      // Error handler  
       const errorHandler = (error: Error) => {
-        console.error('[MessageStore] WebSocket error:', error);
-        set({
-          error: error,
-          streamingMessage: null // Reset streaming state on error
+        console.error('WebSocket error:', error);
+        
+        get().setStreamingMessage(conversationId, null);
+        
+        Toast.show({
+          type: 'error',
+          text1: 'Connection Error',
+          text2: error.message || 'WebSocket connection failed'
         });
+        
+        set({ error });
+        
+        // Cleanup handlers
+        unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
       };
       
       // Register handlers
-      const contentUnsubscribe = webSocketService.onMessage(contentHandler);
-      const completeUnsubscribe = webSocketService.onComplete(completeHandler);
-      const errorUnsubscribe = webSocketService.onError(errorHandler);
+      unsubscribeFunctions.push(
+        webSocketService.onMessage(contentHandler),
+        webSocketService.onComplete(completeHandler),
+        webSocketService.onTerminated(terminationHandler),
+        webSocketService.onError(errorHandler)
+      );
       
-      unsubscribeFunctions.push(contentUnsubscribe, completeUnsubscribe, errorUnsubscribe);
+      // Connect and send
+      await webSocketService.connectAndSend(configName, conversationId, payload);
       
-      // Connect to WebSocket
-      await webSocketService.connect(configName, conversationId, messages);
-      console.log(`[MessageStore] Successfully connected to conversation: ${conversationId}`);
-      
-      // Return cleanup function
-      return () => {
-        console.log(`[MessageStore] Cleaning up connection for conversation: ${conversationId}`);
-        unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
-        webSocketService.disconnect();
-      };
     } catch (error) {
-      console.error(`[MessageStore] Error connecting to conversation: ${conversationId}`, error);
+      console.error('Error sending message:', error);
       
-      // Clean up any subscriptions if connection failed
-      unsubscribeFunctions.forEach(unsubscribe => unsubscribe());
+      const errorMessage = error instanceof Error ? error : new Error(String(error));
       
-      // Set error state
-      set({
-        error: error instanceof Error ? error : new Error(String(error))
+      Toast.show({
+        type: 'error',
+        text1: 'Send Failed',
+        text2: errorMessage.message
       });
       
-      // Rethrow the error
-      throw error;
-    }
-  },
-  
-  // Send a message
-  sendMessage: async (conversationId, content, options = {}) => {
-    try {
-      const webSocketService = getWebSocketService();
-      
-      // Check if connected
-      if (!webSocketService.isConnected()) {
-        throw new Error('Cannot send message: WebSocket not connected');
-      }
-      
-      // If this is a regular message
-      if (content) {
-        // Add message to store
-        await get().addUserMessage(conversationId, content);
-      }
-      
-      // Prepare payload
-      let payload: any;
-      
-      // Handle different message types
-      if (options.analysisBundle) {
-        // This is an analysis bundle
-        payload = {
-          type: 'analysis_bundle',
-          bundle: options.analysisBundle,
-          conversation_id: conversationId
-        };
-      } else {
-        // Regular message
-        payload = {
-          message: content,
-          generate_graph: options.detailedAnalysis
-        };
-      }
-      
-      // Send via WebSocket
-      webSocketService.sendMessage(payload);
-      
-      console.log(`[MessageStore] Message sent for conversation: ${conversationId}`);
-    } catch (error) {
-      console.error('[MessageStore] Error sending message:', error);
-      set({
-        error: error instanceof Error ? error : new Error(String(error))
-      });
-      throw error;
+      set({ error: errorMessage });
+      throw errorMessage;
     }
   }
 }));

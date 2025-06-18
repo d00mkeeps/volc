@@ -6,6 +6,7 @@ from app.api.endpoints.db import router as db_router
 from app.api.endpoints.auth import router as auth_router 
 from app.api.endpoints.workout_analysis import router as workout_analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
+from app.core.scheduler import start_cleanup_job
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import setup_logging
 import logging
@@ -39,6 +40,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup():
+    start_cleanup_job()
+    logger.info("Cache cleanup job started")
 
 # Debug middleware to log all requests
 @app.middleware("http")
@@ -89,4 +95,4 @@ async def health_check():
         "status": "ok", 
         "service": "api",
         "supabase_env": "ok" if supabase_env_ok else "missing"
-    }   
+    }

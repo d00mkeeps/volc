@@ -5,10 +5,16 @@ import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/InputArea";
 import { Message } from "@/types";
 
+interface StreamingMessageState {
+  conversationId: string;
+  content: string;
+  isComplete: boolean;
+  isProcessing?: boolean;
+}
+
 interface ChatInterfaceProps {
   messages?: Message[];
-  streamingMessage?: any;
-  isConnected?: boolean;
+  streamingMessage?: StreamingMessageState | null;
   onSend: (content: string) => void;
   placeholder?: string;
 }
@@ -16,7 +22,6 @@ interface ChatInterfaceProps {
 export const ChatInterface = ({
   messages = [],
   streamingMessage,
-  isConnected = false,
   onSend,
   placeholder = "Type a message...",
 }: ChatInterfaceProps) => {

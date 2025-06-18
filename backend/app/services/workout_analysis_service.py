@@ -162,7 +162,12 @@ class WorkoutAnalysisService:
                     bundle=bundle_dict
                 )
                 
-                if not result.get("success", False):
+                if result.get("success", False):
+                    # Refresh conversation cache
+                    from app.services.cache.conversation_attachments_cache import conversation_cache
+                    conversation_cache._cache.pop(conversation_id, None)  # Force reload on next access
+                    logger.info(f"Bundle saved and cache refreshed for conversation: {conversation_id}")
+                else:
                     logger.warning(f"Failed to link bundle to conversation: {result.get('error')}")
             
             # Step 7: Complete job
@@ -187,7 +192,6 @@ class WorkoutAnalysisService:
                 "error": f"Analysis failed: {str(e)}",
                 "status_message": "Error during analysis"
             })
-
     async def _prepare_enhanced_bundle(self, workout_data, original_query, correlation_results=None):
         """
         Prepare an enhanced workout data bundle with consistency metrics and top performers.

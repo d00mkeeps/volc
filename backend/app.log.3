@@ -1,79 +1,126 @@
-2025-06-07 10:15:33,459 - app.api.endpoints.db - INFO - API request to get messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,462 - app.services.db.conversation_service - INFO - Getting conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,559 - app.services.db.conversation_service - INFO - Retrieved conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,560 - app.services.db.conversation_service - INFO - Getting messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,614 - app.services.db.conversation_service - INFO - Retrieved 11 messages for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,720 - app.api.endpoints.db - INFO - API request to get conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,720 - app.services.db.conversation_service - INFO - Getting conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,779 - app.services.db.conversation_service - INFO - Retrieved conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,873 - app.api.endpoints.db - INFO - API request to get graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,873 - app.services.db.graph_bundle_service - INFO - Getting graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,928 - app.services.db.graph_bundle_service - INFO - No graph bundles found for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,928 - app.api.endpoints.db - INFO - Retrieved 0 graph bundles for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:15:33,928 - app.main - INFO - Response status: 200
-2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
-2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
-2025-06-07 10:15:33,929 - app.main - INFO - Response status: 200
-2025-06-07 10:15:33,969 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 906da2fc-b1b3-4938-8fa5-5b950a09e29a
-2025-06-07 10:17:36,465 - app.main - INFO - Request: POST /db/workouts
-2025-06-07 10:17:36,467 - app.main - INFO - Request: POST /api/workout-analysis
-2025-06-07 10:17:36,467 - app.main - INFO - Request: POST /db/conversations
-2025-06-07 10:17:36,738 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
-2025-06-07 10:17:36,739 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:36,739 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
-2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Workout created with ID: b1667867-30e3-4619-a868-647f9391e7f5
-2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Creating 3 exercises for workout: b1667867-30e3-4619-a868-647f9391e7f5
-2025-06-07 10:17:36,871 - app.services.db.workout_service - INFO - Creating exercise 1/3: Bench Press
-2025-06-07 10:17:36,939 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 0792667f-57b3-44e3-9d89-ffce24c3fd71
-2025-06-07 10:17:37,104 - app.services.db.workout_service - INFO - Creating exercise 2/3: Overhead Press
-2025-06-07 10:17:37,170 - app.services.db.workout_service - INFO - Exercise created: Overhead Press with ID: 4fbc570b-83f8-4719-9a92-4d20f0f4947f
-2025-06-07 10:17:37,384 - app.services.db.workout_service - INFO - Creating exercise 3/3: Dumbbell Lateral Raise
-2025-06-07 10:17:37,440 - app.services.db.workout_service - INFO - Exercise created: Dumbbell Lateral Raise with ID: e41e7a30-6fc8-445b-bc54-e5c9b524c1c3
-2025-06-07 10:17:37,847 - app.services.db.workout_service - INFO - Workout creation complete for ID: b1667867-30e3-4619-a868-647f9391e7f5
-2025-06-07 10:17:37,908 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
-2025-06-07 10:17:37,908 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:38,034 - app.services.db.conversation_service - INFO - Conversation created with ID: 3e82f3b8-6f55-4b99-948c-38d9b0291847
-2025-06-07 10:17:38,034 - app.main - INFO - Response status: 200
-2025-06-07 10:17:38,036 - app.main - INFO - Response status: 200
-2025-06-07 10:17:38,118 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-06-07 10:17:38,120 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Dumbbell Lateral Raise']
-2025-06-07 10:17:38,120 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-06-07 10:17:38,121 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Dumbbell Lateral Raise', 'Bench Press']
-2025-06-07 10:17:38,121 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Overhead Press', 'Bench Press', 'Dumbbell Lateral Raise']
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Overhead Press', 'Dumbbell Lateral Raise', 'Bench Press']
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to strength chart
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 16 data points for Bench Press to strength chart
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Added 2 data points for Dumbbell Lateral Raise to strength chart
-2025-06-07 10:17:38,122 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
-2025-06-07 10:17:38,946 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
-2025-06-07 10:17:38,947 - app.services.workout_analysis.graph_service - INFO - Added 12 data points for Overhead Press to volume chart
-2025-06-07 10:17:38,947 - app.services.workout_analysis.graph_service - INFO - Added 2 data points for Dumbbell Lateral Raise to volume chart
-2025-06-07 10:17:38,948 - app.services.workout_analysis.graph_service - INFO - Added 16 data points for Bench Press to volume chart
-2025-06-07 10:17:38,948 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
-2025-06-07 10:17:40,382 - app.main - INFO - Response status: 202
-2025-06-07 10:17:40,383 - app.main - INFO - Request: GET /api/dashboard
-2025-06-07 10:17:40,385 - app.main - INFO - Response status: 200
-2025-06-07 10:17:41,416 - app.main - INFO - Request: GET /api/workout-analysis/7cef9486-9919-4153-b4de-219afe03c421
-2025-06-07 10:17:41,423 - app.main - INFO - Response status: 200
-2025-06-07 10:17:41,531 - app.main - INFO - Request: DELETE /db/graph-bundles/conversation/pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:41,531 - app.main - INFO - Request: POST /db/graph-bundles
-2025-06-07 10:17:41,595 - app.api.endpoints.db - INFO - API request to delete all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:41,596 - app.services.db.graph_bundle_service - INFO - Deleting all graph bundles for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:41,648 - app.services.db.graph_bundle_service - ERROR - Error deleting conversation bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-07 10:17:41,649 - app.services.db.base_service - ERROR - Error in delete_conversation_bundles: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-07 10:17:41,650 - app.main - INFO - Response status: 200
-2025-06-07 10:17:41,721 - app.api.endpoints.db - INFO - API request to save graph bundle for conversation: pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:41,721 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: e8de77e1-fa2d-46ee-8778-108bb83b3f0a
-2025-06-07 10:17:41,837 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "pending-1e2d6190-5d52-4f48-974c-7a5a43a50bf3"'}
-2025-06-07 10:17:41,838 - app.main - INFO - Response status: 200
-2025-06-07 10:17:55,418 - app.main - INFO - Request: POST /db/conversations
-2025-06-07 10:17:55,537 - app.api.endpoints.db - INFO - API request to create conversation: Upper Body Power analysis
-2025-06-07 10:17:55,538 - app.services.db.conversation_service - INFO - Creating conversation with title: Upper Body Power analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 10:17:55,712 - app.services.db.conversation_service - INFO - Conversation created with ID: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:55,714 - app.main - INFO - Response status: 200
-2025-06-07 10:17:55,826 - app.main - INFO - Request: GET /db/conversations/d7df51e9-b8f7-41b6-ba16-6dab19fde4f1/messages
-2025-06-07 10:17:55,877 - app.api.endpoints.db - INFO - API request to get messages for conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:55,877 - app.services.db.conversation_service - INFO - Getting conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
-2025-06-07 10:17:55,931 - app.services.db.conversation_service - INFO - Retrieved conversation: d7df51e9-b8f7-41b6-ba16-6dab19fde4f1
+2025-06-07 23:28:29,309 - app.main - INFO - Response status: 200
+2025-06-07 23:28:29,356 - app.main - INFO - Request: GET /db/workouts/templates
+2025-06-07 23:28:29,418 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:29,418 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:29,561 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:29,576 - app.main - INFO - Response status: 200
+2025-06-07 23:28:39,004 - app.main - INFO - Request: GET /db/conversations
+2025-06-07 23:28:39,107 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:39,107 - app.api.endpoints.db - INFO - Creating ConversationService instance
+2025-06-07 23:28:39,108 - app.api.endpoints.db - INFO - Supabase client available: True
+2025-06-07 23:28:39,258 - app.api.endpoints.db - INFO - Supabase client test query successful
+2025-06-07 23:28:39,258 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+2025-06-07 23:28:39,258 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:39,322 - app.services.db.conversation_service - INFO - Retrieved 23 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:39,322 - app.api.endpoints.db - INFO - Retrieved 23 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-06-07 23:28:39,324 - app.main - INFO - Response status: 200
+2025-06-07 23:28:42,788 - app.main - INFO - Request: GET /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
+2025-06-07 23:28:42,854 - app.api.endpoints.db - INFO - API request to get messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:42,855 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:42,915 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:42,916 - app.services.db.conversation_service - INFO - Getting messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:42,991 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:42,993 - app.main - INFO - Response status: 200
+2025-06-07 23:28:46,472 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
+2025-06-07 23:28:46,558 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:46,558 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:46,618 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:46,618 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:46,690 - app.services.db.conversation_service - INFO - Message saved with ID: 83827fa9-400e-47f3-b7d9-0b002a18c3fe
+2025-06-07 23:28:46,690 - app.main - INFO - Response status: 200
+2025-06-07 23:28:46,810 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+
+
+Current workout data context:
+Available workout data:
+            {
+  "available_data": []
+}
+
+Visualizations and metrics:
+No workout data available
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
+2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-06-07 23:28:50,901 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-06-07 23:29:01,995 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
+2025-06-07 23:29:02,142 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:02,142 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:02,245 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:02,245 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:02,317 - app.services.db.conversation_service - INFO - Message saved with ID: 66504341-150a-464c-a946-6dae960b8103
+2025-06-07 23:29:02,318 - app.main - INFO - Response status: 200
+2025-06-07 23:29:02,430 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+
+
+Current workout data context:
+Available workout data:
+            {
+  "available_data": []
+}
+
+Visualizations and metrics:
+No workout data available
+2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - Content: Hi?
+2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-06-07 23:29:05,519 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-06-07 23:29:16,743 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
+2025-06-07 23:29:16,842 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:16,842 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:16,989 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:16,990 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:17,049 - app.services.db.conversation_service - INFO - Message saved with ID: a64fbdbe-163c-4793-8a91-749a4797c429
+2025-06-07 23:29:17,059 - app.main - INFO - Response status: 200
+2025-06-07 23:29:17,138 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+
+
+Current workout data context:
+Available workout data:
+            {
+  "available_data": []
+}
+
+Visualizations and metrics:
+No workout data available
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - Content: Are you there
+2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - =====================
