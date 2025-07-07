@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Platform, Keyboard, KeyboardAvoidingView } from "react-native";
-import { YStack, XStack, Text, Progress, Button, ScrollView } from "tamagui";
+import { YStack, XStack, Text, Button, ScrollView } from "tamagui";
 import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
+import { workoutService } from "@/services/db/workout";
+import { useUserStore } from "@/stores/userProfileStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {
@@ -19,7 +21,7 @@ export function WorkoutCompletionModal({
   const [currentSlide, setCurrentSlide] = useState<"summary" | "chat">(
     "summary"
   );
-  const [retryCount, setRetryCount] = useState(0);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 
   const { currentWorkout } = useUserSessionStore();
@@ -27,34 +29,32 @@ export function WorkoutCompletionModal({
   const analysisProgress = workoutAnalysisStore.getProgress();
 
   // Determine if analysis is ready
-  const isAnalysisReady =
-    analysisProgress.status === "completed" ||
-    analysisProgress.status === "error" ||
-    analysisProgress.progress >= 100;
+  const isAnalysisReady = analysisProgress.status === "success";
 
   useEffect(() => {
     if (isVisible) {
       setCurrentSlide("summary");
-      setRetryCount(0);
+      setConversationId(null);
       setShowCloseConfirmation(false);
     }
   }, [isVisible]);
 
   useEffect(() => {
-    if (isVisible && currentWorkout) {
-      workoutAnalysisStore.submitAnalysis(currentWorkout, {
-        onProgress: (progress) => {
-          console.log("[WorkoutCompletionModal] Analysis progress:", progress);
-        },
-        onComplete: (result) => {
-          console.log("[WorkoutCompletionModal] Analysis completed:", result);
-        },
-        onError: (error) => {
-          console.error("[WorkoutCompletionModal] Analysis error:", error);
-        },
-      });
-    }
-  }, [isVisible]);
+    const initiateAnalysis = async () => {
+      if (isVisible && currentWorkout) {
+        try {
+          const result = await workoutAnalysisStore.submitAnalysis({
+            ...currentWorkout,
+            exercises: currentWorkout.workout_exercises || [],
+          });
+          setConversationId(result.conversation_id);
+        } catch (error) {
+          console.error("[WorkoutCompletionModal] Analysis submission failed:", error);
+        }
+      }
+    };
+    initiateAnalysis();
+  }, [isVisible, currentWorkout]);
 
   const handleCloseAttempt = () => {
     setShowCloseConfirmation(true);
@@ -71,21 +71,18 @@ export function WorkoutCompletionModal({
 
   const handleChatError = (error: Error) => {
     console.error("[WorkoutCompletionModal] Chat error:", error);
-    if (retryCount === 0) {
-      setCurrentSlide("summary");
-      setRetryCount(1);
-    } else {
-      handleClose();
-    }
+    handleClose();
   };
 
   const handleClose = () => {
     workoutAnalysisStore.resetAnalysis();
-    setRetryCount(0);
     onClose();
   };
 
-  const handleContinueToChat = () => {
+  const handleContinueToChat = async () => {
+    if (currentWorkout) {
+      await workoutService.updateWorkout(currentWorkout.id, currentWorkout);
+    }
     setCurrentSlide("chat");
   };
 
@@ -110,41 +107,7 @@ export function WorkoutCompletionModal({
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (
-          <WorkoutAnalysisSlide onError={handleChatError} />
-        )}
-
-        {!isAnalysisReady && (
-          <YStack
-            position="absolute"
-            bottom="$3"
-            left="$3"
-            right="$3"
-            backgroundColor="$background"
-            padding="$3"
-            borderRadius="$3"
-            borderTopWidth={1}
-            borderTopColor="$borderSoft"
-          >
-            <YStack gap="$2">
-              <XStack justifyContent="space-between" alignItems="center">
-                <Text fontSize="$3" color="$textSoft">
-                  Analyzing workout...
-                </Text>
-                <Text fontSize="$3" color="$textMuted">
-                  {Math.round(analysisProgress.progress)}%
-                </Text>
-              </XStack>
-              <Progress
-                value={analysisProgress.progress}
-                backgroundColor="$backgroundMuted"
-              >
-                <Progress.Indicator
-                  animation="bouncy"
-                  backgroundColor="$primary"
-                />
-              </Progress>
-            </YStack>
-          </YStack>
+          conversationId && <WorkoutAnalysisSlide conversationId={conversationId} onError={handleChatError} />
         )}
 
         {showCloseConfirmation && (

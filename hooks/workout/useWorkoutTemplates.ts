@@ -1,6 +1,6 @@
 // hooks/useWorkoutTemplates.ts
 import { useEffect } from 'react';
-import { useWorkoutStore } from '@/stores/workout/workoutStore';
+import { useWorkoutStore } from '@/stores/workout/WorkoutStore';
 
 export const useWorkoutTemplates = (userId?: string) => {
   const { 

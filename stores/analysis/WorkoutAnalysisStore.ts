@@ -1,14 +1,9 @@
-// stores/WorkoutAnalysisStore.ts
 import { create } from 'zustand';
 import { workoutAnalysisService } from '../../services/api/workoutAnalysisService';
-import { useJobStore } from './JobStore';
 import { useUserStore } from '@/stores/userProfileStore';
-import { useGraphBundleStore } from '../attachments/GraphBundleStore';
 
 interface AnalysisStatus {
-  jobId: string | null;
   status: 'idle' | 'loading' | 'success' | 'error';
-  progress: number;
   result: any | null;
   error: Error | null;
 }
@@ -16,53 +11,32 @@ interface AnalysisStatus {
 interface WorkoutAnalysisStoreState {
   currentAnalysis: AnalysisStatus;
   
-  // Submit workout data for analysis
   submitAnalysis: (
     workoutData: any,
     options?: {
-      onProgress?: (progress: number) => void;
       onComplete?: (result: any) => void;
       onError?: (error: Error) => void;
     }
-  ) => Promise<string>;
+  ) => Promise<{ conversation_id: string }>;
   
-  // Get current analysis progress
-  getProgress: () => { status: string; progress: number };
+  getProgress: () => { status: string };
   
-  // Get analysis result (if available)
+  
   getResult: () => any | null;
-  
-  // Reset analysis state
   resetAnalysis: () => void;
-  
-  // Internal handlers
-  _handleAnalysisComplete: (result: any) => void;
-  _handleAnalysisError: (error: Error) => void;
 }
 
 export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, get) => ({
   currentAnalysis: {
-    jobId: null,
     status: 'idle',
-    progress: 0,
     result: null,
     error: null
   },
   
   submitAnalysis: async (workoutData, options = {}) => {
     try {
-      // Reset current analysis state
-      set({
-        currentAnalysis: {
-          jobId: null,
-          status: 'loading',
-          progress: 0,
-          result: null,
-          error: null
-        }
-      });
+      set({ currentAnalysis: { status: 'loading', result: null, error: null } });
       
-      // Get current user ID from user store
       const userProfile = useUserStore.getState().userProfile;
       const currentUserId = userProfile?.auth_user_uuid;
       
@@ -70,82 +44,28 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
         throw new Error('No authenticated user found');
       }
       
-      console.log('[WorkoutAnalysisStore] Using user ID:', currentUserId);
+      const response = await workoutAnalysisService.initiateAnalysisAndConversation(workoutData, currentUserId);
       
-      // Format the data using the service (now with userId parameter)
-      const formattedData = workoutAnalysisService.formatAnalysisData(workoutData, currentUserId);
+      set({ currentAnalysis: { status: 'success', result: response, error: null } });
       
-      // Create job using JobStore
-      const jobId = await useJobStore.getState().createJob('/api/workout-analysis', formattedData);
+      if (options.onComplete) {
+        options.onComplete(response);
+      }
       
-      // Update state with job ID
-      set((state) => ({
-        currentAnalysis: {
-          ...state.currentAnalysis,
-          jobId
-        }
-      }));
-      
-      // Start polling using JobStore
-      useJobStore.getState().pollJob(
-        '/api/workout-analysis',
-        jobId,
-        {
-          onProgress: (progress) => {
-            // Update internal progress
-            set((state) => ({
-              currentAnalysis: {
-                ...state.currentAnalysis,
-                progress
-              }
-            }));
-            
-            // Forward progress to caller
-            if (options.onProgress) {
-              options.onProgress(progress);
-            }
-          },
-          onComplete: (result) => {
-            // Handle completion internally
-            get()._handleAnalysisComplete(result);
-            
-            // Forward result to caller
-            if (options.onComplete) {
-              options.onComplete(result);
-            }
-          },
-          onError: (error) => {
-            // Handle error internally
-            get()._handleAnalysisError(error);
-            
-            // Forward error to caller
-            if (options.onError) {
-              options.onError(error);
-            }
-          }
-        }
-      );
-      
-      return jobId;
+      return response; // Return the conversation_id
     } catch (error) {
-      console.error('[WorkoutAnalysisStore] Error submitting analysis:', error);
-      
-      // Update state with error
-      set((state) => ({
-        currentAnalysis: {
-          ...state.currentAnalysis,
-          status: 'error',
-          error: error instanceof Error ? error : new Error(String(error))
-        }
-      }));
-      
-      throw error;
+      const err = error instanceof Error ? error : new Error(String(error));
+      set({ currentAnalysis: { status: 'error', result: null, error: err } });
+      if (options.onError) {
+        options.onError(err);
+      }
+      throw err;
     }
   },
   
   getProgress: () => {
-    const { status, progress } = get().currentAnalysis;
-    return { status, progress };
+    const { status } = get().currentAnalysis;
+    return { status };
   },
   
   getResult: () => {
@@ -153,63 +73,6 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
   },
   
   resetAnalysis: () => {
-    const { jobId } = get().currentAnalysis;
-    
-    // If there's an active job, stop polling
-    if (jobId) {
-      useJobStore.getState().stopPolling(jobId);
-    }
-    
-    // Reset state
-    set({
-      currentAnalysis: {
-        jobId: null,
-        status: 'idle',
-        progress: 0,
-        result: null,
-        error: null
-      }
-    });
+    set({ currentAnalysis: { status: 'idle', result: null, error: null } });
   },
-  
-// WorkoutAnalysisStore.ts - Update _handleAnalysisComplete:
-_handleAnalysisComplete: (result) => {
-  console.log('[WorkoutAnalysisStore] Analysis completed successfully:', result);
-  
-  // Update state with result
-  set((state) => ({
-    currentAnalysis: {
-      ...state.currentAnalysis,
-      status: 'success',
-      progress: 100,
-      result
-    }
-  }));
-  
-  // Save bundle immediately with temporary ID
-  const userProfile = useUserStore.getState().userProfile;
-  const userId = userProfile?.auth_user_uuid;
-  if (userId) {
-    const tempId = `pending-${userId}`;
-    const bundleStore = useGraphBundleStore.getState();
-    
-    // Clear any existing pending bundle first
-    bundleStore.clearBundlesForConversation(tempId);
-    // Save new bundle with temporary ID
-    bundleStore.addBundle(result, tempId);
-  }
-},
-  
-  _handleAnalysisError: (error) => {
-    console.error('[WorkoutAnalysisStore] Analysis failed:', error);
-    
-    // Update state with error
-    set((state) => ({
-      currentAnalysis: {
-        ...state.currentAnalysis,
-        status: 'error',
-        error
-      }
-    }));
-  }
 }));

@@ -1,55 +1,30 @@
-// services/api/WorkoutAnalysisService.ts
+import { apiPost } from './core/apiClient';
 import { BaseService } from '../db/base';
-import { apiGet } from './core/apiClient';
 
 export class WorkoutAnalysisService extends BaseService {
   private ANALYSIS_ENDPOINT = '/api/workout-analysis';
-  
+
   /**
-   * Format workout data for analysis
-   * @param workoutData Raw workout data
+   * Initiate analysis and conversation
+   * @param workoutData The workout data to analyze
    * @param userId The authenticated user's UUID
    */
-  formatAnalysisData(workoutData: any, userId: string): any {
-    // Ensure we have a valid workout object
-    if (!workoutData) {
-      throw new Error('No workout data provided');
-    }
-    
-    if (!userId) {
-      throw new Error('User ID is required');
-    }
-    
-    // Extract exercise names from the workout
-    const exerciseNames = workoutData.workout_exercises?.map((ex: any) => ex.name) || [];
-    
-    if (exerciseNames.length === 0) {
-      throw new Error('No exercises found in workout data');
-    }
-    
-    // Return payload for historical analysis
-    return {
-      user_id: userId,
-      exercise_names: exerciseNames,
-      timeframe: "3 months",
-      message: `Analyze progress for: ${exerciseNames.join(', ')}`
-    };
-  }
-  
-  /**
-   * Get stored analysis result for a conversation
-   * @param conversationId The conversation ID
-   */
-  async getStoredAnalysisResult(conversationId: string): Promise<any> {
+  async initiateAnalysisAndConversation(workoutData: any, userId: string): Promise<{ conversation_id: string }> {
     try {
-      console.log(`[WorkoutAnalysisService] Getting stored analysis for conversation: ${conversationId}`);
-      
-      // This would call an endpoint to get the stored analysis from the database
-      const result = await apiGet<any>(`/api/workout-analysis/conversation/${conversationId}`);
-      
-      return result;
+      console.log(`[WorkoutAnalysisService] Initiating analysis and conversation for user: ${userId}`);
+
+      const payload = {
+        user_id: userId,
+        workout_data: workoutData,
+        message: "Analyze my workout" // Default message for initial analysis
+      };
+
+      const response = await apiPost<{ conversation_id: string }>(this.ANALYSIS_ENDPOINT, payload);
+
+      console.log(`[WorkoutAnalysisService] Analysis initiation complete. Conversation ID: ${response.conversation_id}`);
+      return response;
     } catch (error) {
-      console.error('[WorkoutAnalysisService] Error getting stored analysis:', error);
+      console.error('[WorkoutAnalysisService] Error initiating analysis and conversation:', error);
       return this.handleError(error);
     }
   }

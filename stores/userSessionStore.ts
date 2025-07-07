@@ -138,11 +138,15 @@ finishWorkout: async () => {
     throw new Error('No user profile found');
   }
   
-  // Save workout and refresh dashboard
+  // Save workout without notes and refresh dashboard
+  const workoutData = { ...currentWorkout, notes: '' };
   const savedWorkout = await workoutService.saveCompletedWorkout(
     userProfile.user_id.toString(), 
-    currentWorkout
+    workoutData
   );
+
+  // Update the current workout with the saved one, so we have the ID
+  set({ currentWorkout: savedWorkout });
   
   useDashboardStore.getState().refreshDashboard();
 },

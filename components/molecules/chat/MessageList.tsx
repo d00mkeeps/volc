@@ -23,33 +23,18 @@ export const MessageList = ({
   const listRef = useRef<FlatList>(null);
 
   const allMessages = useMemo(() => {
-    let filteredMessages = messages;
-
-    // Filter out initial user message(s)
-    if (messages.length > 0 && messages[0].sender === "user") {
-      filteredMessages = messages.slice(1);
-
-      // If there's still a duplicate user message, remove it too
-      if (
-        filteredMessages.length > 0 &&
-        filteredMessages[0].sender === "user"
-      ) {
-        filteredMessages = filteredMessages.slice(1);
-      }
-    }
-
-    if (!streamingMessage) return filteredMessages;
+    if (!streamingMessage) return messages;
 
     const tempStreamingMessage: Message = {
       id: "streaming",
       content: streamingMessage.content,
       sender: "assistant",
-      conversation_id: messages[0]?.conversation_id || "", // Use original messages
-      conversation_sequence: filteredMessages.length + 1,
+      conversation_id: messages[0]?.conversation_id || "",
+      conversation_sequence: messages.length + 1,
       timestamp: new Date(),
     };
 
-    return [...filteredMessages, tempStreamingMessage];
+    return [...messages, tempStreamingMessage];
   }, [messages, streamingMessage]);
 
   // Only auto-scroll for new actual messages, not streaming

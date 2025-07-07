@@ -10,46 +10,30 @@ class ConversationService(BaseDBService):
     Service for handling conversation operations in the database
     """
     
-    async def create_conversation(self, user_id: str, title: str, first_message: str, config_name: str) -> Dict[str, Any]:
+    async def create_conversation(self, user_id: str, title: str, config_name: str) -> Dict[str, Any]:
         """
-        Create a new conversation with the first message
+        Create a new, empty conversation
         """
         try:
-            logger.info(f"Creating conversation with title: {title} for user: {user_id}")
+            logger.info(f"Creating empty conversation with title: {title} for user: {user_id}")
             
-            # Call RPC function to create conversation with message
-            result = self.supabase.rpc(
-                "create_conversation_with_message",
-                {
-                    "p_user_id": user_id,
-                    "p_title": title,
-                    "p_first_message": first_message,
-                    "p_config_name": config_name
-                }
-            ).execute()
+            # Direct insert into conversations table
+            result = self.supabase.table("conversations").insert({
+                "user_id": user_id,
+                "title": title,
+                "config_name": config_name,
+                "status": "active"
+            }).execute()
             
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to create conversation: {result.error.message}")
-                
-            if not result.data:
-                raise Exception("No conversation ID returned")
-                
-            conversation_id = result.data
+            if not hasattr(result, 'data') or not result.data:
+                raise Exception("Failed to create conversation: No data returned")
             
-            # Fetch the created conversation
-            conversation_result = self.supabase.table("conversations") \
-                .select("*") \
-                .eq("id", conversation_id) \
-                .execute()
-                
-            if hasattr(conversation_result, 'error') and conversation_result.error or not conversation_result.data:
-                raise Exception("Failed to fetch created conversation")
-                
-            logger.info(f"Conversation created with ID: {conversation_id}")
-            return conversation_result.data[0]
+            conversation = result.data[0]
+            logger.info(f"Empty conversation created with ID: {conversation['id']}")
+            return conversation
             
         except Exception as e:
-            logger.error(f"Error creating conversation: {str(e)}")
+            logger.error(f"Error creating empty conversation: {str(e)}")
             return await self.handle_error("create_conversation", e)
     
     async def create_onboarding_conversation(self, user_id: str, session_id: str, config_name: str) -> Dict[str, Any]:

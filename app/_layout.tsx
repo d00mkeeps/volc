@@ -100,30 +100,7 @@ function RootLayoutNav() {
                   )}
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(tabs)" />
-                    <Stack.Screen
-                      name="conversation/[id]"
-                      options={{
-                        headerShown: true,
-                        headerTitle: "Conversation",
-                        headerBackTitle: "Home",
-                        contentStyle: {
-                          backgroundColor:
-                            colorScheme === "dark" ? "#231f20" : "#ffffff",
-                          flex: 1,
-                        },
-                        headerStyle: {
-                          backgroundColor:
-                            colorScheme === "dark" ? "#231f20" : "#ffffff",
-                        },
-                        headerTintColor:
-                          colorScheme === "dark" ? "#ffffff" : "#231f20",
-                        animation: "slide_from_right",
-                      }}
-                      getId={({ params }: { params?: Record<string, any> }) => {
-                        if (!params) return undefined;
-                        return String(params.id);
-                      }}
-                    />
+                    
                     <Stack.Screen
                       name="modal"
                       options={{ presentation: "modal" }}

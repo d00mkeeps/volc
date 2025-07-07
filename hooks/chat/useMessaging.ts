@@ -33,13 +33,14 @@ export function useMessaging(conversationId: string) {
   // Simple pass-through to MessageStore
   const sendMessage = useCallback(async (
     content: string,
-    options?: { detailedAnalysis?: boolean }
+    options?: { detailedAnalysis?: boolean, conversationId?: string } // Add conversationId here
   ) => {
-    if (!conversationId) {
+    const targetConversationId = options?.conversationId || conversationId; // Use provided ID or hook's ID
+    if (!targetConversationId) {
       throw new Error('Cannot send message: no conversationId');
     }
     
-    await messageStore.sendMessage(conversationId, content, options);
+    await messageStore.sendMessage(targetConversationId, content, options);
   }, [conversationId, messageStore]);
   
   // Load messages on demand

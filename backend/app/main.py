@@ -41,10 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.on_event("startup")
-async def startup():
-    start_cleanup_job()
-    logger.info("Cache cleanup job started")
+
 
 # Debug middleware to log all requests
 @app.middleware("http")

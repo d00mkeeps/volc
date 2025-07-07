@@ -1,126 +1,93 @@
-2025-06-07 23:28:29,309 - app.main - INFO - Response status: 200
-2025-06-07 23:28:29,356 - app.main - INFO - Request: GET /db/workouts/templates
-2025-06-07 23:28:29,418 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:29,418 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:29,561 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:29,576 - app.main - INFO - Response status: 200
-2025-06-07 23:28:39,004 - app.main - INFO - Request: GET /db/conversations
-2025-06-07 23:28:39,107 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:39,107 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-06-07 23:28:39,108 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-06-07 23:28:39,258 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-06-07 23:28:39,258 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-06-07 23:28:39,258 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:39,322 - app.services.db.conversation_service - INFO - Retrieved 23 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:39,322 - app.api.endpoints.db - INFO - Retrieved 23 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-06-07 23:28:39,324 - app.main - INFO - Response status: 200
-2025-06-07 23:28:42,788 - app.main - INFO - Request: GET /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
-2025-06-07 23:28:42,854 - app.api.endpoints.db - INFO - API request to get messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:42,855 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:42,915 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:42,916 - app.services.db.conversation_service - INFO - Getting messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:42,991 - app.services.db.conversation_service - INFO - Retrieved 2 messages for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:42,993 - app.main - INFO - Response status: 200
-2025-06-07 23:28:46,472 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
-2025-06-07 23:28:46,558 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:46,558 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:46,618 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:46,618 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:46,690 - app.services.db.conversation_service - INFO - Message saved with ID: 83827fa9-400e-47f3-b7d9-0b002a18c3fe
-2025-06-07 23:28:46,690 - app.main - INFO - Response status: 200
-2025-06-07 23:28:46,810 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": []
-}
-
-Visualizations and metrics:
-No workout data available
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
-2025-06-07 23:28:46,828 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-07 23:28:50,901 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-06-07 23:29:01,995 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
-2025-06-07 23:29:02,142 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:02,142 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:02,245 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:02,245 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:02,317 - app.services.db.conversation_service - INFO - Message saved with ID: 66504341-150a-464c-a946-6dae960b8103
-2025-06-07 23:29:02,318 - app.main - INFO - Response status: 200
-2025-06-07 23:29:02,430 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-07 23:29:02,437 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": []
-}
-
-Visualizations and metrics:
-No workout data available
-2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - Content: Hi?
-2025-06-07 23:29:02,438 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-06-07 23:29:05,519 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 56, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Documents/supreme-octo-doodle/backend/venv/lib/python3.13/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-06-07 23:29:16,743 - app.main - INFO - Request: POST /db/conversations/6be13853-8c82-4a90-93f5-a344b3f03d33/messages
-2025-06-07 23:29:16,842 - app.api.endpoints.db - INFO - API request to save message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:16,842 - app.services.db.conversation_service - INFO - Getting conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:16,989 - app.services.db.conversation_service - INFO - Retrieved conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:16,990 - app.services.db.conversation_service - INFO - Saving user message to conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:17,049 - app.services.db.conversation_service - INFO - Message saved with ID: a64fbdbe-163c-4793-8a91-749a4797c429
-2025-06-07 23:29:17,059 - app.main - INFO - Response status: 200
-2025-06-07 23:29:17,138 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6be13853-8c82-4a90-93f5-a344b3f03d33
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": []
-}
-
-Visualizations and metrics:
-No workout data available
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - Content: Are you there
-2025-06-07 23:29:17,145 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-07-07 12:53:47,019 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:47,025 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-07 12:53:47,490 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-07 12:53:47,490 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-07 12:53:48,155 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-07 12:53:48,160 - app.main - INFO - Response status: 200
+2025-07-07 12:53:48,161 - app.main - INFO - Request: GET /api/dashboard
+2025-07-07 12:53:48,162 - app.main - INFO - Response status: 200
+2025-07-07 12:53:48,164 - app.main - INFO - Response status: 200
+2025-07-07 12:53:48,384 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-07 12:53:48,817 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:48,818 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:49,454 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:49,461 - app.main - INFO - Response status: 200
+2025-07-07 12:53:52,188 - app.main - INFO - Request: GET /db/user-profile
+2025-07-07 12:53:52,630 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:52,632 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:53,048 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:53,052 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-07 12:53:54,535 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-07 12:53:54,536 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-07 12:53:55,257 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-07 12:53:55,263 - app.main - INFO - Request: GET /api/dashboard
+2025-07-07 12:53:55,263 - app.main - INFO - Response status: 200
+2025-07-07 12:53:55,265 - app.main - INFO - Response status: 200
+2025-07-07 12:53:55,265 - app.main - INFO - Response status: 200
+2025-07-07 12:53:55,469 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-07 12:53:55,658 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:55,659 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:56,274 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 12:53:56,282 - app.main - INFO - Response status: 200
+2025-07-07 15:17:39,508 - app.main - INFO - Request: GET /db/user-profile
+2025-07-07 15:17:40,193 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:40,194 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:40,753 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:40,753 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-07 15:17:41,155 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-07 15:17:41,155 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-07 15:17:41,724 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-07 15:17:41,737 - app.main - INFO - Response status: 200
+2025-07-07 15:17:41,738 - app.main - INFO - Request: GET /api/dashboard
+2025-07-07 15:17:41,739 - app.main - INFO - Response status: 200
+2025-07-07 15:17:41,741 - app.main - INFO - Response status: 200
+2025-07-07 15:17:41,919 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-07 15:17:42,353 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:42,353 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:43,002 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:43,019 - app.main - INFO - Response status: 200
+2025-07-07 15:17:45,287 - app.main - INFO - Request: GET /db/user-profile
+2025-07-07 15:17:45,713 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:45,713 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:46,128 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:46,128 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-07 15:17:46,547 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-07 15:17:46,547 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-07 15:17:47,172 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-07 15:17:47,185 - app.main - INFO - Request: GET /api/dashboard
+2025-07-07 15:17:47,185 - app.main - INFO - Response status: 200
+2025-07-07 15:17:47,186 - app.main - INFO - Response status: 200
+2025-07-07 15:17:47,187 - app.main - INFO - Response status: 200
+2025-07-07 15:17:47,338 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-07 15:17:47,554 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:47,555 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:48,300 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:48,316 - app.main - INFO - Response status: 200
+2025-07-07 15:17:55,625 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-07 15:17:55,626 - app.main - INFO - Request: POST /db/workouts
+2025-07-07 15:17:56,149 - app.api.endpoints.db - INFO - API request to create workout: Upper Body Power
+2025-07-07 15:17:56,150 - app.services.db.workout_service - INFO - Creating workout: Upper Body Power for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:17:56,156 - app.services.db.workout_service - INFO - Inserting workout with data: Upper Body Power, None
+2025-07-07 15:17:56,790 - app.services.db.workout_service - INFO - Workout created with ID: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:17:56,790 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:17:56,790 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
+2025-07-07 15:17:57,297 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 8cf1bac2-2187-4654-8f09-56ceb37d0cbc
+2025-07-07 15:17:59,347 - app.services.db.workout_service - INFO - Creating exercise 2/4: Ab Wheel Rollout
+2025-07-07 15:17:59,532 - app.services.db.workout_service - INFO - Exercise created: Ab Wheel Rollout with ID: 4f6f02cd-21ef-4981-8abb-49dcd3503e52
+2025-07-07 15:18:00,323 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
+2025-07-07 15:18:00,779 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 4656831d-99c4-4401-a171-a47ebedfb7bc
+2025-07-07 15:18:00,780 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
+2025-07-07 15:18:01,292 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: edb2ddd1-febd-47a4-a41c-8d8aee04d8f8
+2025-07-07 15:18:01,475 - app.services.db.workout_service - INFO - Workout creation complete for ID: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:18:01,487 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Upper Body Power Analysis for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-07 15:18:01,689 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 5301fb72-0d28-437b-906d-3bd0ffccfdc3
+2025-07-07 15:18:01,689 - app.main - INFO - Response status: 200
+2025-07-07 15:18:01,691 - app.services.workout_analysis_service - WARNING - No workout data for analysis task for conversation 5301fb72-0d28-437b-906d-3bd0ffccfdc3
+2025-07-07 15:18:01,691 - app.main - INFO - Response status: 200
+2025-07-07 15:18:02,024 - app.main - INFO - Request: GET /api/dashboard
+2025-07-07 15:18:02,026 - app.main - INFO - Response status: 200
+2025-07-07 15:18:08,469 - app.main - INFO - Request: PUT /db/workouts/6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:18:09,082 - app.api.endpoints.db - INFO - API request to update workout: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:18:09,082 - app.services.db.workout_service - INFO - Getting workout: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:18:09,691 - app.services.db.workout_service - INFO - Successfully retrieved workout: 6bdf6328-32c6-4b7d-a5bd-89c213349787
+2025-07-07 15:18:09,692 - app.services.db.workout_service - INFO - Updating workout: 6bdf6328-32c6-4b7d-a5bd-89c213349787

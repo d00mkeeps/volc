@@ -7,6 +7,7 @@ from app.services.db.workout_service import WorkoutService
 from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
 from app.services.db.user_profile_service import UserProfileService
+from app.services.db.message_service import MessageService
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/db")
@@ -390,7 +391,6 @@ async def create_conversation(
         result = await conversation_service.create_conversation(
             user.id, 
             data.get("title"), 
-            data.get("firstMessage"), 
             data.get("configName")
         )
         
@@ -482,7 +482,8 @@ async def get_conversation_messages(
             )
         
         # Get messages
-        messages = await conversation_service.get_conversation_messages(conversation_id)
+        message_service = MessageService()
+        messages = await message_service.get_conversation_messages(conversation_id)
         
         return messages
     except Exception as e:
@@ -619,7 +620,8 @@ async def save_message(
                 detail="You do not have permission to access this conversation"
             )
         
-        result = await conversation_service.save_message(
+        message_service = MessageService()
+        result = await message_service.save_message(
             conversation_id,
             data.get("content"),
             data.get("sender")

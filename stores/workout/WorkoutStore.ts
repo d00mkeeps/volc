@@ -1,4 +1,3 @@
-// stores/workoutStore.ts
 import { create } from 'zustand';
 import { CompleteWorkout, WorkoutInput, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";

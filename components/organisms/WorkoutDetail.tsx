@@ -3,7 +3,7 @@ import { YStack, XStack, Text, ScrollView, Button, Stack } from "tamagui";
 import { Modal } from "react-native";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
 import { CompleteWorkout, WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
-import { useWorkoutStore } from "@/stores/workout/workoutStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface WorkoutDetailProps {
   workoutId: string;
@@ -124,7 +124,7 @@ export default function WorkoutDetail({ workoutId, visible, onClose }: WorkoutDe
                   <ExerciseTracker
                     key={exercise.id}
                     exercise={exercise}
-                    isInitiallyExpanded={false}
+                    
                     isActive={true}
                     onExerciseUpdate={handleExerciseUpdate}
                     onExerciseDelete={() => {}}

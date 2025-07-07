@@ -1,6 +1,6 @@
 // hooks/useWorkouts.ts
 import { useEffect, useState } from 'react';
-import { useWorkoutStore } from '@/stores/workout/workoutStore';
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { WorkoutWithConversation } from '@/types/workout';
 
 export const useWorkouts = (userId?: string, conversationId?: string) => {

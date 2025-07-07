@@ -105,14 +105,15 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
       set({ isLoading: true, error: null });
       
       const messages = await conversationService.getConversationMessages(conversationId);
+      const sortedMessages = messages.sort((a, b) => a.conversation_sequence - b.conversation_sequence);
       
       set((state) => {
         const newMessages = new Map(state.messages);
-        newMessages.set(conversationId, messages);
+        newMessages.set(conversationId, sortedMessages);
         return { messages: newMessages, isLoading: false };
       });
       
-      return messages;
+      return sortedMessages;
     } catch (error) {
       set({
         isLoading: false,

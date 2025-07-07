@@ -3,7 +3,7 @@ import { Stack, Text, ScrollView } from "tamagui";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
 import WorkoutDetail from "@/components/organisms/WorkoutDetail";
-import { useWorkoutStore } from "@/stores/workout/workoutStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useUserStore } from "@/stores/userProfileStore";
 
 interface WorkoutListProps {
