@@ -607,12 +607,9 @@ class WorkoutService(BaseDBService):
         self, 
         user_id: str, 
         definition_ids: List[str], 
-        timeframe: str = "3 months"
     ) -> Dict[str, Any]:
         try:
-            days = self._convert_timeframe_to_days(timeframe)
-            from_date = datetime.now() - timedelta(days=days)
-            
+            from_date = datetime.now() - timedelta(days=180)      
             logger.info(f"Calling RPC for user: {user_id}, definitions: {definition_ids}")
             
             result = self.supabase.rpc('get_workouts_by_definition_ids', {

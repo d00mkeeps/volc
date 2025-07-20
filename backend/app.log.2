@@ -1,43 +1,98 @@
-2025-07-20 11:50:14,481 - app.services.db.workout_service - INFO - RPC returned: 38 workouts
-2025-07-20 11:50:14,481 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 38 workouts
-2025-07-20 11:50:14,481 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-07-20 11:50:14,482 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Ab Wheel Rollout']
-2025-07-20 11:50:14,482 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-07-20 11:50:14,482 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Ab Wheel Rollout']
-2025-07-20 11:50:14,482 - app.services.workout_analysis.graph_service - INFO - Added 38 data points for Ab Wheel Rollout to strength chart
-2025-07-20 11:50:14,482 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 1 exercises with data
-2025-07-20 11:50:17,175 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 1 exercises
-2025-07-20 11:50:17,176 - app.services.workout_analysis.graph_service - INFO - Added 38 data points for Ab Wheel Rollout to volume chart
-2025-07-20 11:50:17,176 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 1 exercises with data
-2025-07-20 11:50:18,784 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 6bb6c638-f55c-439b-a54c-4d09a817af99
-2025-07-20 11:50:19,196 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "graph_bundles"'}
-2025-07-20 11:50:19,197 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation 3d4d7b3f-c95e-4cd5-8f45-c25ba0dbf2ca
-2025-07-20 11:50:19,198 - app.main - INFO - Response status: 200
-2025-07-20 11:50:19,707 - app.main - INFO - Request: GET /api/dashboard
-2025-07-20 11:50:19,709 - app.main - INFO - Response status: 200
-2025-07-20 11:54:50,929 - app - INFO - Logging has been set up
-2025-07-20 11:54:50,929 - app.main - INFO - Application starting
-2025-07-20 11:54:50,929 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 11:54:50,929 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 11:54:50,929 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 12:02:34,683 - app.main - INFO - Request: POST /db/workouts
-2025-07-20 12:02:35,354 - app.api.endpoints.db - INFO - API request to create workout: Chest,  arms, and abs
-2025-07-20 12:02:35,355 - app.services.db.workout_service - INFO - Creating workout: Chest,  arms, and abs for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 12:02:35,356 - app.services.db.workout_service - INFO - Inserting workout with data: Chest,  arms, and abs, None
-2025-07-20 12:02:35,973 - app.services.db.workout_service - INFO - Workout created with ID: 1463278c-712c-4d13-8716-7b82c8c6dc05
-2025-07-20 12:02:35,973 - app.services.db.workout_service - INFO - Creating 4 exercises for workout: 1463278c-712c-4d13-8716-7b82c8c6dc05
-2025-07-20 12:02:35,973 - app.services.db.workout_service - INFO - Creating exercise 1/4: Bench Press
-2025-07-20 12:02:36,385 - app.services.db.workout_service - INFO - Exercise created: Bench Press with ID: 11e3f2bc-34f1-4d49-bf09-e47be758107f
-2025-07-20 12:02:36,973 - app.services.db.workout_service - INFO - Creating exercise 2/4: Ab Wheel Rollout
-2025-07-20 12:02:37,397 - app.services.db.workout_service - INFO - Exercise created: Ab Wheel Rollout with ID: d6fb1335-d5f5-424a-9ea0-aa670772edcb
-2025-07-20 12:02:38,172 - app.services.db.workout_service - INFO - Creating exercise 3/4: Incline Dumbbell Press
-2025-07-20 12:02:38,563 - app.services.db.workout_service - INFO - Exercise created: Incline Dumbbell Press with ID: 2abf0842-dd2e-4632-8b14-4f7e11d591ee
-2025-07-20 12:02:38,563 - app.services.db.workout_service - INFO - Creating exercise 4/4: Tricep Dips
-2025-07-20 12:02:38,740 - app.services.db.workout_service - INFO - Exercise created: Tricep Dips with ID: 42f5892d-a486-4e61-a5da-ce7bcd9c7e20
-2025-07-20 12:02:38,916 - app.services.db.workout_service - INFO - Workout creation complete for ID: 1463278c-712c-4d13-8716-7b82c8c6dc05
-2025-07-20 12:02:38,918 - app.main - INFO - Response status: 200
-2025-07-20 12:02:39,142 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-20 12:02:39,652 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 12:02:39,826 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 01bddf37-9c15-4397-b3ce-5656ee46577a
-2025-07-20 12:02:39,827 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 01bddf37-9c15-4397-b3ce-5656ee46577a
-2025-07-20 12:02:39,827 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['2f08941a-a4e0-4feb-bb3c-01fda83615b4']
+2025-07-20 16:22:39,325 - app.main - INFO - Application starting
+2025-07-20 16:22:39,326 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:22:39,326 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:22:39,326 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:24:02,685 - app - INFO - Logging has been set up
+2025-07-20 16:24:02,685 - app.main - INFO - Application starting
+2025-07-20 16:24:02,685 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:24:02,685 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:24:02,685 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:24:24,391 - app - INFO - Logging has been set up
+2025-07-20 16:24:24,391 - app.main - INFO - Application starting
+2025-07-20 16:24:24,391 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:24:24,391 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:24:24,391 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:25:01,778 - app - INFO - Logging has been set up
+2025-07-20 16:25:01,778 - app.main - INFO - Application starting
+2025-07-20 16:25:01,779 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:25:01,779 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:25:01,779 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:25:04,482 - app.main - INFO - Request: POST /db/workouts
+2025-07-20 16:25:05,039 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-20 16:25:05,040 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 16:25:05,040 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-20 16:25:05,545 - app.services.db.workout_service - INFO - Workout created with ID: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
+2025-07-20 16:25:05,546 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
+2025-07-20 16:25:05,546 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
+2025-07-20 16:25:06,003 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 5e173201-9603-4dd2-92f2-87c313794491
+2025-07-20 16:25:06,975 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
+2025-07-20 16:25:07,180 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: 0fa72def-9d52-4b48-a293-3215a3f43526
+2025-07-20 16:25:08,818 - app.services.db.workout_service - INFO - Workout creation complete for ID: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
+2025-07-20 16:25:08,820 - app.main - INFO - Response status: 200
+2025-07-20 16:25:09,003 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-20 16:25:09,184 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 16:25:09,335 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 4cec9a6a-cad5-41d2-8e24-c36435438b40
+2025-07-20 16:25:09,336 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 4cec9a6a-cad5-41d2-8e24-c36435438b40
+2025-07-20 16:25:09,336 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
+2025-07-20 16:25:09,521 - app.services.db.workout_service - INFO - RPC returned: 55 workouts
+2025-07-20 16:25:09,521 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 55 workouts
+2025-07-20 16:25:09,523 - app.services.workout_analysis_service - ERROR - Error during analysis task: 1 validation error for WorkoutDataBundle
+bundle_id
+  Input should be a valid string [type=string_type, input_value=UUID('0cb498f7-72d8-4443-a062-57502ad678a2'), input_type=UUID]
+    For further information visit https://errors.pydantic.dev/2.10/v/string_type
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 84, in _perform_analysis_task
+    bundle = WorkoutDataBundle(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for WorkoutDataBundle
+bundle_id
+  Input should be a valid string [type=string_type, input_value=UUID('0cb498f7-72d8-4443-a062-57502ad678a2'), input_type=UUID]
+    For further information visit https://errors.pydantic.dev/2.10/v/string_type
+2025-07-20 16:25:09,526 - app.main - INFO - Response status: 200
+2025-07-20 16:25:09,557 - app.main - INFO - Request: GET /api/dashboard
+2025-07-20 16:25:09,557 - app.main - INFO - Response status: 200
+2025-07-20 16:26:17,133 - app - INFO - Logging has been set up
+2025-07-20 16:26:17,134 - app.main - INFO - Application starting
+2025-07-20 16:26:17,134 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:26:17,134 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:26:17,134 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:26:21,957 - app.main - INFO - Request: POST /db/workouts
+2025-07-20 16:26:22,445 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-20 16:26:22,446 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 16:26:22,446 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-20 16:26:22,960 - app.services.db.workout_service - INFO - Workout created with ID: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
+2025-07-20 16:26:22,961 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
+2025-07-20 16:26:22,961 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
+2025-07-20 16:26:23,483 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 3e1c1ac6-fe50-4bf3-9ebb-1476bb772bdc
+2025-07-20 16:26:24,697 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
+2025-07-20 16:26:25,210 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: da8765a9-8407-4209-8471-748aeb453426
+2025-07-20 16:26:26,954 - app.services.db.workout_service - INFO - Workout creation complete for ID: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
+2025-07-20 16:26:26,957 - app.main - INFO - Response status: 200
+2025-07-20 16:26:27,178 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-20 16:26:27,671 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 16:26:27,889 - app.services.db.conversation_service - INFO - Empty conversation created with ID: ff785b37-384f-43ff-8908-8d517a857a65
+2025-07-20 16:26:27,889 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: ff785b37-384f-43ff-8908-8d517a857a65
+2025-07-20 16:26:27,889 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
+2025-07-20 16:26:28,113 - app.services.db.workout_service - INFO - RPC returned: 56 workouts
+2025-07-20 16:26:28,113 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 56 workouts
+2025-07-20 16:26:28,117 - app.services.workout_analysis_service - ERROR - Error during analysis task: object str can't be used in 'await' expression
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 83, in _perform_analysis_task
+    bundle_id = await str(new_uuid())
+                ^^^^^^^^^^^^^^^^^^^^^
+TypeError: object str can't be used in 'await' expression
+2025-07-20 16:26:28,118 - app.main - INFO - Response status: 200
+2025-07-20 16:26:28,151 - app.main - INFO - Request: GET /api/dashboard
+2025-07-20 16:26:28,152 - app.main - INFO - Response status: 200
+2025-07-20 16:26:39,447 - app - INFO - Logging has been set up
+2025-07-20 16:26:39,447 - app.main - INFO - Application starting
+2025-07-20 16:26:39,447 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 16:26:39,448 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 16:26:39,448 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 16:26:47,998 - app.main - INFO - Request: POST /db/workouts
+2025-07-20 16:26:48,220 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-20 16:26:48,221 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 16:26:48,221 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None

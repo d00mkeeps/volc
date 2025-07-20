@@ -1,79 +1,65 @@
-2025-07-20 12:02:40,378 - app.services.db.workout_service - INFO - RPC returned: 39 workouts
-2025-07-20 12:02:40,379 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 39 workouts
-2025-07-20 12:02:40,380 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-07-20 12:02:40,381 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Ab Wheel Rollout']
-2025-07-20 12:02:40,381 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-07-20 12:02:40,381 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Ab Wheel Rollout']
-2025-07-20 12:02:40,382 - app.services.workout_analysis.graph_service - INFO - Added 39 data points for Ab Wheel Rollout to strength chart
-2025-07-20 12:02:40,382 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 1 exercises with data
-2025-07-20 12:02:41,291 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 1 exercises
-2025-07-20 12:02:41,292 - app.services.workout_analysis.graph_service - INFO - Added 39 data points for Ab Wheel Rollout to volume chart
-2025-07-20 12:02:41,292 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 1 exercises with data
-2025-07-20 12:02:47,947 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 7584ef49-9253-4382-8608-bd80bcfba34c
-2025-07-20 12:02:48,470 - app.services.db.graph_bundle_service - ERROR - Error saving graph bundle: object APIResponse[TypeVar] can't be used in 'await' expression
-2025-07-20 12:02:48,470 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation 01bddf37-9c15-4397-b3ce-5656ee46577a
-2025-07-20 12:02:48,471 - app.main - INFO - Response status: 200
-2025-07-20 12:02:48,484 - app.main - INFO - Request: GET /api/dashboard
-2025-07-20 12:02:48,485 - app.main - INFO - Response status: 200
-2025-07-20 12:05:35,246 - app - INFO - Logging has been set up
-2025-07-20 12:05:35,247 - app.main - INFO - Application starting
-2025-07-20 12:05:35,247 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 12:05:35,247 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 12:05:35,247 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 12:07:02,709 - app.main - INFO - Request: POST /db/workouts
-2025-07-20 12:07:05,108 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
-2025-07-20 12:07:05,108 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 12:07:05,110 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
-2025-07-20 12:07:07,070 - app.services.db.workout_service - INFO - Workout created with ID: c68e9b94-2c7a-43be-b746-8b73ccd6124c
-2025-07-20 12:07:07,071 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: c68e9b94-2c7a-43be-b746-8b73ccd6124c
-2025-07-20 12:07:07,071 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
-2025-07-20 12:07:07,663 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 873a185e-6165-4352-a54f-afda02587592
-2025-07-20 12:07:10,191 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
-2025-07-20 12:07:10,931 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: 21951430-dee1-44be-88c2-5abcd1836a8e
-2025-07-20 12:07:14,079 - app.services.db.workout_service - INFO - Workout creation complete for ID: c68e9b94-2c7a-43be-b746-8b73ccd6124c
-2025-07-20 12:07:14,081 - app.main - INFO - Response status: 200
-2025-07-20 12:07:14,380 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-20 12:07:16,092 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 12:07:16,945 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 082e5d18-7d3b-44db-b30b-fc3a529a9a14
-2025-07-20 12:07:16,946 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 082e5d18-7d3b-44db-b30b-fc3a529a9a14
-2025-07-20 12:07:16,947 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
-2025-07-20 12:07:17,714 - app.services.db.workout_service - INFO - RPC result: {'workouts': [{'name': 'Freestyle Workout', 'date': '2025-07-20T17:07:05.109578+00:00', 'notes': 'A blank template for creating custom workouts', 'exercises': [{'exercise_name': 'Barbell Back Squat', 'sets': [{'set_number': 1, 'weight': 160, 'reps': 5, 'rpe': None, 'distance': None, 'duration': None}, {'set_number': 2, 'weight': 165, 'reps': 5, 'rpe': None, 'distance': None, 'duration': None}, {'set_number': 3, 'weight': 170, 'reps': None, 'rpe': None, 'distance': None, 'duration': None}]}, {'exercise_name': 'Barbell Bench Press', 'sets': [{'set_number': 1, 'weight': 90, 'reps': 5, 'rpe': None, 'distance': None, 'duration': None}, {'set_number': 2, 'weight': 90, 'reps': 5, 'rpe': None, 'distance': None, 'duration': None}, {'set_number': 3, 'weight': 90, 'reps': 5, 'rpe': None, 'distance': None, 'duration': None}]}]}], 'metadata': {'total_workouts': 1, 'total_exercises': 2, 'date_range': {'earliest': '2025-07-20T17:07:05.109578+00:00', 'latest': '2025-07-20T17:07:05.109578+00:00'}}}
-2025-07-20 12:07:17,714 - app.services.db.workout_service - INFO - RPC returned: 1 workouts
-2025-07-20 12:07:17,714 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 1 workouts
-2025-07-20 12:07:17,715 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Barbell Back Squat', 'Barbell Bench Press']
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Barbell Back Squat', 'Barbell Bench Press']
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Back Squat to strength chart
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Bench Press to strength chart
-2025-07-20 12:07:17,716 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 2 exercises with data
-2025-07-20 12:07:20,329 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 2 exercises
-2025-07-20 12:07:20,329 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Back Squat to volume chart
-2025-07-20 12:07:20,330 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Bench Press to volume chart
-2025-07-20 12:07:20,330 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 2 exercises with data
-2025-07-20 12:07:22,276 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: f8c962f8-0ad7-477a-9dfc-a32c391f865c
-2025-07-20 12:07:22,783 - app.services.db.graph_bundle_service - INFO - Bundle saved successfully with ID: f8c962f8-0ad7-477a-9dfc-a32c391f865c
-2025-07-20 12:07:22,783 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation 082e5d18-7d3b-44db-b30b-fc3a529a9a14
-2025-07-20 12:07:22,784 - app.main - INFO - Response status: 200
-2025-07-20 12:07:22,825 - app.main - INFO - Request: GET /api/dashboard
-2025-07-20 12:07:22,826 - app.main - INFO - Response status: 200
-2025-07-20 12:12:03,550 - app - INFO - Logging has been set up
-2025-07-20 12:12:03,551 - app.main - INFO - Application starting
-2025-07-20 12:12:03,551 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 12:12:03,552 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 12:12:03,552 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 12:27:03,271 - app - INFO - Logging has been set up
-2025-07-20 12:27:03,271 - app.main - INFO - Application starting
-2025-07-20 12:27:03,271 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 12:27:03,271 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 12:27:03,271 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 12:30:52,037 - app - INFO - Logging has been set up
-2025-07-20 12:30:52,038 - app.main - INFO - Application starting
-2025-07-20 12:30:52,038 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 12:30:52,038 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 12:30:52,038 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 12:32:06,781 - app - INFO - Logging has been set up
-2025-07-20 12:32:06,781 - app.main - INFO - Application starting
-2025-07-20 12:32:06,781 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 12:32:06,781 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 12:32:06,781 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 17:14:07,953 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 17:14:08,369 - app.services.db.conversation_service - INFO - Empty conversation created with ID: dd4d4412-55ae-407b-93f3-274f025c3ec7
+2025-07-20 17:14:08,370 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: dd4d4412-55ae-407b-93f3-274f025c3ec7
+2025-07-20 17:14:08,370 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
+2025-07-20 17:14:08,709 - app.services.db.workout_service - INFO - RPC returned: 58 workouts
+2025-07-20 17:14:08,709 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 58 workouts
+2025-07-20 17:14:08,713 - app.services.workout_analysis_service - ERROR - Error during analysis task: 1 validation error for WorkoutDataBundle
+computed_metrics
+  Field required [type=missing, input_value={'bundle_id': '466cf914-0... 20, 17, 14, 8, 709856)}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 74, in _perform_analysis_task
+    bundle = WorkoutDataBundle(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pydantic/main.py", line 214, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for WorkoutDataBundle
+computed_metrics
+  Field required [type=missing, input_value={'bundle_id': '466cf914-0... 20, 17, 14, 8, 709856)}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.10/v/missing
+2025-07-20 17:14:08,722 - app.main - INFO - Response status: 200
+2025-07-20 17:14:08,751 - app.main - INFO - Request: GET /api/dashboard
+2025-07-20 17:14:08,752 - app.main - INFO - Response status: 200
+2025-07-20 17:14:53,956 - app - INFO - Logging has been set up
+2025-07-20 17:14:53,956 - app.main - INFO - Application starting
+2025-07-20 17:14:53,957 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-20 17:14:53,957 - app.main - INFO - SUPABASE_URL present: True
+2025-07-20 17:14:53,957 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-20 17:15:00,894 - app.main - INFO - Request: POST /db/workouts
+2025-07-20 17:15:01,418 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-20 17:15:01,418 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 17:15:01,418 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-20 17:15:01,933 - app.services.db.workout_service - INFO - Workout created with ID: ca151fb4-a218-4d54-a09a-62fbd38cab62
+2025-07-20 17:15:01,933 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: ca151fb4-a218-4d54-a09a-62fbd38cab62
+2025-07-20 17:15:01,933 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
+2025-07-20 17:15:02,441 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 12bf9ba4-6181-42ad-9602-690a88d2a1a9
+2025-07-20 17:15:03,364 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
+2025-07-20 17:15:03,538 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: 149d5ed5-313a-47b8-b3b7-531587914498
+2025-07-20 17:15:04,437 - app.services.db.workout_service - INFO - Workout creation complete for ID: ca151fb4-a218-4d54-a09a-62fbd38cab62
+2025-07-20 17:15:04,440 - app.main - INFO - Response status: 200
+2025-07-20 17:15:04,663 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-20 17:15:05,209 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-20 17:15:05,719 - app.services.db.conversation_service - INFO - Empty conversation created with ID: f306d49f-695d-4411-aa6a-514048cedaef
+2025-07-20 17:15:05,721 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: f306d49f-695d-4411-aa6a-514048cedaef
+2025-07-20 17:15:05,721 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
+2025-07-20 17:15:05,912 - app.services.db.workout_service - INFO - RPC returned: 59 workouts
+2025-07-20 17:15:05,912 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 59 workouts
+2025-07-20 17:15:05,912 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
+2025-07-20 17:15:05,913 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Barbell Back Squat', 'Barbell Bench Press']
+2025-07-20 17:15:05,913 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
+2025-07-20 17:15:05,913 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Barbell Bench Press', 'Barbell Back Squat']
+2025-07-20 17:15:05,914 - app.services.workout_analysis.graph_service - INFO - Added 41 data points for Barbell Back Squat to strength chart
+2025-07-20 17:15:05,914 - app.services.workout_analysis.graph_service - INFO - Added 56 data points for Barbell Bench Press to strength chart
+2025-07-20 17:15:05,914 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 2 exercises with data
+2025-07-20 17:15:06,744 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 2 exercises
+2025-07-20 17:15:06,745 - app.services.workout_analysis.graph_service - INFO - Added 56 data points for Barbell Bench Press to volume chart
+2025-07-20 17:15:06,745 - app.services.workout_analysis.graph_service - INFO - Added 41 data points for Barbell Back Squat to volume chart
+2025-07-20 17:15:06,745 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 2 exercises with data
+2025-07-20 17:15:08,080 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 6728e400-0844-451a-8854-06aa1fdecaef
+2025-07-20 17:15:08,593 - app.services.db.graph_bundle_service - INFO - Bundle saved successfully with ID: 6728e400-0844-451a-8854-06aa1fdecaef
+2025-07-20 17:15:08,594 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation f306d49f-695d-4411-aa6a-514048cedaef
+2025-07-20 17:15:08,594 - app.main - INFO - Response status: 200
+2025-07-20 17:15:08,622 - app.main - INFO - Request: GET /api/dashboard
+2025-07-20 17:15:08,623 - app.main - INFO - Response status: 200
