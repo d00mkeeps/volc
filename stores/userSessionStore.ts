@@ -3,6 +3,8 @@ import { CompleteWorkout, WorkoutExercise } from '@/types/workout';
 import { workoutService } from '@/services/db/workout';
 import { useDashboardStore } from '@/stores/dashboardStore';
 import { useUserStore } from '@/stores/userProfileStore';
+import { useWorkoutAnalysisStore } from './analysis/WorkoutAnalysisStore';
+import { workoutAnalysisService } from '@/services/api/workoutAnalysisService';
 
 interface UserSessionState {
   // Session state
@@ -127,7 +129,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ currentWorkout: updatedWorkout });
   },
   
- // In userSessionStore.ts
+// Update the finishWorkout method
 finishWorkout: async () => {
   const { currentWorkout } = get();
   
@@ -147,6 +149,21 @@ finishWorkout: async () => {
 
   // Update the current workout with the saved one, so we have the ID
   set({ currentWorkout: savedWorkout });
+  
+  // Extract definition IDs for analysis
+  const definitionIds = savedWorkout.workout_exercises
+  .map(ex => ex.definition_id)
+  .filter((id): id is string => Boolean(id));
+  
+  // Trigger analysis with definition IDs
+  if (definitionIds.length > 0) {
+    try {
+      const analysisResult = await workoutAnalysisService.initiateAnalysisAndConversation(definitionIds);
+      console.log('Analysis initiated with conversation ID:', analysisResult.conversation_id);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+    }
+  }
   
   useDashboardStore.getState().refreshDashboard();
 },

@@ -4,12 +4,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any, List, Optional, Union
 
 class WorkoutAnalysisRequest(BaseModel):
-    user_id: str
-    exercise_names: Optional[List[str]] = None
-    workout_data: Optional[Dict[str, Any]] = None
-    timeframe: Optional[str] = "3 months"
-    message: Optional[str] = "Analyze my workout"
-    conversation_id: Optional[str] = None
+    exercise_definition_ids: List[str]
     
     class Config:
         schema_extra = {

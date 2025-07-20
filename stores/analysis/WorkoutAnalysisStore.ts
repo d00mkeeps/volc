@@ -33,35 +33,29 @@ export const useWorkoutAnalysisStore = create<WorkoutAnalysisStoreState>((set, g
     error: null
   },
   
-  submitAnalysis: async (workoutData, options = {}) => {
-    try {
-      set({ currentAnalysis: { status: 'loading', result: null, error: null } });
-      
-      const userProfile = useUserStore.getState().userProfile;
-      const currentUserId = userProfile?.auth_user_uuid;
-      
-      if (!currentUserId) {
-        throw new Error('No authenticated user found');
-      }
-      
-      const response = await workoutAnalysisService.initiateAnalysisAndConversation(workoutData, currentUserId);
-      
-      set({ currentAnalysis: { status: 'success', result: response, error: null } });
-      
-      if (options.onComplete) {
-        options.onComplete(response);
-      }
-      
-      return response; // Return the conversation_id
-    } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      set({ currentAnalysis: { status: 'error', result: null, error: err } });
-      if (options.onError) {
-        options.onError(err);
-      }
-      throw err;
+ // Update the submitAnalysis method signature
+submitAnalysis: async (definitionIds: string[], options = {}) => {
+  try {
+    set({ currentAnalysis: { status: 'loading', result: null, error: null } });
+    
+    const response = await workoutAnalysisService.initiateAnalysisAndConversation(definitionIds);
+    
+    set({ currentAnalysis: { status: 'success', result: response, error: null } });
+    
+    if (options.onComplete) {
+      options.onComplete(response);
     }
-  },
+    
+    return response;
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    set({ currentAnalysis: { status: 'error', result: null, error: err } });
+    if (options.onError) {
+      options.onError(err);
+    }
+    throw err;
+  }
+},
   
   getProgress: () => {
     const { status } = get().currentAnalysis;

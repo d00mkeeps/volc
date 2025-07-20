@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { YStack, Text, Input, Button, TextArea, Card } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
@@ -13,6 +13,16 @@ export function WorkoutSummarySlide({
 }: WorkoutSummarySlideProps) {
   const { currentWorkout, updateCurrentWorkout } = useUserSessionStore();
   const [workoutName, setWorkoutName] = useState(currentWorkout?.name || "");
+  const notesRef = useRef<Record<number, string>>({});
+
+  // Initialize notes ref with existing notes
+  useEffect(() => {
+    currentWorkout?.workout_exercises?.forEach((exercise, index) => {
+      if (exercise.notes) {
+        notesRef.current[index] = exercise.notes;
+      }
+    });
+  }, [currentWorkout]);
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
@@ -26,12 +36,15 @@ export function WorkoutSummarySlide({
   };
 
   const handleNotesChange = (exerciseIndex: number, notes: string) => {
+    notesRef.current[exerciseIndex] = notes;
+  };
+
+  const handleContinue = () => {
     if (currentWorkout) {
-      const updatedExercises = [...currentWorkout.workout_exercises];
-      updatedExercises[exerciseIndex] = {
-        ...updatedExercises[exerciseIndex],
-        notes,
-      };
+      const updatedExercises = currentWorkout.workout_exercises.map((exercise, index) => ({
+        ...exercise,
+        notes: notesRef.current[index] || exercise.notes || ""
+      }));
 
       updateCurrentWorkout({
         ...currentWorkout,
@@ -39,6 +52,8 @@ export function WorkoutSummarySlide({
         updated_at: new Date().toISOString(),
       });
     }
+    
+    onContinue();
   };
 
   return (
@@ -69,7 +84,7 @@ export function WorkoutSummarySlide({
                 </Text>
                 <TextArea
                   placeholder="Add notes for this exercise..."
-                  value={exercise.notes || ""}
+                  defaultValue={exercise.notes || ""}
                   onChangeText={(notes) => handleNotesChange(index, notes)}
                   minHeight={80}
                   backgroundColor="$background"
@@ -81,7 +96,7 @@ export function WorkoutSummarySlide({
       </YStack>
 
       {showContinueButton && (
-        <Button size="$4" backgroundColor="$primary" onPress={onContinue}>
+        <Button size="$4" backgroundColor="$primary" onPress={handleContinue}>
           Continue to Coach
         </Button>
       )}

@@ -1,311 +1,108 @@
 from typing import Dict, List, Any
-from datetime import datetime
+import logging
 
-class BaseMetricsCalculator:
-    def __init__(self, workout_data: Dict):
-        self.workout_data = workout_data
-        self.metrics = {}
-    
-    def calculate(self) -> Dict:
-        """Calculate metrics and return results"""
-        raise NotImplementedError
+logger = logging.getLogger(__name__)
 
-class PerformanceMetricsCalculator(BaseMetricsCalculator):
-    def calculate(self) -> Dict:
-        """Calculate performance metrics for each exercise, now grouped by definition_id."""
-        exercise_metrics = {}
-        
-        for workout in self.workout_data.get('workouts', []):
-            for exercise in workout.get('exercises', []):
-                # Use definition_id as key if available, otherwise use name
-                definition_id = exercise.get('definition_id')
-                # Use standardized name from definition
-                name = exercise.get('exercise_name', 'Unknown Exercise')
-                
-                # Create consistent key for grouping
-                key = str(definition_id) if definition_id else name
-                
-                if key not in exercise_metrics:
-                    exercise_metrics[key] = {
-                        'display_name': name,
-                        'sessions': []
-                    }
-                
-                # Extract metrics for this session
-                metrics = {
-                    'date': workout.get('date', ''),
-                    'max_weight': max([s.get('weight', 0) or 0 for s in exercise.get('sets', [])]),
-                    'total_volume': exercise.get('metrics', {}).get('total_volume', 0),
-                    'total_sets': exercise.get('metrics', {}).get('total_sets', 0)
-                }
-                
-                exercise_metrics[key]['sessions'].append(metrics)
-        
-        # Calculate progression metrics
-        progression_data = {}
-        
-        for key, data in exercise_metrics.items():
-            display_name = data['display_name']
-            sessions = data['sessions']
-            
-            if len(sessions) < 2:
-                continue
-                
-            # Sort by date
-            sessions.sort(key=lambda x: x['date'])
-            
-            # Calculate progression metrics
-            start_weight = sessions[0]['max_weight']
-            current_weight = sessions[-1]['max_weight']
-            
-            # Calculate weekly volume trend
-            volume_trend = self._calculate_trend([s['total_volume'] for s in sessions])
-            
-            # Calculate weight progression
-            if start_weight > 0:
-                weight_change = current_weight - start_weight
-                weight_change_pct = (weight_change / start_weight) * 100
-            else:
-                weight_change = 0
-                weight_change_pct = 0
-            
-            progression_data[display_name] = {
-                'occurrences': len(sessions),
-                'first_date': sessions[0]['date'],
-                'last_date': sessions[-1]['date'],
-                'weight_progression': {
-                    'start': start_weight,
-                    'current': current_weight,
-                    'change': round(weight_change, 2),
-                    'change_percent': round(weight_change_pct, 1)
-                },
-                'volume_trend': volume_trend
-            }
-        
-        return {'exercise_progression': progression_data}
-    
-    # [_calculate_trend method remains unchanged]
-    
-    def _calculate_trend(self, values: List[float]) -> str:
-        """Calculate the trend direction from a list of values"""
-        if not values or len(values) < 2:
-            return "neutral"
-            
-        # Simple linear trend analysis
-        start, end = values[0], values[-1]
-        if end > start * 1.05:  # 5% increase
-            return "increasing"
-        elif end < start * 0.95:  # 5% decrease
-            return "decreasing"
-        else:
-            return "stable"
-
-class StrengthMetricsCalculator(BaseMetricsCalculator):
-    def calculate(self) -> Dict:
-        """Calculate strength metrics based on 1RM estimates, grouped by definition_id."""
-        exercise_1rm = {}
-        
-        for workout in self.workout_data.get('workouts', []):
-            for exercise in workout.get('exercises', []):
-                # Use definition_id as key if available, otherwise use name
-                definition_id = exercise.get('definition_id')
-                # Use standardized name from definition
-                name = exercise.get('exercise_name', 'Unknown Exercise')
-                
-                # Create consistent key for grouping
-                key = str(definition_id) if definition_id else name
-                
-                if key not in exercise_1rm:
-                    exercise_1rm[key] = {
-                        'display_name': name,
-                        'sessions': []
-                    }
-                
-                # Get highest estimated 1RM for this session
-                highest_1rm = max([s.get('estimated_1rm', 0) or 0 for s in exercise.get('sets', [])])
-                
-                if highest_1rm > 0:
-                    exercise_1rm[key]['sessions'].append({
-                        'date': workout.get('date', ''),
-                        'estimated_1rm': highest_1rm
-                    })
-        
-        # Calculate strength progression
-        strength_data = {}
-        most_improved = []
-        
-        for key, data in exercise_1rm.items():
-            display_name = data['display_name']
-            sessions = data['sessions']
-            
-            if len(sessions) < 2:
-                continue
-                
-            # Sort by date
-            sessions.sort(key=lambda x: x['date'])
-            
-            # Calculate 1RM progression
-            start_1rm = sessions[0]['estimated_1rm']
-            current_1rm = sessions[-1]['estimated_1rm']
-            
-            # Calculate change
-            rm_change = current_1rm - start_1rm
-            rm_change_pct = (rm_change / start_1rm) * 100 if start_1rm > 0 else 0
-            
-            # Calculate rate of progress (per month)
-            try:
-                start_date = datetime.fromisoformat(sessions[0]['date'].replace('Z', '+00:00'))
-                end_date = datetime.fromisoformat(sessions[-1]['date'].replace('Z', '+00:00'))
-                days = (end_date - start_date).days
-                if days > 0:
-                    monthly_rate = (rm_change / days) * 30
-                else:
-                    monthly_rate = 0
-            except (ValueError, TypeError):
-                monthly_rate = 0
-            
-            strength_data[display_name] = {
-                'estimated_1rm': {
-                    'start': round(start_1rm, 1),
-                    'current': round(current_1rm, 1),
-                    'change': round(rm_change, 1),
-                    'change_percent': round(rm_change_pct, 1),
-                    'monthly_rate': round(monthly_rate, 1)
-                }
-            }
-            
-            # Track for most improved
-            most_improved.append({
-                'name': display_name,
-                'improvement': rm_change_pct
-            })
-        
-        # Sort and limit most improved
-        most_improved.sort(key=lambda x: x['improvement'], reverse=True)
-        top_improved = most_improved[:3]
-        
-        return {
-            'strength_progression': strength_data,
-            'most_improved_exercises': top_improved
-        }
-
-class WorkoutFrequencyCalculator(BaseMetricsCalculator):
-    def calculate(self) -> Dict:
-        """Calculate workout frequency and consistency metrics"""
-        workouts = self.workout_data.get('workouts', [])
-        
-        if not workouts:
-            return {'workout_frequency': {'total_workouts': 0}}
-        
-        # Extract dates and convert to datetime objects
-        dates = []
-        for workout in workouts:
-            date_str = workout.get('date', '')
-            if not date_str:
-                continue
-                
-            try:
-                date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                dates.append(date)
-            except (ValueError, TypeError):
-                # Skip invalid dates
-                continue
-        
-        if not dates:
-            return {'workout_frequency': {'total_workouts': 0}}
-        
-        # Sort dates
-        dates.sort()
-        
-        # Calculate metrics
-        first_date = dates[0]
-        last_date = dates[-1]
-        total_days = (last_date - first_date).days + 1  # Include both start and end days
-        
-        # Calculate days between workouts
-        intervals = []
-        for i in range(1, len(dates)):
-            interval = (dates[i] - dates[i-1]).days
-            intervals.append(interval)
-        
-        # Calculate metrics
-        avg_interval = sum(intervals) / len(intervals) if intervals else 0
-        workouts_per_week = 7 / avg_interval if avg_interval > 0 else 0
-        total_weeks = total_days / 7
-        
-        return {
-            'workout_frequency': {
-                'total_workouts': len(dates),
-                'first_workout': first_date.strftime('%Y-%m-%d'),
-                'last_workout': last_date.strftime('%Y-%m-%d'),
-                'total_days': total_days,
-                'avg_days_between': round(avg_interval, 1),
-                'workouts_per_week': round(workouts_per_week, 1),
-                'consistency_score': self._calculate_consistency(intervals)
-            }
-        }
-    
-    def _calculate_consistency(self, dates_or_intervals):
-        """Calculate a consistency score based on workout intervals or dates"""
-        if not dates_or_intervals:
-            return {'score': 0, 'streak': 0}
-        
-        intervals = []
-        if isinstance(dates_or_intervals[0], datetime):
-            # Convert dates to intervals
-            dates = sorted(dates_or_intervals)
-            for i in range(1, len(dates)):
-                interval = (dates[i] - dates[i-1]).days
-                intervals.append(interval)
-        else:
-            intervals = dates_or_intervals
-        
-        try:
-            # Ensure all intervals are integers/floats
-            intervals = [float(interval) for interval in intervals]
-            
-            # Calculate coefficient of variation (lower is more consistent)
-            mean = sum(intervals) / len(intervals)
-            variance = sum((x - mean) ** 2 for x in intervals) / len(intervals)
-            std_dev = variance ** 0.5
-            cv = (std_dev / mean) if mean > 0 else float('inf')
-            
-            # Convert to a 0-100 score (0 is inconsistent, 100 is perfect consistency)
-            # Cap CV at 1.0 for scoring purposes
-            capped_cv = min(cv, 1.0)
-            score = 100 * (1 - capped_cv)
-            
-            # Calculate current streak
-            streak = 0
-            for interval in reversed(intervals):
-                if interval <= mean * 1.5:
-                    streak += 1
-                else:
-                    break
-            
-            return {
-                'score': round(score),
-                'streak': streak
-            }
-        except Exception as e:
-            print(f"Error in consistency calculation: {e}")
-            return {'score': 0, 'streak': 0}
-    
 class MetricsProcessor:
-    def __init__(self, workout_data: Dict):
-        self.workout_data = workout_data
-        self.calculators = [
-            PerformanceMetricsCalculator(workout_data),
-            StrengthMetricsCalculator(workout_data),
-            WorkoutFrequencyCalculator(workout_data)
-        ]
-    
-    def process(self) -> Dict:
-        """Process all metrics and return combined results"""
-        combined_metrics = {}
-        
-        for calculator in self.calculators:
-            metrics = calculator.calculate()
-            combined_metrics.update(metrics)
-        
-        return combined_metrics
+   def __init__(self, workout_data: Dict[str, Any]):
+       self.workout_data = workout_data
+
+   def process(self) -> Dict[str, Any]:
+       """Process workout data and calculate metrics."""
+       try:
+           workouts = self.workout_data.get('workouts', [])
+           if not workouts:
+               return self._empty_metrics()
+
+           all_exercises = []
+           for workout in workouts:
+               for exercise in workout.get('exercises', []):
+                   all_exercises.append(exercise)
+
+           exercise_metrics = {}
+           for exercise in all_exercises:
+               exercise_name = exercise.get('exercise_name', '')
+               if exercise_name and exercise_name not in exercise_metrics:
+                   exercise_metrics[exercise_name] = self._calculate_exercise_metrics(exercise)
+
+           return {
+               'total_workouts': len(workouts),
+               'total_exercises': len(all_exercises),
+               'exercise_metrics': exercise_metrics,
+               'overall_metrics': self._calculate_overall_metrics(all_exercises)
+           }
+
+       except Exception as e:
+           logger.error(f"Error processing metrics: {e}")
+           return self._empty_metrics()
+
+   def _calculate_exercise_metrics(self, exercise: Dict) -> Dict:
+       """Calculate metrics for a single exercise."""
+       sets = exercise.get('sets', [])
+       
+       # Filter out null values
+       weights = [s.get('weight') for s in sets if s.get('weight') is not None]
+       reps = [s.get('reps') for s in sets if s.get('reps') is not None]
+       
+       # Calculate volume (weight × reps) for sets with both values
+       volumes = []
+       for s in sets:
+           weight = s.get('weight')
+           rep = s.get('reps')
+           if weight is not None and rep is not None:
+               volumes.append(weight * rep)
+
+       return {
+           'total_sets': len(sets),
+           'max_weight': max(weights) if weights else 0,
+           'min_weight': min(weights) if weights else 0,
+           'avg_weight': sum(weights) / len(weights) if weights else 0,
+           'max_reps': max(reps) if reps else 0,
+           'min_reps': min(reps) if reps else 0,
+           'avg_reps': sum(reps) / len(reps) if reps else 0,
+           'total_volume': sum(volumes),
+           'avg_volume_per_set': sum(volumes) / len(volumes) if volumes else 0
+       }
+
+   def _calculate_overall_metrics(self, all_exercises: List[Dict]) -> Dict:
+       """Calculate overall metrics across all exercises."""
+       all_weights = []
+       all_reps = []
+       all_volumes = []
+       
+       for exercise in all_exercises:
+           for s in exercise.get('sets', []):
+               weight = s.get('weight')
+               rep = s.get('reps')
+               
+               if weight is not None:
+                   all_weights.append(weight)
+               if rep is not None:
+                   all_reps.append(rep)
+               if weight is not None and rep is not None:
+                   all_volumes.append(weight * rep)
+
+       return {
+           'total_sets_all_exercises': sum(len(ex.get('sets', [])) for ex in all_exercises),
+           'max_weight_overall': max(all_weights) if all_weights else 0,
+           'avg_weight_overall': sum(all_weights) / len(all_weights) if all_weights else 0,
+           'max_reps_overall': max(all_reps) if all_reps else 0,
+           'avg_reps_overall': sum(all_reps) / len(all_reps) if all_reps else 0,
+           'total_volume_overall': sum(all_volumes)
+       }
+
+   def _empty_metrics(self) -> Dict:
+       """Return empty metrics structure."""
+       return {
+           'total_workouts': 0,
+           'total_exercises': 0,
+           'exercise_metrics': {},
+           'overall_metrics': {
+               'total_sets_all_exercises': 0,
+               'max_weight_overall': 0,
+               'avg_weight_overall': 0,
+               'max_reps_overall': 0,
+               'avg_reps_overall': 0,
+               'total_volume_overall': 0
+           }
+       }

@@ -4,19 +4,14 @@ import { BaseService } from '../db/base';
 export class WorkoutAnalysisService extends BaseService {
   private ANALYSIS_ENDPOINT = '/api/workout-analysis';
 
-  /**
-   * Initiate analysis and conversation
-   * @param workoutData The workout data to analyze
-   * @param userId The authenticated user's UUID
-   */
-  async initiateAnalysisAndConversation(workoutData: any, userId: string): Promise<{ conversation_id: string }> {
+  async initiateAnalysisAndConversation(
+    definitionIds: string[]
+  ): Promise<{ conversation_id: string }> {
     try {
-      console.log(`[WorkoutAnalysisService] Initiating analysis and conversation for user: ${userId}`);
+      console.log(`[WorkoutAnalysisService] Initiating analysis for definition IDs:`, definitionIds);
 
       const payload = {
-        user_id: userId,
-        workout_data: workoutData,
-        message: "Analyze my workout" // Default message for initial analysis
+        exercise_definition_ids: definitionIds
       };
 
       const response = await apiPost<{ conversation_id: string }>(this.ANALYSIS_ENDPOINT, payload);
@@ -24,7 +19,7 @@ export class WorkoutAnalysisService extends BaseService {
       console.log(`[WorkoutAnalysisService] Analysis initiation complete. Conversation ID: ${response.conversation_id}`);
       return response;
     } catch (error) {
-      console.error('[WorkoutAnalysisService] Error initiating analysis and conversation:', error);
+      console.error('[WorkoutAnalysisService] Error initiating analysis:', error);
       return this.handleError(error);
     }
   }

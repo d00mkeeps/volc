@@ -447,13 +447,12 @@ class WorkoutGraphService:
             "type": "bar"  # Specify main chart type
         }
     
-    async def add_charts_to_bundle(self, bundle: WorkoutDataBundle, llm) -> Dict[str, str]:
+    async def add_charts_to_bundle(self, bundle: WorkoutDataBundle) -> Dict[str, str]:
         """
         Generates multiple charts for an existing workout bundle and returns URLs.
         
         Args:
             bundle: The workout data bundle to generate charts for
-            llm: Language model instance used for chart customization
             
         Returns:
             Dictionary mapping chart types to their URLs
@@ -501,31 +500,23 @@ class WorkoutGraphService:
             logger.error(f"Error generating charts: {str(e)}")
             return {}
         
-    async def create_workout_bundle(self, user_id: str, query_text: str) -> Optional[WorkoutDataBundle]:
-        """
-        Create a workout data bundle based on a query
-        """
+    async def create_workout_bundle(self, user_id: str, definition_ids: List[str]) -> Optional[WorkoutDataBundle]:
+        """Create a workout data bundle based on definition IDs"""
         try:
-            logger.info(f"Creating workout bundle for query: {query_text}")
+            logger.info(f"Creating workout bundle for definition IDs: {definition_ids}")
             
-            # Extract exercise names from query (keep your existing parsing logic)
-            exercise_names = self._extract_exercise_names(query_text)
-            if not exercise_names:
-                logger.warning("No exercise names extracted from query")
-                return None
-                
-            # Instead of using query_builder, use workout_service
-            workout_data = await self.workout_service.get_workout_history_by_exercises(
+            # Use the new definition ID method
+            workout_data = await self.workout_service.get_workout_history_by_definition_ids(
                 user_id=user_id,
-                exercises=exercise_names,
-                timeframe="3 months"  # Default timeframe
+                definition_ids=definition_ids,
+                timeframe="3 months"
             )
             
-            if not workout_data:
+            if not workout_data or not workout_data.get('workouts'):
                 logger.warning("No workout data found")
                 return None
                 
-            # Create bundle (keep your existing bundle creation logic)
+            # Create bundle
             bundle_id = await new_uuid()
             bundle = WorkoutDataBundle(
                 bundle_id=bundle_id,
@@ -536,7 +527,7 @@ class WorkoutGraphService:
                     exercises_included=workout_data.get('metadata', {}).get('exercises_included', [])
                 ),
                 workout_data=workout_data,
-                original_query=query_text,
+                original_query=f"Analysis for {len(definition_ids)} exercises",
                 created_at=datetime.now()
             )
             

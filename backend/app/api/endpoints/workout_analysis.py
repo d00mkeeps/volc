@@ -1,35 +1,33 @@
 import logging
 from fastapi import APIRouter, HTTPException, Depends, status
-from typing import Dict, Any
 
 from ...services.workout_analysis_service import WorkoutAnalysisService
 from ...schemas.workout_analysis import WorkoutAnalysisRequest
+from ...core.supabase.auth import get_current_user
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter()
 
-# Dependency to get analysis service
 def get_analysis_service():
     return WorkoutAnalysisService()
 
 @router.post("/api/workout-analysis", status_code=status.HTTP_200_OK)
 async def create_workout_analysis(
     request: WorkoutAnalysisRequest,
+    user = Depends(get_current_user),
     analysis_service: WorkoutAnalysisService = Depends(get_analysis_service)
 ):
     """
     Initiate a workout analysis and conversation.
     """
     try:
-        # Validate request
-        if not request.exercise_names and not request.workout_data:
+        if not request.exercise_definition_ids:
             raise HTTPException(
                 status_code=400, 
-                detail="Either exercise_names or workout_data must be provided"
+                detail="exercise_definition_ids must be provided"
             )
         
-        result = await analysis_service.initiate_analysis_and_conversation(request)
+        result = await analysis_service.initiate_analysis_and_conversation(request, user)
         return result
         
     except Exception as e:

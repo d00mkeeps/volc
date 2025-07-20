@@ -138,8 +138,7 @@ class WorkoutFormatter:
             transformed_exercises = []
             
             # Process each exercise within the workout
-            for exercise in workout.get('exercises', []):
-                # Transform the exercise structure
+            for exercise in workout.get('workout_exercises', []):
                 transformed_exercise = {
                     'exercise_name': exercise.get('name', ''),
                     'units': {

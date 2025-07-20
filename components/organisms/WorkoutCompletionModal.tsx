@@ -40,21 +40,13 @@ export function WorkoutCompletionModal({
   }, [isVisible]);
 
   useEffect(() => {
-    const initiateAnalysis = async () => {
-      if (isVisible && currentWorkout) {
-        try {
-          const result = await workoutAnalysisStore.submitAnalysis({
-            ...currentWorkout,
-            exercises: currentWorkout.workout_exercises || [],
-          });
-          setConversationId(result.conversation_id);
-        } catch (error) {
-          console.error("[WorkoutCompletionModal] Analysis submission failed:", error);
-        }
+    if (isVisible) {
+      const result = workoutAnalysisStore.getResult();
+      if (result?.conversation_id) {
+        setConversationId(result.conversation_id);
       }
-    };
-    initiateAnalysis();
-  }, [isVisible, currentWorkout]);
+    }
+  }, [isVisible]);
 
   const handleCloseAttempt = () => {
     setShowCloseConfirmation(true);

@@ -157,7 +157,7 @@ class GraphBundleService(BaseDBService):
                 insert_data["conversation_id"] = conversation_id
             
             # Save to database with matching schema columns
-            result = await self.supabase.table("graph_bundles").insert(insert_data).execute()
+            result = self.supabase.table("graph_bundles").insert(insert_data).execute()
             
             # Check for successful response
             if hasattr(result, 'data') and result.data:
