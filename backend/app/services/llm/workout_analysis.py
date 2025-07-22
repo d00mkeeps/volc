@@ -1,6 +1,7 @@
 # app/services/llm/workout_analysis.py
 
 import logging
+import asyncio
 from typing import Dict, Any, AsyncGenerator
 from fastapi import WebSocket
 import anthropic
@@ -20,6 +21,15 @@ class WorkoutAnalysisLLMService:
         self._conversation_chains = {}  # Store chains by conversation_id
         self.message_service = MessageService()
         self.graph_bundle_service = GraphBundleService()
+    
+    def _filter_bundle_for_llm(self, bundle_data: dict) -> dict:
+        """Remove empty fields from bundle for LLM context"""
+        return {
+            "metadata": bundle_data.get("metadata", {}),
+            "top_performers": bundle_data.get("top_performers", {}),
+            "chart_urls": bundle_data.get("chart_urls", {})
+            # Skip correlation_data and consistency_metrics
+        }
         
     def get_chain(self, conversation_id: str, user_id: str = None) -> WorkoutAnalysisChain:
         """Get or create a conversation chain"""
@@ -75,7 +85,8 @@ class WorkoutAnalysisLLMService:
                     await asyncio.sleep(retry_delay)
 
                 if analysis_bundle:
-                    await chain.add_data_bundle(analysis_bundle)
+                    filtered_bundle = self._filter_bundle_for_llm(analysis_bundle)
+                    await chain.add_data_bundle(filtered_bundle)
                     logger.info(f"Added analysis bundle to conversation {conversation_id} for proactive message.")
                     
                     full_response_content = ""
@@ -131,8 +142,9 @@ class WorkoutAnalysisLLMService:
                                 bundle = WorkoutDataBundle(**bundle_data)
                             else:
                                 bundle = bundle_data
-                                
-                            await chain.add_data_bundle(bundle)
+                            
+                            filtered_bundle = self._filter_bundle_for_llm(bundle_data)
+                            await chain.add_data_bundle(filtered_bundle)
                             logger.info(f"Added analysis bundle to conversation {conversation_id}")
                         except Exception as e:
                             logger.error(f"Error adding bundle to conversation: {str(e)}")

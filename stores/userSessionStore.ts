@@ -1,9 +1,9 @@
 import { create } from 'zustand';
+import { v4 as uuidv4 } from 'uuid';
 import { CompleteWorkout, WorkoutExercise } from '@/types/workout';
 import { workoutService } from '@/services/db/workout';
 import { useDashboardStore } from '@/stores/dashboardStore';
 import { useUserStore } from '@/stores/userProfileStore';
-import { useWorkoutAnalysisStore } from './analysis/WorkoutAnalysisStore';
 import { workoutAnalysisService } from '@/services/api/workoutAnalysisService';
 
 interface UserSessionState {
@@ -25,7 +25,7 @@ interface UserSessionState {
   startWorkout: (workout: CompleteWorkout) => void;
   pauseWorkout: () => void;
   resumeWorkout: () => void;
-  togglePause: () => void; // This was missing!
+  togglePause: () => void;
   finishWorkout: () => Promise<void>;
   updateElapsedTime: () => void;
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
@@ -42,6 +42,36 @@ interface UserSessionState {
   getProgress: () => { completed: number; total: number };
 }
 
+// Helper function to create workout with proper UUIDs
+function createWorkoutWithIds(template: CompleteWorkout, userId: string): CompleteWorkout {
+  const workoutId = uuidv4();
+  const now = new Date().toISOString();
+  
+  return {
+    ...template,
+    id: workoutId,
+    user_id: userId,
+    template_id: template.id,
+    is_template: false,
+    created_at: now,
+    updated_at: now,
+    workout_exercises: template.workout_exercises.map((exercise) => {
+      const exerciseId = uuidv4();
+      
+      return {
+        ...exercise,
+        id: exerciseId,
+        workout_id: workoutId,
+        workout_exercise_sets: exercise.workout_exercise_sets.map((set) => ({
+          ...set,
+          id: uuidv4(),
+          exercise_id: exerciseId,
+          is_completed: false,
+        })),
+      };
+    }),
+  };
+}
 
 // At the top of the file, outside the store
 export function createEmptyWorkout(userId: string): CompleteWorkout {
@@ -92,7 +122,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ isPaused: false });
   },
 
-  // ADD THIS MISSING METHOD:
   togglePause: () => {
     const { isPaused } = get();
     if (isPaused) {
@@ -105,11 +134,24 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
 
   updateCurrentWorkout: (workout) => {
-    const { isActive } = get();
-    if (!isActive) return;
+    console.log('=== UPDATE CURRENT WORKOUT ===');
+    console.log('Incoming workout ID:', workout.id);
+    console.log('Incoming workout notes:', workout.notes);
+    console.log('Incoming workout notes length:', workout.notes?.length);
     
-    console.log('[UserSession] Updating current workout data');
+    const { isActive, currentWorkout: oldWorkout } = get();
+    console.log('Store isActive:', isActive);
+    console.log('Old workout notes:', oldWorkout?.notes);
+    console.log('Old workout notes length:', oldWorkout?.notes?.length);
+    
+    // Remove isActive check if you haven't already
     set({ currentWorkout: workout });
+    
+    // Verify the update took effect
+    const { currentWorkout: newWorkout } = get();
+    console.log('After update - new workout notes:', newWorkout?.notes);
+    console.log('After update - new workout notes length:', newWorkout?.notes?.length);
+    console.log('Update successful:', newWorkout?.notes === workout.notes);
   },
 
   updateExercise: (exerciseId, updatedExercise) => {
@@ -129,56 +171,61 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ currentWorkout: updatedWorkout });
   },
   
-// Update the finishWorkout method
-finishWorkout: async () => {
-  const { currentWorkout } = get();
-  
-  if (!currentWorkout) return;
-  
-  const userProfile = useUserStore.getState().userProfile;
-  if (!userProfile?.user_id) {
-    throw new Error('No user profile found');
-  }
-  
-  // Save workout without notes and refresh dashboard
-  const workoutData = { ...currentWorkout, notes: '' };
-  const savedWorkout = await workoutService.saveCompletedWorkout(
-    userProfile.user_id.toString(), 
-    workoutData
-  );
-
-  // Update the current workout with the saved one, so we have the ID
-  set({ currentWorkout: savedWorkout });
-  
-  // Extract definition IDs for analysis
-  const definitionIds = savedWorkout.workout_exercises
-  .map(ex => ex.definition_id)
-  .filter((id): id is string => Boolean(id));
-  
-  // Trigger analysis with definition IDs
-  if (definitionIds.length > 0) {
-    try {
-      const analysisResult = await workoutAnalysisService.initiateAnalysisAndConversation(definitionIds);
-      console.log('Analysis initiated with conversation ID:', analysisResult.conversation_id);
-    } catch (error) {
-      console.error('Analysis failed:', error);
+  // Updated finishWorkout method
+  finishWorkout: async () => {
+    const { currentWorkout } = get();
+    
+    if (!currentWorkout) return;
+    
+    const userProfile = useUserStore.getState().userProfile;
+    if (!userProfile?.user_id) {
+      throw new Error('No user profile found');
     }
-  }
-  
-  useDashboardStore.getState().refreshDashboard();
-},
+    
+    // Generate proper UUIDs for saving to database
+    const workoutForSaving = createWorkoutWithIds(
+      currentWorkout, 
+      userProfile.user_id.toString()
+    );
 
-resetSession: () => {
-  set({
-    currentWorkout: null,
-    isActive: false,
-    isPaused: false,
-    startTime: null,
-    elapsedSeconds: 0,
-    scheduledTime: undefined,
-    selectedTemplate: null
-  });
-},
+    // Save workout without notes
+    const savedWorkout = await workoutService.saveCompletedWorkout(
+      userProfile.user_id.toString(), 
+      { ...workoutForSaving, notes: '' }
+    );
+
+    // Update the current workout with the saved one, so we have the real ID
+    set({ currentWorkout: savedWorkout });
+    
+    // Extract definition IDs for analysis
+    const definitionIds = savedWorkout.workout_exercises
+    .map(ex => ex.definition_id)
+    .filter((id): id is string => Boolean(id));
+    
+    // Trigger analysis with definition IDs
+    if (definitionIds.length > 0) {
+      try {
+        const analysisResult = await workoutAnalysisService.initiateAnalysisAndConversation(definitionIds);
+        console.log('Analysis initiated with conversation ID:', analysisResult.conversation_id);
+      } catch (error) {
+        console.error('Analysis failed:', error);
+      }
+    }
+    
+    useDashboardStore.getState().refreshDashboard();
+  },
+
+  resetSession: () => {
+    set({
+      currentWorkout: null,
+      isActive: false,
+      isPaused: false,
+      startTime: null,
+      elapsedSeconds: 0,
+      scheduledTime: undefined,
+      selectedTemplate: null
+    });
+  },
   
   updateElapsedTime: () => {
     const { startTime, isPaused } = get();
@@ -214,7 +261,7 @@ resetSession: () => {
       return;
     }
     
-    // Create a new workout based on the selected template
+    // Create a new workout based on the selected template with temp IDs for local use
     const now = new Date().toISOString();
     const newWorkout: CompleteWorkout = {
       ...template,

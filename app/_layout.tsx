@@ -16,6 +16,7 @@ import React from "react";
 import { TamaguiProvider, Theme } from "@tamagui/core"; // Removed PortalProvider
 import config from "../tamagui.config";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-get-random-values";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -100,7 +101,7 @@ function RootLayoutNav() {
                   )}
                   <Stack screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="(tabs)" />
-                    
+
                     <Stack.Screen
                       name="modal"
                       options={{ presentation: "modal" }}

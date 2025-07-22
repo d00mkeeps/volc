@@ -1,98 +1,91 @@
-2025-07-20 16:22:39,325 - app.main - INFO - Application starting
-2025-07-20 16:22:39,326 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:22:39,326 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:22:39,326 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:24:02,685 - app - INFO - Logging has been set up
-2025-07-20 16:24:02,685 - app.main - INFO - Application starting
-2025-07-20 16:24:02,685 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:24:02,685 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:24:02,685 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:24:24,391 - app - INFO - Logging has been set up
-2025-07-20 16:24:24,391 - app.main - INFO - Application starting
-2025-07-20 16:24:24,391 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:24:24,391 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:24:24,391 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:25:01,778 - app - INFO - Logging has been set up
-2025-07-20 16:25:01,778 - app.main - INFO - Application starting
-2025-07-20 16:25:01,779 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:25:01,779 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:25:01,779 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:25:04,482 - app.main - INFO - Request: POST /db/workouts
-2025-07-20 16:25:05,039 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
-2025-07-20 16:25:05,040 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 16:25:05,040 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
-2025-07-20 16:25:05,545 - app.services.db.workout_service - INFO - Workout created with ID: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
-2025-07-20 16:25:05,546 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
-2025-07-20 16:25:05,546 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
-2025-07-20 16:25:06,003 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 5e173201-9603-4dd2-92f2-87c313794491
-2025-07-20 16:25:06,975 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
-2025-07-20 16:25:07,180 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: 0fa72def-9d52-4b48-a293-3215a3f43526
-2025-07-20 16:25:08,818 - app.services.db.workout_service - INFO - Workout creation complete for ID: 4816e5c9-0a29-44ed-a6cd-b2f61dec2974
-2025-07-20 16:25:08,820 - app.main - INFO - Response status: 200
-2025-07-20 16:25:09,003 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-20 16:25:09,184 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 16:25:09,335 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 4cec9a6a-cad5-41d2-8e24-c36435438b40
-2025-07-20 16:25:09,336 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 4cec9a6a-cad5-41d2-8e24-c36435438b40
-2025-07-20 16:25:09,336 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
-2025-07-20 16:25:09,521 - app.services.db.workout_service - INFO - RPC returned: 55 workouts
-2025-07-20 16:25:09,521 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 55 workouts
-2025-07-20 16:25:09,523 - app.services.workout_analysis_service - ERROR - Error during analysis task: 1 validation error for WorkoutDataBundle
-bundle_id
-  Input should be a valid string [type=string_type, input_value=UUID('0cb498f7-72d8-4443-a062-57502ad678a2'), input_type=UUID]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 84, in _perform_analysis_task
-    bundle = WorkoutDataBundle(
-             ^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pydantic/main.py", line 214, in __init__
-    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pydantic_core._pydantic_core.ValidationError: 1 validation error for WorkoutDataBundle
-bundle_id
-  Input should be a valid string [type=string_type, input_value=UUID('0cb498f7-72d8-4443-a062-57502ad678a2'), input_type=UUID]
-    For further information visit https://errors.pydantic.dev/2.10/v/string_type
-2025-07-20 16:25:09,526 - app.main - INFO - Response status: 200
-2025-07-20 16:25:09,557 - app.main - INFO - Request: GET /api/dashboard
-2025-07-20 16:25:09,557 - app.main - INFO - Response status: 200
-2025-07-20 16:26:17,133 - app - INFO - Logging has been set up
-2025-07-20 16:26:17,134 - app.main - INFO - Application starting
-2025-07-20 16:26:17,134 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:26:17,134 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:26:17,134 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:26:21,957 - app.main - INFO - Request: POST /db/workouts
-2025-07-20 16:26:22,445 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
-2025-07-20 16:26:22,446 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 16:26:22,446 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
-2025-07-20 16:26:22,960 - app.services.db.workout_service - INFO - Workout created with ID: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
-2025-07-20 16:26:22,961 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
-2025-07-20 16:26:22,961 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Bench Press
-2025-07-20 16:26:23,483 - app.services.db.workout_service - INFO - Exercise created: Barbell Bench Press with ID: 3e1c1ac6-fe50-4bf3-9ebb-1476bb772bdc
-2025-07-20 16:26:24,697 - app.services.db.workout_service - INFO - Creating exercise 2/2: Barbell Back Squat
-2025-07-20 16:26:25,210 - app.services.db.workout_service - INFO - Exercise created: Barbell Back Squat with ID: da8765a9-8407-4209-8471-748aeb453426
-2025-07-20 16:26:26,954 - app.services.db.workout_service - INFO - Workout creation complete for ID: 5c2cd663-cd30-46fe-bb1c-4a44a284d689
-2025-07-20 16:26:26,957 - app.main - INFO - Response status: 200
-2025-07-20 16:26:27,178 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-20 16:26:27,671 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 20 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 16:26:27,889 - app.services.db.conversation_service - INFO - Empty conversation created with ID: ff785b37-384f-43ff-8908-8d517a857a65
-2025-07-20 16:26:27,889 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: ff785b37-384f-43ff-8908-8d517a857a65
-2025-07-20 16:26:27,889 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['46a6427a-127d-4127-9219-884075d863e8', '622a4502-c073-4a27-a9a5-5c9377393138']
-2025-07-20 16:26:28,113 - app.services.db.workout_service - INFO - RPC returned: 56 workouts
-2025-07-20 16:26:28,113 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 56 workouts
-2025-07-20 16:26:28,117 - app.services.workout_analysis_service - ERROR - Error during analysis task: object str can't be used in 'await' expression
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/workout_analysis_service.py", line 83, in _perform_analysis_task
-    bundle_id = await str(new_uuid())
-                ^^^^^^^^^^^^^^^^^^^^^
-TypeError: object str can't be used in 'await' expression
-2025-07-20 16:26:28,118 - app.main - INFO - Response status: 200
-2025-07-20 16:26:28,151 - app.main - INFO - Request: GET /api/dashboard
-2025-07-20 16:26:28,152 - app.main - INFO - Response status: 200
-2025-07-20 16:26:39,447 - app - INFO - Logging has been set up
-2025-07-20 16:26:39,447 - app.main - INFO - Application starting
-2025-07-20 16:26:39,447 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-20 16:26:39,448 - app.main - INFO - SUPABASE_URL present: True
-2025-07-20 16:26:39,448 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-20 16:26:47,998 - app.main - INFO - Request: POST /db/workouts
-2025-07-20 16:26:48,220 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
-2025-07-20 16:26:48,221 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-20 16:26:48,221 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-22 12:49:59,597 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:50:00,162 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:50:00,182 - app.main - INFO - Response status: 200
+2025-07-22 12:50:16,196 - app.main - INFO - Request: POST /db/workouts
+2025-07-22 12:50:16,474 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-22 12:50:16,474 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:50:16,476 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-22 12:50:16,720 - app.services.db.workout_service - ERROR - Error creating workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "temp-1753185013753"'}
+2025-07-22 12:50:16,721 - app.services.db.base_service - ERROR - Error in create_workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "temp-1753185013753"'}
+2025-07-22 12:50:16,723 - app.main - INFO - Response status: 200
+2025-07-22 12:52:41,847 - app.main - INFO - Request: GET /db/user-profile
+2025-07-22 12:52:42,351 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:42,351 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:42,623 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:42,624 - app.main - INFO - Response status: 200
+2025-07-22 12:52:42,624 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-22 12:52:42,758 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-22 12:52:42,758 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-22 12:52:42,965 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-22 12:52:42,972 - app.main - INFO - Request: GET /api/dashboard
+2025-07-22 12:52:42,973 - app.main - INFO - Response status: 200
+2025-07-22 12:52:42,974 - app.main - INFO - Response status: 200
+2025-07-22 12:52:43,124 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-22 12:52:43,445 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:43,446 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:43,711 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:52:43,732 - app.main - INFO - Response status: 200
+2025-07-22 12:54:37,455 - app.main - INFO - Request: POST /db/workouts
+2025-07-22 12:54:38,651 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-22 12:54:38,651 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 12:54:38,652 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-22 12:54:39,122 - app.services.db.workout_service - ERROR - Error creating workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "temp-1753185267262"'}
+2025-07-22 12:54:39,122 - app.services.db.base_service - ERROR - Error in create_workout: {'code': '22P02', 'details': None, 'hint': None, 'message': 'invalid input syntax for type uuid: "temp-1753185267262"'}
+2025-07-22 12:54:39,123 - app.main - INFO - Response status: 200
+2025-07-22 17:58:06,645 - app.main - INFO - Request: GET /db/user-profile
+2025-07-22 17:58:06,994 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:06,994 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:07,379 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:07,381 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-22 17:58:07,449 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-22 17:58:07,449 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-22 17:58:07,663 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-22 17:58:07,674 - app.main - INFO - Response status: 200
+2025-07-22 17:58:07,675 - app.main - INFO - Request: GET /api/dashboard
+2025-07-22 17:58:07,675 - app.main - INFO - Response status: 200
+2025-07-22 17:58:07,677 - app.main - INFO - Response status: 200
+2025-07-22 17:58:07,861 - app.main - INFO - Request: GET /db/workouts/templates
+2025-07-22 17:58:08,031 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:08,031 - app.services.db.workout_service - INFO - Getting workout templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:08,319 - app.services.db.workout_service - INFO - Retrieved 50 templates for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 17:58:08,334 - app.main - INFO - Response status: 200
+2025-07-22 18:04:06,602 - app.main - INFO - Request: POST /db/workouts
+2025-07-22 18:04:06,946 - app.api.endpoints.db - INFO - API request to create workout: Freestyle Workout
+2025-07-22 18:04:06,947 - app.services.db.workout_service - INFO - Creating workout: Freestyle Workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 18:04:06,947 - app.services.db.workout_service - INFO - Inserting workout with data: Freestyle Workout, None
+2025-07-22 18:04:07,172 - app.services.db.workout_service - INFO - Workout created with ID: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:07,292 - app.services.db.workout_service - INFO - Workout creation complete for ID: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:07,294 - app.main - INFO - Response status: 200
+2025-07-22 18:04:07,355 - app.main - INFO - Request: GET /api/dashboard
+2025-07-22 18:04:07,357 - app.main - INFO - Response status: 200
+2025-07-22 18:04:24,233 - app.main - INFO - Request: PUT /db/workouts/924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,461 - app.api.endpoints.db - INFO - API request to update workout: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,462 - app.services.db.workout_service - INFO - Getting workout: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,610 - app.services.db.workout_service - INFO - Successfully retrieved workout: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,611 - app.services.db.workout_service - INFO - Updating workout: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,755 - app.services.db.workout_service - INFO - Successfully updated workout: 924cbf48-eb07-4592-a973-53eb617779f3
+2025-07-22 18:04:24,756 - app.main - INFO - Response status: 200
+2025-07-22 18:04:48,499 - app.main - INFO - Request: POST /db/workouts
+2025-07-22 18:04:48,622 - app.api.endpoints.db - INFO - API request to create workout: Chest,  arms, and abs
+2025-07-22 18:04:48,622 - app.services.db.workout_service - INFO - Creating workout: Chest,  arms, and abs for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 18:04:48,622 - app.services.db.workout_service - INFO - Inserting workout with data: Chest,  arms, and abs, None
+2025-07-22 18:04:48,791 - app.services.db.workout_service - INFO - Workout created with ID: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:04:48,917 - app.services.db.workout_service - INFO - Workout creation complete for ID: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:04:48,919 - app.main - INFO - Response status: 200
+2025-07-22 18:04:48,974 - app.main - INFO - Request: GET /api/dashboard
+2025-07-22 18:04:48,976 - app.main - INFO - Response status: 200
+2025-07-22 18:04:59,699 - app.main - INFO - Request: PUT /db/workouts/c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:04:59,863 - app.api.endpoints.db - INFO - API request to update workout: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:04:59,863 - app.services.db.workout_service - INFO - Getting workout: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:05:00,000 - app.services.db.workout_service - INFO - Successfully retrieved workout: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:05:00,000 - app.services.db.workout_service - INFO - Updating workout: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:05:00,139 - app.services.db.workout_service - INFO - Successfully updated workout: c8271ed8-1066-4408-97ac-88d145f071b3
+2025-07-22 18:05:00,140 - app.main - INFO - Response status: 200
+2025-07-22 18:10:17,128 - app.main - INFO - Request: GET /db/user-profile
+2025-07-22 18:10:17,470 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 18:10:17,470 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 18:10:17,607 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-22 18:10:17,608 - app.main - INFO - Response status: 200
+2025-07-22 18:10:17,609 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-22 18:10:17,688 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-22 18:10:17,688 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions

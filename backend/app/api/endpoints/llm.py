@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
-from ...services.chains.workout_analysis_chain import WorkoutAnalysisChain
 
 # Load environment variables
 load_dotenv()

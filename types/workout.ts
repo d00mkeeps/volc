@@ -172,9 +172,9 @@ export type Workout = {
   id: string;
   name: string;
   description?: string;
-  exercises: WorkoutExercise[];
+  workout_exercises: WorkoutExercise[]; // Changed from "exercises"
   created_at: string;
-};
+}
 
 export type WorkoutWithConversation = Workout & {
   conversationId: string;

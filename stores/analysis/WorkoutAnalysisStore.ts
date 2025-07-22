@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { workoutAnalysisService } from '../../services/api/workoutAnalysisService';
-import { useUserStore } from '@/stores/userProfileStore';
 
 interface AnalysisStatus {
   status: 'idle' | 'loading' | 'success' | 'error';

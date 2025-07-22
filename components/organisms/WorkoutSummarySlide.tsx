@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { YStack, Text, Input, Button, TextArea, Card } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
-  showContinueButton?: boolean; // Add this prop
+  showContinueButton?: boolean;
 }
 
 export function WorkoutSummarySlide({
@@ -13,16 +13,18 @@ export function WorkoutSummarySlide({
 }: WorkoutSummarySlideProps) {
   const { currentWorkout, updateCurrentWorkout } = useUserSessionStore();
   const [workoutName, setWorkoutName] = useState(currentWorkout?.name || "");
-  const notesRef = useRef<Record<number, string>>({});
+  const [workoutNotes, setWorkoutNotes] = useState(() => {
+    // Pre-populate with exercise headings if no existing notes
+    if (currentWorkout?.notes) {
+      return currentWorkout.notes;
+    }
 
-  // Initialize notes ref with existing notes
-  useEffect(() => {
-    currentWorkout?.workout_exercises?.forEach((exercise, index) => {
-      if (exercise.notes) {
-        notesRef.current[index] = exercise.notes;
-      }
-    });
-  }, [currentWorkout]);
+    return (
+      currentWorkout?.workout_exercises
+        ?.map((exercise) => `--- ${exercise.name} ---\n\n`)
+        .join("\n") || ""
+    );
+  });
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
@@ -35,24 +37,30 @@ export function WorkoutSummarySlide({
     }
   };
 
-  const handleNotesChange = (exerciseIndex: number, notes: string) => {
-    notesRef.current[exerciseIndex] = notes;
-  };
-
   const handleContinue = () => {
-    if (currentWorkout) {
-      const updatedExercises = currentWorkout.workout_exercises.map((exercise, index) => ({
-        ...exercise,
-        notes: notesRef.current[index] || exercise.notes || ""
-      }));
+    console.log("=== SUMMARY SLIDE CONTINUE ===");
+    console.log("Workout name:", workoutName);
+    console.log("Workout notes:", workoutNotes);
+    console.log("Workout notes length:", workoutNotes.length);
 
-      updateCurrentWorkout({
+    if (currentWorkout) {
+      const updatedWorkout = {
         ...currentWorkout,
-        workout_exercises: updatedExercises,
+        name: workoutName,
+        notes: workoutNotes,
         updated_at: new Date().toISOString(),
+      };
+
+      console.log("About to update workout with:", {
+        id: updatedWorkout.id,
+        name: updatedWorkout.name,
+        notes: updatedWorkout.notes,
+        notesLength: updatedWorkout.notes?.length,
       });
+
+      updateCurrentWorkout(updatedWorkout);
     }
-    
+
     onContinue();
   };
 
@@ -75,24 +83,13 @@ export function WorkoutSummarySlide({
           Notes
         </Text>
 
-        <YStack gap="$3">
-          {currentWorkout?.workout_exercises?.map((exercise, index) => (
-            <Card key={index} padding="$3" backgroundColor="$backgroundSoft">
-              <YStack gap="$2">
-                <Text fontSize="$4" fontWeight="bold">
-                  {exercise.name}
-                </Text>
-                <TextArea
-                  placeholder="Add notes for this exercise..."
-                  defaultValue={exercise.notes || ""}
-                  onChangeText={(notes) => handleNotesChange(index, notes)}
-                  minHeight={80}
-                  backgroundColor="$background"
-                />
-              </YStack>
-            </Card>
-          )) || <Text color="$textMuted">No exercises found</Text>}
-        </YStack>
+        <TextArea
+          value={workoutNotes}
+          onChangeText={setWorkoutNotes}
+          placeholder="Add notes for your workout..."
+          minHeight={200}
+          backgroundColor="$background"
+        />
       </YStack>
 
       {showContinueButton && (

@@ -1,5 +1,5 @@
 import { BaseService } from './base';
-import { WorkoutInput, CompleteWorkout, WorkoutWithConversation } from '@/types/workout';
+import { CompleteWorkout, WorkoutWithConversation } from '@/types/workout';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api/core/apiClient';
 import { convertCompleteToInput } from '@/utils/workoutConversion';
 
@@ -7,19 +7,20 @@ export class WorkoutService extends BaseService {
   /**
    * Create a new workout and store it in the database with direct conversation ID
    */
-  async createWorkout(userId: string, workout: WorkoutInput | WorkoutWithConversation): Promise<CompleteWorkout> {
+  async createWorkout(userId: string, workout: CompleteWorkout | WorkoutWithConversation): Promise<CompleteWorkout> {
     try {
       console.log("[WorkoutService] Creating workout:", {
         userId,
         workoutId: 'id' in workout ? workout.id : 'N/A',
         workoutName: workout.name,
         conversationId: 'conversationId' in workout ? workout.conversationId : 'N/A',
-        exerciseCount: workout.exercises?.length || 0
+        exerciseCount: workout.workout_exercises?.length || 0
       });
       
       // Make API call to create workout
-      const data = await apiPost<CompleteWorkout>('/db/workouts', workout);
-      
+// In workoutService
+const data = await apiPost<CompleteWorkout>('/db/workouts', workout);
+console.log("[WorkoutService] API Response:", data); // Add this      
       console.log("[WorkoutService] Workout created successfully with ID:", data.id);
       
       return data;
@@ -36,11 +37,8 @@ export class WorkoutService extends BaseService {
     try {
       console.log("[WorkoutService] Saving completed workout:", workout.id);
       
-      // Convert CompleteWorkout to WorkoutInput format
-      const workoutInput = convertCompleteToInput(workout);
-      
       // Use existing createWorkout method
-      const result = await this.createWorkout(userId, workoutInput);
+      const result = await this.createWorkout(userId, workout);
       
       console.log("[WorkoutService] Completed workout saved with ID:", result.id);
       return result;
@@ -110,7 +108,7 @@ export class WorkoutService extends BaseService {
   /**
  * Update an existing workout
  */
-async updateWorkout(workoutId: string, workout: WorkoutInput): Promise<CompleteWorkout> {
+async updateWorkout(workoutId: string, workout: CompleteWorkout): Promise<CompleteWorkout> {
   try {
     console.log(`[WorkoutService] Updating workout: ${workoutId}`);
     

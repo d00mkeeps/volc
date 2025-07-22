@@ -25,11 +25,22 @@ export function WorkoutCompletionModal({
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 
   const { currentWorkout } = useUserSessionStore();
-  const workoutAnalysisStore = useWorkoutAnalysisStore();
-  const analysisProgress = workoutAnalysisStore.getProgress();
 
-  // Determine if analysis is ready
-  const isAnalysisReady = analysisProgress.status === "success";
+  useEffect(() => {
+    console.log("=== MODAL WORKOUT CHANGED ===");
+    console.log("Modal sees workout ID:", currentWorkout?.id);
+    console.log("Modal sees workout notes:", currentWorkout?.notes);
+    console.log(
+      "Modal sees workout notes length:",
+      currentWorkout?.notes?.length
+    );
+    console.log(
+      "Modal sees workout exercises count:",
+      currentWorkout?.workout_exercises?.length
+    );
+  }, [currentWorkout]);
+
+  const workoutAnalysisStore = useWorkoutAnalysisStore();
 
   useEffect(() => {
     if (isVisible) {
@@ -72,12 +83,25 @@ export function WorkoutCompletionModal({
   };
 
   const handleContinueToChat = async () => {
-    if (currentWorkout) {
-      await workoutService.updateWorkout(currentWorkout.id, currentWorkout);
+    // Get fresh data from store instead of using stale closure
+    const freshWorkout = useUserSessionStore.getState().currentWorkout;
+
+    console.log("=== JUST BEFORE UPDATE CALL ===");
+    console.log("Fresh workout from store notes:", freshWorkout?.notes);
+    console.log("Fresh workout notes length:", freshWorkout?.notes?.length);
+    console.log("Stale currentWorkout notes:", currentWorkout?.notes);
+    console.log(
+      "Stale currentWorkout notes length:",
+      currentWorkout?.notes?.length
+    );
+
+    if (freshWorkout) {
+      console.log("Using fresh workout data for update");
+      await workoutService.updateWorkout(freshWorkout.id, freshWorkout);
     }
+
     setCurrentSlide("chat");
   };
-
   return (
     <BaseModal
       isVisible={isVisible}
@@ -94,12 +118,17 @@ export function WorkoutCompletionModal({
             <ScrollView flex={1} padding="$3">
               <WorkoutSummarySlide
                 onContinue={handleContinueToChat}
-                showContinueButton={isAnalysisReady}
+                showContinueButton={true}
               />
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (
-          conversationId && <WorkoutAnalysisSlide conversationId={conversationId} onError={handleChatError} />
+          conversationId && (
+            <WorkoutAnalysisSlide
+              conversationId={conversationId}
+              onError={handleChatError}
+            />
+          )
         )}
 
         {showCloseConfirmation && (
