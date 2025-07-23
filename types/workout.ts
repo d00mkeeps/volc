@@ -115,7 +115,7 @@ export type BundleMetadata = {
   exercises_included: string[];
 };
 
-export interface WorkoutDataBundle {
+export interface AnalysisBundle {
   bundle_id: string;
   conversationId?: string;
   metadata: {
@@ -180,4 +180,4 @@ export type WorkoutWithConversation = Workout & {
   conversationId: string;
 };
 
-export type AttachmentType = 'workout' | 'graph_bundle';
+export type AttachmentType = 'workout' | 'graph_bundle' | 'analysis_bundle';

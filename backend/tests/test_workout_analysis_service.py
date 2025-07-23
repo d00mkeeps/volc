@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from app.services.job_store import job_store
 from app.services.workout_analysis_service import WorkoutAnalysisService
 from app.services.db.workout_service import WorkoutService
-from app.services.db.graph_bundle_service import GraphBundleService
+from backend.app.services.db.analysis_service import GraphBundleService
 
 # Configure logging
 logging.basicConfig(

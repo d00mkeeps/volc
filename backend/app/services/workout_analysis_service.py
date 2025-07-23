@@ -6,12 +6,11 @@ from datetime import datetime
 from ..schemas.workout_analysis import WorkoutAnalysisRequest
 from .db.workout_service import WorkoutService
 from .db.conversation_service import ConversationService
-from .db.graph_bundle_service import GraphBundleService
+from .db.analysis_service import AnalysisBundleService
 from .workout_analysis.correlation_service import CorrelationService
-from .workout_analysis.graph_service import WorkoutGraphService
+# from .workout_analysis.graph_service import WorkoutGraphService
 from ..core.utils.id_gen import new_uuid
-from ..schemas.workout_data_bundle import WorkoutDataBundle, BundleMetadata
-from ..core.supabase.auth import get_current_user
+from ..schemas.workout_data_bundle import WorkoutDataBundle
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +18,8 @@ class WorkoutAnalysisService:
     def __init__(self):
         self.workout_service = WorkoutService()
         self.conversation_service = ConversationService()
-        self.graph_bundle_service = GraphBundleService()
-        self.graph_service = WorkoutGraphService(self.workout_service)
+        self.analysis_bundle_service = AnalysisBundleService()
+        # self.graph_service = WorkoutGraphService(self.workout_service)
         
     async def initiate_analysis_and_conversation(
         self, 
@@ -75,15 +74,15 @@ class WorkoutAnalysisService:
                 bundle_id=bundle_id,
                 metadata=metadata,
                 raw_workouts=raw_workout_data,
-                correlation_data=correlation_results,
+                # correlation_data=correlation_results,
                 created_at=datetime.now()
             )
             
-            await self.graph_service.add_charts_to_bundle(bundle)
+            # await self.graph_service.add_charts_to_bundle(bundle)
 
             bundle_dict = bundle.model_dump()
             bundle_dict["conversationId"] = conversation_id
-            await self.graph_bundle_service.save_graph_bundle(user_id, bundle_dict)
+            await self.analysis_bundle_service.save_analysis_bundle(user_id, bundle_dict)
 
             logger.info(f"Analysis task completed for conversation {conversation_id}")
 

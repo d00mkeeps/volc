@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
 from typing import Dict, Any
 from app.core.supabase.auth import get_current_user
 import logging
-from app.services.db.graph_bundle_service import GraphBundleService
+from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
 from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
@@ -40,90 +40,90 @@ async def get_templates(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-@router.get("/graph-bundles")
-async def get_graph_bundles(
+@router.get("/analysis-bundles")
+async def get_analysis_bundles(
     conversation_id: str, 
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    Get all graph bundles for a conversation
+    Get all analysis bundles for a conversation
     """
     try:
-        logger.info(f"API request to get graph bundles for conversation: {conversation_id}")
+        logger.info(f"API request to get analysis bundles for conversation: {conversation_id}")
         
-        graph_bundle_service = GraphBundleService()
-        bundles = await graph_bundle_service.get_bundles_by_conversation(user.id, conversation_id)
+        analysis_bundle_service = AnalysisBundleService()
+        bundles = await analysis_bundle_service.get_bundles_by_conversation(user.id, conversation_id)
         
-        logger.info(f"Retrieved {len(bundles)} graph bundles for conversation: {conversation_id}")
+        logger.info(f"Retrieved {len(bundles)} analysis bundles for conversation: {conversation_id}")
         return bundles
     except Exception as e:
-        logger.error(f"Error getting graph bundles: {str(e)}")
+        logger.error(f"Error getting analysis bundles: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
 
-@router.post("/graph-bundles")
-async def save_graph_bundle(
+@router.post("/analysis-bundles")
+async def save_analysis_bundle(
     bundle: Dict[str, Any],
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    Save a graph bundle
+    Save an analysis bundle
     """
     try:
-        logger.info(f"API request to save graph bundle for conversation: {bundle.get('conversationId')}")
+        logger.info(f"API request to save analysis bundle for conversation: {bundle.get('conversationId')}")
         
-        graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.save_graph_bundle(user.id, bundle)
+        analysis_bundle_service = AnalysisBundleService()
+        result = await analysis_bundle_service.save_analysis_bundle(user.id, bundle)
         
         return result
     except Exception as e:
-        logger.error(f"Error saving graph bundle: {str(e)}")
+        logger.error(f"Error saving analysis bundle: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
 
-@router.delete("/graph-bundles/{bundle_id}")
-async def delete_graph_bundle(
+@router.delete("/analysis-bundles/{bundle_id}")
+async def delete_analysis_bundle(
     bundle_id: str,
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    Delete a graph bundle
+    Delete analysis bundle
     """
     try:
-        logger.info(f"API request to delete graph bundle: {bundle_id}")
+        logger.info(f"API request to delete analysis bundle: {bundle_id}")
         
-        graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.delete_graph_bundle(user.id, bundle_id)
+        analysis_bundle_service = AnalysisBundleService()
+        result = await analysis_bundle_service.delete_analysis_bundle(user.id, bundle_id)
         
         return result
     except Exception as e:
-        logger.error(f"Error deleting graph bundle: {str(e)}")
+        logger.error(f"Error deleting analysis bundle: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
 
-@router.delete("/graph-bundles/conversation/{conversation_id}")
+@router.delete("/analysis-bundles/conversation/{conversation_id}")
 async def delete_conversation_bundles(
     conversation_id: str,
     request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    Delete all graph bundles for a conversation
+    Delete all analysis bundles for a conversation
     """
     try:
-        logger.info(f"API request to delete all graph bundles for conversation: {conversation_id}")
+        logger.info(f"API request to delete all analysis bundles for conversation: {conversation_id}")
         
-        graph_bundle_service = GraphBundleService()
-        result = await graph_bundle_service.delete_conversation_bundles(user.id, conversation_id)
+        analysis_bundle_service = AnalysisBundleService()
+        result = await analysis_bundle_service.delete_conversation_bundles(user.id, conversation_id)
         
         return result
     except Exception as e:

@@ -2,14 +2,13 @@
 
 import logging
 import asyncio
-from typing import Dict, Any, AsyncGenerator
 from fastapi import WebSocket
 import anthropic
 from langchain_anthropic import ChatAnthropic
 from ...schemas.workout_data_bundle import WorkoutDataBundle
 from ..chains.workout_analysis_chain import WorkoutAnalysisChain
 from ..db.message_service import MessageService
-from ..db.graph_bundle_service import GraphBundleService
+from ..db.analysis_service import AnalysisBundleService
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ class WorkoutAnalysisLLMService:
         self.api_key = api_key
         self._conversation_chains = {}  # Store chains by conversation_id
         self.message_service = MessageService()
-        self.graph_bundle_service = GraphBundleService()
+        self.analysis_bundle_service = AnalysisBundleService()
     
     def _filter_bundle_for_llm(self, bundle_data: dict) -> dict:
         """Remove empty fields from bundle for LLM context"""
@@ -77,7 +76,7 @@ class WorkoutAnalysisLLMService:
                 max_retries = 10
                 retry_delay = 0.5 # seconds
                 for i in range(max_retries):
-                    bundles = await self.graph_bundle_service.get_bundles_by_conversation(conversation_id)
+                    bundles = await self.analysis_bundle_service.get_bundles_by_conversation(conversation_id)
                     if bundles:
                         analysis_bundle = bundles[0] # Assuming we need the first bundle
                         break

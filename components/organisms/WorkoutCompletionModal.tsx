@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Keyboard, KeyboardAvoidingView } from "react-native";
+import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack, XStack, Text, Button, ScrollView } from "tamagui";
 import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
 import { workoutService } from "@/services/db/workout";
-import { useUserStore } from "@/stores/userProfileStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {
@@ -23,7 +22,6 @@ export function WorkoutCompletionModal({
   );
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
-
   const { currentWorkout } = useUserSessionStore();
   const workoutAnalysisStore = useWorkoutAnalysisStore();
 
@@ -72,9 +70,8 @@ export function WorkoutCompletionModal({
     const freshWorkout = useUserSessionStore.getState().currentWorkout;
     if (freshWorkout) {
       console.log("Using fresh workout data for update");
-      await workoutService.updateWorkout(freshWorkout.id, freshWorkout);
+      workoutService.updateWorkout(freshWorkout.id, freshWorkout);
     }
-
     setCurrentSlide("chat");
   };
   return (

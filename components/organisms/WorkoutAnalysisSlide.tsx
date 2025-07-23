@@ -1,8 +1,7 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { YStack, Text } from "tamagui";
+import React, { useCallback, useEffect } from "react";
+import { YStack } from "tamagui";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { ChatInterface } from "./ChatInterface";
-import { InputArea } from "../atoms/InputArea";
 
 interface WorkoutAnalysisSlideProps {
   conversationId: string;

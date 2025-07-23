@@ -3,9 +3,8 @@ import { create } from 'zustand';
 import { conversationService } from '../../services/db/conversation';
 import { Message } from '@/types';
 import { getWebSocketService } from '../../services/websocket/WebSocketService';
-import { ChatConfigName } from '@/types';
 import { useWorkoutAnalysisStore } from '../analysis/WorkoutAnalysisStore';
-import { useGraphBundleStore } from '../attachments/GraphBundleStore';
+import { useAnalysisBundleStore } from '../attachments/AnalysisBundleStore';
 import { useConversationStore } from './ConversationStore';
 import Toast from 'react-native-toast-message';
 
@@ -197,15 +196,15 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
       // Auto-gather all data
       const messages = get().getMessages(conversationId);
       const analysisResult = useWorkoutAnalysisStore.getState().getResult();
-      const graphBundles = useGraphBundleStore.getState().getBundlesByConversation(conversationId);
+      const analysisBundles = useAnalysisBundleStore.getState().getBundlesByConversation(conversationId);
       
       // Build complete payload
       const payload = {
         message: content,
         conversation_history: messages,
         analysis_bundle: analysisResult,
-        graph_bundles: graphBundles,
-        generate_graph: options.detailedAnalysis || false
+        analysis_bundles: analysisBundles,
+        generate_graph: options.detailedAnalysis || false //this is old but i dont want to touch it incase it breaks. if you see an opportunity to refactor it out, please let me know.
       };
       
       // Set up WebSocket handlers

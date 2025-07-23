@@ -1,7 +1,7 @@
 from typing import Dict, List
 import logging
 from app.schemas.workout_data_bundle import WorkoutDataBundle
-from app.services.db.graph_bundle_service import GraphBundleService
+from backend.app.services.db.analysis_service import GraphBundleService
 from app.services.db.workout_service import WorkoutService
 from ...utils.one_rm_calc import OneRMCalculator
 from ..chart_generator.chart_service import ChartService

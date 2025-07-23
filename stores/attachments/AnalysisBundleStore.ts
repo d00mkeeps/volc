@@ -1,19 +1,19 @@
-// stores/GraphBundleStore.ts
+// stores/AnalysisBundleStore.ts
 import { create } from 'zustand';
-import { graphBundleService } from '@/services/db/graphBundle';
+import { analysisBundleService } from '@/services/db/analysis';
 import { authService } from '@/services/db/auth';
-import { WorkoutDataBundle } from '@/types/workout';
+import { AnalysisBundle } from '@/types/workout';
 
-// GraphBundleStore.ts - Update the interface:
-interface GraphBundleState {
-  bundles: Map<string, WorkoutDataBundle>;
+// AnalysisBundleStore.ts - Update the interface:
+interface AnalysisBundleState {
+  bundles: Map<string, AnalysisBundle>;
   isLoading: boolean;
   error: Error | null;
   
   // Actions
   loadBundlesForConversation: (conversationId: string) => Promise<void>;
-  getBundlesByConversation: (conversationId: string) => WorkoutDataBundle[];
-  addBundle: (bundle: WorkoutDataBundle, conversationId: string) => Promise<void>;
+  getBundlesByConversation: (conversationId: string) => AnalysisBundle[];
+  addBundle: (bundle: AnalysisBundle, conversationId: string) => Promise<void>;
   deleteBundle: (bundleId: string) => Promise<void>;
   clearBundlesForConversation: (conversationId: string) => Promise<void>;
   updateBundleConversation: (oldConversationId: string, newConversationId: string) => Promise<void>; // Add this line
@@ -21,8 +21,8 @@ interface GraphBundleState {
 
 const MAX_BUNDLES_PER_CONVERSATION = 20;
 
-export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
-  bundles: new Map<string, WorkoutDataBundle>(),
+export const useAnalysisBundleStore = create<AnalysisBundleState>((set, get) => ({
+  bundles: new Map<string, AnalysisBundle>(),
   isLoading: false,
   error: null,
   
@@ -33,21 +33,21 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
       const session = await authService.getSession();
       if (!session?.user?.id) return;
       
-      const savedBundles = await graphBundleService.getGraphBundlesByConversation(
+      const savedBundles = await analysisBundleService.getAnalysisBundlesByConversation(
         session.user.id,
         conversationId
       );
       
       if (savedBundles?.length) {
-        const bundleMap = new Map<string, WorkoutDataBundle>();
-        savedBundles.forEach((bundle: WorkoutDataBundle) => {
+        const bundleMap = new Map<string, AnalysisBundle>();
+        savedBundles.forEach((bundle: AnalysisBundle) => {
           bundleMap.set(bundle.bundle_id, bundle);
         });
         
         set({ bundles: bundleMap });
       }
     } catch (error) {
-      console.error("[GraphBundleStore] Failed to load bundles:", error);
+      console.error("[AnalysisBundleStore] Failed to load bundles:", error);
       set({ error: error instanceof Error ? error : new Error(String(error)) });
     } finally {
       set({ isLoading: false });
@@ -63,7 +63,7 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
       );
   },
   
-  addBundle: async (bundle: WorkoutDataBundle, conversationId: string) => {
+  addBundle: async (bundle: AnalysisBundle, conversationId: string) => {
     const { bundles } = get();
     
     try {
@@ -105,10 +105,10 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
       set({ bundles: newBundles });
       
       // Save to database
-      await graphBundleService.saveGraphBundle(session.user.id, bundleWithConversation);
+      await analysisBundleService.saveAnalysisBundle(session.user.id, bundleWithConversation);
       
     } catch (error) {
-      console.error("[GraphBundleStore] Failed to add bundle:", error);
+      console.error("[AnalysisBundleStore] Failed to add bundle:", error);
       
       // Rollback state
       const rollbackBundles = new Map(get().bundles);
@@ -136,16 +136,16 @@ export const useGraphBundleStore = create<GraphBundleState>((set, get) => ({
       set({ bundles: newBundles });
       
       // Delete from database
-      await graphBundleService.deleteGraphBundle(session.user.id, bundleId);
+      await analysisBundleService.deleteAnalysisBundle(session.user.id, bundleId);
       
     } catch (error) {
-      console.error("[GraphBundleStore] Failed to delete bundle:", error);
+      console.error("[AnalysisBundleStore] Failed to delete bundle:", error);
       set({ error: error instanceof Error ? error : new Error(String(error)) });
     } finally {
       set({ isLoading: false });
     }
   },
-  // GraphBundleStore.ts - Update updateBundleConversation method:
+  // AnalysisBundleStore.ts - Update updateBundleConversation method:
 updateBundleConversation: async (oldConversationId: string, newConversationId: string) => {
   try {
     set({ isLoading: true, error: null });
@@ -156,7 +156,7 @@ updateBundleConversation: async (oldConversationId: string, newConversationId: s
     }
     
     // Get pending bundles
-    const pendingBundles = await graphBundleService.getGraphBundlesByConversation(
+    const pendingBundles = await analysisBundleService.getAnalysisBundlesByConversation(
       session.user.id, 
       oldConversationId
     );
@@ -171,8 +171,8 @@ updateBundleConversation: async (oldConversationId: string, newConversationId: s
       };
       
       // Delete old bundle and save new one
-      await graphBundleService.deleteGraphBundle(session.user.id, bundle.bundle_id);
-      await graphBundleService.saveGraphBundle(session.user.id, updatedBundle);
+      await analysisBundleService.deleteAnalysisBundle(session.user.id, bundle.bundle_id);
+      await analysisBundleService.saveAnalysisBundle(session.user.id, updatedBundle);
       
       // Update local state
       const newBundles = new Map(get().bundles);
@@ -181,7 +181,7 @@ updateBundleConversation: async (oldConversationId: string, newConversationId: s
       set({ bundles: newBundles });
     }
   } catch (error) {
-    console.error("[GraphBundleStore] Failed to update bundle conversation:", error);
+    console.error("[AnalysisBundleStore] Failed to update bundle conversation:", error);
     set({ error: error instanceof Error ? error : new Error(String(error)) });
   } finally {
     set({ isLoading: false });
@@ -206,14 +206,13 @@ updateBundleConversation: async (oldConversationId: string, newConversationId: s
       set({ bundles: newBundles });
       
       // Delete from database
-      await graphBundleService.deleteConversationGraphBundles(session.user.id, conversationId);
+      await analysisBundleService.deleteConversationAnalysisBundles(session.user.id, conversationId);
       
     } catch (error) {
-      console.error("[GraphBundleStore] Failed to clear bundles for conversation:", error);
+      console.error("[AnalysisBundleStore] Failed to clear bundles for conversation:", error);
       set({ error: error instanceof Error ? error : new Error(String(error)) });
     } finally {
       set({ isLoading: false });
     }
   }
 }));
-

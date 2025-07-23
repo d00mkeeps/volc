@@ -24,7 +24,7 @@ class WorkoutDataBundle(BaseModel):
     raw_workouts: Dict[str, Any]
     chart_urls: Dict[str, str] = Field(default_factory=dict)
     top_performers: TopPerformers = Field(default_factory=TopPerformers)
-    consistency_metrics: ConsistencyMetrics = Field(default_factory=ConsistencyMetrics)
+    # consistency_metrics: ConsistencyMetrics = Field(default_factory=ConsistencyMetrics)
     correlation_data: Optional[Dict[str, Any]] = None
     created_at: datetime
 

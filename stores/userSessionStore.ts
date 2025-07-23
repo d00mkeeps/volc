@@ -4,7 +4,7 @@ import { CompleteWorkout, WorkoutExercise } from '@/types/workout';
 import { workoutService } from '@/services/db/workout';
 import { useDashboardStore } from '@/stores/dashboardStore';
 import { useUserStore } from '@/stores/userProfileStore';
-import { workoutAnalysisService } from '@/services/api/workoutAnalysisService';
+import { useWorkoutAnalysisStore } from './analysis/WorkoutAnalysisStore';
 
 interface UserSessionState {
   // Session state
@@ -171,7 +171,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ currentWorkout: updatedWorkout });
   },
   
-  // Updated finishWorkout method
   finishWorkout: async () => {
     const { currentWorkout } = get();
     
@@ -187,26 +186,26 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       currentWorkout, 
       userProfile.user_id.toString()
     );
-
+  
     // Save workout without notes
     const savedWorkout = await workoutService.saveCompletedWorkout(
       userProfile.user_id.toString(), 
       { ...workoutForSaving, notes: '' }
     );
-
+  
     // Update the current workout with the saved one, so we have the real ID
     set({ currentWorkout: savedWorkout });
     
     // Extract definition IDs for analysis
     const definitionIds = savedWorkout.workout_exercises
-    .map(ex => ex.definition_id)
-    .filter((id): id is string => Boolean(id));
+      .map(ex => ex.definition_id)
+      .filter((id): id is string => Boolean(id));
     
     // Trigger analysis with definition IDs
     if (definitionIds.length > 0) {
       try {
-        const analysisResult = await workoutAnalysisService.initiateAnalysisAndConversation(definitionIds);
-        console.log('Analysis initiated with conversation ID:', analysisResult.conversation_id);
+        await useWorkoutAnalysisStore.getState().initiateBackgroundAnalysis(definitionIds);
+        console.log('Analysis initiated successfully');
       } catch (error) {
         console.error('Analysis failed:', error);
       }
@@ -238,33 +237,23 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   
   // Template actions
   setSelectedTemplate: (template) => {
-    console.log('[UserSession] Setting selected template:', template?.name);
     set({ selectedTemplate: template });
   },
   
   openTemplateSelector: () => {
-    console.log('[UserSession] Opening template selector');
     set({ showTemplateSelector: true });
   },
   
   closeTemplateSelector: () => {
-    console.log('[UserSession] Closing template selector');
     set({ showTemplateSelector: false });
   },
   
-  selectTemplate: (template) => {
-console.log("Storing template in session:", {
-  id: template.id,
-  name: template.name,
-  workoutExercisesCount: template.workout_exercises?.length || 0
-});    
+  selectTemplate: (template) => {   
     const userProfile = useUserStore.getState().userProfile;
     if (!userProfile?.user_id) {
       console.error('Cannot select template: No user profile found');
       return;
     }
-    
-    // Create a new workout based on the selected template with temp IDs for local use
     const now = new Date().toISOString();
     const newWorkout: CompleteWorkout = {
       ...template,

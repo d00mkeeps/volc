@@ -1,52 +1,23 @@
-2025-07-23 10:59:27,283 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Preacher Curl', 'Barbell Skull Crusher']
-2025-07-23 10:59:27,286 - app.services.workout_analysis.graph_service - INFO - Added 31 data points for Preacher Curl to strength chart
-2025-07-23 10:59:27,286 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Skull Crusher to strength chart
-2025-07-23 10:59:27,287 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 2 exercises with data
-2025-07-23 10:59:51,331 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 2 exercises
-2025-07-23 10:59:51,332 - app.services.workout_analysis.graph_service - INFO - Added 31 data points for Preacher Curl to volume chart
-2025-07-23 10:59:51,332 - app.services.workout_analysis.graph_service - INFO - Added 1 data points for Barbell Skull Crusher to volume chart
-2025-07-23 10:59:51,332 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 2 exercises with data
-2025-07-23 11:00:38,444 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: 8724da62-6f14-45f8-ae0a-a0249563b8b2
-2025-07-23 11:00:38,905 - app.services.db.graph_bundle_service - INFO - Bundle saved successfully with ID: 8724da62-6f14-45f8-ae0a-a0249563b8b2
-2025-07-23 11:00:38,906 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation eccc2eff-5758-4bca-a14c-76677c0c35f8
-2025-07-23 11:00:38,909 - app.main - INFO - Response status: 200
-2025-07-23 11:00:38,911 - app.main - INFO - Request: PUT /db/workouts/2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:38,912 - app.main - INFO - Request: PUT /db/workouts/2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:39,098 - app.api.endpoints.db - INFO - API request to update workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:39,098 - app.services.db.workout_service - INFO - Getting workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:39,185 - app.services.db.workout_service - INFO - Successfully retrieved workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:39,186 - app.services.db.workout_service - INFO - Updating workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:40,358 - app.services.db.workout_service - INFO - Successfully updated workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:40,452 - app.api.endpoints.db - INFO - API request to update workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:40,453 - app.services.db.workout_service - INFO - Getting workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:40,540 - app.services.db.workout_service - INFO - Successfully retrieved workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:40,541 - app.services.db.workout_service - INFO - Updating workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:41,800 - app.services.db.workout_service - INFO - Successfully updated workout: 2e6e4e9c-9f42-46d6-b228-713e512206bd
-2025-07-23 11:00:41,802 - app.main - INFO - Request: GET /api/dashboard
-2025-07-23 11:00:41,803 - app.main - INFO - Response status: 200
-2025-07-23 11:00:41,805 - app.main - INFO - Response status: 200
-2025-07-23 11:00:41,805 - app.main - INFO - Response status: 200
-2025-07-23 11:04:39,722 - app.main - INFO - Request: GET /db/user-profile
-2025-07-23 11:04:40,152 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:40,153 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:40,320 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:40,322 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-07-23 11:04:40,397 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-07-23 11:04:40,398 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-07-23 11:04:40,509 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-07-23 11:04:40,519 - app.main - INFO - Response status: 200
-2025-07-23 11:04:40,519 - app.main - INFO - Request: GET /api/dashboard
-2025-07-23 11:04:40,520 - app.main - INFO - Response status: 200
-2025-07-23 11:04:40,522 - app.main - INFO - Response status: 200
-2025-07-23 11:04:40,722 - app.main - INFO - Request: GET /db/workouts/user
-2025-07-23 11:04:40,798 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:40,798 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:41,098 - app.services.db.workout_service - INFO - Retrieved 207 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:41,098 - app.api.endpoints.db - INFO - Retrieved 207 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:04:41,146 - app.main - INFO - Response status: 200
-2025-07-23 11:48:50,663 - app.main - INFO - Request: GET /db/workouts/user
-2025-07-23 11:48:51,242 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:48:51,243 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:48:51,788 - app.services.db.workout_service - INFO - Retrieved 207 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:48:51,788 - app.api.endpoints.db - INFO - Retrieved 207 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 11:48:51,842 - app.main - INFO - Response status: 200
+2025-07-23 18:22:51,521 - app.services.db.workout_service - INFO - Exercise created: Cable lateral raise with ID: fe96b535-a75e-4e64-b89f-d1be31e1da02
+2025-07-23 18:22:51,783 - app.services.db.workout_service - INFO - Workout creation complete for ID: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:22:51,794 - app.main - INFO - Response status: 200
+2025-07-23 18:22:52,302 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-23 18:22:52,387 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 23 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-23 18:22:52,451 - app.services.db.conversation_service - INFO - Empty conversation created with ID: c898bf51-3cd2-488e-ac8b-e2eea94bd842
+2025-07-23 18:22:52,451 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: c898bf51-3cd2-488e-ac8b-e2eea94bd842
+2025-07-23 18:22:52,452 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['b8d098e2-0cd1-4992-84b1-fd8a5c51a83f', '53d5978d-2a80-4b99-91f5-f315f4ba9ffc', '46a6427a-127d-4127-9219-884075d863e8', '9b15f600-cc20-463c-bc73-6e05ee8cc77e', '1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9', 'fda6110e-01b3-4988-aaa7-b4ff8f7199a9', 'af7ba166-f9c1-4909-871a-e3784ea9d83e', '194b066b-7df2-4b2d-9ac2-1daa2da019bb']
+2025-07-23 18:22:52,630 - app.services.db.workout_service - INFO - RPC returned: 113 workouts
+2025-07-23 18:22:52,631 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 113 workouts
+2025-07-23 18:22:52,634 - app.services.db.analysis_service - INFO - Saving analysis bundle: c7cc8bca-efca-40db-a18f-f7e47f2b6d74
+2025-07-23 18:22:53,769 - app.services.db.analysis_service - INFO - Bundle saved successfully with ID: c7cc8bca-efca-40db-a18f-f7e47f2b6d74
+2025-07-23 18:22:53,770 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation c898bf51-3cd2-488e-ac8b-e2eea94bd842
+2025-07-23 18:22:53,770 - app.main - INFO - Response status: 200
+2025-07-23 18:22:53,805 - app.main - INFO - Request: GET /api/dashboard
+2025-07-23 18:22:53,805 - app.main - INFO - Response status: 200
+2025-07-23 18:23:49,605 - app.main - INFO - Request: PUT /db/workouts/55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:49,912 - app.api.endpoints.db - INFO - API request to update workout: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:49,913 - app.services.db.workout_service - INFO - Getting workout: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:50,047 - app.services.db.workout_service - INFO - Successfully retrieved workout: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:50,048 - app.services.db.workout_service - INFO - Updating workout: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:52,087 - app.services.db.workout_service - INFO - Successfully updated workout: 55b681c4-aa45-4604-9269-a9e77c548545
+2025-07-23 18:23:52,089 - app.main - INFO - Response status: 200

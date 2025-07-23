@@ -1,25 +1,25 @@
 from datetime import datetime
 import uuid
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
 
 logger = logging.getLogger(__name__)
 
-class GraphBundleService(BaseDBService):
+class AnalysisBundleService(BaseDBService):
     """
-    Service for handling graph bundle operations in the database
+    Service for handling analysis bundle operations in the database
     """
     
     async def get_bundles_by_conversation(self, user_id: str, conversation_id: str) -> List[Dict[str, Any]]:
         """
-        Get all graph bundles for a specific conversation
+        Get all analysis bundles for a specific conversation
         """
         try:
-            logger.info(f"Getting graph bundles for conversation: {conversation_id}")
+            logger.info(f"Getting analysis bundles for conversation: {conversation_id}")
             
             # Query using Supabase client
-            result = self.supabase.table("graph_bundles") \
+            result = self.supabase.table("analysis_bundles") \
                 .select("*") \
                 .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
@@ -27,7 +27,7 @@ class GraphBundleService(BaseDBService):
                 .execute()
                 
             if not hasattr(result, 'data') or not result.data:
-                logger.info(f"No graph bundles found for conversation: {conversation_id}")
+                logger.info(f"No analyses found for conversation: {conversation_id}")
                 return []
                 
             # Transform data similar to client-side transformation
@@ -46,20 +46,20 @@ class GraphBundleService(BaseDBService):
                     "conversationId": conversation_id
                 })
                 
-            logger.info(f"Retrieved {len(formatted_bundles)} graph bundles")
+            logger.info(f"Retrieved {len(formatted_bundles)} analyses")
             return formatted_bundles
         except Exception as e:
-            logger.error(f"Error getting graph bundles: {str(e)}")
+            logger.error(f"Error getting analysis bundles: {str(e)}")
             return await self.handle_error("get_bundles_by_conversation", e)
 
-    async def delete_graph_bundle(self, user_id: str, bundle_id: str) -> Dict[str, Any]:
+    async def delete_analysis_bundle(self, user_id: str, bundle_id: str) -> Dict[str, Any]:
         """
-        Delete a graph bundle
+        Delete a analysis bundle
         """
         try:
-            logger.info(f"Deleting graph bundle: {bundle_id}")
+            logger.info(f"Deleting analysis bundle: {bundle_id}")
             
-            result = self.supabase.table("graph_bundles") \
+            result = self.supabase.table("analysis_bundles") \
                 .delete() \
                 .eq("id", bundle_id) \
                 .eq("user_id", user_id) \
@@ -67,24 +67,24 @@ class GraphBundleService(BaseDBService):
                 
             # Check for data in response
             if hasattr(result, 'data'):
-                logger.info(f"Successfully deleted graph bundle: {bundle_id}")
+                logger.info(f"Successfully deleted analysis bundle: {bundle_id}")
                 return {"success": True}
             else:
                 logger.error(f"Failed to delete bundle: No data returned")
                 return {"success": False, "error": "No data returned"}
                 
         except Exception as e:
-            logger.error(f"Error deleting graph bundle: {str(e)}")
-            return await self.handle_error("delete_graph_bundle", e)
+            logger.error(f"Error deleting analysis bundle: {str(e)}")
+            return await self.handle_error("delete_analysis_bundle", e)
 
     async def delete_conversation_bundles(self, user_id: str, conversation_id: str) -> Dict[str, Any]:
         """
-        Delete all graph bundles for a conversation
+        Delete all analysis bundles for a conversation
         """
         try:
-            logger.info(f"Deleting all graph bundles for conversation: {conversation_id}")
+            logger.info(f"Deleting all analysis bundles for conversation: {conversation_id}")
             
-            result = self.supabase.table("graph_bundles") \
+            result = self.supabase.table("analysis_bundles") \
                 .delete() \
                 .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
@@ -92,7 +92,7 @@ class GraphBundleService(BaseDBService):
                 
             # Check for data in response
             if hasattr(result, 'data'):
-                logger.info(f"Successfully deleted all graph bundles for conversation: {conversation_id}")
+                logger.info(f"Successfully deleted all analysis bundles for conversation: {conversation_id}")
                 return {"success": True}
             else:
                 logger.error(f"Failed to delete conversation bundles: No data returned")
@@ -102,11 +102,11 @@ class GraphBundleService(BaseDBService):
             logger.error(f"Error deleting conversation bundles: {str(e)}")
             return await self.handle_error("delete_conversation_bundles", e)
         
-    async def save_graph_bundle(self, user_id: str, bundle: dict) -> dict:
+    async def save_analysis_bundle(self, user_id: str, bundle: dict) -> dict:
         try:
             bundle_id = str(bundle.get('bundle_id', uuid.uuid4()))
             
-            logger.info(f"Saving graph bundle: {bundle_id}")
+            logger.info(f"Saving analysis bundle: {bundle_id}")
             
             # Convert objects to JSON-serializable types
             def convert_for_json(data):
@@ -148,5 +148,5 @@ class GraphBundleService(BaseDBService):
                 return {"success": False, "error": "Database insertion yielded no data", "bundle_id": bundle_id}
                 
         except Exception as e:
-            logger.error(f"Error saving graph bundle: {str(e)}")
+            logger.error(f"Error saving analysis bundle: {str(e)}")
             return {"success": False, "error": str(e)}
