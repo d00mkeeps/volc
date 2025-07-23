@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CompleteWorkout, WorkoutInput, WorkoutWithConversation } from "@/types/workout";
+import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 
 interface WorkoutState {
@@ -13,15 +13,15 @@ interface WorkoutState {
   // Actions
   loadWorkouts: (userId: string) => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
-  createWorkout: (userId: string, workout: WorkoutInput) => Promise<void>;
-  updateWorkout: (workoutId: string, updates: WorkoutInput) => Promise<void>;
+  createWorkout: (userId: string, workout: CompleteWorkout) => Promise<void>;
+  updateWorkout: (workoutId: string, updates: CompleteWorkout) => Promise<void>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
   fetchTemplates: (userId: string) => Promise<void>;
   saveAsTemplate: (workout: CompleteWorkout) => Promise<CompleteWorkout>;
   getWorkoutsByConversation: (userId: string, conversationId: string) => Promise<WorkoutWithConversation[]>; // Fixed return type
   deleteConversationWorkouts: (userId: string, conversationId: string) => Promise<void>;
-  updateTemplateUsage: (templateId: string) => Promise<void>;
+  // updateTemplateUsage: (templateId: string) => Promise<void>;
 }
 
 export const useWorkoutStore = create<WorkoutState>((set, get) => ({
@@ -66,10 +66,12 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
   
-  createWorkout: async (userId: string, workoutInput: WorkoutInput) => {
+  createWorkout: async (userId: string, workout: CompleteWorkout) => {
     try {
       set({ loading: true, error: null });
-      const newWorkout = await workoutService.createWorkout(userId, workoutInput);
+      const newWorkout = await workoutService.createWorkout(userId, workout);
+      
+      // Add to workouts array - this triggers template refresh
       set((state) => ({ 
         workouts: [newWorkout, ...state.workouts],
         currentWorkout: newWorkout 
@@ -151,7 +153,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
 
-  updateWorkout: async (workoutId: string, updates: WorkoutInput) => {
+  updateWorkout: async (workoutId: string, updates: CompleteWorkout) => {
     try {
       set({ loading: true, error: null });
       const updatedWorkout = await workoutService.updateWorkout(workoutId, updates);
@@ -167,14 +169,14 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
   
-  updateTemplateUsage: async (templateId: string) => {
-    try {
-      set({ loading: true, error: null });
-      await workoutService.updateTemplateUsage(templateId);
-    } catch (err) {
-      set({ error: err instanceof Error ? err : new Error("Failed to update template usage") });
-    } finally {
-      set({ loading: false });
-    }
-  }
+  // updateTemplateUsage: async (templateId: string) => {
+  //   try {
+  //     set({ loading: true, error: null });
+  //     await workoutService.updateTemplateUsage(templateId);
+  //   } catch (err) {
+  //     set({ error: err instanceof Error ? err : new Error("Failed to update template usage") });
+  //   } finally {
+  //     set({ loading: false });
+  //   }
+  // }
 }));

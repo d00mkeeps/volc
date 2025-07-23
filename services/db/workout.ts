@@ -9,19 +9,16 @@ export class WorkoutService extends BaseService {
    */
   async createWorkout(userId: string, workout: CompleteWorkout | WorkoutWithConversation): Promise<CompleteWorkout> {
     try {
-      console.log("[WorkoutService] Creating workout:", {
-        userId,
-        workoutId: 'id' in workout ? workout.id : 'N/A',
-        workoutName: workout.name,
-        conversationId: 'conversationId' in workout ? workout.conversationId : 'N/A',
-        exerciseCount: workout.workout_exercises?.length || 0
+      const workoutId = 'id' in workout ? workout.id : 'N/A';
+      
+      console.log(`[WorkoutService] Creating workout: ${workoutId} with exercises:`);
+      workout.workout_exercises?.forEach(exercise => {
+        const setCount = exercise.workout_exercise_sets?.length || 0;
+        console.log(`    ${exercise.id} (${exercise.name}, ${setCount} sets)`);
       });
       
-      // Make API call to create workout
-// In workoutService
-const data = await apiPost<CompleteWorkout>('/db/workouts', workout);
-console.log("[WorkoutService] API Response:", data); // Add this      
-      console.log("[WorkoutService] Workout created successfully with ID:", data.id);
+      const data = await apiPost<CompleteWorkout>('/db/workouts', workout);
+      console.log("[WorkoutService] API Response:", data);
       
       return data;
     } catch (error) {
@@ -29,7 +26,6 @@ console.log("[WorkoutService] API Response:", data); // Add this
       return this.handleError(error);
     }
   }
-
   /**
    * Save a completed workout (convenience method that handles conversion)
    */
@@ -143,19 +139,19 @@ async updateWorkout(workoutId: string, workout: CompleteWorkout): Promise<Comple
   /**
    * Update template usage timestamp
    */
-  async updateTemplateUsage(templateId: string): Promise<void> {
-    try {
-      console.log(`[WorkoutService] Updating template usage for workout: ${templateId}`);
+  // async updateTemplateUsage(templateId: string): Promise<void> {
+  //   try {
+  //     console.log(`[WorkoutService] Updating template usage for workout: ${templateId}`);
       
-      // Make API call to update template usage
-      await apiPut(`/db/workouts/template/${templateId}`, {});
+  //     // Make API call to update template usage
+  //     await apiPut(`/db/workouts/template/${templateId}`, {});
       
-      console.log(`[WorkoutService] Successfully updated template usage for workout: ${templateId}`);
-    } catch (error) {
-      console.error(`[WorkoutService] Error updating template usage:`, error);
-      return this.handleError(error);
-    }
-  }
+  //     console.log(`[WorkoutService] Successfully updated template usage for workout: ${templateId}`);
+  //   } catch (error) {
+  //     console.error(`[WorkoutService] Error updating template usage:`, error);
+  //     return this.handleError(error);
+  //   }
+  // }
   
   /**
    * Get all workout templates for a user
@@ -179,24 +175,21 @@ async updateWorkout(workoutId: string, workout: CompleteWorkout): Promise<Comple
   /**
    * Save a workout as a template
    */
-  async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
-    try {
-      console.log(`[WorkoutService] Saving workout as template: ${workout.id}`);
-      
-      // Convert CompleteWorkout to WorkoutInput format for the API
-      const workoutInput = convertCompleteToInput(workout);
-      
-      // Call the template endpoint
-      const data = await apiPost<CompleteWorkout>('/db/workouts/template', workoutInput);
-      
-      console.log(`[WorkoutService] Successfully saved workout as template: ${data.id}`);
-      
-      return data;
-    } catch (error) {
-      console.error(`[WorkoutService] Error saving workout as template:`, error);
-      return this.handleError(error);
-    }
+// Remove the conversion in saveAsTemplate
+async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
+  try {
+    console.log(`[WorkoutService] Saving workout as template: ${workout.id}`);
+    
+    // Send CompleteWorkout directly instead of converting
+    const data = await apiPost<CompleteWorkout>('/db/workouts/template', workout);
+    
+    console.log(`[WorkoutService] Successfully saved workout as template: ${data.id}`);
+    return data;
+  } catch (error) {
+    console.error(`[WorkoutService] Error saving workout as template:`, error);
+    return this.handleError(error);
   }
+}
   
   /**
    * Delete a workout

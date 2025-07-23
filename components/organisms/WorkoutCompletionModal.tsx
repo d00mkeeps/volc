@@ -25,21 +25,6 @@ export function WorkoutCompletionModal({
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 
   const { currentWorkout } = useUserSessionStore();
-
-  useEffect(() => {
-    console.log("=== MODAL WORKOUT CHANGED ===");
-    console.log("Modal sees workout ID:", currentWorkout?.id);
-    console.log("Modal sees workout notes:", currentWorkout?.notes);
-    console.log(
-      "Modal sees workout notes length:",
-      currentWorkout?.notes?.length
-    );
-    console.log(
-      "Modal sees workout exercises count:",
-      currentWorkout?.workout_exercises?.length
-    );
-  }, [currentWorkout]);
-
   const workoutAnalysisStore = useWorkoutAnalysisStore();
 
   useEffect(() => {
@@ -85,16 +70,6 @@ export function WorkoutCompletionModal({
   const handleContinueToChat = async () => {
     // Get fresh data from store instead of using stale closure
     const freshWorkout = useUserSessionStore.getState().currentWorkout;
-
-    console.log("=== JUST BEFORE UPDATE CALL ===");
-    console.log("Fresh workout from store notes:", freshWorkout?.notes);
-    console.log("Fresh workout notes length:", freshWorkout?.notes?.length);
-    console.log("Stale currentWorkout notes:", currentWorkout?.notes);
-    console.log(
-      "Stale currentWorkout notes length:",
-      currentWorkout?.notes?.length
-    );
-
     if (freshWorkout) {
       console.log("Using fresh workout data for update");
       await workoutService.updateWorkout(freshWorkout.id, freshWorkout);

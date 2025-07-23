@@ -12,148 +12,6 @@ class WorkoutService(BaseDBService):
     Service for handling workout operations in the database
     """
 
-    async def create_workout(
-        self, user_id: str, workout_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        Create a new worko]]ut and store it in the database
-        """
-        try:
-            logger.info(
-                f"Creating workout: {workout_data.get('name')} for user: {user_id}"
-            )
-
-            now = datetime.utcnow().isoformat()
-
-            # Prepare the workout data including the conversation_id if present
-            workout_insert_data = {
-                "id": workout_data.get("id") or str(await new_uuid()),
-                "user_id": user_id,
-                "name": workout_data.get("name"),
-                "notes": workout_data.get("description") or workout_data.get("notes"),
-                "conversation_id": workout_data.get("conversationId"),
-                "created_at": workout_data.get("created_at") or now,
-                "used_as_template": now,  # Set this to creation date by default
-            }
-
-            logger.info(
-                f"Inserting workout with data: {workout_insert_data.get('name')}, {workout_insert_data.get('conversation_id')}"
-            )
-
-            # Insert workout
-            result = (
-                self.supabase.table("workouts").insert(workout_insert_data).execute()
-            )
-
-            if not hasattr(result, "data") or not result.data:
-                raise Exception("Failed to create workout: No data returned")
-
-            workout_id = result.data[0]["id"]
-            logger.info(f"Workout created with ID: {workout_id}")
-
-            # Process exercises if they exist in input
-            if workout_data.get("exercises") and len(workout_data["exercises"]) > 0:
-                logger.info(
-                    f"Creating {len(workout_data['exercises'])} exercises for workout: {workout_id}"
-                )
-
-                for index, exercise in enumerate(workout_data["exercises"]):
-                    # Extract exercise data
-                    exercise_name = exercise.get("exercise_name") or exercise.get(
-                        "name"
-                    )
-                    definition_id = exercise.get("definition_id")
-                    order_index = (
-                        exercise.get("order_in_workout")
-                        or exercise.get("order_index")
-                        or index
-                    )
-
-                    logger.info(
-                        f"Creating exercise {index + 1}/{len(workout_data['exercises'])}: {exercise_name}"
-                    )
-
-                    # Insert exercise
-                    exercise_result = (
-                        self.supabase.table("workout_exercises")
-                        .insert(
-                            {
-                                "workout_id": workout_id,
-                                "name": exercise_name,
-                                "definition_id": definition_id,
-                                "order_index": order_index,
-                                "weight_unit": exercise.get("weight_unit") or "kg",
-                                "distance_unit": exercise.get("distance_unit") or "m",
-                            }
-                        )
-                        .execute()
-                    )
-
-                    if not hasattr(exercise_result, "data") or not exercise_result.data:
-                        raise Exception(f"Failed to create exercise: No data returned")
-
-                    exercise_id = exercise_result.data[0]["id"]
-                    logger.info(
-                        f"Exercise created: {exercise_name} with ID: {exercise_id}"
-                    )
-
-                    # Process sets if they exist
-                    if exercise.get("set_data") and exercise["set_data"].get("sets"):
-                        sets = exercise["set_data"]["sets"]
-
-                        for set_index, set_data in enumerate(sets):
-                            set_result = (
-                                self.supabase.table("workout_exercise_sets")
-                                .insert(
-                                    {
-                                        "exercise_id": exercise_id,
-                                        "set_number": set_index + 1,
-                                        "weight": set_data.get("weight"),
-                                        "reps": set_data.get("reps"),
-                                        "rpe": set_data.get("rpe"),
-                                        "distance": set_data.get("distance"),
-                                        "duration": set_data.get("duration"),
-                                    }
-                                )
-                                .execute()
-                            )
-
-                            if not hasattr(set_result, "data") or not set_result.data:
-                                raise Exception(
-                                    f"Failed to create set: No data returned"
-                                )
-
-            # Fetch the complete workout
-            complete_result = (
-                self.supabase.table("workouts")
-                .select("*, workout_exercises(*, workout_exercise_sets(*))")
-                .eq("id", workout_id)
-                .execute()
-            )
-
-            if not hasattr(complete_result, "data") or not complete_result.data:
-                raise Exception("Failed to fetch created workout")
-
-            # Format the response
-            workout = complete_result.data[0]
-
-            # Sort exercises by order_index
-            workout["workout_exercises"].sort(key=lambda x: x["order_index"])
-
-            # Sort sets by set_number
-            for exercise in workout["workout_exercises"]:
-                exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
-
-            # Add conversationId in the expected format
-            workout["conversationId"] = workout["conversation_id"]
-
-            logger.info(f"Workout creation complete for ID: {workout_id}")
-            return workout
-
-        except Exception as e:
-            logger.error(f"Error creating workout: {str(e)}")
-            return await self.handle_error("create_workout", e)
-
     async def get_workout(self, workout_id: str) -> Dict[str, Any]:
         """
         Get a workout by ID
@@ -467,124 +325,6 @@ class WorkoutService(BaseDBService):
     #     except Exception as e:
     #         logger.error(f"Error fetching workout history: {str(e)}")
     #         return await self.handle_error("get_workout_history_by_exercises", e)
-
-    async def update_workout(
-        self, workout_id: str, workout_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        Update an existing workout
-        """
-        try:
-            logger.info(f"Updating workout: {workout_id}")
-
-            # Update the main workout record
-            workout_update_data = {
-                "name": workout_data.get("name"),
-                "notes": workout_data.get("description") or workout_data.get("notes"),
-                "updated_at": datetime.utcnow().isoformat(),
-            }
-
-            workout_result = (
-                self.supabase.table("workouts")
-                .update(workout_update_data)
-                .eq("id", workout_id)
-                .execute()
-            )
-
-            if not hasattr(workout_result, "data") or not workout_result.data:
-                raise Exception("Failed to update workout")
-
-            # If exercises are provided, replace them entirely
-            if workout_data.get("exercises"):
-                # Delete existing exercises and sets (cascades)
-                existing_exercises = (
-                    self.supabase.table("workout_exercises")
-                    .select("id")
-                    .eq("workout_id", workout_id)
-                    .execute()
-                )
-
-                if hasattr(existing_exercises, "data") and existing_exercises.data:
-                    exercise_ids = [e["id"] for e in existing_exercises.data]
-
-                    # Delete sets first
-                    self.supabase.table("workout_exercise_sets").delete().in_(
-                        "exercise_id", exercise_ids
-                    ).execute()
-
-                    # Delete exercises
-                    self.supabase.table("workout_exercises").delete().eq(
-                        "workout_id", workout_id
-                    ).execute()
-
-                # Create new exercises
-                for index, exercise in enumerate(workout_data["exercises"]):
-                    exercise_name = exercise.get("exercise_name") or exercise.get(
-                        "name"
-                    )
-
-                    exercise_result = (
-                        self.supabase.table("workout_exercises")
-                        .insert(
-                            {
-                                "workout_id": workout_id,
-                                "name": exercise_name,
-                                "definition_id": exercise.get("definition_id"),
-                                "order_index": exercise.get("order_in_workout", index),
-                                "weight_unit": exercise.get("weight_unit", "kg"),
-                                "distance_unit": exercise.get("distance_unit", "m"),
-                            }
-                        )
-                        .execute()
-                    )
-
-                    if hasattr(exercise_result, "data") and exercise_result.data:
-                        exercise_id = exercise_result.data[0]["id"]
-
-                        # Create sets if provided
-                        if exercise.get("set_data") and exercise["set_data"].get(
-                            "sets"
-                        ):
-                            for set_index, set_data in enumerate(
-                                exercise["set_data"]["sets"]
-                            ):
-                                self.supabase.table("workout_exercise_sets").insert(
-                                    {
-                                        "exercise_id": exercise_id,
-                                        "set_number": set_index + 1,
-                                        "weight": set_data.get("weight"),
-                                        "reps": set_data.get("reps"),
-                                        "rpe": set_data.get("rpe"),
-                                        "distance": set_data.get("distance"),
-                                        "duration": set_data.get("duration"),
-                                    }
-                                ).execute()
-
-            # Return complete updated workout
-            complete_result = (
-                self.supabase.table("workouts")
-                .select("*, workout_exercises(*, workout_exercise_sets(*))")
-                .eq("id", workout_id)
-                .execute()
-            )
-
-            if not hasattr(complete_result, "data") or not complete_result.data:
-                raise Exception("Failed to fetch updated workout")
-
-            workout = complete_result.data[0]
-
-            # Sort exercises and sets
-            workout["workout_exercises"].sort(key=lambda x: x["order_index"])
-            for exercise in workout["workout_exercises"]:
-                exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
-
-            logger.info(f"Successfully updated workout: {workout_id}")
-            return workout
-
-        except Exception as e:
-            logger.error(f"Error updating workout: {str(e)}")
-            return await self.handle_error("update_workout", e)
-
     def _convert_timeframe_to_days(self, timeframe: str) -> int:
         """Convert a timeframe string to number of days."""
         try:
@@ -625,3 +365,250 @@ class WorkoutService(BaseDBService):
         except Exception as e:
             logger.error(f"RPC error: {str(e)}")
             return self._empty_workout_result(from_date)
+        
+    async def create_workout(
+        self, user_id: str, workout_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Create a new workout and store it in the database
+        """
+        try:
+            logger.info(
+                f"Creating workout: {workout_data.get('name')} for user: {user_id}"
+            )
+
+            now = datetime.utcnow().isoformat()
+
+            # Prepare the workout data including the conversation_id if present
+            workout_insert_data = {
+                "id": workout_data.get("id") or str(await new_uuid()),
+                "user_id": user_id,
+                "name": workout_data.get("name"),
+                "notes": workout_data.get("description") or workout_data.get("notes"),
+                "conversation_id": workout_data.get("conversationId"),
+                "created_at": workout_data.get("created_at") or now,
+                "used_as_template": now,  # Set this to creation date by default
+            }
+
+            logger.info(
+                f"Inserting workout with data: {workout_insert_data.get('name')}, {workout_insert_data.get('conversation_id')}"
+            )
+
+            # Insert workout
+            result = (
+                self.supabase.table("workouts").insert(workout_insert_data).execute()
+            )
+
+            if not hasattr(result, "data") or not result.data:
+                raise Exception("Failed to create workout: No data returned")
+
+            workout_id = result.data[0]["id"]
+            logger.info(f"Workout created with ID: {workout_id}")
+
+            # Process exercises if they exist in input
+            if workout_data.get("workout_exercises") and len(workout_data["workout_exercises"]) > 0:
+                logger.info(
+                    f"Creating {len(workout_data['workout_exercises'])} exercises for workout: {workout_id}"
+                )
+
+                for index, exercise in enumerate(workout_data["workout_exercises"]):
+                    # Extract exercise data
+                    exercise_name = exercise.get("name")
+                    definition_id = exercise.get("definition_id")
+                    order_index = exercise.get("order_index") or index
+
+                    logger.info(
+                        f"Creating exercise {index + 1}/{len(workout_data['workout_exercises'])}: {exercise_name}"
+                    )
+
+                    # Insert exercise
+                    exercise_result = (
+                        self.supabase.table("workout_exercises")
+                        .insert(
+                            {
+                                "workout_id": workout_id,
+                                "name": exercise_name,
+                                "definition_id": definition_id,
+                                "order_index": order_index,
+                                "weight_unit": exercise.get("weight_unit") or "kg",
+                                "distance_unit": exercise.get("distance_unit") or "m",
+                            }
+                        )
+                        .execute()
+                    )
+
+                    if not hasattr(exercise_result, "data") or not exercise_result.data:
+                        raise Exception(f"Failed to create exercise: No data returned")
+
+                    exercise_id = exercise_result.data[0]["id"]
+                    logger.info(
+                        f"Exercise created: {exercise_name} with ID: {exercise_id}"
+                    )
+
+                    # Process sets if they exist
+                    if exercise.get("workout_exercise_sets"):
+                        sets = exercise["workout_exercise_sets"]
+
+                        for set_index, set_data in enumerate(sets):
+                            set_result = (
+                                self.supabase.table("workout_exercise_sets")
+                                .insert(
+                                    {
+                                        "exercise_id": exercise_id,
+                                        "set_number": set_index + 1,
+                                        "weight": set_data.get("weight"),
+                                        "reps": set_data.get("reps"),
+                                        "rpe": set_data.get("rpe"),
+                                        "distance": set_data.get("distance"),
+                                        "duration": set_data.get("duration"),
+                                    }
+                                )
+                                .execute()
+                            )
+
+                            if not hasattr(set_result, "data") or not set_result.data:
+                                raise Exception(
+                                    f"Failed to create set: No data returned"
+                                )
+
+            # Fetch the complete workout
+            complete_result = (
+                self.supabase.table("workouts")
+                .select("*, workout_exercises(*, workout_exercise_sets(*))")
+                .eq("id", workout_id)
+                .execute()
+            )
+
+            if not hasattr(complete_result, "data") or not complete_result.data:
+                raise Exception("Failed to fetch created workout")
+
+            # Format the response
+            workout = complete_result.data[0]
+
+            # Sort exercises by order_index
+            workout["workout_exercises"].sort(key=lambda x: x["order_index"])
+
+            # Sort sets by set_number
+            for exercise in workout["workout_exercises"]:
+                exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
+
+            # Add conversationId in the expected format
+            workout["conversationId"] = workout["conversation_id"]
+
+            logger.info(f"Workout creation complete for ID: {workout_id}")
+            return workout
+
+        except Exception as e:
+            logger.error(f"Error creating workout: {str(e)}")
+            return await self.handle_error("create_workout", e)
+
+    async def update_workout(
+        self, workout_id: str, workout_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Update an existing workout
+        """
+        try:
+            logger.info(f"Updating workout: {workout_id}")
+
+            # Update the main workout record
+            workout_update_data = {
+                "name": workout_data.get("name"),
+                "notes": workout_data.get("description") or workout_data.get("notes"),
+                "updated_at": datetime.utcnow().isoformat(),
+            }
+
+            workout_result = (
+                self.supabase.table("workouts")
+                .update(workout_update_data)
+                .eq("id", workout_id)
+                .execute()
+            )
+
+            if not hasattr(workout_result, "data") or not workout_result.data:
+                raise Exception("Failed to update workout")
+
+            # If exercises are provided, replace them entirely
+            if workout_data.get("workout_exercises"):
+                # Delete existing exercises and sets (cascades)
+                existing_exercises = (
+                    self.supabase.table("workout_exercises")
+                    .select("id")
+                    .eq("workout_id", workout_id)
+                    .execute()
+                )
+
+                if hasattr(existing_exercises, "data") and existing_exercises.data:
+                    exercise_ids = [e["id"] for e in existing_exercises.data]
+
+                    # Delete sets first
+                    self.supabase.table("workout_exercise_sets").delete().in_(
+                        "exercise_id", exercise_ids
+                    ).execute()
+
+                    # Delete exercises
+                    self.supabase.table("workout_exercises").delete().eq(
+                        "workout_id", workout_id
+                    ).execute()
+
+                # Create new exercises
+                for index, exercise in enumerate(workout_data["workout_exercises"]):
+                    exercise_name = exercise.get("name")
+
+                    exercise_result = (
+                        self.supabase.table("workout_exercises")
+                        .insert(
+                            {
+                                "workout_id": workout_id,
+                                "name": exercise_name,
+                                "definition_id": exercise.get("definition_id"),
+                                "order_index": exercise.get("order_index", index),
+                                "weight_unit": exercise.get("weight_unit", "kg"),
+                                "distance_unit": exercise.get("distance_unit", "m"),
+                            }
+                        )
+                        .execute()
+                    )
+
+                    if hasattr(exercise_result, "data") and exercise_result.data:
+                        exercise_id = exercise_result.data[0]["id"]
+
+                        # Create sets if provided
+                        if exercise.get("workout_exercise_sets"):
+                            for set_index, set_data in enumerate(exercise["workout_exercise_sets"]):
+                                self.supabase.table("workout_exercise_sets").insert(
+                                    {
+                                        "exercise_id": exercise_id,
+                                        "set_number": set_index + 1,
+                                        "weight": set_data.get("weight"),
+                                        "reps": set_data.get("reps"),
+                                        "rpe": set_data.get("rpe"),
+                                        "distance": set_data.get("distance"),
+                                        "duration": set_data.get("duration"),
+                                    }
+                                ).execute()
+
+            # Return complete updated workout
+            complete_result = (
+                self.supabase.table("workouts")
+                .select("*, workout_exercises(*, workout_exercise_sets(*))")
+                .eq("id", workout_id)
+                .execute()
+            )
+
+            if not hasattr(complete_result, "data") or not complete_result.data:
+                raise Exception("Failed to fetch updated workout")
+
+            workout = complete_result.data[0]
+
+            # Sort exercises and sets
+            workout["workout_exercises"].sort(key=lambda x: x["order_index"])
+            for exercise in workout["workout_exercises"]:
+                exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
+
+            logger.info(f"Successfully updated workout: {workout_id}")
+            return workout
+
+        except Exception as e:
+            logger.error(f"Error updating workout: {str(e)}")
+            return await self.handle_error("update_workout", e)

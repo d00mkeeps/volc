@@ -2,8 +2,8 @@ import { CompleteWorkout } from "./types/workout";
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   id: 'empty-workout-template',
-  user_id: '', // Will be set when used
-  name: 'Freestyle Workout',
+  user_id: '', 
+  name: 'Start Empty Workout',
   notes: '',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),

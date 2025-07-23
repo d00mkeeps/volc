@@ -104,7 +104,7 @@ export interface CompleteWorkout {
   scheduled_time?: string; // Format: "HH:MM" in 24-hour time
   description?: string;
 }
-  
+
 export type BundleMetadata = {
   total_workouts: number;
   total_exercises: number;

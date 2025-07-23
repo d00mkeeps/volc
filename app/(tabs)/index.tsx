@@ -1,4 +1,3 @@
-// app/(tabs)/index.tsx
 import React, { useState, useRef, useMemo } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
@@ -51,6 +50,13 @@ export default function HomeScreen() {
   }, [templates, userProfile?.user_id]);
 
   const handleTemplateSelect = (template: CompleteWorkout) => {
+    console.log("Selected template:", {
+      id: template.id,
+      name: template.name,
+      workoutExercises: template.workout_exercises?.length || 0,
+      exercises: (template as any).exercises?.length || 0,
+      fullTemplate: template,
+    });
     selectTemplate(template);
 
     if (intendedToStart) {

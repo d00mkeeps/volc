@@ -253,8 +253,11 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
   
   selectTemplate: (template) => {
-    console.log('[UserSession] Selecting template:', template.name);
-    
+console.log("Storing template in session:", {
+  id: template.id,
+  name: template.name,
+  workoutExercisesCount: template.workout_exercises?.length || 0
+});    
     const userProfile = useUserStore.getState().userProfile;
     if (!userProfile?.user_id) {
       console.error('Cannot select template: No user profile found');

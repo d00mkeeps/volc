@@ -1,30 +1,28 @@
-// hooks/useWorkoutTemplates.ts
-import { useEffect } from 'react';
+// hooks/workout/useWorkoutTemplates.ts
+import { useEffect, useMemo } from 'react';
 import { useWorkoutStore } from '@/stores/workout/WorkoutStore';
+import { createTemplatesFromWorkouts } from '@/utils/createTemplatesFromWorkouts';
 
-export const useWorkoutTemplates = (userId?: string) => {
-  const { 
-    templates, 
-    loading, 
-    error, 
-    fetchTemplates, 
-    saveAsTemplate,
-    updateTemplateUsage 
-  } = useWorkoutStore();
-  
-  // Auto-load templates when userId is provided
+export function useWorkoutTemplates(userId?: string) {
+  const { workouts, loading, error, loadWorkouts } = useWorkoutStore();
+
+  // Load workouts when userId changes
   useEffect(() => {
-    if (userId && templates.length === 0) {
-      fetchTemplates(userId);
+    if (userId) {
+      loadWorkouts(userId);
     }
-  }, [userId, templates.length, fetchTemplates]);
-  
+  }, [userId, loadWorkouts]);
+
+  // Process workouts into templates
+  const templates = useMemo(() => {
+    if (!workouts.length) return [];
+    return createTemplatesFromWorkouts(workouts);
+  }, [workouts]);
+
   return {
     templates,
     loading,
     error,
-    fetchTemplates,
-    saveAsTemplate,
-    updateTemplateUsage
+    refetch: () => userId && loadWorkouts(userId)
   };
-};
+}

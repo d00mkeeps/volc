@@ -1,4 +1,3 @@
-// components/molecules/TemplateSelector.tsx
 import React, { useState, useMemo } from "react";
 import { YStack, XStack, Text, Input, ScrollView, Button } from "tamagui";
 import { View } from "react-native";
