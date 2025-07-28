@@ -36,6 +36,13 @@ export class WebSocketService {
   // Activity tracking
   private lastActivity: number = Date.now();
 
+  // Connection management
+  private connecting: boolean = false;
+  private connectionPromise: Promise<void> | null = null;
+  private disconnectReason: string = "";
+  private previousConversationId: string | null = null;
+  private disconnectTimestamp: number = 0;
+
   /**
    * Ensure connection to current conversation from session store
    */
@@ -43,8 +50,24 @@ export class WebSocketService {
     const sessionConversationId =
       useUserSessionStore.getState().activeConversationId;
 
+    console.log(`[WSService] ensureConnection called:`, {
+      sessionConversationId,
+      currentConversationId: this.currentConversationId,
+      connectionState: this.connectionState,
+      isConnected: this.isConnected(),
+      socketReadyState: this.socket?.readyState,
+      connecting: this.connecting,
+      timestamp: Date.now(),
+    });
+
     if (!sessionConversationId) {
       throw new Error("No active conversation in session");
+    }
+
+    // Return existing connection promise if connecting
+    if (this.connecting && this.connectionPromise) {
+      console.log(`[WSService] Connection in progress, waiting...`);
+      return this.connectionPromise;
     }
 
     // Already connected to same conversation
@@ -52,6 +75,7 @@ export class WebSocketService {
       this.currentConversationId === sessionConversationId &&
       this.isConnected()
     ) {
+      console.log(`[WSService] Already connected to: ${sessionConversationId}`);
       this.resetInactivityTimer();
       return;
     }
@@ -59,12 +83,23 @@ export class WebSocketService {
     // Different conversation - disconnect and reconnect
     if (this.currentConversationId !== sessionConversationId) {
       console.log(
-        `[WebSocket] Switching conversation: ${this.currentConversationId} → ${sessionConversationId}`
+        `[WSService] Switching conversation: ${this.currentConversationId} → ${sessionConversationId}`
       );
+
+      // Store the old conversation ID before switching
+      this.previousConversationId = this.currentConversationId;
+      this.disconnectReason = "conversation_switch";
       this.disconnect();
     }
 
-    await this.connect(sessionConversationId);
+    // Create connection promise with lock
+    this.connecting = true;
+    this.connectionPromise = this.connect(sessionConversationId).finally(() => {
+      this.connecting = false;
+      this.connectionPromise = null;
+    });
+
+    return this.connectionPromise;
   }
 
   /**
@@ -79,7 +114,7 @@ export class WebSocketService {
     this.resetInactivityTimer();
 
     console.log(
-      `[WebSocket] Sent ${
+      `[WSService] Sent ${
         JSON.stringify(payload).length
       } characters to conversation: ${this.currentConversationId}`
     );
@@ -90,11 +125,11 @@ export class WebSocketService {
    */
   disconnect(): void {
     console.log(
-      `[WebSocket] Disconnecting from conversation: ${this.currentConversationId}`
+      `[WSService] Disconnecting from conversation: ${this.currentConversationId} (reason: ${this.disconnectReason})`
     );
 
     this.cleanup();
-    this.currentConversationId = null;
+    // Don't clear currentConversationId here - let onclose handler manage it
     this.setConnectionState("disconnected");
   }
 
@@ -120,12 +155,15 @@ export class WebSocketService {
   private async connect(conversationId: string): Promise<void> {
     this.cleanup();
     this.setConnectionState("connecting");
-    this.currentConversationId = conversationId;
+
+    // DON'T update currentConversationId until connection succeeds
+    // This prevents race conditions during conversation switching
 
     const baseUrl = await getWsBaseUrl();
-    const configName = "workout-analysis"; // Could be dynamic later
+    const configName = "workout-analysis";
     const url = `${baseUrl}/${configName}/${conversationId}`;
 
+    console.log(`[WSService] Connecting to: ${url}`);
     this.socket = new WebSocket(url);
 
     return new Promise((resolve, reject) => {
@@ -135,30 +173,52 @@ export class WebSocketService {
 
       this.socket!.onopen = () => {
         clearTimeout(timeout);
+
+        // ONLY update currentConversationId after successful connection
+        this.currentConversationId = conversationId;
+        this.previousConversationId = null; // Clear the previous ID
+
         this.setConnectionState("connected");
         this.retryAttempts = 0; // Reset retry counter on successful connection
         this.resetInactivityTimer();
 
-        console.log(`[WebSocket] Connected to conversation: ${conversationId}`);
+        console.log(`[WSService] Connected to conversation: ${conversationId}`);
         resolve();
       };
 
       this.socket!.onclose = (event) => {
         clearTimeout(timeout);
-        console.log(
-          `[WebSocket] Connection closed - code: ${event.code}, clean: ${event.wasClean}`
-        );
+        this.disconnectTimestamp = Date.now();
+
+        // DETAILED DISCONNECT LOGGING
+        console.log(`[WSService] Connection closed:`, {
+          code: event.code,
+          wasClean: event.wasClean,
+          reason: event.reason,
+          disconnectReason: this.disconnectReason,
+          currentConversationId: this.currentConversationId,
+          previousConversationId: this.previousConversationId,
+          sessionConversationId:
+            useUserSessionStore.getState().activeConversationId,
+          timeSinceLastDisconnect:
+            this.disconnectTimestamp - (this.disconnectTimestamp || 0),
+        });
 
         this.handleDisconnect();
 
-        if (!event.wasClean) {
-          reject(new Error(`Connection closed: ${event.code}`));
+        // Only reject on abnormal closures that weren't intentional
+        if (
+          event.code !== 1000 &&
+          !event.wasClean &&
+          this.disconnectReason !== "conversation_switch"
+        ) {
+          reject(new Error(`Connection closed abnormally: ${event.code}`));
         }
       };
 
       this.socket!.onerror = (error) => {
         clearTimeout(timeout);
-        console.error("[WebSocket] Connection error:", error);
+        console.error("[WSService] Connection error:", error);
         reject(new Error("WebSocket connection error"));
       };
 
@@ -173,8 +233,9 @@ export class WebSocketService {
    */
   private scheduleReconnect(): void {
     if (this.retryAttempts >= this.maxRetries) {
-      console.error("[WebSocket] Max reconnection attempts reached");
+      console.error("[WSService] Max reconnection attempts reached");
       this.setConnectionState("disconnected");
+      this.currentConversationId = null; // Clear on max retries
 
       Toast.show({
         type: "error",
@@ -190,7 +251,7 @@ export class WebSocketService {
     this.setConnectionState("reconnecting");
 
     console.log(
-      `[WebSocket] Scheduling reconnect in ${delay}ms (attempt ${this.retryAttempts}/${this.maxRetries})`
+      `[WSService] Scheduling reconnect in ${delay}ms (attempt ${this.retryAttempts}/${this.maxRetries})`
     );
 
     Toast.show({
@@ -204,10 +265,17 @@ export class WebSocketService {
       try {
         const currentConversationId = this.currentConversationId;
         if (currentConversationId) {
-          await this.connect(currentConversationId);
+          this.connecting = true;
+          this.connectionPromise = this.connect(currentConversationId).finally(
+            () => {
+              this.connecting = false;
+              this.connectionPromise = null;
+            }
+          );
+          await this.connectionPromise;
         }
       } catch (error) {
-        console.error("[WebSocket] Reconnection failed:", error);
+        console.error("[WSService] Reconnection failed:", error);
         this.scheduleReconnect(); // Try again
       }
     }, delay);
@@ -232,7 +300,7 @@ export class WebSocketService {
    * Handle 5-minute inactivity timeout
    */
   private handleInactivity(): void {
-    console.log("[WebSocket] Inactivity timeout reached - disconnecting");
+    console.log("[WSService] Inactivity timeout reached - disconnecting");
 
     Toast.show({
       type: "info",
@@ -241,6 +309,7 @@ export class WebSocketService {
       visibilityTime: 3000,
     });
 
+    this.disconnectReason = "inactivity";
     this.disconnect();
   }
 
@@ -265,24 +334,23 @@ export class WebSocketService {
           break;
 
         case "error":
-          console.error("[WebSocket] Server error:", message.error);
+          console.error("[WSService] Server error:", message.error);
           this.events.emit("error", new Error(message.error || "Server error"));
           break;
 
         case "connection_status":
-          console.log("[WebSocket] Connection status:", message.data);
+          console.log("[WSService] Connection status:", message.data);
           break;
 
         case "heartbeat_ack":
-          // Handle heartbeat acknowledgment (future use)
-          console.log("[WebSocket] Heartbeat acknowledged");
+          console.log("[WSService] Heartbeat acknowledged");
           break;
 
         default:
-          console.warn("[WebSocket] Unknown message type:", message.type);
+          console.warn("[WSService] Unknown message type:", message.type);
       }
     } catch (error) {
-      console.error("[WebSocket] Failed to parse message:", error);
+      console.error("[WSService] Failed to parse message:", error);
       this.events.emit("error", new Error("Failed to parse WebSocket message"));
     }
   }
@@ -293,20 +361,60 @@ export class WebSocketService {
   private handleDisconnect(): void {
     this.setConnectionState("disconnected");
 
-    // Only auto-reconnect if we still have an active conversation and it wasn't a clean disconnect
     const currentSessionConversationId =
       useUserSessionStore.getState().activeConversationId;
 
-    if (
+    // IMPROVED LOGIC: Don't reconnect if this was from switching conversations
+    const wasConversationSwitch =
+      this.disconnectReason === "conversation_switch" &&
+      this.previousConversationId !== null;
+
+    const wasInactivityDisconnect = this.disconnectReason === "inactivity";
+
+    const shouldReconnect =
+      !wasConversationSwitch && // Don't reconnect if switching conversations
+      !wasInactivityDisconnect && // Don't reconnect if inactivity timeout
       this.currentConversationId &&
       this.currentConversationId === currentSessionConversationId &&
-      this.retryAttempts < this.maxRetries
-    ) {
-      console.log("[WebSocket] Unexpected disconnect - scheduling reconnect");
+      this.retryAttempts < this.maxRetries;
+
+    // DETAILED RECONNECTION DECISION LOGGING
+    console.log(`[WSService] Disconnect analysis:`, {
+      disconnectReason: this.disconnectReason,
+      wasConversationSwitch,
+      wasInactivityDisconnect,
+      currentConversationId: this.currentConversationId,
+      previousConversationId: this.previousConversationId,
+      sessionConversationId: currentSessionConversationId,
+      retryAttempts: this.retryAttempts,
+      maxRetries: this.maxRetries,
+      shouldReconnect,
+      decision: shouldReconnect ? "RECONNECTING" : "NOT_RECONNECTING",
+    });
+
+    if (shouldReconnect) {
+      console.log("[WSService] Unexpected disconnect - scheduling reconnect");
       this.scheduleReconnect();
     } else {
-      console.log("[WebSocket] Normal disconnect - not reconnecting");
+      console.log(
+        `[WSService] ${
+          wasConversationSwitch
+            ? "Intentional"
+            : wasInactivityDisconnect
+            ? "Inactivity"
+            : "Normal"
+        } disconnect - not reconnecting`
+      );
+
+      // Clear conversation ID on intentional disconnects
+      if (wasConversationSwitch || wasInactivityDisconnect) {
+        this.currentConversationId = null;
+      }
     }
+
+    // Reset disconnect reason and previous conversation
+    this.disconnectReason = "";
+    this.previousConversationId = null;
   }
 
   /**
@@ -315,7 +423,7 @@ export class WebSocketService {
   private setConnectionState(state: ConnectionState): void {
     if (this.connectionState !== state) {
       this.connectionState = state;
-      console.log(`[WebSocket] State changed: ${state}`);
+      console.log(`[WSService] State changed: ${state}`);
     }
   }
 

@@ -1,22 +1,27 @@
-2025-07-28 12:10:05,868 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
-2025-07-28 12:10:05,983 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:05,983 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:06,099 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:06,100 - app.services.db.message_service - INFO - Saving assistant message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:06,214 - app.services.db.message_service - INFO - Message saved with ID: 05cc5b43-f8aa-4d13-b4d4-6ac804b8e36f
-2025-07-28 12:10:06,216 - app.main - INFO - Response status: 200
-2025-07-28 12:10:18,240 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
-2025-07-28 12:10:18,431 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:18,431 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:18,632 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:18,633 - app.services.db.message_service - INFO - Saving user message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:18,720 - app.services.db.message_service - INFO - Message saved with ID: f6f187e3-c38b-41f0-92ab-7182d4e35f5a
-2025-07-28 12:10:18,721 - app.main - INFO - Response status: 200
-2025-07-28 12:10:18,769 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,046 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 140, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-07-28 13:55:18,054 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 13:55:18,055 - app.services.llm.workout_analysis - INFO - Loading conversation context (attempt 1/20)
+2025-07-28 13:55:18,055 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Skipping bundle 3ccde96c-40c2-4d93-b7d7-d408b53764aa with status: pending
+2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Successfully loaded 20 messages and 0 complete bundles for conversation bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Found 1 pending/in_progress bundles
+2025-07-28 13:55:18,151 - app.services.llm.workout_analysis - INFO - Context loaded successfully with 0 bundles
+2025-07-28 13:55:18,152 - app.services.chains.base_conversation_chain - INFO - Loaded 20 messages into conversation history
+2025-07-28 13:55:18,152 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 20 messages and 0 bundles
+2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - 
 === Formatted Messages ===
-2025-07-28 12:10:18,769 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - 
 Message 1 (SystemMessage):
-2025-07-28 12:10:18,769 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
 
 
 Current workout data context:
@@ -27,24 +32,21 @@ Available workout data:
 
 Visualizations and metrics:
 No workout data available
-2025-07-28 12:10:18,769 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-07-28 12:10:18,769 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
 Message 3 (HumanMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
 Message 4 (HumanMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
 Message 5 (HumanMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (HumanMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
-Message 7 (AIMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! 👋
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
+Message 6 (AIMessage):
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! 👋
 
 Welcome to your fitness coaching session. I'd be happy to help you with any fitness goals or questions you might have! Is there something specific you'd like to discuss today? For example:
 
@@ -55,82 +57,63 @@ Welcome to your fitness coaching session. I'd be happy to help you with any fitn
 - Tracking your fitness progress
 
 Let me know what you're interested in, and we can take it from there!
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - 
-Message 8 (HumanMessage):
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - Content: Who are you? Who am I?
-2025-07-28 12:10:18,770 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-07-28 12:10:23,052 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
-2025-07-28 12:10:23,160 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:23,160 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:23,557 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:23,558 - app.services.db.message_service - INFO - Saving assistant message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:10:23,666 - app.services.db.message_service - INFO - Message saved with ID: 96ef1b89-5368-4aa1-a077-fe33ef3664a6
-2025-07-28 12:10:23,667 - app.main - INFO - Response status: 200
-2025-07-28 12:11:02,092 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
-2025-07-28 12:11:02,430 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:02,431 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:02,670 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:02,671 - app.services.db.message_service - INFO - Saving user message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:02,861 - app.services.db.message_service - INFO - Message saved with ID: ae867761-7b49-4027-b0da-c387077fdc4b
-2025-07-28 12:11:02,866 - app.main - INFO - Response status: 200
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
-
-Current workout data context:
-Available workout data:
-            {
-  "available_data": []
-}
-
-Visualizations and metrics:
-No workout data available
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (HumanMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (HumanMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 7 (AIMessage):
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! 👋
-
-Welcome to your fitness coaching session. I'd be happy to help you with any fitness goals or questions you might have! Is there something specific you'd like to discuss today? For example:
-
-- Creating a workout plan
-- Nutrition advice
-- Form tips for specific exercises
-- Training for a particular goal
-- Tracking your fitness progress
-
-Let me know what you're interested in, and we can take it from there!
-2025-07-28 12:11:02,940 - app.services.chains.base_conversation_chain - INFO - 
-Message 8 (HumanMessage):
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - Content: Who are you? Who am I?
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - 
-Message 9 (AIMessage):
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - Content: I'm your AI fitness coach, designed to provide guidance and support for your fitness journey. I can help with workout plans, form tips, nutrition advice, and tracking your progress.
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
+Message 7 (HumanMessage):
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Who are you? Who am I?
+2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
+Message 8 (AIMessage):
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: I'm your AI fitness coach, designed to provide guidance and support for your fitness journey. I can help with workout plans, form tips, nutrition advice, and tracking your progress.
 
 As for who you are - you're the person I'm here to assist! I don't have any specific information about you unless you share it with me. I don't know your name, fitness level, or personal details until you choose to tell me.
 
 Would you like to share a bit about yourself and your fitness goals so I can provide more personalized advice? Things like your experience level, what types of activities you enjoy, or what you're hoping to achieve would be helpful.
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - 
-Message 10 (HumanMessage):
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - Content: Context is the most important part of ai applications! Intelligence is useless in a vacuum
-2025-07-28 12:11:02,941 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-07-28 12:11:08,364 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
-2025-07-28 12:11:08,550 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:08,550 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 12:11:08,732 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
+Message 9 (HumanMessage):
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: Context is the most important part of ai applications! Intelligence is useless in a vacuum
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
+Message 10 (AIMessage):
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: You're absolutely right! Context is crucial for AI applications to be truly useful. Without understanding your specific situation, goals, and constraints, any advice I provide would be generic at best and potentially unhelpful at worst.
+
+Intelligence - whether human or artificial - needs context to be meaningful and applicable. In fitness especially, personalization matters tremendously. What works for a competitive athlete wouldn't work for someone just starting their fitness journey. What's appropriate for someone in their 20s might not be suitable for someone in their 60s.
+
+That's why I'd be much more effective if you share:
+- Your fitness background and current level
+- Any specific goals you have
+- Physical considerations or limitations
+- What kind of fitness activities you enjoy or have access to
+- Your schedule constraints
+
+The more context you provide, the more tailored and relevant my guidance can be. Would you like to share some of this information so I can better assist you?
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
+Message 11 (HumanMessage):
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: I’m the developer, and I think I’ll initiate future conversations by giving you user’s name, goals, training history, past injuries, and workout performance analysis.
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
+Message 12 (AIMessage):
+2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: That's excellent! As the developer, you've identified exactly what would make this fitness coaching AI most effective. Providing that initial context about each user will dramatically improve the quality and relevance of the guidance I can offer.
+
+Having information like:
+- The user's name (for personalized communication)
+- Their specific fitness goals (strength, weight loss, endurance, etc.)
+- Training history (experience level, past routines)
+- Injury history (for safety and appropriate modifications)
+- Performance data (to track progress and make data-driven recommendations)
+
+This contextual foundation will allow me to give much more tailored advice from the very beginning of each conversation, making the experience more valuable for users.
+
+Is there anything specific you'd like to adjust about how I process or respond to this information? Or any particular aspects of fitness coaching you want to ensure I emphasize?
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
+Message 13 (HumanMessage):
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Can you see any earlier message
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
+Message 14 (HumanMessage):
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Can you see earlier messages?
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
+Message 15 (AIMessage):
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: No, I can't see any messages from previous conversations. Each time a new conversation starts, I only have access to the messages within that current conversation. 
+
+I don't have any memory of past interactions with you or any other users outside of what's shared in our current exchange. That's why providing that initial context about the user at the beginning of each conversation (name, goals, training history, injuries, and performance data) would be so valuable - it gives me the information I need to provide relevant guidance right from the start.
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
+Message 16 (HumanMessage):
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Do you know who I am?
+2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
+Message 17 (AIMessage):
