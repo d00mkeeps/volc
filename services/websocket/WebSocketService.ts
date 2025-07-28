@@ -1,149 +1,165 @@
-// WebSocketService.ts
-import EventEmitter from 'eventemitter3';
-import Toast from 'react-native-toast-message';
-import { getWsBaseUrl } from '../api/core/apiClient';
-import { ChatConfigName, Message } from '@/types';
+// services/websocket/WebSocketService.ts
+import EventEmitter from "eventemitter3";
+import Toast from "react-native-toast-message";
+import { getWsBaseUrl } from "../api/core/apiClient";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
 export type TerminationCallback = (reason: string) => void;
 export type ErrorCallback = (error: Error) => void;
 
-export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
+export type ConnectionState =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "reconnecting";
 
-export type WebSocketSendMessage = 
-  | { type: 'message', data: string }
-  | { type: 'initialize', data: Message[] }
-  | { type: string, [key: string]: any }
-  | { message: string, [key: string]: any };
-  
-export type WebSocketReceiveMessage = 
-  | { type: 'content', data: string }
-  | { type: 'done', reason?: string }
-  | { type: 'error', error: string };
-
-let connectionCounter = 0;
-  /**
- * Ephemeral WebSocket service - connects per message, disconnects after completion
+/**
+ * Persistent WebSocket service - maintains single active connection per conversation
  */
 export class WebSocketService {
-  private connectionId = ++connectionCounter;
-
   private socket: WebSocket | null = null;
+  private currentConversationId: string | null = null;
+  private connectionState: ConnectionState = "disconnected";
   private events = new EventEmitter();
-  private connectionState: ConnectionState = 'disconnected';
-  private streamStartTime: number | null = null;
-  private lastContentTime: number | null = null;
+
+  // Timers
+  private inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Retry logic
   private retryAttempts = 0;
   private maxRetries = 3;
   private retryDelays = [1000, 3000, 5000]; // 1s, 3s, 5s
-  private retryTimeout: ReturnType<typeof setTimeout> | null = null;
-  
+
+  // Activity tracking
+  private lastActivity: number = Date.now();
+
   /**
-   * Connect and send complete message bundle
+   * Ensure connection to current conversation from session store
    */
-  public async connectAndSend(
-    configName: ChatConfigName, 
-    conversationId: string, 
-    payload: any
-  ): Promise<void> {
-    this.retryAttempts = 0;
-    return this.attemptConnectionAndSend(configName, conversationId, payload);
-  }
+  async ensureConnection(): Promise<void> {
+    const sessionConversationId =
+      useUserSessionStore.getState().activeConversationId;
 
-  private async attemptConnectionAndSend(
-    configName: ChatConfigName,
-    conversationId: string, 
-    payload: any
-  ): Promise<void> {
-    try {
-      await this.connect(configName, conversationId);
-      this.sendMessage(payload);
-    } catch (error) {
-      await this.handleRetry(configName, conversationId, payload, error);
-    }
-  }
-
-  private async handleRetry(
-    configName: ChatConfigName,
-    conversationId: string,
-    payload: any,
-    error: any
-  ): Promise<void> {
-    this.retryAttempts++;
-    
-    if (this.retryAttempts > this.maxRetries) {
-      Toast.show({
-        type: 'error',
-        text1: 'Connection Failed',
-        text2: 'Please check your network connection',
-        visibilityTime: 5000
-      });
-      throw error;
+    if (!sessionConversationId) {
+      throw new Error("No active conversation in session");
     }
 
-    const delay = this.retryDelays[this.retryAttempts - 1];
-    const attemptText = this.retryAttempts === 1 ? 'Retrying connection...' : 
-                      this.retryAttempts === 2 ? 'Still trying to connect...' : 
-                      'Final connection attempt...';
-    
-    Toast.show({
-      type: 'info',
-      text1: 'Connection Issue',
-      text2: attemptText,
-      visibilityTime: 3000
-    });
+    // Already connected to same conversation
+    if (
+      this.currentConversationId === sessionConversationId &&
+      this.isConnected()
+    ) {
+      this.resetInactivityTimer();
+      return;
+    }
 
-    this.retryTimeout = setTimeout(async () => {
-      try {
-        await this.attemptConnectionAndSend(configName, conversationId, payload);
-      } catch (retryError) {
-        // Will trigger another retry or final failure
-      }
-    }, delay);
+    // Different conversation - disconnect and reconnect
+    if (this.currentConversationId !== sessionConversationId) {
+      console.log(
+        `[WebSocket] Switching conversation: ${this.currentConversationId} → ${sessionConversationId}`
+      );
+      this.disconnect();
+    }
+
+    await this.connect(sessionConversationId);
   }
 
-  private async connect(configName: ChatConfigName, conversationId: string): Promise<void> {
+  /**
+   * Send message on current connection
+   */
+  sendMessage(payload: any): void {
+    if (!this.isConnected()) {
+      throw new Error("Not connected - call ensureConnection() first");
+    }
+
+    this.socket!.send(JSON.stringify(payload));
+    this.resetInactivityTimer();
+
+    console.log(
+      `[WebSocket] Sent ${
+        JSON.stringify(payload).length
+      } characters to conversation: ${this.currentConversationId}`
+    );
+  }
+
+  /**
+   * Clean disconnect and cleanup
+   */
+  disconnect(): void {
+    console.log(
+      `[WebSocket] Disconnecting from conversation: ${this.currentConversationId}`
+    );
+
     this.cleanup();
-    this.setConnectionState('connecting');
-    
+    this.currentConversationId = null;
+    this.setConnectionState("disconnected");
+  }
+
+  /**
+   * Get current connection state
+   */
+  getConnectionState(): ConnectionState {
+    return this.connectionState;
+  }
+
+  /**
+   * Check if currently connected
+   */
+  isConnected(): boolean {
+    return this.socket?.readyState === WebSocket.OPEN;
+  }
+
+  // PRIVATE METHODS
+
+  /**
+   * Internal connection logic
+   */
+  private async connect(conversationId: string): Promise<void> {
+    this.cleanup();
+    this.setConnectionState("connecting");
+    this.currentConversationId = conversationId;
+
     const baseUrl = await getWsBaseUrl();
+    const configName = "workout-analysis"; // Could be dynamic later
     const url = `${baseUrl}/${configName}/${conversationId}`;
-    const connectionId = ++connectionCounter;
-    
+
     this.socket = new WebSocket(url);
-    this.streamStartTime = null;
-    this.lastContentTime = null;
-    
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error('Connection timeout'));
+        reject(new Error("Connection timeout"));
       }, 10000);
 
       this.socket!.onopen = () => {
         clearTimeout(timeout);
-        this.setConnectionState('connected');
-        
-console.log(`[ws_${connectionId.toString().padStart(2, '0')}] Connection established for ${configName}/${conversationId}`);
+        this.setConnectionState("connected");
+        this.retryAttempts = 0; // Reset retry counter on successful connection
+        this.resetInactivityTimer();
 
+        console.log(`[WebSocket] Connected to conversation: ${conversationId}`);
         resolve();
       };
 
       this.socket!.onclose = (event) => {
         clearTimeout(timeout);
-        this.setConnectionState('disconnected');
-        
-        if (this.streamStartTime && !event.wasClean) {
-          this.events.emit('terminated', 'connection_lost');
+        console.log(
+          `[WebSocket] Connection closed - code: ${event.code}, clean: ${event.wasClean}`
+        );
+
+        this.handleDisconnect();
+
+        if (!event.wasClean) {
+          reject(new Error(`Connection closed: ${event.code}`));
         }
-        
-        reject(new Error(`Connection closed: ${event.code}`));
       };
 
-      this.socket!.onerror = () => {
+      this.socket!.onerror = (error) => {
         clearTimeout(timeout);
-        this.setConnectionState('error');
-        reject(new Error('WebSocket connection error'));
+        console.error("[WebSocket] Connection error:", error);
+        reject(new Error("WebSocket connection error"));
       };
 
       this.socket!.onmessage = (event) => {
@@ -152,127 +168,220 @@ console.log(`[ws_${connectionId.toString().padStart(2, '0')}] Connection establi
     });
   }
 
+  /**
+   * Auto-reconnect on unexpected disconnect
+   */
+  private scheduleReconnect(): void {
+    if (this.retryAttempts >= this.maxRetries) {
+      console.error("[WebSocket] Max reconnection attempts reached");
+      this.setConnectionState("disconnected");
+
+      Toast.show({
+        type: "error",
+        text1: "Connection Failed",
+        text2: "Unable to reconnect to chat service",
+        visibilityTime: 5000,
+      });
+      return;
+    }
+
+    const delay = this.retryDelays[this.retryAttempts];
+    this.retryAttempts++;
+    this.setConnectionState("reconnecting");
+
+    console.log(
+      `[WebSocket] Scheduling reconnect in ${delay}ms (attempt ${this.retryAttempts}/${this.maxRetries})`
+    );
+
+    Toast.show({
+      type: "info",
+      text1: "Reconnecting...",
+      text2: `Attempt ${this.retryAttempts}/${this.maxRetries}`,
+      visibilityTime: 3000,
+    });
+
+    this.reconnectTimer = setTimeout(async () => {
+      try {
+        const currentConversationId = this.currentConversationId;
+        if (currentConversationId) {
+          await this.connect(currentConversationId);
+        }
+      } catch (error) {
+        console.error("[WebSocket] Reconnection failed:", error);
+        this.scheduleReconnect(); // Try again
+      }
+    }, delay);
+  }
+
+  /**
+   * Reset 5-minute inactivity timer
+   */
+  private resetInactivityTimer(): void {
+    this.lastActivity = Date.now();
+
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+    }
+
+    this.inactivityTimer = setTimeout(() => {
+      this.handleInactivity();
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  /**
+   * Handle 5-minute inactivity timeout
+   */
+  private handleInactivity(): void {
+    console.log("[WebSocket] Inactivity timeout reached - disconnecting");
+
+    Toast.show({
+      type: "info",
+      text1: "Chat Disconnected",
+      text2: "Disconnected due to inactivity",
+      visibilityTime: 3000,
+    });
+
+    this.disconnect();
+  }
+
+  /**
+   * Handle incoming WebSocket messages
+   */
   private handleMessage(event: MessageEvent): void {
+    this.resetInactivityTimer(); // Reset timer on any message received
+
     try {
-      const message = JSON.parse(event.data) as WebSocketReceiveMessage;
-      const now = Date.now();
-      
+      const message = JSON.parse(event.data);
+
       switch (message.type) {
-        case 'content':
-          if (!this.streamStartTime) {
-            this.streamStartTime = now;
+        case "content":
+          if (message.data) {
+            this.events.emit("message", message.data);
           }
-          this.lastContentTime = now;
-          this.events.emit('message', message.data);
           break;
-          
-        case 'done':
-          this.handleCompletion(message.reason);
+
+        case "done":
+          this.events.emit("complete");
           break;
-          
-        case 'error':
-          this.events.emit('error', new Error(message.error));
-          this.disconnect();
+
+        case "error":
+          console.error("[WebSocket] Server error:", message.error);
+          this.events.emit("error", new Error(message.error || "Server error"));
           break;
+
+        case "connection_status":
+          console.log("[WebSocket] Connection status:", message.data);
+          break;
+
+        case "heartbeat_ack":
+          // Handle heartbeat acknowledgment (future use)
+          console.log("[WebSocket] Heartbeat acknowledged");
+          break;
+
+        default:
+          console.warn("[WebSocket] Unknown message type:", message.type);
       }
     } catch (error) {
-      this.events.emit('error', new Error('Failed to parse WebSocket message'));
+      console.error("[WebSocket] Failed to parse message:", error);
+      this.events.emit("error", new Error("Failed to parse WebSocket message"));
     }
   }
 
-  private handleCompletion(reason?: string): void {
-    const now = Date.now();
-    let wasTerminated = false;
-    
-    // Detect premature termination
-    if (reason === 'token_limit' || reason === 'length_limit') {
-      wasTerminated = true;
-    } else if (this.streamStartTime && this.lastContentTime) {
-      const streamDuration = now - this.streamStartTime;
-      const timeSinceLastContent = now - this.lastContentTime;
-      
-      if (streamDuration < 500 || timeSinceLastContent > 5000) {
-        wasTerminated = true;
-        reason = reason || 'timeout';
-      }
-    }
+  /**
+   * Handle connection disconnect
+   */
+  private handleDisconnect(): void {
+    this.setConnectionState("disconnected");
 
-    this.streamStartTime = null;
-    this.lastContentTime = null;
+    // Only auto-reconnect if we still have an active conversation and it wasn't a clean disconnect
+    const currentSessionConversationId =
+      useUserSessionStore.getState().activeConversationId;
 
-    if (wasTerminated) {
-      this.events.emit('terminated', reason || 'unknown');
+    if (
+      this.currentConversationId &&
+      this.currentConversationId === currentSessionConversationId &&
+      this.retryAttempts < this.maxRetries
+    ) {
+      console.log("[WebSocket] Unexpected disconnect - scheduling reconnect");
+      this.scheduleReconnect();
     } else {
-      this.events.emit('complete');
+      console.log("[WebSocket] Normal disconnect - not reconnecting");
     }
-
-    // Auto-disconnect after completion
-    setTimeout(() => this.disconnect(), 100);
   }
 
-  public sendMessage(payload: any): void {
-    if (!this.isConnected()) {
-      throw new Error('Cannot send message: not connected');
-    }
-    
-    this.socket!.send(JSON.stringify(payload));
-    console.log(`[ws_${this.connectionId.toString().padStart(2, '0')}] Sending ${JSON.stringify(payload).length} characters to WebSocket`);
-  }
-
-  public disconnect(): void {
-    this.cleanup();
-    this.setConnectionState('disconnected');
-  }
-
-  private cleanup(): void {
-    if (this.retryTimeout) {
-      clearTimeout(this.retryTimeout);
-      this.retryTimeout = null;
-    }
-    
-    if (this.socket) {
-      this.socket.close(1000, 'Normal closure');
-      this.socket = null;
-    }
-    
-    // Auto-cleanup: remove all event listeners
-    this.events.removeAllListeners();
-  }
-
-  // Event registration
-  public onMessage(callback: MessageCallback): () => void {
-    this.events.on('message', callback);
-    return () => this.events.off('message', callback);
-  }
-
-  public onComplete(callback: CompletionCallback): () => void {
-    this.events.on('complete', callback);
-    return () => this.events.off('complete', callback);
-  }
-
-  public onTerminated(callback: TerminationCallback): () => void {
-    this.events.on('terminated', callback);
-    return () => this.events.off('terminated', callback);
-  }
-
-  public onError(callback: ErrorCallback): () => void {
-    this.events.on('error', callback);
-    return () => this.events.off('error', callback);
-  }
-
-  // Status methods
-  public isConnected(): boolean {
-    return this.socket?.readyState === WebSocket.OPEN;
-  }
-
-  public getConnectionState(): ConnectionState {
-    return this.connectionState;
-  }
-
+  /**
+   * Set connection state and emit events if needed
+   */
   private setConnectionState(state: ConnectionState): void {
     if (this.connectionState !== state) {
       this.connectionState = state;
+      console.log(`[WebSocket] State changed: ${state}`);
     }
+  }
+
+  /**
+   * Clean up all timers and connections
+   */
+  private cleanup(): void {
+    // Clear timers
+    if (this.inactivityTimer) {
+      clearTimeout(this.inactivityTimer);
+      this.inactivityTimer = null;
+    }
+
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    // Close socket
+    if (this.socket) {
+      this.socket.close(1000, "Normal closure");
+      this.socket = null;
+    }
+
+    // Don't clear event listeners - they're managed by components
+  }
+
+  // PUBLIC EVENT REGISTRATION
+
+  /**
+   * Register message content handler
+   */
+  onMessage(callback: MessageCallback): () => void {
+    this.events.on("message", callback);
+    return () => this.events.off("message", callback);
+  }
+
+  /**
+   * Register completion handler
+   */
+  onComplete(callback: CompletionCallback): () => void {
+    this.events.on("complete", callback);
+    return () => this.events.off("complete", callback);
+  }
+
+  /**
+   * Register termination handler
+   */
+  onTerminated(callback: TerminationCallback): () => void {
+    this.events.on("terminated", callback);
+    return () => this.events.off("terminated", callback);
+  }
+
+  /**
+   * Register error handler
+   */
+  onError(callback: ErrorCallback): () => void {
+    this.events.on("error", callback);
+    return () => this.events.off("error", callback);
+  }
+
+  /**
+   * Remove all event listeners (for cleanup)
+   */
+  removeAllListeners(): void {
+    this.events.removeAllListeners();
   }
 }
 
@@ -289,6 +398,7 @@ export const getWebSocketService = (): WebSocketService => {
 export const cleanup = (): void => {
   if (webSocketServiceInstance) {
     webSocketServiceInstance.disconnect();
+    webSocketServiceInstance.removeAllListeners();
     webSocketServiceInstance = null;
   }
 };

@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 import logging
 import json
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_anthropic import ChatAnthropic
 from app.schemas.workout_data_bundle import WorkoutDataBundle
@@ -181,3 +180,19 @@ TOP PERFORMERS:
                 "messages": self.messages,
                 "current_message": ""
             }
+        
+
+def load_bundles(self, bundles: List) -> None:
+    """Load workout bundles into context"""
+    from app.schemas.workout_data_bundle import WorkoutDataBundle
+    
+    # Ensure all bundles are WorkoutDataBundle instances
+    valid_bundles = []
+    for bundle in bundles:
+        if isinstance(bundle, WorkoutDataBundle):
+            valid_bundles.append(bundle)
+        else:
+            logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
+    
+    self._data_bundles = valid_bundles.copy()
+    logger.info(f"Loaded {len(self._data_bundles)} workout bundles into conversation context")

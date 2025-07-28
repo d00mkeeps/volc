@@ -1,11 +1,4 @@
-// components/chat/molecules/MessageList.tsx
-import React, {
-  useCallback,
-  useRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
 import { YStack, Text } from "tamagui";
 import { MessageItem } from "../../atoms/MessageItem";
@@ -23,34 +16,35 @@ export const MessageList = ({
   const listRef = useRef<FlatList>(null);
 
   const allMessages = useMemo(() => {
-    if (!streamingMessage) return messages;
+    const safeMessages = Array.isArray(messages) ? messages : [];
+
+    if (!streamingMessage) {
+      return safeMessages;
+    }
 
     const tempStreamingMessage: Message = {
       id: "streaming",
-      content: streamingMessage.content,
+      content: streamingMessage.content || "",
       sender: "assistant",
-      conversation_id: messages[0]?.conversation_id || "",
-      conversation_sequence: messages.length + 1,
+      conversation_id: safeMessages[0]?.conversation_id || "",
+      conversation_sequence: safeMessages.length + 1,
       timestamp: new Date(),
     };
 
-    return [...messages, tempStreamingMessage];
+    return [...safeMessages, tempStreamingMessage];
   }, [messages, streamingMessage]);
 
-  // Only auto-scroll for new actual messages, not streaming
   useEffect(() => {
     if (allMessages.length > 0) {
       listRef.current?.scrollToEnd({ animated: true });
     }
   }, [allMessages.length]);
 
-  const renderMessage = useCallback(
-    ({ item }: { item: Message }) => (
-      <MessageItem message={item} isStreaming={item.id === "streaming"} />
-    ),
-    []
-  );
-  // Key extractor
+  const renderMessage = useCallback(({ item }: { item: Message }) => {
+    if (!item) return null;
+    return <MessageItem message={item} isStreaming={item.id === "streaming"} />;
+  }, []);
+
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
   if (allMessages.length === 0) {

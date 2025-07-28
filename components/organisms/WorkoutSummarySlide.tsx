@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { YStack, Text, Input, Button, TextArea, Card } from "tamagui";
+import React, { useState } from "react";
+import { YStack, Text, Input, Button, TextArea } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutSummarySlideProps {
@@ -21,7 +21,7 @@ export function WorkoutSummarySlide({
 
     return (
       currentWorkout?.workout_exercises
-        ?.map((exercise) => `--- ${exercise.name} ---\n\n`)
+        ?.map((exercise) => `${exercise.name}:\n\n`)
         .join("\n") || ""
     );
   });
@@ -87,16 +87,14 @@ export function WorkoutSummarySlide({
           value={workoutNotes}
           onChangeText={setWorkoutNotes}
           placeholder="Add notes for your workout..."
-          minHeight={200}
+          minHeight={300}
           backgroundColor="$background"
         />
       </YStack>
 
-      {showContinueButton && (
-        <Button size="$4" backgroundColor="$primary" onPress={handleContinue}>
-          Continue to Coach
-        </Button>
-      )}
+      <Button size="$4" backgroundColor="$primary" onPress={handleContinue}>
+        Continue to Coach
+      </Button>
     </YStack>
   );
 }

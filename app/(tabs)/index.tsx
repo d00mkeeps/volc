@@ -16,25 +16,34 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { EMPTY_WORKOUT_TEMPLATE } from "@/mockdata";
 import { CompleteWorkout } from "@/types/workout";
-
+let count = 0;
 export default function HomeScreen() {
+  console.log(`=== homescreen render count: ${count} ===`);
+  count++;
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
 
+  // With selective selectors:
+  const isActive = useUserSessionStore((state) => state.isActive);
+  const currentWorkout = useUserSessionStore((state) => state.currentWorkout);
+  const showTemplateSelector = useUserSessionStore(
+    (state) => state.showTemplateSelector
+  );
+  const selectedTemplate = useUserSessionStore(
+    (state) => state.selectedTemplate
+  );
+
+  // Actions can be accessed directly:
   const {
-    isActive,
     startWorkout,
     finishWorkout,
-    currentWorkout,
-    showTemplateSelector,
-    selectedTemplate,
     closeTemplateSelector,
     openTemplateSelector,
     selectTemplate,
     resetSession,
-  } = useUserSessionStore();
+  } = useUserSessionStore.getState();
 
   const { templates } = useWorkoutTemplates(userProfile?.user_id?.toString());
 

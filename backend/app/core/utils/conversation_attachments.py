@@ -1,8 +1,10 @@
+# app/core/utils/conversation_attachments.py
+
 from app.core.supabase.client import SupabaseClient
-from typing import Dict, List, Any, Optional, NamedTuple
+from typing import Dict, List, Any, NamedTuple
 import logging
 
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from app.schemas.workout_data_bundle import WorkoutDataBundle
 
 logger = logging.getLogger(__name__)
@@ -99,6 +101,11 @@ class ConversationAttachmentsService(BaseDBService):
         
         for bundle_raw in raw_bundles:
             try:
+                # Only process bundles with 'complete' status
+                if bundle_raw.get('status') != 'complete':
+                    logger.info(f"Skipping bundle {bundle_raw.get('id')} with status: {bundle_raw.get('status')}")
+                    continue
+                    
                 # Reconstruct the bundle from separate JSONB fields
                 bundle_data = {
                     'metadata': bundle_raw.get('metadata', {}),
@@ -107,6 +114,7 @@ class ConversationAttachmentsService(BaseDBService):
                     'consistency_metrics': bundle_raw.get('consistency_metrics', {}),
                     'correlation_data': bundle_raw.get('correlation_data', {}),
                     'chart_urls': bundle_raw.get('chart_urls', {}),
+                    'status': bundle_raw.get('status', 'unknown'),  # Include status
                 }
                 
                 # Create WorkoutDataBundle instance
@@ -152,9 +160,12 @@ class ConversationAttachmentsService(BaseDBService):
             raw_messages = raw_data.get('messages') or []
             langchain_messages = self._convert_messages_to_langchain(raw_messages)
             
-            # Extract and convert analysis bundles
+            # Extract and convert analysis bundles (only complete ones)
             raw_bundles = raw_data.get('analysis_bundles') or []
             workout_bundles = self._convert_bundles_to_workout_data(raw_bundles)
+            
+            # Check for pending/in_progress bundles for retry logic
+            pending_bundles = [b for b in raw_bundles if b.get('status') in ['pending', 'in_progress']]
             
             # Create context object
             context = ConversationContext(
@@ -162,7 +173,9 @@ class ConversationAttachmentsService(BaseDBService):
                 bundles=workout_bundles
             )
             
-            logger.info(f"Successfully loaded {len(langchain_messages)} messages and {len(workout_bundles)} bundles for conversation {conversation_id}")
+            logger.info(f"Successfully loaded {len(langchain_messages)} messages and {len(workout_bundles)} complete bundles for conversation {conversation_id}")
+            if pending_bundles:
+                logger.info(f"Found {len(pending_bundles)} pending/in_progress bundles")
             
             return await self.format_response(context)
             

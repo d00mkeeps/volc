@@ -1,7 +1,7 @@
 const config = {
 expo: {
-name: "trainsmart",
-slug: "trainsmart",
+name: "Volc",
+slug: "Volc",
 version: "1.0.0",
 orientation: "portrait",
 icon: "./assets/images/icon.png",

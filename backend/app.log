@@ -1,23 +1,119 @@
-2025-07-23 18:22:51,521 - app.services.db.workout_service - INFO - Exercise created: Cable lateral raise with ID: fe96b535-a75e-4e64-b89f-d1be31e1da02
-2025-07-23 18:22:51,783 - app.services.db.workout_service - INFO - Workout creation complete for ID: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:22:51,794 - app.main - INFO - Response status: 200
-2025-07-23 18:22:52,302 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-23 18:22:52,387 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 23 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 18:22:52,451 - app.services.db.conversation_service - INFO - Empty conversation created with ID: c898bf51-3cd2-488e-ac8b-e2eea94bd842
-2025-07-23 18:22:52,451 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: c898bf51-3cd2-488e-ac8b-e2eea94bd842
-2025-07-23 18:22:52,452 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['b8d098e2-0cd1-4992-84b1-fd8a5c51a83f', '53d5978d-2a80-4b99-91f5-f315f4ba9ffc', '46a6427a-127d-4127-9219-884075d863e8', '9b15f600-cc20-463c-bc73-6e05ee8cc77e', '1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9', 'fda6110e-01b3-4988-aaa7-b4ff8f7199a9', 'af7ba166-f9c1-4909-871a-e3784ea9d83e', '194b066b-7df2-4b2d-9ac2-1daa2da019bb']
-2025-07-23 18:22:52,630 - app.services.db.workout_service - INFO - RPC returned: 113 workouts
-2025-07-23 18:22:52,631 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 113 workouts
-2025-07-23 18:22:52,634 - app.services.db.analysis_service - INFO - Saving analysis bundle: c7cc8bca-efca-40db-a18f-f7e47f2b6d74
-2025-07-23 18:22:53,769 - app.services.db.analysis_service - INFO - Bundle saved successfully with ID: c7cc8bca-efca-40db-a18f-f7e47f2b6d74
-2025-07-23 18:22:53,770 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation c898bf51-3cd2-488e-ac8b-e2eea94bd842
-2025-07-23 18:22:53,770 - app.main - INFO - Response status: 200
-2025-07-23 18:22:53,805 - app.main - INFO - Request: GET /api/dashboard
-2025-07-23 18:22:53,805 - app.main - INFO - Response status: 200
-2025-07-23 18:23:49,605 - app.main - INFO - Request: PUT /db/workouts/55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:49,912 - app.api.endpoints.db - INFO - API request to update workout: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:49,913 - app.services.db.workout_service - INFO - Getting workout: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:50,047 - app.services.db.workout_service - INFO - Successfully retrieved workout: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:50,048 - app.services.db.workout_service - INFO - Updating workout: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:52,087 - app.services.db.workout_service - INFO - Successfully updated workout: 55b681c4-aa45-4604-9269-a9e77c548545
-2025-07-23 18:23:52,089 - app.main - INFO - Response status: 200
+2025-07-28 12:11:08,733 - app.services.db.message_service - INFO - Saving assistant message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:11:08,816 - app.services.db.message_service - INFO - Message saved with ID: 3fe2ccd5-aecb-41f8-a063-3aed9800a97e
+2025-07-28 12:11:08,817 - app.main - INFO - Response status: 200
+2025-07-28 12:12:03,783 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
+2025-07-28 12:12:03,984 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:03,984 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:04,197 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:04,197 - app.services.db.message_service - INFO - Saving user message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:04,331 - app.services.db.message_service - INFO - Message saved with ID: 3abcba62-773b-4411-95df-0fb32269f95a
+2025-07-28 12:12:04,332 - app.main - INFO - Response status: 200
+2025-07-28 12:12:04,406 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-07-28 12:12:04,406 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-07-28 12:12:04,406 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
+
+
+Current workout data context:
+Available workout data:
+            {
+  "available_data": []
+}
+
+Visualizations and metrics:
+No workout data available
+2025-07-28 12:12:04,407 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-07-28 12:12:04,407 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 12:12:04,407 - app.services.chains.base_conversation_chain - INFO - 
+Message 3 (HumanMessage):
+2025-07-28 12:12:04,407 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 12:12:04,407 - app.services.chains.base_conversation_chain - INFO - 
+Message 4 (HumanMessage):
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - 
+Message 5 (HumanMessage):
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - 
+Message 6 (HumanMessage):
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - 
+Message 7 (AIMessage):
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! 👋
+
+Welcome to your fitness coaching session. I'd be happy to help you with any fitness goals or questions you might have! Is there something specific you'd like to discuss today? For example:
+
+- Creating a workout plan
+- Nutrition advice
+- Form tips for specific exercises
+- Training for a particular goal
+- Tracking your fitness progress
+
+Let me know what you're interested in, and we can take it from there!
+2025-07-28 12:12:04,408 - app.services.chains.base_conversation_chain - INFO - 
+Message 8 (HumanMessage):
+2025-07-28 12:12:04,409 - app.services.chains.base_conversation_chain - INFO - Content: Who are you? Who am I?
+2025-07-28 12:12:04,409 - app.services.chains.base_conversation_chain - INFO - 
+Message 9 (AIMessage):
+2025-07-28 12:12:04,409 - app.services.chains.base_conversation_chain - INFO - Content: I'm your AI fitness coach, designed to provide guidance and support for your fitness journey. I can help with workout plans, form tips, nutrition advice, and tracking your progress.
+
+As for who you are - you're the person I'm here to assist! I don't have any specific information about you unless you share it with me. I don't know your name, fitness level, or personal details until you choose to tell me.
+
+Would you like to share a bit about yourself and your fitness goals so I can provide more personalized advice? Things like your experience level, what types of activities you enjoy, or what you're hoping to achieve would be helpful.
+2025-07-28 12:12:04,410 - app.services.chains.base_conversation_chain - INFO - 
+Message 10 (HumanMessage):
+2025-07-28 12:12:04,416 - app.services.chains.base_conversation_chain - INFO - Content: Context is the most important part of ai applications! Intelligence is useless in a vacuum
+2025-07-28 12:12:04,416 - app.services.chains.base_conversation_chain - INFO - 
+Message 11 (AIMessage):
+2025-07-28 12:12:04,417 - app.services.chains.base_conversation_chain - INFO - Content: You're absolutely right! Context is crucial for AI applications to be truly useful. Without understanding your specific situation, goals, and constraints, any advice I provide would be generic at best and potentially unhelpful at worst.
+
+Intelligence - whether human or artificial - needs context to be meaningful and applicable. In fitness especially, personalization matters tremendously. What works for a competitive athlete wouldn't work for someone just starting their fitness journey. What's appropriate for someone in their 20s might not be suitable for someone in their 60s.
+
+That's why I'd be much more effective if you share:
+- Your fitness background and current level
+- Any specific goals you have
+- Physical considerations or limitations
+- What kind of fitness activities you enjoy or have access to
+- Your schedule constraints
+
+The more context you provide, the more tailored and relevant my guidance can be. Would you like to share some of this information so I can better assist you?
+2025-07-28 12:12:04,417 - app.services.chains.base_conversation_chain - INFO - 
+Message 12 (HumanMessage):
+2025-07-28 12:12:04,417 - app.services.chains.base_conversation_chain - INFO - Content: I’m the developer, and I think I’ll initiate future conversations by giving you user’s name, goals, training history, past injuries, and workout performance analysis.
+2025-07-28 12:12:04,417 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-07-28 12:12:10,933 - app.main - INFO - Request: POST /db/conversations/bfa3c16f-39fa-4797-83e4-d3a4fae8ef55/messages
+2025-07-28 12:12:11,124 - app.api.endpoints.db - INFO - API request to save message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:11,125 - app.services.db.conversation_service - INFO - Getting conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:11,316 - app.services.db.conversation_service - INFO - Retrieved conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:11,317 - app.services.db.message_service - INFO - Saving assistant message to conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-28 12:12:11,437 - app.services.db.message_service - INFO - Message saved with ID: 984bb614-fc08-4b97-b25c-48f91c571712
+2025-07-28 12:12:11,439 - app.main - INFO - Response status: 200
+2025-07-28 12:12:31,419 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 140, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
+    self._raise_on_disconnect(message)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-07-28 12:12:32,908 - app.main - INFO - Request: GET /db/user-profile
+2025-07-28 12:12:33,091 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:33,092 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:33,258 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:33,259 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-28 12:12:33,259 - app.main - INFO - Response status: 200
+2025-07-28 12:12:33,367 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-28 12:12:33,367 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-28 12:12:33,530 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-28 12:12:33,535 - app.main - INFO - Request: GET /api/dashboard
+2025-07-28 12:12:33,536 - app.main - INFO - Response status: 200
+2025-07-28 12:12:33,537 - app.main - INFO - Response status: 200
+2025-07-28 12:12:33,680 - app.main - INFO - Request: GET /db/workouts/user
+2025-07-28 12:12:33,786 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:33,786 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:34,168 - app.services.db.workout_service - INFO - Retrieved 235 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:34,169 - app.api.endpoints.db - INFO - Retrieved 235 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-28 12:12:34,243 - app.main - INFO - Response status: 200

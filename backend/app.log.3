@@ -1,89 +1,106 @@
-2025-07-23 15:42:05,483 - app.main - INFO - Request: GET /db/user-profile
-2025-07-23 15:42:05,884 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:05,885 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:06,055 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:06,056 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-07-23 15:42:06,160 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-07-23 15:42:06,160 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-07-23 15:42:06,298 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-07-23 15:42:06,304 - app.main - INFO - Response status: 200
-2025-07-23 15:42:06,304 - app.main - INFO - Request: GET /api/dashboard
-2025-07-23 15:42:06,305 - app.main - INFO - Response status: 200
-2025-07-23 15:42:06,306 - app.main - INFO - Response status: 200
-2025-07-23 15:42:06,463 - app.main - INFO - Request: GET /db/workouts/user
-2025-07-23 15:42:06,564 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:06,564 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:06,812 - app.services.db.workout_service - INFO - Retrieved 209 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:06,813 - app.api.endpoints.db - INFO - Retrieved 209 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:42:07,132 - app.main - INFO - Response status: 200
-2025-07-23 15:43:50,030 - app.main - INFO - Request: POST /db/workouts
-2025-07-23 15:43:50,424 - app.api.endpoints.db - INFO - API request to create workout: Wednesday arm day
-2025-07-23 15:43:50,424 - app.services.db.workout_service - INFO - Creating workout: Wednesday arm day for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:43:50,425 - app.services.db.workout_service - INFO - Inserting workout with data: Wednesday arm day, None
-2025-07-23 15:43:50,627 - app.services.db.workout_service - INFO - Workout created with ID: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:43:50,627 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:43:50,627 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-07-23 15:43:50,756 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: f0eedecb-78d3-4750-ac0c-3eba0ec640c7
-2025-07-23 15:43:51,036 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-07-23 15:43:51,099 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 4692f591-5c83-4831-aad2-e70b41803364
-2025-07-23 15:43:51,409 - app.services.db.workout_service - INFO - Workout creation complete for ID: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:43:51,411 - app.main - INFO - Response status: 200
-2025-07-23 15:43:51,621 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-23 15:43:51,731 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 23 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-23 15:43:51,838 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 5290738b-ad98-4082-a93e-3203a4496a57
-2025-07-23 15:43:51,838 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 5290738b-ad98-4082-a93e-3203a4496a57
-2025-07-23 15:43:51,839 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-07-23 15:43:51,929 - app.services.db.workout_service - INFO - RPC returned: 34 workouts
-2025-07-23 15:43:51,929 - app.services.workout_analysis_service - INFO - Proceeding with analysis for 34 workouts
-2025-07-23 15:43:51,930 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: 1rm_change
-2025-07-23 15:43:51,931 - app.services.workout_analysis.graph_service - INFO - Top 1rm_change performers: ['Barbell Back Squat', 'Barbell Skull Crusher', 'Preacher Curl']
-2025-07-23 15:43:51,931 - app.services.workout_analysis.graph_service - INFO - Getting top performers for metric: volume_change
-2025-07-23 15:43:51,932 - app.services.workout_analysis.graph_service - INFO - Top volume_change performers: ['Preacher Curl', 'Barbell Back Squat', 'Barbell Skull Crusher']
-2025-07-23 15:43:51,932 - app.services.workout_analysis.graph_service - INFO - Added 29 data points for Barbell Back Squat to strength chart
-2025-07-23 15:43:51,932 - app.services.workout_analysis.graph_service - INFO - Added 4 data points for Barbell Skull Crusher to strength chart
-2025-07-23 15:43:51,932 - app.services.workout_analysis.graph_service - INFO - Added 34 data points for Preacher Curl to strength chart
-2025-07-23 15:43:51,932 - app.services.workout_analysis.graph_service - INFO - Strength chart contains 3 exercises with data
-2025-07-23 15:44:15,201 - app.services.workout_analysis.graph_service - INFO - Generating volume chart for 3 exercises
-2025-07-23 15:44:15,203 - app.services.workout_analysis.graph_service - INFO - Added 34 data points for Preacher Curl to volume chart
-2025-07-23 15:44:15,203 - app.services.workout_analysis.graph_service - INFO - Added 29 data points for Barbell Back Squat to volume chart
-2025-07-23 15:44:15,203 - app.services.workout_analysis.graph_service - INFO - Added 4 data points for Barbell Skull Crusher to volume chart
-2025-07-23 15:44:15,203 - app.services.workout_analysis.graph_service - INFO - Volume chart contains 3 exercises with data
-2025-07-23 15:45:02,700 - app.services.db.graph_bundle_service - INFO - Saving graph bundle: ac651c5d-55ae-4f90-bf9e-64f09eeeffaa
-2025-07-23 15:45:03,058 - app.services.db.graph_bundle_service - INFO - Bundle saved successfully with ID: ac651c5d-55ae-4f90-bf9e-64f09eeeffaa
-2025-07-23 15:45:03,059 - app.services.workout_analysis_service - INFO - Analysis task completed for conversation 5290738b-ad98-4082-a93e-3203a4496a57
-2025-07-23 15:45:03,063 - app.main - INFO - Response status: 200
-2025-07-23 15:45:03,064 - app.main - INFO - Request: PUT /db/workouts/1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:03,065 - app.main - INFO - Request: PUT /db/workouts/1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:03,197 - app.api.endpoints.db - INFO - API request to update workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:03,198 - app.services.db.workout_service - INFO - Getting workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:03,311 - app.services.db.workout_service - INFO - Successfully retrieved workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:03,312 - app.services.db.workout_service - INFO - Updating workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:04,389 - app.services.db.workout_service - INFO - Successfully updated workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:04,460 - app.api.endpoints.db - INFO - API request to update workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:04,461 - app.services.db.workout_service - INFO - Getting workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:04,540 - app.services.db.workout_service - INFO - Successfully retrieved workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:04,540 - app.services.db.workout_service - INFO - Updating workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:05,539 - app.services.db.workout_service - INFO - Successfully updated workout: 1fd9835b-ac8b-43b7-93ce-9aee995587e2
-2025-07-23 15:45:05,541 - app.main - INFO - Request: GET /api/dashboard
-2025-07-23 15:45:05,541 - app.main - INFO - Response status: 200
-2025-07-23 15:45:05,543 - app.main - INFO - Response status: 200
-2025-07-23 15:45:05,544 - app.main - INFO - Response status: 200
-2025-07-23 16:04:29,524 - app - INFO - Logging has been set up
-2025-07-23 16:04:29,524 - app.main - INFO - Application starting
-2025-07-23 16:04:29,525 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-23 16:04:29,525 - app.main - INFO - SUPABASE_URL present: True
-2025-07-23 16:04:29,525 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-23 16:05:22,146 - app - INFO - Logging has been set up
-2025-07-23 16:05:22,147 - app.main - INFO - Application starting
-2025-07-23 16:05:22,147 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-23 16:05:22,147 - app.main - INFO - SUPABASE_URL present: True
-2025-07-23 16:05:22,147 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-23 17:46:09,475 - app - INFO - Logging has been set up
-2025-07-23 17:46:09,475 - app.main - INFO - Application starting
-2025-07-23 17:46:09,475 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-23 17:46:09,476 - app.main - INFO - SUPABASE_URL present: True
-2025-07-23 17:46:09,476 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-23 17:46:18,735 - app - INFO - Logging has been set up
-2025-07-23 17:46:18,736 - app.main - INFO - Application starting
-2025-07-23 17:46:18,736 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-23 17:46:18,736 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 16:54:35,192 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:36,215 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:36,216 - app.services.db.message_service - INFO - Getting messages for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:36,334 - app.services.db.message_service - INFO - Retrieved 3 messages
+2025-07-26 16:54:36,335 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:37,361 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:37,362 - app.services.db.message_service - INFO - Getting messages for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:37,467 - app.services.db.message_service - INFO - Retrieved 3 messages
+2025-07-26 16:54:37,468 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:38,499 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:38,501 - app.services.db.message_service - INFO - Getting messages for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:38,574 - app.services.db.message_service - INFO - Retrieved 3 messages
+2025-07-26 16:54:38,574 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:39,600 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:39,602 - app.services.db.message_service - INFO - Getting messages for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:39,678 - app.services.db.message_service - INFO - Retrieved 3 messages
+2025-07-26 16:54:39,678 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:40,695 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:40,696 - app.services.db.message_service - INFO - Getting messages for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
+2025-07-26 16:54:40,770 - app.services.db.message_service - INFO - Retrieved 3 messages
+2025-07-26 16:54:40,770 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 116, in process_websocket
+    chain.load_messages(existing_messages)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'WorkoutAnalysisChain' object has no attribute 'load_messages'
+2025-07-26 16:54:42,718 - app.main - INFO - Request: GET /db/user-profile
+2025-07-26 16:54:42,867 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:42,867 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:42,942 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:42,943 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-26 16:54:42,943 - app.main - INFO - Response status: 200
+2025-07-26 16:54:43,011 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-26 16:54:43,012 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-26 16:54:43,147 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-26 16:54:43,152 - app.main - INFO - Response status: 200
+2025-07-26 16:54:43,154 - app.main - INFO - Request: GET /api/dashboard
+2025-07-26 16:54:43,157 - app.main - INFO - Response status: 200
+2025-07-26 16:54:43,207 - app.main - INFO - Request: GET /db/workouts/user
+2025-07-26 16:54:43,270 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:43,270 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:43,518 - app.services.db.workout_service - INFO - Retrieved 235 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:43,519 - app.api.endpoints.db - INFO - Retrieved 235 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-26 16:54:43,575 - app.main - INFO - Response status: 200
+2025-07-26 16:59:10,394 - app - INFO - Logging has been set up
+2025-07-26 16:59:10,394 - app.main - INFO - Application starting
+2025-07-26 16:59:10,394 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-26 16:59:10,394 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 16:59:10,394 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-26 17:41:57,974 - app - INFO - Logging has been set up
+2025-07-26 17:41:57,975 - app.main - INFO - Application starting
+2025-07-26 17:41:57,975 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-26 17:41:57,975 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 17:41:57,975 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-26 17:43:12,163 - app - INFO - Logging has been set up
+2025-07-26 17:43:12,164 - app.main - INFO - Application starting
+2025-07-26 17:43:12,164 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-26 17:43:12,164 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 17:43:12,164 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-26 17:43:38,763 - app - INFO - Logging has been set up
+2025-07-26 17:43:38,763 - app.main - INFO - Application starting
+2025-07-26 17:43:38,764 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-26 17:43:38,764 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 17:43:38,764 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-26 17:51:45,078 - app - INFO - Logging has been set up
+2025-07-26 17:51:45,078 - app.main - INFO - Application starting
+2025-07-26 17:51:45,079 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-26 17:51:45,079 - app.main - INFO - SUPABASE_URL present: True
+2025-07-26 17:51:45,079 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-28 11:18:11,680 - app - INFO - Logging has been set up
+2025-07-28 11:18:11,680 - app.main - INFO - Application starting
+2025-07-28 11:18:11,680 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-28 11:18:11,680 - app.main - INFO - SUPABASE_URL present: True
+2025-07-28 11:18:11,680 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-28 11:20:23,456 - app - INFO - Logging has been set up
+2025-07-28 11:20:23,457 - app.main - INFO - Application starting
+2025-07-28 11:20:23,458 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-07-28 11:20:23,458 - app.main - INFO - SUPABASE_URL present: True
+2025-07-28 11:20:23,458 - app.main - INFO - SUPABASE_KEY present: True
+2025-07-28 11:20:50,098 - app - INFO - Logging has been set up
+2025-07-28 11:20:50,098 - app.main - INFO - Application starting

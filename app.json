@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "trainsmart",
-    "slug": "trainsmart",
+    "name": "Volc",
+    "slug": "Volc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.d00mkeeps.trainsmart"
+      "bundleIdentifier": "com.d00mkeeps.Volc"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.d00mkeeps.trainsmart"
+      "package": "com.d00mkeeps.Volc"
     },
     "web": {
       "bundler": "metro",

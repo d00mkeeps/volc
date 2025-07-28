@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack, XStack, Text, Button, ScrollView } from "tamagui";
 import BaseModal from "../atoms/Modal";
@@ -13,32 +13,28 @@ interface WorkoutCompletionModalProps {
   onClose: () => void;
 }
 
+let count = 0;
+
 export function WorkoutCompletionModal({
   isVisible,
   onClose,
 }: WorkoutCompletionModalProps) {
+  console.log(`=== postworkout modal render count: ${count} ===`);
+  count++;
+
   const [currentSlide, setCurrentSlide] = useState<"summary" | "chat">(
     "summary"
   );
-  const [conversationId, setConversationId] = useState<string | null>(null);
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
-  const { currentWorkout } = useUserSessionStore();
+
+  // Use selective selector to avoid timer renders
+  const currentWorkout = useUserSessionStore((state) => state.currentWorkout);
   const workoutAnalysisStore = useWorkoutAnalysisStore();
 
   useEffect(() => {
     if (isVisible) {
       setCurrentSlide("summary");
-      setConversationId(null);
       setShowCloseConfirmation(false);
-    }
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (isVisible) {
-      const result = workoutAnalysisStore.getResult();
-      if (result?.conversation_id) {
-        setConversationId(result.conversation_id);
-      }
     }
   }, [isVisible]);
 
@@ -62,18 +58,20 @@ export function WorkoutCompletionModal({
 
   const handleClose = () => {
     workoutAnalysisStore.resetAnalysis();
+    // Clear active conversation when modal closes
+    useUserSessionStore.getState().setActiveConversation(null);
     onClose();
   };
 
-  const handleContinueToChat = async () => {
-    // Get fresh data from store instead of using stale closure
+  const handleContinueToChat = useCallback(async () => {
     const freshWorkout = useUserSessionStore.getState().currentWorkout;
     if (freshWorkout) {
       console.log("Using fresh workout data for update");
       workoutService.updateWorkout(freshWorkout.id, freshWorkout);
     }
     setCurrentSlide("chat");
-  };
+  }, []);
+
   return (
     <BaseModal
       isVisible={isVisible}
@@ -95,12 +93,8 @@ export function WorkoutCompletionModal({
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (
-          conversationId && (
-            <WorkoutAnalysisSlide
-              conversationId={conversationId}
-              onError={handleChatError}
-            />
-          )
+          // No more conversationId prop - gets it from session store
+          <WorkoutAnalysisSlide onError={handleChatError} />
         )}
 
         {showCloseConfirmation && (

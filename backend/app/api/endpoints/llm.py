@@ -1,22 +1,14 @@
-# app/api/endpoints/llm.py
-
 import logging
 import os
 import json
 from typing import Dict, Any, Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
-from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 
-# Load environment variables
 load_dotenv()
-
-# Configure logging
 logger = logging.getLogger(__name__)
-
-# Create router
 router = APIRouter()
 
 # Dependency for WebSocket authentication (placeholder - implement as needed)

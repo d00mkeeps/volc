@@ -99,3 +99,14 @@ class BaseConversationChain:
                 "type": "error",
                 "data": "An error occurred while processing your message"
             }
+
+    def load_conversation_context(self, context) -> None:
+        """Load messages from ConversationContext and clear any existing history"""
+        from app.core.utils.conversation_attachments import ConversationContext
+        
+        if isinstance(context, ConversationContext):
+            self.messages = context.messages.copy()
+            logger.info(f"Loaded {len(self.messages)} messages into conversation history")
+        else:
+            logger.error("Invalid context type provided to load_conversation_context")
+            raise ValueError("Context must be a ConversationContext object")

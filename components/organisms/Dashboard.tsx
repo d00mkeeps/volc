@@ -5,8 +5,10 @@ import GoalProgressRing from "@/components/molecules/dashboard/GoalProgressRing"
 import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
 import { useDashboardData } from "@/hooks/useDashboardData";
-
+let count = 0;
 export default function Dashboard() {
+  console.log(`=== dashboard render count: ${count} ===`);
+  count++;
   const { goalProgress, muscleBalance, consistency, isLoading } =
     useDashboardData();
 
