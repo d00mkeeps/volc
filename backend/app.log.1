@@ -1,119 +1,5301 @@
-2025-07-28 13:55:18,046 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 140, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-07-28 13:55:18,054 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 13:55:18,055 - app.services.llm.workout_analysis - INFO - Loading conversation context (attempt 1/20)
-2025-07-28 13:55:18,055 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Skipping bundle 3ccde96c-40c2-4d93-b7d7-d408b53764aa with status: pending
-2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Successfully loaded 20 messages and 0 complete bundles for conversation bfa3c16f-39fa-4797-83e4-d3a4fae8ef55
-2025-07-28 13:55:18,150 - app.core.utils.conversation_attachments - INFO - Found 1 pending/in_progress bundles
-2025-07-28 13:55:18,151 - app.services.llm.workout_analysis - INFO - Context loaded successfully with 0 bundles
-2025-07-28 13:55:18,152 - app.services.chains.base_conversation_chain - INFO - Loaded 20 messages into conversation history
-2025-07-28 13:55:18,152 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 20 messages and 0 bundles
-2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-07-28 13:55:18,153 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach!
-
+2025-07-28 18:38:05,166 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
 
 Current workout data context:
 Available workout data:
-            {
-  "available_data": []
+{
+  "metadata": {
+    "total_workouts": 46,
+    "total_exercises": 237,
+    "date_range": {
+      "start": "2025-01-30T22:02:04.023375+00:00",
+      "end": "2025-07-28T14:46:27.93+00:00"
+    },
+    "exercises_included": [
+      "Sumo Deadlift",
+      "Leg Curl",
+      "Barbell Bench Press",
+      "Preacher Curl",
+      "Pull-Up",
+      "Barbell Skull Crusher",
+      "Copenhagen Plank",
+      "Face Pull",
+      "Barbell Back Squat"
+    ]
+  },
+  "top_performers": {
+    "strength": [],
+    "volume": [],
+    "frequency": []
+  },
+  "consistency_metrics": {},
+  "correlation_data": {
+    "summary": [],
+    "time_series": {},
+    "heatmap_base64": null
+  },
+  "recent_workouts": {
+    "metadata": {
+      "date_range": {
+        "latest": "2025-07-28T14:46:27.93+00:00",
+        "earliest": "2025-01-30T22:02:04.023375+00:00"
+      },
+      "total_workouts": 46,
+      "total_exercises": 237,
+      "exercises_included": [
+        "Barbell Back Squat",
+        "Barbell Bench Press",
+        "Barbell Skull Crusher",
+        "Copenhagen Plank",
+        "Face Pull",
+        "Leg Curl",
+        "Preacher Curl",
+        "Pull-Up",
+        "Sumo Deadlift"
+      ]
+    },
+    "workouts": [
+      {
+        "id": "85c5baa4-d55a-4ad6-8dd9-fa456fdb03c3",
+        "date": "2025-03-28T18:52:58.678+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "17beef61-3802-493d-9f90-f64c1b847fb2",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "286c053d-f383-46b9-89f5-5389ebb5f75a",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "3a689274-8726-4745-9d27-0c0120c40c30",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "7f5560d9-f681-4a80-98da-32c9bd3d53d3",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "8e4e4f31-b563-42c4-970c-ad24667f2e39",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "addd0ede-2d06-40d8-bc8e-0f766ebc9efa",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "cd364962-4fa1-4e06-8248-77451ec703ef",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "8b3ec38c-c85e-4eb3-af4f-79c1aab1ac8e",
+        "date": "2025-03-28T17:33:55.71+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "050dd8c7-45fa-442b-bf1c-75ca45cce79e",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "2fa61a4f-166d-4c09-b8b0-fc934d06c660",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "364dd0b7-1958-479c-ba77-2262d5b8ca4d",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "4a31f504-7d94-446d-8081-a5cc65e721ea",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "60b771be-017e-4c1c-aeec-8bd42005fc55",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "6dbab3b3-b3f2-4953-a850-e6584fb5ea1f",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "dcd67fd0-1f49-4911-8ef9-cb705c69b5d4",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "658c30c0-628e-4b5a-9ca2-eaec9922a70f",
+        "date": "2025-07-28T14:46:27.93+00:00",
+        "name": "Monday arm workout",
+        "notes": "",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "7a9f2750-649f-4c31-a809-f50bf0799038",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "fabb7ebb-7042-457b-99d1-07f0d5e9fe28",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "1278b8c7-2218-454d-8ffc-4bcf3cea595b",
+        "date": "2025-03-28T18:01:18.992+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "01e43eb3-8c67-4e66-9af3-dae20f26e708",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "1140112a-7a33-4d85-821f-ba2de77f5647",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "2f018a2e-8088-41c4-a90e-db4701199005",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "4062c182-0f94-4b79-9559-6786b9791148",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "489b3993-ac3e-4e79-949c-fcf309bbc492",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "56a23139-4781-46fd-8d33-bbcfe974b809",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "681e48c7-3815-468d-8f0c-f7fcfc20fdd1",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "e54494fb-1be6-4a99-a589-ae89242d95af",
+        "date": "2025-03-29T21:51:53.705+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "05e2685d-a14c-4488-9704-7954c6af2f18",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "1bc01589-7bf5-4703-b108-c38d6ac08de9",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "581f5765-87a0-434f-b43b-ba83dd6fee77",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "6064258a-b84e-4f96-9633-372f0f761673",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "66270227-88f6-4437-bb43-d00d31fd65e3",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "8d28d7f5-dfdb-4550-b51a-128fc4f9e215",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "e9b698ee-508c-49fe-b9e3-79e4a129157b",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "14b9eb7c-207b-4efc-a8c3-aac6d4780798",
+        "date": "2025-07-23T14:12:45.66+00:00",
+        "name": "Wednesday arm day",
+        "notes": "",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 15,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 15,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "ab07ae1c-62bc-4b35-a625-e72ee6db73d8",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "f8886405-d25a-41f8-9ba1-d22d113af7c2",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "87f40b14-c52f-4850-91ec-7264b06b9e6c",
+        "date": "2025-03-28T17:00:06.106+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "22f29acc-2656-41c5-85db-ffeb5f43a97a",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "33c0f998-8795-449b-8547-bb5ca9390ecc",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "58222621-f1c7-4531-9cdf-b37e1f1bce35",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "791f25d4-dc63-490a-a612-fb691f46c82d",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "82404121-0f13-45dd-910b-9dd4a95f62e3",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "9aaf0f8d-9135-4321-a63e-d15fb35e3125",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "b25ae875-5033-4cae-9c3a-6f22bf6acea0",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          }
+        ]
+      },
+      {
+        "id": "10700597-7706-492d-b5a9-e2e0bcc95fa8",
+        "date": "2025-03-29T21:46:20.751+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "311a5e24-d5af-41be-a96d-7ea83be7ed48",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "8d959b85-645c-49c3-8f93-3754ae135a4c",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "911f8d47-95d3-4c7b-9ffd-b85bc1b34647",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "a365e5af-6e07-4033-b429-8530c773a9f7",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "c7a5fc26-55df-4bb9-9a29-d1cc26757d87",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "d744466c-e655-4715-b4ab-ea9d4191da32",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "fdc05940-cc89-4806-b745-c07f4a4ffdb6",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          }
+        ]
+      },
+      {
+        "id": "33333333-6666-4111-1111-111111111111",
+        "date": "2025-02-13T22:02:04.023375+00:00",
+        "name": "Week 3 - Workout B",
+        "notes": "Had a training partner for motivation. Focused on slower eccentric today.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 15,
+                "weight": 62.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "34931d34-f4b1-4a9a-8c6b-e74b0f3bd564",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 12,
+                "weight": 20.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "5abfb080-dd96-4297-8f74-7a800fdafd6a",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 15,
+                "weight": 125.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "68a8fef8-ed0c-4e41-8bfc-a1e8406f9be7",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 8,
+                "weight": 43.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "a594ba07-4644-4831-a963-fa27464a0c28",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 112.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "bf7d4307-f55c-4fa0-b6f4-27498eae99c2",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 3,
+                "weight": 205.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "e737b96f-62fc-439f-ae07-05fdacadd185",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 7,
+                "weight": 102.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "fd5b1d68-38c7-4295-8a82-7190bf9517c1",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          }
+        ]
+      },
+      {
+        "id": "33333333-3333-4111-1111-111111111111",
+        "date": "2025-02-03T22:02:04.023375+00:00",
+        "name": "Week 2 - Workout A",
+        "notes": "Working on technique today. Nutrition on point, felt the difference.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 8,
+                "weight": 40.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "13c0109b-932d-44cb-b0b2-04128d7b955f",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 105.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "28889a7e-a38a-4df3-9717-66e6eda9ef49",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 7,
+                "weight": 95.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "6072c352-478b-48ac-b986-e826e941e40d",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 12,
+                "weight": 19.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "6b85b390-e638-4e0d-a9a9-0b989435d2aa",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 15,
+                "weight": 58.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "7ad75408-f268-42c9-a58d-c84462d25df7",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 15,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "923fdaac-55ec-4433-a41c-52aea35dc414",
+            "weight_unit": "kg",
+            "definition_id": "645cc7cc-c6fb-4879-a396-6f09de7cca95",
+            "distance_unit": null,
+            "exercise_name": "Copenhagen Plank"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 3,
+                "weight": 190.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "b2afbede-e4db-43fe-a4cf-930e5847ae5c",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          }
+        ]
+      },
+      {
+        "id": "97773b90-11ce-4b69-ac20-3c82d5634c98",
+        "date": "2025-03-29T00:00:29.64+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "1a7e42fd-b733-4496-bb1c-e2ccc6afc873",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "5bc14f39-f05b-401e-a78e-60035e620078",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "7defcf23-7b4d-46e9-acf2-3bad2f8bc4f3",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "87bb899e-83bd-4f9a-a2f6-9e7441427636",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "d2798971-8fc5-4182-a3f3-c165ac9ec3a0",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "d37b29a5-41cb-404a-b883-4d61f388e38e",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "f3b8ca59-51e2-4db3-9018-4e5aaa58b2c2",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "953a4bc9-c9e2-49ab-8b93-51987dff66b9",
+        "date": "2025-03-30T10:11:36.543+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "03d2f8c8-3c9e-44ec-8daa-23feb5f58fcd",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "1702d1f8-d4f2-4e26-959a-a80fb96880fb",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "1c1ce74e-63cd-4130-ac45-ff1d4267d889",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "5fe4cac0-350e-4c82-b29b-1f54e9c45650",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "730994f9-9a29-4f9e-9cee-4102cfce23f7",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "b4d56b83-461e-4939-b879-ff425a5f7a44",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "eeb4cbe0-43ce-475b-880a-bd4dc158b786",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          }
+        ]
+      },
+      {
+        "id": "eb1b83b0-6e3e-4764-9353-6af439e6096f",
+        "date": "2025-04-11T18:53:26.254+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "447bea27-5c31-48d9-a4c7-8ec8c2182dca",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 58,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "47bcd2f4-37dc-424b-813e-d96ccc819831",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "4a94667c-f2b7-4cd0-b3a5-63f79a983b81",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "4e897ef0-1507-4b08-b41d-773f5253b6cb",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "515e3eed-a673-44bf-b524-a9fcef1db01e",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "6164d762-ea9c-4622-b28f-f9802b4dbe23",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "8ead657a-4da2-4e61-ab48-53465a6ef05d",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          }
+        ]
+      },
+      {
+        "id": "2f0dc493-c2f2-4a3b-ac2e-d54918d114f1",
+        "date": "2025-07-23T11:09:12.012+00:00",
+        "name": "Wednesday arm day",
+        "notes": "--- Barbell Skull Crusher ---\nUpped the reps, way stronger\n\n--- Preacher Curl ---\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 15,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 15,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "514c35ea-a07f-44a0-a2a6-640433289948",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "8a45caa9-6612-4c61-9561-ff1c01426846",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "361cf0b9-a054-4ec4-acc7-876c3e54df63",
+        "date": "2025-07-23T17:09:36.597+00:00",
+        "name": "Wednesday arm day",
+        "notes": "--- Barbell Skull Crusher ---\n\n\n--- Preacher Curl ---\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "14966230-b9ea-479d-9aef-964b8cedf273",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "740b262b-d926-4eba-b6a6-0d4b7afacf07",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "714af7d1-56cf-4bae-9428-2f824186a105",
+        "date": "2025-07-24T02:27:37.498+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\nThis was a pretty good workout\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "61152a99-e9d6-4000-b840-d38baa34e65b",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "cca8ee95-83b7-47e7-85fa-e4e8e757db27",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "33333333-8888-4111-1111-111111111111",
+        "date": "2025-02-20T22:02:04.023375+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "Final workout of the program. Added extra stretching after workout.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 7,
+                "weight": 105.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "0b7f7bde-fb6d-45d9-bb47-1d6d1012f530",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 15,
+                "weight": 65.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "37cf8b81-1320-4239-b96b-f5598841bdc0",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "474aa6b4-c142-4782-a4ba-aca22468b74c",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "5b26da28-1227-4fc0-b627-576e2a1c40aa",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "655fa9b2-347f-4d01-8339-7a7512abed75",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "76770b58-a698-4e9c-b0b2-e839abc598de",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 8,
+                "weight": 45.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "a66cabf2-bc8c-4b96-9dd0-45c7568fa8ef",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "a8951d40-b7d5-44fc-841c-049a861319b0",
+        "date": "2025-03-30T10:57:56.362+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "370ab83a-c2f8-421e-bcc5-18ba88d978e2",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "3cdbfadd-ab28-43ac-9be5-6d58cf18dbc5",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "94da0aee-dff2-4c2c-98d5-347207cd701d",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "b0e88979-758e-4ae8-8711-c33012323127",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "ced6c0e3-645a-4b7c-b85a-abe22b60faf4",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "e85a7464-2152-4408-a203-5365a2a89c00",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "f80929d2-35dd-44ed-a24f-79155d27c6d3",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          }
+        ]
+      },
+      {
+        "id": "eed95d64-cdf6-4a37-b9d5-6383f9b6097d",
+        "date": "2025-07-23T22:02:51.677+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "bd38988b-21e2-44ca-997c-2c00ef8c5ba4",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "cbaefadc-5673-4100-989c-dd697bc88ccf",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "627f258c-caa8-481f-8eaf-2d5ab6e300b7",
+        "date": "2025-07-23T22:26:49.905+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "1debbb51-bb36-41ee-a428-9e286182d71a",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "49e1318d-87c9-48f6-9f39-bacc2564fe32",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "75ef2b08-0617-451e-9bbf-f9e7140156c8",
+        "date": "2025-07-24T02:45:42.837+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "8e3c1270-d057-4c0e-8301-3732c9a71bd7",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "fb329fb3-8b75-4224-88b5-808041fb0335",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "a9803c7d-0fa0-488e-a208-0b7556e8460e",
+        "date": "2025-07-28T14:34:02.66+00:00",
+        "name": "Monday arm workout",
+        "notes": "Barbell Skull Crusher:\nKlkjh\n\nPreacher Curl:\nLkj;Lou",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "a5a68d61-e45e-4b6b-8f4b-385ca09fa4cf",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "d5f975dc-d76f-4642-810e-0444fd1c8f95",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "1fd9835b-ac8b-43b7-93ce-9aee995587e2",
+        "date": "2025-07-23T14:43:49.874+00:00",
+        "name": "Wednesday arm day",
+        "notes": "--- Barbell Skull Crusher ---\nThis is a super fun exercise! \n\n--- Preacher Curl ---\nRe act react lol asdlfkjasd;folk",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "a51d9733-97e0-4863-b6ce-f936c94015d8",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 18,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 18,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "a8c49084-c847-42ce-857c-d6db0fb18ae4",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "9713bea6-2feb-4aac-9555-ff998ffece9b",
+        "date": "2025-07-28T11:29:37.581+00:00",
+        "name": "Monday arm workout",
+        "notes": "Barbell Skull Crusher:\nElbow pain \n\nPreacher Curl:\nGffsdfasd\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "43f01cb5-068d-46cc-8a20-1ce060e9ce00",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "54e457d0-c752-488e-8fd7-3464415d9a2a",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "39352300-3ad5-4882-bff3-64123867e3c6",
+        "date": "2025-04-11T18:30:13.541+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "1ef8c83d-ee3a-422b-b7b8-2b5003be6333",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 58,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "2b2232a0-ea3e-40d4-981e-c6362467da0d",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "5e1e75b9-0d41-407a-8cae-4315682814b7",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "672bed37-80a2-4677-a9a8-46d9fc7316d7",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "6ba19f26-56b1-4e75-9bff-e185a9cb08d3",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "808fc9db-b937-48e3-a581-fa4a763c6f29",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "c22283fe-6f7a-4738-bfa4-2ae7c594f710",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          }
+        ]
+      },
+      {
+        "id": "08251e0d-a960-4d58-9646-e6c30bc803b8",
+        "date": "2025-03-29T21:50:29.341+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "09c900db-20fd-4377-b16e-cd493e59d45e",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "338a2122-47bb-4697-9380-079664422825",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "7fa13504-1cc1-406b-9c05-78791c7691a8",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "92b23a07-d7d9-47b5-9dee-26bf19d1ad79",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "cb2eb1eb-453d-4fc6-90b9-0d5752dee974",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "ff16e558-a583-4625-8d42-a66e8bc78dd2",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "ff16fc75-378d-4764-ac80-e4c4710b7c99",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          }
+        ]
+      },
+      {
+        "id": "33333333-5555-4111-1111-111111111111",
+        "date": "2025-02-10T22:02:04.023375+00:00",
+        "name": "Week 3 - Workout A",
+        "notes": "New PR on deadlift! Increased time under tension.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 8,
+                "weight": 41.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "06befbb7-0ea5-4d1c-8082-7d8e85580e2b",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "14880dd9-e21e-4933-b67c-881a1b59eb4a",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 15,
+                "weight": 120.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "32e68362-0ef7-4b1e-9e38-aa194d509028",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 3,
+                "weight": 195.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "933d896e-83b1-44ea-8371-615336501b2f",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 7,
+                "weight": 97.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "bd6507bd-8941-4e4c-912e-98fbf0e1b1cc",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 107.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "ced4aa52-7432-4662-a447-710df3e1bcd9",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 15,
+                "weight": 59.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "fe61b061-178a-4d26-b996-44fc3fa4ff82",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "4134cef4-a2fa-4f57-bf7b-aa540446a7cc",
+        "date": "2025-07-24T02:51:54.155+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "2a0ca183-067a-444b-8923-395b9eaa92a9",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 4
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "42774266-4f1e-44e7-b377-f8c4789ccfca",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "98813fdf-7a66-47dd-a06e-6e518189e41e",
+        "date": "2025-07-23T22:27:41.004+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "7a42a2d5-1878-4ea1-ab38-2a333d0781b3",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "e28280fa-bdcb-4e43-ac65-875ca59fbce6",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "67a81b87-2812-4275-a94e-abee5f8ef85d",
+        "date": "2025-04-06T18:06:23.712+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "206bbc37-6cbc-4c85-b2ce-cdf6892239ed",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "52987162-642e-47c4-bc8e-18dcc7c6a2b0",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "6ff72f74-3355-4023-9a4f-159eb1ee489c",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "78d7aff4-cbfa-45ff-a908-c5b183452e75",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "97687350-2546-4315-bb48-4f6992ad72e2",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "de870c44-fc8e-4fc4-b1d9-28ee04900a77",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 58,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "f791d297-046b-4b28-a5db-2f32b167d18b",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          }
+        ]
+      },
+      {
+        "id": "b6e16817-0ee8-4a7f-96ae-5a2f3ef3ffb9",
+        "date": "2025-03-29T21:45:25.799+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "0fdd73f7-d535-47e7-aeb5-1a293c793185",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "183f330d-4014-43ba-90fa-f40238ccc873",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "3856e37e-2e8e-4577-82ad-dfc281db470b",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "5790e9b0-1291-4c7f-b262-7de2903df92a",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "64bd6341-35ef-4a27-aae6-2b4b61f79404",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "dab54f78-681a-4faf-83e2-8d84fa2e013f",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "ed5e1911-b5b4-406d-a1be-23d1e99a18c7",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          }
+        ]
+      },
+      {
+        "id": "4bfdc95f-785b-4564-909b-8a10e51a7b38",
+        "date": "2025-07-24T01:57:02.645+00:00",
+        "name": "Wednesday arm day",
+        "notes": "",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "6163fad4-0589-4882-b783-02481eb22e00",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "f7cd6087-8f68-4e15-9d0d-f928a6ff0d37",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "2e6e4e9c-9f42-46d6-b228-713e512206bd",
+        "date": "2025-07-23T09:59:25.256+00:00",
+        "name": "Wednesday arm day",
+        "notes": "--- Barbell Skull Crusher ---\nElbow pain, no problem I\u2019m a big boy\n\n--- Preacher Curl ---\nMy biceps are so juicy I just wanna give myself a big ole hug\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 30,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 8,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "1be7901e-94ac-4086-9004-84151e02631d",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 12,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": null,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "f5fe6078-d416-4dbb-801c-d0b89eb0b6a4",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "c78df83a-5095-4b64-b793-b30f8db08b59",
+        "date": "2025-03-28T17:36:33.05+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "0664cf83-abee-4336-a0f1-8f0817d7b8e9",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "578109e9-9e70-4ec9-900d-bb79f17ca7eb",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "584a4c7f-20ef-40a4-a431-caa00eed5f92",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "801b62b7-ecfa-4c7e-9e62-389785c06deb",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "851f9787-9b5d-4ffd-a528-1f1c41ffe094",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "930d70bc-eb3e-417b-9be2-39bcd6243356",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "9b698354-64f0-4182-98c0-5aebe1f7fbec",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          }
+        ]
+      },
+      {
+        "id": "1323b37d-dcb9-426d-aca5-a92f0da4364b",
+        "date": "2025-07-23T22:27:56.697+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "74892d51-d36c-4c7d-ad07-e5fb3d72a648",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "f5266fac-945f-492c-9111-39379654dc69",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          }
+        ]
+      },
+      {
+        "id": "b0f1a64a-22e6-403f-baf0-3fdd176b36e8",
+        "date": "2025-04-05T20:21:50.952+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "060a77ac-7719-46b9-b310-892c383a9020",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "14223d5f-a162-4c43-9841-b6450daa525f",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 58,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "19774161-1266-4076-ba52-cd84a06ad9de",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "40636a34-322b-4be0-9583-9a9cf2cba02b",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "44b81601-95ba-4662-bf4f-2af302778183",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "ac489d85-e083-4ac2-a7bc-e636fe13a006",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "e6289e60-6095-44ba-a8e0-b08fba88ccc3",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "d2ff98ee-f899-4e27-a431-8b6ec5273c0b",
+        "date": "2025-03-28T17:13:48.361+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "0fd9b492-152e-44d1-95dd-ed99d66bfc78",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "59a41902-9ce9-4f01-8606-cbb4813b59c3",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "65262478-d90f-475c-9985-48c48704e598",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "94fe1cd5-733b-497e-a2de-992922c37116",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "9e25ad2f-9f3b-4e9a-a2bf-5d9f543914c1",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "d1ac9665-6538-42a0-a3fb-957673599510",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "d8e89128-e3fb-4168-8a0e-8b30fe641755",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          }
+        ]
+      },
+      {
+        "id": "3fd0d47f-3098-4de1-8341-50c6d8e01be4",
+        "date": "2025-07-23T22:23:55.105+00:00",
+        "name": "Wednesday arm day",
+        "notes": "Barbell Skull Crusher:\n\n\nPreacher Curl:\n\n",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 20,
+                "weight": 35,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Barbell Skull Crusher",
+            "exercise_id": "69c97038-2569-446f-b983-5fb9c1ddcbe8",
+            "weight_unit": "kg",
+            "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Skull Crusher"
+          },
+          {
+            "sets": [
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              },
+              {
+                "rpe": null,
+                "reps": 22,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 2
+              },
+              {
+                "rpe": null,
+                "reps": 10,
+                "weight": 37.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 3
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "eb2d66db-4b7f-4aa8-9be1-d3dd6f01cce7",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "33333333-7777-4111-1111-111111111111",
+        "date": "2025-02-17T22:02:04.023375+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "Recovery feels improved this week. Slight deload on some exercises.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "08d177b7-e756-472f-b8b1-49ce0a4f4cd2",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "1eb9b7be-65e4-4c57-8fcc-279cce773039",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "7ceaf6d2-8467-4fb0-8180-960b45898df2",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 3,
+                "weight": 110.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "b77461df-1713-4565-85b6-7aaba04a3b2d",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 8,
+                "weight": 42.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "bac50f06-d7ee-4044-be13-ef1118eacab5",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "cecc9eaa-0707-4d58-a567-3747366ea4dd",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "d72419fb-e3fd-4306-8e9d-5110663ff6fc",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "8be0e3d5-efe0-43aa-bff7-9b844d55d7c8",
+        "date": "2025-03-28T18:14:23.143+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "33c93dcf-9d93-469c-a32c-2853c087de29",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "4603c671-3d8b-4e2d-861b-b301412437db",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "90dba8c4-3c2d-4b70-8898-e0c3cdfbdf0f",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "99aaefb2-0846-43e6-94d5-e5e3250ab3a1",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "ddd1cf85-8bb9-4418-9080-6f26cc25258c",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "e4f765ed-dce9-4f2c-bf87-aff69ae3ec6b",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "feb95ca6-236d-4913-9e84-69732743051a",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "4cdd3937-a5c5-4f86-bb85-d8adbcd58170",
+        "date": "2025-03-28T18:51:27.447+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "1b781bf7-a993-444d-8c45-6bc8ede5466c",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "2f689576-2ecd-4e13-8836-d736b22050bb",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "5f1be6a5-0053-467d-8685-4555c40e5355",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "841f3794-0b6d-422c-98a3-ef22314d6cd0",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "845bd74c-a474-48d2-a4d6-fa00a93a268b",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "a9315e74-18fb-4dad-9516-f74f026189b7",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "da6c639c-124e-4997-898f-2a4fa251b741",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          }
+        ]
+      },
+      {
+        "id": "529ca2f4-cae9-4395-95aa-3dcc7b4bc7e4",
+        "date": "2025-03-28T17:18:45.295+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "109a7f8f-a57a-430d-9f51-72eab4b0ac19",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "19ff5624-458a-4550-a753-c85cd5301295",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "2b345997-afb5-4884-a76c-6bf125f69857",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 15,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "4e02a2ae-fa4d-46c1-830f-6635dc2fe261",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "5012cc45-4450-47da-aefd-aa2dc169a236",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "6f923a8e-c9f7-4436-bb53-e29c430c94b4",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "df4d7130-ad29-4464-a085-648c64a12dbe",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          }
+        ]
+      },
+      {
+        "id": "564b2520-f7a0-4fbb-892d-a10995d700b9",
+        "date": "2025-04-07T16:16:45.729+00:00",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 3,
+                "weight": 110,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "0c75c088-f1bc-459a-bfa7-6b006adab7e0",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 12,
+                "weight": 19.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "20288af5-3a8e-49da-9a70-dbc35d336c35",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 58,
+                "weight": 122.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "4a4e7823-cfa0-4a94-9bd8-8439abb56bb9",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7,
+                "reps": 8,
+                "weight": 42,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "4a8e78a3-0284-4486-9186-4ae8106f90bb",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 100,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "4dbe5e69-6dae-4435-adde-03e790daae84",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 200,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "4e29ec32-3f54-4528-8312-ab60e7feaee7",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 61,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "554d25c7-0d8f-4aad-9122-7000e9ee6d80",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          }
+        ]
+      },
+      {
+        "id": "33333333-4444-4111-1111-111111111111",
+        "date": "2025-02-06T22:02:04.023375+00:00",
+        "name": "Week 2 - Workout B",
+        "notes": "Slight deload to work on technique.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 3,
+                "weight": 102.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "2487d9d7-4d3e-4a56-8817-48694d2118c4",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 12,
+                "weight": 18.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "57e8a6f0-b84a-49ea-8ae6-19e5039b68b1",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 7,
+                "weight": 92.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "844b41b8-cb62-4c13-a389-3b99cf5739e7",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 15,
+                "weight": 115.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "8aaac565-e9a8-4617-a27c-d2f4e7aeb4b1",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 185.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "91c0427a-53aa-46c3-b50e-068c386bc3a6",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 15,
+                "weight": 56.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "a279319d-83bc-4696-855c-8ac0dd31e91b",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 6.5,
+                "reps": 8,
+                "weight": 39.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "a97b56b2-84d1-42e7-ae64-b4ad4f23a85c",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          }
+        ]
+      },
+      {
+        "id": "8bca8087-2d7c-414d-a9b7-aa0135e63975",
+        "date": "2025-03-30T11:04:20.113+00:00",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 12,
+                "weight": 21,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "4685e58f-de09-4ac1-b932-e414faaa4ef8",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": "m",
+            "exercise_name": "Face Pull"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 8,
+                "weight": 45,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "689d9d64-47cf-4642-acfb-3d08c75cdae0",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": "m",
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.5,
+                "reps": 3,
+                "weight": 210,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "7c7db5b4-559e-4dfa-a598-8bdf7a7d0ddd",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": "m",
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 7,
+                "weight": 105,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "842342b5-ee73-4718-b21a-3ffabfb625c6",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": "m",
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 15,
+                "weight": 130,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "86789774-d67d-448a-9ea6-ce0a4247af32",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8,
+                "reps": 15,
+                "weight": 65,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "dc4ac2cf-c13e-4d03-8dbd-e5812a23f2b3",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": "m",
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9,
+                "reps": 3,
+                "weight": 117.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "edd3ded8-186a-452e-8179-a140fd2f8907",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": "m",
+            "exercise_name": "Barbell Bench Press"
+          }
+        ]
+      },
+      {
+        "id": "33333333-2222-4111-1111-111111111111",
+        "date": "2025-01-30T22:02:04.023375+00:00",
+        "name": "Week 1 - Workout B",
+        "notes": "Added extra warm-up sets. Great pump, increased range of motion.",
+        "exercises": [
+          {
+            "sets": [
+              {
+                "rpe": 8.5,
+                "reps": 3,
+                "weight": 102.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Bench Press",
+            "exercise_id": "27db51c0-8499-4226-9eb6-88df54888cb4",
+            "weight_unit": "kg",
+            "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+            "distance_unit": null,
+            "exercise_name": "Barbell Bench Press"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 8,
+                "weight": 38.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Preacher Curl",
+            "exercise_id": "4794a623-f458-4e0c-967e-a055245d9067",
+            "weight_unit": "kg",
+            "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+            "distance_unit": null,
+            "exercise_name": "Preacher Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 8.0,
+                "reps": 7,
+                "weight": 92.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Pull-up",
+            "exercise_id": "8908ca16-1f38-41e2-9ed7-7f421cc16a28",
+            "weight_unit": "kg",
+            "definition_id": "53d5978d-2a80-4b99-91f5-f315f4ba9ffc",
+            "distance_unit": null,
+            "exercise_name": "Pull-Up"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.0,
+                "reps": 15,
+                "weight": 56.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Leg Curl",
+            "exercise_id": "90a05be1-e712-4a0f-aa3c-5beb087192ee",
+            "weight_unit": "kg",
+            "definition_id": "26c2e923-c045-4b50-be15-1260dcdc6ffc",
+            "distance_unit": null,
+            "exercise_name": "Leg Curl"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 9.0,
+                "reps": 3,
+                "weight": 185.0,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Deadlift",
+            "exercise_id": "a14789cb-9535-4f80-acfe-d5de369bcf6d",
+            "weight_unit": "kg",
+            "definition_id": "7332f800-3d36-4504-afef-50aa26dfbcff",
+            "distance_unit": null,
+            "exercise_name": "Sumo Deadlift"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 15,
+                "weight": 112.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Hack Squat",
+            "exercise_id": "b5921a23-2f42-4b84-9d6e-1e0c990735a9",
+            "weight_unit": "kg",
+            "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+            "distance_unit": null,
+            "exercise_name": "Barbell Back Squat"
+          },
+          {
+            "sets": [
+              {
+                "rpe": 7.5,
+                "reps": 12,
+                "weight": 18.5,
+                "distance": null,
+                "duration": null,
+                "set_number": 1
+              }
+            ],
+            "raw_name": "Face Pull",
+            "exercise_id": "eb765e23-cb85-4a3e-8635-c7c37a09528b",
+            "weight_unit": "kg",
+            "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+            "distance_unit": null,
+            "exercise_name": "Face Pull"
+          }
+        ]
+      }
+    ]
+  }
 }
 
 Visualizations and metrics:
-No workout data available
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (HumanMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (AIMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Hi there! 👋
 
-Welcome to your fitness coaching session. I'd be happy to help you with any fitness goals or questions you might have! Is there something specific you'd like to discuss today? For example:
+CHARTS:
+No charts available
 
-- Creating a workout plan
-- Nutrition advice
-- Form tips for specific exercises
-- Training for a particular goal
-- Tracking your fitness progress
+CONSISTENCY METRICS:
+- Score: 0/100
+- Current streak: 0 workouts
+- Average frequency: Every 0 days
 
-Let me know what you're interested in, and we can take it from there!
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 7 (HumanMessage):
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - Content: Who are you? Who am I?
-2025-07-28 13:55:18,154 - app.services.chains.base_conversation_chain - INFO - 
-Message 8 (AIMessage):
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: I'm your AI fitness coach, designed to provide guidance and support for your fitness journey. I can help with workout plans, form tips, nutrition advice, and tracking your progress.
+TOP PERFORMERS:
+- Strength gains: No significant strength gains detected
+- Volume increases: No significant volume increases detected
+- Most frequent exercises: Not enough data
 
-As for who you are - you're the person I'm here to assist! I don't have any specific information about you unless you share it with me. I don't know your name, fitness level, or personal details until you choose to tell me.
-
-Would you like to share a bit about yourself and your fitness goals so I can provide more personalized advice? Things like your experience level, what types of activities you enjoy, or what you're hoping to achieve would be helpful.
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
-Message 9 (HumanMessage):
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: Context is the most important part of ai applications! Intelligence is useless in a vacuum
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
-Message 10 (AIMessage):
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: You're absolutely right! Context is crucial for AI applications to be truly useful. Without understanding your specific situation, goals, and constraints, any advice I provide would be generic at best and potentially unhelpful at worst.
-
-Intelligence - whether human or artificial - needs context to be meaningful and applicable. In fitness especially, personalization matters tremendously. What works for a competitive athlete wouldn't work for someone just starting their fitness journey. What's appropriate for someone in their 20s might not be suitable for someone in their 60s.
-
-That's why I'd be much more effective if you share:
-- Your fitness background and current level
-- Any specific goals you have
-- Physical considerations or limitations
-- What kind of fitness activities you enjoy or have access to
-- Your schedule constraints
-
-The more context you provide, the more tailored and relevant my guidance can be. Would you like to share some of this information so I can better assist you?
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
-Message 11 (HumanMessage):
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: I’m the developer, and I think I’ll initiate future conversations by giving you user’s name, goals, training history, past injuries, and workout performance analysis.
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - 
-Message 12 (AIMessage):
-2025-07-28 13:55:18,155 - app.services.chains.base_conversation_chain - INFO - Content: That's excellent! As the developer, you've identified exactly what would make this fitness coaching AI most effective. Providing that initial context about each user will dramatically improve the quality and relevance of the guidance I can offer.
-
-Having information like:
-- The user's name (for personalized communication)
-- Their specific fitness goals (strength, weight loss, endurance, etc.)
-- Training history (experience level, past routines)
-- Injury history (for safety and appropriate modifications)
-- Performance data (to track progress and make data-driven recommendations)
-
-This contextual foundation will allow me to give much more tailored advice from the very beginning of each conversation, making the experience more valuable for users.
-
-Is there anything specific you'd like to adjust about how I process or respond to this information? Or any particular aspects of fitness coaching you want to ensure I emphasize?
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
-Message 13 (HumanMessage):
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Can you see any earlier message
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
-Message 14 (HumanMessage):
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Can you see earlier messages?
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
-Message 15 (AIMessage):
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: No, I can't see any messages from previous conversations. Each time a new conversation starts, I only have access to the messages within that current conversation. 
-
-I don't have any memory of past interactions with you or any other users outside of what's shared in our current exchange. That's why providing that initial context about the user at the beginning of each conversation (name, goals, training history, injuries, and performance data) would be so valuable - it gives me the information I need to provide relevant guidance right from the start.
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
-Message 16 (HumanMessage):
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - Content: Do you know who I am?
-2025-07-28 13:55:18,156 - app.services.chains.base_conversation_chain - INFO - 
-Message 17 (AIMessage):

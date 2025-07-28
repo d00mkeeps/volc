@@ -1,5 +1,3 @@
-# app/core/utils/conversation_attachments.py
-
 from app.core.supabase.client import SupabaseClient
 from typing import Dict, List, Any, NamedTuple
 import logging
@@ -108,13 +106,14 @@ class ConversationAttachmentsService(BaseDBService):
                     
                 # Reconstruct the bundle from separate JSONB fields
                 bundle_data = {
+                    'id': bundle_raw.get('id'),
+                    'created_at': bundle_raw.get('created_at'),
+                    'status': bundle_raw.get('status'),  # Add this line
                     'metadata': bundle_raw.get('metadata', {}),
-                    'raw_workouts': bundle_raw.get('raw_workouts', {}),
+                    'workouts': bundle_raw.get('workouts', {}),
                     'top_performers': bundle_raw.get('top_performers', {}),
-                    'consistency_metrics': bundle_raw.get('consistency_metrics', {}),
                     'correlation_data': bundle_raw.get('correlation_data', {}),
                     'chart_urls': bundle_raw.get('chart_urls', {}),
-                    'status': bundle_raw.get('status', 'unknown'),  # Include status
                 }
                 
                 # Create WorkoutDataBundle instance

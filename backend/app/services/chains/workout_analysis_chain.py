@@ -11,8 +11,7 @@ logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
     def __init__(self, llm: ChatAnthropic, user_id: str):
-        system_prompt = """ try and talk like a human fitness coach!
-"""
+        system_prompt = """ try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours."""
 
         super().__init__(system_prompt=system_prompt, llm=llm)
         self.user_id = user_id
@@ -48,9 +47,9 @@ class WorkoutAnalysisChain(BaseConversationChain):
                 available_charts = list(bundle.chart_urls.keys())
             logger.info(f"Bundle has {len(available_charts)} charts available")
             
-            # Log top performers if available
+            # Log top performers if available - FIXED: Use direct attribute access
             if hasattr(bundle, 'top_performers') and bundle.top_performers:
-                strength_highlights = bundle.top_performers.get('strength', [])
+                strength_highlights = bundle.top_performers.strength
                 if strength_highlights and len(strength_highlights) > 0:
                     logger.info(f"Top strength performer: {strength_highlights[0].get('name') if isinstance(strength_highlights[0], dict) else 'None'}")
                 else:
@@ -61,9 +60,21 @@ class WorkoutAnalysisChain(BaseConversationChain):
             logger.error(f"Failed to add workout data bundle: {str(e)}", exc_info=True)
             return False
 
-    def _format_date(self, dt: datetime) -> str:
+    def _format_date(self, dt) -> str:
         """Format datetime to string."""
-        return dt.isoformat() if dt else None
+        if dt is None:
+            return None
+        
+        # If it's already a string, return as-is (assuming it's properly formatted)
+        if isinstance(dt, str):
+            return dt
+        
+        # If it's a datetime object, format it
+        if isinstance(dt, datetime):
+            return dt.isoformat()
+        
+        # For any other type, try to convert to string
+        return str(dt)
 
     def _format_visualization_context(self) -> str:
         """Format the visualization context for the latest bundle."""
@@ -82,37 +93,50 @@ class WorkoutAnalysisChain(BaseConversationChain):
             if 'weekly_frequency' in latest_bundle.chart_urls:
                 available_charts.append("Weekly Workout Frequency Chart")
         
-        # Format top performers 
+        # Format top performers - FIXED: Use direct attribute access
         strength_highlights = []
         volume_highlights = []
         frequency_highlights = []
         
         if hasattr(latest_bundle, 'top_performers'):
-            # Process strength performers
-            for performer in latest_bundle.top_performers.get('strength', []):
+            # Process strength performers - CHANGED: Direct attribute access
+            for performer in latest_bundle.top_performers.strength:
                 if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
                     strength_highlights.append(
                         f"{performer.get('name')}: +{performer.get('change_percent')}%"
                     )
             
-            # Process volume performers
-            for performer in latest_bundle.top_performers.get('volume', []):
+            # Process volume performers - CHANGED: Direct attribute access
+            for performer in latest_bundle.top_performers.volume:
                 if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
                     volume_highlights.append(
                         f"{performer.get('name')}: +{performer.get('change_percent')}%"
                     )
             
-            # Process frequency performers
-            for performer in latest_bundle.top_performers.get('frequency', []):
+            # Process frequency performers - CHANGED: Direct attribute access
+            for performer in latest_bundle.top_performers.frequency:
                 if isinstance(performer, dict):
                     frequency_highlights.append(
                         f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
                     )
         
-        # Format consistency metrics
-        consistency_score = latest_bundle.consistency_metrics.get('score', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
-        consistency_streak = latest_bundle.consistency_metrics.get('streak', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
-        consistency_gap = latest_bundle.consistency_metrics.get('avg_gap', 0) if hasattr(latest_bundle, 'consistency_metrics') else 0
+        # Format consistency metrics - FIXED: Handle Pydantic model properly
+        consistency_score = 0
+        consistency_streak = 0
+        consistency_gap = 0
+        
+        if hasattr(latest_bundle, 'consistency_metrics') and latest_bundle.consistency_metrics:
+            # Check if it's a Pydantic model or dict
+            if hasattr(latest_bundle.consistency_metrics, 'score'):
+                # It's a Pydantic model
+                consistency_score = latest_bundle.consistency_metrics.score
+                consistency_streak = latest_bundle.consistency_metrics.streak
+                consistency_gap = latest_bundle.consistency_metrics.avg_gap
+            elif isinstance(latest_bundle.consistency_metrics, dict):
+                # It's a dict
+                consistency_score = latest_bundle.consistency_metrics.get('score', 0)
+                consistency_streak = latest_bundle.consistency_metrics.get('streak', 0)
+                consistency_gap = latest_bundle.consistency_metrics.get('avg_gap', 0)
         
         # Create the visualization context
         context = f"""
@@ -132,67 +156,58 @@ TOP PERFORMERS:
         return context
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
-        """Get workout-specific context variables with consolidated formatting."""
-        base_vars = await super().get_additional_prompt_vars()
-
-        try:
-            # Include the system prompt explicitly
-            base_vars["system_prompt"] = self.system_prompt
-            
-            # Format the visualization context
-            base_vars["visualization_context"] = self._format_visualization_context()
-            
-            # Format workout data context
-            workout_context = {
-                "available_data": []
-            }
-            
-            if self._data_bundles:
-                latest_bundle = self._data_bundles[-1]
-                
-                # Include the advanced metrics and minimal exercise data
-                date_range = latest_bundle.metadata.date_range
-                
-                workout_context["available_data"] = {
-                    "query": latest_bundle.original_query,
-                    "date_range": {
-                        "start": self._format_date(date_range['earliest']),
-                        "end": self._format_date(date_range['latest'])
-                    },
-                    # Focus on providing the metrics instead of raw data
-                    "workout_metrics": latest_bundle.workout_data.get('metrics', {}),
-                    "total_workouts": latest_bundle.metadata.total_workouts,
-                    "correlation_analysis": latest_bundle.correlation_data.summary if latest_bundle.correlation_data else None
-                }
-            
-            context_str = f"""Available workout data:
-            {json.dumps(workout_context, indent=2)}"""
-            
-            base_vars["context"] = context_str
-            return base_vars
-            
-        except Exception as e:
-            self.logger.error(f"Error getting prompt variables: {str(e)}", exc_info=True)
+        if not self._data_bundles:
             return {
                 "system_prompt": self.system_prompt,
-                "context": "No workout data available",
+                "context": "No workout data available", 
                 "visualization_context": "No visualizations available",
                 "messages": self.messages,
                 "current_message": ""
             }
-        
 
-def load_bundles(self, bundles: List) -> None:
-    """Load workout bundles into context"""
-    from app.schemas.workout_data_bundle import WorkoutDataBundle
+        latest_bundle = self._data_bundles[-1]
+        date_range = latest_bundle.metadata.date_range
+        
+        workout_context = {
+            "metadata": {
+                "total_workouts": latest_bundle.metadata.total_workouts,
+                "total_exercises": latest_bundle.metadata.total_exercises,
+                "date_range": {
+                    "start": self._format_date(date_range['earliest']),
+                    "end": self._format_date(date_range['latest'])
+                },
+                "exercises_included": latest_bundle.metadata.exercises_included
+            },
+            "top_performers": {
+                # FIXED: Direct attribute access instead of dict access
+                "strength": latest_bundle.top_performers.strength,
+                "volume": latest_bundle.top_performers.volume,
+                "frequency": latest_bundle.top_performers.frequency
+            },
+            "consistency_metrics": latest_bundle.consistency_metrics if hasattr(latest_bundle, 'consistency_metrics') else {},
+            "correlation_data": latest_bundle.correlation_data,
+            "recent_workouts": latest_bundle.workouts
+        }
+
+        return {
+            "system_prompt": self.system_prompt,
+            "context": f"Available workout data:\n{json.dumps(workout_context, indent=2)}",
+            "visualization_context": self._format_visualization_context(),
+            "messages": self.messages,
+            "current_message": ""
+        }
     
-    # Ensure all bundles are WorkoutDataBundle instances
-    valid_bundles = []
-    for bundle in bundles:
-        if isinstance(bundle, WorkoutDataBundle):
-            valid_bundles.append(bundle)
-        else:
-            logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
-    
-    self._data_bundles = valid_bundles.copy()
-    logger.info(f"Loaded {len(self._data_bundles)} workout bundles into conversation context")
+    def load_bundles(self, bundles: List) -> None:
+        """Load workout bundles into context"""
+        from app.schemas.workout_data_bundle import WorkoutDataBundle
+        
+        # Ensure all bundles are WorkoutDataBundle instances
+        valid_bundles = []
+        for bundle in bundles:
+            if isinstance(bundle, WorkoutDataBundle):
+                valid_bundles.append(bundle)
+            else:
+                logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
+        
+        self._data_bundles = valid_bundles.copy()
+        logger.info(f"Loaded {len(self._data_bundles)} workout bundles into conversation context")

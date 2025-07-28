@@ -20,15 +20,6 @@ class WorkoutAnalysisLLMService:
         self._conversation_chains = {}  # Store chains by conversation_id
         self.message_service = MessageService()
         self.analysis_bundle_service = AnalysisBundleService()
-    
-    def _filter_bundle_for_llm(self, bundle_data: dict) -> dict:
-        """Remove empty fields from bundle for LLM context"""
-        return {
-            "metadata": bundle_data.get("metadata", {}),
-            "top_performers": bundle_data.get("top_performers", {}),
-            "chart_urls": bundle_data.get("chart_urls", {})
-            # Skip correlation_data and consistency_metrics
-        }
         
     def get_chain(self, conversation_id: str, user_id: str = None) -> WorkoutAnalysisChain:
         """Get or create a conversation chain"""
@@ -114,16 +105,15 @@ class WorkoutAnalysisLLMService:
                 full_response_content = ""
                 async for response in chain.process_message("Analyze my workout"):
                     await websocket.send_json(response)
-                    if response.get("type") == "message_delta":
+                    if response.get("type") == "content":
                         full_response_content += response.get("data", "")
                 
                 # Save the AI's response as the first message
                 if full_response_content:
                     await self.message_service.save_message(
                         conversation_id=conversation_id,
-                        user_id=chain.user_id,
                         message_content=full_response_content,
-                        message_type="ai"
+                        message_type="assistant"
                     )
                     logger.info(f"Saved proactive AI message for conversation {conversation_id}")
 
@@ -147,39 +137,8 @@ class WorkoutAnalysisLLMService:
                     })
                     continue
                 
-                # Handle analysis bundle
-                if data.get('type') == 'analysis_bundle':
-                    bundle_data = data.get('bundle')
-                    message = data.get('message', 'Analyze this workout data')
-                    
-                    # Add bundle to conversation context
-                    if bundle_data:
-                        try:
-                            # Convert dict to WorkoutDataBundle if needed
-                            if not isinstance(bundle_data, WorkoutDataBundle):
-                                bundle = WorkoutDataBundle(**bundle_data)
-                            else:
-                                bundle = bundle_data
-                            
-                            filtered_bundle = self._filter_bundle_for_llm(bundle_data)
-                            await chain.add_data_bundle(filtered_bundle)
-                            logger.info(f"Added analysis bundle to conversation {conversation_id}")
-                        except Exception as e:
-                            logger.error(f"Error adding bundle to conversation: {str(e)}")
-                            await websocket.send_json({
-                                "type": "error",
-                                "data": {
-                                    "message": f"Failed to process analysis data: {str(e)}"
-                                }
-                            })
-                            continue
-                    
-                    # Process message with bundle context
-                    async for response in chain.process_message(message):
-                        await websocket.send_json(response)
-                
                 # Handle regular messages
-                elif data.get('type') == 'message' or 'message' in data:
+                if data.get('type') == 'message' or 'message' in data:
                     message = data.get('message', '')
                     
                     # Process message

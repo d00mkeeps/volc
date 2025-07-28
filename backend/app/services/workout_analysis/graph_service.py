@@ -24,8 +24,8 @@ class WorkoutGraphService:
         
         exercise_metrics = {}
         
-        # Use bundle.raw_workouts instead of workout_data
-        for workout in bundle.raw_workouts.get('workouts', []):
+        # Use bundle.workouts instead of raw_workouts
+        for workout in bundle.workouts.get('workouts', []):
             workout_date = workout.get('date', '')
             if not workout_date:
                 continue
@@ -110,7 +110,7 @@ class WorkoutGraphService:
             definition_id = exercise.get('definition_id')
             data_points = []
             
-            for workout in bundle.raw_workouts.get('workouts', []):
+            for workout in bundle.workouts.get('workouts', []):
                 workout_date = workout.get('date', '')
                 if not workout_date:
                     continue
@@ -202,7 +202,7 @@ class WorkoutGraphService:
             definition_id = exercise.get('definition_id')
             data_points = []
             
-            for workout in bundle.raw_workouts.get('workouts', []):
+            for workout in bundle.workouts.get('workouts', []):
                 workout_date = workout.get('date', '')
                 if not workout_date:
                     continue
@@ -284,7 +284,7 @@ class WorkoutGraphService:
         from datetime import datetime, timedelta
         
         workout_dates = []
-        for workout in bundle.raw_workouts.get('workouts', []):
+        for workout in bundle.workouts.get('workouts', []):
             date_str = workout.get('date', '')
             if date_str:
                 try:
