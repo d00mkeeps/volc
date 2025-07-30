@@ -7,10 +7,7 @@ from ..schemas.workout_analysis import WorkoutAnalysisRequest
 from .db.workout_service import WorkoutService
 from .db.conversation_service import ConversationService
 from .db.analysis_service import AnalysisBundleService
-from .workout_analysis.correlation_service import CorrelationService
-# from .workout_analysis.graph_service import WorkoutGraphService
-from ..core.utils.id_gen import new_uuid
-from ..schemas.workout_data_bundle import WorkoutDataBundle
+from .workout_analysis.main_processor import WorkoutDataProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +16,6 @@ class WorkoutAnalysisService:
         self.workout_service = WorkoutService()
         self.conversation_service = ConversationService()
         self.analysis_bundle_service = AnalysisBundleService()
-        # self.graph_service = WorkoutGraphService(self.workout_service)
         
     async def initiate_analysis_and_conversation(
         self, 
@@ -41,6 +37,7 @@ class WorkoutAnalysisService:
         except Exception as e:
             logger.error(f"Error initiating analysis and conversation: {e}", exc_info=True)
             raise
+    
     async def _get_workout_data(self, request: WorkoutAnalysisRequest, user_id: str) -> Dict[str, Any]:
         if request.exercise_definition_ids:
             return await self.workout_service.get_workout_history_by_definition_ids(
@@ -66,85 +63,33 @@ class WorkoutAnalysisService:
             # 2. Update status to in_progress
             await self.analysis_bundle_service.update_bundle_status(bundle_id, 'in_progress')
             
-            # 3. Get full workout data (for calculations)
-            full_workout_data = await self._get_workout_data(request, user_id)
+            # 3. Get raw workout data
+            raw_workout_data = await self._get_workout_data(request, user_id)
             
-            if not full_workout_data or not full_workout_data.get("workouts"):
+            if not raw_workout_data or not raw_workout_data.get("workouts"):
                 logger.warning(f"No workout data for conversation {conversation_id}")
                 await self.analysis_bundle_service.update_bundle_status(
                     bundle_id, 'failed', 'No workout data found'
                 )
                 return
             
-            logger.info(f"Proceeding with analysis for {len(full_workout_data['workouts'])} workouts")
+            logger.info(f"Processing analysis for {len(raw_workout_data['workouts'])} workouts")
             
-            # 4. Extract lightweight workouts (name, date, notes only)
-            lightweight_workouts = [
-                {
-                    "name": workout.get("name", ""),
-                    "date": workout.get("date", "")[:10] if workout.get("date") else "",
-                    "notes": workout.get("notes", "")
-                }
-                for workout in full_workout_data.get("workouts", [])
-            ]
+            # 4. Process raw data into complete bundle using main processor
+            processor = WorkoutDataProcessor()
+            complete_bundle = processor.process(bundle_id, conversation_id, user_id, raw_workout_data)
             
-            # 5. Store lightweight workouts
-            await self.analysis_bundle_service.update_bundle_field(bundle_id, 'workouts', lightweight_workouts)
+            # 5. Save the complete bundle to database
+            save_result = await self.analysis_bundle_service.save_analysis_bundle(bundle_id, complete_bundle)
             
-            # 6. Generate metadata (from full data)
-            exercise_names = set()
-            for workout in full_workout_data.get('workouts', []):
-                for exercise in workout.get('exercises', []):
-                    exercise_names.add(exercise.get('exercise_name', ''))
-
-            from ..schemas.workout_data_bundle import BundleMetadata
-            metadata = BundleMetadata(
-                total_workouts=full_workout_data['metadata']['total_workouts'],
-                total_exercises=full_workout_data['metadata']['total_exercises'], 
-                date_range=full_workout_data['metadata']['date_range'],
-                exercises_included=list(exercise_names)
-            )
-            
-            # 7. Update bundle with metadata
-            await self.analysis_bundle_service.update_bundle_field(bundle_id, 'metadata', metadata.model_dump())
-            
-            # 8. Calculate top_performers (from full data, before we discard it)
-            from .workout_analysis.graph_service import WorkoutGraphService
-            graph_service = WorkoutGraphService(self.workout_service)
-            
-            # Create temporary bundle for calculations
-            temp_bundle = WorkoutDataBundle(
-                id=bundle_id,
-                metadata=metadata,
-                workouts=lightweight_workouts,  # This won't be used for calculations
-                created_at=datetime.now(),
-                status='in_progress'
-            )
-            temp_bundle.raw_workouts = full_workout_data  # Use full data for calculations
-            
-            top_strength = graph_service._get_top_performers(temp_bundle, "1rm_change", 3)
-            top_volume = graph_service._get_top_performers(temp_bundle, "volume_change", 3)
-            
-            top_performers = {
-                "strength": top_strength,
-                "volume": top_volume,
-                "frequency": []  # Can calculate this from lightweight data if needed
-            }
-            
-            await self.analysis_bundle_service.update_bundle_field(bundle_id, 'top_performers', top_performers)
-            
-            # 9. Perform correlation analysis (from full data)
-            correlation_results = CorrelationService().analyze_exercise_correlations(full_workout_data)
-            
-            # 10. Update bundle with correlation data
-            if correlation_results:
-                await self.analysis_bundle_service.update_bundle_field(bundle_id, 'correlation_data', correlation_results)
-            
-            # 11. Mark as complete
-            await self.analysis_bundle_service.update_bundle_status(bundle_id, 'complete')
-            
-            logger.info(f"Analysis task completed successfully for conversation {conversation_id}")
-
+            if save_result.get("success"):
+                logger.info(f"Analysis task completed successfully for conversation {conversation_id}")
+            else:
+                logger.error(f"Failed to save complete bundle: {save_result.get('error')}")
+                await self.analysis_bundle_service.update_bundle_status(
+                    bundle_id, 'failed', f"Bundle save failed: {save_result.get('error')}"
+                )
+                
         except Exception as e:
             logger.error(f"Error during analysis task: {e}", exc_info=True)
             

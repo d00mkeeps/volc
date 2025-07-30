@@ -1,93 +1,65 @@
-2025-07-28 18:38:05,201 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-07-28 18:38:05,202 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-07-28 18:38:05,202 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (AIMessage):
-2025-07-28 18:38:05,202 - app.services.chains.base_conversation_chain - INFO - Content: # Hi there! 👋
-
-I'd be happy to help you with anything fitness or workout related. Since we don't have any workout data loaded yet, I can:
-
-- Answer questions about exercise and fitness
-- Help you plan workouts
-- Provide nutrition guidance
-- Explain exercise techniques
-- Analyze your workout data once you share it
-
-What would you like to talk about today?
-2025-07-28 18:38:05,202 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (HumanMessage):
-2025-07-28 18:38:05,202 - app.services.chains.base_conversation_chain - INFO - Content: I’m the dev
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - Content: Hello?
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (HumanMessage):
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - Content: Can you see this message
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 7 (HumanMessage):
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - Content: ?
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 8 (HumanMessage):
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - Content: Are we there
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 9 (HumanMessage):
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - Content: I think I fixed it
-2025-07-28 18:38:05,203 - app.services.chains.base_conversation_chain - INFO - 
-Message 10 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Sigh
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 11 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Hola
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 12 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: .
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 13 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Test
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 14 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Test
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 15 (AIMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Hello there! I can definitely see your message coming through now. 
-
-I'm here and ready to assist you with any fitness or workout questions you might have! Is there anything specific about your training data or workout routine you'd like to discuss?
-
-By the way, I absolutely love birds - cardinals are such a vibrant splash of red color in nature, don't you think? The way they stand out against winter landscapes is quite remarkable.
-
-What can I help you with regarding your fitness journey today?
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - 
-Message 16 (HumanMessage):
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - Content: Can you see my workout bundle?
-2025-07-28 18:38:05,206 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-07-28 18:38:06,304 - app.services.chains.base_conversation_chain - ERROR - Error processing message: Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'This request would exceed the rate limit for your organization (59abe5d1-222f-4a4e-9568-afed04c257ac) of 20,000 input tokens per minute. For details, refer to: https://docs.anthropic.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase.'}}
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/chains/base_conversation_chain.py", line 67, in process_message
-    async for chunk in self.chat_model.astream(
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py", line 509, in astream
-    async for chunk in self._astream(
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/langchain_anthropic/chat_models.py", line 747, in _astream
-    stream = await self._async_client.messages.create(**payload)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/anthropic/resources/messages/messages.py", line 2051, in create
-    return await self._post(
-           ^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/anthropic/_base_client.py", line 1842, in post
-    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/anthropic/_base_client.py", line 1536, in request
-    return await self._request(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/anthropic/_base_client.py", line 1637, in _request
-    raise self._make_status_error_from_response(err.response) from None
-anthropic.RateLimitError: Error code: 429 - {'type': 'error', 'error': {'type': 'rate_limit_error', 'message': 'This request would exceed the rate limit for your organization (59abe5d1-222f-4a4e-9568-afed04c257ac) of 20,000 input tokens per minute. For details, refer to: https://docs.anthropic.com/en/api/rate-limits. You can see the response headers for current usage. Please reduce the prompt length or the maximum tokens requested, or try again later. You may also contact sales at https://www.anthropic.com/contact-sales to discuss your options for a rate limit increase.'}}
-2025-07-28 18:43:06,359 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 130, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 135, in receive_json
-    self._raise_on_disconnect(message)
-  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/starlette/websockets.py", line 113, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-07-30 01:08:32,943 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:32,945 - app.main - INFO - Response status: 200
+2025-07-30 01:08:32,946 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-07-30 01:08:33,009 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-07-30 01:08:33,009 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-07-30 01:08:33,113 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-07-30 01:08:33,118 - app.main - INFO - Response status: 200
+2025-07-30 01:08:33,120 - app.main - INFO - Request: GET /api/dashboard
+2025-07-30 01:08:33,123 - app.main - INFO - Response status: 200
+2025-07-30 01:08:33,271 - app.main - INFO - Request: GET /db/workouts/user
+2025-07-30 01:08:33,337 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:33,337 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:33,611 - app.services.db.workout_service - INFO - Retrieved 242 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:33,611 - app.api.endpoints.db - INFO - Retrieved 242 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:33,681 - app.main - INFO - Response status: 200
+2025-07-30 01:08:40,009 - app.main - INFO - Request: POST /db/workouts
+2025-07-30 01:08:40,252 - app.api.endpoints.db - INFO - API request to create workout: Monday chest workout
+2025-07-30 01:08:40,252 - app.services.db.workout_service - INFO - Creating workout: Monday chest workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:40,254 - app.services.db.workout_service - INFO - Inserting workout with data: Monday chest workout, None
+2025-07-30 01:08:40,370 - app.services.db.workout_service - INFO - Workout created with ID: dd49320c-8fe1-4818-a0e9-bc6694851f9a
+2025-07-30 01:08:40,370 - app.services.db.workout_service - INFO - Creating 8 exercises for workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
+2025-07-30 01:08:40,370 - app.services.db.workout_service - INFO - Creating exercise 1/8: Face Pull
+2025-07-30 01:08:40,446 - app.services.db.workout_service - INFO - Exercise created: Face Pull with ID: 743fa0ea-8617-47b2-9cbe-fa252cce5d00
+2025-07-30 01:08:40,652 - app.services.db.workout_service - INFO - Creating exercise 2/8: Pull-ups
+2025-07-30 01:08:40,716 - app.services.db.workout_service - INFO - Exercise created: Pull-ups with ID: cc97b8f3-6d4d-43ad-9da3-cce8b9b69284
+2025-07-30 01:08:40,904 - app.services.db.workout_service - INFO - Creating exercise 3/8: Bench press
+2025-07-30 01:08:40,966 - app.services.db.workout_service - INFO - Exercise created: Bench press with ID: cfc275fe-7de5-414d-b7d1-ef19cd29e553
+2025-07-30 01:08:41,144 - app.services.db.workout_service - INFO - Creating exercise 4/8: Ez bar curl
+2025-07-30 01:08:41,200 - app.services.db.workout_service - INFO - Exercise created: Ez bar curl with ID: 1bf7b736-65b2-4d07-a286-8da8245ea413
+2025-07-30 01:08:41,324 - app.services.db.workout_service - INFO - Creating exercise 5/8: Dips
+2025-07-30 01:08:41,415 - app.services.db.workout_service - INFO - Exercise created: Dips with ID: 8b6a71ca-83fa-4371-a7c0-4878ec97e111
+2025-07-30 01:08:41,585 - app.services.db.workout_service - INFO - Creating exercise 6/8: Seated hammer curl
+2025-07-30 01:08:41,651 - app.services.db.workout_service - INFO - Exercise created: Seated hammer curl with ID: ea8852bd-f13a-4c02-ac3f-d12560625bf6
+2025-07-30 01:08:41,848 - app.services.db.workout_service - INFO - Creating exercise 7/8: Cable flye
+2025-07-30 01:08:41,916 - app.services.db.workout_service - INFO - Exercise created: Cable flye with ID: 50e151fa-175a-4fa7-ab91-9f3327ee6c3d
+2025-07-30 01:08:42,093 - app.services.db.workout_service - INFO - Creating exercise 8/8: Cable lateral raise
+2025-07-30 01:08:42,149 - app.services.db.workout_service - INFO - Exercise created: Cable lateral raise with ID: a5e7b1b1-e9c3-4359-99c2-d4e75ac2923b
+2025-07-30 01:08:42,375 - app.services.db.workout_service - INFO - Workout creation complete for ID: dd49320c-8fe1-4818-a0e9-bc6694851f9a
+2025-07-30 01:08:42,376 - app.main - INFO - Response status: 200
+2025-07-30 01:08:42,959 - app.main - INFO - Request: POST /api/workout-analysis
+2025-07-30 01:08:43,027 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 30 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 01:08:43,088 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 768c31dd-f0cf-4fe1-a1c4-c29b963f4323
+2025-07-30 01:08:43,089 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 768c31dd-f0cf-4fe1-a1c4-c29b963f4323
+2025-07-30 01:08:43,090 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 73c34abb-627c-44ed-9a1d-b3ef26968170 for conversation: 768c31dd-f0cf-4fe1-a1c4-c29b963f4323
+2025-07-30 01:08:43,149 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 73c34abb-627c-44ed-9a1d-b3ef26968170
+2025-07-30 01:08:43,150 - app.services.workout_analysis_service - INFO - Created empty bundle: 73c34abb-627c-44ed-9a1d-b3ef26968170
+2025-07-30 01:08:43,150 - app.services.db.analysis_service - INFO - Updating bundle 73c34abb-627c-44ed-9a1d-b3ef26968170 status to: in_progress
+2025-07-30 01:08:43,208 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 73c34abb-627c-44ed-9a1d-b3ef26968170 -> in_progress
+2025-07-30 01:08:43,208 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['b8d098e2-0cd1-4992-84b1-fd8a5c51a83f', '53d5978d-2a80-4b99-91f5-f315f4ba9ffc', '46a6427a-127d-4127-9219-884075d863e8', '9b15f600-cc20-463c-bc73-6e05ee8cc77e', '1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9', 'fda6110e-01b3-4988-aaa7-b4ff8f7199a9', 'af7ba166-f9c1-4909-871a-e3784ea9d83e', '194b066b-7df2-4b2d-9ac2-1daa2da019bb']
+2025-07-30 01:08:43,374 - app.services.db.workout_service - INFO - RPC returned: 126 workouts
+2025-07-30 01:08:43,374 - app.services.workout_analysis_service - INFO - Processing analysis for 126 workouts
+2025-07-30 01:08:43,374 - app.services.workout_analysis.main_processor - INFO - Processing bundle 73c34abb-627c-44ed-9a1d-b3ef26968170 with 126 workouts
+2025-07-30 01:08:43,377 - app.services.workout_analysis.calc.strength - INFO - Found 20 exercises with strength data, returning top 3
+2025-07-30 01:08:43,377 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 20 exercises
+2025-07-30 01:08:43,379 - app.services.workout_analysis.calc.volume - INFO - Found 20 exercises with volume data, returning top 3
+2025-07-30 01:08:43,379 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 20 exercises
+2025-07-30 01:08:43,379 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=1.4, variance=36.50413988351377
+2025-07-30 01:08:44,115 - app.services.workout_analysis.calc.correlation - INFO - Found 62 significant correlations out of 561 pairs analyzed
+2025-07-30 01:08:44,116 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 73c34abb-627c-44ed-9a1d-b3ef26968170
+2025-07-30 01:08:44,116 - app.services.db.analysis_service - INFO - Updating analysis bundle: 73c34abb-627c-44ed-9a1d-b3ef26968170
+2025-07-30 01:08:44,193 - app.services.db.analysis_service - INFO - Bundle updated successfully: 73c34abb-627c-44ed-9a1d-b3ef26968170
+2025-07-30 01:08:44,194 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 768c31dd-f0cf-4fe1-a1c4-c29b963f4323
+2025-07-30 01:08:44,194 - app.main - INFO - Response status: 200
+2025-07-30 01:08:44,381 - app.main - INFO - Request: GET /api/dashboard
+2025-07-30 01:08:44,383 - app.main - INFO - Response status: 200

@@ -4,9 +4,10 @@ from pydantic import BaseModel, Field
 
 class BundleMetadata(BaseModel):
     total_workouts: int
-    total_exercises: int
+    total_exercises: int  
     date_range: Dict[str, Any]
     exercises_included: List[str]
+    errors: List[str] = []  # NEW: Analysis errors
 
 class TopPerformers(BaseModel):
     strength: List[Dict[str, Any]] = []
@@ -14,9 +15,8 @@ class TopPerformers(BaseModel):
     frequency: List[Dict[str, Any]] = []
 
 class ConsistencyMetrics(BaseModel):
-    score: float = 0.0
-    streak: int = 0
-    avg_gap: float = 0.0
+    avg_gap: float = 0.0        
+    variance: Optional[float] = None
 
 class WorkoutDataBundle(BaseModel):
     id: str

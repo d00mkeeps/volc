@@ -44,7 +44,8 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
-
+*.log
+*.pyc
 # backend
 .env
 **/.env

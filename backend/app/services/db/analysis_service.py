@@ -4,6 +4,8 @@ from app.services.db.base_service import BaseDBService
 from typing import Dict, List, Any
 import logging
 
+from app.services.workout_analysis.schemas import WorkoutDataBundle
+
 logger = logging.getLogger(__name__)
 
 class AnalysisBundleService(BaseDBService):
@@ -102,11 +104,11 @@ class AnalysisBundleService(BaseDBService):
             logger.error(f"Error deleting conversation bundles: {str(e)}")
             return await self.handle_error("delete_conversation_bundles", e)
         
-    async def save_analysis_bundle(self, user_id: str, bundle: dict) -> dict:
+
+    async def save_analysis_bundle(self, bundle_id: str, bundle: 'WorkoutDataBundle') -> dict:
+        """Update an existing bundle with complete processed data."""
         try:
-            bundle_id = str(bundle.get('bundle_id', uuid.uuid4()))
-            
-            logger.info(f"Saving analysis bundle: {bundle_id}")
+            logger.info(f"Updating analysis bundle: {bundle_id}")
             
             # Convert objects to JSON-serializable types
             def convert_for_json(data):
@@ -118,39 +120,42 @@ class AnalysisBundleService(BaseDBService):
                     return str(data)
                 elif isinstance(data, datetime):
                     return data.isoformat()
+                elif hasattr(data, "model_dump"):  # Pydantic models
+                    return convert_for_json(data.model_dump())
                 elif hasattr(data, "item"):  # NumPy types
                     return data.item()
                 else:
                     return data
             
-            converted_bundle = convert_for_json(bundle)
-            
-            insert_data = {
-                "id": bundle_id,
-                "user_id": user_id,
-                "conversation_id": converted_bundle.get("conversationId"),
-                "metadata": converted_bundle.get("metadata", {}),
-                "raw_workouts": converted_bundle.get("raw_workouts", {}),
-                "top_performers": converted_bundle.get("top_performers", {}),
-                "consistency_metrics": converted_bundle.get("consistency_metrics", {}),
-                "correlation_data": converted_bundle.get("correlation_data", {}),
-                "chart_urls": converted_bundle.get("chart_urls", {}),
-                "created_at": datetime.now().isoformat()
+            # Convert WorkoutDataBundle to JSON-safe format
+            update_data = {
+                "metadata": convert_for_json(bundle.metadata),
+                "workouts": convert_for_json(bundle.workouts),  # Fixed field name!
+                "top_performers": convert_for_json(bundle.top_performers),
+                "consistency_metrics": convert_for_json(bundle.consistency_metrics),
+                "correlation_data": convert_for_json(bundle.correlation_data),
+                "chart_urls": convert_for_json(bundle.chart_urls),
+                "status": bundle.status,
+                "created_at": bundle.created_at.isoformat()
             }
             
-            result = self.supabase.table("analysis_bundles").insert(insert_data).execute()
+            # UPDATE existing bundle instead of INSERT
+            result = self.supabase.table("analysis_bundles") \
+                .update(update_data) \
+                .eq("id", bundle_id) \
+                .execute()
             
             if hasattr(result, 'data') and result.data:
-                logger.info(f"Bundle saved successfully with ID: {bundle_id}")
+                logger.info(f"Bundle updated successfully: {bundle_id}")
                 return {"success": True, "bundle_id": bundle_id}
             else:
-                logger.warning(f"Bundle may not have been saved properly. Result: {result}")
-                return {"success": False, "error": "Database insertion yielded no data", "bundle_id": bundle_id}
+                logger.warning(f"Bundle update yielded no data. Result: {result}")
+                return {"success": False, "error": "Database update yielded no data", "bundle_id": bundle_id}
                 
         except Exception as e:
-            logger.error(f"Error saving analysis bundle: {str(e)}")
+            logger.error(f"Error updating analysis bundle: {str(e)}")
             return {"success": False, "error": str(e)}
-        
+
     async def create_empty_bundle(self, conversation_id: str, user_id: str) -> Dict[str, Any]:
         """
         Create an empty analysis bundle with 'pending' status
@@ -165,7 +170,7 @@ class AnalysisBundleService(BaseDBService):
                 "conversation_id": conversation_id,
                 "status": "pending",
                 "metadata": {},
-                "raw_workouts": {},
+                "workouts": {},
                 "top_performers": {},
                 "consistency_metrics": {},
                 "correlation_data": {},
