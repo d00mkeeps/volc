@@ -4,7 +4,8 @@ import json
 from typing import Dict, Any, Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from langchain_google_vertexai import ChatVertexAI
+import google.api_core.exceptions
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 
 load_dotenv()
@@ -18,26 +19,32 @@ async def verify_token(token: str) -> Optional[str]:
     # This is a placeholder that always returns success
     return "test_user"
 
-# Dependency to get Anthropic API key
-def get_anthropic_api_key():
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
-        logger.error("ANTHROPIC_API_KEY environment variable not set")
-        raise HTTPException(status_code=500, detail="API configuration error")
-    return api_key
+def get_google_credentials():
+    """Verify Google Cloud credentials are properly set"""
+    credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+    
+    if not credentials_path:
+        logger.error("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+        raise HTTPException(status_code=500, detail="Google Cloud credentials not configured")
+    
+    if not project_id:
+        logger.error("GOOGLE_CLOUD_PROJECT environment variable not set")
+        raise HTTPException(status_code=500, detail="Google Cloud project not configured")
+    
+    return {"credentials_path": credentials_path, "project_id": project_id}
 
-# Dependency to get LLM instance
-def get_llm(api_key: str = Depends(get_anthropic_api_key)):
-    return ChatAnthropic(
-        model="claude-3-7-sonnet-20250219",
+def get_llm(credentials: dict = Depends(get_google_credentials)):
+    return ChatVertexAI(
+        model="gemini-2.5-flash",
         streaming=True,
-        api_key=api_key,
-        max_retries=0
+        max_retries=0,
+        temperature=0
     )
 
 # Dependency to get workout LLM service
-def get_workout_llm_service(api_key: str = Depends(get_anthropic_api_key)):
-    return WorkoutAnalysisLLMService(api_key=api_key)
+def get_workout_llm_service(credentials: dict = Depends(get_google_credentials)):
+    return WorkoutAnalysisLLMService()
 
 # Custom JSON encoder that handles datetime objects
 class DateTimeEncoder(json.JSONEncoder):
@@ -106,7 +113,7 @@ async def conversation_websocket(
     websocket: WebSocket, 
     conversation_id: str,
     user_id: str,
-    llm: ChatAnthropic = Depends(get_llm)
+    llm: ChatVertexAI = Depends(get_llm)
 ):
     """WebSocket endpoint for general LLM conversations"""
     
@@ -218,7 +225,7 @@ async def conversation_websocket(
 @router.websocket("/api/llm/onboarding")
 async def onboarding_websocket(
     websocket: WebSocket,
-    llm: ChatAnthropic = Depends(get_llm)
+    llm: ChatVertexAI = Depends(get_llm)
 ):
     """WebSocket endpoint for onboarding conversations"""
     

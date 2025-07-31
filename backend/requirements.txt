@@ -13,3 +13,7 @@ pytest-asyncio
 supabase
 pydantic[email]
 apscheduler
+langchain-google-vertexai
+google-cloud-aiplatform
+pandas
+scipy

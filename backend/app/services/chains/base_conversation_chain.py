@@ -1,9 +1,7 @@
-import json
-from typing import AsyncGenerator, Dict, Any, Optional, List
-import asyncio
+from typing import AsyncGenerator, Dict, Any, List
 import logging
-from langchain_anthropic import ChatAnthropic
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, BaseMessage
+from langchain_google_vertexai import ChatVertexAI
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 logger = logging.getLogger(__name__)
@@ -12,7 +10,7 @@ class BaseConversationChain:
     def __init__(
         self, 
         system_prompt: str, 
-        llm: ChatAnthropic
+        llm: ChatVertexAI
     ):
         self.system_prompt = system_prompt
         self.chat_model = llm
@@ -68,11 +66,11 @@ class BaseConversationChain:
                 input=formatted_prompt
             ):
                 
-                # Check if this is a completion chunk
                 if (not chunk.content and 
-                    getattr(chunk, 'response_metadata', {}).get('stop_reason') == 'end_turn'):
+                    hasattr(chunk, 'response_metadata') and 
+                    chunk.response_metadata):
                     yield {
-                        "type": "done",
+                        "type": "done", 
                         "data": ""
                     }
                     continue

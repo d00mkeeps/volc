@@ -3,14 +3,14 @@ from typing import Dict, Any, List
 import logging
 import json
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_anthropic import ChatAnthropic
+from langchain_google_vertexai import ChatVertexAI
 from app.schemas.workout_data_bundle import WorkoutDataBundle
 from .base_conversation_chain import BaseConversationChain
 
 logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
-    def __init__(self, llm: ChatAnthropic, user_id: str):
+    def __init__(self, llm: ChatVertexAI, user_id: str):
         system_prompt = """ try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours."""
 
         super().__init__(system_prompt=system_prompt, llm=llm)

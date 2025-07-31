@@ -1,83 +1,1259 @@
-2025-07-30 00:59:55,281 - app.main - INFO - Application starting
-2025-07-30 00:59:55,283 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-30 00:59:55,283 - app.main - INFO - SUPABASE_URL present: True
-2025-07-30 00:59:55,283 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-30 01:00:25,180 - app.main - INFO - Request: GET /db/user-profile
-2025-07-30 01:00:25,461 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:25,462 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:25,560 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:25,560 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-07-30 01:00:25,561 - app.main - INFO - Response status: 200
-2025-07-30 01:00:25,660 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-07-30 01:00:25,660 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-07-30 01:00:25,762 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-07-30 01:00:25,767 - app.main - INFO - Request: GET /api/dashboard
-2025-07-30 01:00:25,769 - app.main - INFO - Response status: 200
-2025-07-30 01:00:25,770 - app.main - INFO - Response status: 200
-2025-07-30 01:00:25,923 - app.main - INFO - Request: GET /db/workouts/user
-2025-07-30 01:00:25,983 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:25,983 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:26,487 - app.services.db.workout_service - INFO - Retrieved 241 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:26,487 - app.api.endpoints.db - INFO - Retrieved 241 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:26,563 - app.main - INFO - Response status: 200
-2025-07-30 01:00:40,341 - app.main - INFO - Request: POST /db/workouts
-2025-07-30 01:00:40,459 - app.api.endpoints.db - INFO - API request to create workout: Monday chest workout
-2025-07-30 01:00:40,459 - app.services.db.workout_service - INFO - Creating workout: Monday chest workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:40,459 - app.services.db.workout_service - INFO - Inserting workout with data: Monday chest workout, None
-2025-07-30 01:00:40,559 - app.services.db.workout_service - INFO - Workout created with ID: a28c560c-54d2-4f2e-b909-0bc6b017d6da
-2025-07-30 01:00:40,559 - app.services.db.workout_service - INFO - Creating 8 exercises for workout: a28c560c-54d2-4f2e-b909-0bc6b017d6da
-2025-07-30 01:00:40,559 - app.services.db.workout_service - INFO - Creating exercise 1/8: Face Pull
-2025-07-30 01:00:40,618 - app.services.db.workout_service - INFO - Exercise created: Face Pull with ID: 4eb49929-46b1-44e8-b9d2-9db07656ee16
-2025-07-30 01:00:40,830 - app.services.db.workout_service - INFO - Creating exercise 2/8: Pull-ups
-2025-07-30 01:00:40,887 - app.services.db.workout_service - INFO - Exercise created: Pull-ups with ID: d6feca23-6150-4edf-9505-842d3c464dda
-2025-07-30 01:00:41,077 - app.services.db.workout_service - INFO - Creating exercise 3/8: Bench press
-2025-07-30 01:00:41,138 - app.services.db.workout_service - INFO - Exercise created: Bench press with ID: 1a151696-3ba0-45ac-b8dd-0f56f1ae5680
-2025-07-30 01:00:41,352 - app.services.db.workout_service - INFO - Creating exercise 4/8: Ez bar curl
-2025-07-30 01:00:41,405 - app.services.db.workout_service - INFO - Exercise created: Ez bar curl with ID: f841dc32-14ff-4d5d-b0de-299a0f43e7c5
-2025-07-30 01:00:41,508 - app.services.db.workout_service - INFO - Creating exercise 5/8: Dips
-2025-07-30 01:00:41,565 - app.services.db.workout_service - INFO - Exercise created: Dips with ID: f40843fa-af33-4d4e-9c6f-400cd7a1b8b6
-2025-07-30 01:00:41,743 - app.services.db.workout_service - INFO - Creating exercise 6/8: Seated hammer curl
-2025-07-30 01:00:41,802 - app.services.db.workout_service - INFO - Exercise created: Seated hammer curl with ID: 79cc894d-8bc7-47c9-b304-eddbd532440d
-2025-07-30 01:00:41,975 - app.services.db.workout_service - INFO - Creating exercise 7/8: Cable flye
-2025-07-30 01:00:42,030 - app.services.db.workout_service - INFO - Exercise created: Cable flye with ID: 30bfb3da-f4a5-45ef-ad6f-7f12ea41dec3
-2025-07-30 01:00:42,206 - app.services.db.workout_service - INFO - Creating exercise 8/8: Cable lateral raise
-2025-07-30 01:00:42,261 - app.services.db.workout_service - INFO - Exercise created: Cable lateral raise with ID: aceaa3ce-4beb-4da3-93fe-874f183cdb09
-2025-07-30 01:00:42,481 - app.services.db.workout_service - INFO - Workout creation complete for ID: a28c560c-54d2-4f2e-b909-0bc6b017d6da
-2025-07-30 01:00:42,483 - app.main - INFO - Response status: 200
-2025-07-30 01:00:43,017 - app.main - INFO - Request: POST /api/workout-analysis
-2025-07-30 01:00:43,086 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Jul 30 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:00:43,138 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 5ed4e587-c838-4ed5-a336-9a79e1f5ffea
-2025-07-30 01:00:43,138 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 5ed4e587-c838-4ed5-a336-9a79e1f5ffea
-2025-07-30 01:00:43,139 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 0bffa715-c770-495a-8d7d-390b3cda971f for conversation: 5ed4e587-c838-4ed5-a336-9a79e1f5ffea
-2025-07-30 01:00:43,202 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 0bffa715-c770-495a-8d7d-390b3cda971f
-2025-07-30 01:00:43,203 - app.services.workout_analysis_service - INFO - Created empty bundle: 0bffa715-c770-495a-8d7d-390b3cda971f
-2025-07-30 01:00:43,203 - app.services.db.analysis_service - INFO - Updating bundle 0bffa715-c770-495a-8d7d-390b3cda971f status to: in_progress
-2025-07-30 01:00:43,262 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 0bffa715-c770-495a-8d7d-390b3cda971f -> in_progress
-2025-07-30 01:00:43,262 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['b8d098e2-0cd1-4992-84b1-fd8a5c51a83f', '53d5978d-2a80-4b99-91f5-f315f4ba9ffc', '46a6427a-127d-4127-9219-884075d863e8', '9b15f600-cc20-463c-bc73-6e05ee8cc77e', '1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9', 'fda6110e-01b3-4988-aaa7-b4ff8f7199a9', 'af7ba166-f9c1-4909-871a-e3784ea9d83e', '194b066b-7df2-4b2d-9ac2-1daa2da019bb']
-2025-07-30 01:00:43,480 - app.services.db.workout_service - INFO - RPC returned: 125 workouts
-2025-07-30 01:00:43,480 - app.services.workout_analysis_service - INFO - Processing analysis for 125 workouts
-2025-07-30 01:00:43,480 - app.services.workout_analysis.main_processor - INFO - Processing bundle 0bffa715-c770-495a-8d7d-390b3cda971f with 125 workouts
-2025-07-30 01:00:43,484 - app.services.workout_analysis.calc.strength - INFO - Found 20 exercises with strength data, returning top 3
-2025-07-30 01:00:43,484 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 20 exercises
-2025-07-30 01:00:43,486 - app.services.workout_analysis.calc.volume - INFO - Found 20 exercises with volume data, returning top 3
-2025-07-30 01:00:43,486 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 20 exercises
-2025-07-30 01:00:43,486 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=1.4, variance=36.7821550041854
-2025-07-30 01:00:44,144 - app.services.workout_analysis.calc.correlation - INFO - Found 62 significant correlations out of 561 pairs analyzed
-2025-07-30 01:00:44,145 - app.services.workout_analysis.main_processor - ERROR - Critical error processing bundle 0bffa715-c770-495a-8d7d-390b3cda971f: 1 validation error for WorkoutDataBundle
-consistency_metrics
-  Input should be a valid dictionary or instance of ConsistencyMetrics [type=model_type, input_value=ConsistencyMetrics(avg_gap=1.4, variance=36.78), input_type=ConsistencyMetrics]
-    For further information visit https://errors.pydantic.dev/2.10/v/model_type
-2025-07-30 01:00:44,145 - app.services.db.analysis_service - INFO - Updating analysis bundle: 0bffa715-c770-495a-8d7d-390b3cda971f
-2025-07-30 01:00:44,209 - app.services.db.analysis_service - INFO - Bundle updated successfully: 0bffa715-c770-495a-8d7d-390b3cda971f
-2025-07-30 01:00:44,209 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 5ed4e587-c838-4ed5-a336-9a79e1f5ffea
-2025-07-30 01:00:44,209 - app.main - INFO - Response status: 200
-2025-07-30 01:00:44,373 - app.main - INFO - Request: GET /api/dashboard
-2025-07-30 01:00:44,374 - app.main - INFO - Response status: 200
-2025-07-30 01:06:56,384 - app - INFO - Logging has been set up
-2025-07-30 01:06:56,385 - app.main - INFO - Application starting
-2025-07-30 01:06:56,385 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-30 01:06:56,385 - app.main - INFO - SUPABASE_URL present: True
-2025-07-30 01:06:56,385 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-30 01:08:32,651 - app.main - INFO - Request: GET /db/user-profile
-2025-07-30 01:08:32,837 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 01:08:32,838 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-07-30 21:30:41,303 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
+
+Current workout data context:
+Available workout data:
+{
+  "metadata": {
+    "total_workouts": 127,
+    "total_exercises": 899,
+    "date_range": {
+      "start": "2025-02-01T22:00:00+00:00",
+      "end": "2025-07-30T19:39:22.076+00:00"
+    },
+    "exercises_included": [
+      "Air Squat",
+      "Back Extension",
+      "Barbell Back Squat",
+      "Barbell Bench Press",
+      "Barbell Shrug",
+      "Cable Fly",
+      "Cable Lateral Raise",
+      "Chin-Up",
+      "Copenhagen Plank",
+      "Dips",
+      "Dumbbell Row",
+      "Dumbbell Single-Arm Row",
+      "EZ Bar Curl",
+      "Face Pull",
+      "Hammer Curl",
+      "Hanging Leg Raise",
+      "Leg Curl",
+      "Machine Crunch",
+      "Machine Row",
+      "Preacher Curl",
+      "Pull-Up",
+      "Sumo Deadlift"
+    ]
+  },
+  "top_performers": {
+    "strength": [
+      {
+        "name": "Dips",
+        "change": 115.95,
+        "last_value": 129.92,
+        "first_value": 13.97,
+        "definition_id": "1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9",
+        "change_percent": 830.0
+      },
+      {
+        "name": "Face Pull",
+        "change": 8.38,
+        "last_value": 34.92,
+        "first_value": 26.54,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 31.6
+      },
+      {
+        "name": "Barbell Back Squat",
+        "change": 15.42,
+        "last_value": 191.0,
+        "first_value": 175.58,
+        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+        "change_percent": 8.8
+      }
+    ],
+    "volume": [
+      {
+        "name": "Dips",
+        "change": 2371.0,
+        "last_value": 2731.0,
+        "first_value": 360.0,
+        "definition_id": "1d702aa6-01c6-4e0a-b2fe-22abbcc2ebf9",
+        "change_percent": 658.6
+      },
+      {
+        "name": "Face Pull",
+        "change": 672.0,
+        "last_value": 900.0,
+        "first_value": 228.0,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 294.7
+      },
+      {
+        "name": "Cable Fly",
+        "change": 270.0,
+        "last_value": 810.0,
+        "first_value": 540.0,
+        "definition_id": "af7ba166-f9c1-4909-871a-e3784ea9d83e",
+        "change_percent": 50.0
+      }
+    ],
+    "frequency": []
+  },
+  "consistency_metrics": {},
+  "correlation_data": {
+    "significant_count": 62,
+    "data_quality_notes": [
+      "Insufficient weekly data for Air Squat strength (2 weeks, need 4+)",
+      "Insufficient weekly data for Dumbbell Row strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Copenhagen Plank strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Air Squat volume (2 weeks, need 4+)",
+      "Insufficient weekly data for Dumbbell Row volume (1 weeks, need 4+)",
+      "Insufficient weekly data for Copenhagen Plank volume (1 weeks, need 4+)"
+    ],
+    "total_pairs_analyzed": 561,
+    "significant_correlations": [
+      {
+        "outcome": "Face Pull strength",
+        "summary": "Face Pull volume predicts Face Pull strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Face Pull volume"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "summary": "Barbell Bench Press volume predicts Face Pull strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Barbell Bench Press volume"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Pull-Up strength predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up strength"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Barbell Bench Press strength predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Barbell Bench Press strength"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Sumo Deadlift strength predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift strength"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Preacher Curl strength predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl strength"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Back Extension strength predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension strength"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Leg Curl volume predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Pull-Up volume predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Sumo Deadlift volume predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Preacher Curl volume predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Leg Curl strength",
+        "summary": "Back Extension volume predicts Leg Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Barbell Back Squat strength",
+        "summary": "Barbell Back Squat volume predicts Barbell Back Squat strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Barbell Back Squat volume"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Barbell Bench Press strength predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Barbell Bench Press strength"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Sumo Deadlift strength predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift strength"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Preacher Curl strength predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl strength"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Leg Curl volume predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Pull-Up volume predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Sumo Deadlift volume predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Pull-Up strength",
+        "summary": "Preacher Curl volume predicts Pull-Up strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Sumo Deadlift strength predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift strength"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Preacher Curl strength predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl strength"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Leg Curl volume predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Pull-Up volume predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Sumo Deadlift volume predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Barbell Bench Press strength",
+        "summary": "Preacher Curl volume predicts Barbell Bench Press strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Preacher Curl strength predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl strength"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Back Extension strength predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension strength"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Leg Curl volume predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Pull-Up volume predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Sumo Deadlift volume predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Preacher Curl volume predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Sumo Deadlift strength",
+        "summary": "Back Extension volume predicts Sumo Deadlift strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Back Extension strength predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension strength"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Leg Curl volume predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Pull-Up volume predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Sumo Deadlift volume predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Preacher Curl volume predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Preacher Curl strength",
+        "summary": "Back Extension volume predicts Preacher Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Dips strength",
+        "summary": "Dips volume predicts Dips strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Dips volume"
+      },
+      {
+        "outcome": "EZ Bar Curl strength",
+        "summary": "Dips volume predicts EZ Bar Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Dips volume"
+      },
+      {
+        "outcome": "EZ Bar Curl strength",
+        "summary": "Hammer Curl volume predicts EZ Bar Curl strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Hammer Curl volume"
+      },
+      {
+        "outcome": "Cable Lateral Raise strength",
+        "summary": "Cable Lateral Raise volume predicts Cable Lateral Raise strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Cable Lateral Raise volume"
+      },
+      {
+        "outcome": "Cable Lateral Raise strength",
+        "summary": "Cable Fly volume predicts Cable Lateral Raise strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Cable Fly volume"
+      },
+      {
+        "outcome": "Back Extension strength",
+        "summary": "Leg Curl volume predicts Back Extension strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Leg Curl volume"
+      },
+      {
+        "outcome": "Back Extension strength",
+        "summary": "Barbell Back Squat volume predicts Back Extension strength increases after 3 weeks",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 3,
+        "predictor": "Barbell Back Squat volume"
+      },
+      {
+        "outcome": "Back Extension strength",
+        "summary": "Sumo Deadlift volume predicts Back Extension strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Back Extension strength",
+        "summary": "Preacher Curl volume predicts Back Extension strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Back Extension strength",
+        "summary": "Back Extension volume predicts Back Extension strength increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Face Pull volume",
+        "summary": "Machine Row volume predicts Face Pull volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Machine Row volume"
+      },
+      {
+        "outcome": "Leg Curl volume",
+        "summary": "Pull-Up volume predicts Leg Curl volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Pull-Up volume"
+      },
+      {
+        "outcome": "Leg Curl volume",
+        "summary": "Sumo Deadlift volume predicts Leg Curl volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Leg Curl volume",
+        "summary": "Preacher Curl volume predicts Leg Curl volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Leg Curl volume",
+        "summary": "Back Extension volume predicts Leg Curl volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Pull-Up volume",
+        "summary": "Sumo Deadlift volume predicts Pull-Up volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Sumo Deadlift volume"
+      },
+      {
+        "outcome": "Pull-Up volume",
+        "summary": "Preacher Curl volume predicts Pull-Up volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Barbell Bench Press volume",
+        "summary": "Dips volume predicts Barbell Bench Press volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Dips volume"
+      },
+      {
+        "outcome": "Sumo Deadlift volume",
+        "summary": "Preacher Curl volume predicts Sumo Deadlift volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Preacher Curl volume"
+      },
+      {
+        "outcome": "Sumo Deadlift volume",
+        "summary": "Back Extension volume predicts Sumo Deadlift volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Preacher Curl volume",
+        "summary": "Back Extension volume predicts Preacher Curl volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Back Extension volume"
+      },
+      {
+        "outcome": "Dips volume",
+        "summary": "Hammer Curl volume predicts Dips volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Hammer Curl volume"
+      },
+      {
+        "outcome": "Cable Lateral Raise volume",
+        "summary": "Cable Fly volume predicts Cable Lateral Raise volume increases",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "predictor": "Cable Fly volume"
+      }
+    ]
+  },
+  "recent_workouts": {
+    "workouts": [
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-07",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form using lower trap engagement\",\"Working on weaker side for dumbbell rows\",\"Progressive volume on leg raises\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-07-24",
+        "name": "My god I want to get this done with",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "Face Pull:\n\n\nPull-ups:\nLoulkj\n\nBench press:\nLj;lj\n\nEz bar curl:\n\n\nDips:\n\n\nSeated hammer curl:\n\n\nCable flye:\n\n\nCable lateral raise:\n\nkk"
+      },
+      {
+        "date": "2025-07-28",
+        "name": "My god I want to get this done with",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-03-10",
+        "name": "This is a workout",
+        "notes": "[\"This is a note\",\"Second note\"]"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "Freestyle Workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": "A blank template for creating custom workouts"
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-30",
+        "name": "Monday chest workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Thursday Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-20",
+        "name": "Test workout",
+        "notes": "[\"This is a test!\"]"
+      },
+      {
+        "date": "2025-04-07",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-20",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-18",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-10",
+        "name": "Week 3 - Workout A",
+        "notes": "New PR on deadlift! Increased time under tension."
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "Face Pull:\n\n\nPull-ups:\n\n\nBench press:\n\n\nEz bar curl:\n\n\nDips:\n\n\nSeated hammer curl:\n\n\nCable flye:\n\n\nCable lateral raise:\n\n"
+      },
+      {
+        "date": "2025-02-06",
+        "name": "Chest Day",
+        "notes": null
+      },
+      {
+        "date": "2025-04-06",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "Face Pull:\n\n\nPull-ups:\n\n\nBench press:\n\n\nEz bar curl:\n\n\nDips:\n\n\nSeated hammer curl:\n\n\nCable flye:\n\n\nCable lateral raise:\n\n"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "--- Face Pull ---\n\nDflasdf\n--- Pull-ups ---\nAdgbaefgwafed\n\n--- Bench press ---\nDfgadadfbdea\n\n--- Ez bar curl ---\n\n\n--- Dips ---\n\n\n--- Seated hammer curl ---\n\n\n--- Cable flye ---\n\n\n--- Cable lateral raise ---\n\nk"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "Freestyle Workout",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-03-27",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form with lower trap engagement\",\"Noted preference for pull-ups over chin-ups\",\"DB rows possibly too heavy after break from exercise\"]"
+      },
+      {
+        "date": "2025-03-03",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on back exercises with proper form\",\"Special attention to pull-up technique with lower trap engagement\",\"Note on DB rows: performed at challenging weight after break\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Saturday Back Workout",
+        "notes": "[\"6tvybuniu\\t\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-07-24",
+        "name": "My god I want to get this done with",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-07",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-19",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "Freestyle Workout",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-07-30",
+        "name": "Monday chest workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form with lower trap engagement\",\"Noted preference for pull-ups over chin-ups\",\"DB rows possibly too heavy after break from exercise\"]"
+      },
+      {
+        "date": "2025-04-05",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-06",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Monday chest workout",
+        "notes": "[\"Left arm is weaker on the single arm rows\"]"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "Monday chest workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-20",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-20",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-13",
+        "name": "Week 3 - Workout B",
+        "notes": "Had a training partner for motivation. Focused on slower eccentric today."
+      },
+      {
+        "date": "2025-02-03",
+        "name": "Week 2 - Workout A",
+        "notes": "Working on technique today. Nutrition on point, felt the difference."
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "My god I want to get this done with",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-04-06",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-20",
+        "name": "Week 4 - Workout B",
+        "notes": "Final workout of the program. Added extra stretching after workout."
+      },
+      {
+        "date": "2025-04-01",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form using lower trap engagement\",\"Working on weaker side for dumbbell rows\",\"Progressive volume on leg raises\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form using lower trap engagement\",\"Working on weaker side for dumbbell rows\",\"Progressive volume on leg raises\"]"
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "--- Face Pull ---\nLuke\n\n--- Pull-ups ---\nHlkjhlkjhlk\n\n--- Bench press ---\nJhlkjhlkjhlh\n\n--- Ez bar curl ---\n\n\n--- Dips ---\n\n\n--- Seated hammer curl ---\n\n\n--- Cable flye ---\n\n\n--- Cable lateral raise ---\n\n"
+      },
+      {
+        "date": "2025-03-01",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form with lower trap engagementsdfsadfw\",\"Noted weakness in dumbbell rows after time off\",\"Mix of strength and volume work\",\"This is a new note\"]"
+      },
+      {
+        "date": "2025-07-23",
+        "name": "Monday chest workout",
+        "notes": "--- Face Pull ---\nTissu we\n\n--- Pull-ups ---\nHard!\n\n--- Bench press ---\nNot so bad\n\n--- Ez bar curl ---\nLuv my arms\n\n--- Dips ---\nDippin dots\n\n--- Seated hammer curl ---\nHammer hammer\n\n--- Cable flye ---\nJuicy tits\n\n--- Cable lateral raise ---\nDeltoid supremacy"
+      },
+      {
+        "date": "2025-02-01",
+        "name": "Thursday Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-03-19",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-14",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-30",
+        "name": "Monday chest workout",
+        "notes": ""
+      },
+      {
+        "date": "2025-04-07",
+        "name": "Monday chest workout",
+        "notes": "[\"Gym was empty, it was great!\",\"\"]"
+      },
+      {
+        "date": "2025-03-19",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-20",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Focus on proper pull-up form with lo\",\"Noted preference for pull-ups over chin-ups\",\"DB rows possibly too heavy after break from \",\"This\"]"
+      },
+      {
+        "date": "2025-03-29",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-30",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-29",
+        "name": "Monday chest workout",
+        "notes": null
+      },
+      {
+        "date": "2025-03-03",
+        "name": "Saturday Back Workout",
+        "notes": "[\"Good focus on pull-up form with lower trap engagement\",\"Included variety of rowing movements\",\"Progressive overload on leg raises\",\"Note on DB rows being potentially too heavy after break\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-24",
+        "name": "Freestyle Workout",
+        "notes": "Barbell Bench Press:\n\n\nBarbell Back Squat:\n\n"
+      },
+      {
+        "date": "2025-04-05",
+        "name": "Week 4 - Workout A",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-14",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Week 4 - Workout B",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-19",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-02-17",
+        "name": "Week 4 - Workout A",
+        "notes": "Recovery feels improved this week. Slight deload on some exercises."
+      },
+      {
+        "date": "2025-03-19",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-15",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-28",
+        "name": "Test workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-07-20",
+        "name": "Freestyle Workout",
+        "notes": null
+      },
+      {
+        "date": "2025-05-27",
+        "name": "Upper Body Power",
+        "notes": "Build upper body strength and power"
+      },
+      {
+        "date": "2025-02-06",
+        "name": "Week 2 - Workout B",
+        "notes": "Slight deload to work on technique."
+      },
+      {
+        "date": "2025-03-22",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-06",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-22",
+        "name": "This is a workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-25",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-03-19",
+        "name": "Saturday Back Workout",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-14",
+        "name": "Xyz",
+        "notes": "[\"\"]"
+      },
+      {
+        "date": "2025-04-11",
+        "name": "Monday chest workout",
+        "notes": "[\"\"]"
+      }
+    ]
+  }
+}
+
+Visualizations and metrics:
+
+CHARTS:
+No charts available
+
+CONSISTENCY METRICS:
+- Score: 0/100
+- Current streak: 0 workouts
+- Average frequency: Every 0 days
+
+TOP PERFORMERS:
+- Strength gains: Dips: +830.0%, Face Pull: +31.6%, Barbell Back Squat: +8.8%
+- Volume increases: Dips: +658.6%, Face Pull: +294.7%, Cable Fly: +50.0%
+- Most frequent exercises: Not enough data
+
