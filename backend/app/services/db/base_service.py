@@ -1,9 +1,8 @@
 from app.core.supabase.client import SupabaseClient
 from typing import Dict, List, Any, Optional, NamedTuple
 import logging
-
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
-from app.schemas.workout_data_bundle import WorkoutDataBundle
+from app.services.workout_analysis.schemas import WorkoutDataBundle
 
 logger = logging.getLogger(__name__)
 

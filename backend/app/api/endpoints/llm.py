@@ -5,7 +5,6 @@ from typing import Dict, Any, Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from dotenv import load_dotenv
 from langchain_google_vertexai import ChatVertexAI
-import google.api_core.exceptions
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 
 load_dotenv()
@@ -186,6 +185,7 @@ async def conversation_websocket(
                     
                     with llm.stream(conversation_history) as stream:
                         for chunk in stream:
+                            logger.info(f"LLM chunk: '{chunk.content}', type: {type(chunk)}")
                             chunk_content = chunk.content
                             if chunk_content:
                                 response_content += chunk_content
@@ -194,10 +194,13 @@ async def conversation_websocket(
                                     "data": {"content": chunk_content}
                                 })
                     
+                    logger.info(f"Stream ended. Total response length: {len(response_content)}")
+                    
                     # Save complete assistant response to database
                     assistant_msg = await message_service.save_message(conversation_id, response_content, "assistant")
                     if assistant_msg.get('success') != False:
                         context["messages"].append(assistant_msg)
+                        logger.info(f"Saved assistant message with ID: {assistant_msg.get('id')}")
                     
                     conversation_history.append({"role": "assistant", "content": response_content})
                     
@@ -205,6 +208,7 @@ async def conversation_websocket(
                         "type": "complete",
                         "data": {"message_id": len(conversation_history) // 2}
                     })
+                    logger.info("Sent completion signal")
                     
                 except Exception as e:
                     logger.error(f"Error processing message: {str(e)}", exc_info=True)

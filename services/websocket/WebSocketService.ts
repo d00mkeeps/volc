@@ -147,8 +147,6 @@ export class WebSocketService {
     return this.socket?.readyState === WebSocket.OPEN;
   }
 
-  // PRIVATE METHODS
-
   /**
    * Internal connection logic
    */
@@ -329,8 +327,15 @@ export class WebSocketService {
           }
           break;
 
-        case "done":
+        case "complete":
           this.events.emit("complete");
+          break;
+
+        case "done": // Keep for backward compatibility
+          this.events.emit("complete");
+          console.log(
+            "[WSService] deprecated [done] message detected.. fix asap"
+          );
           break;
 
         case "error":

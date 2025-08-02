@@ -1,5 +1,5 @@
 from .base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
 from datetime import datetime, timedelta
 from ...core.utils.id_gen import new_uuid
@@ -11,7 +11,6 @@ class WorkoutService(BaseDBService):
     """
     Service for handling workout operations in the database
     """
-
     async def get_workout(self, workout_id: str) -> Dict[str, Any]:
         """
         Get a workout by ID

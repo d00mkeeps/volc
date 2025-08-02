@@ -19,7 +19,6 @@ setup_logging()
 logger = logging.getLogger(__name__)
 logger.info("Application starting")
 
-# Load environment variables with explicit path
 project_root = Path(__file__).parent.absolute()
 env_path = project_root / '.env'
 load_dotenv(dotenv_path=env_path)

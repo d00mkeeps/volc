@@ -1,7 +1,7 @@
-from typing import Dict, Any, List, Optional
+from typing import Dict, List
 from datetime import datetime
 import logging
-from app.schemas.workout_data_bundle import ConsistencyMetrics
+from ..schemas import ConsistencyMetrics
 
 logger = logging.getLogger(__name__)
 

@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import Dict, Any, List
 import logging
 import json
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate,MessagesPlaceholder
 from langchain_google_vertexai import ChatVertexAI
-from app.schemas.workout_data_bundle import WorkoutDataBundle
+from app.services.workout_analysis.schemas import WorkoutDataBundle
 from .base_conversation_chain import BaseConversationChain
 
 logger = logging.getLogger(__name__)
@@ -198,10 +198,7 @@ TOP PERFORMERS:
         }
     
     def load_bundles(self, bundles: List) -> None:
-        """Load workout bundles into context"""
-        from app.schemas.workout_data_bundle import WorkoutDataBundle
-        
-        # Ensure all bundles are WorkoutDataBundle instances
+        """Load workout bundles into context"""        
         valid_bundles = []
         for bundle in bundles:
             if isinstance(bundle, WorkoutDataBundle):

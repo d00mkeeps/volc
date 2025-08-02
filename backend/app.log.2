@@ -1,65 +1,113 @@
-2025-07-30 20:40:00,493 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - Content: Hi!
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (AIMessage):
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, fitness superstar! Ready to dive into your progress? I've got some awesome insights from your workout data that I think you're gonna love. Let's get you even stronger! 💪
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - Content: Wow!
-2025-07-30 20:40:00,494 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-07-30 20:45:03,345 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 126, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-07-30 21:30:19,590 - app - INFO - Logging has been set up
-2025-07-30 21:30:19,590 - app.main - INFO - Application starting
-2025-07-30 21:30:19,590 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-07-30 21:30:19,590 - app.main - INFO - SUPABASE_URL present: True
-2025-07-30 21:30:19,590 - app.main - INFO - SUPABASE_KEY present: True
-2025-07-30 21:30:24,075 - app.main - INFO - Request: GET /db/conversations
-2025-07-30 21:30:24,219 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 21:30:24,219 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-07-30 21:30:24,219 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-07-30 21:30:24,311 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-07-30 21:30:24,311 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-07-30 21:30:24,311 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 21:30:24,388 - app.services.db.conversation_service - INFO - Retrieved 32 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 21:30:24,388 - app.api.endpoints.db - INFO - Retrieved 32 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-07-30 21:30:24,391 - app.main - INFO - Response status: 200
-2025-07-30 21:30:25,534 - app.main - INFO - Request: GET /db/conversations/b2cc402f-174c-482c-a09d-d22766dd6c16/messages
-2025-07-30 21:30:25,646 - app.api.endpoints.db - INFO - API request to get messages for conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:25,646 - app.services.db.conversation_service - INFO - Getting conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:25,754 - app.services.db.conversation_service - INFO - Retrieved conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:25,754 - app.services.db.message_service - INFO - Getting messages for conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:25,854 - app.services.db.message_service - INFO - Retrieved 2 messages
-2025-07-30 21:30:25,855 - app.main - INFO - Response status: 200
-2025-07-30 21:30:39,966 - app.main - INFO - Request: POST /db/conversations/b2cc402f-174c-482c-a09d-d22766dd6c16/messages
-2025-07-30 21:30:40,114 - app.api.endpoints.db - INFO - API request to save message to conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,115 - app.services.db.conversation_service - INFO - Getting conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,265 - app.services.db.conversation_service - INFO - Retrieved conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,265 - app.services.db.message_service - INFO - Saving user message to conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,348 - app.services.db.message_service - INFO - Message saved with ID: 90c5ba90-ed5f-4712-97f2-f70ef7a484bb
-2025-07-30 21:30:40,349 - app.main - INFO - Response status: 200
-2025-07-30 21:30:40,411 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,414 - app.services.llm.workout_analysis - INFO - Loading conversation context (attempt 1/20)
-2025-07-30 21:30:40,414 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,532 - app.core.utils.conversation_attachments - INFO - Successfully loaded 3 messages and 1 complete bundles for conversation b2cc402f-174c-482c-a09d-d22766dd6c16
-2025-07-30 21:30:40,533 - app.services.llm.workout_analysis - INFO - Context loaded successfully with 1 bundles
-2025-07-30 21:30:41,301 - app.services.chains.base_conversation_chain - INFO - Loaded 3 messages into conversation history
-2025-07-30 21:30:41,301 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-07-30 21:30:41,301 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 3 messages and 1 bundles
-2025-07-30 21:30:41,303 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-07-30 21:30:41,303 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
+2025-08-01 15:53:47,671 - app.main - INFO - Request: GET /api/dashboard
+2025-08-01 15:53:47,674 - app.main - INFO - Response status: 200
+2025-08-01 15:53:47,955 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-01 15:53:48,045 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-01 15:53:48,045 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-01 15:53:48,523 - app.services.db.workout_service - INFO - Retrieved 245 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-01 15:53:48,523 - app.api.endpoints.db - INFO - Retrieved 245 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-01 15:53:48,586 - app.main - INFO - Response status: 200
+2025-08-02 18:11:28,922 - app - INFO - Logging has been set up
+2025-08-02 18:11:28,923 - app.main - INFO - Application starting
+2025-08-02 18:11:28,923 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:11:28,923 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:11:28,923 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:24:40,463 - app - INFO - Logging has been set up
+2025-08-02 18:24:40,463 - app.main - INFO - Application starting
+2025-08-02 18:24:40,464 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:24:40,464 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:24:40,464 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:24:55,651 - app - INFO - Logging has been set up
+2025-08-02 18:24:55,651 - app.main - INFO - Application starting
+2025-08-02 18:24:55,651 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:24:55,651 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:24:55,651 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:25:18,371 - app - INFO - Logging has been set up
+2025-08-02 18:25:18,371 - app.main - INFO - Application starting
+2025-08-02 18:25:18,371 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:25:18,372 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:25:18,372 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:25:23,825 - app - INFO - Logging has been set up
+2025-08-02 18:25:23,825 - app.main - INFO - Application starting
+2025-08-02 18:25:23,826 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:25:23,826 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:25:23,826 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:25:36,943 - app - INFO - Logging has been set up
+2025-08-02 18:25:36,944 - app.main - INFO - Application starting
+2025-08-02 18:25:36,944 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:25:36,944 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:25:36,944 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:25:49,746 - app - INFO - Logging has been set up
+2025-08-02 18:25:49,746 - app.main - INFO - Application starting
+2025-08-02 18:25:49,747 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:25:49,747 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:25:49,747 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:26:20,134 - app - INFO - Logging has been set up
+2025-08-02 18:26:20,134 - app.main - INFO - Application starting
+2025-08-02 18:26:20,134 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:26:20,135 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:26:20,135 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:26:25,508 - app - INFO - Logging has been set up
+2025-08-02 18:26:25,508 - app.main - INFO - Application starting
+2025-08-02 18:26:25,509 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:26:25,509 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:26:25,509 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:26:48,213 - app - INFO - Logging has been set up
+2025-08-02 18:26:48,213 - app.main - INFO - Application starting
+2025-08-02 18:26:48,213 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:26:48,213 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:26:48,213 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:26:57,368 - app - INFO - Logging has been set up
+2025-08-02 18:26:57,369 - app.main - INFO - Application starting
+2025-08-02 18:26:57,369 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:26:57,369 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:26:57,369 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:27:14,382 - app - INFO - Logging has been set up
+2025-08-02 18:27:14,383 - app.main - INFO - Application starting
+2025-08-02 18:27:14,383 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:27:14,383 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:27:14,383 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:27:37,067 - app - INFO - Logging has been set up
+2025-08-02 18:27:37,067 - app.main - INFO - Application starting
+2025-08-02 18:27:37,068 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:27:37,068 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:27:37,068 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:28:32,665 - app - INFO - Logging has been set up
+2025-08-02 18:28:32,666 - app.main - INFO - Application starting
+2025-08-02 18:28:32,666 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:28:32,666 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:28:32,666 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:28:53,466 - app - INFO - Logging has been set up
+2025-08-02 18:28:53,466 - app.main - INFO - Application starting
+2025-08-02 18:28:53,467 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:28:53,467 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:28:53,467 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:29:07,711 - app - INFO - Logging has been set up
+2025-08-02 18:29:07,711 - app.main - INFO - Application starting
+2025-08-02 18:29:07,711 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:29:07,712 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:29:07,712 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:35:51,300 - app - INFO - Logging has been set up
+2025-08-02 18:35:51,301 - app.main - INFO - Application starting
+2025-08-02 18:35:51,301 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:35:51,301 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:35:51,301 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:36:35,746 - app - INFO - Logging has been set up
+2025-08-02 18:36:35,747 - app.main - INFO - Application starting
+2025-08-02 18:36:35,747 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:36:35,747 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:36:35,747 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:36:58,301 - app - INFO - Logging has been set up
+2025-08-02 18:36:58,302 - app.main - INFO - Application starting
+2025-08-02 18:36:58,302 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:36:58,302 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:36:58,303 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:37:04,705 - app - INFO - Logging has been set up
+2025-08-02 18:37:04,706 - app.main - INFO - Application starting
+2025-08-02 18:37:04,706 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:37:04,706 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:37:04,706 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-02 18:37:14,334 - app - INFO - Logging has been set up
+2025-08-02 18:37:14,334 - app.main - INFO - Application starting
+2025-08-02 18:37:14,334 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-02 18:37:14,334 - app.main - INFO - SUPABASE_URL present: True
+2025-08-02 18:37:14,334 - app.main - INFO - SUPABASE_KEY present: True

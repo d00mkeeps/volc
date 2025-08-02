@@ -1,4 +1,3 @@
-// stores/MessageStore.ts
 import { create } from "zustand";
 import { conversationService } from "../../services/db/conversation";
 import { Message } from "@/types";
@@ -44,7 +43,6 @@ interface MessageStoreState {
   ) => Promise<Message>;
   clearMessages: (conversationId: string) => void;
 
-  // Streaming state management
   getStreamingMessage: (conversationId: string) => StreamingMessageState | null;
   setStreamingMessage: (
     conversationId: string,

@@ -65,16 +65,8 @@ class BaseConversationChain:
             async for chunk in self.chat_model.astream(
                 input=formatted_prompt
             ):
+                logger.info(f"Chunk: content='{chunk.content}', metadata={getattr(chunk, 'response_metadata', None)}")
                 
-                if (not chunk.content and 
-                    hasattr(chunk, 'response_metadata') and 
-                    chunk.response_metadata):
-                    yield {
-                        "type": "done", 
-                        "data": ""
-                    }
-                    continue
-                    
                 chunk_content = chunk.content
                 if chunk_content:  # Only send non-empty content chunks
                     full_response += chunk_content
@@ -82,6 +74,12 @@ class BaseConversationChain:
                         "type": "content",
                         "data": chunk_content
                     }
+
+            # After the loop ends naturally:
+            yield {
+                "type": "complete",
+                "data": {"length": len(full_response)}
+            }
 
             # Only add both messages to history after successful processing
             self.messages.append(HumanMessage(content=message))

@@ -1,7 +1,6 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
