@@ -2,9 +2,20 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
+import { useEffect } from "react";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { getConversations } = useConversationStore();
+  const { loadWorkouts } = useWorkoutStore();
+
+  // Fetch data once when tabs initialize
+  useEffect(() => {
+    getConversations();
+    loadWorkouts();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

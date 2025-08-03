@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Stack, Text, ScrollView } from "tamagui";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
 import WorkoutDetail from "@/components/organisms/WorkoutDetail";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import { useUserStore } from "@/stores/userProfileStore";
 
 interface WorkoutListProps {
   limit?: number;
@@ -12,17 +11,12 @@ interface WorkoutListProps {
 
 export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
   const router = useRouter();
-  const { workouts, loading, loadWorkouts, deleteWorkout } = useWorkoutStore();
-  const { userProfile } = useUserStore();
+  const { workouts, loading, deleteWorkout } = useWorkoutStore();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
     null
   );
 
-  useEffect(() => {
-    if (userProfile?.auth_user_uuid) {
-      loadWorkouts(userProfile.auth_user_uuid);
-    }
-  }, [userProfile?.auth_user_uuid, loadWorkouts]);
+  // Removed useEffect - workouts now loaded in tab layout
 
   const displayedWorkouts = workouts.slice(0, limit);
 

@@ -15,10 +15,6 @@ export default function ConversationList({
   const { conversations, isLoading, getConversations, deleteConversation } =
     useConversationStore();
 
-  useEffect(() => {
-    getConversations();
-  }, []);
-
   const allConversations = Array.from(conversations.values()).sort(
     (a, b) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
