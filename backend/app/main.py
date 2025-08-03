@@ -6,7 +6,6 @@ from app.api.endpoints.db import router as db_router
 from app.api.endpoints.auth import router as auth_router 
 from app.api.endpoints.workout_analysis import router as workout_analysis_router
 from app.api.endpoints.dashboard import router as dashboard_router
-from app.core.scheduler import start_cleanup_job
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import setup_logging
 import logging
@@ -14,7 +13,6 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Set up logging first
 setup_logging()
 logger = logging.getLogger(__name__)
 logger.info("Application starting")
@@ -28,7 +26,6 @@ logger.info(f"Loading .env from: {env_path} (exists: {os.path.exists(str(env_pat
 logger.info(f"SUPABASE_URL present: {os.environ.get('SUPABASE_URL') is not None}")
 logger.info(f"SUPABASE_KEY present: {os.environ.get('SUPABASE_KEY') is not None}")
 
-# Initialize FastAPI app
 app = FastAPI()
 
 # Add CORS middleware

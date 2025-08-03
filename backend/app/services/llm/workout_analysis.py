@@ -35,7 +35,7 @@ class WorkoutAnalysisLLMService:
             )
             
         return self._conversation_chains[conversation_id]
-    
+        
     async def process_websocket(self, websocket: WebSocket, conversation_id: str):
         """Process WebSocket connection for workout analysis interpretation"""
         try:
@@ -48,43 +48,12 @@ class WorkoutAnalysisLLMService:
                 "data": "connected"
             })
             
-            # Load complete conversation context with retry logic for pending analysis
-            from app.core.utils.conversation_attachments import load_conversation_context
-
-            max_attempts = 20  # 10 seconds at 500ms intervals
-            context = None
-
-            for attempt in range(max_attempts):
-                logger.info(f"Loading conversation context (attempt {attempt + 1}/{max_attempts})")
-                
-                context_result = await load_conversation_context(conversation_id)
-                if not context_result["success"]:
-                    logger.error(f"Failed to load conversation context: {context_result['error']}")
-                    await websocket.send_json({
-                        "type": "error",
-                        "data": {"message": "Failed to load conversation history"}
-                    })
-                    return
-                
-                context = context_result["data"]
-                
-                # Check if we have complete bundles or no pending ones
-                if context.bundles or not any(True for _ in context.bundles):  # Has complete bundles or no bundles at all
-                    logger.info(f"Context loaded successfully with {len(context.bundles)} bundles")
-                    break
-                
-                # If we have pending/in_progress bundles, wait and retry
-                logger.info("Found pending analysis, waiting 500ms before retry...")
-                await asyncio.sleep(0.5)
-
-            if context is None:
-                logger.error("Failed to load conversation context after all retries")
-                await websocket.send_json({
-                    "type": "error", 
-                    "data": {"message": "Failed to load conversation after retries"}
-                })
-                return
-
+            # Load complete conversation context with unified service
+            from app.services.context.conversation_context_service import conversation_context_service
+            
+            logger.info("Loading conversation context via unified service")
+            context = await conversation_context_service.load_context(conversation_id)
+            
             # Get or create conversation chain
             chain = self.get_chain(conversation_id)
 
@@ -108,9 +77,11 @@ class WorkoutAnalysisLLMService:
                 if full_response_content:
                     await self.message_service.save_message(
                         conversation_id=conversation_id,
-                        message_content=full_response_content,
-                        message_type="assistant"
+                        content=full_response_content,
+                        sender="assistant"
                     )
+                    # Refresh context after saving message
+                    await conversation_context_service.refresh_context(conversation_id)
                     logger.info(f"Saved proactive AI message for conversation {conversation_id}")
 
             elif not context.messages and not context.bundles:
@@ -140,7 +111,7 @@ class WorkoutAnalysisLLMService:
                     # Process message
                     async for response in chain.process_message(message):
                         await websocket.send_json(response)
-                
+            
         except google.api_core.exceptions.ResourceExhausted as e:
             logger.error(f"Rate limit exceeded: {str(e)}")
             try:
@@ -167,3 +138,133 @@ class WorkoutAnalysisLLMService:
                 await websocket.close(code=1011)
             except:
                 pass
+            """Process WebSocket connection for workout analysis interpretation"""
+            try:
+                await websocket.accept()
+                logger.info(f"WebSocket connection accepted for conversation: {conversation_id}")
+                
+                # Send connection confirmation
+                await websocket.send_json({
+                    "type": "connection_status",
+                    "data": "connected"
+                })
+                
+                # Load complete conversation context with retry logic for pending analysis
+                from app.core.utils.conversation_attachments import load_conversation_context
+
+                max_attempts = 20  # 10 seconds at 500ms intervals
+                context = None
+
+                for attempt in range(max_attempts):
+                    logger.info(f"Loading conversation context (attempt {attempt + 1}/{max_attempts})")
+                    
+                    context_result = await load_conversation_context(conversation_id)
+                    if not context_result["success"]:
+                        logger.error(f"Failed to load conversation context: {context_result['error']}")
+                        await websocket.send_json({
+                            "type": "error",
+                            "data": {"message": "Failed to load conversation history"}
+                        })
+                        return
+                    
+                    context = context_result["data"]
+                    
+                    # Check if we have complete bundles or no pending ones
+                    if context.bundles or not any(True for _ in context.bundles):  # Has complete bundles or no bundles at all
+                        logger.info(f"Context loaded successfully with {len(context.bundles)} bundles")
+                        break
+                    
+                    # If we have pending/in_progress bundles, wait and retry
+                    logger.info("Found pending analysis, waiting 500ms before retry...")
+                    await asyncio.sleep(0.5)
+
+                if context is None:
+                    logger.error("Failed to load conversation context after all retries")
+                    await websocket.send_json({
+                        "type": "error", 
+                        "data": {"message": "Failed to load conversation after retries"}
+                    })
+                    return
+
+                # Get or create conversation chain
+                chain = self.get_chain(conversation_id)
+
+                # Load context into the chain
+                chain.load_conversation_context(context)
+                if context.bundles:
+                    chain.load_bundles(context.bundles)
+
+                # Decide conversation flow based on loaded context
+                if not context.messages and context.bundles:
+                    # New conversation WITH workout data - send proactive message
+                    logger.info("New conversation with workout data - sending proactive analysis")
+                    
+                    full_response_content = ""
+                    async for response in chain.process_message("Analyze my workout"):
+                        await websocket.send_json(response)
+                        if response.get("type") == "content":
+                            full_response_content += response.get("data", "")
+                    
+                    # Save the AI's response as the first message
+                    if full_response_content:
+                        await self.message_service.save_message(
+                            conversation_id=conversation_id,
+                            message_content=full_response_content,
+                            message_type="assistant"
+                        )
+                        logger.info(f"Saved proactive AI message for conversation {conversation_id}")
+
+                elif not context.messages and not context.bundles:
+                    # Empty conversation - wait for user input
+                    logger.info("Empty conversation - waiting for user input")
+
+                else:
+                    # Existing conversation - context already loaded
+                    logger.info(f"Existing conversation loaded with {len(context.messages)} messages and {len(context.bundles)} bundles")
+
+                # Process messages
+                while True:
+                    data = await websocket.receive_json()
+                    
+                    # Handle heartbeat
+                    if data.get('type') == 'heartbeat':
+                        await websocket.send_json({
+                            "type": "heartbeat_ack",
+                            "timestamp": data.get('timestamp')
+                        })
+                        continue
+                    
+                    # Handle regular messages
+                    if data.get('type') == 'message' or 'message' in data:
+                        message = data.get('message', '')
+                        
+                        # Process message
+                        async for response in chain.process_message(message):
+                            await websocket.send_json(response)
+                    
+            except google.api_core.exceptions.ResourceExhausted as e:
+                logger.error(f"Rate limit exceeded: {str(e)}")
+                try:
+                    await websocket.send_json({
+                        "type": "error",
+                        "data": {
+                            "code": "rate_limit",
+                            "message": f"Rate limit exceeded. Please try again later.",
+                            "retry_after": 60
+                        }
+                    })
+                except:
+                    pass
+                    
+            except Exception as e:
+                logger.error(f"Error in LLM websocket: {str(e)}", exc_info=True)
+                try:
+                    await websocket.send_json({
+                        "type": "error",
+                        "data": {
+                            "message": f"Connection error: {str(e)}"
+                        }
+                    })
+                    await websocket.close(code=1011)
+                except:
+                    pass

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 import logging
 import json
-from langchain_core.prompts import ChatPromptTemplate,MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_vertexai import ChatVertexAI
 from app.services.workout_analysis.schemas import WorkoutDataBundle
 from .base_conversation_chain import BaseConversationChain
@@ -27,10 +27,35 @@ class WorkoutAnalysisChain(BaseConversationChain):
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", "{system_prompt}\n\n"
                       "Current workout data context:\n{context}\n\n"
-                      "Visualizations and metrics:\n{visualization_context}"),
+                      "Analysis insights:\n{insights_context}"),
             MessagesPlaceholder(variable_name="messages"),
             ("human", "{current_message}")
         ])
+
+    def _serialize_for_json(self, data):
+        """
+        Convert any data structure containing Pydantic models to JSON-serializable format.
+        
+        Handles:
+        - Pydantic models (ConsistencyMetrics, CorrelationCalculatorResult, etc.)
+        - Nested dictionaries and lists
+        - DateTime objects
+        - Regular Python types
+        """
+        if isinstance(data, dict):
+            return {k: self._serialize_for_json(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._serialize_for_json(item) for item in data]
+        elif hasattr(data, "model_dump"):  # Pydantic models
+            return self._serialize_for_json(data.model_dump())
+        elif isinstance(data, datetime):
+            return data.isoformat()
+        else:
+            return data
+
+    def _serialize_workout_context(self, workout_context: dict) -> str:
+        """Convert workout context with Pydantic objects to JSON string."""
+        return json.dumps(self._serialize_for_json(workout_context), indent=2)
 
     async def add_data_bundle(self, bundle: WorkoutDataBundle) -> bool:
         """Add workout data bundle to conversation context without adding system messages."""
@@ -41,19 +66,19 @@ class WorkoutAnalysisChain(BaseConversationChain):
             # Log success but don't add to message history
             logger.info(f"Added workout data bundle to conversation context")
             
-            # Log chart availability
-            available_charts = []
-            if hasattr(bundle, 'chart_urls') and bundle.chart_urls:
-                available_charts = list(bundle.chart_urls.keys())
-            logger.info(f"Bundle has {len(available_charts)} charts available")
-            
-            # Log top performers if available - FIXED: Use direct attribute access
+            # Log top performers if available
             if hasattr(bundle, 'top_performers') and bundle.top_performers:
-                strength_highlights = bundle.top_performers.strength
-                if strength_highlights and len(strength_highlights) > 0:
-                    logger.info(f"Top strength performer: {strength_highlights[0].get('name') if isinstance(strength_highlights[0], dict) else 'None'}")
-                else:
-                    logger.info(f"Top strength performer: None")
+                strength_count = len(bundle.top_performers.strength)
+                volume_count = len(bundle.top_performers.volume)
+                logger.info(f"Bundle has {strength_count} strength performers, {volume_count} volume performers")
+                
+                if bundle.top_performers.strength:
+                    top_strength = bundle.top_performers.strength[0]
+                    logger.info(f"Top strength performer: {top_strength.get('name')} (+{top_strength.get('change_percent')}%)")
+            
+            # Log correlation insights
+            if hasattr(bundle, 'correlation_data') and bundle.correlation_data:
+                logger.info(f"Bundle has {bundle.correlation_data.significant_count} significant correlations")
             
             return True
         except Exception as e:
@@ -65,93 +90,101 @@ class WorkoutAnalysisChain(BaseConversationChain):
         if dt is None:
             return None
         
-        # If it's already a string, return as-is (assuming it's properly formatted)
         if isinstance(dt, str):
             return dt
         
-        # If it's a datetime object, format it
         if isinstance(dt, datetime):
             return dt.isoformat()
         
-        # For any other type, try to convert to string
         return str(dt)
 
-    def _format_visualization_context(self) -> str:
-        """Format the visualization context for the latest bundle."""
+    def _format_insights_context(self) -> str:
+        """Format analysis insights for the latest bundle (replaces old chart context)."""
         if not self._data_bundles:
-            return "No workout data available"
+            return "No workout analysis available"
         
         latest_bundle = self._data_bundles[-1]
         
-        # Format available charts
-        available_charts = []
-        if hasattr(latest_bundle, 'chart_urls') and latest_bundle.chart_urls:
-            if 'strength_progress' in latest_bundle.chart_urls:
-                available_charts.append("Strength Progress Chart")
-            if 'volume_progress' in latest_bundle.chart_urls:
-                available_charts.append("Volume Progress Chart")
-            if 'weekly_frequency' in latest_bundle.chart_urls:
-                available_charts.append("Weekly Workout Frequency Chart")
-        
-        # Format top performers - FIXED: Use direct attribute access
+        # Format top performers
         strength_highlights = []
         volume_highlights = []
         frequency_highlights = []
         
-        if hasattr(latest_bundle, 'top_performers'):
-            # Process strength performers - CHANGED: Direct attribute access
+        if hasattr(latest_bundle, 'top_performers') and latest_bundle.top_performers:
+            # Process strength performers
             for performer in latest_bundle.top_performers.strength:
                 if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
                     strength_highlights.append(
                         f"{performer.get('name')}: +{performer.get('change_percent')}%"
                     )
             
-            # Process volume performers - CHANGED: Direct attribute access
+            # Process volume performers  
             for performer in latest_bundle.top_performers.volume:
                 if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
                     volume_highlights.append(
                         f"{performer.get('name')}: +{performer.get('change_percent')}%"
                     )
             
-            # Process frequency performers - CHANGED: Direct attribute access
-            for performer in latest_bundle.top_performers.frequency:
-                if isinstance(performer, dict):
-                    frequency_highlights.append(
-                        f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
-                    )
+            # Process frequency performers (handle empty array gracefully)
+            if latest_bundle.top_performers.frequency:  # Only process if not empty
+                for performer in latest_bundle.top_performers.frequency:
+                    if isinstance(performer, dict):
+                        frequency_highlights.append(
+                            f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
+                        )
         
-        # Format consistency metrics - FIXED: Handle Pydantic model properly
-        consistency_score = 0
-        consistency_streak = 0
+        # Format consistency metrics
         consistency_gap = 0
+        variance = None
         
         if hasattr(latest_bundle, 'consistency_metrics') and latest_bundle.consistency_metrics:
-            # Check if it's a Pydantic model or dict
-            if hasattr(latest_bundle.consistency_metrics, 'score'):
-                # It's a Pydantic model
-                consistency_score = latest_bundle.consistency_metrics.score
-                consistency_streak = latest_bundle.consistency_metrics.streak
+            if hasattr(latest_bundle.consistency_metrics, 'avg_gap'):
+                # Pydantic model
                 consistency_gap = latest_bundle.consistency_metrics.avg_gap
+                variance = latest_bundle.consistency_metrics.variance
             elif isinstance(latest_bundle.consistency_metrics, dict):
-                # It's a dict
-                consistency_score = latest_bundle.consistency_metrics.get('score', 0)
-                consistency_streak = latest_bundle.consistency_metrics.get('streak', 0)
+                # Dict format
                 consistency_gap = latest_bundle.consistency_metrics.get('avg_gap', 0)
+                variance = latest_bundle.consistency_metrics.get('variance', None)
         
-        # Create the visualization context
+        # Format correlation insights
+        correlation_summary = "No correlation analysis available"
+        top_correlations = []
+        
+        if hasattr(latest_bundle, 'correlation_data') and latest_bundle.correlation_data:
+            correlation_data = latest_bundle.correlation_data
+            significant_count = correlation_data.significant_count if hasattr(correlation_data, 'significant_count') else 0
+            total_analyzed = correlation_data.total_pairs_analyzed if hasattr(correlation_data, 'total_pairs_analyzed') else 0
+            
+            correlation_summary = f"{significant_count} significant correlations found from {total_analyzed} exercise pairs analyzed"
+            
+            # Get top 3 correlations for highlights
+            if hasattr(correlation_data, 'significant_correlations') and correlation_data.significant_correlations:
+                for i, corr in enumerate(correlation_data.significant_correlations[:3]):
+                    if isinstance(corr, dict):
+                        summary = corr.get('summary', 'Correlation found')
+                        top_correlations.append(f"• {summary}")
+                    elif hasattr(corr, 'summary'):
+                        top_correlations.append(f"• {corr.summary}")
+        
+        # Create the insights context
         context = f"""
-CHARTS:
-{', '.join(available_charts) if available_charts else 'No charts available'}
-
 CONSISTENCY METRICS:
-- Score: {consistency_score}/100
-- Current streak: {consistency_streak} workouts
-- Average frequency: Every {consistency_gap} days
+- Average gap between workouts: {consistency_gap:.1f} days
+- Workout frequency variance: {variance if variance is not None else 'Not calculated'}
 
 TOP PERFORMERS:
-- Strength gains: {', '.join(strength_highlights) if strength_highlights else 'No significant strength gains detected'}
-- Volume increases: {', '.join(volume_highlights) if volume_highlights else 'No significant volume increases detected'}
-- Most frequent exercises: {', '.join(frequency_highlights) if frequency_highlights else 'Not enough data'}
+- Strength gains: {', '.join(strength_highlights[:3]) if strength_highlights else 'No significant strength gains detected'}
+- Volume increases: {', '.join(volume_highlights[:3]) if volume_highlights else 'No significant volume increases detected'}
+- Most frequent exercises: {', '.join(frequency_highlights[:3]) if frequency_highlights else 'Frequency data not available'}
+
+CORRELATION INSIGHTS:
+{correlation_summary}
+{chr(10).join(top_correlations[:3]) if top_correlations else '• No correlation patterns detected'}
+
+WORKOUT SUMMARY:
+- Total workouts analyzed: {latest_bundle.metadata.total_workouts if hasattr(latest_bundle, 'metadata') else 'Unknown'}
+- Exercise variety: {len(latest_bundle.metadata.exercises_included) if hasattr(latest_bundle, 'metadata') and latest_bundle.metadata.exercises_included else 'Unknown'} different exercises
 """
         return context
 
@@ -160,7 +193,7 @@ TOP PERFORMERS:
             return {
                 "system_prompt": self.system_prompt,
                 "context": "No workout data available", 
-                "visualization_context": "No visualizations available",
+                "insights_context": "No analysis insights available",
                 "messages": self.messages,
                 "current_message": ""
             }
@@ -168,31 +201,37 @@ TOP PERFORMERS:
         latest_bundle = self._data_bundles[-1]
         date_range = latest_bundle.metadata.date_range
         
+        # Build comprehensive workout context
         workout_context = {
             "metadata": {
                 "total_workouts": latest_bundle.metadata.total_workouts,
                 "total_exercises": latest_bundle.metadata.total_exercises,
                 "date_range": {
-                    "start": self._format_date(date_range['earliest']),
-                    "end": self._format_date(date_range['latest'])
+                    "start": self._format_date(date_range.get('earliest')),
+                    "end": self._format_date(date_range.get('latest'))
                 },
-                "exercises_included": latest_bundle.metadata.exercises_included
+                "exercises_included": latest_bundle.metadata.exercises_included[:10],  # Limit for context size
+                "analysis_errors": latest_bundle.metadata.errors if latest_bundle.metadata.errors else []
             },
-            "top_performers": {
-                # FIXED: Direct attribute access instead of dict access
-                "strength": latest_bundle.top_performers.strength,
-                "volume": latest_bundle.top_performers.volume,
-                "frequency": latest_bundle.top_performers.frequency
+            "performance_summary": {
+                "strength_top_performers": latest_bundle.top_performers.strength[:5],  # Top 5
+                "volume_top_performers": latest_bundle.top_performers.volume[:5],      # Top 5
+                "frequency_performers": latest_bundle.top_performers.frequency[:3]     # Top 3
             },
-            "consistency_metrics": latest_bundle.consistency_metrics if hasattr(latest_bundle, 'consistency_metrics') else {},
-            "correlation_data": latest_bundle.correlation_data,
-            "recent_workouts": latest_bundle.workouts
+            "consistency_analysis": latest_bundle.consistency_metrics,
+            "correlation_summary": {
+                "significant_count": latest_bundle.correlation_data.significant_count if latest_bundle.correlation_data else 0,
+                "total_analyzed": latest_bundle.correlation_data.total_pairs_analyzed if latest_bundle.correlation_data else 0,
+                "top_correlations": latest_bundle.correlation_data.significant_correlations[:5] if latest_bundle.correlation_data and latest_bundle.correlation_data.significant_correlations else [],
+                "data_quality": latest_bundle.correlation_data.data_quality_notes[:3] if latest_bundle.correlation_data and latest_bundle.correlation_data.data_quality_notes else []
+            },
+            "recent_workouts_sample": latest_bundle.workouts.get('workouts', [])[:5] if hasattr(latest_bundle.workouts, 'get') and latest_bundle.workouts.get('workouts') else []
         }
 
         return {
             "system_prompt": self.system_prompt,
-            "context": f"Available workout data:\n{json.dumps(workout_context, indent=2)}",
-            "visualization_context": self._format_visualization_context(),
+            "context": f"Available workout data:\n{self._serialize_workout_context(workout_context)}",
+            "insights_context": self._format_insights_context(),
             "messages": self.messages,
             "current_message": ""
         }

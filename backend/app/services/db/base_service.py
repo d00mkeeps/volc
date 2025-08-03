@@ -1,8 +1,9 @@
 from app.core.supabase.client import SupabaseClient
-from typing import Dict, List, Any, Optional, NamedTuple
+from typing import Dict, List, Any
 import logging
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from app.services.workout_analysis.schemas import WorkoutDataBundle
+from app.schemas.schemas import ConversationContext
 
 logger = logging.getLogger(__name__)
 
@@ -65,11 +66,6 @@ class BaseDBService:
             return {"success": False, "error": str(error), "data": None}
         return {"success": True, "data": data, "error": None}
 
-
-class ConversationContext(NamedTuple):
-    """Structured conversation context data"""
-    messages: List[BaseMessage]
-    bundles: List[WorkoutDataBundle]
 
 
 class ConversationAttachmentsService(BaseDBService):
