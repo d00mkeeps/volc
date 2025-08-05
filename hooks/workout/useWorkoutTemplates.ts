@@ -1,7 +1,7 @@
 // hooks/workout/useWorkoutTemplates.ts
-import { useEffect, useMemo } from 'react';
-import { useWorkoutStore } from '@/stores/workout/WorkoutStore';
-import { createTemplatesFromWorkouts } from '@/utils/createTemplatesFromWorkouts';
+import { useEffect, useMemo } from "react";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { createTemplatesFromWorkouts } from "@/utils/createTemplatesFromWorkouts";
 
 export function useWorkoutTemplates(userId?: string) {
   const { workouts, loading, error, loadWorkouts } = useWorkoutStore();
@@ -9,7 +9,7 @@ export function useWorkoutTemplates(userId?: string) {
   // Load workouts when userId changes
   useEffect(() => {
     if (userId) {
-      loadWorkouts(userId);
+      loadWorkouts();
     }
   }, [userId, loadWorkouts]);
 
@@ -23,6 +23,6 @@ export function useWorkoutTemplates(userId?: string) {
     templates,
     loading,
     error,
-    refetch: () => userId && loadWorkouts(userId)
+    refetch: () => userId && loadWorkouts(),
   };
 }

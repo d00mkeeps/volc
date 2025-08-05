@@ -1,91 +1,233 @@
-2025-08-03 19:31:04,357 - app.services.chains.base_conversation_chain - INFO - Content: Haha, I love that energy! It's like a whole flock of **hummingbirds** just zipped into the room – buzzing with excitement!
+2025-08-05 14:05:40,825 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
 
-That's the kind of enthusiasm that fuels incredible workouts! What's got you feeling so pumped today? Let's channel that awesome vibe into your next session!
-2025-08-03 19:31:04,358 - app.services.chains.base_conversation_chain - INFO - 
-Message 10 (HumanMessage):
-2025-08-03 19:31:04,358 - app.services.chains.base_conversation_chain - INFO - Content: What do you think of the iPhone 16
-2025-08-03 19:31:04,358 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-03 19:31:06,029 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Haha', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-03 19:31:06,628 - app.services.chains.base_conversation_chain - INFO - Chunk: content=', that's a fun one! As your fitness coach, my expertise is definitely more in reps, sets, and personal bests than in tech specs and new phone models! My focus is on helping *you* upgrade your body and', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-03 19:31:07,148 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' performance, not your gadgets. 😉
+Current workout data context:
+Available workout data:
+{
+  "metadata": {
+    "total_workouts": 53,
+    "total_exercises": 241,
+    "date_range": {
+      "start": "2025-02-06T22:02:04.023375+00:00",
+      "end": "2025-08-05T12:05:24.533+00:00"
+    },
+    "exercises_included": [
+      "Barbell Back Squat",
+      "Barbell Bench Press",
+      "Barbell Skull Crusher",
+      "Face Pull",
+      "Leg Curl",
+      "Preacher Curl",
+      "Pull-Up",
+      "Straight Bar Triceps Pushdown",
+      "Sumo Deadlift"
+    ],
+    "analysis_errors": []
+  },
+  "performance_summary": {
+    "strength_top_performers": [
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 29.48,
+        "last_value": 73.3,
+        "first_value": 43.82,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 67.3
+      },
+      {
+        "name": "Preacher Curl",
+        "change": 14.01,
+        "last_value": 62.84,
+        "first_value": 48.83,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 28.7
+      },
+      {
+        "name": "Barbell Back Squat",
+        "change": 29.93,
+        "last_value": 205.51,
+        "first_value": 175.58,
+        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+        "change_percent": 17.0
+      }
+    ],
+    "volume_top_performers": [
+      {
+        "name": "Preacher Curl",
+        "change": 2313.0,
+        "last_value": 2625.0,
+        "first_value": 312.0,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 741.3
+      },
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 3175.0,
+        "last_value": 4175.0,
+        "first_value": 1000.0,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 317.5
+      },
+      {
+        "name": "Barbell Back Squat",
+        "change": 5380.0,
+        "last_value": 7105.0,
+        "first_value": 1725.0,
+        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+        "change_percent": 311.9
+      }
+    ],
+    "frequency_performers": []
+  },
+  "consistency_analysis": {
+    "avg_gap": 0.0,
+    "variance": null
+  },
+  "correlation_summary": {
+    "significant_count": 67,
+    "total_analyzed": 91,
+    "top_correlations": [
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Leg Curl strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Leg Curl strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Pull-Up strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Pull-Up strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Barbell Bench Press strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Barbell Bench Press strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Sumo Deadlift strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Sumo Deadlift strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Preacher Curl strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Preacher Curl strength predicts Face Pull strength increases"
+      }
+    ],
+    "data_quality": [
+      "Insufficient weekly data for Straight Bar Triceps Pushdown strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Barbell Skull Crusher strength (3 weeks, need 4+)",
+      "Insufficient weekly data for Straight Bar Triceps Pushdown volume (1 weeks, need 4+)"
+    ]
+  },
+  "recent_workouts_sample": [
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout B",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout A",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout A",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-29",
+      "name": "Week 4 - Workout B",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-08-05",
+      "name": "Test workouttt",
+      "notes": ""
+    }
+  ]
+}
 
-But speaking of upgrades, how are you feeling about your *own* performance upgrades lately? We've seen some incredible jumps in your Dips and Face Pulls – that's a serious upgrade right there!
+Analysis insights:
 
-What's on your mind for your next workout? Are we', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-03 19:31:07,573 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' aiming to push those Dips even further, or perhaps focus on that Barbell Back Squat? Let's talk about what's going to make *you* feel like the latest, greatest model!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-03 19:31:07,792 - app.main - INFO - Request: POST /db/conversations/3a770a23-d1e8-45f6-96e7-5ee4042c3e3d/messages
-2025-08-03 19:31:07,893 - app.api.endpoints.db - INFO - API request to save message to conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:07,893 - app.services.db.conversation_service - INFO - Getting conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:07,995 - app.services.db.conversation_service - INFO - Retrieved conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:07,995 - app.services.db.message_service - INFO - Saving assistant message to conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,165 - app.services.db.message_service - INFO - Message saved with ID: 06caf88b-8cb8-43f8-82a9-b3567ca2aba6
-2025-08-03 19:31:08,166 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,166 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,167 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,167 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d (check took 0.00s)
-2025-08-03 19:31:08,167 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,275 - app.core.utils.conversation_attachments - INFO - Successfully loaded 9 messages and 1 complete bundles for conversation 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,276 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
-2025-08-03 19:31:08,276 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d (expires in 30 min)
-2025-08-03 19:31:08,276 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.11s - 9 messages, 1 bundles
-2025-08-03 19:31:08,276 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 3a770a23-d1e8-45f6-96e7-5ee4042c3e3d
-2025-08-03 19:31:08,277 - app.main - INFO - Response status: 200
-2025-08-03 19:36:07,802 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-08-03 19:36:07,815 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+CONSISTENCY METRICS:
+- Average gap between workouts: 0.0 days
+- Workout frequency variance: Not calculated
 
-During handling of the above exception, another exception occurred:
+TOP PERFORMERS:
+- Strength gains: Barbell Skull Crusher: +67.3%, Preacher Curl: +28.7%, Barbell Back Squat: +17.0%
+- Volume increases: Preacher Curl: +741.3%, Barbell Skull Crusher: +317.5%, Barbell Back Squat: +311.9%
+- Most frequent exercises: Frequency data not available
 
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
-    await websocket.accept()
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
-    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
-    raise RuntimeError(
-        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
-    )
-RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-2025-08-03 21:49:30,297 - app.main - INFO - Request: GET /db/user-profile
-2025-08-03 21:49:30,931 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:30,931 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:31,317 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:31,318 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-03 21:49:31,318 - app.main - INFO - Response status: 200
-2025-08-03 21:49:31,418 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-03 21:49:31,418 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-03 21:49:31,669 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-03 21:49:31,688 - app.main - INFO - Request: GET /api/dashboard
-2025-08-03 21:49:31,691 - app.main - INFO - Response status: 200
-2025-08-03 21:49:31,691 - app.main - INFO - Response status: 200
-2025-08-03 21:49:31,870 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-03 21:49:32,019 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:32,020 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:32,621 - app.services.db.workout_service - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:32,621 - app.api.endpoints.db - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:32,695 - app.main - INFO - Response status: 200
-2025-08-03 21:49:37,539 - app.main - INFO - Request: GET /db/conversations
-2025-08-03 21:49:37,783 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 21:49:37,784 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-08-03 21:49:37,784 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-08-03 21:49:37,996 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-08-03 21:49:37,997 - app.api.endpoints.db - INFO - Calling get_user_conversations method
+CORRELATION INSIGHTS:
+67 significant correlations found from 91 exercise pairs analyzed
+• Leg Curl strength predicts Face Pull strength increases
+• Pull-Up strength predicts Face Pull strength increases
+• Barbell Bench Press strength predicts Face Pull strength increases
+
+WORKOUT SUMMARY:
+- Total workouts analyzed: 53
+- Exercise variety: 9 different exercises
+
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
+Message 3 (HumanMessage):
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hi
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
+Message 4 (AIMessage):
+2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, fitness champ! Ready to dive into your progress? I've got your latest workout data right here, and let me tell you, it's looking pretty awesome!
+
+What's on your mind today? Let's talk about those gains! 💪
+2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - 
+Message 5 (HumanMessage):
+2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - Content: What can you see?
+2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-05 14:05:45,107 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, let's take a look under', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:45,677 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' the hood of your fitness journey! This is exciting!
+
+From what I can see, you've been absolutely crushing it!
+
+First off, you've logged a fantastic **53 workouts** between February and August – that's some serious dedication right there! And you're hitting a good variety,', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:46,272 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' working with **9 different exercises**.
+
+Now, for the good stuff, your **strength gains** are really popping:
+
+*   Your **Barbell Skull Crusher** strength is up an incredible **67.3%**! That's massive progress for your triceps!
+*   **Preacher C', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:46,812 - app.services.chains.base_conversation_chain - INFO - Chunk: content='urls** are showing a solid **28.7%** increase – those biceps are definitely getting stronger.
+*   And your **Barbell Back Squat** strength has jumped by **17.0%**! Building that strong foundation!
+
+When it comes to **volume** – how much work you're putting in –', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:47,254 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' you're also seeing some phenomenal numbers:
+
+*   **Preacher Curls** volume is up a whopping **741.3%**! You're doing so much more work there, which explains those strength gains!
+*   **Barbell Skull Crushers** volume is up **317', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:47,706 - app.services.chains.base_conversation_chain - INFO - Chunk: content='.5%**!
+*   And **Barbell Back Squats** volume is up **311.9%**!
+
+It looks like you've been incredibly consistent too, with an average gap of **0.0 days** between workouts – that's like a perfect attendance record! You're showing', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:48,151 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' up, putting in the work, and it's clearly paying off.
+
+And here's something super cool: the data shows some interesting connections! For example, it looks like getting stronger in your **Leg Curls, Pull-Ups, Barbell Bench Press, and even Preacher Curls** all predict', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:48,704 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' increases in your **Face Pull strength**. That's awesome because it means the work you're doing on other exercises is having a positive ripple effect on your Face Pulls!
+
+Seriously, this is fantastic progress! You're building strength, increasing your work capacity, and staying super consistent.
+
+What do you think about all that', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 14:05:48,802 - app.services.chains.base_conversation_chain - INFO - Chunk: content='? Anything in particular stand out to you?', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}

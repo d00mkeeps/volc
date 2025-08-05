@@ -1,12 +1,28 @@
-import React from "react";
-import { YStack, Text, ScrollView } from "tamagui";
+import React, { useState } from "react";
+import { YStack, Text, ScrollView, Button } from "tamagui";
 import { useUserStore } from "@/stores/userProfileStore";
+import { useAuth } from "@/context/AuthContext"; // Add this import
 import ProfileHeader from "@/components/molecules/headers/ProfileHeader";
 import PersonalInfoCard from "@/components/molecules/PersonalInfoCard";
 import DataCard from "@/components/molecules/ProfileDataCard";
 
 export default function ProfileScreen() {
   const { userProfile, loading, error } = useUserStore();
+  const { signOut } = useAuth(); // Add this
+  const [isLoggingOut, setIsLoggingOut] = useState(false); // Add loading state
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await signOut();
+      // Navigation will be handled automatically by AuthGate
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Optionally show an error toast here
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -60,6 +76,20 @@ export default function ProfileScreen() {
             title="Training Preferences"
             data={userProfile.preferences}
           />
+
+          {/* Logout Button */}
+          <YStack paddingTop="$4" paddingBottom="$6">
+            <Button
+              onPress={handleLogout}
+              disabled={isLoggingOut}
+              backgroundColor="$red9"
+              color="white"
+              size="$4"
+              borderRadius="$3"
+            >
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </Button>
+          </YStack>
         </YStack>
       </ScrollView>
     </YStack>

@@ -1,80 +1,35 @@
-2025-08-03 22:11:06,272 - app.api.endpoints.db - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:06,345 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-03 22:11:06,432 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:06,432 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:06,754 - app.services.db.workout_service - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:06,754 - app.api.endpoints.db - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:06,828 - app.main - INFO - Request: GET /db/conversations
-2025-08-03 22:11:06,829 - app.main - INFO - Response status: 200
-2025-08-03 22:11:07,123 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:07,124 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-08-03 22:11:07,124 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-08-03 22:11:07,233 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-08-03 22:11:07,234 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-08-03 22:11:07,234 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:07,361 - app.services.db.conversation_service - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:07,361 - app.api.endpoints.db - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:07,366 - app.main - INFO - Response status: 200
-2025-08-03 22:11:07,368 - app.main - INFO - Response status: 200
-2025-08-03 22:11:21,817 - app.main - INFO - Request: GET /db/user-profile
-2025-08-03 22:11:22,087 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,088 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,295 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,297 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-03 22:11:22,297 - app.main - INFO - Response status: 200
-2025-08-03 22:11:22,397 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-03 22:11:22,398 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-03 22:11:22,597 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-03 22:11:22,603 - app.main - INFO - Request: GET /api/dashboard
-2025-08-03 22:11:22,605 - app.main - INFO - Request: GET /db/conversations
-2025-08-03 22:11:22,606 - app.main - INFO - Response status: 200
-2025-08-03 22:11:22,710 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,711 - app.api.endpoints.db - INFO - Creating ConversationService instance
-2025-08-03 22:11:22,711 - app.api.endpoints.db - INFO - Supabase client available: True
-2025-08-03 22:11:22,883 - app.api.endpoints.db - INFO - Supabase client test query successful
-2025-08-03 22:11:22,883 - app.api.endpoints.db - INFO - Calling get_user_conversations method
-2025-08-03 22:11:22,883 - app.services.db.conversation_service - INFO - Getting active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,962 - app.services.db.conversation_service - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,962 - app.api.endpoints.db - INFO - Retrieved 33 active conversations for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:22,963 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-03 22:11:22,963 - app.main - INFO - Response status: 200
-2025-08-03 22:11:23,082 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:23,082 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:23,414 - app.services.db.workout_service - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:23,414 - app.api.endpoints.db - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:23,483 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-03 22:11:23,483 - app.main - INFO - Response status: 200
-2025-08-03 22:11:23,634 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:23,635 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:24,009 - app.services.db.workout_service - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:24,009 - app.api.endpoints.db - INFO - Retrieved 246 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-03 22:11:24,087 - app.main - INFO - Response status: 200
-2025-08-03 22:11:24,088 - app.main - INFO - Response status: 200
-2025-08-03 22:11:33,577 - app.main - INFO - Request: DELETE /db/workouts/1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:33,915 - app.api.endpoints.db - INFO - API request to delete workout: 1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:33,915 - app.services.db.workout_service - INFO - Getting workout: 1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:34,135 - app.services.db.workout_service - INFO - Successfully retrieved workout: 1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:34,135 - app.services.db.workout_service - INFO - Deleting workout: 1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:34,588 - app.services.db.workout_service - INFO - Successfully deleted workout: 1e8cad42-bc9b-4060-b1e9-9f3ed887848e
-2025-08-03 22:11:34,589 - app.main - INFO - Response status: 200
-2025-08-03 22:11:35,184 - app.main - INFO - Request: DELETE /db/workouts/c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,273 - app.api.endpoints.db - INFO - API request to delete workout: c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,273 - app.services.db.workout_service - INFO - Getting workout: c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,358 - app.services.db.workout_service - INFO - Successfully retrieved workout: c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,358 - app.services.db.workout_service - INFO - Deleting workout: c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,686 - app.services.db.workout_service - INFO - Successfully deleted workout: c71ba2c6-eddc-4694-82e7-bd1d8bd03893
-2025-08-03 22:11:35,688 - app.main - INFO - Response status: 200
-2025-08-03 22:11:36,305 - app.main - INFO - Request: DELETE /db/workouts/663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,397 - app.api.endpoints.db - INFO - API request to delete workout: 663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,397 - app.services.db.workout_service - INFO - Getting workout: 663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,477 - app.services.db.workout_service - INFO - Successfully retrieved workout: 663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,478 - app.services.db.workout_service - INFO - Deleting workout: 663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,791 - app.services.db.workout_service - INFO - Successfully deleted workout: 663c7187-53a7-4109-bea4-9ad5d3f6d434
-2025-08-03 22:11:36,792 - app.main - INFO - Response status: 200
-2025-08-03 22:11:37,347 - app.main - INFO - Request: DELETE /db/workouts/dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:37,436 - app.api.endpoints.db - INFO - API request to delete workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:37,437 - app.services.db.workout_service - INFO - Getting workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:37,519 - app.services.db.workout_service - INFO - Successfully retrieved workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:37,519 - app.services.db.workout_service - INFO - Deleting workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:38,126 - app.services.db.workout_service - INFO - Successfully deleted workout: dd49320c-8fe1-4818-a0e9-bc6694851f9a
-2025-08-03 22:11:38,128 - app.main - INFO - Response status: 200
+2025-08-05 14:10:49,056 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-08-05 14:10:49,064 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
+    await websocket.accept()
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
+    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
+    raise RuntimeError(
+        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
+    )
+RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'

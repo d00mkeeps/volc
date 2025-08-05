@@ -5,6 +5,7 @@ import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
+import { Keyboard } from "react-native"; // Add Keyboard to existing imports
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
 import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
@@ -87,6 +88,12 @@ export default function HomeScreen() {
 
   const handleToggleWorkout = async () => {
     if (isActive) {
+      // Force dismiss keyboard to save any active input values
+      Keyboard.dismiss();
+
+      // Small delay to let onBlur events process
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       setShowCompletionModal(true);
       try {
         await finishWorkout();

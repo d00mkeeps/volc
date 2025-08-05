@@ -5,7 +5,8 @@ import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
-import { workoutService } from "@/services/db/workout";
+// REMOVE this import since we're not calling it directly anymore
+// import { workoutService } from "@/services/db/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {
@@ -64,11 +65,14 @@ export function WorkoutCompletionModal({
   };
 
   const handleContinueToChat = useCallback(async () => {
-    const freshWorkout = useUserSessionStore.getState().currentWorkout;
-    if (freshWorkout) {
-      console.log("Using fresh workout data for update");
-      workoutService.updateWorkout(freshWorkout.id, freshWorkout);
-    }
+    // REMOVE the direct service call since we're handling it in the summary slide now
+    // const freshWorkout = useUserSessionStore.getState().currentWorkout;
+    // if (freshWorkout) {
+    //   console.log("Using fresh workout data for update");
+    //   workoutService.updateWorkout(freshWorkout.id, freshWorkout);
+    // }
+
+    console.log("Continuing to chat slide");
     setCurrentSlide("chat");
   }, []);
 

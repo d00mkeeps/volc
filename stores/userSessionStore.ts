@@ -5,6 +5,7 @@ import { workoutService } from "@/services/db/workout";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface UserSessionState {
   // Session state
@@ -189,7 +190,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
   finishWorkout: async () => {
     const { currentWorkout } = get();
-
     if (!currentWorkout) return;
 
     const userProfile = useUserStore.getState().userProfile;
@@ -197,34 +197,67 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       throw new Error("No user profile found");
     }
 
-    // Generate proper UUIDs for saving to database
+    // 1. ALWAYS create new workout record (for history/analysis)
     const workoutForSaving = createWorkoutWithIds(
       currentWorkout,
       userProfile.user_id.toString()
     );
-
-    // Save workout without notes
     const savedWorkout = await workoutService.saveCompletedWorkout(
       userProfile.user_id.toString(),
       { ...workoutForSaving, notes: "" }
     );
 
-    // Update the current workout with the saved one, so we have the real ID
+    // 2. Handle template deduplication
+    const { workouts } = useWorkoutStore.getState();
+    const currentDefIds = new Set(
+      currentWorkout.workout_exercises
+        .map((ex) => ex.definition_id)
+        .filter(Boolean)
+    );
+
+    // Find existing template with same definition_ids
+    const existingTemplate = Array.from(workouts.values()).find((workout) => {
+      const templateDefIds = new Set(
+        workout.workout_exercises.map((ex) => ex.definition_id).filter(Boolean)
+      );
+
+      // Same exercises regardless of order
+      return (
+        currentDefIds.size === templateDefIds.size &&
+        [...currentDefIds].every((id) => templateDefIds.has(id))
+      );
+    });
+
+    if (existingTemplate) {
+      // Update existing template with latest version
+      console.log(
+        "[UserSession] Updating existing template:",
+        existingTemplate.id
+      );
+      const { updateWorkout } = useWorkoutStore.getState();
+      await updateWorkout(existingTemplate.id, {
+        ...currentWorkout,
+        id: existingTemplate.id,
+        updated_at: new Date().toISOString(),
+      });
+    }
+    // If no existing template found, savedWorkout becomes the new template automatically
+
     set({ currentWorkout: savedWorkout });
 
-    // Extract definition IDs for analysis
+    // 3. Extract definition IDs for analysis
     const definitionIds = savedWorkout.workout_exercises
       .map((ex) => ex.definition_id)
       .filter((id): id is string => Boolean(id));
 
-    // Trigger analysis with definition IDs
+    // 4. Trigger analysis with definition IDs
     if (definitionIds.length > 0) {
       try {
         const analysisResult = await useWorkoutAnalysisStore
           .getState()
           .initiateBackgroundAnalysis(definitionIds);
 
-        // NEW: Store conversation ID in session
+        // Store conversation ID in session
         if (analysisResult?.conversation_id) {
           set({ activeConversationId: analysisResult.conversation_id });
           console.log(
@@ -239,6 +272,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       }
     }
 
+    // 5. Refresh dashboard
     useDashboardStore.getState().refreshDashboard();
   },
 

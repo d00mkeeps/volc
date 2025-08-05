@@ -10,10 +10,10 @@ import { useEffect, useState } from "react";
 import { useColorScheme, Text, View } from "react-native";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthGate } from "@/components/auth/AuthGate";
+import { useAuthStore } from "@/stores/authStore";
 import Toast from "react-native-toast-message";
 import React from "react";
-// Add these Tamagui imports
-import { TamaguiProvider, Theme } from "@tamagui/core"; // Removed PortalProvider
+import { TamaguiProvider, Theme } from "@tamagui/core";
 import config from "../tamagui.config";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
@@ -25,6 +25,12 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
+
+// FIX: Better component implementation
+function AuthStoreManager({ children }: { children: React.ReactNode }) {
+  useAuthStore();
+  return children as React.ReactElement;
+}
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -51,6 +57,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+
   const [supabaseStatus, setSupabaseStatus] = useState<{
     success: boolean;
     message: string;
@@ -65,50 +72,52 @@ function RootLayoutNav() {
         <TamaguiProvider config={config}>
           <Theme name={colorScheme === "dark" ? "dark" : "light"}>
             <AuthProvider>
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <AuthGate>
-                  {/* rest of your existing code stays the same */}
-                  {supabaseStatus && (
-                    <View
-                      style={{
-                        position: "absolute",
-                        bottom: 40,
-                        right: 10,
-                        padding: 8,
-                        borderRadius: 4,
-                        backgroundColor: supabaseStatus.success
-                          ? "rgba(248, 79, 62, 0.2)"
-                          : "rgba(255, 0, 0, 0.2)",
-                        zIndex: 9999,
-                      }}
-                    >
-                      <Text
+              <AuthStoreManager>
+                <ThemeProvider
+                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                  <AuthGate>
+                    {supabaseStatus && (
+                      <View
                         style={{
-                          color: supabaseStatus.success ? "#d4412f" : "#721c24",
-                          fontSize: 12,
+                          position: "absolute",
+                          bottom: 40,
+                          right: 10,
+                          padding: 8,
+                          borderRadius: 4,
+                          backgroundColor: supabaseStatus.success
+                            ? "rgba(248, 79, 62, 0.2)"
+                            : "rgba(255, 0, 0, 0.2)",
+                          zIndex: 9999,
                         }}
                       >
-                        Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
-                        {supabaseStatus.message}
-                        {supabaseStatus.url &&
-                          `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
-                        {supabaseStatus.error &&
-                          `\nDetails: ${supabaseStatus.error}`}
-                      </Text>
-                    </View>
-                  )}
-                  <Stack screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="(tabs)" />
-
-                    <Stack.Screen
-                      name="modal"
-                      options={{ presentation: "modal" }}
-                    />
-                  </Stack>
-                </AuthGate>
-              </ThemeProvider>
+                        <Text
+                          style={{
+                            color: supabaseStatus.success
+                              ? "#d4412f"
+                              : "#721c24",
+                            fontSize: 12,
+                          }}
+                        >
+                          Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
+                          {supabaseStatus.message}
+                          {supabaseStatus.url &&
+                            `\nURL: ${supabaseStatus.url.substring(0, 15)}...`}
+                          {supabaseStatus.error &&
+                            `\nDetails: ${supabaseStatus.error}`}
+                        </Text>
+                      </View>
+                    )}
+                    <Stack screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name="(tabs)" />
+                      <Stack.Screen
+                        name="modal"
+                        options={{ presentation: "modal" }}
+                      />
+                    </Stack>
+                  </AuthGate>
+                </ThemeProvider>
+              </AuthStoreManager>
             </AuthProvider>
           </Theme>
         </TamaguiProvider>

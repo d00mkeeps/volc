@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { YStack, Text, Input, Button, TextArea } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore"; // ADD THIS IMPORT
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -12,6 +13,8 @@ export function WorkoutSummarySlide({
   showContinueButton = true,
 }: WorkoutSummarySlideProps) {
   const { currentWorkout, updateCurrentWorkout } = useUserSessionStore();
+  const { updateWorkout } = useWorkoutStore(); // ADD THIS
+
   const [workoutName, setWorkoutName] = useState(currentWorkout?.name || "");
   const [workoutNotes, setWorkoutNotes] = useState(() => {
     // Pre-populate with exercise headings if no existing notes
@@ -37,7 +40,8 @@ export function WorkoutSummarySlide({
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    // MAKE THIS ASYNC
     console.log("=== SUMMARY SLIDE CONTINUE ===");
     console.log("Workout name:", workoutName);
     console.log("Workout notes:", workoutNotes);
@@ -59,6 +63,15 @@ export function WorkoutSummarySlide({
       });
 
       updateCurrentWorkout(updatedWorkout);
+
+      // ADD THIS: Update in database using store method (which has auth)
+      try {
+        await updateWorkout(updatedWorkout.id, updatedWorkout);
+        console.log("Workout successfully saved to database");
+      } catch (error) {
+        console.error("Failed to save workout:", error);
+        // Could show a toast error here if needed
+      }
     }
 
     onContinue();

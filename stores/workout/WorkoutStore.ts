@@ -10,8 +10,13 @@ interface WorkoutState {
   templates: CompleteWorkout[];
   loading: boolean;
   error: Error | null;
+  initialized: boolean;
 
-  // Actions - removed userId parameters
+  // Auth-triggered methods (called by authStore)
+  initializeIfAuthenticated: () => Promise<void>;
+  clearData: () => void;
+
+  // Actions
   loadWorkouts: () => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (workout: CompleteWorkout) => Promise<void>;
@@ -26,20 +31,12 @@ interface WorkoutState {
   deleteConversationWorkouts: (conversationId: string) => Promise<void>;
 }
 
-export const useWorkoutStore = create<WorkoutState>((set, get) => ({
-  // Initial state
-  workouts: [],
-  currentWorkout: null,
-  templates: [],
-  loading: false,
-  error: null,
-
-  // Actions
-  loadWorkouts: async () => {
+export const useWorkoutStore = create<WorkoutState>((set, get) => {
+  const loadWorkoutsData = async () => {
     try {
+      console.log("Loading workouts...");
       set({ loading: true, error: null });
 
-      // Get user ID from session
       const session = await authService.getSession();
       if (!session?.user?.id) {
         throw new Error("No authenticated user found");
@@ -48,223 +45,260 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
       const userWorkouts = await workoutService.getUserWorkouts(
         session.user.id
       );
-      set({ workouts: userWorkouts });
+      set({ workouts: userWorkouts, initialized: true });
+      console.log(`Loaded ${userWorkouts.length} workouts`);
     } catch (err) {
       console.error("[WorkoutStore] Error loading workouts:", err);
       set({
         error:
           err instanceof Error ? err : new Error("Failed to load workouts"),
+        initialized: true,
       });
     } finally {
       set({ loading: false });
     }
-  },
+  };
 
-  getWorkout: async (workoutId: string) => {
-    try {
-      set({ loading: true, error: null });
-      // First check if we already have the workout in our state
-      const { workouts } = get();
-      const existingWorkout = workouts.find((w) => w.id === workoutId);
+  return {
+    // Initial state - clean slate
+    workouts: [],
+    currentWorkout: null,
+    templates: [],
+    loading: false,
+    error: null,
+    initialized: false,
 
-      if (existingWorkout) {
-        set({ currentWorkout: existingWorkout });
-        return;
+    // Called by authStore when user becomes authenticated
+    initializeIfAuthenticated: async () => {
+      const { initialized, loading } = get();
+      if (initialized || loading) return; // Prevent double-initialization
+
+      await loadWorkoutsData();
+    },
+
+    // Called by authStore when user logs out
+    clearData: () => {
+      set({
+        workouts: [],
+        currentWorkout: null,
+        templates: [],
+        loading: false,
+        error: null,
+        initialized: false,
+      });
+    },
+
+    // Actions
+    loadWorkouts: async () => {
+      await loadWorkoutsData();
+    },
+
+    getWorkout: async (workoutId: string) => {
+      try {
+        set({ loading: true, error: null });
+        const { workouts } = get();
+        const existingWorkout = workouts.find((w) => w.id === workoutId);
+
+        if (existingWorkout) {
+          set({ currentWorkout: existingWorkout });
+          return;
+        }
+
+        const workout = await workoutService.getWorkout(workoutId);
+        set({ currentWorkout: workout });
+      } catch (err) {
+        console.error("[WorkoutStore] Error getting workout:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to load workout"),
+        });
+      } finally {
+        set({ loading: false });
       }
+    },
 
-      const workout = await workoutService.getWorkout(workoutId);
-      set({ currentWorkout: workout });
-    } catch (err) {
-      console.error("[WorkoutStore] Error getting workout:", err);
-      set({
-        error: err instanceof Error ? err : new Error("Failed to load workout"),
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
+    createWorkout: async (workout: CompleteWorkout) => {
+      try {
+        set({ loading: true, error: null });
 
-  createWorkout: async (workout: CompleteWorkout) => {
-    try {
-      set({ loading: true, error: null });
+        const session = await authService.getSession();
+        if (!session?.user?.id) {
+          throw new Error("No authenticated user found");
+        }
 
-      // Get user ID from session
-      const session = await authService.getSession();
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user found");
+        const newWorkout = await workoutService.createWorkout(
+          session.user.id,
+          workout
+        );
+
+        set((state) => ({
+          workouts: [newWorkout, ...state.workouts],
+          currentWorkout: newWorkout,
+        }));
+      } catch (err) {
+        console.error("[WorkoutStore] Error creating workout:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to create workout"),
+        });
+      } finally {
+        set({ loading: false });
       }
+    },
 
-      const newWorkout = await workoutService.createWorkout(
-        session.user.id,
-        workout
-      );
-
-      // Add to workouts array - this triggers template refresh
-      set((state) => ({
-        workouts: [newWorkout, ...state.workouts],
-        currentWorkout: newWorkout,
-      }));
-    } catch (err) {
-      console.error("[WorkoutStore] Error creating workout:", err);
-      set({
-        error:
-          err instanceof Error ? err : new Error("Failed to create workout"),
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  updateWorkout: async (workoutId: string, updates: CompleteWorkout) => {
-    try {
-      set({ loading: true, error: null });
-      const updatedWorkout = await workoutService.updateWorkout(
-        workoutId,
-        updates
-      );
-      set((state) => ({
-        workouts: state.workouts.map((w) =>
-          w.id === workoutId ? updatedWorkout : w
-        ),
-        currentWorkout:
-          state.currentWorkout?.id === workoutId
-            ? updatedWorkout
-            : state.currentWorkout,
-      }));
-    } catch (err) {
-      console.error("[WorkoutStore] Error updating workout:", err);
-      set({
-        error:
-          err instanceof Error ? err : new Error("Failed to update workout"),
-      });
-      throw err;
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  deleteWorkout: async (workoutId: string) => {
-    try {
-      set({ loading: true, error: null });
-      await workoutService.deleteWorkout(workoutId);
-      set((state) => ({
-        workouts: state.workouts.filter((w) => w.id !== workoutId),
-        currentWorkout:
-          state.currentWorkout?.id === workoutId ? null : state.currentWorkout,
-      }));
-    } catch (err) {
-      console.error("[WorkoutStore] Error deleting workout:", err);
-      set({
-        error:
-          err instanceof Error ? err : new Error("Failed to delete workout"),
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  fetchTemplates: async () => {
-    try {
-      set({ loading: true, error: null });
-
-      // Get user ID from session
-      const session = await authService.getSession();
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user found");
+    updateWorkout: async (workoutId: string, updates: CompleteWorkout) => {
+      try {
+        set({ loading: true, error: null });
+        const updatedWorkout = await workoutService.updateWorkout(
+          workoutId,
+          updates
+        );
+        set((state) => ({
+          workouts: state.workouts.map((w) =>
+            w.id === workoutId ? updatedWorkout : w
+          ),
+          currentWorkout:
+            state.currentWorkout?.id === workoutId
+              ? updatedWorkout
+              : state.currentWorkout,
+        }));
+      } catch (err) {
+        console.error("[WorkoutStore] Error updating workout:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to update workout"),
+        });
+        throw err;
+      } finally {
+        set({ loading: false });
       }
+    },
 
-      const templateList = await workoutService.getTemplates(session.user.id);
-      set({ templates: templateList });
-    } catch (err) {
-      console.error("[WorkoutStore] Error fetching templates:", err);
-      set({
-        error:
-          err instanceof Error ? err : new Error("Failed to load templates"),
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  saveAsTemplate: async (workout: CompleteWorkout) => {
-    try {
-      set({ loading: true, error: null });
-      const template = await workoutService.saveAsTemplate(workout);
-      set((state) => ({ templates: [template, ...state.templates] }));
-      return template;
-    } catch (err) {
-      console.error("[WorkoutStore] Error saving template:", err);
-      set({
-        error:
-          err instanceof Error ? err : new Error("Failed to save template"),
-      });
-      throw err;
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  getWorkoutsByConversation: async (conversationId: string) => {
-    try {
-      set({ loading: true, error: null });
-
-      // Get user ID from session
-      const session = await authService.getSession();
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user found");
+    deleteWorkout: async (workoutId: string) => {
+      try {
+        set({ loading: true, error: null });
+        await workoutService.deleteWorkout(workoutId);
+        set((state) => ({
+          workouts: state.workouts.filter((w) => w.id !== workoutId),
+          currentWorkout:
+            state.currentWorkout?.id === workoutId
+              ? null
+              : state.currentWorkout,
+        }));
+      } catch (err) {
+        console.error("[WorkoutStore] Error deleting workout:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to delete workout"),
+        });
+      } finally {
+        set({ loading: false });
       }
+    },
 
-      const conversationWorkouts =
-        await workoutService.getWorkoutsByConversation(
+    fetchTemplates: async () => {
+      try {
+        set({ loading: true, error: null });
+
+        const session = await authService.getSession();
+        if (!session?.user?.id) {
+          throw new Error("No authenticated user found");
+        }
+
+        const templateList = await workoutService.getTemplates(session.user.id);
+        set({ templates: templateList });
+      } catch (err) {
+        console.error("[WorkoutStore] Error fetching templates:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to load templates"),
+        });
+      } finally {
+        set({ loading: false });
+      }
+    },
+
+    saveAsTemplate: async (workout: CompleteWorkout) => {
+      try {
+        set({ loading: true, error: null });
+        const template = await workoutService.saveAsTemplate(workout);
+        set((state) => ({ templates: [template, ...state.templates] }));
+        return template;
+      } catch (err) {
+        console.error("[WorkoutStore] Error saving template:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to save template"),
+        });
+        throw err;
+      } finally {
+        set({ loading: false });
+      }
+    },
+
+    getWorkoutsByConversation: async (conversationId: string) => {
+      try {
+        set({ loading: true, error: null });
+
+        const session = await authService.getSession();
+        if (!session?.user?.id) {
+          throw new Error("No authenticated user found");
+        }
+
+        const conversationWorkouts =
+          await workoutService.getWorkoutsByConversation(
+            session.user.id,
+            conversationId
+          );
+        return conversationWorkouts;
+      } catch (err) {
+        console.error(
+          "[WorkoutStore] Error getting conversation workouts:",
+          err
+        );
+        set({
+          error:
+            err instanceof Error
+              ? err
+              : new Error("Failed to load conversation workouts"),
+        });
+        return [];
+      } finally {
+        set({ loading: false });
+      }
+    },
+
+    deleteConversationWorkouts: async (conversationId: string) => {
+      try {
+        set({ loading: true, error: null });
+
+        const session = await authService.getSession();
+        if (!session?.user?.id) {
+          throw new Error("No authenticated user found");
+        }
+
+        await workoutService.deleteConversationWorkouts(
           session.user.id,
           conversationId
         );
-      return conversationWorkouts;
-    } catch (err) {
-      console.error("[WorkoutStore] Error getting conversation workouts:", err);
-      set({
-        error:
-          err instanceof Error
-            ? err
-            : new Error("Failed to load conversation workouts"),
-      });
-      return []; // Return empty array on error
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  deleteConversationWorkouts: async (conversationId: string) => {
-    try {
-      set({ loading: true, error: null });
-
-      // Get user ID from session
-      const session = await authService.getSession();
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user found");
+      } catch (err) {
+        console.error(
+          "[WorkoutStore] Error deleting conversation workouts:",
+          err
+        );
+        set({
+          error:
+            err instanceof Error
+              ? err
+              : new Error("Failed to delete conversation workouts"),
+        });
+      } finally {
+        set({ loading: false });
       }
+    },
 
-      await workoutService.deleteConversationWorkouts(
-        session.user.id,
-        conversationId
-      );
-    } catch (err) {
-      console.error(
-        "[WorkoutStore] Error deleting conversation workouts:",
-        err
-      );
-      set({
-        error:
-          err instanceof Error
-            ? err
-            : new Error("Failed to delete conversation workouts"),
-      });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  clearError: () => {
-    set({ error: null });
-  },
-}));
+    clearError: () => {
+      set({ error: null });
+    },
+  };
+});

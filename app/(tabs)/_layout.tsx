@@ -2,20 +2,22 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
-import { useEffect } from "react";
-import { useConversationStore } from "@/stores/chat/ConversationStore";
-import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+// REMOVE these imports - authStore handles them now
+// import { useEffect } from "react";
+// import { useConversationStore } from "@/stores/chat/ConversationStore";
+// import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { getConversations } = useConversationStore();
-  const { loadWorkouts } = useWorkoutStore();
+  // REMOVE these - authStore handles them now
+  // const { getConversations } = useConversationStore();
+  // const { loadWorkouts } = useWorkoutStore();
 
-  // Fetch data once when tabs initialize
-  useEffect(() => {
-    getConversations();
-    loadWorkouts();
-  }, []);
+  // REMOVE this entire useEffect - authStore handles initialization
+  // useEffect(() => {
+  //   getConversations();
+  //   loadWorkouts();
+  // }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -23,15 +25,15 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: colorScheme === "dark" ? "#231f20" : "#ffffff", // Volc charcoal/white
-            borderTopColor: "#f84f3e", // Volc orange border
+            backgroundColor: colorScheme === "dark" ? "#231f20" : "#ffffff",
+            borderTopColor: "#f84f3e",
             borderTopWidth: 2,
             paddingBottom: 0,
             height: 60,
           },
-          tabBarActiveTintColor: "#f84f3e", // Volc orange active
+          tabBarActiveTintColor: "#f84f3e",
           tabBarInactiveTintColor:
-            colorScheme === "dark" ? "#6b6466" : "#999999", // Volc warm gray
+            colorScheme === "dark" ? "#6b6466" : "#999999",
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "500",
