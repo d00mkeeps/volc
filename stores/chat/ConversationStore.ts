@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { conversationService } from "../../services/db/conversation";
 import { Conversation, ChatConfigName } from "@/types";
 import { authService } from "@/services/db/auth";
+import { useMessageStore } from "./MessageStore";
+import { useUserStore } from "../userProfileStore";
 
 interface ConversationStoreState {
   // State
@@ -92,14 +94,57 @@ export const useConversationStore = create<ConversationStoreState>(
       error: null,
       initialized: false,
 
-      // Called by authStore when user becomes authenticated
-      initializeIfAuthenticated: async () => {
-        const { initialized, isLoading } = get();
-        if (initialized || isLoading) return; // Prevent double-initialization
+      async initializeIfAuthenticated() {
+        console.log("🗣️ ConversationStore: Starting initialization...");
 
-        await loadConversations();
+        const userProfile = useUserStore.getState().userProfile;
+        if (!userProfile?.auth_user_uuid) {
+          console.log("🗣️ ConversationStore: No user profile, skipping");
+          return;
+        }
+
+        try {
+          console.log(
+            "🗣️ ConversationStore: Loading conversations with messages..."
+          );
+          set({ isLoading: true, error: null });
+
+          const result =
+            await conversationService.getConversationsWithRecentMessages(
+              userProfile.auth_user_uuid
+            );
+
+          console.log(
+            "🗣️ ConversationStore: Got",
+            result.conversations.length,
+            "conversations"
+          );
+          console.log(
+            "🗣️ ConversationStore: Got messages for",
+            Object.keys(result.messages).length,
+            "conversations"
+          );
+
+          const conversationsMap = new Map(
+            result.conversations.map((conv) => [conv.id, conv])
+          );
+
+          useMessageStore.getState().setBulkMessages(result.messages);
+
+          set({
+            conversations: conversationsMap,
+            isLoading: false,
+          });
+
+          console.log("✅ ConversationStore: Initialization complete");
+        } catch (error) {
+          console.error("❌ ConversationStore: Initialization failed:", error);
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error : new Error(String(error)),
+          });
+        }
       },
-
       // Called by authStore when user logs out
       clearData: () => {
         set({

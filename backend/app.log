@@ -1,35 +1,25 @@
-2025-08-05 14:10:49,056 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-08-05 14:10:49,064 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
-    await websocket.accept()
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
-    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
-    raise RuntimeError(
-        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
-    )
-RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
+2025-08-05 19:31:59,310 - app.services.db.analysis_service - INFO - Bundle status updated successfully: a97a51e6-0677-49db-9cbc-608ac67113de -> in_progress
+2025-08-05 19:31:59,313 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
+2025-08-05 19:31:59,454 - app.services.db.workout_service - INFO - RPC returned: 57 workouts
+2025-08-05 19:31:59,454 - app.services.workout_analysis_service - INFO - Processing analysis for 57 workouts
+2025-08-05 19:31:59,454 - app.services.workout_analysis.main_processor - INFO - Processing bundle a97a51e6-0677-49db-9cbc-608ac67113de with 57 workouts
+2025-08-05 19:31:59,455 - app.services.workout_analysis.calc.strength - INFO - Found 9 exercises with strength data, returning top 3
+2025-08-05 19:31:59,455 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 9 exercises
+2025-08-05 19:31:59,456 - app.services.workout_analysis.calc.volume - INFO - Found 9 exercises with volume data, returning top 3
+2025-08-05 19:31:59,456 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 9 exercises
+2025-08-05 19:31:59,456 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=3.2, variance=204.01583428247994
+2025-08-05 19:31:59,670 - app.services.workout_analysis.calc.correlation - INFO - Found 67 significant correlations out of 91 pairs analyzed
+2025-08-05 19:31:59,671 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle a97a51e6-0677-49db-9cbc-608ac67113de
+2025-08-05 19:31:59,671 - app.services.db.analysis_service - INFO - Updating analysis bundle: a97a51e6-0677-49db-9cbc-608ac67113de
+2025-08-05 19:31:59,783 - app.services.db.analysis_service - INFO - Bundle updated successfully: a97a51e6-0677-49db-9cbc-608ac67113de
+2025-08-05 19:31:59,783 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:31:59,783 - app.main - INFO - Response status: 200
+2025-08-05 19:31:59,940 - app.main - INFO - Request: GET /db/conversations/dfc39fbe-f928-40a2-8029-c7c79e10dbd2/messages
+2025-08-05 19:32:00,043 - app.api.endpoints.db - INFO - API request to get messages for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:32:00,045 - app.services.db.conversation_service - INFO - Getting conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:32:00,137 - app.services.db.conversation_service - INFO - Retrieved conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:32:00,138 - app.services.db.message_service - INFO - Getting messages for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:32:00,229 - app.services.db.message_service - INFO - Retrieved 0 messages
+2025-08-05 19:32:00,233 - app.main - INFO - Request: GET /api/dashboard
+2025-08-05 19:32:00,233 - app.main - INFO - Response status: 200
+2025-08-05 19:32:00,236 - app.main - INFO - Response status: 200

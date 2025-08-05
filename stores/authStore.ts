@@ -17,22 +17,32 @@ export function useAuthStore() {
       if (user) {
         console.log("🔐 Auth detected - initializing stores...");
 
-        // Initialize all auth-dependent stores
-        useUserStore.getState().initializeIfAuthenticated();
-        useExerciseStore.getState().initializeIfAuthenticated();
-        useConversationStore.getState().initializeIfAuthenticated();
-        useWorkoutStore.getState().initializeIfAuthenticated();
+        const initializeStores = async () => {
+          try {
+            // Initialize UserStore first (others depend on it)
+            await useUserStore.getState().initializeIfAuthenticated();
 
-        console.log("✅ All stores initialized");
+            // Then initialize stores that depend on user profile
+            await Promise.all([
+              useExerciseStore.getState().initializeIfAuthenticated(),
+              useConversationStore.getState().initializeIfAuthenticated(),
+              useWorkoutStore.getState().initializeIfAuthenticated(),
+            ]);
+
+            console.log("✅ All stores initialized");
+          } catch (error) {
+            console.error("❌ Store initialization failed:", error);
+          }
+        };
+
+        initializeStores();
       } else {
         console.log("🚪 User logged out - clearing stores...");
-
         // Clear all stores on logout
         useUserStore.getState().clearData();
         useExerciseStore.getState().clearData();
         useConversationStore.getState().clearData();
         useWorkoutStore.getState().clearData();
-
         console.log("🧹 All stores cleared");
       }
     }

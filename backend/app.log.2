@@ -1,79 +1,80 @@
-2025-08-05 14:05:40,825 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
+2025-08-05 19:29:43,935 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
 
 Current workout data context:
 Available workout data:
 {
   "metadata": {
-    "total_workouts": 53,
-    "total_exercises": 241,
+    "total_workouts": 126,
+    "total_exercises": 904,
     "date_range": {
       "start": "2025-02-06T22:02:04.023375+00:00",
-      "end": "2025-08-05T12:05:24.533+00:00"
+      "end": "2025-08-05T17:29:27.976+00:00"
     },
     "exercises_included": [
+      "Air Squat",
+      "Back Extension",
       "Barbell Back Squat",
       "Barbell Bench Press",
-      "Barbell Skull Crusher",
-      "Face Pull",
-      "Leg Curl",
-      "Preacher Curl",
-      "Pull-Up",
-      "Straight Bar Triceps Pushdown",
-      "Sumo Deadlift"
+      "Barbell Shrug",
+      "Cable Fly",
+      "Cable Lateral Raise",
+      "Chin-Up",
+      "Dips",
+      "Dumbbell Row"
     ],
     "analysis_errors": []
   },
   "performance_summary": {
     "strength_top_performers": [
       {
-        "name": "Barbell Skull Crusher",
-        "change": 29.48,
-        "last_value": 73.3,
-        "first_value": 43.82,
-        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
-        "change_percent": 67.3
+        "name": "Face Pull",
+        "change": 27.75,
+        "last_value": 53.59,
+        "first_value": 25.84,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 107.4
       },
       {
-        "name": "Preacher Curl",
-        "change": 14.01,
-        "last_value": 62.84,
-        "first_value": 48.83,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
-        "change_percent": 28.7
+        "name": "EZ Bar Curl",
+        "change": 10.35,
+        "last_value": 54.36,
+        "first_value": 44.01,
+        "definition_id": "9b15f600-cc20-463c-bc73-6e05ee8cc77e",
+        "change_percent": 23.5
       },
       {
         "name": "Barbell Back Squat",
-        "change": 29.93,
-        "last_value": 205.51,
+        "change": 15.42,
+        "last_value": 191.0,
         "first_value": 175.58,
         "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
-        "change_percent": 17.0
+        "change_percent": 8.8
       }
     ],
     "volume_top_performers": [
       {
-        "name": "Preacher Curl",
-        "change": 2313.0,
-        "last_value": 2625.0,
-        "first_value": 312.0,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
-        "change_percent": 741.3
+        "name": "Face Pull",
+        "change": 2130.0,
+        "last_value": 2352.0,
+        "first_value": 222.0,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 959.5
       },
       {
-        "name": "Barbell Skull Crusher",
-        "change": 3175.0,
-        "last_value": 4175.0,
-        "first_value": 1000.0,
-        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
-        "change_percent": 317.5
+        "name": "Barbell Bench Press",
+        "change": 1042.5,
+        "last_value": 1350.0,
+        "first_value": 307.5,
+        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+        "change_percent": 339.0
       },
       {
-        "name": "Barbell Back Squat",
-        "change": 5380.0,
-        "last_value": 7105.0,
-        "first_value": 1725.0,
-        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
-        "change_percent": 311.9
+        "name": "Cable Fly",
+        "change": 270.0,
+        "last_value": 810.0,
+        "first_value": 540.0,
+        "definition_id": "af7ba166-f9c1-4909-871a-e3784ea9d83e",
+        "change_percent": 50.0
       }
     ],
     "frequency_performers": []
@@ -83,54 +84,54 @@ Available workout data:
     "variance": null
   },
   "correlation_summary": {
-    "significant_count": 67,
-    "total_analyzed": 91,
+    "significant_count": 64,
+    "total_analyzed": 561,
     "top_correlations": [
       {
         "outcome": "Face Pull strength",
-        "predictor": "Leg Curl strength",
+        "predictor": "Face Pull volume",
         "strength": "strong",
         "direction": "positive",
         "lag_weeks": 0,
-        "summary": "Leg Curl strength predicts Face Pull strength increases"
+        "summary": "Face Pull volume predicts Face Pull strength increases"
       },
       {
         "outcome": "Face Pull strength",
+        "predictor": "Barbell Bench Press volume",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Barbell Bench Press volume predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Leg Curl strength",
         "predictor": "Pull-Up strength",
         "strength": "strong",
         "direction": "positive",
         "lag_weeks": 0,
-        "summary": "Pull-Up strength predicts Face Pull strength increases"
+        "summary": "Pull-Up strength predicts Leg Curl strength increases"
       },
       {
-        "outcome": "Face Pull strength",
+        "outcome": "Leg Curl strength",
         "predictor": "Barbell Bench Press strength",
         "strength": "strong",
         "direction": "positive",
         "lag_weeks": 0,
-        "summary": "Barbell Bench Press strength predicts Face Pull strength increases"
+        "summary": "Barbell Bench Press strength predicts Leg Curl strength increases"
       },
       {
-        "outcome": "Face Pull strength",
+        "outcome": "Leg Curl strength",
         "predictor": "Sumo Deadlift strength",
         "strength": "strong",
         "direction": "positive",
         "lag_weeks": 0,
-        "summary": "Sumo Deadlift strength predicts Face Pull strength increases"
-      },
-      {
-        "outcome": "Face Pull strength",
-        "predictor": "Preacher Curl strength",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Preacher Curl strength predicts Face Pull strength increases"
+        "summary": "Sumo Deadlift strength predicts Leg Curl strength increases"
       }
     ],
     "data_quality": [
-      "Insufficient weekly data for Straight Bar Triceps Pushdown strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Barbell Skull Crusher strength (3 weeks, need 4+)",
-      "Insufficient weekly data for Straight Bar Triceps Pushdown volume (1 weeks, need 4+)"
+      "Insufficient weekly data for Air Squat strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Dumbbell Row strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Air Squat volume (1 weeks, need 4+)"
     ]
   },
   "recent_workouts_sample": [
@@ -145,19 +146,19 @@ Available workout data:
       "notes": "[\"\"]"
     },
     {
-      "date": "2025-03-28",
-      "name": "Week 4 - Workout A",
+      "date": "2025-04-07",
+      "name": "Monday chest workout",
       "notes": "[\"\"]"
     },
     {
-      "date": "2025-03-29",
-      "name": "Week 4 - Workout B",
-      "notes": "[\"\"]"
+      "date": "2025-02-28",
+      "name": "Saturday Back Workout",
+      "notes": "[\"Focus on proper pull-up form using lower trap engagement\",\"Working on weaker side for dumbbell rows\",\"Progressive volume on leg raises\"]"
     },
     {
-      "date": "2025-08-05",
-      "name": "Test workouttt",
-      "notes": ""
+      "date": "2025-07-20",
+      "name": "Freestyle Workout",
+      "notes": null
     }
   ]
 }
@@ -169,65 +170,55 @@ CONSISTENCY METRICS:
 - Workout frequency variance: Not calculated
 
 TOP PERFORMERS:
-- Strength gains: Barbell Skull Crusher: +67.3%, Preacher Curl: +28.7%, Barbell Back Squat: +17.0%
-- Volume increases: Preacher Curl: +741.3%, Barbell Skull Crusher: +317.5%, Barbell Back Squat: +311.9%
+- Strength gains: Face Pull: +107.4%, EZ Bar Curl: +23.5%, Barbell Back Squat: +8.8%
+- Volume increases: Face Pull: +959.5%, Barbell Bench Press: +339.0%, Cable Fly: +50.0%
 - Most frequent exercises: Frequency data not available
 
 CORRELATION INSIGHTS:
-67 significant correlations found from 91 exercise pairs analyzed
-• Leg Curl strength predicts Face Pull strength increases
-• Pull-Up strength predicts Face Pull strength increases
-• Barbell Bench Press strength predicts Face Pull strength increases
+64 significant correlations found from 561 exercise pairs analyzed
+• Face Pull volume predicts Face Pull strength increases
+• Barbell Bench Press volume predicts Face Pull strength increases
+• Pull-Up strength predicts Leg Curl strength increases
 
 WORKOUT SUMMARY:
-- Total workouts analyzed: 53
-- Exercise variety: 9 different exercises
+- Total workouts analyzed: 126
+- Exercise variety: 21 different exercises
 
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
+2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - 
 Message 3 (HumanMessage):
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hi
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (AIMessage):
-2025-08-05 14:05:40,828 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, fitness champ! Ready to dive into your progress? I've got your latest workout data right here, and let me tell you, it's looking pretty awesome!
+2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
+2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-05 19:29:45,348 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Hey there, awesome to hear from you! Ready to dive into your fitness', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:45,663 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' journey and see what kind of gains you've been crushing?
 
-What's on your mind today? Let's talk about those gains! 💪
-2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - Content: What can you see?
-2025-08-05 14:05:40,829 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-05 14:05:45,107 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, let's take a look under', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:45,677 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' the hood of your fitness journey! This is exciting!
+I've got your latest workout data right here, and let me tell you, it', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:46,077 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''s looking pretty solid! We're talking about **126 workouts** and over **900 exercises** logged since February. That's some serious dedication right there!
 
-From what I can see, you've been absolutely crushing it!
+Let's break down some of the highlights:
 
-First off, you've logged a fantastic **53 workouts** between February and August – that's some serious dedication right there! And you're hitting a good variety,', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:46,272 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' working with **9 different exercises**.
+First', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:46,340 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' off, your **Face Pulls** are absolutely soaring! You've seen a massive **107.4% increase in strength** and an incredible **959.5% jump in volume** for that exercise. That's like watching', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:46,925 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' a little chick grow into a magnificent eagle – truly impressive progress! Keep that up, it's clearly paying off.
 
-Now, for the good stuff, your **strength gains** are really popping:
+You're also making some great strides with your **EZ Bar Curls**, with a **23.5% strength gain**, and your **Barbell Back Squat** is up by **', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:47,420 - app.services.chains.base_conversation_chain - INFO - Chunk: content='8.8%**. Strong legs and strong arms – that's a winning combo!
 
-*   Your **Barbell Skull Crusher** strength is up an incredible **67.3%**! That's massive progress for your triceps!
-*   **Preacher C', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:46,812 - app.services.chains.base_conversation_chain - INFO - Chunk: content='urls** are showing a solid **28.7%** increase – those biceps are definitely getting stronger.
-*   And your **Barbell Back Squat** strength has jumped by **17.0%**! Building that strong foundation!
+And get this, your **Barbell Bench Press volume** has exploded by **339%**! That's a huge amount of work you're putting in, and it's no surprise to see that kind', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:47,956 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' of effort translating into results.
 
-When it comes to **volume** – how much work you're putting in –', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:47,254 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' you're also seeing some phenomenal numbers:
+What's really cool is that the data shows a strong connection between the volume you're putting into your **Face Pulls** and **Barbell Bench Press** and the strength gains you're seeing in your **Face Pulls**. It's like the more you train', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:48,584 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' those areas, the stronger your whole upper body becomes.
 
-*   **Preacher Curls** volume is up a whopping **741.3%**! You're doing so much more work there, which explains those strength gains!
-*   **Barbell Skull Crushers** volume is up **317', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:47,706 - app.services.chains.base_conversation_chain - INFO - Chunk: content='.5%**!
-*   And **Barbell Back Squats** volume is up **311.9%**!
+Looks like you're consistently hitting those workouts too, which is the secret sauce to long-term progress.
 
-It looks like you've been incredibly consistent too, with an average gap of **0.0 days** between workouts – that's like a perfect attendance record! You're showing', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:48,151 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' up, putting in the work, and it's clearly paying off.
-
-And here's something super cool: the data shows some interesting connections! For example, it looks like getting stronger in your **Leg Curls, Pull-Ups, Barbell Bench Press, and even Preacher Curls** all predict', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:48,704 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' increases in your **Face Pull strength**. That's awesome because it means the work you're doing on other exercises is having a positive ripple effect on your Face Pulls!
-
-Seriously, this is fantastic progress! You're building strength, increasing your work capacity, and staying super consistent.
-
-What do you think about all that', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 14:05:48,802 - app.services.chains.base_conversation_chain - INFO - Chunk: content='? Anything in particular stand out to you?', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+So, what do you think? Anything in particular you want to focus on or any questions about your progress? Let's keep this momentum going', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-05 19:29:48,588 - app.services.chains.base_conversation_chain - INFO - Chunk: content='!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-05 19:29:48,703 - app.main - INFO - Request: POST /db/conversations/5aa0e90a-1811-4a54-9d74-41eb09962ee3/messages
+2025-08-05 19:29:48,805 - app.api.endpoints.db - INFO - API request to save message to conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,805 - app.services.db.conversation_service - INFO - Getting conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,891 - app.services.db.conversation_service - INFO - Retrieved conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,891 - app.services.db.message_service - INFO - Saving assistant message to conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,973 - app.services.db.message_service - INFO - Message saved with ID: ef976739-223e-4f67-af8c-93d7c3934699

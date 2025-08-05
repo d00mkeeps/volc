@@ -1,76 +1,91 @@
-2025-08-05 14:05:48,845 - app.main - INFO - Request: POST /db/conversations/bbc79d68-613a-4a10-b85d-002e17ce9f99/messages
-2025-08-05 14:05:49,027 - app.api.endpoints.db - INFO - API request to save message to conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,027 - app.services.db.conversation_service - INFO - Getting conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,191 - app.services.db.conversation_service - INFO - Retrieved conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,191 - app.services.db.message_service - INFO - Saving assistant message to conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,278 - app.services.db.message_service - INFO - Message saved with ID: e01907b3-df54-4411-b068-731d2be9cff0
-2025-08-05 14:05:49,279 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,280 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,280 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,280 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99 (check took 0.00s)
-2025-08-05 14:05:49,280 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,373 - app.core.utils.conversation_attachments - INFO - Successfully loaded 4 messages and 1 complete bundles for conversation bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,373 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
-2025-08-05 14:05:49,374 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99 (expires in 30 min)
-2025-08-05 14:05:49,374 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.09s - 4 messages, 1 bundles
-2025-08-05 14:05:49,374 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: bbc79d68-613a-4a10-b85d-002e17ce9f99
-2025-08-05 14:05:49,375 - app.main - INFO - Response status: 200
-2025-08-05 14:10:29,789 - app.main - INFO - Request: POST /db/workouts
-2025-08-05 14:10:30,242 - app.api.endpoints.db - INFO - API request to create workout: Monday arm workout
-2025-08-05 14:10:30,242 - app.services.db.workout_service - INFO - Creating workout: Monday arm workout for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 14:10:30,243 - app.services.db.workout_service - INFO - Inserting workout with data: Monday arm workout, None
-2025-08-05 14:10:30,518 - app.services.db.workout_service - INFO - Workout created with ID: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:30,518 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:30,519 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-05 14:10:30,624 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 8c20cb0d-a404-428c-b933-4434cae5c44a
-2025-08-05 14:10:31,089 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-05 14:10:31,232 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 9e2179b2-a508-4985-8fff-32827b8bdf48
-2025-08-05 14:10:31,730 - app.services.db.workout_service - INFO - Workout creation complete for ID: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:31,733 - app.main - INFO - Response status: 200
-2025-08-05 14:10:31,872 - app.main - INFO - Request: PUT /db/workouts/e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:31,954 - app.api.endpoints.db - INFO - API request to update workout: e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:31,955 - app.services.db.workout_service - INFO - Getting workout: e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:32,047 - app.services.db.workout_service - INFO - Successfully retrieved workout: e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:32,047 - app.services.db.workout_service - INFO - Updating workout: e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:33,622 - app.services.db.workout_service - INFO - Successfully updated workout: e5f538d3-9358-4c2d-b87d-65d07110ccc0
-2025-08-05 14:10:33,624 - app.main - INFO - Response status: 200
-2025-08-05 14:10:34,028 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-05 14:10:34,115 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 05 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 14:10:34,206 - app.services.db.conversation_service - INFO - Empty conversation created with ID: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:34,207 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:34,208 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: ed85f822-dfa2-4135-ba39-39f6799e76ca for conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:34,306 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: ed85f822-dfa2-4135-ba39-39f6799e76ca
-2025-08-05 14:10:34,307 - app.services.workout_analysis_service - INFO - Created empty bundle: ed85f822-dfa2-4135-ba39-39f6799e76ca
-2025-08-05 14:10:34,307 - app.services.db.analysis_service - INFO - Updating bundle ed85f822-dfa2-4135-ba39-39f6799e76ca status to: in_progress
-2025-08-05 14:10:34,416 - app.services.db.analysis_service - INFO - Bundle status updated successfully: ed85f822-dfa2-4135-ba39-39f6799e76ca -> in_progress
-2025-08-05 14:10:34,417 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-05 14:10:34,579 - app.services.db.workout_service - INFO - RPC returned: 54 workouts
-2025-08-05 14:10:34,579 - app.services.workout_analysis_service - INFO - Processing analysis for 54 workouts
-2025-08-05 14:10:34,579 - app.services.workout_analysis.main_processor - INFO - Processing bundle ed85f822-dfa2-4135-ba39-39f6799e76ca with 54 workouts
-2025-08-05 14:10:34,581 - app.services.workout_analysis.calc.strength - INFO - Found 9 exercises with strength data, returning top 3
-2025-08-05 14:10:34,581 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 9 exercises
-2025-08-05 14:10:34,582 - app.services.workout_analysis.calc.volume - INFO - Found 9 exercises with volume data, returning top 3
-2025-08-05 14:10:34,582 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 9 exercises
-2025-08-05 14:10:34,582 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=3.4, variance=214.97537125139027
-2025-08-05 14:10:34,809 - app.services.workout_analysis.calc.correlation - INFO - Found 67 significant correlations out of 91 pairs analyzed
-2025-08-05 14:10:34,809 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle ed85f822-dfa2-4135-ba39-39f6799e76ca
-2025-08-05 14:10:34,810 - app.services.db.analysis_service - INFO - Updating analysis bundle: ed85f822-dfa2-4135-ba39-39f6799e76ca
-2025-08-05 14:10:34,977 - app.services.db.analysis_service - INFO - Bundle updated successfully: ed85f822-dfa2-4135-ba39-39f6799e76ca
-2025-08-05 14:10:34,977 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:34,977 - app.main - INFO - Response status: 200
-2025-08-05 14:10:35,115 - app.main - INFO - Request: GET /api/dashboard
-2025-08-05 14:10:35,116 - app.main - INFO - Response status: 200
-2025-08-05 14:10:46,715 - app.main - INFO - Request: PUT /db/workouts/7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:46,912 - app.api.endpoints.db - INFO - API request to update workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:46,912 - app.services.db.workout_service - INFO - Getting workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:47,053 - app.services.db.workout_service - INFO - Successfully retrieved workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:47,053 - app.services.db.workout_service - INFO - Updating workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:48,558 - app.services.db.workout_service - INFO - Successfully updated workout: 7a0987c5-c699-4ab2-ac67-4136f81fa140
-2025-08-05 14:10:48,564 - app.main - INFO - Response status: 200
-2025-08-05 14:10:48,737 - app.main - INFO - Request: GET /db/conversations/c538513b-16b9-461f-b3d6-acb7d1325d7b/messages
-2025-08-05 14:10:48,857 - app.api.endpoints.db - INFO - API request to get messages for conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:48,857 - app.services.db.conversation_service - INFO - Getting conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:48,932 - app.services.db.conversation_service - INFO - Retrieved conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:48,932 - app.services.db.message_service - INFO - Getting messages for conversation: c538513b-16b9-461f-b3d6-acb7d1325d7b
-2025-08-05 14:10:49,052 - app.services.db.message_service - INFO - Retrieved 0 messages
-2025-08-05 14:10:49,054 - app.main - INFO - Response status: 200
+2025-08-05 19:29:48,974 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3 (check took 0.00s)
+2025-08-05 19:29:48,976 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:49,058 - app.core.utils.conversation_attachments - INFO - Successfully loaded 2 messages and 1 complete bundles for conversation 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
+2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3 (expires in 30 min)
+2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.08s - 2 messages, 1 bundles
+2025-08-05 19:29:49,059 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
+2025-08-05 19:29:49,059 - app.main - INFO - Response status: 200
+2025-08-05 19:31:48,027 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-08-05 19:31:48,037 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, '')
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
+    await websocket.accept()
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
+    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
+    raise RuntimeError(
+        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
+    )
+RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
+2025-08-05 19:31:49,876 - app.main - INFO - Request: GET /api/dashboard
+2025-08-05 19:31:49,881 - app.main - INFO - Request: GET /db/user-profile
+2025-08-05 19:31:50,250 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:50,251 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:50,420 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:50,421 - app.main - INFO - Response status: 200
+2025-08-05 19:31:50,422 - app.main - INFO - Response status: 200
+2025-08-05 19:31:50,630 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-05 19:31:50,630 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-05 19:31:50,706 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:50,706 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:51,058 - app.services.db.workout_service - INFO - Retrieved 257 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:51,058 - app.api.endpoints.db - INFO - Retrieved 257 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:51,210 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-05 19:31:51,210 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-05 19:31:51,324 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-05 19:31:51,332 - app.main - INFO - Response status: 200
+2025-08-05 19:31:51,332 - app.main - INFO - Response status: 200
+2025-08-05 19:31:55,760 - app.main - INFO - Request: POST /db/workouts
+2025-08-05 19:31:55,849 - app.api.endpoints.db - INFO - API request to create workout: Tuesday arm workout.
+2025-08-05 19:31:55,850 - app.services.db.workout_service - INFO - Creating workout: Tuesday arm workout. for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:55,851 - app.services.db.workout_service - INFO - Inserting workout with data: Tuesday arm workout., None
+2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Workout created with ID: 8d4f4451-ca31-4ac2-986f-481534af9e33
+2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 8d4f4451-ca31-4ac2-986f-481534af9e33
+2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
+2025-08-05 19:31:56,045 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: cd8224ca-eb48-49c0-ae31-11b08aeda40e
+2025-08-05 19:31:56,409 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
+2025-08-05 19:31:56,504 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: b6ee73f7-eaae-44c8-9ef6-509eec1f778a
+2025-08-05 19:31:56,953 - app.services.db.workout_service - INFO - Workout creation complete for ID: 8d4f4451-ca31-4ac2-986f-481534af9e33
+2025-08-05 19:31:56,955 - app.main - INFO - Response status: 200
+2025-08-05 19:31:57,186 - app.main - INFO - Request: PUT /db/workouts/321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:57,273 - app.api.endpoints.db - INFO - API request to update workout: 321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:57,274 - app.services.db.workout_service - INFO - Getting workout: 321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:57,368 - app.services.db.workout_service - INFO - Successfully retrieved workout: 321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:57,369 - app.services.db.workout_service - INFO - Updating workout: 321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:58,674 - app.services.db.workout_service - INFO - Successfully updated workout: 321e280f-151d-420b-8d3a-6131071dff5b
+2025-08-05 19:31:58,676 - app.main - INFO - Response status: 200
+2025-08-05 19:31:58,977 - app.main - INFO - Request: POST /api/workout-analysis
+2025-08-05 19:31:59,061 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 05 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-05 19:31:59,140 - app.services.db.conversation_service - INFO - Empty conversation created with ID: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:31:59,140 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:31:59,141 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: a97a51e6-0677-49db-9cbc-608ac67113de for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
+2025-08-05 19:31:59,224 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: a97a51e6-0677-49db-9cbc-608ac67113de
+2025-08-05 19:31:59,224 - app.services.workout_analysis_service - INFO - Created empty bundle: a97a51e6-0677-49db-9cbc-608ac67113de
+2025-08-05 19:31:59,225 - app.services.db.analysis_service - INFO - Updating bundle a97a51e6-0677-49db-9cbc-608ac67113de status to: in_progress

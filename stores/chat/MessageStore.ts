@@ -32,7 +32,8 @@ interface MessageStoreState {
   isLoading: boolean;
   error: Error | null;
 
-  // Core message operations
+  // Core message
+  setBulkMessages: (messagesByConversation: Record<string, Message[]>) => void;
   getMessages: (conversationId: string) => Message[];
   getEmptyMessages: () => Message[];
   loadMessages: (conversationId: string) => Promise<Message[]>;
@@ -80,6 +81,25 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     return state.messages.get(conversationId) || EMPTY_MESSAGES;
   },
 
+  setBulkMessages: (messagesByConversation: Record<string, Message[]>) => {
+    set((state) => {
+      const newMessages = new Map(state.messages);
+
+      // Add all preloaded messages to the store
+      Object.entries(messagesByConversation).forEach(
+        ([conversationId, msgs]) => {
+          // Sort messages by conversation_sequence for consistency
+          const sortedMessages = msgs.sort(
+            (a, b) => a.conversation_sequence - b.conversation_sequence
+          );
+          newMessages.set(conversationId, sortedMessages);
+        }
+      );
+
+      return { messages: newMessages };
+    });
+  },
+
   getStreamingMessage: (conversationId) => {
     const state = get();
     if (!state.streamingMessages || !conversationId) {
@@ -109,9 +129,19 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
     return streamingState != null && !streamingState.isComplete;
   },
 
-  // Load messages from database
   loadMessages: async (conversationId) => {
     try {
+      // Check if messages are already loaded (from preloading)
+      const existingMessages = get().messages.get(conversationId);
+      if (existingMessages && existingMessages.length > 0) {
+        console.log(
+          "[MessageStore] Using preloaded messages for:",
+          conversationId
+        );
+        return existingMessages;
+      }
+
+      // Fallback to individual loading for conversations not preloaded
       set({ isLoading: true, error: null });
 
       const messages = await conversationService.getConversationMessages(

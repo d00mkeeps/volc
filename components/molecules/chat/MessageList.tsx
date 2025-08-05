@@ -2,37 +2,57 @@ import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
 import { YStack, Text } from "tamagui";
 import { MessageItem } from "../../atoms/MessageItem";
+import { LoadingMessage } from "../../atoms/LoadingMessage";
 import { Message } from "@/types";
 
 interface MessageListProps {
   messages: Message[];
   streamingMessage?: { content: string; isComplete: boolean } | null;
+  showLoadingIndicator?: boolean; // NEW
 }
 
 export const MessageList = ({
   messages,
   streamingMessage,
+  showLoadingIndicator = false, // NEW
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
 
   const allMessages = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
 
-    if (!streamingMessage) {
-      return safeMessages;
+    // If streaming message exists, add it
+    if (streamingMessage) {
+      const tempStreamingMessage: Message = {
+        id: "streaming",
+        content: streamingMessage.content || "",
+        sender: "assistant",
+        conversation_id: safeMessages[0]?.conversation_id || "",
+        conversation_sequence: safeMessages.length + 1,
+        timestamp: new Date(),
+      };
+      return [...safeMessages, tempStreamingMessage];
     }
 
-    const tempStreamingMessage: Message = {
-      id: "streaming",
-      content: streamingMessage.content || "",
-      sender: "assistant",
-      conversation_id: safeMessages[0]?.conversation_id || "",
-      conversation_sequence: safeMessages.length + 1,
-      timestamp: new Date(),
-    };
+    // Show loading indicator when explicitly requested or when last message is from user
+    const lastMessage = safeMessages[safeMessages.length - 1];
+    const shouldShowLoading =
+      showLoadingIndicator || lastMessage?.sender === "user";
 
-    return [...safeMessages, tempStreamingMessage];
-  }, [messages, streamingMessage]);
+    if (shouldShowLoading) {
+      const tempLoadingMessage: Message = {
+        id: "loading",
+        content: "", // Empty content, LoadingMessage will handle the dots
+        sender: "assistant",
+        conversation_id: safeMessages[0]?.conversation_id || "",
+        conversation_sequence: safeMessages.length + 1,
+        timestamp: new Date(),
+      };
+      return [...safeMessages, tempLoadingMessage];
+    }
+
+    return safeMessages;
+  }, [messages, streamingMessage, showLoadingIndicator]); // Added showLoadingIndicator to deps
 
   useEffect(() => {
     if (allMessages.length > 0) {
@@ -42,6 +62,12 @@ export const MessageList = ({
 
   const renderMessage = useCallback(({ item }: { item: Message }) => {
     if (!item) return null;
+
+    // Special handling for loading message
+    if (item.id === "loading") {
+      return <LoadingMessage />;
+    }
+
     return <MessageItem message={item} isStreaming={item.id === "streaming"} />;
   }, []);
 

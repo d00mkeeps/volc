@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
-import { YStack } from "tamagui";
+import { YStack, Text } from "tamagui";
 import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/InputArea";
 import { Message } from "@/types";
@@ -17,6 +17,8 @@ interface ChatInterfaceProps {
   streamingMessage?: StreamingMessageState | null;
   onSend: (content: string) => void;
   placeholder?: string;
+  connectionState?: "ready" | "expecting_ai_message";
+  queuedMessageCount?: number;
 }
 
 export const ChatInterface = ({
@@ -24,7 +26,33 @@ export const ChatInterface = ({
   streamingMessage,
   onSend,
   placeholder = "Type a message...",
+  connectionState = "ready",
+  queuedMessageCount = 0,
 }: ChatInterfaceProps) => {
+  const getPlaceholder = () => {
+    switch (connectionState) {
+      case "expecting_ai_message":
+        return "Loading..."; // Simple and clean
+      default:
+        return placeholder;
+    }
+  };
+
+  const getStatusText = () => {
+    if (queuedMessageCount > 0) {
+      return `${queuedMessageCount} message${
+        queuedMessageCount > 1 ? "s" : ""
+      } queued`;
+    }
+    return null;
+  };
+
+  // Show loading indicator when expecting AI message
+  const shouldShowLoadingIndicator = connectionState === "expecting_ai_message";
+
+  // Disable input when expecting AI message
+  const isInputDisabled = connectionState === "expecting_ai_message";
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -32,8 +60,28 @@ export const ChatInterface = ({
       style={{ flex: 1 }}
     >
       <YStack flex={1}>
-        <MessageList messages={messages} streamingMessage={streamingMessage} />
-        <InputArea placeholder={placeholder} onSendMessage={onSend} />
+        <MessageList
+          messages={messages}
+          streamingMessage={streamingMessage}
+          showLoadingIndicator={shouldShowLoadingIndicator}
+        />
+
+        {getStatusText() && (
+          <Text
+            ta="center"
+            color="$textMuted"
+            fontSize="$2"
+            paddingVertical="$1"
+          >
+            {getStatusText()}
+          </Text>
+        )}
+
+        <InputArea
+          placeholder={getPlaceholder()}
+          onSendMessage={onSend}
+          disabled={isInputDisabled}
+        />
       </YStack>
     </KeyboardAvoidingView>
   );
