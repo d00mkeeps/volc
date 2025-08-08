@@ -1,76 +1,67 @@
-// ExerciseTrackerHeader.tsx
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { XStack, Text, Stack } from "tamagui";
+import { XStack, Stack, Text } from "tamagui";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
+  hasNotes: boolean;
   isActive: boolean;
   isEditing: boolean;
   onEditPress: () => void;
   onNotesPress: () => void;
   onDelete: () => void;
-  onSave: () => void; // Can remove this too since auto-save
-  hasNotes: boolean;
+  onSave: () => void;
 }
 
 export default function ExerciseTrackerHeader({
   exerciseName,
+  hasNotes,
   isActive,
   isEditing,
   onEditPress,
   onNotesPress,
-  hasNotes,
+  onDelete,
+  onSave,
 }: ExerciseTrackerHeaderProps) {
   return (
-    <XStack justifyContent="space-between" alignItems="center">
-      <XStack alignItems="center" gap="$1.5" flex={1}>
-        {!isEditing && (
-          <Stack
-            paddingHorizontal="$1.5"
-            paddingVertical="$2"
-            borderRadius="$2"
-            backgroundColor="transparent"
-            pressStyle={{ backgroundColor: "$backgroundPress" }}
-            onPress={onEditPress}
-            cursor="pointer"
-          >
-            <Text fontSize="$3" color="$textSoft" fontWeight="600">
-              Edit
-            </Text>
-          </Stack>
-        )}
-        <Text
-          fontSize="$5"
-          fontWeight="600"
-          color={isActive ? "$color" : "$textMuted"}
-          flex={1}
-        >
-          {exerciseName}
-        </Text>
-      </XStack>
+    <XStack
+      justifyContent="space-between"
+      alignItems="center"
+      paddingVertical="$2"
+    >
+      <Text fontSize="$5" fontWeight="600" color="$color" flex={1}>
+        {exerciseName || "Select Exercise"}
+      </Text>
 
-      <XStack gap="$1.5" alignItems="center">
-        {!isEditing && (
+      {isActive && !isEditing && (
+        <XStack gap="$2" alignItems="center">
           <Stack
-            padding={"$3"}
-            borderRadius="$3"
-            backgroundColor="transparent"
-            pressStyle={{ backgroundColor: "$backgroundPress" }}
             onPress={onNotesPress}
-            cursor="pointer"
+            padding="$1.5"
+            borderRadius="$2"
+            pressStyle={{ backgroundColor: "$backgroundPress" }}
           >
-            <XStack alignItems="center" gap="$1">
-              <Text fontSize="$3" color="$textSoft" fontWeight="600">
-                Notes
-              </Text>
-              {hasNotes && (
-                <Ionicons name="checkmark" size={16} color="#00bf19" />
-              )}
-            </XStack>
+            <Ionicons
+              name="document-text-outline"
+              size={24}
+              color={hasNotes ? "#0ea5e9" : "#999999"}
+            />
           </Stack>
-        )}
-      </XStack>
+
+          <Stack
+            onPress={onEditPress}
+            padding="$1.5"
+            borderRadius="$2"
+            pressStyle={{ backgroundColor: "$backgroundPress" }}
+          >
+            <Ionicons
+              name="swap-horizontal-outline"
+              size={24}
+              color="#999999"
+            />
+          </Stack>
+        </XStack>
+      )}
     </XStack>
   );
 }

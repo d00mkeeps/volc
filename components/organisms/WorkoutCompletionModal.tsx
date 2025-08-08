@@ -5,8 +5,6 @@ import BaseModal from "../atoms/Modal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
-// REMOVE this import since we're not calling it directly anymore
-// import { workoutService } from "@/services/db/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {

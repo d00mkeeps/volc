@@ -130,16 +130,19 @@ export default function ExerciseTracker({
   const handleAddSet = () => {
     if (!isActive || !onExerciseUpdate) return;
 
+    const lastSet =
+      exercise.workout_exercise_sets[exercise.workout_exercise_sets.length - 1];
+
     const newSet: WorkoutExerciseSet = {
       id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       exercise_id: exercise.id,
       set_number: exercise.workout_exercise_sets.length + 1,
-      weight: undefined,
-      reps: undefined,
-      distance: undefined,
-      duration: undefined,
-      rpe: undefined,
-      is_completed: false,
+      weight: lastSet?.weight || undefined,
+      reps: lastSet?.reps || undefined,
+      distance: lastSet?.distance || undefined,
+      duration: lastSet?.duration || undefined,
+      rpe: lastSet?.rpe || undefined,
+      // is_completed removed - not using anymore
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

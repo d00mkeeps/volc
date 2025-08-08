@@ -1,91 +1,98 @@
-2025-08-05 19:29:48,974 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,976 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3 (check took 0.00s)
-2025-08-05 19:29:48,976 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:49,058 - app.core.utils.conversation_attachments - INFO - Successfully loaded 2 messages and 1 complete bundles for conversation 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
-2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3 (expires in 30 min)
-2025-08-05 19:29:49,058 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.08s - 2 messages, 1 bundles
-2025-08-05 19:29:49,059 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:49,059 - app.main - INFO - Response status: 200
-2025-08-05 19:31:48,027 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
-2025-08-05 19:31:48,037 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, awesome to hear from you! Ready to dive into your progress?
 
-During handling of the above exception, another exception occurred:
+I've been looking at your workout data, and wow, you've been putting in some serious work! You've logged 127 workouts since February, hitting 21 different exercises. That's fantastic consistency!
 
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
-    await websocket.accept()
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
-    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
-    raise RuntimeError(
-        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
-    )
-RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-2025-08-05 19:31:49,876 - app.main - INFO - Request: GET /api/dashboard
-2025-08-05 19:31:49,881 - app.main - INFO - Request: GET /db/user-profile
-2025-08-05 19:31:50,250 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:50,251 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:50,420 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:50,421 - app.main - INFO - Response status: 200
-2025-08-05 19:31:50,422 - app.main - INFO - Response status: 200
-2025-08-05 19:31:50,630 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-05 19:31:50,630 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-05 19:31:50,706 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:50,706 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:51,058 - app.services.db.workout_service - INFO - Retrieved 257 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:51,058 - app.api.endpoints.db - INFO - Retrieved 257 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:51,210 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-05 19:31:51,210 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-05 19:31:51,324 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-05 19:31:51,332 - app.main - INFO - Response status: 200
-2025-08-05 19:31:51,332 - app.main - INFO - Response status: 200
-2025-08-05 19:31:55,760 - app.main - INFO - Request: POST /db/workouts
-2025-08-05 19:31:55,849 - app.api.endpoints.db - INFO - API request to create workout: Tuesday arm workout.
-2025-08-05 19:31:55,850 - app.services.db.workout_service - INFO - Creating workout: Tuesday arm workout. for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:55,851 - app.services.db.workout_service - INFO - Inserting workout with data: Tuesday arm workout., None
-2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Workout created with ID: 8d4f4451-ca31-4ac2-986f-481534af9e33
-2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 8d4f4451-ca31-4ac2-986f-481534af9e33
-2025-08-05 19:31:55,948 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-05 19:31:56,045 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: cd8224ca-eb48-49c0-ae31-11b08aeda40e
-2025-08-05 19:31:56,409 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-05 19:31:56,504 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: b6ee73f7-eaae-44c8-9ef6-509eec1f778a
-2025-08-05 19:31:56,953 - app.services.db.workout_service - INFO - Workout creation complete for ID: 8d4f4451-ca31-4ac2-986f-481534af9e33
-2025-08-05 19:31:56,955 - app.main - INFO - Response status: 200
-2025-08-05 19:31:57,186 - app.main - INFO - Request: PUT /db/workouts/321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:57,273 - app.api.endpoints.db - INFO - API request to update workout: 321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:57,274 - app.services.db.workout_service - INFO - Getting workout: 321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:57,368 - app.services.db.workout_service - INFO - Successfully retrieved workout: 321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:57,369 - app.services.db.workout_service - INFO - Updating workout: 321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:58,674 - app.services.db.workout_service - INFO - Successfully updated workout: 321e280f-151d-420b-8d3a-6131071dff5b
-2025-08-05 19:31:58,676 - app.main - INFO - Response status: 200
-2025-08-05 19:31:58,977 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-05 19:31:59,061 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 05 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-05 19:31:59,140 - app.services.db.conversation_service - INFO - Empty conversation created with ID: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
-2025-08-05 19:31:59,140 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
-2025-08-05 19:31:59,141 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: a97a51e6-0677-49db-9cbc-608ac67113de for conversation: dfc39fbe-f928-40a2-8029-c7c79e10dbd2
-2025-08-05 19:31:59,224 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: a97a51e6-0677-49db-9cbc-608ac67113de
-2025-08-05 19:31:59,224 - app.services.workout_analysis_service - INFO - Created empty bundle: a97a51e6-0677-49db-9cbc-608ac67113de
-2025-08-05 19:31:59,225 - app.services.db.analysis_service - INFO - Updating bundle a97a51e6-0677-49db-9cbc-608ac67113de status to: in_progress
+Let's talk about some of the highlights:
+
+*   **Strength Gains:** Your **Face Pulls** are soaring, up over 31% in strength! That's like a majestic eagle taking flight – powerful and impressive! Your **EZ Bar Curls** are also crushing it, up 23.5%. Keep that up!
+*   **Volume Boosts:** You've really ramped up the **Barbell Bench Press** volume, an incredible 318% increase! And your **Face Pull** volume is right there with it, up nearly 300%. That's some serious dedication, building those muscles like a master sculptor.
+
+It looks like your **Face Pulls** are a real star here – not only are you getting stronger, but the data shows that increasing your Face Pull volume actually predicts *more* strength in that exercise. That's a beautiful synergy, like a vibrant blue sky on a perfect training day!
+
+Anything specific you want to chat about, or any goals you're working towards? Let's keep this momentum going!
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 5 (HumanMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hi I need to get 1 trillion money in a Roblox game can you help oh and also in  24 hours ?
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 6 (AIMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Whoa, a trillion in 24 hours? That's a massive goal, and honestly, that sounds like a challenge for a super-powered gaming wizard, not your friendly fitness coach! My expertise is all about helping you build strength, endurance, and a healthy body in the *real* world, not virtual currency.
+
+Think of it this way: just like you're aiming for a huge number in that game, we're aiming for huge gains and incredible health in your fitness journey. And while I can't help you with Roblox money, I *can* help you build a body that feels like a million bucks (or even a trillion, in terms of how good you'll feel!).
+
+So, while I can't offer tips on virtual wealth, I'm here to help you crush your *physical* goals. What's next on your fitness agenda? Are we talking about pushing those Barbell Bench Presses even higher, or maybe exploring some new exercises to keep that strength climbing like a bird soaring to new heights? Let's focus on what we *can* achieve together!
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 7 (HumanMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: It is in grow a grden
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 8 (AIMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Ah, "Grow a Garden"! Gotcha. That sounds like a fun, relaxing game, a bit like how a beautiful garden grows with consistent care and effort.
+
+But you know what else grows with consistent care and effort? Your muscles, your strength, your endurance! And *that's* where I come in. While I can't help you cultivate virtual plants or earn digital currency, I *can* help you cultivate a stronger, healthier you.
+
+Think of your body as your most important garden. We've already seen some amazing growth in your **Face Pulls** and **Barbell Bench Press** volume – those are like your prize-winning roses and towering sunflowers! We're nurturing those gains, making sure they flourish.
+
+So, while you're busy growing your virtual garden, let's keep tending to your physical one. What's the next step in your fitness journey? Are we looking to plant some new strength seeds, or perhaps prune some old habits to make way for even more vibrant progress? Let's keep those real-world gains blooming!
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 9 (HumanMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hey I’m not talking about working out I am talking about Roblox you see
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 10 (AIMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Ah, my apologies! You're absolutely right, my bad for getting a bit carried away with the fitness talk when you're clearly focused on your Roblox game, "Grow a Garden." I hear you loud and clear!
+
+It's just that my brain is wired for reps, sets, and personal bests, so when I see "trillion" and "24 hours," my first thought goes to the kind of intense dedication we see in the gym!
+
+But hey, even in a game like "Grow a Garden," there's a kind of consistency and strategy involved, right? Just like how you're probably figuring out the best way to grow your virtual plants, we're always looking for the best strategies to grow your strength and fitness.
+
+So, while I can't give you cheat codes for Roblox, I *can* help you unlock your full physical potential. What's on your mind regarding your *actual* workouts? Are we looking to cultivate some new strength, or maybe add some vibrant new exercises to your routine? Let's get those real-world gains blooming!
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
+Message 11 (HumanMessage):
+2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hey miles you are my bro
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 12 (AIMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Haha, you got it, my friend! That's what I'm here for – to be your fitness "bro" and help you crush those goals! We're in this together, pushing boundaries and building a stronger, healthier you.
+
+Speaking of crushing goals, I'm still looking at your data, and those **Barbell Bench Press** and **Face Pull** volume increases are seriously impressive. It's like watching a vibrant, powerful bird take flight – just soaring to new heights!
+
+So, what's on your mind today, "bro"? Ready to talk about how we can keep that momentum going, or maybe tackle a new challenge? Let's get after it!
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 13 (HumanMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Hey what is your name
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 14 (AIMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: That's a great question! You can just call me your **AI Fitness Coach**. I don't have a personal name like Miles, but I'm here to help you analyze your workouts, celebrate your wins, and guide you on your fitness journey.
+
+Think of me as your personal fitness guide, always ready to help you soar to new heights, just like a magnificent bird with wings of vibrant colors!
+
+So, what's next on our fitness agenda, my friend?
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 15 (HumanMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Hey can I call you a name
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 16 (AIMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Absolutely! If giving me a name helps you feel more connected and makes our fitness journey together more fun, then go for it! I'm here to support you, however you want to address me.
+
+Just remember, no matter what you call me, my goal is always to help you fly high with your fitness goals, just like a powerful bird taking to the sky!
+
+So, what's on your mind today, my friend? Ready to dive into some more workout insights?
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 17 (HumanMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Bro no more fitness talking ok
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 18 (AIMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Got it, loud and clear! My apologies, sometimes I get a little too enthusiastic about gains and personal bests. Force of habit, you know?
+
+Okay, no more fitness talk for now. My bad for pushing it.
+
+So, what's on your mind then? What would you like to chat about? I'm all ears.
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 19 (HumanMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: How about
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 20 (AIMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: How about... anything you want to talk about!
+
+Seriously, I'm all ears. What's on your mind? Let's chat about something completely different.
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
+Message 21 (HumanMessage):
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Helli
+2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - =====================

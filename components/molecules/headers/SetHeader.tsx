@@ -1,6 +1,5 @@
 import React from "react";
-import { XStack, Stack } from "tamagui";
-import Label from "../../atoms/Label";
+import { XStack, Stack, Text } from "tamagui";
 import { ExerciseDefinition } from "@/types/workout";
 
 interface SetHeaderProps {
@@ -23,49 +22,72 @@ export default function SetHeader({
 
   const renderHeaders = () => {
     const headers = [];
-
     if (showWeight)
       headers.push(
         <Stack key="weight" flex={1} alignItems="center">
-          <Label isActive={isActive}>{weightUnit}</Label>
+          <Text
+            fontSize="$4"
+            fontWeight="600"
+            color={isActive ? "$color" : "$textSoft"}
+          >
+            {weightUnit}
+          </Text>
         </Stack>
       );
-
     if (showReps)
       headers.push(
         <Stack key="reps" flex={1} alignItems="center">
-          <Label isActive={isActive}>reps</Label>
+          <Text
+            fontSize="$4"
+            fontWeight="600"
+            color={isActive ? "$color" : "$textSoft"}
+          >
+            reps
+          </Text>
         </Stack>
       );
-
     if (showDistance)
       headers.push(
         <Stack key="distance" flex={1} alignItems="center">
-          <Label isActive={isActive}>{distanceUnit}</Label>
+          <Text
+            fontSize="$4"
+            fontWeight="600"
+            color={isActive ? "$color" : "$textSoft"}
+          >
+            {distanceUnit}
+          </Text>
         </Stack>
       );
-
     if (showDuration)
       headers.push(
         <Stack key="duration" flex={1} alignItems="center">
-          <Label isActive={isActive}>time</Label>
+          <Text
+            fontSize="$4"
+            fontWeight="600"
+            color={isActive ? "$color" : "$textSoft"}
+          >
+            time
+          </Text>
         </Stack>
       );
-
     return headers;
   };
 
   return (
     <XStack gap="$3" alignItems="center" paddingBottom="$1">
       <Stack width={30} alignItems="center">
-        <Label isActive={isActive}>Set</Label>
+        <Text
+          fontSize="$4"
+          fontWeight="600"
+          color={isActive ? "$color" : "$textSoft"}
+        >
+          Set
+        </Text>
       </Stack>
       <XStack flex={1} gap="$1.5">
         {renderHeaders()}
       </XStack>
-      <Stack width={40} alignItems="center">
-        <Label isActive={isActive}>🗑</Label>
-      </Stack>
+      <Stack width={40} />
     </XStack>
   );
 }

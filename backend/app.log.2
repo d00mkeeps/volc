@@ -1,14 +1,39 @@
-2025-08-05 19:29:43,935 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
+2025-08-07 10:02:38,111 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (expires in 30 min)
+2025-08-07 10:02:38,113 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.19s - 18 messages, 1 bundles
+2025-08-07 10:02:38,113 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:38,114 - app.main - INFO - Response status: 200
+2025-08-07 10:02:40,908 - app.main - INFO - Request: POST /db/conversations/b74b7ddf-9443-4453-901c-01d832956ac3/messages
+2025-08-07 10:02:41,103 - app.api.endpoints.db - INFO - API request to save message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,103 - app.services.db.conversation_service - INFO - Getting conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,717 - app.services.db.conversation_service - INFO - Retrieved conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,718 - app.services.db.message_service - INFO - Saving user message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,869 - app.services.db.message_service - INFO - Message saved with ID: b005db13-7abf-47b1-b689-aac084497055
+2025-08-07 10:02:41,870 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,870 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,871 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:41,871 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (check took 0.00s)
+2025-08-07 10:02:41,871 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:42,037 - app.core.utils.conversation_attachments - INFO - Successfully loaded 19 messages and 1 complete bundles for conversation b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
+2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (expires in 30 min)
+2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.17s - 19 messages, 1 bundles
+2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
+2025-08-07 10:02:42,037 - app.main - INFO - Response status: 200
+2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
 
 Current workout data context:
 Available workout data:
 {
   "metadata": {
-    "total_workouts": 126,
-    "total_exercises": 904,
+    "total_workouts": 127,
+    "total_exercises": 913,
     "date_range": {
-      "start": "2025-02-06T22:02:04.023375+00:00",
-      "end": "2025-08-05T17:29:27.976+00:00"
+      "start": "2025-02-10T22:02:04.023375+00:00",
+      "end": "2025-08-06T19:16:58.829+00:00"
     },
     "exercises_included": [
       "Air Squat",
@@ -28,11 +53,11 @@ Available workout data:
     "strength_top_performers": [
       {
         "name": "Face Pull",
-        "change": 27.75,
-        "last_value": 53.59,
-        "first_value": 25.84,
+        "change": 8.7,
+        "last_value": 35.94,
+        "first_value": 27.24,
         "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
-        "change_percent": 107.4
+        "change_percent": 31.9
       },
       {
         "name": "EZ Bar Curl",
@@ -43,30 +68,30 @@ Available workout data:
         "change_percent": 23.5
       },
       {
-        "name": "Barbell Back Squat",
-        "change": 15.42,
-        "last_value": 191.0,
-        "first_value": 175.58,
-        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
-        "change_percent": 8.8
+        "name": "Cable Lateral Raise",
+        "change": 0.63,
+        "last_value": 10.54,
+        "first_value": 9.91,
+        "definition_id": "194b066b-7df2-4b2d-9ac2-1daa2da019bb",
+        "change_percent": 6.4
       }
     ],
     "volume_top_performers": [
       {
-        "name": "Face Pull",
-        "change": 2130.0,
-        "last_value": 2352.0,
-        "first_value": 222.0,
-        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
-        "change_percent": 959.5
+        "name": "Barbell Bench Press",
+        "change": 1027.5,
+        "last_value": 1350.0,
+        "first_value": 322.5,
+        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
+        "change_percent": 318.6
       },
       {
-        "name": "Barbell Bench Press",
-        "change": 1042.5,
-        "last_value": 1350.0,
-        "first_value": 307.5,
-        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
-        "change_percent": 339.0
+        "name": "Face Pull",
+        "change": 691.0,
+        "last_value": 925.0,
+        "first_value": 234.0,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 295.3
       },
       {
         "name": "Cable Fly",
@@ -84,9 +109,25 @@ Available workout data:
     "variance": null
   },
   "correlation_summary": {
-    "significant_count": 64,
+    "significant_count": 67,
     "total_analyzed": 561,
     "top_correlations": [
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Pull-Up strength",
+        "strength": "moderate",
+        "direction": "negative",
+        "lag_weeks": 0,
+        "summary": "Pull-Up strength predicts Face Pull strength decreases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Barbell Bench Press strength",
+        "strength": "moderate",
+        "direction": "negative",
+        "lag_weeks": 0,
+        "summary": "Barbell Bench Press strength predicts Face Pull strength decreases"
+      },
       {
         "outcome": "Face Pull strength",
         "predictor": "Face Pull volume",
@@ -104,28 +145,12 @@ Available workout data:
         "summary": "Barbell Bench Press volume predicts Face Pull strength increases"
       },
       {
-        "outcome": "Leg Curl strength",
-        "predictor": "Pull-Up strength",
+        "outcome": "Barbell Back Squat strength",
+        "predictor": "Leg Curl strength",
         "strength": "strong",
         "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Pull-Up strength predicts Leg Curl strength increases"
-      },
-      {
-        "outcome": "Leg Curl strength",
-        "predictor": "Barbell Bench Press strength",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Barbell Bench Press strength predicts Leg Curl strength increases"
-      },
-      {
-        "outcome": "Leg Curl strength",
-        "predictor": "Sumo Deadlift strength",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Sumo Deadlift strength predicts Leg Curl strength increases"
+        "lag_weeks": 2,
+        "summary": "Leg Curl strength predicts Barbell Back Squat strength increases after 2 weeks"
       }
     ],
     "data_quality": [
@@ -170,55 +195,25 @@ CONSISTENCY METRICS:
 - Workout frequency variance: Not calculated
 
 TOP PERFORMERS:
-- Strength gains: Face Pull: +107.4%, EZ Bar Curl: +23.5%, Barbell Back Squat: +8.8%
-- Volume increases: Face Pull: +959.5%, Barbell Bench Press: +339.0%, Cable Fly: +50.0%
+- Strength gains: Face Pull: +31.9%, EZ Bar Curl: +23.5%, Cable Lateral Raise: +6.4%
+- Volume increases: Barbell Bench Press: +318.6%, Face Pull: +295.3%, Cable Fly: +50.0%
 - Most frequent exercises: Frequency data not available
 
 CORRELATION INSIGHTS:
-64 significant correlations found from 561 exercise pairs analyzed
+67 significant correlations found from 561 exercise pairs analyzed
+• Pull-Up strength predicts Face Pull strength decreases
+• Barbell Bench Press strength predicts Face Pull strength decreases
 • Face Pull volume predicts Face Pull strength increases
-• Barbell Bench Press volume predicts Face Pull strength increases
-• Pull-Up strength predicts Leg Curl strength increases
 
 WORKOUT SUMMARY:
-- Total workouts analyzed: 126
+- Total workouts analyzed: 127
 - Exercise variety: 21 different exercises
 
-2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-07 10:02:42,071 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
-2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hello
+2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - 
 Message 3 (HumanMessage):
-2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - Content: Hello!
-2025-08-05 19:29:43,936 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-05 19:29:45,348 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Hey there, awesome to hear from you! Ready to dive into your fitness', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:45,663 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' journey and see what kind of gains you've been crushing?
-
-I've got your latest workout data right here, and let me tell you, it', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:46,077 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''s looking pretty solid! We're talking about **126 workouts** and over **900 exercises** logged since February. That's some serious dedication right there!
-
-Let's break down some of the highlights:
-
-First', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:46,340 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' off, your **Face Pulls** are absolutely soaring! You've seen a massive **107.4% increase in strength** and an incredible **959.5% jump in volume** for that exercise. That's like watching', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:46,925 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' a little chick grow into a magnificent eagle – truly impressive progress! Keep that up, it's clearly paying off.
-
-You're also making some great strides with your **EZ Bar Curls**, with a **23.5% strength gain**, and your **Barbell Back Squat** is up by **', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:47,420 - app.services.chains.base_conversation_chain - INFO - Chunk: content='8.8%**. Strong legs and strong arms – that's a winning combo!
-
-And get this, your **Barbell Bench Press volume** has exploded by **339%**! That's a huge amount of work you're putting in, and it's no surprise to see that kind', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:47,956 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' of effort translating into results.
-
-What's really cool is that the data shows a strong connection between the volume you're putting into your **Face Pulls** and **Barbell Bench Press** and the strength gains you're seeing in your **Face Pulls**. It's like the more you train', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:48,584 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' those areas, the stronger your whole upper body becomes.
-
-Looks like you're consistently hitting those workouts too, which is the secret sauce to long-term progress.
-
-So, what do you think? Anything in particular you want to focus on or any questions about your progress? Let's keep this momentum going', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-05 19:29:48,588 - app.services.chains.base_conversation_chain - INFO - Chunk: content='!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-05 19:29:48,703 - app.main - INFO - Request: POST /db/conversations/5aa0e90a-1811-4a54-9d74-41eb09962ee3/messages
-2025-08-05 19:29:48,805 - app.api.endpoints.db - INFO - API request to save message to conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,805 - app.services.db.conversation_service - INFO - Getting conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,891 - app.services.db.conversation_service - INFO - Retrieved conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,891 - app.services.db.message_service - INFO - Saving assistant message to conversation: 5aa0e90a-1811-4a54-9d74-41eb09962ee3
-2025-08-05 19:29:48,973 - app.services.db.message_service - INFO - Message saved with ID: ef976739-223e-4f67-af8c-93d7c3934699
+2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hello
+2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - 
+Message 4 (AIMessage):

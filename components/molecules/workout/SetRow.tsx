@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { XStack, Stack, Text, Input } from "tamagui";
+import { XStack, Stack, Text } from "tamagui";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import MetricInput from "@/components/atoms/MetricInput";
+import { useUserStore } from "@/stores/userProfileStore";
 
 interface SetRowProps {
   set: WorkoutExerciseSet;
@@ -23,13 +25,10 @@ export default function SetRow({
   onUpdate,
   onDelete,
 }: SetRowProps) {
-  const [weight, setWeight] = useState(set.weight?.toString() || "");
-  const [reps, setReps] = useState(set.reps?.toString() || "");
-  const [distance, setDistance] = useState(set.distance?.toString() || "");
-  const [duration, setDuration] = useState(set.duration?.toString() || "");
   const [pendingDelete, setPendingDelete] = useState(false);
+  const { userProfile } = useUserStore();
+  const isImperial = userProfile?.is_imperial ?? false;
 
-  // Reset pending delete after 1 second
   useEffect(() => {
     if (pendingDelete) {
       const timer = setTimeout(() => setPendingDelete(false), 1000);
@@ -41,18 +40,13 @@ export default function SetRow({
     if (!isActive) return;
 
     if (pendingDelete) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // Strong haptic
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       onDelete?.(set.id);
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setPendingDelete(true);
     }
   };
-
-  const showWeight = exerciseDefinition?.uses_weight ?? true;
-  const showReps = exerciseDefinition?.uses_reps ?? true;
-  const showDistance = exerciseDefinition?.uses_distance ?? false;
-  const showDuration = exerciseDefinition?.uses_duration ?? false;
 
   const handleUpdate = (field: string, value: any) => {
     if (!isActive) return;
@@ -63,138 +57,79 @@ export default function SetRow({
     });
   };
 
-  const renderInputs = () => {
-    const inputs = [];
-
-    if (showWeight) {
-      inputs.push(
-        <Stack key="weight" flex={1}>
-          <Input
-            size="$3"
-            value={weight}
-            onChangeText={setWeight}
-            onBlur={() =>
-              handleUpdate("weight", parseFloat(weight) || undefined)
-            }
-            selectTextOnFocus={true}
-            placeholder="0"
-            keyboardType="numeric"
-            textAlign="center"
-            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-            color={isActive ? "$color" : "$textMuted"}
-            editable={isActive}
-            focusStyle={{ borderColor: "$primary" }}
-          />
-        </Stack>
-      );
-    }
-
-    if (showReps) {
-      inputs.push(
-        <Stack key="reps" flex={1}>
-          <Input
-            size="$3"
-            value={reps}
-            onChangeText={setReps}
-            onBlur={() => handleUpdate("reps", parseInt(reps) || undefined)}
-            selectTextOnFocus={true}
-            placeholder="0"
-            keyboardType="numeric"
-            textAlign="center"
-            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-            color={isActive ? "$color" : "$textMuted"}
-            editable={isActive}
-            focusStyle={{ borderColor: "$primary" }}
-          />
-        </Stack>
-      );
-    }
-
-    if (showDistance) {
-      inputs.push(
-        <Stack key="distance" flex={1}>
-          <Input
-            size="$3"
-            value={distance}
-            onChangeText={setDistance}
-            onBlur={() =>
-              handleUpdate("distance", parseFloat(distance) || undefined)
-            }
-            selectTextOnFocus={true}
-            placeholder="0"
-            keyboardType="numeric"
-            textAlign="center"
-            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-            color={isActive ? "$color" : "$textMuted"}
-            editable={isActive}
-            focusStyle={{ borderColor: "$primary" }}
-          />
-        </Stack>
-      );
-    }
-
-    if (showDuration) {
-      inputs.push(
-        <Stack key="duration" flex={1}>
-          <Input
-            size="$3"
-            value={duration}
-            onChangeText={setDuration}
-            onBlur={() => handleUpdate("duration", duration || undefined)}
-            selectTextOnFocus={true}
-            placeholder="00:00"
-            textAlign="center"
-            backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-            borderColor={isActive ? "$borderSoft" : "$borderMuted"}
-            color={isActive ? "$color" : "$textMuted"}
-            editable={isActive}
-            focusStyle={{ borderColor: "$primary" }}
-          />
-        </Stack>
-      );
-    }
-
-    return inputs;
-  };
+  const showWeight = exerciseDefinition?.uses_weight ?? true;
+  const showReps = exerciseDefinition?.uses_reps ?? true;
+  const showDistance = exerciseDefinition?.uses_distance ?? false;
+  const showDuration = exerciseDefinition?.uses_duration ?? false;
 
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
       <Stack width={30} alignItems="center" justifyContent="center" height={40}>
-        <Text
-          fontSize="$3"
-          fontWeight="600"
-          color={isActive ? "$textSoft" : "$textMuted"}
-        >
+        <Text fontSize="$4" fontWeight="600" color="$color">
           {set.set_number}
         </Text>
       </Stack>
+
       <XStack flex={1} gap="$1.5">
-        {renderInputs()}
-      </XStack>
-      <Stack width={40} alignItems="center" justifyContent="center">
-        <Stack
-          width={32}
-          height={32}
-          borderRadius="$2"
-          backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
-          justifyContent="center"
-          alignItems="center"
-          pressStyle={{
-            backgroundColor: pendingDelete ? "#ef444450" : "$backgroundPress",
-          }}
-          onPress={handleDeletePress}
-          cursor={isActive ? "pointer" : "default"}
-          animation="quick"
-        >
-          <Ionicons
-            name={pendingDelete ? "trash" : "trash-outline"}
-            size={16}
-            color={isActive ? "#ef4444" : "$textMuted"}
+        {showWeight && (
+          <MetricInput
+            type="weight"
+            value={set.weight}
+            unit={weightUnit}
+            isMetric={!isImperial}
+            onChange={(value) => handleUpdate("weight", value)}
+            isActive={isActive}
           />
-        </Stack>
+        )}
+        {showReps && (
+          <MetricInput
+            type="reps"
+            value={set.reps}
+            isMetric={!isImperial}
+            onChange={(value) => handleUpdate("reps", value)}
+            isActive={isActive}
+          />
+        )}
+        {showDistance && (
+          <MetricInput
+            type="distance"
+            value={set.distance}
+            unit={distanceUnit}
+            isMetric={!isImperial}
+            onChange={(value) => handleUpdate("distance", value)}
+            isActive={isActive}
+          />
+        )}
+        {showDuration && (
+          <MetricInput
+            type="duration"
+            value={set.duration}
+            isMetric={!isImperial}
+            onChange={(value) => handleUpdate("duration", value)}
+            isActive={isActive}
+          />
+        )}
+      </XStack>
+
+      <Stack
+        width={32}
+        height={32}
+        borderRadius="$2"
+        backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
+        justifyContent="center"
+        alignItems="center"
+        pressStyle={{
+          backgroundColor: pendingDelete ? "#ef444450" : "$backgroundPress",
+        }}
+        onPress={handleDeletePress}
+        cursor={isActive ? "pointer" : "default"}
+        animation="quick"
+      >
+        <Ionicons
+          name={pendingDelete ? "trash" : "trash-outline"}
+          size={16}
+          color="#ef4444"
+        />
       </Stack>
     </XStack>
   );
