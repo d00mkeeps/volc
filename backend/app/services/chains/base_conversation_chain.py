@@ -2,58 +2,39 @@ from typing import AsyncGenerator, Dict, Any, List
 import logging
 from langchain_google_vertexai import ChatVertexAI
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 logger = logging.getLogger(__name__)
 
 class BaseConversationChain:
-    def __init__(
-        self, 
-        system_prompt: str, 
-        llm: ChatVertexAI
-    ):
-        self.system_prompt = system_prompt
+    """
+    Base class for all conversation chains.
+    
+    Handles:
+    - Universal LLM streaming logic
+    - Message history management  
+    - Error handling
+    - Context loading
+    
+    Subclasses must implement:
+    - get_formatted_prompt() - for chain-specific prompt formatting
+    """
+    
+    def __init__(self, llm: ChatVertexAI):
         self.chat_model = llm
         self.messages: List[BaseMessage] = []
-        self._initialize_prompt_template()
 
-    def _initialize_prompt_template(self) -> None:
-        """Sets up the base conversation prompt template."""
-        self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "{system_prompt}"),
-            MessagesPlaceholder(variable_name="messages"),
-            ("human", "{current_message}"),
-        ]).partial(system_prompt=self.system_prompt)
-
-    async def extract_data(self) -> Any:
-        """Optional data extraction - override if needed"""
-        return None
-        
-    async def analyze_sentiment(self, message: str, current_summary: Dict) -> bool:
-        """Optional sentiment analysis - override if needed"""
-        return False
-
-    async def update_state(self, extracted_data: Any) -> None:
-        """Optional state updates - override if needed"""
-        pass
-
-    async def get_additional_prompt_vars(self) -> Dict[str, Any]:
-        """Get additional variables for prompt formatting - override if needed"""
-        return {
-            "messages": self.messages,
-            "current_message": ""
-        }
     async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Universal LLM streaming logic.
+        
+        Gets formatted prompt from subclass, streams LLM response,
+        manages conversation history, handles errors.
+        """
         try:
-            # Get prompt variables including any from child classes
-            # Note: We don't add the message to history yet to avoid duplication
-            prompt_vars = await self.get_additional_prompt_vars()
-            prompt_vars["current_message"] = message
+            # Get formatted prompt from subclass
+            formatted_prompt = await self.get_formatted_prompt(message)
             
-            # Format the prompt
-            formatted_prompt = self.prompt.format_messages(**prompt_vars)
-            
-            # Log the formatted messages
+            # Log the formatted messages for debugging
             logger.info("\n=== Formatted Messages ===")
             for i, msg in enumerate(formatted_prompt):
                 logger.info(f"\nMessage {i+1} ({type(msg).__name__}):")
@@ -62,9 +43,7 @@ class BaseConversationChain:
             
             # Stream the response
             full_response = ""
-            async for chunk in self.chat_model.astream(
-                input=formatted_prompt
-            ):
+            async for chunk in self.chat_model.astream(input=formatted_prompt):
                 logger.info(f"Chunk: content='{chunk.content}', metadata={getattr(chunk, 'response_metadata', None)}")
                 
                 chunk_content = chunk.content
@@ -75,13 +54,13 @@ class BaseConversationChain:
                         "data": chunk_content
                     }
 
-            # After the loop ends naturally:
+            # Send completion signal
             yield {
                 "type": "complete",
                 "data": {"length": len(full_response)}
             }
 
-            # Only add both messages to history after successful processing
+            # Add both messages to history after successful processing
             self.messages.append(HumanMessage(content=message))
             self.messages.append(AIMessage(content=full_response))
             
@@ -96,8 +75,28 @@ class BaseConversationChain:
                 "data": "An error occurred while processing your message"
             }
 
+    async def get_formatted_prompt(self, message: str):
+        """
+        Format the prompt for LangChain.
+        
+        Must be implemented by subclasses to handle their specific
+        prompt templates, context formatting, etc.
+        
+        Args:
+            message: The current user message
+            
+        Returns:
+            Formatted messages ready for LangChain
+        """
+        raise NotImplementedError("Subclasses must implement get_formatted_prompt")
+
     def load_conversation_context(self, context) -> None:
-        """Load messages from ConversationContext and clear any existing history"""
+        """
+        Load messages from ConversationContext and replace existing history.
+        
+        Args:
+            context: ConversationContext object with message history
+        """
         from app.core.utils.conversation_attachments import ConversationContext
         
         if isinstance(context, ConversationContext):

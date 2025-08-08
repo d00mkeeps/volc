@@ -115,56 +115,43 @@ class ConversationContextService:
     # (You don't need to understand these details)
     # =========================
     
+
     async def _load_from_database_with_retries(self, conversation_id: str, user_id: Optional[str]) -> ConversationContext:
-        """
-        Load context from database with retry logic for pending analysis.
-        
-        Handles the complexity of waiting for analysis bundles to complete processing.
-        """
         for attempt in range(self.pending_analysis_max_retries):
-            logger.debug(f"Database load attempt {attempt + 1}/{self.pending_analysis_max_retries}")
-            
             # Try RPC approach first (more reliable, single call)
             try:
                 context_result = await load_conversation_context(conversation_id)
                 if context_result["success"]:
                     context = context_result["data"]
-                    
-                    # Check if we have complete bundles or no bundles at all
                     if context.bundles or not any(True for _ in context.bundles):
-                        logger.info(f"RPC load successful with {len(context.bundles)} bundles")
                         return context
-                    
-                    # Has pending bundles - wait and retry
-                    logger.debug("Found pending analysis via RPC, retrying...")
                     await asyncio.sleep(0.5)
                     continue
-                    
             except Exception as e:
-                logger.warning(f"RPC load failed, trying cache approach: {str(e)}")
+                logger.warning(f"RPC load failed: {str(e)}")
             
-            # Fallback to cache-style loading (separate calls)
+            # If RPC fails and we don't have user_id, can't use fallback
+            if not user_id:
+                logger.warning("No user_id provided, cannot use fallback loading method")
+                break
+                
+            # Try fallback method
             try:
                 context = await self._load_via_separate_calls(conversation_id, user_id)
-                if context.bundles:  # Has complete bundles
-                    logger.info(f"Fallback load successful with {len(context.bundles)} bundles")
+                if context.bundles:
                     return context
-                    
-                # Wait and retry if no bundles yet
                 await asyncio.sleep(0.5)
-                
             except Exception as e:
                 logger.warning(f"Fallback load failed: {str(e)}")
                 await asyncio.sleep(0.5)
         
-        # If we get here, retries exhausted - return what we have
-        logger.warning(f"Max retries exhausted for conversation: {conversation_id}")
+        # Return what we can get
         try:
             context_result = await load_conversation_context(conversation_id)
             return context_result["data"] if context_result["success"] else ConversationContext(messages=[], bundles=[])
         except:
             return ConversationContext(messages=[], bundles=[])
-    
+
     async def _load_via_separate_calls(self, conversation_id: str, user_id: Optional[str]) -> ConversationContext:
         """
         Load context using separate database calls (fallback method).

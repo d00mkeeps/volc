@@ -1,26 +1,45 @@
-2025-08-07 10:02:43,427 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Helli there!
+2025-08-08 22:44:04,228 - app.services.chains.base_conversation_chain - INFO - Chunk: content=':** These exercises might be building supporting muscles that directly contribute to your Face Pull performance.
+3.  **Improved Form/Mind-Muscle Connection:** As you get more experienced, your ability to engage the right muscles improves across the board.
 
-What's up? Ready to dive into whatever you've got on your mind?', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-07 10:02:43,498 - app.main - INFO - Request: POST /db/conversations/b74b7ddf-9443-4453-901c-01d832956ac3/messages
-2025-08-07 10:02:43,706 - app.api.endpoints.db - INFO - API request to save message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:43,706 - app.services.db.conversation_service - INFO - Getting conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:43,889 - app.services.db.conversation_service - INFO - Retrieved conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:43,889 - app.services.db.message_service - INFO - Saving assistant message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,402 - app.services.db.message_service - INFO - Message saved with ID: b49b8e22-c20c-48a0-aef1-5080201d80ca
-2025-08-07 10:02:49,403 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,403 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,404 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,404 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (check took 0.00s)
-2025-08-07 10:02:49,404 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,810 - app.core.utils.conversation_attachments - INFO - Successfully loaded 20 messages and 1 complete bundles for conversation b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,811 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
-2025-08-07 10:02:49,811 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (expires in 30 min)
-2025-08-07 10:02:49,811 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.41s - 20 messages, 1 bundles
-2025-08-07 10:02:49,811 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:49,812 - app.main - INFO - Response status: 200
-2025-08-07 10:54:35,027 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+This is a great reminder that your body works as a whole system! Keep', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:04,628 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' pushing those other lifts, and your Face Pulls will likely continue to benefit.
+
+### **A Little Note on Data**
+
+Just a heads-up, for a few exercises like the Barbell Skull Crusher and Straight Bar Triceps Pushdown, we'd love to see a bit more weekly data (4', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:05,144 - app.services.chains.base_conversation_chain - INFO - Chunk: content='+ weeks) to get an even clearer picture of their trends. But don't worry, the insights we have are already super valuable!
+
+### **What's Next?**
+
+You're on an amazing trajectory! Keep doing what you're doing, especially with those Skull Crushers, Preacher Curls,', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:05,656 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' and Back Squats. Consider how you can leverage those correlations – maybe a little extra focus on your Leg Curls, Pull-Ups, or Bench Press could give your Face Pulls an extra boost!
+
+Keep up the incredible work! You're building a stronger, more powerful you, one workout at a time! Let', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:05,674 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''s keep that momentum going!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-08 22:44:05,678 - app.services.db.message_service - INFO - Saving assistant message to conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,882 - app.services.db.message_service - INFO - Message saved with ID: 2e38d6a1-f506-411b-9c9f-edf040d55191
+2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (check took 0.00s)
+2025-08-08 22:44:05,882 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,985 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,985 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (expires in 30 min)
+2025-08-08 22:44:05,985 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.10s - 1 messages, 1 bundles
+2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (check took 0.00s)
+2025-08-08 22:44:05,986 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:06,090 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (expires in 30 min)
+2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.10s - 1 messages, 1 bundles
+2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:44:06,091 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:51:17,289 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
 Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
     data = await websocket.receive_json()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
@@ -29,64 +48,3 @@ Traceback (most recent call last):
   File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
     raise WebSocketDisconnect(message["code"], message.get("reason"))
 starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-2025-08-07 10:54:35,047 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 97, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 143, in process_websocket
-    await websocket.accept()
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 110, in accept
-    await self.send({"type": "websocket.accept", "subprotocol": subprotocol, "headers": headers})
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 80, in send
-    raise RuntimeError(
-        f'Expected ASGI message "websocket.send" or "websocket.close", but got {message_type!r}'
-    )
-RuntimeError: Expected ASGI message "websocket.send" or "websocket.close", but got 'websocket.accept'
-2025-08-08 08:41:06,290 - app - INFO - Logging has been set up
-2025-08-08 08:41:06,291 - app.main - INFO - Application starting
-2025-08-08 08:41:06,291 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-08 08:41:06,292 - app.main - INFO - SUPABASE_URL present: True
-2025-08-08 08:41:06,293 - app.main - INFO - SUPABASE_KEY present: True
-2025-08-08 08:44:10,687 - app.main - INFO - Request: GET /api/dashboard
-2025-08-08 08:44:10,713 - app.main - INFO - Request: GET /db/user-profile
-2025-08-08 08:44:10,723 - app.core.supabase.client - INFO - Loading environment variables for Supabase client
-2025-08-08 08:44:10,726 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/.env
-2025-08-08 08:44:10,729 - app.core.supabase.client - INFO - Supabase URL present: True
-2025-08-08 08:44:10,729 - app.core.supabase.client - INFO - Supabase API key present: True
-2025-08-08 08:44:10,729 - app.core.supabase.client - INFO - Creating Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
-2025-08-08 08:44:10,729 - app.core.supabase.client - INFO - Supabase key length: 208 characters
-2025-08-08 08:44:11,013 - app.core.supabase.client - INFO - Supabase client created successfully
-2025-08-08 08:44:11,516 - app.core.supabase.client - INFO - Test query successful: 1
-2025-08-08 08:44:11,721 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:11,721 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:11,907 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:11,908 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-08 08:44:11,909 - app.main - INFO - Response status: 200
-2025-08-08 08:44:12,026 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-08 08:44:12,026 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-08 08:44:12,236 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-08 08:44:12,241 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-08 08:44:12,241 - app.main - INFO - Response status: 200
-2025-08-08 08:44:12,371 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:12,371 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:13,241 - app.services.db.workout_service - INFO - Retrieved 260 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:13,242 - app.api.endpoints.db - INFO - Retrieved 260 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:13,311 - app.main - INFO - Response status: 200
-2025-08-08 08:44:13,312 - app.main - INFO - Response status: 200
-2025-08-08 08:44:13,728 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-08 08:44:13,873 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:13,873 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:14,289 - app.services.db.workout_service - INFO - Retrieved 260 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:14,289 - app.api.endpoints.db - INFO - Retrieved 260 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-08 08:44:14,361 - app.main - INFO - Response status: 200

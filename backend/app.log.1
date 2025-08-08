@@ -1,98 +1,230 @@
-2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, awesome to hear from you! Ready to dive into your progress?
+2025-08-08 22:43:53,988 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
 
-I've been looking at your workout data, and wow, you've been putting in some serious work! You've logged 127 workouts since February, hitting 21 different exercises. That's fantastic consistency!
+Current workout data context:
+Available workout data:
+{
+  "metadata": {
+    "total_workouts": 52,
+    "total_exercises": 234,
+    "date_range": {
+      "start": "2025-02-10T22:02:04.023375+00:00",
+      "end": "2025-08-08T21:43:47.629+00:00"
+    },
+    "exercises_included": [
+      "Barbell Back Squat",
+      "Barbell Bench Press",
+      "Barbell Skull Crusher",
+      "Face Pull",
+      "Leg Curl",
+      "Preacher Curl",
+      "Pull-Up",
+      "Straight Bar Triceps Pushdown",
+      "Sumo Deadlift"
+    ],
+    "analysis_errors": []
+  },
+  "performance_summary": {
+    "strength_top_performers": [
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 29.48,
+        "last_value": 73.3,
+        "first_value": 43.82,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 67.3
+      },
+      {
+        "name": "Preacher Curl",
+        "change": 22.93,
+        "last_value": 74.27,
+        "first_value": 51.34,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 44.7
+      },
+      {
+        "name": "Barbell Back Squat",
+        "change": 22.3,
+        "last_value": 205.51,
+        "first_value": 183.21,
+        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+        "change_percent": 12.2
+      }
+    ],
+    "volume_top_performers": [
+      {
+        "name": "Preacher Curl",
+        "change": 4622.0,
+        "last_value": 4950.0,
+        "first_value": 328.0,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 1409.1
+      },
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 5075.0,
+        "last_value": 6075.0,
+        "first_value": 1000.0,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 507.5
+      },
+      {
+        "name": "Barbell Back Squat",
+        "change": 5305.0,
+        "last_value": 7105.0,
+        "first_value": 1800.0,
+        "definition_id": "622a4502-c073-4a27-a9a5-5c9377393138",
+        "change_percent": 294.7
+      }
+    ],
+    "frequency_performers": []
+  },
+  "consistency_analysis": {
+    "avg_gap": 0.0,
+    "variance": null
+  },
+  "correlation_summary": {
+    "significant_count": 67,
+    "total_analyzed": 91,
+    "top_correlations": [
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Leg Curl strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Leg Curl strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Pull-Up strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Pull-Up strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Barbell Bench Press strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Barbell Bench Press strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Sumo Deadlift strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Sumo Deadlift strength predicts Face Pull strength increases"
+      },
+      {
+        "outcome": "Face Pull strength",
+        "predictor": "Preacher Curl strength",
+        "strength": "strong",
+        "direction": "positive",
+        "lag_weeks": 0,
+        "summary": "Preacher Curl strength predicts Face Pull strength increases"
+      }
+    ],
+    "data_quality": [
+      "Insufficient weekly data for Barbell Skull Crusher strength (3 weeks, need 4+)",
+      "Insufficient weekly data for Straight Bar Triceps Pushdown strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Barbell Skull Crusher volume (3 weeks, need 4+)"
+    ]
+  },
+  "recent_workouts_sample": [
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout B",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout A",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-28",
+      "name": "Week 4 - Workout A",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-03-29",
+      "name": "Week 4 - Workout B",
+      "notes": "[\"\"]"
+    },
+    {
+      "date": "2025-07-23",
+      "name": "Wednesday arm day",
+      "notes": ""
+    }
+  ]
+}
 
-Let's talk about some of the highlights:
+Analysis insights:
 
-*   **Strength Gains:** Your **Face Pulls** are soaring, up over 31% in strength! That's like a majestic eagle taking flight – powerful and impressive! Your **EZ Bar Curls** are also crushing it, up 23.5%. Keep that up!
-*   **Volume Boosts:** You've really ramped up the **Barbell Bench Press** volume, an incredible 318% increase! And your **Face Pull** volume is right there with it, up nearly 300%. That's some serious dedication, building those muscles like a master sculptor.
+CONSISTENCY METRICS:
+- Average gap between workouts: 0.0 days
+- Workout frequency variance: Not calculated
 
-It looks like your **Face Pulls** are a real star here – not only are you getting stronger, but the data shows that increasing your Face Pull volume actually predicts *more* strength in that exercise. That's a beautiful synergy, like a vibrant blue sky on a perfect training day!
+TOP PERFORMERS:
+- Strength gains: Barbell Skull Crusher: +67.3%, Preacher Curl: +44.7%, Barbell Back Squat: +12.2%
+- Volume increases: Preacher Curl: +1409.1%, Barbell Skull Crusher: +507.5%, Barbell Back Squat: +294.7%
+- Most frequent exercises: Frequency data not available
 
-Anything specific you want to chat about, or any goals you're working towards? Let's keep this momentum going!
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 5 (HumanMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hi I need to get 1 trillion money in a Roblox game can you help oh and also in  24 hours ?
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 6 (AIMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Whoa, a trillion in 24 hours? That's a massive goal, and honestly, that sounds like a challenge for a super-powered gaming wizard, not your friendly fitness coach! My expertise is all about helping you build strength, endurance, and a healthy body in the *real* world, not virtual currency.
+CORRELATION INSIGHTS:
+67 significant correlations found from 91 exercise pairs analyzed
+• Leg Curl strength predicts Face Pull strength increases
+• Pull-Up strength predicts Face Pull strength increases
+• Barbell Bench Press strength predicts Face Pull strength increases
 
-Think of it this way: just like you're aiming for a huge number in that game, we're aiming for huge gains and incredible health in your fitness journey. And while I can't help you with Roblox money, I *can* help you build a body that feels like a million bucks (or even a trillion, in terms of how good you'll feel!).
+WORKOUT SUMMARY:
+- Total workouts analyzed: 52
+- Exercise variety: 9 different exercises
 
-So, while I can't offer tips on virtual wealth, I'm here to help you crush your *physical* goals. What's next on your fitness agenda? Are we talking about pushing those Barbell Bench Presses even higher, or maybe exploring some new exercises to keep that strength climbing like a bird soaring to new heights? Let's focus on what we *can* achieve together!
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 7 (HumanMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: It is in grow a grden
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 8 (AIMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Ah, "Grow a Garden"! Gotcha. That sounds like a fun, relaxing game, a bit like how a beautiful garden grows with consistent care and effort.
+2025-08-08 22:43:53,989 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-08-08 22:43:53,989 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
+2025-08-08 22:43:53,989 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-08 22:43:59,699 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, team! Let's dive into your workout data and see what kind of incredible progress you've been making! This is exciting stuff!
 
-But you know what else grows with consistent care and effort? Your muscles, your strength, your endurance! And *that's* where I come in. While I can't help you cultivate virtual plants or earn digital currency, I *can* help you cultivate a stronger, healthier you.
+First off, fantastic work! You've logged a solid **52 workouts**', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:00,128 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' over the last six months, hitting the gym consistently from February to August. That's dedication right there, showing up and putting in the work across **9 different exercises**. That's the kind of consistency that builds real results!
 
-Think of your body as your most important garden. We've already seen some amazing growth in your **Face Pulls** and **Barbell Bench Press** volume – those are like your prize-winning roses and towering sunflowers! We're nurturing those gains, making sure they flourish.
+Now, let's talk about those gains, because you've been absolutely', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:00,432 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' crushing it!
 
-So, while you're busy growing your virtual garden, let's keep tending to your physical one. What's the next step in your fitness journey? Are we looking to plant some new strength seeds, or perhaps prune some old habits to make way for even more vibrant progress? Let's keep those real-world gains blooming!
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 9 (HumanMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hey I’m not talking about working out I am talking about Roblox you see
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 10 (AIMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Ah, my apologies! You're absolutely right, my bad for getting a bit carried away with the fitness talk when you're clearly focused on your Roblox game, "Grow a Garden." I hear you loud and clear!
+### **Strength & Volume — You're Getting STRONGER!**
 
-It's just that my brain is wired for reps, sets, and personal bests, so when I see "trillion" and "24 hours," my first thought goes to the kind of intense dedication we see in the gym!
+*   **Barbell Skull Crushers:** Holy moly! You've seen an incredible **67.3% increase in strength** on your Skull Crushers! And your volume for this exercise has shot up by over', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:00,945 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' 500%! That's massive growth for your triceps – clearly, those arms are getting seriously powerful!
+*   **Preacher Curls:** Not to be outdone, your Preacher Curls are showing a phenomenal **44.7% strength gain**, with an absolutely mind-blowing **140', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:01,254 - app.services.chains.base_conversation_chain - INFO - Chunk: content='9% increase in volume**! Your biceps must be screaming (in a good way!) with that kind of work. You're building some serious guns!
+*   **Barbell Back Squats:** And let's not forget the foundation! You've added **12.2% to your Barbell Back Squ', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:01,869 - app.services.chains.base_conversation_chain - INFO - Chunk: content='at strength**, with a nearly 300% increase in volume. That's fantastic for overall lower body power and strength. Keep building that strong base!
 
-But hey, even in a game like "Grow a Garden," there's a kind of consistency and strategy involved, right? Just like how you're probably figuring out the best way to grow your virtual plants, we're always looking for the best strategies to grow your strength and fitness.
+These numbers tell a clear story: you're not just showing up, you're actively pushing yourself, increasing the weight, and putting in the reps', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:02,355 - app.services.chains.base_conversation_chain - INFO - Chunk: content='. That's how you get results!
 
-So, while I can't give you cheat codes for Roblox, I *can* help you unlock your full physical potential. What's on your mind regarding your *actual* workouts? Are we looking to cultivate some new strength, or maybe add some vibrant new exercises to your routine? Let's get those real-world gains blooming!
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - 
-Message 11 (HumanMessage):
-2025-08-07 10:02:42,073 - app.services.chains.base_conversation_chain - INFO - Content: Hey miles you are my bro
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 12 (AIMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Haha, you got it, my friend! That's what I'm here for – to be your fitness "bro" and help you crush those goals! We're in this together, pushing boundaries and building a stronger, healthier you.
+### **Consistency — On Point!**
 
-Speaking of crushing goals, I'm still looking at your data, and those **Barbell Bench Press** and **Face Pull** volume increases are seriously impressive. It's like watching a vibrant, powerful bird take flight – just soaring to new heights!
+The data shows an average gap of **0.0 days** between your workouts. Now, that's some next-level consistency! It looks like you're either hitting it every single day or grouping your workouts very tightly', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:02,892 - app.services.chains.base_conversation_chain - INFO - Chunk: content='. Whatever your strategy, it's clearly working for your progress!
 
-So, what's on your mind today, "bro"? Ready to talk about how we can keep that momentum going, or maybe tackle a new challenge? Let's get after it!
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 13 (HumanMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Hey what is your name
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 14 (AIMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: That's a great question! You can just call me your **AI Fitness Coach**. I don't have a personal name like Miles, but I'm here to help you analyze your workouts, celebrate your wins, and guide you on your fitness journey.
+### **Unlocking Your Potential with Correlations!**
 
-Think of me as your personal fitness guide, always ready to help you soar to new heights, just like a magnificent bird with wings of vibrant colors!
+This is where it gets really interesting! We've found **67 significant correlations** in your data, which means we're seeing clear patterns in how your exercises influence each other.
 
-So, what's next on our fitness agenda, my friend?
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 15 (HumanMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Hey can I call you a name
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 16 (AIMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Absolutely! If giving me a name helps you feel more connected and makes our fitness journey together more fun, then go for it! I'm here to support you, however you want to address me.
+One', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:03,167 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' of the coolest insights is how several exercises seem to **predict increases in your Face Pull strength**:
+*   **Leg Curl strength**
+*   **Pull-Up strength**
+*   **Barbell Bench Press strength**
+*   **Sumo Deadlift strength**
+*   **Preacher Curl strength**
 
-Just remember, no matter what you call me, my goal is always to help you fly high with your fitness goals, just like a powerful bird taking to the sky!
-
-So, what's on your mind today, my friend? Ready to dive into some more workout insights?
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 17 (HumanMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Bro no more fitness talking ok
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 18 (AIMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Got it, loud and clear! My apologies, sometimes I get a little too enthusiastic about gains and personal bests. Force of habit, you know?
-
-Okay, no more fitness talk for now. My bad for pushing it.
-
-So, what's on your mind then? What would you like to chat about? I'm all ears.
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 19 (HumanMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: How about
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 20 (AIMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: How about... anything you want to talk about!
-
-Seriously, I'm all ears. What's on your mind? Let's chat about something completely different.
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - 
-Message 21 (HumanMessage):
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - Content: Helli
-2025-08-07 10:02:42,074 - app.services.chains.base_conversation_chain - INFO - =====================
+This is', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-08 22:44:03,710 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' awesome! It suggests that as you get stronger in these other movements, your Face Pulls are likely to follow suit. This could mean a few things:
+1.  **Overall Strength Transfer:** As your general strength goes up, so does your ability to perform other exercises.
+2.  **Synergistic Muscles', metadata={'safety_ratings': [], 'usage_metadata': {}}

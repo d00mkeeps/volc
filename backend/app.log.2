@@ -1,219 +1,72 @@
-2025-08-07 10:02:38,111 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (expires in 30 min)
-2025-08-07 10:02:38,113 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.19s - 18 messages, 1 bundles
-2025-08-07 10:02:38,113 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:38,114 - app.main - INFO - Response status: 200
-2025-08-07 10:02:40,908 - app.main - INFO - Request: POST /db/conversations/b74b7ddf-9443-4453-901c-01d832956ac3/messages
-2025-08-07 10:02:41,103 - app.api.endpoints.db - INFO - API request to save message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,103 - app.services.db.conversation_service - INFO - Getting conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,717 - app.services.db.conversation_service - INFO - Retrieved conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,718 - app.services.db.message_service - INFO - Saving user message to conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,869 - app.services.db.message_service - INFO - Message saved with ID: b005db13-7abf-47b1-b689-aac084497055
-2025-08-07 10:02:41,870 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,870 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,871 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:41,871 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (check took 0.00s)
-2025-08-07 10:02:41,871 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:42,037 - app.core.utils.conversation_attachments - INFO - Successfully loaded 19 messages and 1 complete bundles for conversation b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - RPC load successful with 1 bundles
-2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b74b7ddf-9443-4453-901c-01d832956ac3 (expires in 30 min)
-2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.17s - 19 messages, 1 bundles
-2025-08-07 10:02:42,037 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b74b7ddf-9443-4453-901c-01d832956ac3
-2025-08-07 10:02:42,037 - app.main - INFO - Response status: 200
-2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-08 22:43:43,964 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-08 22:43:43,965 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-08 22:43:44,110 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-08 22:43:44,116 - app.main - INFO - Response status: 200
+2025-08-08 22:43:44,117 - app.main - INFO - Response status: 200
+2025-08-08 22:43:47,634 - app.main - INFO - Request: POST /db/workouts
+2025-08-08 22:43:47,740 - app.api.endpoints.db - INFO - API request to create workout: Friday arm workout (test)
+2025-08-08 22:43:47,741 - app.services.db.workout_service - INFO - Creating workout: Friday arm workout (test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-08 22:43:47,741 - app.services.db.workout_service - INFO - Inserting workout with data: Friday arm workout (test), None
+2025-08-08 22:43:47,853 - app.services.db.workout_service - INFO - Workout created with ID: d97135fa-0d0a-4c99-a3a7-de5b31987e2c
+2025-08-08 22:43:47,853 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: d97135fa-0d0a-4c99-a3a7-de5b31987e2c
+2025-08-08 22:43:47,853 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
+2025-08-08 22:43:47,984 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: a8e7366c-741a-42b1-a016-171a0d96999c
+2025-08-08 22:43:48,278 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
+2025-08-08 22:43:48,389 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 7f48b021-1b97-4db5-a1b9-7a19ddc43a5f
+2025-08-08 22:43:48,751 - app.services.db.workout_service - INFO - Workout creation complete for ID: d97135fa-0d0a-4c99-a3a7-de5b31987e2c
+2025-08-08 22:43:48,751 - app.main - INFO - Response status: 200
+2025-08-08 22:43:48,903 - app.main - INFO - Request: PUT /db/workouts/a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:49,007 - app.api.endpoints.db - INFO - API request to update workout: a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:49,007 - app.services.db.workout_service - INFO - Getting workout: a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:49,118 - app.services.db.workout_service - INFO - Successfully retrieved workout: a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:49,119 - app.services.db.workout_service - INFO - Updating workout: a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:51,085 - app.services.db.workout_service - INFO - Successfully updated workout: a647f4a0-2256-40ed-b7ed-21a3dbac84c2
+2025-08-08 22:43:51,087 - app.main - INFO - Response status: 200
+2025-08-08 22:43:51,375 - app.main - INFO - Request: POST /api/workout-analysis
+2025-08-08 22:43:51,597 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 08 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-08 22:43:51,770 - app.services.db.conversation_service - INFO - Empty conversation created with ID: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:51,771 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:51,771 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183 for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:51,931 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183
+2025-08-08 22:43:51,931 - app.services.workout_analysis_service - INFO - Created empty bundle: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183
+2025-08-08 22:43:51,931 - app.services.db.analysis_service - INFO - Updating bundle 85f179c7-30d8-4ff8-a4ff-abf3acf3d183 status to: in_progress
+2025-08-08 22:43:52,103 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183 -> in_progress
+2025-08-08 22:43:52,104 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
+2025-08-08 22:43:52,444 - app.services.db.workout_service - INFO - RPC returned: 52 workouts
+2025-08-08 22:43:52,444 - app.services.workout_analysis_service - INFO - Processing analysis for 52 workouts
+2025-08-08 22:43:52,445 - app.services.workout_analysis.main_processor - INFO - Processing bundle 85f179c7-30d8-4ff8-a4ff-abf3acf3d183 with 52 workouts
+2025-08-08 22:43:52,446 - app.services.workout_analysis.calc.strength - INFO - Found 9 exercises with strength data, returning top 3
+2025-08-08 22:43:52,446 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 9 exercises
+2025-08-08 22:43:52,447 - app.services.workout_analysis.calc.volume - INFO - Found 9 exercises with volume data, returning top 3
+2025-08-08 22:43:52,447 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 9 exercises
+2025-08-08 22:43:52,447 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=3.5, variance=222.90618409565997
+2025-08-08 22:43:52,645 - app.services.workout_analysis.calc.correlation - INFO - Found 67 significant correlations out of 91 pairs analyzed
+2025-08-08 22:43:52,645 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 85f179c7-30d8-4ff8-a4ff-abf3acf3d183
+2025-08-08 22:43:52,645 - app.services.db.analysis_service - INFO - Updating analysis bundle: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183
+2025-08-08 22:43:53,060 - app.services.db.analysis_service - INFO - Bundle updated successfully: 85f179c7-30d8-4ff8-a4ff-abf3acf3d183
+2025-08-08 22:43:53,061 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,062 - app.main - INFO - Response status: 200
+2025-08-08 22:43:53,189 - app.main - INFO - Request: GET /db/conversations/b8e2e82c-9e9e-4106-8636-b81b1a84bed1/messages
+2025-08-08 22:43:53,451 - app.api.endpoints.db - INFO - API request to get messages for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,451 - app.services.db.conversation_service - INFO - Getting conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,629 - app.services.db.conversation_service - INFO - Retrieved conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,629 - app.services.db.message_service - INFO - Getting messages for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,802 - app.services.db.message_service - INFO - Retrieved 0 messages
+2025-08-08 22:43:53,802 - app.main - INFO - Response status: 200
+2025-08-08 22:43:53,804 - app.main - INFO - Request: GET /api/dashboard
+2025-08-08 22:43:53,805 - app.main - INFO - Response status: 200
+2025-08-08 22:43:53,810 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,812 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
+2025-08-08 22:43:53,812 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,813 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (check took 0.00s)
+2025-08-08 22:43:53,813 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,983 - app.core.utils.conversation_attachments - INFO - Successfully loaded 0 messages and 1 complete bundles for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
+2025-08-08 22:43:53,983 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (expires in 30 min)
+2025-08-08 22:43:53,983 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.17s - 0 messages, 1 bundles
+2025-08-08 22:43:53,986 - app.services.chains.base_conversation_chain - INFO - Loaded 0 messages into conversation history
+2025-08-08 22:43:53,987 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
+2025-08-08 22:43:53,987 - app.services.llm.workout_analysis - INFO - New conversation with workout data - sending proactive analysis
+2025-08-08 22:43:53,988 - app.services.chains.base_conversation_chain - INFO - 
 === Formatted Messages ===
-2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-08 22:43:53,988 - app.services.chains.base_conversation_chain - INFO - 
 Message 1 (SystemMessage):
-2025-08-07 10:02:42,070 - app.services.chains.base_conversation_chain - INFO - Content:  try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours.
-
-Current workout data context:
-Available workout data:
-{
-  "metadata": {
-    "total_workouts": 127,
-    "total_exercises": 913,
-    "date_range": {
-      "start": "2025-02-10T22:02:04.023375+00:00",
-      "end": "2025-08-06T19:16:58.829+00:00"
-    },
-    "exercises_included": [
-      "Air Squat",
-      "Back Extension",
-      "Barbell Back Squat",
-      "Barbell Bench Press",
-      "Barbell Shrug",
-      "Cable Fly",
-      "Cable Lateral Raise",
-      "Chin-Up",
-      "Dips",
-      "Dumbbell Row"
-    ],
-    "analysis_errors": []
-  },
-  "performance_summary": {
-    "strength_top_performers": [
-      {
-        "name": "Face Pull",
-        "change": 8.7,
-        "last_value": 35.94,
-        "first_value": 27.24,
-        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
-        "change_percent": 31.9
-      },
-      {
-        "name": "EZ Bar Curl",
-        "change": 10.35,
-        "last_value": 54.36,
-        "first_value": 44.01,
-        "definition_id": "9b15f600-cc20-463c-bc73-6e05ee8cc77e",
-        "change_percent": 23.5
-      },
-      {
-        "name": "Cable Lateral Raise",
-        "change": 0.63,
-        "last_value": 10.54,
-        "first_value": 9.91,
-        "definition_id": "194b066b-7df2-4b2d-9ac2-1daa2da019bb",
-        "change_percent": 6.4
-      }
-    ],
-    "volume_top_performers": [
-      {
-        "name": "Barbell Bench Press",
-        "change": 1027.5,
-        "last_value": 1350.0,
-        "first_value": 322.5,
-        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
-        "change_percent": 318.6
-      },
-      {
-        "name": "Face Pull",
-        "change": 691.0,
-        "last_value": 925.0,
-        "first_value": 234.0,
-        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
-        "change_percent": 295.3
-      },
-      {
-        "name": "Cable Fly",
-        "change": 270.0,
-        "last_value": 810.0,
-        "first_value": 540.0,
-        "definition_id": "af7ba166-f9c1-4909-871a-e3784ea9d83e",
-        "change_percent": 50.0
-      }
-    ],
-    "frequency_performers": []
-  },
-  "consistency_analysis": {
-    "avg_gap": 0.0,
-    "variance": null
-  },
-  "correlation_summary": {
-    "significant_count": 67,
-    "total_analyzed": 561,
-    "top_correlations": [
-      {
-        "outcome": "Face Pull strength",
-        "predictor": "Pull-Up strength",
-        "strength": "moderate",
-        "direction": "negative",
-        "lag_weeks": 0,
-        "summary": "Pull-Up strength predicts Face Pull strength decreases"
-      },
-      {
-        "outcome": "Face Pull strength",
-        "predictor": "Barbell Bench Press strength",
-        "strength": "moderate",
-        "direction": "negative",
-        "lag_weeks": 0,
-        "summary": "Barbell Bench Press strength predicts Face Pull strength decreases"
-      },
-      {
-        "outcome": "Face Pull strength",
-        "predictor": "Face Pull volume",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Face Pull volume predicts Face Pull strength increases"
-      },
-      {
-        "outcome": "Face Pull strength",
-        "predictor": "Barbell Bench Press volume",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 0,
-        "summary": "Barbell Bench Press volume predicts Face Pull strength increases"
-      },
-      {
-        "outcome": "Barbell Back Squat strength",
-        "predictor": "Leg Curl strength",
-        "strength": "strong",
-        "direction": "positive",
-        "lag_weeks": 2,
-        "summary": "Leg Curl strength predicts Barbell Back Squat strength increases after 2 weeks"
-      }
-    ],
-    "data_quality": [
-      "Insufficient weekly data for Air Squat strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Dumbbell Row strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Air Squat volume (1 weeks, need 4+)"
-    ]
-  },
-  "recent_workouts_sample": [
-    {
-      "date": "2025-03-28",
-      "name": "Week 4 - Workout B",
-      "notes": "[\"\"]"
-    },
-    {
-      "date": "2025-03-28",
-      "name": "Week 4 - Workout A",
-      "notes": "[\"\"]"
-    },
-    {
-      "date": "2025-04-07",
-      "name": "Monday chest workout",
-      "notes": "[\"\"]"
-    },
-    {
-      "date": "2025-02-28",
-      "name": "Saturday Back Workout",
-      "notes": "[\"Focus on proper pull-up form using lower trap engagement\",\"Working on weaker side for dumbbell rows\",\"Progressive volume on leg raises\"]"
-    },
-    {
-      "date": "2025-07-20",
-      "name": "Freestyle Workout",
-      "notes": null
-    }
-  ]
-}
-
-Analysis insights:
-
-CONSISTENCY METRICS:
-- Average gap between workouts: 0.0 days
-- Workout frequency variance: Not calculated
-
-TOP PERFORMERS:
-- Strength gains: Face Pull: +31.9%, EZ Bar Curl: +23.5%, Cable Lateral Raise: +6.4%
-- Volume increases: Barbell Bench Press: +318.6%, Face Pull: +295.3%, Cable Fly: +50.0%
-- Most frequent exercises: Frequency data not available
-
-CORRELATION INSIGHTS:
-67 significant correlations found from 561 exercise pairs analyzed
-• Pull-Up strength predicts Face Pull strength decreases
-• Barbell Bench Press strength predicts Face Pull strength decreases
-• Face Pull volume predicts Face Pull strength increases
-
-WORKOUT SUMMARY:
-- Total workouts analyzed: 127
-- Exercise variety: 21 different exercises
-
-2025-08-07 10:02:42,071 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hello
-2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - 
-Message 3 (HumanMessage):
-2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - Content: Hello
-2025-08-07 10:02:42,072 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (AIMessage):

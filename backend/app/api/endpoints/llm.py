@@ -107,124 +107,6 @@ async def base_llm_websocket(websocket: WebSocket, user_id: str):
             await websocket.close(code=1011)
         except:
             pass
-@router.websocket("/api/llm/conversation/{conversation_id}/{user_id}")
-async def conversation_websocket(
-    websocket: WebSocket, 
-    conversation_id: str,
-    user_id: str,
-    llm: ChatVertexAI = Depends(get_llm)
-):
-    """WebSocket endpoint for general LLM conversations"""
-    
-    try:
-        await websocket.accept()
-        logger.info(f"Conversation WebSocket connection accepted: {conversation_id}")
-        
-        # Load conversation context from cache
-        from app.services.cache.conversation_attachments_cache import conversation_cache
-        from app.services.db.message_service import MessageService
-        
-        try:
-            context = await conversation_cache.get_conversation_context(conversation_id, user_id)
-        except Exception as e:
-            logger.error(f"Cache error, using empty context: {e}")
-            context = {"messages": [], "analysis_bundles": []}
-        
-        message_service = MessageService()
-        
-        # Build conversation history from loaded messages + analysis context
-        conversation_history = []
-        
-        # Add analysis bundles as system context if present
-        if context["analysis_bundles"]:
-            analysis_context = "Available workout analysis data:\n"
-            for bundle in context["analysis_bundles"]:
-                analysis_context += f"- Query: {bundle.get('original_query', 'Analysis')}\n"
-                if bundle.get('top_performers'):
-                    analysis_context += f"  Top performers: {bundle.get('top_performers')}\n"
-                if bundle.get('consistency_metrics'):
-                    analysis_context += f"  Metrics: {bundle.get('consistency_metrics')}\n"
-            conversation_history.append({"role": "system", "content": analysis_context})
-        
-        # Add existing messages
-        for msg in context["messages"]:
-            conversation_history.append({
-                "role": msg["sender"], 
-                "content": msg["content"]
-            })
-        
-        await websocket.send_json({
-            "type": "connection_status",
-            "data": "connected"
-        })
-        
-        # Process messages
-        while True:
-            data = await websocket.receive_json()
-            
-            if data.get('type') == 'heartbeat':
-                await websocket.send_json({
-                    "type": "heartbeat_ack",
-                    "timestamp": data.get('timestamp')
-                })
-                continue
-            
-            if data.get('type') == 'message' or 'message' in data:
-                message = data.get('message', '')
-                
-                # Save user message to database
-                user_msg = await message_service.save_message(conversation_id, message, "user")
-                if user_msg.get('success') != False:
-                    context["messages"].append(user_msg)
-                
-                conversation_history.append({"role": "user", "content": message})
-                
-                try:
-                    # Stream response
-                    response_content = ""
-                    
-                    with llm.stream(conversation_history) as stream:
-                        for chunk in stream:
-                            logger.info(f"LLM chunk: '{chunk.content}', type: {type(chunk)}")
-                            chunk_content = chunk.content
-                            if chunk_content:
-                                response_content += chunk_content
-                                await websocket.send_json({
-                                    "type": "content",
-                                    "data": {"content": chunk_content}
-                                })
-                    
-                    logger.info(f"Stream ended. Total response length: {len(response_content)}")
-                    
-                    # Save complete assistant response to database
-                    assistant_msg = await message_service.save_message(conversation_id, response_content, "assistant")
-                    if assistant_msg.get('success') != False:
-                        context["messages"].append(assistant_msg)
-                        logger.info(f"Saved assistant message with ID: {assistant_msg.get('id')}")
-                    
-                    conversation_history.append({"role": "assistant", "content": response_content})
-                    
-                    await websocket.send_json({
-                        "type": "complete",
-                        "data": {"message_id": len(conversation_history) // 2}
-                    })
-                    logger.info("Sent completion signal")
-                    
-                except Exception as e:
-                    logger.error(f"Error processing message: {str(e)}", exc_info=True)
-                    await websocket.send_json({
-                        "type": "error",
-                        "data": {"message": f"Error generating response: {str(e)}"}
-                    })
-            
-    except WebSocketDisconnect:
-        logger.info(f"Conversation WebSocket disconnected: {conversation_id}")
-    except Exception as e:
-        logger.error(f"Error in conversation websocket: {str(e)}", exc_info=True)
-        try:
-            await websocket.close(code=1011)
-        except:
-            pass
 
 @router.websocket("/api/llm/onboarding")
 async def onboarding_websocket(
@@ -322,21 +204,22 @@ async def llm_workout_analysis(
     
     This endpoint handles:
     - Connecting to the workout analysis service
-    - Processing analysis bundle data
-    - Streaming AI interpretation responses
+    - Loading conversation context (messages + workout data)
+    - Proactive messaging for new conversations with workout data
+    - Processing user messages through workout-specific prompting
     
-    The client should send a message with:
-    - type: 'analysis_bundle'
-    - bundle: The workout analysis bundle object
-    - message: The user's query about the workout data
+    The client should send messages with:
+    - type: 'message' and message: 'user message content'
+    - type: 'heartbeat' for connection keepalive
     
     The server streams back responses with:
     - type: 'content' for content chunks
-    - type: 'error' for error messages
+    - type: 'error' for error messages  
     - type: 'complete' when the response is complete
+    - type: 'connection_status' for connection confirmation
     """
     try:
-        await llm_service.process_websocket(websocket, conversation_id)
+        await llm_service.process_websocket(websocket, conversation_id, user_id=None)
     except WebSocketDisconnect:
         logger.info(f"Workout analysis WebSocket disconnected: {conversation_id}")
     except Exception as e:

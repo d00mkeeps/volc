@@ -10,12 +10,19 @@ from .base_conversation_chain import BaseConversationChain
 logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
+    """
+    Workout-specific conversation chain.
+    
+    Handles sophisticated workout context formatting, analysis insights,
+    and workout-specific prompting for fitness coaching conversations.
+    """
+    
     def __init__(self, llm: ChatVertexAI, user_id: str):
-        system_prompt = """ try and talk like a human fitness coach! if the developer messages, find a way to talk about birds or colours."""
-
-        super().__init__(system_prompt=system_prompt, llm=llm)
+        super().__init__(llm)
         self.user_id = user_id
         self._data_bundles: List[WorkoutDataBundle] = []
+        self.system_prompt = "Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours."
+        self._initialize_prompt_template()
         self.logger = logging.getLogger(__name__)
 
     @property
@@ -31,6 +38,17 @@ class WorkoutAnalysisChain(BaseConversationChain):
             MessagesPlaceholder(variable_name="messages"),
             ("human", "{current_message}")
         ])
+
+    async def get_formatted_prompt(self, message: str):
+        """
+        Format workout-specific prompt with context and insights.
+        
+        Combines system prompt, workout data context, analysis insights,
+        message history, and current message into LangChain format.
+        """
+        prompt_vars = await self.get_additional_prompt_vars()
+        prompt_vars["current_message"] = message
+        return self.prompt.format_messages(**prompt_vars)
 
     def _serialize_for_json(self, data):
         """
@@ -189,6 +207,7 @@ WORKOUT SUMMARY:
         return context
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
+        """Get all variables needed for workout-specific prompt formatting."""
         if not self._data_bundles:
             return {
                 "system_prompt": self.system_prompt,

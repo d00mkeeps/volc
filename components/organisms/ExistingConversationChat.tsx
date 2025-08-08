@@ -19,6 +19,7 @@ export const ExistingConversationChat = ({
     (state) => state.setActiveConversation
   );
 
+  // Set active conversation on mount
   useEffect(() => {
     setActiveConversation(conversationId);
     return () => {
@@ -26,6 +27,8 @@ export const ExistingConversationChat = ({
     };
   }, [conversationId, setActiveConversation]);
 
+  // Load messages when conversation becomes active
+  // (useMessaging will auto-connect websocket)
   useEffect(() => {
     if (messaging.conversationId === conversationId) {
       messaging.loadMessages().catch(console.error);
@@ -48,6 +51,7 @@ export const ExistingConversationChat = ({
     onBack();
   }, [onBack, setActiveConversation]);
 
+  // Error state
   if (messaging.error) {
     return (
       <YStack flex={1} padding="$4" gap="$4">
@@ -65,7 +69,8 @@ export const ExistingConversationChat = ({
     );
   }
 
-  if (messaging.conversationId !== conversationId) {
+  // Loading state
+  if (messaging.conversationId !== conversationId || messaging.isLoading) {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center">
         <Text>Loading conversation...</Text>

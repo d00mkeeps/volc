@@ -282,41 +282,62 @@ export const useConversationStore = create<ConversationStoreState>(
         }
       },
 
-      // Delete a conversation
       deleteConversation: async (id) => {
+        // Optimistic update - remove immediately
+        const { conversations, conversationConfigs, activeConversationId } =
+          get();
+        const conversationToDelete = conversations.get(id);
+        const configToDelete = conversationConfigs.get(id);
+
+        set((state) => {
+          const newConversations = new Map(state.conversations);
+          newConversations.delete(id);
+
+          const newConfigs = new Map(state.conversationConfigs);
+          newConfigs.delete(id);
+
+          const newActiveId =
+            state.activeConversationId === id
+              ? null
+              : state.activeConversationId;
+
+          return {
+            conversations: newConversations,
+            conversationConfigs: newConfigs,
+            activeConversationId: newActiveId,
+            error: null,
+          };
+        });
+
         try {
-          set({ isLoading: true, error: null });
-
           await conversationService.deleteConversation(id);
-
-          set((state) => {
-            const newConversations = new Map(state.conversations);
-            newConversations.delete(id);
-
-            const newConfigs = new Map(state.conversationConfigs);
-            newConfigs.delete(id);
-
-            const newActiveId =
-              state.activeConversationId === id
-                ? null
-                : state.activeConversationId;
-
-            return {
-              conversations: newConversations,
-              conversationConfigs: newConfigs,
-              activeConversationId: newActiveId,
-              isLoading: false,
-            };
-          });
         } catch (error) {
           console.error(
             "[ConversationStore] Error deleting conversation:",
             error
           );
-          set({
-            isLoading: false,
-            error: error instanceof Error ? error : new Error(String(error)),
-          });
+
+          // Rollback on failure - restore the conversation
+          if (conversationToDelete) {
+            set((state) => {
+              const newConversations = new Map(state.conversations);
+              newConversations.set(id, conversationToDelete);
+
+              const newConfigs = new Map(state.conversationConfigs);
+              if (configToDelete) {
+                newConfigs.set(id, configToDelete);
+              }
+
+              return {
+                conversations: newConversations,
+                conversationConfigs: newConfigs,
+                activeConversationId: activeConversationId,
+                isLoading: false,
+                error:
+                  error instanceof Error ? error : new Error(String(error)),
+              };
+            });
+          }
           throw error;
         }
       },

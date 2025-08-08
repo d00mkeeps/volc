@@ -1,35 +1,34 @@
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native'
-import type { AuthButtonProps } from '@/types/auth'
+import { Button, Spinner, Text } from "tamagui";
+import type { AuthButtonProps } from "@/types/auth";
 
 export function AuthButton({ onPress, loading, title }: AuthButtonProps) {
   return (
-    <TouchableOpacity 
-      style={styles.button}
+    <Button
       onPress={onPress}
       disabled={loading}
+      backgroundColor="$primary"
+      borderRadius="$4"
+      marginVertical="$2"
+      borderWidth={2}
+      borderColor="$primary"
+      fontSize="$4"
+      fontWeight="600"
+      pressStyle={{
+        backgroundColor: "$primaryMuted",
+        borderColor: "$primaryMuted",
+      }}
+      disabledStyle={{
+        backgroundColor: "$primaryMuted",
+        opacity: 0.7,
+      }}
     >
       {loading ? (
-        <ActivityIndicator color="#fff" />
+        <Spinner color="#ffffff" />
       ) : (
-        <Text style={styles.buttonText}>{title}</Text>
+        <Text color="#ffffff" fontSize="$4" fontWeight="600">
+          {title}
+        </Text>
       )}
-    </TouchableOpacity>
-  )
+    </Button>
+  );
 }
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#1f281f',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 10,
-    borderWidth: 3,
-    borderColor: '#999',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  }
-})

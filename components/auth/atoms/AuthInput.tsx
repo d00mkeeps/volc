@@ -1,36 +1,31 @@
-import { TextInput, StyleSheet } from 'react-native'
-import type { AuthInputProps } from '@/types/auth'
+import { Input } from "tamagui";
+import type { AuthInputProps } from "@/types/auth";
 
 export function AuthInput({
   value,
   onChangeText,
   placeholder,
   secureTextEntry,
-  autoCapitalize = 'none',
-  keyboardType = 'default'
+  autoCapitalize = "none",
+  keyboardType = "default",
 }: AuthInputProps) {
   return (
-    <TextInput
-      style={styles.input}
+    <Input
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor="#666"
+      placeholderTextColor="$textMuted"
       secureTextEntry={secureTextEntry}
       autoCapitalize={autoCapitalize}
       keyboardType={keyboardType}
+      backgroundColor="$backgroundStrong"
+      borderRadius="$4"
+      padding="$3"
+      marginBottom="$3"
+      fontSize="$4"
+      borderWidth={1}
+      borderColor="$borderSoft"
+      color="$color"
     />
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: '#2a332a', // Slightly lighter than background
-    borderRadius: 20,
-    padding: 15,
-    marginBottom: 12,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#999',
-    color: '#fff',
-  }})

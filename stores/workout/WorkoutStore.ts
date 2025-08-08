@@ -175,24 +175,41 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     },
 
     deleteWorkout: async (workoutId: string) => {
+      // Optimistic update - remove immediately
+      const { workouts, currentWorkout } = get();
+      const workoutToDelete = workouts.find((w) => w.id === workoutId);
+
+      set((state) => ({
+        workouts: state.workouts.filter((w) => w.id !== workoutId),
+        currentWorkout:
+          state.currentWorkout?.id === workoutId ? null : state.currentWorkout,
+        error: null,
+      }));
+
       try {
-        set({ loading: true, error: null });
         await workoutService.deleteWorkout(workoutId);
-        set((state) => ({
-          workouts: state.workouts.filter((w) => w.id !== workoutId),
-          currentWorkout:
-            state.currentWorkout?.id === workoutId
-              ? null
-              : state.currentWorkout,
-        }));
       } catch (err) {
         console.error("[WorkoutStore] Error deleting workout:", err);
-        set({
-          error:
-            err instanceof Error ? err : new Error("Failed to delete workout"),
-        });
-      } finally {
-        set({ loading: false });
+
+        // Rollback on failure - restore the workout
+        if (workoutToDelete) {
+          set((state) => ({
+            workouts: [...state.workouts, workoutToDelete].sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime()
+            ),
+            currentWorkout:
+              currentWorkout?.id === workoutId
+                ? workoutToDelete
+                : state.currentWorkout,
+            error:
+              err instanceof Error
+                ? err
+                : new Error("Failed to delete workout"),
+          }));
+        }
+        throw err;
       }
     },
 
