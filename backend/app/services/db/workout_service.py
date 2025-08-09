@@ -494,13 +494,15 @@ class WorkoutService(BaseDBService):
             # Add conversationId in the expected format
             workout["conversationId"] = workout["conversation_id"]
 
+            await self.update_bicep_leaderboard(workout_id, user_id)
+
             logger.info(f"Workout creation complete for ID: {workout_id}")
             return workout
-
+        
         except Exception as e:
             logger.error(f"Error creating workout: {str(e)}")
             return await self.handle_error("create_workout", e)
-
+             
     async def update_workout(
         self, workout_id: str, workout_data: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -605,9 +607,87 @@ class WorkoutService(BaseDBService):
             for exercise in workout["workout_exercises"]:
                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
+
+            workout_user = workout_result.data[0].get("user_id") if workout_result.data else None
+            if workout_user:
+                await self.update_bicep_leaderboard(workout_id, workout_user)
+
+            logger.info(f"Successfully updated workout: {workout_id}")
+            return workout
+
             logger.info(f"Successfully updated workout: {workout_id}")
             return workout
 
         except Exception as e:
             logger.error(f"Error updating workout: {str(e)}")
             return await self.handle_error("update_workout", e)
+        
+    async def update_bicep_leaderboard(self, workout_id: str, user_id: str) -> None:
+        """
+        Check if workout contains bicep PRs and update leaderboard
+        """
+        try:
+            # Get workout with exercises and definitions
+            result = self.supabase.table("workout_exercises").select(
+                "*, workout_exercise_sets(*), exercise_definitions!inner(*)"
+            ).eq("workout_id", workout_id).execute()
+            
+            if not result.data:
+                return
+            
+            # Find bicep exercises
+            max_1rm = 0
+            best_exercise = None
+            
+            for exercise in result.data:
+                definition = exercise.get("exercise_definitions", {})
+                primary_muscles = definition.get("primary_muscles", [])
+                
+                if "biceps" not in primary_muscles:
+                    continue
+                
+                # Calculate 1RM for each set
+                for set_data in exercise.get("workout_exercise_sets", []):
+                    weight = set_data.get("weight")
+                    reps = set_data.get("reps")
+                    
+                    if weight and reps:
+                        from ...utils.one_rm_calc import OneRMCalculator
+                        one_rm = OneRMCalculator.calculate(weight, reps)
+                        
+                        if one_rm and one_rm > max_1rm:
+                            max_1rm = one_rm
+                            best_exercise = {
+                                "exercise_id": exercise["id"],
+                                "definition_id": exercise["definition_id"],
+                                "exercise_name": exercise["name"]
+                            }
+            
+            if not best_exercise:
+                return
+            
+            # Check current leaderboard entry
+            current = self.supabase.table("leaderboard_biceps").select("estimated_1rm").eq("user_id", user_id).execute()
+            
+            # Get workout date
+            workout_result = self.supabase.table("workouts").select("created_at").eq("id", workout_id).execute()
+            performed_at = workout_result.data[0]["created_at"] if workout_result.data else datetime.utcnow().isoformat()
+            
+            if not current.data or max_1rm > current.data[0]["estimated_1rm"]:
+                # Update or insert
+                entry = {
+                    "user_id": user_id,
+                    "workout_id": workout_id,
+                    "exercise_id": best_exercise["exercise_id"],
+                    "definition_id": best_exercise["definition_id"],
+                    "exercise_name": best_exercise["exercise_name"],
+                    "estimated_1rm": max_1rm,
+                    "performed_at": performed_at
+                }
+                
+                self.supabase.table("leaderboard_biceps").upsert(entry).execute()
+                logger.info(f"Updated bicep leaderboard for user {user_id}: {max_1rm} 1RM")
+        
+        except Exception as e:
+            logger.error(f"Error updating leaderboard: {e}")
+            # Don't fail the workout save if leaderboard update fails

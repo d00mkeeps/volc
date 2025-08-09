@@ -1,4 +1,4 @@
-// components/chat/atoms/InputArea.tsx
+import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
 import { XStack, Input, Button, Text } from "tamagui";
 import { Send } from "@tamagui/lucide-icons";
@@ -15,17 +15,22 @@ export const InputArea = ({
   onSendMessage,
 }: InputAreaProps) => {
   const [input, setInput] = useState("");
+  const [error, setError] = useState<string | undefined>();
 
   const handleSend = useCallback(() => {
+    const validation = WorkoutValidation.chatMessage(input);
+
+    if (!validation.isValid) {
+      setError(validation.error);
+      return;
+    }
+
     if (!disabled && input.trim()) {
       onSendMessage(input.trim());
       setInput("");
+      setError(undefined);
     }
   }, [disabled, input, onSendMessage]);
-
-  const handleSubmit = useCallback(() => {
-    handleSend();
-  }, [handleSend]);
 
   return (
     <XStack
@@ -38,19 +43,21 @@ export const InputArea = ({
       <Input
         flex={1}
         value={input}
-        onChangeText={setInput}
+        onChangeText={(text) => {
+          setInput(text);
+          if (error && text.length <= 240) setError(undefined);
+        }}
         placeholder={disabled ? "Please wait..." : placeholder}
         disabled={disabled}
         backgroundColor={disabled ? "$backgroundMuted" : "$backgroundSoft"}
-        borderColor="$borderSoft"
+        borderColor={error ? "$error" : "$borderSoft"}
         color="$color"
         placeholderTextColor="$textMuted"
-        onSubmitEditing={handleSubmit}
+        onSubmitEditing={handleSend}
         returnKeyType="send"
         multiline={false}
-        maxLength={1000}
+        maxLength={240}
       />
-
       <Button
         size="$3"
         backgroundColor="$primary"

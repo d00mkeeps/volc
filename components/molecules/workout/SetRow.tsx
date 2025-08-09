@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
+import DurationInput from "@/components/atoms/DurationInput";
 
 interface SetRowProps {
   set: WorkoutExerciseSet;
@@ -101,10 +102,8 @@ export default function SetRow({
           />
         )}
         {showDuration && (
-          <MetricInput
-            type="duration"
+          <DurationInput
             value={set.duration}
-            isMetric={!isImperial}
             onChange={(value) => handleUpdate("duration", value)}
             isActive={isActive}
           />

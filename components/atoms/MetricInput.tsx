@@ -1,10 +1,13 @@
+// /components/atoms/MetricInput.tsx
+
 import React, { useState } from "react";
 import { XStack, Stack, Input, Text } from "tamagui";
 import * as Haptics from "expo-haptics";
+import { WorkoutValidation } from "@/utils/validation";
 
 interface MetricInputProps {
   type: "weight" | "reps" | "distance" | "duration";
-  value: number | string | null | undefined; // Add null here
+  value: number | string | null | undefined;
   unit?: string;
   isMetric: boolean;
   onChange: (value: number | undefined) => void;
@@ -21,6 +24,7 @@ export default function MetricInput({
 }: MetricInputProps) {
   const [localValue, setLocalValue] = useState(value?.toString() || "");
   const [isFocused, setIsFocused] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
   const getIncrement = () => {
     switch (type) {
@@ -30,8 +34,6 @@ export default function MetricInput({
         return 1;
       case "distance":
         return isMetric ? 0.5 : 0.25;
-      case "duration":
-        return 30; // seconds
       default:
         return 1;
     }
@@ -50,13 +52,31 @@ export default function MetricInput({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  const formatPlaceholder = () => {
-    return type === "duration" ? "0:00" : "0";
+  const validateAndUpdate = (val: string) => {
+    const sanitized = WorkoutValidation.sanitizeNumeric(val);
+    const numValue = parseFloat(sanitized);
+
+    let validation: { isValid: boolean; error?: string } = { isValid: true }; // Changed this line
+
+    switch (type) {
+      case "weight":
+        validation = WorkoutValidation.weight(numValue, isMetric);
+        break;
+      case "reps":
+        validation = WorkoutValidation.reps(numValue);
+        break;
+      case "distance":
+        validation = WorkoutValidation.distance(numValue, isMetric);
+        break;
+    }
+
+    setError(validation.error);
+    return validation.isValid ? numValue : undefined;
   };
 
   return (
     <XStack flex={1} gap="$1" alignItems="center">
-      {isFocused && (
+      {isFocused && type !== "duration" && (
         <Stack
           width={30}
           height={30}
@@ -76,30 +96,30 @@ export default function MetricInput({
         flex={1}
         size="$3"
         value={localValue}
-        onChangeText={setLocalValue}
+        onChangeText={(text) => {
+          const sanitized = WorkoutValidation.sanitizeNumeric(text);
+          setLocalValue(sanitized);
+        }}
         onFocus={() => setIsFocused(true)}
         onBlur={() => {
           setIsFocused(false);
-          if (type === "duration") {
-            // Duration stays as string for now
-            onChange(localValue as any);
-          } else {
-            onChange(parseFloat(localValue) || undefined);
-          }
+          const validated = validateAndUpdate(localValue);
+          onChange(validated);
         }}
         selectTextOnFocus
-        placeholder={formatPlaceholder()}
+        placeholder="0"
         keyboardType="numeric"
         textAlign="center"
         backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+        borderColor={
+          error ? "$error" : isActive ? "$borderSoft" : "$borderMuted"
+        }
         color={isActive ? "$color" : "$textMuted"}
         editable={isActive}
         focusStyle={{ borderColor: "$primary" }}
-        maxWidth={type === "duration" ? 80 : undefined}
       />
 
-      {isFocused && (
+      {isFocused && type !== "duration" && (
         <Stack
           width={30}
           height={30}

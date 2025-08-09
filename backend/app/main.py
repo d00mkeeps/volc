@@ -5,6 +5,7 @@ from app.api.endpoints.llm import router as llm_router
 from app.api.endpoints.db import router as db_router
 from app.api.endpoints.auth import router as auth_router 
 from app.api.endpoints.workout_analysis import router as workout_analysis_router
+from app.api.endpoints.leaderboard import router as leaderboard_router
 from app.api.endpoints.dashboard import router as dashboard_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import setup_logging
@@ -73,6 +74,8 @@ async def general_exception_handler(request: Request, exc: Exception):
 app.include_router(llm_router, tags=["llm"])
 app.include_router(db_router, tags=["db"])
 app.include_router(auth_router, tags=["auth"])
+app.include_router(leaderboard_router, tags=["leaderboard"])
+
 app.include_router(workout_analysis_router, tags=["workout-analysis"])
 app.include_router(dashboard_router, tags=["dashboard"])
 
