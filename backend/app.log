@@ -1,50 +1,71 @@
-2025-08-08 22:44:04,228 - app.services.chains.base_conversation_chain - INFO - Chunk: content=':** These exercises might be building supporting muscles that directly contribute to your Face Pull performance.
-3.  **Improved Form/Mind-Muscle Connection:** As you get more experienced, your ability to engage the right muscles improves across the board.
-
-This is a great reminder that your body works as a whole system! Keep', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-08 22:44:04,628 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' pushing those other lifts, and your Face Pulls will likely continue to benefit.
-
-### **A Little Note on Data**
-
-Just a heads-up, for a few exercises like the Barbell Skull Crusher and Straight Bar Triceps Pushdown, we'd love to see a bit more weekly data (4', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-08 22:44:05,144 - app.services.chains.base_conversation_chain - INFO - Chunk: content='+ weeks) to get an even clearer picture of their trends. But don't worry, the insights we have are already super valuable!
-
-### **What's Next?**
-
-You're on an amazing trajectory! Keep doing what you're doing, especially with those Skull Crushers, Preacher Curls,', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-08 22:44:05,656 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' and Back Squats. Consider how you can leverage those correlations – maybe a little extra focus on your Leg Curls, Pull-Ups, or Bench Press could give your Face Pulls an extra boost!
-
-Keep up the incredible work! You're building a stronger, more powerful you, one workout at a time! Let', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-08 22:44:05,674 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''s keep that momentum going!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-08 22:44:05,678 - app.services.db.message_service - INFO - Saving assistant message to conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,882 - app.services.db.message_service - INFO - Message saved with ID: 2e38d6a1-f506-411b-9c9f-edf040d55191
-2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,882 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (check took 0.00s)
-2025-08-08 22:44:05,882 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,985 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,985 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (expires in 30 min)
-2025-08-08 22:44:05,985 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.10s - 1 messages, 1 bundles
-2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 🔄 UNIFIED SERVICE: Loading context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:05,986 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (check took 0.00s)
-2025-08-08 22:44:05,986 - app.core.utils.conversation_attachments - INFO - Loading conversation context for: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:06,090 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1 (expires in 30 min)
-2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - ✅ UNIFIED SERVICE: Context loaded successfully in 0.10s - 1 messages, 1 bundles
-2025-08-08 22:44:06,091 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:44:06,091 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation b8e2e82c-9e9e-4106-8636-b81b1a84bed1
-2025-08-08 22:51:17,289 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-08-09 01:33:52,220 - app.services.db.workout_service - INFO - Updating workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:33:52,433 - app.services.db.workout_service - INFO - Successfully updated workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:33:52,434 - app.main - INFO - Response status: 200
+2025-08-09 01:34:19,746 - app.main - INFO - Request: GET /api/dashboard
+2025-08-09 01:34:19,749 - app.main - INFO - Request: GET /db/user-profile
+2025-08-09 01:34:19,895 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:19,895 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,079 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,081 - app.main - INFO - Response status: 200
+2025-08-09 01:34:20,082 - app.main - INFO - Response status: 200
+2025-08-09 01:34:20,287 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-09 01:34:20,393 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,393 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,502 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,502 - app.api.endpoints.db - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:20,503 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-09 01:34:20,615 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-09 01:34:20,616 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-09 01:34:20,723 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-09 01:34:20,738 - app.main - INFO - Response status: 200
+2025-08-09 01:34:20,738 - app.main - INFO - Response status: 200
+2025-08-09 01:34:34,805 - app.main - INFO - Request: PUT /db/workouts/11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:34,987 - app.api.endpoints.db - INFO - API request to update workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:34,987 - app.services.db.workout_service - INFO - Getting workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:35,128 - app.services.db.workout_service - INFO - Successfully retrieved workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:35,128 - app.services.db.workout_service - INFO - Updating workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:35,271 - app.services.db.workout_service - INFO - Successfully updated workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:35,273 - app.main - INFO - Response status: 200
+2025-08-09 01:34:39,966 - app.main - INFO - Request: GET /api/dashboard
+2025-08-09 01:34:39,971 - app.main - INFO - Request: GET /db/user-profile
+2025-08-09 01:34:39,972 - app.main - INFO - Response status: 200
+2025-08-09 01:34:40,084 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,084 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,152 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,153 - app.main - INFO - Response status: 200
+2025-08-09 01:34:40,334 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-09 01:34:40,436 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,437 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,555 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,556 - app.api.endpoints.db - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:34:40,557 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-09 01:34:40,657 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-09 01:34:40,657 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-09 01:34:40,755 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-09 01:34:40,765 - app.main - INFO - Response status: 200
+2025-08-09 01:34:40,765 - app.main - INFO - Response status: 200
+2025-08-09 01:34:51,300 - app.main - INFO - Request: DELETE /db/workouts/11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:51,491 - app.api.endpoints.db - INFO - API request to delete workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:51,491 - app.services.db.workout_service - INFO - Getting workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:51,638 - app.services.db.workout_service - INFO - Successfully retrieved workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:51,638 - app.services.db.workout_service - INFO - Deleting workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:52,078 - app.services.db.workout_service - INFO - Successfully deleted workout: 11111111-1111-4111-1111-111111111111
+2025-08-09 01:34:52,079 - app.main - INFO - Response status: 200
+2025-08-09 01:57:56,291 - app.main - INFO - Request: GET /api/dashboard
+2025-08-09 01:57:56,304 - app.main - INFO - Request: GET /db/user-profile
+2025-08-09 01:57:56,667 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:56,667 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:56,854 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:56,855 - app.main - INFO - Response status: 200
+2025-08-09 01:57:56,857 - app.main - INFO - Response status: 200
+2025-08-09 01:57:57,022 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-09 01:57:57,128 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:57,128 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:57,226 - app.services.db.workout_service - INFO - Retrieved 1 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:57,227 - app.api.endpoints.db - INFO - Retrieved 1 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-09 01:57:57,227 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-09 01:57:57,292 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-09 01:57:57,292 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-09 01:57:57,424 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-09 01:57:57,433 - app.main - INFO - Response status: 200
+2025-08-09 01:57:57,434 - app.main - INFO - Response status: 200
