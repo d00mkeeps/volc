@@ -1,60 +1,6 @@
-2025-08-10 15:38:43,218 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:43,232 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:38:43,562 - app.services.db.user_profile_service - INFO - No profile found for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:43,563 - app.main - INFO - Response status: 200
-2025-08-10 15:38:43,564 - app.main - INFO - Response status: 200
-2025-08-10 15:38:43,730 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 15:38:43,846 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 15:38:43,846 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 15:38:43,857 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:38:44,113 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 15:38:44,175 - app.main - INFO - Response status: 200
-2025-08-10 15:38:44,275 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 15:38:44,602 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:44,602 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:44,612 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:38:44,836 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:44,836 - app.api.endpoints.db - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:38:44,837 - app.main - INFO - Response status: 200
-2025-08-10 15:42:57,203 - app.main - INFO - Request: GET /api/dashboard
-2025-08-10 15:42:57,211 - app.main - INFO - Request: GET /db/user-profile
-2025-08-10 15:42:57,684 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:57,685 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:57,694 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:42:57,951 - app.services.db.user_profile_service - INFO - No profile found for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:57,952 - app.main - INFO - Response status: 200
-2025-08-10 15:42:57,953 - app.main - INFO - Response status: 200
-2025-08-10 15:42:58,104 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 15:42:58,169 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 15:42:58,170 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 15:42:58,178 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:42:58,311 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 15:42:58,319 - app.main - INFO - Response status: 200
-2025-08-10 15:42:58,390 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 15:42:58,571 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:58,571 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:58,582 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 15:42:58,707 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:58,707 - app.api.endpoints.db - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 15:42:58,708 - app.main - INFO - Response status: 200
-2025-08-10 16:07:14,486 - app.main - INFO - Request: GET /api/dashboard
-2025-08-10 16:07:14,493 - app.main - INFO - Request: GET /db/user-profile
-2025-08-10 16:07:15,370 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:15,370 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:15,400 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 16:07:15,854 - app.services.db.user_profile_service - INFO - No profile found for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:15,856 - app.main - INFO - Response status: 200
-2025-08-10 16:07:15,860 - app.main - INFO - Response status: 200
-2025-08-10 16:07:16,031 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 16:07:16,174 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 16:07:16,174 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 16:07:16,182 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 16:07:16,975 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 16:07:17,003 - app.main - INFO - Response status: 200
-2025-08-10 16:07:22,874 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 16:07:23,187 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:23,187 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:23,202 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
-2025-08-10 16:07:23,394 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:23,394 - app.api.endpoints.db - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 16:07:23,394 - app.main - INFO - Response status: 200
+2025-08-10 18:23:59,491 - app.main - INFO - Response status: 200
+2025-08-10 18:23:59,495 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-10 18:24:00,026 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-10 18:24:00,041 - app.main - INFO - Response status: 200
+2025-08-10 18:24:25,018 - app.main - INFO - Request: GET /api/leaderboard/biceps
+2025-08-10 18:24:25,544 - app.main - INFO - Response status: 200

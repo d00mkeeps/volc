@@ -1,147 +1,69 @@
+# backend/app/services/db/conversation_service.py
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
 
 logger = logging.getLogger(__name__)
 
 class ConversationService(BaseDBService):
-    """
-    Service for handling conversation operations in the database
-    """
+    """Service for handling conversation operations"""
     
-    def __init__(self, jwt_token: Optional[str] = None):
-        super().__init__(jwt_token)
-    
-    async def create_conversation(self, user_id: str, title: str, config_name: str) -> Dict[str, Any]:
-        """
-        Create a new, empty conversation
-        """
+    async def create_conversation(
+        self,
+        title: str,
+        config_name: str,
+        user,
+        jwt_token: str
+    ) -> Dict[str, Any]:
+        """Create a new conversation"""
         try:
-            logger.info(f"Creating empty conversation with title: {title} for user: {user_id}")
+            logger.info(f"Creating conversation for user: {user.id}")
             
-            # Direct insert into conversations table
-            result = self.supabase.table("conversations").insert({
-                "user_id": user_id,
+            # Use user context for RLS
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("conversations").insert({
+                "user_id": user.id,
                 "title": title,
                 "config_name": config_name,
                 "status": "active"
             }).execute()
             
-            if not hasattr(result, 'data') or not result.data:
-                raise Exception("Failed to create conversation: No data returned")
+            if not result.data:
+                raise Exception("Failed to create conversation")
             
-            conversation = result.data[0]
-            logger.info(f"Empty conversation created with ID: {conversation['id']}")
-            return conversation
+            # Optional: Log to admin table
+            admin_client = self.get_admin_client()
+            admin_client.table("operation_logs").insert({
+                "operation": "create_conversation",
+                "user_id": user.id,
+                "conversation_id": result.data[0]["id"]
+            }).execute()
+            
+            return await self.format_response(result.data[0])
             
         except Exception as e:
-            logger.error(f"Error creating empty conversation: {str(e)}")
             return await self.handle_error("create_conversation", e)
     
-    async def create_onboarding_conversation(self, user_id: str, session_id: str, config_name: str) -> Dict[str, Any]:
-        """
-        Create an onboarding conversation with a specific ID
-        """
+    async def get_user_conversations(
+        self,
+        user,
+        jwt_token: str
+    ) -> Dict[str, Any]:
+        """Get all conversations for authenticated user"""
         try:
-            logger.info(f"Creating onboarding conversation for user: {user_id}")
-            
-            # Direct insert with specified ID
-            result = self.supabase.table("conversations") \
-                .insert({
-                    "id": session_id,
-                    "user_id": user_id,
-                    "title": "Onboarding Session",
-                    "config_name": config_name,
-                    "status": "active"
-                }) \
-                .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to create onboarding conversation: {result.error.message}")
-                
-            if not result.data:
-                raise Exception("Failed to create onboarding conversation")
-                
-            logger.info(f"Onboarding conversation created with ID: {session_id}")
-            return result.data[0]
-            
-        except Exception as e:
-            logger.error(f"Error creating onboarding conversation: {str(e)}")
-            return await self.handle_error("create_onboarding_conversation", e)
-    
-    async def get_conversation(self, conversation_id: str) -> Dict[str, Any]:
-        """
-        Get a conversation by ID
-        """
-        try:
-            logger.info(f"Getting conversation: {conversation_id}")
-            
-            # RLS handles user access control
-            result = self.supabase.table("conversations") \
+            # Use user context - RLS will filter to user's conversations
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("conversations") \
                 .select("*") \
-                .eq("id", conversation_id) \
-                .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to fetch conversation: {result.error.message}")
-                
-            if not result.data or len(result.data) == 0:
-                raise Exception(f"No conversation found with ID: {conversation_id}")
-                
-            logger.info(f"Retrieved conversation: {conversation_id}")
-            return result.data[0]
-            
-        except Exception as e:
-            logger.error(f"Error getting conversation: {str(e)}")
-            return await self.handle_error("get_conversation", e)
-    
-    async def get_user_conversations(self, user_id: str) -> List[Dict[str, Any]]:
-        """
-        Get all active conversations for a user
-        """
-        try:
-            logger.info(f"Getting active conversations for user: {user_id}") 
-            
-            # RLS handles user filtering, but we keep user_id for business logic validation
-            result = self.supabase.table("conversations") \
-                .select("*") \
-                .eq("user_id", user_id) \
                 .eq("status", "active") \
                 .neq("config_name", "onboarding") \
                 .order("updated_at", desc=True) \
                 .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to fetch conversations: {result.error.message}")
-                
-            conversations = result.data or []
             
-            logger.info(f"Retrieved {len(conversations)} active conversations for user: {user_id}")
-            return conversations
+            return await self.format_response(result.data or [])
             
         except Exception as e:
-            logger.error(f"Error getting user conversations: {str(e)}")
             return await self.handle_error("get_user_conversations", e)
-    
-    async def delete_conversation(self, conversation_id: str) -> Dict[str, Any]:
-        """
-        Soft delete a conversation by setting status to 'deleted'
-        """
-        try:
-            logger.info(f"Deleting conversation: {conversation_id}")
-            
-            # RLS handles user access control
-            result = self.supabase.table("conversations") \
-                .update({"status": "deleted"}) \
-                .eq("id", conversation_id) \
-                .execute()
-                
-            if hasattr(result, 'error') and result.error:
-                raise Exception(f"Failed to delete conversation: {result.error.message}")
-                
-            logger.info(f"Successfully deleted conversation: {conversation_id}")
-            return {"success": True, "id": conversation_id}
-            
-        except Exception as e:
-            logger.error(f"Error deleting conversation: {str(e)}")
-            return await self.handle_error("delete_conversation", e)
+
+# Create service instance
+conversation_service = ConversationService()

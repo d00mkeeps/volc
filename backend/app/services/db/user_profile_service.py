@@ -1,5 +1,5 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -19,9 +19,6 @@ class UserProfileService(BaseDBService):
     Service for handling user profile operations in the database
     """
     
-    def __init__(self, jwt_token: Optional[str] = None):
-        super().__init__(jwt_token)
-    
     def map_age_group_to_number(self, age_group: str) -> int:
         """
         Map an age group string to its corresponding number value
@@ -31,7 +28,7 @@ class UserProfileService(BaseDBService):
         
         return AGE_GROUP_MAP[age_group]
     
-    async def save_user_profile(self, user_id: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def save_user_profile(self, user_id: str, profile_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
         Save or update a user's profile information
         """
@@ -57,7 +54,8 @@ class UserProfileService(BaseDBService):
                     # We'll continue without the age group rather than failing the entire operation
             
             # Update the user profile - RLS handles user filtering
-            result = self.supabase.table("user_profiles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("user_profiles") \
                 .update(user_profile) \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
@@ -69,7 +67,7 @@ class UserProfileService(BaseDBService):
                 # Add the user ID to the profile data for insert (business logic requirement)
                 user_profile["auth_user_uuid"] = user_id
                 
-                result = self.supabase.table("user_profiles") \
+                result = user_client.table("user_profiles") \
                     .insert(user_profile) \
                     .execute()
                     
@@ -77,7 +75,7 @@ class UserProfileService(BaseDBService):
                     raise Exception("Failed to create user profile: No data returned")
             
             # Fetch the updated profile - RLS handles user filtering
-            profile_result = self.supabase.table("user_profiles") \
+            profile_result = user_client.table("user_profiles") \
                 .select("*") \
                 .execute()
                 
@@ -85,13 +83,13 @@ class UserProfileService(BaseDBService):
                 raise Exception("Failed to fetch updated user profile")
                 
             logger.info(f"Successfully saved profile for user: {user_id}")
-            return profile_result.data[0]
+            return await self.format_response(profile_result.data[0])
             
         except Exception as e:
             logger.error(f"Error saving user profile: {str(e)}")
             return await self.handle_error("save_user_profile", e)
     
-    async def get_user_profile(self, user_id: str) -> Dict[str, Any]:
+    async def get_user_profile(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Get a user's profile information
         """
@@ -99,16 +97,17 @@ class UserProfileService(BaseDBService):
             logger.info(f"Getting profile for user: {user_id}")
             
             # RLS handles user filtering - no need to filter by auth_user_uuid
-            result = self.supabase.table("user_profiles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("user_profiles") \
                 .select("*") \
                 .execute()
                 
             if not hasattr(result, 'data') or not result.data or len(result.data) == 0:
                 logger.info(f"No profile found for user: {user_id}")
-                return None
+                return await self.format_response(None)
                 
             logger.info(f"Successfully retrieved profile for user: {user_id}")
-            return result.data[0]
+            return await self.format_response(result.data[0])
             
         except Exception as e:
             logger.error(f"Error getting user profile: {str(e)}")

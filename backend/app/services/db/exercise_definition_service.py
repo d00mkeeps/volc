@@ -1,5 +1,5 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -9,17 +9,15 @@ class ExerciseDefinitionService(BaseDBService):
     Service for handling exercise definition operations in the database
     """
     
-    def __init__(self, jwt_token: Optional[str] = None):
-        super().__init__(jwt_token)
-    
-    async def get_all_exercise_definitions(self) -> List[Dict[str, Any]]:
+    async def get_all_exercise_definitions(self, jwt_token: str) -> Dict[str, Any]:
         """
         Get all exercise definitions ordered by standard_name
         """
         try:
             logger.info("Fetching all exercise definitions")
             
-            result = self.supabase.table("exercise_definitions") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("exercise_definitions") \
                 .select("*") \
                 .order("standard_name") \
                 .execute()
@@ -29,13 +27,13 @@ class ExerciseDefinitionService(BaseDBService):
                 
             definitions = result.data or []
             logger.info(f"Fetched {len(definitions)} exercise definitions")
-            return definitions
+            return await self.format_response(definitions)
             
         except Exception as e:
             logger.error(f"Error getting exercise definitions: {str(e)}")
             return await self.handle_error("get_all_exercise_definitions", e)
-    
-    async def create_exercise_definition(self, exercise_data: Dict[str, Any]) -> Dict[str, Any]:
+            
+    async def create_exercise_definition(self, exercise_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
         Create a new exercise definition
         """
@@ -50,7 +48,8 @@ class ExerciseDefinitionService(BaseDBService):
             if 'updated_at' in exercise_data:
                 del exercise_data['updated_at']
                 
-            result = self.supabase.table("exercise_definitions") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("exercise_definitions") \
                 .insert(exercise_data) \
                 .execute()
                 
@@ -62,20 +61,21 @@ class ExerciseDefinitionService(BaseDBService):
                 
             created_definition = result.data[0]
             logger.info(f"Exercise definition created with ID: {created_definition.get('id')}")
-            return created_definition
+            return await self.format_response(created_definition)
             
         except Exception as e:
             logger.error(f"Error creating exercise definition: {str(e)}")
             return await self.handle_error("create_exercise_definition", e)
-    
-    async def get_exercise_definition_by_id(self, definition_id: str) -> Dict[str, Any]:
+            
+    async def get_exercise_definition_by_id(self, definition_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Get an exercise definition by ID
         """
         try:
             logger.info(f"Getting exercise definition: {definition_id}")
             
-            result = self.supabase.table("exercise_definitions") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("exercise_definitions") \
                 .select("*") \
                 .eq("id", definition_id) \
                 .execute()
@@ -88,7 +88,7 @@ class ExerciseDefinitionService(BaseDBService):
                 
             definition = result.data[0]
             logger.info(f"Retrieved exercise definition: {definition.get('standard_name')}")
-            return definition
+            return await self.format_response(definition)
             
         except Exception as e:
             logger.error(f"Error getting exercise definition: {str(e)}")

@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
 from typing import Dict, Any
-from app.core.supabase.auth import get_current_user
-from app.core.utils.jwt_utils import extract_jwt_from_request
+from app.core.supabase.auth import get_current_user, get_jwt_token
 import logging
+
+# Import service instances instead of classes
 from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
-from app.services.db.conversation_service import ConversationService
+from app.services.db.conversation_service import conversation_service
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
 from app.services.db.user_profile_service import UserProfileService
 from app.services.db.message_service import MessageService
@@ -13,28 +14,40 @@ from app.services.db.message_service import MessageService
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/db")
 
+analysis_bundle_service = AnalysisBundleService()
+workout_service = WorkoutService()
+exercise_definition_service = ExerciseDefinitionService()
+user_profile_service = UserProfileService()
+message_service = MessageService()
+
 @router.get("/health")
 async def health_check():
-    """
-    Basic health check endpoint to verify the API is running
-    """
+    """Basic health check endpoint to verify the API is running"""
     return {"status": "ok", "service": "db-api"}    
 
+@router.get("/exercise-definitions")
+async def get_exercise_definitions(
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get all exercise definitions"""
+    try:
+        result = await exercise_definition_service.get_all_exercise_definitions(jwt_token)
+        return result.get("data", []) if result.get("success") else []
+    except Exception as e:
+        logger.error(f"Error getting exercise definitions: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
 @router.get("/workouts/templates")
 async def get_templates(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get all workout templates for a user
-    """
+    """Get all workout templates for a user"""
     try:
         logger.info(f"API request to get workout templates for user: {user.id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        result = await workout_service.get_templates(user.id)
-        
+        result = await workout_service.get_templates(user, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error getting templates: {str(e)}")
@@ -46,47 +59,23 @@ async def get_templates(
 @router.get("/analysis-bundles")
 async def get_analysis_bundles(
     conversation_id: str, 
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get all analysis bundles for a conversation
-    """
+    """Get all analysis bundles for a conversation"""
     try:
         logger.info(f"API request to get analysis bundles for conversation: {conversation_id}")
+        result = await analysis_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
         
-        jwt_token = extract_jwt_from_request(request)
-        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
-        bundles = await analysis_bundle_service.get_bundles_by_conversation(user.id, conversation_id)
-        
-        logger.info(f"Retrieved {len(bundles)} analysis bundles for conversation: {conversation_id}")
-        return bundles
+        if result.get("success"):
+            bundles = result.get("data", [])
+            logger.info(f"Retrieved {len(bundles)} analysis bundles for conversation: {conversation_id}")
+            return bundles
+        else:
+            raise Exception(result.get("error", "Unknown error"))
+            
     except Exception as e:
         logger.error(f"Error getting analysis bundles: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.post("/analysis-bundles")
-async def save_analysis_bundle(
-    bundle: Dict[str, Any],
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Save an analysis bundle
-    """
-    try:
-        logger.info(f"API request to save analysis bundle for conversation: {bundle.get('conversationId')}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
-        result = await analysis_bundle_service.save_analysis_bundle(user.id, bundle)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error saving analysis bundle: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
@@ -95,19 +84,13 @@ async def save_analysis_bundle(
 @router.delete("/analysis-bundles/{bundle_id}")
 async def delete_analysis_bundle(
     bundle_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Delete analysis bundle
-    """
+    """Delete analysis bundle"""
     try:
         logger.info(f"API request to delete analysis bundle: {bundle_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
-        result = await analysis_bundle_service.delete_analysis_bundle(user.id, bundle_id)
-        
+        result = await analysis_bundle_service.delete_analysis_bundle(bundle_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error deleting analysis bundle: {str(e)}")
@@ -119,19 +102,13 @@ async def delete_analysis_bundle(
 @router.delete("/analysis-bundles/conversation/{conversation_id}")
 async def delete_conversation_bundles(
     conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Delete all analysis bundles for a conversation
-    """
+    """Delete all analysis bundles for a conversation"""
     try:
         logger.info(f"API request to delete all analysis bundles for conversation: {conversation_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
-        result = await analysis_bundle_service.delete_conversation_bundles(user.id, conversation_id)
-        
+        result = await analysis_bundle_service.delete_conversation_bundles(conversation_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error deleting conversation bundles: {str(e)}")
@@ -143,19 +120,13 @@ async def delete_conversation_bundles(
 @router.post("/workouts")
 async def create_workout(
     workout: Dict[str, Any],
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Create a new workout
-    """
+    """Create a new workout"""
     try:
         logger.info(f"API request to create workout: {workout.get('name')}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        result = await workout_service.create_workout(user.id, workout)
-        
+        result = await workout_service.create_workout(user.id, workout, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error creating workout: {str(e)}")
@@ -166,21 +137,23 @@ async def create_workout(
 
 @router.get("/workouts/user")
 async def get_user_workouts(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get all workouts for a user (not filtered by conversation)
-    """
+    """Get all workouts for a user (not filtered by conversation)"""
     try:
         logger.info(f"API request to get all workouts for user: {user.id}")
+        result = await workout_service.get_user_workouts(user, jwt_token)
         
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        result = await workout_service.get_user_workouts(user.id)
-        
-        logger.info(f"Retrieved {len(result)} workouts for user: {user.id}")
-        return result
+        if isinstance(result, list):
+            logger.info(f"Retrieved {len(result)} workouts for user: {user.id}")
+            return result
+        else:
+            # Handle error response format
+            if result.get("success") == False:
+                raise Exception(result.get("error", "Unknown error"))
+            return result.get("data", [])
+            
     except Exception as e:
         logger.error(f"Error getting user workouts: {str(e)}")
         raise HTTPException(
@@ -191,19 +164,13 @@ async def get_user_workouts(
 @router.get("/workouts/{workout_id}")
 async def get_workout(
     workout_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get a workout by ID
-    """
+    """Get a workout by ID"""
     try:
         logger.info(f"API request to get workout: {workout_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        result = await workout_service.get_workout(workout_id)
-        
+        result = await workout_service.get_workout(workout_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error getting workout: {str(e)}")
@@ -212,47 +179,17 @@ async def get_workout(
             detail=str(e)
         )
 
-@router.post("/workouts/template")
-async def save_workout_as_template(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user),
-    workout: Dict[str, Any] = Body(...),
-):
-    """
-    Save a workout as a template
-    """
-    try:
-        logger.info(f"API request to save workout as template: {workout.get('id')}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        result = await workout_service.save_as_template(user.id, workout)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error saving workout as template: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-    
 @router.put("/workouts/{workout_id}")
 async def update_workout(
     workout_id: str,
-    request: Request,
     workout: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Update an existing workout
-    """
+    """Update an existing workout"""
     try:
         logger.info(f"API request to update workout: {workout_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        
-        result = await workout_service.update_workout(workout_id, workout)
+        result = await workout_service.update_workout(workout_id, workout, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error updating workout: {str(e)}")
@@ -264,20 +201,13 @@ async def update_workout(
 @router.delete("/workouts/{workout_id}")
 async def delete_workout(
     workout_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Delete a workout
-    """
+    """Delete a workout"""
     try:
         logger.info(f"API request to delete workout: {workout_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        
-        result = await workout_service.delete_workout(workout_id)
-        
+        result = await workout_service.delete_workout(workout_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error deleting workout: {str(e)}")
@@ -289,20 +219,13 @@ async def delete_workout(
 @router.put("/workouts/template/{template_id}")
 async def update_template_usage(
     template_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Update the used_as_template timestamp for a workout
-    """
+    """Update the used_as_template timestamp for a workout"""
     try:
         logger.info(f"API request to update template usage for workout: {template_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        workout_service = WorkoutService(jwt_token=jwt_token)
-        
-        result = await workout_service.update_template_usage(template_id)
-        
+        result = await workout_service.update_template_usage(template_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error updating template usage: {str(e)}")
@@ -313,24 +236,19 @@ async def update_template_usage(
 
 @router.post("/conversations")
 async def create_conversation(
-    request: Request,
     data: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Create a new conversation with the first message
-    """
+    """Create a new conversation with the first message"""
     try:
         logger.info(f"API request to create conversation: {data.get('title')}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
         result = await conversation_service.create_conversation(
-            user.id, 
             data.get("title"), 
-            data.get("configName")
+            data.get("configName"),
+            user,
+            jwt_token
         )
-        
         return result
     except Exception as e:
         logger.error(f"Error creating conversation: {str(e)}")
@@ -339,53 +257,25 @@ async def create_conversation(
             detail=str(e)
         )
 
-@router.post("/conversations/onboarding")
-async def create_onboarding_conversation(
-    request: Request,
-    data: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
+@router.get("/conversations")
+async def get_user_conversations(
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Create an onboarding conversation with a specific ID
-    """
+    """Get all active conversations for a user"""
     try:
-        logger.info(f"API request to create onboarding conversation")
+        logger.info(f"API request to get active conversations for user: {user.id}")
+        result = await conversation_service.get_user_conversations(user, jwt_token)
         
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        result = await conversation_service.create_onboarding_conversation(
-            user.id, 
-            data.get("sessionId"), 
-            data.get("configName")
-        )
-        
-        return result
+        if result.get("success"):
+            conversations = result.get("data", [])
+            logger.info(f"Retrieved {len(conversations)} active conversations for user: {user.id}")
+            return conversations
+        else:
+            raise Exception(result.get("error", "Unknown error"))
+            
     except Exception as e:
-        logger.error(f"Error creating onboarding conversation: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.get("/conversations/{conversation_id}")
-async def get_conversation(
-    conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get a conversation by ID
-    """
-    try:
-        logger.info(f"API request to get conversation: {conversation_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        result = await conversation_service.get_conversation(conversation_id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting conversation: {str(e)}")
+        logger.error(f"Error getting user conversations: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
@@ -394,106 +284,21 @@ async def get_conversation(
 @router.get("/conversations/{conversation_id}/messages")
 async def get_conversation_messages(
     conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get all messages for a conversation
-    """
+    """Get all messages for a conversation"""
     try:
         logger.info(f"API request to get messages for conversation: {conversation_id}")
+        result = await message_service.get_conversation_messages(conversation_id, jwt_token)
         
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        message_service = MessageService(jwt_token=jwt_token)
-        
-        messages = await message_service.get_conversation_messages(conversation_id)
-        
-        return messages
+        if result.get("success"):
+            return result.get("data", [])
+        else:
+            raise Exception(result.get("error", "Unknown error"))
+            
     except Exception as e:
         logger.error(f"Error getting conversation messages: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.get("/conversations")
-async def get_user_conversations(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get all active conversations for a user
-    """
-    try:
-        logger.info(f"API request to get active conversations for user: {user.id}")
-        
-        logger.info("Creating ConversationService instance")
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        
-        # Explicitly log the Supabase client status
-        supabase = conversation_service.supabase
-        logger.info(f"Supabase client available: {hasattr(supabase, 'client')}")
-        
-        try:
-            # Explicitly test the client
-            test_result = supabase.client.table('conversations').select('count').limit(1).execute()
-            logger.info("Supabase client test query successful")
-        except Exception as e:
-            logger.error(f"Supabase client test query failed: {str(e)}")
-        
-        logger.info("Calling get_user_conversations method")
-        result = await conversation_service.get_user_conversations(user.id)
-        
-        # Check if we got an error response
-        if isinstance(result, dict) and result.get('error'):
-            error_msg = result.get('error')
-            logger.error(f"Error response from service: {error_msg}")
-            
-            # If API key error, try direct query
-            if "API key is required" in error_msg:
-                logger.info("API key error detected, trying direct query")
-                conversations = []
-                logger.info(f"Direct query retrieved {len(conversations)} conversations, maybe start debugging?")
-                return conversations
-            
-            # If not an API key error, return a proper error response
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=error_msg
-            )
-        
-        logger.info(f"Retrieved {len(result)} active conversations for user: {user.id}")
-        return result
-        
-    except Exception as e:
-        logger.error(f"Error getting user conversations: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.delete("/conversations/{conversation_id}")
-async def delete_conversation(
-    conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Soft delete a conversation by setting status to 'deleted'
-    """
-    try:
-        logger.info(f"API request to delete conversation: {conversation_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        
-        result = await conversation_service.delete_conversation(conversation_id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error deleting conversation: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
@@ -502,26 +307,19 @@ async def delete_conversation(
 @router.post("/conversations/{conversation_id}/messages")
 async def save_message(
     conversation_id: str,
-    request: Request,
     data: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Save a message to a conversation
-    """
+    """Save a message to a conversation"""
     try:
         logger.info(f"API request to save message to conversation: {conversation_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        conversation_service = ConversationService(jwt_token=jwt_token)
-        message_service = MessageService(jwt_token=jwt_token)
-        
         result = await message_service.save_message(
             conversation_id,
             data.get("content"),
-            data.get("sender")
+            data.get("sender"),
+            jwt_token
         )
-        
         return result
     except Exception as e:
         logger.error(f"Error saving message: {str(e)}")
@@ -529,98 +327,24 @@ async def save_message(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-    
-@router.get("/exercise-definitions")
-async def get_all_exercise_definitions(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get all exercise definitions
-    """
-    try:
-        logger.info("API request to get all exercise definitions")
-        
-        jwt_token = extract_jwt_from_request(request)
-        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
-        result = await exercise_definition_service.get_all_exercise_definitions()
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting exercise definitions: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
 
-@router.post("/exercise-definitions")
-async def create_exercise_definition(
-    request: Request,
-    data: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Create a new exercise definition
-    """
-    try:
-        logger.info(f"API request to create exercise definition: {data.get('standard_name')}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
-        result = await exercise_definition_service.create_exercise_definition(data)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error creating exercise definition: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.get("/exercise-definitions/{definition_id}")
-async def get_exercise_definition_by_id(
-    definition_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get an exercise definition by ID
-    """
-    try:
-        logger.info(f"API request to get exercise definition: {definition_id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
-        result = await exercise_definition_service.get_exercise_definition_by_id(definition_id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting exercise definition: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-    
 @router.get("/user-profile")
 async def get_user_profile(
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get the current user's profile
-    """
+    """Get the current user's profile"""
     try:
         logger.info(f"API request to get profile for user: {user.id}")
+        result = await user_profile_service.get_user_profile(user.id, jwt_token)
         
-        jwt_token = extract_jwt_from_request(request)
-        user_profile_service = UserProfileService(jwt_token=jwt_token)
-        result = await user_profile_service.get_user_profile(user.id)
-        
-        if not result:
-            # Return empty object rather than 404 to simplify client handling
+        if result.get("success"):
+            profile_data = result.get("data")
+            return profile_data if profile_data else {}
+        else:
+            # Return empty object rather than error for missing profiles
             return {}
-        
-        return result
+            
     except Exception as e:
         logger.error(f"Error getting user profile: {str(e)}")
         raise HTTPException(
@@ -630,20 +354,14 @@ async def get_user_profile(
 
 @router.post("/user-profile")
 async def save_user_profile(
-    request: Request,
     data: Dict[str, Any] = Body(...),
-    user: Dict[str, Any] = Depends(get_current_user)
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Save or update the current user's profile
-    """
+    """Save or update the current user's profile"""
     try:
         logger.info(f"API request to save profile for user: {user.id}")
-        
-        jwt_token = extract_jwt_from_request(request)
-        user_profile_service = UserProfileService(jwt_token=jwt_token)
-        result = await user_profile_service.save_user_profile(user.id, data)
-        
+        result = await user_profile_service.save_user_profile(user.id, data, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error saving user profile: {str(e)}")

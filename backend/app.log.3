@@ -1,84 +1,103 @@
-2025-08-10 11:48:29,642 - app.main - INFO - Response status: 200
-2025-08-10 11:48:29,645 - app.main - INFO - Response status: 200
-2025-08-10 11:48:29,821 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 11:48:29,919 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:29,920 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,035 - app.services.db.workout_service - INFO - Retrieved 12 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,035 - app.api.endpoints.db - INFO - Retrieved 12 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,039 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 11:48:30,142 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 11:48:30,142 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 11:48:30,235 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 11:48:30,243 - app.main - INFO - Response status: 200
-2025-08-10 11:48:30,244 - app.main - INFO - Response status: 200
-2025-08-10 11:48:33,054 - app.main - INFO - Request: POST /db/workouts
-2025-08-10 11:48:33,161 - app.api.endpoints.db - INFO - API request to create workout: Friday arm workout (test)
-2025-08-10 11:48:33,162 - app.services.db.workout_service - INFO - Creating workout: Friday arm workout (test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:33,162 - app.services.db.workout_service - INFO - Inserting workout with data: Friday arm workout (test), None
-2025-08-10 11:48:33,239 - app.services.db.workout_service - INFO - Workout created with ID: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,239 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,240 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-10 11:48:33,312 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: ed6169d0-06b4-4342-a274-d0f772563405
-2025-08-10 11:48:33,390 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-10 11:48:33,536 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 63bca804-0277-44da-ae7b-4c5cbf19b648
-2025-08-10 11:48:33,986 - app.services.db.workout_service - INFO - Workout creation complete for ID: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,987 - app.main - INFO - Response status: 200
-2025-08-10 11:50:05,499 - app.main - INFO - Request: GET /api/dashboard
-2025-08-10 11:50:05,510 - app.main - INFO - Request: GET /db/user-profile
-2025-08-10 11:50:05,715 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,715 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,871 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,872 - app.main - INFO - Response status: 200
-2025-08-10 11:50:05,874 - app.main - INFO - Response status: 200
-2025-08-10 11:50:06,213 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 11:50:06,214 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 11:50:06,429 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 11:50:06,430 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 11:50:06,559 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 11:50:06,643 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,643 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,727 - app.services.db.workout_service - INFO - Retrieved 13 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,728 - app.api.endpoints.db - INFO - Retrieved 13 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,731 - app.main - INFO - Response status: 200
-2025-08-10 11:50:06,731 - app.main - INFO - Response status: 200
-2025-08-10 11:50:10,968 - app.main - INFO - Request: POST /db/workouts
-2025-08-10 11:50:11,071 - app.api.endpoints.db - INFO - API request to create workout: Friday arm workout (test)
-2025-08-10 11:50:11,071 - app.services.db.workout_service - INFO - Creating workout: Friday arm workout (test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:11,071 - app.services.db.workout_service - INFO - Inserting workout with data: Friday arm workout (test), None
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Workout created with ID: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-10 11:50:11,226 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 8950feed-cb14-4ad5-82fa-626759f044dc
-2025-08-10 11:50:11,336 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-10 11:50:11,414 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 8967838b-32db-4959-b2ff-5df2cd3a8a74
-2025-08-10 11:50:11,858 - app.services.db.workout_service - INFO - Workout creation complete for ID: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,860 - app.main - INFO - Response status: 200
-2025-08-10 11:50:12,133 - app.main - INFO - Request: PUT /db/workouts/5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,241 - app.api.endpoints.db - INFO - API request to update workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,241 - app.services.db.workout_service - INFO - Getting workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,314 - app.services.db.workout_service - INFO - Successfully retrieved workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,315 - app.services.db.workout_service - INFO - Updating workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:13,370 - app.services.db.workout_service - INFO - Successfully updated workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:13,371 - app.main - INFO - Response status: 200
-2025-08-10 11:50:13,828 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-10 11:50:13,953 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 10 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:14,036 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,036 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,037 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 471706c6-0cea-48d7-874a-234b6d88abf1 for conversation: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,128 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,128 - app.services.workout_analysis_service - INFO - Created empty bundle: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,128 - app.services.db.analysis_service - INFO - Updating bundle 471706c6-0cea-48d7-874a-234b6d88abf1 status to: in_progress
-2025-08-10 11:50:14,229 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 471706c6-0cea-48d7-874a-234b6d88abf1 -> in_progress
-2025-08-10 11:50:14,229 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-10 11:50:14,312 - app.services.db.workout_service - INFO - RPC returned: 12 workouts
-2025-08-10 11:50:14,312 - app.services.workout_analysis_service - INFO - Processing analysis for 12 workouts
-2025-08-10 11:50:14,313 - app.services.workout_analysis.main_processor - INFO - Processing bundle 471706c6-0cea-48d7-874a-234b6d88abf1 with 12 workouts
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
-2025-08-10 11:50:14,316 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.071454436260709
-2025-08-10 11:50:14,394 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,394 - app.services.db.analysis_service - INFO - Updating analysis bundle: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,478 - app.services.db.analysis_service - INFO - Bundle updated successfully: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,484 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 7c7722eb-d2b8-48db-9b70-a2f693cffcde
+2025-08-10 17:32:52,050 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,051 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,068 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,068 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,068 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,083 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,084 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,084 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,101 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,101 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,101 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,118 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,119 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,119 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,134 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,135 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,135 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,151 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,151 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,152 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,168 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,169 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,169 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,184 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,184 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,185 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,201 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,202 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,202 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,219 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,220 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,220 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,234 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,234 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,234 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,250 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,251 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,251 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,267 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,267 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,268 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,284 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,285 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,285 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,300 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,301 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,301 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,318 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,318 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,318 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,334 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,334 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,334 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,352 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,352 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,353 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,366 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,366 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,367 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,384 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,385 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,385 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,401 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,401 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,401 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,417 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,417 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,418 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,434 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,434 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,435 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,450 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,451 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,451 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,467 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,467 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,468 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,485 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,485 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,486 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,500 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,501 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,501 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,517 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,518 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,518 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,534 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,534 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,535 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,550 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,551 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,551 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,567 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,568 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,568 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,585 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,586 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,586 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,600 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,600 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'
+2025-08-10 17:32:52,600 - app.main - INFO - Response status: 401
+2025-08-10 17:32:52,617 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 17:32:52,617 - app.core.supabase.auth - ERROR - Authentication error: 'SupabaseClientFactory' object has no attribute 'service_role_key'

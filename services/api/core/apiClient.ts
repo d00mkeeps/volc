@@ -1,25 +1,25 @@
-// services/api/apiClient.ts
-import { getLocalIpAddress } from '@/utils/network'
-import { supabase } from '@/lib/supabaseClient'
+import { getLocalIpAddress } from "@/utils/network";
+import { supabase } from "@/lib/supabaseClient";
 
 // State variables for base URLs
-let API_BASE_URL: string | null = null
-let WS_BASE_URL: string | null = null
+let API_BASE_URL: string | null = null;
+let WS_BASE_URL: string | null = null;
 
 /**
  * Initialize the API client with the correct base URLs
- * Must be called before making any API requests
  */
 export async function initializeApiClient(): Promise<void> {
   if (!API_BASE_URL) {
     try {
-      const ipAddress = await getLocalIpAddress()
-      API_BASE_URL = `http://${ipAddress}:8000`
-      WS_BASE_URL = `ws://${ipAddress}:8000/api/llm`
-      console.log(`[apiClient] Initialized with base URL: ${API_BASE_URL}`)
+      const ipAddress = await getLocalIpAddress();
+      API_BASE_URL = `http://${ipAddress}:8000`;
+      WS_BASE_URL = `ws://${ipAddress}:8000/api/llm`;
+      console.log(`[apiClient] Initialized with base URL: ${API_BASE_URL}`);
     } catch (error) {
-      console.error('[apiClient] Failed to initialize:', error)
-      throw new Error('Failed to initialize API client: Could not resolve IP address')
+      console.error("[apiClient] Failed to initialize:", error);
+      throw new Error(
+        "Failed to initialize API client: Could not resolve IP address"
+      );
     }
   }
 }
@@ -28,197 +28,246 @@ export async function initializeApiClient(): Promise<void> {
  * Get the current base URL for API requests
  */
 export async function getApiBaseUrl(): Promise<string> {
-  await initializeApiClient()
-  return API_BASE_URL!
+  await initializeApiClient();
+  return API_BASE_URL!;
 }
 
 /**
  * Get the current base URL for WebSocket connections
  */
 export async function getWsBaseUrl(): Promise<string> {
-  await initializeApiClient()
-  return WS_BASE_URL!
+  await initializeApiClient();
+  return WS_BASE_URL!;
 }
 
 /**
  * Endpoints that don't require authentication
  */
-const PUBLIC_ENDPOINTS = [
-  '/health',
-  '/status',
-  // Add other public endpoints as needed
-]
+const PUBLIC_ENDPOINTS = ["/health", "/status"];
 
 /**
  * Check if an endpoint requires authentication
  */
 function requiresAuth(endpoint: string): boolean {
-  return !PUBLIC_ENDPOINTS.some(publicEndpoint => 
+  return !PUBLIC_ENDPOINTS.some((publicEndpoint) =>
     endpoint.startsWith(publicEndpoint)
-  )
+  );
 }
 
 /**
- * Generic API request function with authentication
- * Gets tokens directly from Supabase
+ * Get fresh JWT token from Supabase
  */
-export async function apiRequest<T = any>(
-  endpoint: string, 
-  options: RequestInit = {},
-  retryCount: number = 3
-): Promise<T> {
+/**
+ * Get fresh JWT token from Supabase
+ */
+async function getFreshToken(): Promise<string | null> {
   try {
-    // Ensure API client is initialized
-    await initializeApiClient()
-    
-    // Normalize endpoint
-    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-    const url = `${API_BASE_URL}${normalizedEndpoint}`
-    
-    console.log(`[apiClient] Request to: ${url}`)
-    
-    // Prepare headers
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
+    // First try to get current session
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("[apiClient] Error getting session:", error);
+      return null;
     }
-      
-    // Safely add any existing headers
-    if (options.headers) {
-      Object.entries(options.headers).forEach(([key, value]) => {
-        if (typeof value === 'string') {
-          headers[key] = value
-        } else if (value !== undefined && value !== null) {
-          headers[key] = String(value)
+
+    if (!session) {
+      console.log("[apiClient] No session available");
+      return null;
+    }
+
+    // Check if token is close to expiring (within 5 minutes)
+    const expiresAt = session.expires_at;
+    if (expiresAt) {
+      const now = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = expiresAt - now;
+
+      if (timeUntilExpiry < 300) {
+        // Less than 5 minutes
+        console.log("[apiClient] Token expiring soon, refreshing...");
+        const { data: refreshData, error: refreshError } =
+          await supabase.auth.refreshSession();
+
+        if (refreshError) {
+          console.error("[apiClient] Error refreshing session:", refreshError);
+          return null;
         }
-      })
-    }
-    
-    // Add authorization header if required
-    if (requiresAuth(normalizedEndpoint)) {
-      // Get session directly from Supabase
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (session?.access_token) {
-        headers['Authorization'] = `Bearer ${session.access_token}`
-      } else {
-        console.warn('[apiClient] No auth token available for authenticated endpoint')
+
+        if (refreshData.session?.access_token) {
+          console.log("[apiClient] Token refreshed successfully");
+          return refreshData.session.access_token;
+        }
       }
     }
-    
+
+    return session.access_token;
+  } catch (error) {
+    console.error("[apiClient] Error in getFreshToken:", error);
+    return null;
+  }
+}
+/**
+ * Simplified API request function
+ */
+export async function apiRequest<T = any>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  await initializeApiClient();
+
+  const normalizedEndpoint = endpoint.startsWith("/")
+    ? endpoint
+    : `/${endpoint}`;
+  const url = `${API_BASE_URL}${normalizedEndpoint}`;
+
+  console.log(`[apiClient] Request to: ${url}`);
+
+  // Prepare headers
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  // Add any existing headers
+  if (options.headers) {
+    Object.entries(options.headers).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        headers[key] = value;
+      } else if (value !== undefined && value !== null) {
+        headers[key] = String(value);
+      }
+    });
+  }
+
+  // Add authorization header if required
+  if (requiresAuth(normalizedEndpoint)) {
+    const token = await getFreshToken();
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      console.warn(
+        "[apiClient] No valid token available for authenticated endpoint"
+      );
+      // You might want to redirect to login here
+      throw new Error("Authentication required");
+    }
+  }
+
+  try {
     // Make the request
     const response = await fetch(url, {
       ...options,
-      headers
-    })
-    
+      headers,
+    });
+
     // Handle response
     if (!response.ok) {
-      // Handle 401 Unauthorized
+      // Handle 401 Unauthorized - try one refresh
       if (response.status === 401) {
-        console.log('[apiClient] Received 401, refreshing session...')
-        // Let Supabase handle token refresh - just try to get a fresh session
-        const { data: { session } } = await supabase.auth.getSession()
-        
-        if (session?.access_token) {
-          console.log('[apiClient] Session refreshed, retrying request')
-          // Retry the original request
-          return apiRequest(endpoint, options, retryCount - 1)
+        console.log("[apiClient] Received 401, attempting token refresh...");
+
+        const { data: refreshData, error: refreshError } =
+          await supabase.auth.refreshSession();
+
+        if (!refreshError && refreshData.session?.access_token) {
+          console.log("[apiClient] Token refreshed, retrying request");
+          headers[
+            "Authorization"
+          ] = `Bearer ${refreshData.session.access_token}`;
+
+          // Retry once with fresh token
+          const retryResponse = await fetch(url, {
+            ...options,
+            headers,
+          });
+
+          if (retryResponse.ok) {
+            const contentType = retryResponse.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+              return await retryResponse.json();
+            }
+            return { success: true } as unknown as T;
+          }
         }
+
+        // If refresh failed or retry still got 401, redirect to login
+        console.error(
+          "[apiClient] Authentication failed, redirecting to login"
+        );
+        // Handle auth failure (redirect to login, clear storage, etc.)
+        await supabase.auth.signOut();
+        throw new Error("Authentication failed");
       }
-      
-      // Try to parse error response
-      let errorDetail: string
+
+      // Handle other HTTP errors
+      let errorDetail: string;
       try {
-        const errorJson = await response.json()
-        errorDetail = errorJson.detail || errorJson.message || `HTTP error ${response.status}`
+        const errorJson = await response.json();
+        errorDetail =
+          errorJson.detail ||
+          errorJson.message ||
+          `HTTP error ${response.status}`;
       } catch {
-        errorDetail = `API error: ${response.status} ${response.statusText}`
+        errorDetail = `API error: ${response.status} ${response.statusText}`;
       }
-      
-      throw new Error(errorDetail)
+
+      throw new Error(errorDetail);
     }
-    
-    // Check for empty response
-    const contentType = response.headers.get('content-type')
-    if (contentType && contentType.includes('application/json')) {
-      return await response.json()
-    } else {
-      // Handle non-JSON responses
-      return { success: true } as unknown as T
+
+    // Parse successful response
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
     }
+
+    return { success: true } as unknown as T;
   } catch (error) {
-    console.error(`[apiClient] Request failed: ${endpoint}`, error)
-    
-    // Handle retry logic
-    if (retryCount > 0 && isRetryableError(error)) {
-      console.log(`[apiClient] Retrying... (${retryCount} attempts left)`)
-      
-      // Exponential backoff
-      const backoffDelay = 1000 * Math.pow(2, 3 - retryCount)
-      await new Promise(resolve => setTimeout(resolve, backoffDelay))
-      
-      return apiRequest(endpoint, options, retryCount - 1)
-    }
-    
-    throw error
+    console.error(`[apiClient] Request failed: ${endpoint}`, error);
+    throw error;
   }
 }
 
-/**
- * Check if an error is retryable
- */
-function isRetryableError(error: any): boolean {
-  // Network errors are retryable
-  if (error instanceof TypeError && error.message.includes('network')) {
-    return true
-  }
-  
-  // Server errors (5xx) are retryable
-  if (error.message && error.message.includes('500')) {
-    return true
-  }
-  
-  // Default to not retrying
-  return false
-}
-
-// Helper methods
-export const apiGet = <T = any>(endpoint: string, params: Record<string, any> = {}) => {
-  // Convert params to query string
-  const searchParams = new URLSearchParams()
+// Helper methods (unchanged)
+export const apiGet = <T = any>(
+  endpoint: string,
+  params: Record<string, any> = {}
+) => {
+  const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      searchParams.append(key, String(value))
+      searchParams.append(key, String(value));
     }
-  })
-  
-  const queryString = searchParams.toString()
-  const url = queryString ? `${endpoint}?${queryString}` : endpoint
-  
-  return apiRequest<T>(url, { method: 'GET' })
-}
+  });
+
+  const queryString = searchParams.toString();
+  const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+
+  return apiRequest<T>(url, { method: "GET" });
+};
 
 export const apiPost = <T = any>(endpoint: string, data: any) => {
   return apiRequest<T>(endpoint, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  })
-}
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 
 export const apiPut = <T = any>(endpoint: string, data: any) => {
   return apiRequest<T>(endpoint, {
-    method: 'PUT',
-    body: JSON.stringify(data)
-  })
-}
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+};
 
 export const apiPatch = <T = any>(endpoint: string, data: any) => {
   return apiRequest<T>(endpoint, {
-    method: 'PATCH',
-    body: JSON.stringify(data)
-  })
-}
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+};
 
 export const apiDelete = <T = any>(endpoint: string) => {
-  return apiRequest<T>(endpoint, { method: 'DELETE' })
-}
+  return apiRequest<T>(endpoint, { method: "DELETE" });
+};

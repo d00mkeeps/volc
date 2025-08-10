@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 import logging
 
 from app.services.workout_analysis.schemas import WorkoutDataBundle
@@ -13,10 +13,7 @@ class AnalysisBundleService(BaseDBService):
     Service for handling analysis bundle operations in the database
     """
     
-    def __init__(self, jwt_token: Optional[str] = None):
-        super().__init__(jwt_token)
-    
-    async def get_bundles_by_conversation(self, conversation_id: str) -> List[Dict[str, Any]]:
+    async def get_bundles_by_conversation(self, conversation_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Get all analysis bundles for a specific conversation
         """
@@ -24,7 +21,8 @@ class AnalysisBundleService(BaseDBService):
             logger.info(f"Getting analysis bundles for conversation: {conversation_id}")
             
             # Query using authenticated Supabase client - RLS handles user filtering
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .select("*") \
                 .eq("conversation_id", conversation_id) \
                 .order("created_at", desc=True) \
@@ -32,7 +30,7 @@ class AnalysisBundleService(BaseDBService):
                 
             if not hasattr(result, 'data') or not result.data:
                 logger.info(f"No analyses found for conversation: {conversation_id}")
-                return []
+                return await self.format_response([])
                 
             # Transform data similar to client-side transformation
             formatted_bundles = []
@@ -51,12 +49,13 @@ class AnalysisBundleService(BaseDBService):
                 })
                 
             logger.info(f"Retrieved {len(formatted_bundles)} analyses")
-            return formatted_bundles
+            return await self.format_response(formatted_bundles)
+            
         except Exception as e:
             logger.error(f"Error getting analysis bundles: {str(e)}")
             return await self.handle_error("get_bundles_by_conversation", e)
 
-    async def delete_analysis_bundle(self, bundle_id: str) -> Dict[str, Any]:
+    async def delete_analysis_bundle(self, bundle_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Delete a analysis bundle
         """
@@ -64,24 +63,20 @@ class AnalysisBundleService(BaseDBService):
             logger.info(f"Deleting analysis bundle: {bundle_id}")
             
             # RLS handles user access control
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .delete() \
                 .eq("id", bundle_id) \
                 .execute()
                 
-            # Check for data in response
-            if hasattr(result, 'data'):
-                logger.info(f"Successfully deleted analysis bundle: {bundle_id}")
-                return {"success": True}
-            else:
-                logger.error(f"Failed to delete bundle: No data returned")
-                return {"success": False, "error": "No data returned"}
+            logger.info(f"Successfully deleted analysis bundle: {bundle_id}")
+            return await self.format_response({"success": True})
                 
         except Exception as e:
             logger.error(f"Error deleting analysis bundle: {str(e)}")
             return await self.handle_error("delete_analysis_bundle", e)
 
-    async def delete_conversation_bundles(self, conversation_id: str) -> Dict[str, Any]:
+    async def delete_conversation_bundles(self, conversation_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Delete all analysis bundles for a conversation
         """
@@ -89,24 +84,20 @@ class AnalysisBundleService(BaseDBService):
             logger.info(f"Deleting all analysis bundles for conversation: {conversation_id}")
             
             # RLS handles user access control
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .delete() \
                 .eq("conversation_id", conversation_id) \
                 .execute()
                 
-            # Check for data in response
-            if hasattr(result, 'data'):
-                logger.info(f"Successfully deleted all analysis bundles for conversation: {conversation_id}")
-                return {"success": True}
-            else:
-                logger.error(f"Failed to delete conversation bundles: No data returned")
-                return {"success": False, "error": "No data returned"}
+            logger.info(f"Successfully deleted all analysis bundles for conversation: {conversation_id}")
+            return await self.format_response({"success": True})
                 
         except Exception as e:
             logger.error(f"Error deleting conversation bundles: {str(e)}")
             return await self.handle_error("delete_conversation_bundles", e)
         
-    async def create_empty_bundle(self, conversation_id: str, user_id: str) -> Dict[str, Any]:
+    async def create_empty_bundle(self, conversation_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Create an empty analysis bundle with 'pending' status
         """
@@ -128,20 +119,21 @@ class AnalysisBundleService(BaseDBService):
                 "created_at": datetime.now().isoformat()
             }
             
-            result = self.supabase.table("analysis_bundles").insert(insert_data).execute()
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles").insert(insert_data).execute()
             
             if hasattr(result, 'data') and result.data:
                 logger.info(f"Empty bundle created successfully with ID: {bundle_id}")
-                return {"success": True, "bundle_id": bundle_id}
+                return await self.format_response({"success": True, "bundle_id": bundle_id})
             else:
                 logger.error(f"Failed to create empty bundle")
-                return {"success": False, "error": "Database insertion failed"}
+                return await self.handle_error("create_empty_bundle", Exception("Database insertion failed"))
                 
         except Exception as e:
             logger.error(f"Error creating empty analysis bundle: {str(e)}")
             return await self.handle_error("create_empty_bundle", e)
 
-    async def update_bundle_status(self, bundle_id: str, status: str, error_msg: str = None) -> Dict[str, Any]:
+    async def update_bundle_status(self, bundle_id: str, status: str, jwt_token: str, error_msg: str = None) -> Dict[str, Any]:
         """
         Update the status of an analysis bundle
         """
@@ -153,23 +145,20 @@ class AnalysisBundleService(BaseDBService):
                 update_data["error_message"] = error_msg
                 
             # RLS handles user access control
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .update(update_data) \
                 .eq("id", bundle_id) \
                 .execute()
                 
-            if hasattr(result, 'data') and result.data:
-                logger.info(f"Bundle status updated successfully: {bundle_id} -> {status}")
-                return {"success": True}
-            else:
-                logger.error(f"Failed to update bundle status")
-                return {"success": False, "error": "Status update failed"}
+            logger.info(f"Bundle status updated successfully: {bundle_id} -> {status}")
+            return await self.format_response({"success": True})
                 
         except Exception as e:
             logger.error(f"Error updating bundle status: {str(e)}")
             return await self.handle_error("update_bundle_status", e)
 
-    async def update_bundle_field(self, bundle_id: str, field_name: str, data: Any) -> Dict[str, Any]:
+    async def update_bundle_field(self, bundle_id: str, field_name: str, data: Any, jwt_token: str) -> Dict[str, Any]:
         """
         Update a specific field in an analysis bundle
         """
@@ -194,23 +183,20 @@ class AnalysisBundleService(BaseDBService):
             converted_data = convert_for_json(data)
             
             # RLS handles user access control
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .update({field_name: converted_data}) \
                 .eq("id", bundle_id) \
                 .execute()
                 
-            if hasattr(result, 'data') and result.data:
-                logger.info(f"Bundle field updated successfully: {bundle_id}.{field_name}")
-                return {"success": True}
-            else:
-                logger.error(f"Failed to update bundle field")
-                return {"success": False, "error": "Field update failed"}
+            logger.info(f"Bundle field updated successfully: {bundle_id}.{field_name}")
+            return await self.format_response({"success": True})
                 
         except Exception as e:
             logger.error(f"Error updating bundle field: {str(e)}")
             return await self.handle_error("update_bundle_field", e)
             
-    async def save_analysis_bundle(self, bundle_id: str, bundle: 'WorkoutDataBundle') -> dict:
+    async def save_analysis_bundle(self, bundle_id: str, bundle: 'WorkoutDataBundle', jwt_token: str) -> dict:
         """Update an existing bundle with complete processed data."""
         try:
             logger.info(f"Updating analysis bundle: {bundle_id}")
@@ -245,7 +231,8 @@ class AnalysisBundleService(BaseDBService):
             }
             
             # UPDATE existing bundle instead of INSERT - RLS handles user access control
-            result = self.supabase.table("analysis_bundles") \
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("analysis_bundles") \
                 .update(update_data) \
                 .eq("id", bundle_id) \
                 .execute()
