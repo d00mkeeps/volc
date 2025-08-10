@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 import { authService } from "@/services/db/auth";
+import { imageService } from "@/services/api/imageService";
 
 interface WorkoutState {
   // State
@@ -16,7 +17,6 @@ interface WorkoutState {
   initializeIfAuthenticated: () => Promise<void>;
   clearData: () => void;
 
-  // Actions
   loadWorkouts: () => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (workout: CompleteWorkout) => Promise<void>;
@@ -29,6 +29,7 @@ interface WorkoutState {
     conversationId: string
   ) => Promise<WorkoutWithConversation[]>;
   deleteConversationWorkouts: (conversationId: string) => Promise<void>;
+  updateWorkoutImage: (workoutId: string, imageId: string) => Promise<void>;
 }
 
 export const useWorkoutStore = create<WorkoutState>((set, get) => {
@@ -91,6 +92,61 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     // Actions
     loadWorkouts: async () => {
       await loadWorkoutsData();
+    },
+
+    updateWorkoutImage: async (workoutId: string, imageId: string) => {
+      try {
+        set({ loading: true, error: null });
+
+        // Get the workout to update
+        const { currentWorkout, workouts } = get();
+        const workoutToUpdate =
+          currentWorkout?.id === workoutId
+            ? currentWorkout
+            : workouts.find((w) => w.id === workoutId);
+
+        if (!workoutToUpdate) {
+          throw new Error("Workout not found");
+        }
+
+        // 1. Update workout with image_id
+        const updatedWorkout = await workoutService.updateWorkout(workoutId, {
+          ...workoutToUpdate,
+          image_id: imageId, // Changed from image_path to image_id
+        });
+
+        // 2. Commit the temp image to permanent
+        const commitResult = await imageService.commitImage(imageId);
+        if (!commitResult.success) {
+          throw new Error(commitResult.error || "Failed to commit image");
+        }
+
+        // 3. Update store state
+        set((state) => ({
+          workouts: state.workouts.map((w) =>
+            w.id === workoutId ? updatedWorkout : w
+          ),
+          currentWorkout:
+            state.currentWorkout?.id === workoutId
+              ? updatedWorkout
+              : state.currentWorkout,
+        }));
+
+        console.log(
+          `[WorkoutStore] Image committed and workout updated: ${imageId}`
+        );
+      } catch (err) {
+        console.error("[WorkoutStore] Error updating workout image:", err);
+        set({
+          error:
+            err instanceof Error
+              ? err
+              : new Error("Failed to update workout image"),
+        });
+        throw err;
+      } finally {
+        set({ loading: false });
+      }
     },
 
     getWorkout: async (workoutId: string) => {

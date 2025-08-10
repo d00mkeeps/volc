@@ -211,28 +211,6 @@ async def get_workout(
         )
 
 @router.get("/workouts")
-async def get_workouts_by_conversation(
-    conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Get all workouts for a specific conversation
-    """
-    try:
-        logger.info(f"API request to get workouts for conversation: {conversation_id}")
-        
-        workout_service = WorkoutService()
-        result = await workout_service.get_workouts_by_conversation(user.id, conversation_id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error getting workouts: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-# Add these to your existing FastAPI router
 
 @router.post("/workouts/template")
 async def save_workout_as_template(
@@ -316,29 +294,6 @@ async def delete_workout(
         return result
     except Exception as e:
         logger.error(f"Error deleting workout: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.delete("/workouts/conversation/{conversation_id}")
-async def delete_conversation_workouts(
-    conversation_id: str,
-    request: Request,
-    user: Dict[str, Any] = Depends(get_current_user)
-):
-    """
-    Delete all workouts for a conversation
-    """
-    try:
-        logger.info(f"API request to delete all workouts for conversation: {conversation_id}")
-        
-        workout_service = WorkoutService()
-        result = await workout_service.delete_conversation_workouts(user.id, conversation_id)
-        
-        return result
-    except Exception as e:
-        logger.error(f"Error deleting conversation workouts: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)

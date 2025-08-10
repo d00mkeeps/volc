@@ -12,7 +12,6 @@ interface UserSessionState {
   currentWorkout: CompleteWorkout | null;
   isActive: boolean;
   isPaused: boolean;
-
   // Timer state
   startTime: Date | null;
   elapsedSeconds: number;

@@ -11,6 +11,7 @@ class WorkoutService(BaseDBService):
     """
     Service for handling workout operations in the database
     """
+
     async def get_workout(self, workout_id: str) -> Dict[str, Any]:
         """
         Get a workout by ID
@@ -38,8 +39,7 @@ class WorkoutService(BaseDBService):
             for exercise in workout["workout_exercises"]:
                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
-            # Add conversationId in the expected format
-            workout["conversationId"] = workout["conversation_id"]
+            # REMOVED: workout["conversationId"] = workout["conversation_id"]
 
             logger.info(f"Successfully retrieved workout: {workout_id}")
             return workout
@@ -47,54 +47,6 @@ class WorkoutService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting workout: {str(e)}")
             return await self.handle_error("get_workout", e)
-
-    async def get_workouts_by_conversation(
-        self, user_id: str, conversation_id: str
-    ) -> List[Dict[str, Any]]:
-        """
-        Get all workouts for a specific conversation
-        """
-        try:
-            logger.info(f"Getting workouts for conversation: {conversation_id}")
-
-            result = (
-                self.supabase.table("workouts")
-                .select("*, workout_exercises(*, workout_exercise_sets(*))")
-                .eq("user_id", user_id)
-                .eq("conversation_id", conversation_id)
-                .order("created_at", desc=True)
-                .execute()
-            )
-
-            if not hasattr(result, "data"):
-                raise Exception("Failed to fetch workouts: No data returned")
-
-            workouts = result.data or []
-
-            # Format each workout
-            formatted_workouts = []
-            for workout in workouts:
-                # Sort exercises by order_index
-                workout["workout_exercises"].sort(key=lambda x: x["order_index"])
-
-                # Sort sets by set_number
-                for exercise in workout["workout_exercises"]:
-                    exercise["workout_exercise_sets"].sort(
-                        key=lambda x: x["set_number"]
-                    )
-
-                # Add conversationId in the expected format
-                workout["conversationId"] = workout["conversation_id"]
-                formatted_workouts.append(workout)
-
-            logger.info(
-                f"Retrieved {len(formatted_workouts)} workouts for conversation: {conversation_id}"
-            )
-            return formatted_workouts
-
-        except Exception as e:
-            logger.error(f"Error getting workouts by conversation: {str(e)}")
-            return await self.handle_error("get_workouts_by_conversation", e)
 
     async def delete_workout(self, workout_id: str) -> Dict[str, Any]:
         """
@@ -138,53 +90,6 @@ class WorkoutService(BaseDBService):
         except Exception as e:
             logger.error(f"Error deleting workout: {str(e)}")
             return await self.handle_error("delete_workout", e)
-
-    async def delete_conversation_workouts(
-        self, user_id: str, conversation_id: str
-    ) -> Dict[str, Any]:
-        """
-        Delete all workouts for a specific conversation
-        """
-        try:
-            logger.info(f"Deleting all workouts for conversation: {conversation_id}")
-
-            # Get workout IDs for this conversation
-            workout_result = (
-                self.supabase.table("workouts")
-                .select("id")
-                .eq("user_id", user_id)
-                .eq("conversation_id", conversation_id)
-                .execute()
-            )
-
-            if not hasattr(workout_result, "data"):
-                raise Exception(
-                    "Failed to fetch workouts for deletion: No data returned"
-                )
-
-            if not workout_result.data:
-                logger.info(
-                    f"No workouts found to delete for conversation: {conversation_id}"
-                )
-                return {"success": True}
-
-            workout_ids = [w["id"] for w in workout_result.data]
-            logger.info(
-                f"Found {len(workout_ids)} workouts to delete for conversation: {conversation_id}"
-            )
-
-            # Delete each workout (which will cascade to exercises and sets)
-            for workout_id in workout_ids:
-                await self.delete_workout(workout_id)
-
-            logger.info(
-                f"Successfully deleted all workouts for conversation: {conversation_id}"
-            )
-            return {"success": True}
-
-        except Exception as e:
-            logger.error(f"Error deleting conversation workouts: {str(e)}")
-            return await self.handle_error("delete_conversation_workouts", e)
 
     async def update_template_usage(self, template_id: str) -> Dict[str, Any]:
         """
@@ -295,53 +200,6 @@ class WorkoutService(BaseDBService):
             logger.error(f"Error getting user workouts: {str(e)}")
             return await self.handle_error("get_user_workouts", e)
 
-    # async def get_workout_history_by_exercises(
-    #     self, user_id: str, exercises: List[str], timeframe: str
-    # ) -> Optional[Dict]:
-    #     """
-    #     Fetches workout data for specific exercises over a given timeframe.
-    #     """
-    #     try:
-    #         # Convert timeframe string to days
-    #         days = self._convert_timeframe_to_days(timeframe)
-    #         from_date = datetime.now() - timedelta(days=days)
-
-    #         # Filter non-empty exercises
-    #         exercise_names = [ex.strip() for ex in exercises if ex.strip()]
-
-    #         # Call the database function using supabase
-    #         result = self.supabase.rpc(
-    #             "search_workouts_by_exercises_with_definitions",
-    #             {
-    #                 "user_id_param": user_id,
-    #                 "from_date_param": from_date.isoformat(),
-    #                 "exercise_names": exercise_names,
-    #             },
-    #         ).execute()
-
-    #         return result.data if hasattr(result, "data") and result.data else None
-
-    #     except Exception as e:
-    #         logger.error(f"Error fetching workout history: {str(e)}")
-    #         return await self.handle_error("get_workout_history_by_exercises", e)
-    def _convert_timeframe_to_days(self, timeframe: str) -> int:
-        """Convert a timeframe string to number of days."""
-        try:
-            number = int(timeframe.split()[0])
-            unit = timeframe.split()[1].lower()
-
-            if unit in ["month", "months"]:
-                return number * 30
-            elif unit in ["year", "years"]:
-                return number * 365
-            elif unit in ["day", "days"]:
-                return number
-            else:
-                logger.warning(f"Unsupported time unit: {unit}")
-                return 90  # Default to 90 days
-        except Exception as e:
-            logger.error(f"Error converting timeframe: {str(e)}")
-            return 90  # Default to 90 days
     async def get_workout_history_by_definition_ids(
         self, 
         user_id: str, 
@@ -384,7 +242,6 @@ class WorkoutService(BaseDBService):
                 "user_id": user_id,
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),
-                "conversation_id": workout_data.get("conversationId"),
                 "created_at": workout_data.get("created_at") or now,
                 "used_as_template": now,  # Set this to creation date by default
             }
@@ -491,9 +348,6 @@ class WorkoutService(BaseDBService):
             for exercise in workout["workout_exercises"]:
                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
-            # Add conversationId in the expected format
-            workout["conversationId"] = workout["conversation_id"]
-
             await self.update_bicep_leaderboard(workout_id, user_id)
 
             logger.info(f"Workout creation complete for ID: {workout_id}")
@@ -516,6 +370,7 @@ class WorkoutService(BaseDBService):
             workout_update_data = {
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),
+                "image_id": workout_data.get("image_id"),
                 "updated_at": datetime.utcnow().isoformat(),
             }
 

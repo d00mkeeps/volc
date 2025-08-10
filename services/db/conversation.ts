@@ -1,10 +1,10 @@
 // services/supabase/conversation.ts
-import { BaseService } from "./base";
+import { BaseDBService } from "./base";
 import { Message, Conversation } from "@/types";
 import { apiGet, apiPost, apiDelete } from "../api/core/apiClient";
 import { supabase } from "@/lib/supabaseClient";
 
-export class ConversationService extends BaseService {
+export class ConversationService extends BaseDBService {
   /**
    * Create a new conversation with the first message
    */

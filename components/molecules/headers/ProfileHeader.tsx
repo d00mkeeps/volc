@@ -1,6 +1,7 @@
 import React from "react";
 import { YStack, XStack, Text, Avatar, Stack } from "tamagui";
 import { UserProfile } from "@/types";
+import ImagePickerButton from "@/components/atoms/buttons/ImagePickerButton";
 
 interface ProfileHeaderProps {
   profile: UserProfile;
@@ -11,6 +12,15 @@ export default function ProfileHeader({ profile }: ProfileHeaderProps) {
     profile.display_name ||
     `${profile.first_name || ""} ${profile.last_name || ""}`.trim() ||
     "User";
+
+  const handleImageUploaded = (imagePath: string) => {
+    console.log(`[ProfileHeader] Profile image uploaded: ${imagePath}`);
+    // TODO: Update user profile with new image
+  };
+
+  const handleImageError = (error: string) => {
+    console.error(`[ProfileHeader] Profile image error: ${error}`);
+  };
 
   return (
     <XStack
@@ -32,6 +42,14 @@ export default function ProfileHeader({ profile }: ProfileHeaderProps) {
           {displayName.charAt(0).toUpperCase()}
         </Text>
       </Stack>
+
+      <ImagePickerButton
+        workoutId="profile" // Use special ID for profile images
+        label="📷"
+        size="sm"
+        onImageUploaded={handleImageUploaded}
+        onError={handleImageError}
+      />
 
       <YStack flex={1}>
         <Text fontSize="$6" fontWeight="600" color="$color">

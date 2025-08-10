@@ -1,5 +1,5 @@
 // services/supabase/userProfile.ts
-import { BaseService } from './base';
+import { BaseDBService } from './base';
 import { UserOnboarding } from '@/types/onboarding';
 import { apiGet, apiPost } from '../api/core/apiClient';
 
@@ -12,7 +12,7 @@ const AGE_GROUP_MAP = {
   '65+': 6,
 } as const;
 
-export class UserProfileService extends BaseService {
+export class UserProfileService extends BaseDBService {
   /**
    * Map an age group string to its corresponding number value
    * @private

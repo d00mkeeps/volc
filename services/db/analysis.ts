@@ -1,18 +1,28 @@
-import { BaseService } from './base';
-import { AnalysisBundle } from '@/types/workout';
-import { apiGet, apiPost, apiDelete } from '../api/core/apiClient';
+import { BaseDBService } from "./base";
+import { AnalysisBundle } from "@/types/workout";
+import { apiGet, apiPost, apiDelete } from "../api/core/apiClient";
 
-export class AnalysisBundleService extends BaseService {
+export class AnalysisBundleService extends BaseDBService {
   /**
    * Save a workout data bundle to the database
    */
-  async saveAnalysisBundle(userId: string, bundle: AnalysisBundle): Promise<void> {
+  async saveAnalysisBundle(
+    userId: string,
+    bundle: AnalysisBundle
+  ): Promise<void> {
     try {
-      console.log(`[AnalysisBundleService] Saving analysis bundle: ${bundle.bundle_id}`);
-      await apiPost('/db/analysis-bundles', bundle);
-      console.log(`[AnalysisBundleService] Bundle saved successfully with conversation ID: ${bundle.conversationId}`);
+      console.log(
+        `[AnalysisBundleService] Saving analysis bundle: ${bundle.bundle_id}`
+      );
+      await apiPost("/db/analysis-bundles", bundle);
+      console.log(
+        `[AnalysisBundleService] Bundle saved successfully with conversation ID: ${bundle.conversationId}`
+      );
     } catch (error) {
-      console.error(`[AnalysisBundleService] Error in saveAnalysisBundle:`, error);
+      console.error(
+        `[AnalysisBundleService] Error in saveAnalysisBundle:`,
+        error
+      );
       return this.handleError(error);
     }
   }
@@ -20,14 +30,26 @@ export class AnalysisBundleService extends BaseService {
   /**
    * Get all analysis bundles for a specific conversation
    */
-  async getAnalysisBundlesByConversation(userId: string, conversationId: string): Promise<AnalysisBundle[]> {
+  async getAnalysisBundlesByConversation(
+    userId: string,
+    conversationId: string
+  ): Promise<AnalysisBundle[]> {
     try {
-      console.log(`[AnalysisBundleService] Getting analysis bundles for conversation: ${conversationId}`);
-      const bundles = await apiGet<AnalysisBundle[]>('/db/analysis-bundles', { conversation_id: conversationId });
-      console.log(`[AnalysisBundleService] Retrieved ${bundles.length} analysis bundles`);
+      console.log(
+        `[AnalysisBundleService] Getting analysis bundles for conversation: ${conversationId}`
+      );
+      const bundles = await apiGet<AnalysisBundle[]>("/db/analysis-bundles", {
+        conversation_id: conversationId,
+      });
+      console.log(
+        `[AnalysisBundleService] Retrieved ${bundles.length} analysis bundles`
+      );
       return bundles;
     } catch (error) {
-      console.error(`[AnalysisBundleService] Error getting analysis bundles:`, error);
+      console.error(
+        `[AnalysisBundleService] Error getting analysis bundles:`,
+        error
+      );
       return this.handleError(error);
     }
   }
@@ -37,11 +59,18 @@ export class AnalysisBundleService extends BaseService {
    */
   async deleteAnalysisBundle(userId: string, bundleId: string): Promise<void> {
     try {
-      console.log(`[AnalysisBundleService] Deleting analysis bundle: ${bundleId}`);
+      console.log(
+        `[AnalysisBundleService] Deleting analysis bundle: ${bundleId}`
+      );
       await apiDelete(`/db/analysis-bundles/${bundleId}`);
-      console.log(`[AnalysisBundleService] Successfully deleted analysis bundle: ${bundleId}`);
+      console.log(
+        `[AnalysisBundleService] Successfully deleted analysis bundle: ${bundleId}`
+      );
     } catch (error) {
-      console.error(`[AnalysisBundleService] Error deleting analysis bundle:`, error);
+      console.error(
+        `[AnalysisBundleService] Error deleting analysis bundle:`,
+        error
+      );
       return this.handleError(error);
     }
   }
@@ -49,13 +78,23 @@ export class AnalysisBundleService extends BaseService {
   /**
    * Delete all analysis bundles for a conversation
    */
-  async deleteConversationAnalysisBundles(userId: string, conversationId: string): Promise<void> {
+  async deleteConversationAnalysisBundles(
+    userId: string,
+    conversationId: string
+  ): Promise<void> {
     try {
-      console.log(`[AnalysisBundleService] Deleting all analysis bundles for conversation: ${conversationId}`);
+      console.log(
+        `[AnalysisBundleService] Deleting all analysis bundles for conversation: ${conversationId}`
+      );
       await apiDelete(`/db/analysis-bundles/conversation/${conversationId}`);
-      console.log(`[AnalysisBundleService] Successfully deleted all analysis bundles for conversation: ${conversationId}`);
+      console.log(
+        `[AnalysisBundleService] Successfully deleted all analysis bundles for conversation: ${conversationId}`
+      );
     } catch (error) {
-      console.error(`[AnalysisBundleService] Error deleting conversation analysis bundles:`, error);
+      console.error(
+        `[AnalysisBundleService] Error deleting conversation analysis bundles:`,
+        error
+      );
       return this.handleError(error);
     }
   }

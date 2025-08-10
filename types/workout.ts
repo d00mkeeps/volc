@@ -5,8 +5,8 @@ export type ExerciseInput = {
     sets: SetInput[];
   };
   order_in_workout: number;
-  weight_unit?: 'kg' | 'lbs';
-  distance_unit?: 'km' | 'm' | 'mi';
+  weight_unit?: "kg" | "lbs";
+  distance_unit?: "km" | "m" | "mi";
 };
 
 export type WorkoutInput = {
@@ -18,9 +18,9 @@ export type WorkoutInput = {
 export interface SetInput {
   weight?: number | null;
   reps?: number | null;
-  distance?: number| null;
-  duration?: any| null;
-  rpe?: number| null;
+  distance?: number | null;
+  duration?: any | null;
+  rpe?: number | null;
 }
 export interface WorkoutExerciseSet {
   id: string;
@@ -28,9 +28,9 @@ export interface WorkoutExerciseSet {
   set_number: number;
   weight?: number | null;
   reps?: number | null;
-  distance?: number| null;
-  duration?: any| null;
-  rpe?: number| null;
+  distance?: number | null;
+  duration?: any | null;
+  rpe?: number | null;
   is_completed?: boolean; // Add this
   created_at: string;
   updated_at: string;
@@ -49,25 +49,23 @@ export type WorkoutSet = {
   updated_at: string;
 };
 
-export type WorkoutField = 'weight' | 'reps' | 'rpe' | 'distance' | 'duration';
-  
-  export type WorkoutExercise = {
-    id: string;
-    definition_id?: string; // New field to link to exercise definitions
-    workout_id: string;
-    name: string;
-    order_index: number;
-    weight_unit?: 'kg' | 'lbs';
-    distance_unit?: 'km' | 'm' | 'mi';
-    created_at: string;
-    updated_at: string;
-    workout_exercise_sets: WorkoutExerciseSet[]
-    notes?: string
-  };
+export type WorkoutField = "weight" | "reps" | "rpe" | "distance" | "duration";
 
+export type WorkoutExercise = {
+  id: string;
+  definition_id?: string; // New field to link to exercise definitions
+  workout_id: string;
+  name: string;
+  order_index: number;
+  weight_unit?: "kg" | "lbs";
+  distance_unit?: "km" | "m" | "mi";
+  created_at: string;
+  updated_at: string;
+  workout_exercise_sets: WorkoutExerciseSet[];
+  notes?: string;
+};
 
-
-  // types.ts (add this to your existing types file)
+// types.ts (add this to your existing types file)
 export interface ExerciseDefinition {
   id: string;
   base_movement: string;
@@ -103,6 +101,7 @@ export interface CompleteWorkout {
   workout_exercises: WorkoutExercise[];
   scheduled_time?: string; // Format: "HH:MM" in 24-hour time
   description?: string;
+  image_id?: string;
 }
 
 export type BundleMetadata = {
@@ -174,10 +173,10 @@ export type Workout = {
   description?: string;
   workout_exercises: WorkoutExercise[]; // Changed from "exercises"
   created_at: string;
-}
+};
 
 export type WorkoutWithConversation = Workout & {
   conversationId: string;
 };
 
-export type AttachmentType = 'workout' | 'graph_bundle' | 'analysis_bundle';
+export type AttachmentType = "workout" | "graph_bundle" | "analysis_bundle";

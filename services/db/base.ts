@@ -1,12 +1,12 @@
-import { PostgrestError, PostgrestSingleResponse } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabaseClient';
+import { PostgrestError, PostgrestSingleResponse } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
 
-export class BaseService {
+export class BaseDBService {
   protected supabase = supabase;
 
   protected async handleError(error: unknown): Promise<never> {
     if (error instanceof Error || this.isPostgrestError(error)) {
-      console.error('Service Error:', error);
+      console.error("Service Error:", error);
       throw error;
     }
     // If it's an unknown error type, wrap it in an Error object
@@ -15,11 +15,11 @@ export class BaseService {
 
   private isPostgrestError(error: unknown): error is PostgrestError {
     return (
-      typeof error === 'object' &&
+      typeof error === "object" &&
       error !== null &&
-      'code' in error &&
-      'message' in error &&
-      'details' in error
+      "code" in error &&
+      "message" in error &&
+      "details" in error
     );
   }
 
@@ -31,15 +31,15 @@ export class BaseService {
       try {
         const { data, error } = await operation();
         if (error) throw error;
-        if (!data) throw new Error('No data returned');
+        if (!data) throw new Error("No data returned");
         return data;
       } catch (error) {
         if (attempt === retries) {
           throw error;
         }
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
       }
     }
-    throw new Error('Retry failed');
+    throw new Error("Retry failed");
   }
 }
