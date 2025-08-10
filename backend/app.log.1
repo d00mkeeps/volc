@@ -1,84 +1,98 @@
-2025-08-10 11:48:29,642 - app.main - INFO - Response status: 200
-2025-08-10 11:48:29,645 - app.main - INFO - Response status: 200
-2025-08-10 11:48:29,821 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 11:48:29,919 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:29,920 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,035 - app.services.db.workout_service - INFO - Retrieved 12 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,035 - app.api.endpoints.db - INFO - Retrieved 12 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:30,039 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 11:48:30,142 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 11:48:30,142 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 11:48:30,235 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 11:48:30,243 - app.main - INFO - Response status: 200
-2025-08-10 11:48:30,244 - app.main - INFO - Response status: 200
-2025-08-10 11:48:33,054 - app.main - INFO - Request: POST /db/workouts
-2025-08-10 11:48:33,161 - app.api.endpoints.db - INFO - API request to create workout: Friday arm workout (test)
-2025-08-10 11:48:33,162 - app.services.db.workout_service - INFO - Creating workout: Friday arm workout (test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:48:33,162 - app.services.db.workout_service - INFO - Inserting workout with data: Friday arm workout (test), None
-2025-08-10 11:48:33,239 - app.services.db.workout_service - INFO - Workout created with ID: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,239 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,240 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-10 11:48:33,312 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: ed6169d0-06b4-4342-a274-d0f772563405
-2025-08-10 11:48:33,390 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-10 11:48:33,536 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 63bca804-0277-44da-ae7b-4c5cbf19b648
-2025-08-10 11:48:33,986 - app.services.db.workout_service - INFO - Workout creation complete for ID: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:48:33,987 - app.main - INFO - Response status: 200
-2025-08-10 11:50:05,499 - app.main - INFO - Request: GET /api/dashboard
-2025-08-10 11:50:05,510 - app.main - INFO - Request: GET /db/user-profile
-2025-08-10 11:50:05,715 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,715 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,871 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:05,872 - app.main - INFO - Response status: 200
-2025-08-10 11:50:05,874 - app.main - INFO - Response status: 200
-2025-08-10 11:50:06,213 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-10 11:50:06,214 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-10 11:50:06,429 - app.api.endpoints.db - INFO - API request to get all exercise definitions
-2025-08-10 11:50:06,430 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 11:50:06,559 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 11:50:06,643 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,643 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,727 - app.services.db.workout_service - INFO - Retrieved 13 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,728 - app.api.endpoints.db - INFO - Retrieved 13 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:06,731 - app.main - INFO - Response status: 200
-2025-08-10 11:50:06,731 - app.main - INFO - Response status: 200
-2025-08-10 11:50:10,968 - app.main - INFO - Request: POST /db/workouts
-2025-08-10 11:50:11,071 - app.api.endpoints.db - INFO - API request to create workout: Friday arm workout (test)
-2025-08-10 11:50:11,071 - app.services.db.workout_service - INFO - Creating workout: Friday arm workout (test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:11,071 - app.services.db.workout_service - INFO - Inserting workout with data: Friday arm workout (test), None
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Workout created with ID: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,146 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-10 11:50:11,226 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 8950feed-cb14-4ad5-82fa-626759f044dc
-2025-08-10 11:50:11,336 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-10 11:50:11,414 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 8967838b-32db-4959-b2ff-5df2cd3a8a74
-2025-08-10 11:50:11,858 - app.services.db.workout_service - INFO - Workout creation complete for ID: 6792fe14-4b23-4685-b147-cda3410e0103
-2025-08-10 11:50:11,860 - app.main - INFO - Response status: 200
-2025-08-10 11:50:12,133 - app.main - INFO - Request: PUT /db/workouts/5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,241 - app.api.endpoints.db - INFO - API request to update workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,241 - app.services.db.workout_service - INFO - Getting workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,314 - app.services.db.workout_service - INFO - Successfully retrieved workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:12,315 - app.services.db.workout_service - INFO - Updating workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:13,370 - app.services.db.workout_service - INFO - Successfully updated workout: 5dd76fcc-ee98-4181-a2f7-4d48b8d495ac
-2025-08-10 11:50:13,371 - app.main - INFO - Response status: 200
-2025-08-10 11:50:13,828 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-10 11:50:13,953 - app.services.db.conversation_service - INFO - Creating empty conversation with title: Analysis - Aug 10 for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-10 11:50:14,036 - app.services.db.conversation_service - INFO - Empty conversation created with ID: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,036 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,037 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 471706c6-0cea-48d7-874a-234b6d88abf1 for conversation: 7c7722eb-d2b8-48db-9b70-a2f693cffcde
-2025-08-10 11:50:14,128 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,128 - app.services.workout_analysis_service - INFO - Created empty bundle: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,128 - app.services.db.analysis_service - INFO - Updating bundle 471706c6-0cea-48d7-874a-234b6d88abf1 status to: in_progress
-2025-08-10 11:50:14,229 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 471706c6-0cea-48d7-874a-234b6d88abf1 -> in_progress
-2025-08-10 11:50:14,229 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-10 11:50:14,312 - app.services.db.workout_service - INFO - RPC returned: 12 workouts
-2025-08-10 11:50:14,312 - app.services.workout_analysis_service - INFO - Processing analysis for 12 workouts
-2025-08-10 11:50:14,313 - app.services.workout_analysis.main_processor - INFO - Processing bundle 471706c6-0cea-48d7-874a-234b6d88abf1 with 12 workouts
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
-2025-08-10 11:50:14,315 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
-2025-08-10 11:50:14,316 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.071454436260709
-2025-08-10 11:50:14,394 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,394 - app.services.db.analysis_service - INFO - Updating analysis bundle: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,478 - app.services.db.analysis_service - INFO - Bundle updated successfully: 471706c6-0cea-48d7-874a-234b6d88abf1
-2025-08-10 11:50:14,484 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 7c7722eb-d2b8-48db-9b70-a2f693cffcde
+2025-08-10 12:59:32,512 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 12:59:32,513 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 12:59:42,683 - app - INFO - Logging has been set up
+2025-08-10 12:59:42,683 - app.main - INFO - Application starting
+2025-08-10 12:59:42,683 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 12:59:42,683 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 12:59:42,683 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 12:59:55,033 - app - INFO - Logging has been set up
+2025-08-10 12:59:55,033 - app.main - INFO - Application starting
+2025-08-10 12:59:55,033 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 12:59:55,033 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 12:59:55,033 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:00:44,062 - app - INFO - Logging has been set up
+2025-08-10 13:00:44,062 - app.main - INFO - Application starting
+2025-08-10 13:00:44,062 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:00:44,062 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:00:44,062 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:04:12,622 - app - INFO - Logging has been set up
+2025-08-10 13:04:12,622 - app.main - INFO - Application starting
+2025-08-10 13:04:12,622 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:04:12,622 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:04:12,622 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:19:39,393 - app - INFO - Logging has been set up
+2025-08-10 13:19:39,393 - app.main - INFO - Application starting
+2025-08-10 13:19:39,393 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:19:39,393 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:19:39,394 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:20:29,275 - app - INFO - Logging has been set up
+2025-08-10 13:20:29,275 - app.main - INFO - Application starting
+2025-08-10 13:20:29,276 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:20:29,276 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:20:29,276 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:20:37,443 - app - INFO - Logging has been set up
+2025-08-10 13:20:37,443 - app.main - INFO - Application starting
+2025-08-10 13:20:37,444 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:20:37,444 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:20:37,444 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 13:20:44,082 - app - INFO - Logging has been set up
+2025-08-10 13:20:44,082 - app.main - INFO - Application starting
+2025-08-10 13:20:44,082 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-10 13:20:44,082 - app.main - INFO - SUPABASE_URL present: True
+2025-08-10 13:20:44,082 - app.main - INFO - SUPABASE_KEY present: True
+2025-08-10 14:25:31,680 - app.main - INFO - Request: GET /api/dashboard
+2025-08-10 14:25:31,725 - app.main - INFO - Request: GET /db/user-profile
+2025-08-10 14:25:31,737 - app.core.supabase.client - INFO - Initializing SupabaseClient
+2025-08-10 14:25:31,743 - app.core.supabase.client - INFO - Found .env at: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/.env
+2025-08-10 14:25:31,749 - app.core.supabase.client - INFO - Supabase URL present: True
+2025-08-10 14:25:31,749 - app.core.supabase.client - INFO - Supabase API key present: True
+2025-08-10 14:25:31,750 - app.core.supabase.client - INFO - Creating default Supabase client with URL: https://sfniyudipwsaqwuhsdcq.supabase.co
+2025-08-10 14:25:32,055 - app.core.supabase.client - INFO - Default Supabase client created successfully
+2025-08-10 14:25:32,348 - app.core.supabase.client - INFO - Test query successful: 1
+2025-08-10 14:25:32,592 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:32,592 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:32,601 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 14:25:32,727 - app.services.db.user_profile_service - INFO - No profile found for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:32,728 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-10 14:25:32,728 - app.main - INFO - Response status: 200
+2025-08-10 14:25:32,867 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-10 14:25:32,867 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-10 14:25:32,877 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 14:25:33,059 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-10 14:25:33,067 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 14:25:33,069 - app.main - INFO - Response status: 200
+2025-08-10 14:25:33,190 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:33,190 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:33,205 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 14:25:33,339 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:33,339 - app.api.endpoints.db - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 14:25:33,340 - app.main - INFO - Response status: 200
+2025-08-10 14:25:33,342 - app.main - INFO - Response status: 200
+2025-08-10 14:26:03,006 - app.main - INFO - Request: GET /api/leaderboard/biceps
+2025-08-10 14:26:03,321 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 14:26:03,566 - app.main - INFO - Response status: 200
+2025-08-10 15:34:15,702 - app.main - INFO - Request: GET /db/user-profile
+2025-08-10 15:34:16,005 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:16,006 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:16,017 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 15:34:16,346 - app.services.db.user_profile_service - INFO - No profile found for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:16,350 - app.main - INFO - Response status: 200
+2025-08-10 15:34:16,491 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-10 15:34:16,626 - app.api.endpoints.db - INFO - API request to get all exercise definitions
+2025-08-10 15:34:16,627 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-10 15:34:16,641 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 15:34:16,809 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-10 15:34:16,815 - app.main - INFO - Response status: 200
+2025-08-10 15:34:16,815 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-10 15:34:16,929 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:16,929 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:16,935 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 15:34:17,118 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:17,119 - app.api.endpoints.db - INFO - Retrieved 0 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-10 15:34:17,119 - app.main - INFO - Response status: 200
+2025-08-10 15:34:39,809 - app.main - INFO - Request: GET /api/leaderboard/biceps
+2025-08-10 15:34:40,050 - app.core.supabase.client - ERROR - Failed to create authenticated client: SyncGoTrueClient.set_session() missing 1 required positional argument: 'refresh_token'
+2025-08-10 15:34:40,292 - app.main - INFO - Response status: 200
+2025-08-10 15:38:42,721 - app.main - INFO - Request: GET /api/dashboard
+2025-08-10 15:38:42,736 - app.main - INFO - Request: GET /db/user-profile
+2025-08-10 15:38:43,217 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3

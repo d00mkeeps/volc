@@ -1,5 +1,6 @@
 from app.core.supabase.client import SupabaseClient
-from typing import Dict, List, Any
+from app.core.utils.jwt_utils import JWTContextManager, validate_jwt_format
+from typing import Dict, List, Any, Optional
 import logging
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from app.services.workout_analysis.schemas import WorkoutDataBundle
@@ -9,13 +10,22 @@ logger = logging.getLogger(__name__)
 
 class BaseDBService:
     """
-    Base service for database operations
+    Base service for database operations with JWT context for RLS
     """
-    def __init__(self):
-        logger.debug("Initializing BaseDBService")
+    def __init__(self, jwt_token: Optional[str] = None):
+        logger.debug("Initializing BaseDBService with JWT context")
         try:
+            # Create JWT context manager
+            self.jwt_context = JWTContextManager(jwt_token)
+            
             # Create a new SupabaseClient instance
             self._supabase = SupabaseClient()
+            
+            # Log JWT context status
+            if self.jwt_context.has_valid_token():
+                logger.debug("Valid JWT context established for RLS")
+            else:
+                logger.warning("No valid JWT context - RLS policies may not work correctly")
             
             # Verify client
             if not hasattr(self._supabase, 'client') or self._supabase.client is None:
@@ -29,11 +39,46 @@ class BaseDBService:
     
     @property
     def supabase(self):
-        """Property to ensure we always have a valid Supabase client"""
+        """
+        Property to get the appropriate Supabase client.
+        Returns authenticated client if JWT context is available, otherwise default client.
+        """
         if not hasattr(self, '_supabase') or self._supabase is None:
             logger.warning("Supabase client not found in service, creating new instance")
             self._supabase = SupabaseClient()
-        return self._supabase
+            
+        # Return authenticated client if we have valid JWT
+        if self.jwt_context.has_valid_token():
+            return self._supabase.get_authenticated_client(self.jwt_context.get_token())
+        else:
+            # Return default client for backward compatibility
+            logger.debug("Using default Supabase client (no JWT context)")
+            return self._supabase.client
+    
+    def get_authenticated_client(self):
+        """
+        Get Supabase client with JWT context for RLS.
+        Raises exception if no valid JWT token is available.
+        """
+        if not self.jwt_context.has_valid_token():
+            logger.error("Attempted to get authenticated client without valid JWT")
+            raise ValueError("Valid JWT token required for authenticated operations")
+        
+        return self._supabase.get_authenticated_client(self.jwt_context.get_token())
+    
+    def get_default_client(self):
+        """Get the default (unauthenticated) Supabase client."""
+        return self._supabase.client
+    
+    def has_auth_context(self) -> bool:
+        """Check if service has valid JWT authentication context."""
+        return self.jwt_context.has_valid_token()
+    
+    def require_auth_context(self):
+        """Ensure service has valid JWT context, raise exception if not."""
+        if not self.has_auth_context():
+            logger.error("Operation requires authentication context but none provided")
+            raise ValueError("This operation requires a valid JWT token")
     
     async def handle_error(self, operation: str, error: Exception) -> Dict[str, Any]:
         """
@@ -42,8 +87,19 @@ class BaseDBService:
         """
         logger.error(f"Error in {operation}: {str(error)}")
         
+        # Special handling for authentication/authorization errors
+        error_str = str(error).lower()
+        if any(phrase in error_str for phrase in ['unauthorized', 'forbidden', 'access denied', 'permission']):
+            logger.error(f"Authentication/authorization error in {operation}")
+            return {
+                "error": "Access denied. Please check your permissions.", 
+                "operation": operation, 
+                "success": False,
+                "error_type": "authorization"
+            }
+        
         # Special handling for API key issues
-        if "API key is required" in str(error):
+        if "api key is required" in error_str:
             logger.error("API key error detected - attempting to reinitialize client")
             try:
                 self._supabase = SupabaseClient()
@@ -55,7 +111,8 @@ class BaseDBService:
         return {
             "error": str(error), 
             "operation": operation, 
-            "success": False
+            "success": False,
+            "error_type": "database"
         }
     
     async def format_response(self, data: Any, error: Any = None) -> Dict[str, Any]:
@@ -66,10 +123,11 @@ class BaseDBService:
             return {"success": False, "error": str(error), "data": None}
         return {"success": True, "data": data, "error": None}
 
-
-
 class ConversationAttachmentsService(BaseDBService):
     """Service for loading complete conversation context (messages + analysis bundles)"""
+    
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
     
     def _convert_messages_to_langchain(self, raw_messages: List[Dict[str, Any]]) -> List[BaseMessage]:
         """Convert database message format to LangChain message objects"""
@@ -116,7 +174,8 @@ class ConversationAttachmentsService(BaseDBService):
     
     async def load_conversation_context(self, conversation_id: str) -> Dict[str, Any]:
         """
-        Load complete conversation context (messages + analysis bundles) for a conversation
+        Load complete conversation context (messages + analysis bundles) for a conversation.
+        Uses JWT context for RLS if available.
         
         Returns:
             Dict with structure: {
@@ -130,8 +189,11 @@ class ConversationAttachmentsService(BaseDBService):
         try:
             logger.info(f"Loading conversation context for: {conversation_id}")
             
+            # Use authenticated client if available for RLS
+            client = self.supabase
+            
             # Call the RPC function
-            result = self.supabase.client.rpc('get_conversation_attachments', {
+            result = client.rpc('get_conversation_attachments', {
                 'p_conversation_id': conversation_id
             }).execute()
             
@@ -165,18 +227,22 @@ class ConversationAttachmentsService(BaseDBService):
             logger.error(f"Error in {operation}: {str(e)}", exc_info=True)
             return await self.handle_error(operation, e)
 
-
-# Convenience function for easy usage
-async def load_conversation_context(conversation_id: str) -> Dict[str, Any]:
+# Convenience function for easy usage (with optional JWT context)
+async def load_conversation_context(conversation_id: str, jwt_token: Optional[str] = None) -> Dict[str, Any]:
     """
-    Convenience function to load conversation context
+    Convenience function to load conversation context with optional JWT context
     
     Usage:
+        # With JWT context for RLS
+        result = await load_conversation_context("uuid-here", jwt_token)
+        
+        # Without JWT context (backward compatibility)
         result = await load_conversation_context("uuid-here")
+        
         if result["success"]:
             context = result["data"]  # ConversationContext object
             messages = context.messages  # List[BaseMessage]
             bundles = context.bundles    # List[WorkoutDataBundle]
     """
-    service = ConversationAttachmentsService()
+    service = ConversationAttachmentsService(jwt_token)
     return await service.load_conversation_context(conversation_id)

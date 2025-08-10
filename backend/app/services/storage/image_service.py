@@ -1,6 +1,6 @@
 import uuid
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
 from app.core.supabase.client import SupabaseClient
 
@@ -11,9 +11,17 @@ class ImageService:
     Service for handling image storage operations with TTL support
     """
     
-    def __init__(self):
-        self.supabase = SupabaseClient()
+    def __init__(self, jwt_token: Optional[str] = None):
+        self.supabase_client = SupabaseClient()
+        self.jwt_token = jwt_token
         self.bucket_name = "images"
+    
+    @property
+    def supabase(self):
+        """Get authenticated or default Supabase client"""
+        if self.jwt_token:
+            return self.supabase_client.get_authenticated_client(self.jwt_token)
+        return self.supabase_client.client
     
     async def create_temp_image(self, user_id: str, file_extension: str = "jpg") -> Dict[str, Any]:
         """
@@ -29,6 +37,7 @@ class ImageService:
             # Create temp record with 24h expiry
             expires_at = datetime.utcnow() + timedelta(hours=24)
             
+            # Use authenticated client for database operations
             image_result = self.supabase.table("images").insert({
                 "file_path": file_path,
                 "user_id": user_id,
@@ -39,8 +48,8 @@ class ImageService:
             if not hasattr(image_result, "data") or not image_result.data:
                 raise Exception("Failed to create image record")
             
-            # Get signed URL for upload
-            signed_url = self.supabase.client.storage.from_(self.bucket_name).create_signed_upload_url(file_path)   
+            # Get signed URL for upload using authenticated client for private bucket access
+            signed_url = self.supabase.storage.from_(self.bucket_name).create_signed_upload_url(file_path)   
 
             if signed_url.get('error'):
                 raise Exception(f"Failed to create signed URL: {signed_url['error']}")
@@ -69,6 +78,7 @@ class ImageService:
         try:
             logger.info(f"Committing image to permanent: {image_id}")
             
+            # Use authenticated client - RLS handles user access control
             result = self.supabase.table("images").update({
                 "status": "permanent",
                 "expires_at": None,
@@ -95,6 +105,7 @@ class ImageService:
         try:
             logger.info(f"Getting image URL for ID: {image_id}")
             
+            # Use authenticated client - RLS handles user access control
             result = self.supabase.table("images").select("file_path").eq("id", image_id).execute()
             
             if not hasattr(result, "data") or not result.data:
@@ -132,8 +143,8 @@ class ImageService:
             file_path = f"{folder}/{user_id}/{file_id}.{file_extension}"
             logger.info(f"Generating upload URL for path: {file_path}")
             
-            # Create signed upload URL (expires in 1 hour)
-            signed_url = self.supabase.client.storage.from_(self.bucket_name).create_signed_upload_url(file_path)
+            # Create signed upload URL (expires in 1 hour) using authenticated client
+            signed_url = self.supabase.storage.from_(self.bucket_name).create_signed_upload_url(file_path)
             
             if signed_url.get('error'):
                 raise Exception(f"Failed to create signed URL: {signed_url['error']}")
@@ -157,12 +168,12 @@ class ImageService:
         try:
             logger.info(f"Deleting image: {image_path}")
             
-            # Verify the image belongs to the user (security check)
+            # Verify the image belongs to the user (security check) - business logic validation
             if not image_path.startswith(f"workouts/{user_id}/") and not image_path.startswith(f"images/{user_id}/"):
                 raise Exception("You can only delete your own images")
             
-            # Delete from storage
-            result = self.supabase.client.storage.from_(self.bucket_name).remove([image_path])
+            # Delete from storage using authenticated client for user permission enforcement
+            result = self.supabase.storage.from_(self.bucket_name).remove([image_path])
             
             if result.get('error'):
                 raise Exception(f"Failed to delete image: {result['error']}")
@@ -184,7 +195,8 @@ class ImageService:
         Get the public URL for an image
         """
         try:
-            result = self.supabase.client.storage.from_(self.bucket_name).get_public_url(image_path)
+            # Use authenticated client for consistent access patterns
+            result = self.supabase.storage.from_(self.bucket_name).get_public_url(image_path)
             return result['data']['publicUrl']
         except Exception as e:
             logger.error(f"Error getting public URL for {image_path}: {str(e)}")

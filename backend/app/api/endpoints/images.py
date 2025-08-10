@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
 from typing import Dict, Any
 from app.core.supabase.auth import get_current_user
+from app.core.utils.jwt_utils import extract_jwt_from_request
 import logging
 from app.services.storage.image_service import ImageService
 
@@ -10,6 +11,7 @@ router = APIRouter(prefix="/images")
 # New TTL endpoints
 @router.post("/temp-upload")
 async def create_temp_image(
+    request: Request,
     data: Dict[str, Any] = Body(...),
     user: Dict[str, Any] = Depends(get_current_user)
 ):
@@ -18,7 +20,9 @@ async def create_temp_image(
     """
     try:
         logger.info(f"API request to create temp image for user: {user.id}")
-        image_service = ImageService()
+        
+        jwt_token = extract_jwt_from_request(request)
+        image_service = ImageService(jwt_token=jwt_token)
         result = await image_service.create_temp_image(
             user_id=user.id,
             file_extension=data.get("file_extension", "jpg")
@@ -34,6 +38,7 @@ async def create_temp_image(
 @router.post("/{image_id}/commit")
 async def commit_image(
     image_id: str,
+    request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
@@ -41,7 +46,9 @@ async def commit_image(
     """
     try:
         logger.info(f"API request to commit image: {image_id}")
-        image_service = ImageService()
+        
+        jwt_token = extract_jwt_from_request(request)
+        image_service = ImageService(jwt_token=jwt_token)
         result = await image_service.commit_image(image_id)
         return result
     except Exception as e:
@@ -54,6 +61,7 @@ async def commit_image(
 @router.get("/{image_id}/url")
 async def get_image_url(
     image_id: str,
+    request: Request,
     user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
@@ -61,7 +69,9 @@ async def get_image_url(
     """
     try:
         logger.info(f"API request to get image URL: {image_id}")
-        image_service = ImageService()
+        
+        jwt_token = extract_jwt_from_request(request)
+        image_service = ImageService(jwt_token=jwt_token)
         result = await image_service.get_image_url(image_id)
         return result
     except Exception as e:
@@ -84,11 +94,13 @@ async def get_image_upload_url(
     """
     try:
         logger.info(f"API request to get image upload URL for user: {user.id}")
-        image_service = ImageService()
+        
+        jwt_token = extract_jwt_from_request(request)
+        image_service = ImageService(jwt_token=jwt_token)
         result = await image_service.get_upload_url(
             user_id=user.id,
             file_extension=data.get("file_extension", "jpg"),
-            folder=data.get("folder", "workouts")  # allows for different folders later
+            folder=data.get("folder", "workouts") # allows for different folders later
         )
         return result
     except Exception as e:
@@ -109,7 +121,9 @@ async def delete_image(
     """
     try:
         logger.info(f"API request to delete image: {image_path}")
-        image_service = ImageService()
+        
+        jwt_token = extract_jwt_from_request(request)
+        image_service = ImageService(jwt_token=jwt_token)
         result = await image_service.delete_image(user.id, image_path)
         return result
     except Exception as e:

@@ -1,5 +1,5 @@
 from .base_service import BaseDBService
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 from datetime import datetime, timedelta
 from ...core.utils.id_gen import new_uuid
@@ -12,6 +12,9 @@ class WorkoutService(BaseDBService):
     Service for handling workout operations in the database
     """
 
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
+
     async def get_workout(self, workout_id: str) -> Dict[str, Any]:
         """
         Get a workout by ID
@@ -19,6 +22,7 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting workout: {workout_id}")
 
+            # RLS handles user access control
             result = (
                 self.supabase.table("workouts")
                 .select("*, workout_exercises(*, workout_exercise_sets(*))")
@@ -39,8 +43,6 @@ class WorkoutService(BaseDBService):
             for exercise in workout["workout_exercises"]:
                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
-            # REMOVED: workout["conversationId"] = workout["conversation_id"]
-
             logger.info(f"Successfully retrieved workout: {workout_id}")
             return workout
 
@@ -55,7 +57,7 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Deleting workout: {workout_id}")
 
-            # Get all exercise IDs for this workout
+            # Get all exercise IDs for this workout - RLS handles user access
             exercise_result = (
                 self.supabase.table("workout_exercises")
                 .select("id")
@@ -76,7 +78,7 @@ class WorkoutService(BaseDBService):
                     "workout_id", workout_id
                 ).execute()
 
-            # Delete the workout
+            # Delete the workout - RLS handles user access control
             result = (
                 self.supabase.table("workouts").delete().eq("id", workout_id).execute()
             )
@@ -98,6 +100,7 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Updating template usage for workout: {template_id}")
 
+            # RLS handles user access control
             result = (
                 self.supabase.table("workouts")
                 .update({"used_as_template": datetime.utcnow().isoformat()})
@@ -124,10 +127,10 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting workout templates for user: {user_id}")
 
+            # RLS handles user filtering - removed manual user_id filter
             result = (
                 self.supabase.table("workouts")
                 .select("*, workout_exercises(*, workout_exercise_sets(*))")
-                .eq("user_id", user_id)
                 .order("used_as_template", desc=True)
                 .limit(50)
                 .execute()
@@ -168,11 +171,10 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Getting all workouts for user: {user_id}")
 
-            # Use the same query structure as get_workout for consistency
+            # RLS handles user filtering - removed manual user_id filter
             result = (
                 self.supabase.table("workouts")
                 .select("*, workout_exercises(*, workout_exercise_sets(*))")
-                .eq("user_id", user_id)
                 .order("created_at", desc=True)
                 .execute()
             )
@@ -209,6 +211,7 @@ class WorkoutService(BaseDBService):
             from_date = datetime.now() - timedelta(days=180)      
             logger.info(f"Calling RPC for user: {user_id}, definitions: {definition_ids}")
             
+            # Keep user_id for RPC call - this is business logic requirement
             result = self.supabase.rpc('get_workouts_by_definition_ids', {
                 'user_id_param': user_id,
                 'definition_ids': definition_ids,
@@ -223,6 +226,13 @@ class WorkoutService(BaseDBService):
             logger.error(f"RPC error: {str(e)}")
             return self._empty_workout_result(from_date)
         
+    def _empty_workout_result(self, from_date):
+        """Helper method for empty workout result"""
+        return {
+            "workouts": [],
+            "from_date": from_date.isoformat()
+        }
+        
     async def create_workout(
         self, user_id: str, workout_data: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -236,10 +246,10 @@ class WorkoutService(BaseDBService):
 
             now = datetime.utcnow().isoformat()
 
-            # Prepare the workout data including the conversation_id if present
+            # Prepare the workout data including user_id for business logic
             workout_insert_data = {
                 "id": workout_data.get("id") or str(await new_uuid()),
-                "user_id": user_id,
+                "user_id": user_id,  # Keep user_id for business logic
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),
                 "created_at": workout_data.get("created_at") or now,
@@ -247,7 +257,7 @@ class WorkoutService(BaseDBService):
             }
 
             logger.info(
-                f"Inserting workout with data: {workout_insert_data.get('name')}, {workout_insert_data.get('conversation_id')}"
+                f"Inserting workout with data: {workout_insert_data.get('name')}"
             )
 
             # Insert workout
@@ -366,7 +376,7 @@ class WorkoutService(BaseDBService):
         try:
             logger.info(f"Updating workout: {workout_id}")
 
-            # Update the main workout record
+            # Update the main workout record - RLS handles user access control
             workout_update_data = {
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),
@@ -462,13 +472,9 @@ class WorkoutService(BaseDBService):
             for exercise in workout["workout_exercises"]:
                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
-
             workout_user = workout_result.data[0].get("user_id") if workout_result.data else None
             if workout_user:
                 await self.update_bicep_leaderboard(workout_id, workout_user)
-
-            logger.info(f"Successfully updated workout: {workout_id}")
-            return workout
 
             logger.info(f"Successfully updated workout: {workout_id}")
             return workout

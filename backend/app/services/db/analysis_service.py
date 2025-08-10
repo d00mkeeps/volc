@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 
 from app.services.workout_analysis.schemas import WorkoutDataBundle
@@ -13,17 +13,19 @@ class AnalysisBundleService(BaseDBService):
     Service for handling analysis bundle operations in the database
     """
     
-    async def get_bundles_by_conversation(self, user_id: str, conversation_id: str) -> List[Dict[str, Any]]:
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
+    
+    async def get_bundles_by_conversation(self, conversation_id: str) -> List[Dict[str, Any]]:
         """
         Get all analysis bundles for a specific conversation
         """
         try:
             logger.info(f"Getting analysis bundles for conversation: {conversation_id}")
             
-            # Query using Supabase client
+            # Query using authenticated Supabase client - RLS handles user filtering
             result = self.supabase.table("analysis_bundles") \
                 .select("*") \
-                .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
                 .order("created_at", desc=True) \
                 .execute()
@@ -54,17 +56,17 @@ class AnalysisBundleService(BaseDBService):
             logger.error(f"Error getting analysis bundles: {str(e)}")
             return await self.handle_error("get_bundles_by_conversation", e)
 
-    async def delete_analysis_bundle(self, user_id: str, bundle_id: str) -> Dict[str, Any]:
+    async def delete_analysis_bundle(self, bundle_id: str) -> Dict[str, Any]:
         """
         Delete a analysis bundle
         """
         try:
             logger.info(f"Deleting analysis bundle: {bundle_id}")
             
+            # RLS handles user access control
             result = self.supabase.table("analysis_bundles") \
                 .delete() \
                 .eq("id", bundle_id) \
-                .eq("user_id", user_id) \
                 .execute()
                 
             # Check for data in response
@@ -79,16 +81,16 @@ class AnalysisBundleService(BaseDBService):
             logger.error(f"Error deleting analysis bundle: {str(e)}")
             return await self.handle_error("delete_analysis_bundle", e)
 
-    async def delete_conversation_bundles(self, user_id: str, conversation_id: str) -> Dict[str, Any]:
+    async def delete_conversation_bundles(self, conversation_id: str) -> Dict[str, Any]:
         """
         Delete all analysis bundles for a conversation
         """
         try:
             logger.info(f"Deleting all analysis bundles for conversation: {conversation_id}")
             
+            # RLS handles user access control
             result = self.supabase.table("analysis_bundles") \
                 .delete() \
-                .eq("user_id", user_id) \
                 .eq("conversation_id", conversation_id) \
                 .execute()
                 
@@ -150,6 +152,7 @@ class AnalysisBundleService(BaseDBService):
             if error_msg:
                 update_data["error_message"] = error_msg
                 
+            # RLS handles user access control
             result = self.supabase.table("analysis_bundles") \
                 .update(update_data) \
                 .eq("id", bundle_id) \
@@ -190,6 +193,7 @@ class AnalysisBundleService(BaseDBService):
             
             converted_data = convert_for_json(data)
             
+            # RLS handles user access control
             result = self.supabase.table("analysis_bundles") \
                 .update({field_name: converted_data}) \
                 .eq("id", bundle_id) \
@@ -240,7 +244,7 @@ class AnalysisBundleService(BaseDBService):
                 "created_at": bundle.created_at.isoformat()
             }
             
-            # UPDATE existing bundle instead of INSERT
+            # UPDATE existing bundle instead of INSERT - RLS handles user access control
             result = self.supabase.table("analysis_bundles") \
                 .update(update_data) \
                 .eq("id", bundle_id) \

@@ -1,5 +1,5 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,6 +8,9 @@ class ConversationService(BaseDBService):
     """
     Service for handling conversation operations in the database
     """
+    
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
     
     async def create_conversation(self, user_id: str, title: str, config_name: str) -> Dict[str, Any]:
         """
@@ -73,6 +76,7 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Getting conversation: {conversation_id}")
             
+            # RLS handles user access control
             result = self.supabase.table("conversations") \
                 .select("*") \
                 .eq("id", conversation_id) \
@@ -98,6 +102,7 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Getting active conversations for user: {user_id}") 
             
+            # RLS handles user filtering, but we keep user_id for business logic validation
             result = self.supabase.table("conversations") \
                 .select("*") \
                 .eq("user_id", user_id) \
@@ -125,6 +130,7 @@ class ConversationService(BaseDBService):
         try:
             logger.info(f"Deleting conversation: {conversation_id}")
             
+            # RLS handles user access control
             result = self.supabase.table("conversations") \
                 .update({"status": "deleted"}) \
                 .eq("id", conversation_id) \
@@ -139,5 +145,3 @@ class ConversationService(BaseDBService):
         except Exception as e:
             logger.error(f"Error deleting conversation: {str(e)}")
             return await self.handle_error("delete_conversation", e)
-    
-   

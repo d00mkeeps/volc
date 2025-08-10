@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
 from typing import Dict, Any
 from app.core.supabase.auth import get_current_user
+from app.core.utils.jwt_utils import extract_jwt_from_request
 import logging
 from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
@@ -30,7 +31,8 @@ async def get_templates(
     try:
         logger.info(f"API request to get workout templates for user: {user.id}")
         
-        workout_service = WorkoutService()
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         result = await workout_service.get_templates(user.id)
         
         return result
@@ -40,6 +42,7 @@ async def get_templates(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
 @router.get("/analysis-bundles")
 async def get_analysis_bundles(
     conversation_id: str, 
@@ -52,7 +55,8 @@ async def get_analysis_bundles(
     try:
         logger.info(f"API request to get analysis bundles for conversation: {conversation_id}")
         
-        analysis_bundle_service = AnalysisBundleService()
+        jwt_token = extract_jwt_from_request(request)
+        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
         bundles = await analysis_bundle_service.get_bundles_by_conversation(user.id, conversation_id)
         
         logger.info(f"Retrieved {len(bundles)} analysis bundles for conversation: {conversation_id}")
@@ -76,7 +80,8 @@ async def save_analysis_bundle(
     try:
         logger.info(f"API request to save analysis bundle for conversation: {bundle.get('conversationId')}")
         
-        analysis_bundle_service = AnalysisBundleService()
+        jwt_token = extract_jwt_from_request(request)
+        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
         result = await analysis_bundle_service.save_analysis_bundle(user.id, bundle)
         
         return result
@@ -99,7 +104,8 @@ async def delete_analysis_bundle(
     try:
         logger.info(f"API request to delete analysis bundle: {bundle_id}")
         
-        analysis_bundle_service = AnalysisBundleService()
+        jwt_token = extract_jwt_from_request(request)
+        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
         result = await analysis_bundle_service.delete_analysis_bundle(user.id, bundle_id)
         
         return result
@@ -122,7 +128,8 @@ async def delete_conversation_bundles(
     try:
         logger.info(f"API request to delete all analysis bundles for conversation: {conversation_id}")
         
-        analysis_bundle_service = AnalysisBundleService()
+        jwt_token = extract_jwt_from_request(request)
+        analysis_bundle_service = AnalysisBundleService(jwt_token=jwt_token)
         result = await analysis_bundle_service.delete_conversation_bundles(user.id, conversation_id)
         
         return result
@@ -145,7 +152,8 @@ async def create_workout(
     try:
         logger.info(f"API request to create workout: {workout.get('name')}")
         
-        workout_service = WorkoutService()
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         result = await workout_service.create_workout(user.id, workout)
         
         return result
@@ -155,8 +163,6 @@ async def create_workout(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-# In app/api/endpoints/db.py
-# Place this BEFORE the /workouts/{workout_id} route
 
 @router.get("/workouts/user")
 async def get_user_workouts(
@@ -169,7 +175,8 @@ async def get_user_workouts(
     try:
         logger.info(f"API request to get all workouts for user: {user.id}")
         
-        workout_service = WorkoutService()
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         result = await workout_service.get_user_workouts(user.id)
         
         logger.info(f"Retrieved {len(result)} workouts for user: {user.id}")
@@ -180,6 +187,7 @@ async def get_user_workouts(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
 @router.get("/workouts/{workout_id}")
 async def get_workout(
     workout_id: str,
@@ -192,15 +200,9 @@ async def get_workout(
     try:
         logger.info(f"API request to get workout: {workout_id}")
         
-        workout_service = WorkoutService()
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         result = await workout_service.get_workout(workout_id)
-        
-        # Check if the workout belongs to the user
-        if result["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this workout"
-            )
         
         return result
     except Exception as e:
@@ -210,14 +212,10 @@ async def get_workout(
             detail=str(e)
         )
 
-@router.get("/workouts")
-
 @router.post("/workouts/template")
 async def save_workout_as_template(
     request: Request,
-
-    user: Dict[str, Any] = Depends(get_current_user)
-,
+    user: Dict[str, Any] = Depends(get_current_user),
     workout: Dict[str, Any] = Body(...),
 ):
     """
@@ -226,7 +224,8 @@ async def save_workout_as_template(
     try:
         logger.info(f"API request to save workout as template: {workout.get('id')}")
         
-        workout_service = WorkoutService()
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         result = await workout_service.save_as_template(user.id, workout)
         
         return result
@@ -240,6 +239,7 @@ async def save_workout_as_template(
 @router.put("/workouts/{workout_id}")
 async def update_workout(
     workout_id: str,
+    request: Request,
     workout: Dict[str, Any] = Body(...),
     user: Dict[str, Any] = Depends(get_current_user)
 ):
@@ -249,15 +249,8 @@ async def update_workout(
     try:
         logger.info(f"API request to update workout: {workout_id}")
         
-        workout_service = WorkoutService()
-        
-        # Verify ownership
-        existing_workout = await workout_service.get_workout(workout_id)
-        if existing_workout["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to update this workout"
-            )
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         
         result = await workout_service.update_workout(workout_id, workout)
         return result
@@ -267,6 +260,7 @@ async def update_workout(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
 @router.delete("/workouts/{workout_id}")
 async def delete_workout(
     workout_id: str,
@@ -279,15 +273,8 @@ async def delete_workout(
     try:
         logger.info(f"API request to delete workout: {workout_id}")
         
-        workout_service = WorkoutService()
-        
-        # First get the workout to verify ownership
-        workout = await workout_service.get_workout(workout_id)
-        if workout["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to delete this workout"
-            )
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         
         result = await workout_service.delete_workout(workout_id)
         
@@ -311,15 +298,8 @@ async def update_template_usage(
     try:
         logger.info(f"API request to update template usage for workout: {template_id}")
         
-        workout_service = WorkoutService()
-        
-        # First get the template to verify ownership
-        template = await workout_service.get_workout(template_id)
-        if template["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to update this template"
-            )
+        jwt_token = extract_jwt_from_request(request)
+        workout_service = WorkoutService(jwt_token=jwt_token)
         
         result = await workout_service.update_template_usage(template_id)
         
@@ -330,6 +310,7 @@ async def update_template_usage(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
 @router.post("/conversations")
 async def create_conversation(
     request: Request,
@@ -342,7 +323,8 @@ async def create_conversation(
     try:
         logger.info(f"API request to create conversation: {data.get('title')}")
         
-        conversation_service = ConversationService()
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
         result = await conversation_service.create_conversation(
             user.id, 
             data.get("title"), 
@@ -369,7 +351,8 @@ async def create_onboarding_conversation(
     try:
         logger.info(f"API request to create onboarding conversation")
         
-        conversation_service = ConversationService()
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
         result = await conversation_service.create_onboarding_conversation(
             user.id, 
             data.get("sessionId"), 
@@ -396,15 +379,9 @@ async def get_conversation(
     try:
         logger.info(f"API request to get conversation: {conversation_id}")
         
-        conversation_service = ConversationService()
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
         result = await conversation_service.get_conversation(conversation_id)
-        
-        # Check if the conversation belongs to the user
-        if result["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this conversation"
-            )
         
         return result
     except Exception as e:
@@ -426,18 +403,10 @@ async def get_conversation_messages(
     try:
         logger.info(f"API request to get messages for conversation: {conversation_id}")
         
-        # First, verify the conversation belongs to the user
-        conversation_service = ConversationService()
-        conversation = await conversation_service.get_conversation(conversation_id)
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
+        message_service = MessageService(jwt_token=jwt_token)
         
-        if conversation["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this conversation"
-            )
-        
-        # Get messages
-        message_service = MessageService()
         messages = await message_service.get_conversation_messages(conversation_id)
         
         return messages
@@ -459,9 +428,9 @@ async def get_user_conversations(
     try:
         logger.info(f"API request to get active conversations for user: {user.id}")
         
-        # Create service with additional logging
         logger.info("Creating ConversationService instance")
-        conversation_service = ConversationService()
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
         
         # Explicitly log the Supabase client status
         supabase = conversation_service.supabase
@@ -474,7 +443,6 @@ async def get_user_conversations(
         except Exception as e:
             logger.error(f"Supabase client test query failed: {str(e)}")
         
-        # Attempt to get conversations
         logger.info("Calling get_user_conversations method")
         result = await conversation_service.get_user_conversations(user.id)
         
@@ -486,20 +454,6 @@ async def get_user_conversations(
             # If API key error, try direct query
             if "API key is required" in error_msg:
                 logger.info("API key error detected, trying direct query")
-                
-                # Direct import to get a fresh client
-
-                # direct_client = SupabaseClient()
-                
-                # # Try direct query
-                # direct_result = direct_client.client.table("conversations") \
-                #     .select("*") \
-                #     .eq("user_id", user.id) \
-                #     .eq("status", "active") \
-                #     .neq("config_name", "onboarding") \
-                #     .order("updated_at", {"ascending": False}) \
-                #     .execute()
-                
                 conversations = []
                 logger.info(f"Direct query retrieved {len(conversations)} conversations, maybe start debugging?")
                 return conversations
@@ -532,15 +486,8 @@ async def delete_conversation(
     try:
         logger.info(f"API request to delete conversation: {conversation_id}")
         
-        # First, verify the conversation belongs to the user
-        conversation_service = ConversationService()
-        conversation = await conversation_service.get_conversation(conversation_id)
-        
-        if conversation["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to delete this conversation"
-            )
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
         
         result = await conversation_service.delete_conversation(conversation_id)
         
@@ -565,17 +512,10 @@ async def save_message(
     try:
         logger.info(f"API request to save message to conversation: {conversation_id}")
         
-        # First, verify the conversation belongs to the user
-        conversation_service = ConversationService()
-        conversation = await conversation_service.get_conversation(conversation_id)
+        jwt_token = extract_jwt_from_request(request)
+        conversation_service = ConversationService(jwt_token=jwt_token)
+        message_service = MessageService(jwt_token=jwt_token)
         
-        if conversation["user_id"] != user.id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this conversation"
-            )
-        
-        message_service = MessageService()
         result = await message_service.save_message(
             conversation_id,
             data.get("content"),
@@ -601,7 +541,8 @@ async def get_all_exercise_definitions(
     try:
         logger.info("API request to get all exercise definitions")
         
-        exercise_definition_service = ExerciseDefinitionService()
+        jwt_token = extract_jwt_from_request(request)
+        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
         result = await exercise_definition_service.get_all_exercise_definitions()
         
         return result
@@ -624,7 +565,8 @@ async def create_exercise_definition(
     try:
         logger.info(f"API request to create exercise definition: {data.get('standard_name')}")
         
-        exercise_definition_service = ExerciseDefinitionService()
+        jwt_token = extract_jwt_from_request(request)
+        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
         result = await exercise_definition_service.create_exercise_definition(data)
         
         return result
@@ -647,7 +589,8 @@ async def get_exercise_definition_by_id(
     try:
         logger.info(f"API request to get exercise definition: {definition_id}")
         
-        exercise_definition_service = ExerciseDefinitionService()
+        jwt_token = extract_jwt_from_request(request)
+        exercise_definition_service = ExerciseDefinitionService(jwt_token=jwt_token)
         result = await exercise_definition_service.get_exercise_definition_by_id(definition_id)
         
         return result
@@ -669,7 +612,8 @@ async def get_user_profile(
     try:
         logger.info(f"API request to get profile for user: {user.id}")
         
-        user_profile_service = UserProfileService()
+        jwt_token = extract_jwt_from_request(request)
+        user_profile_service = UserProfileService(jwt_token=jwt_token)
         result = await user_profile_service.get_user_profile(user.id)
         
         if not result:
@@ -696,7 +640,8 @@ async def save_user_profile(
     try:
         logger.info(f"API request to save profile for user: {user.id}")
         
-        user_profile_service = UserProfileService()
+        jwt_token = extract_jwt_from_request(request)
+        user_profile_service = UserProfileService(jwt_token=jwt_token)
         result = await user_profile_service.save_user_profile(user.id, data)
         
         return result

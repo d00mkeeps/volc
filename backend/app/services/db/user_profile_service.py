@@ -1,5 +1,5 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,6 +18,9 @@ class UserProfileService(BaseDBService):
     """
     Service for handling user profile operations in the database
     """
+    
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
     
     def map_age_group_to_number(self, age_group: str) -> int:
         """
@@ -53,7 +56,7 @@ class UserProfileService(BaseDBService):
                     logger.warning(f"Invalid age group: {age_group}")
                     # We'll continue without the age group rather than failing the entire operation
             
-            # Update the user profile - REMOVED await
+            # Update the user profile - RLS handles user filtering
             result = self.supabase.table("user_profiles") \
                 .update(user_profile) \
                 .eq("auth_user_uuid", user_id) \
@@ -63,10 +66,9 @@ class UserProfileService(BaseDBService):
                 # If update didn't affect any rows, the profile might not exist yet, so try insert
                 logger.info(f"No existing profile found for user {user_id}, attempting to create")
                 
-                # Add the user ID to the profile data
+                # Add the user ID to the profile data for insert (business logic requirement)
                 user_profile["auth_user_uuid"] = user_id
                 
-                # REMOVED await
                 result = self.supabase.table("user_profiles") \
                     .insert(user_profile) \
                     .execute()
@@ -74,10 +76,9 @@ class UserProfileService(BaseDBService):
                 if not hasattr(result, 'data') or not result.data:
                     raise Exception("Failed to create user profile: No data returned")
             
-            # Fetch the updated profile - REMOVED await
+            # Fetch the updated profile - RLS handles user filtering
             profile_result = self.supabase.table("user_profiles") \
                 .select("*") \
-                .eq("auth_user_uuid", user_id) \
                 .execute()
                 
             if not hasattr(profile_result, 'data') or not profile_result.data:
@@ -97,10 +98,9 @@ class UserProfileService(BaseDBService):
         try:
             logger.info(f"Getting profile for user: {user_id}")
             
-            # REMOVED await
+            # RLS handles user filtering - no need to filter by auth_user_uuid
             result = self.supabase.table("user_profiles") \
                 .select("*") \
-                .eq("auth_user_uuid", user_id) \
                 .execute()
                 
             if not hasattr(result, 'data') or not result.data or len(result.data) == 0:

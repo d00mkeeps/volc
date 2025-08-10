@@ -97,11 +97,47 @@ export const useConversationStore = create<ConversationStoreState>(
       async initializeIfAuthenticated() {
         console.log("🗣️ ConversationStore: Starting initialization...");
 
-        const userProfile = useUserStore.getState().userProfile;
+        // Wait for UserStore to fully initialize first
+        let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max wait
+        let userProfile = useUserStore.getState().userProfile;
+        let userStoreInitialized = useUserStore.getState().initialized;
+
+        console.log(
+          "🗣️ ConversationStore: Waiting for UserStore to complete..."
+        );
+
+        while (
+          (!userProfile?.auth_user_uuid || !userStoreInitialized) &&
+          attempts < maxAttempts
+        ) {
+          await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms
+          userProfile = useUserStore.getState().userProfile;
+          userStoreInitialized = useUserStore.getState().initialized;
+          attempts++;
+
+          if (attempts % 10 === 0) {
+            console.log(
+              `🗣️ ConversationStore: Still waiting... attempt ${attempts}/50, userProfile exists: ${!!userProfile}, initialized: ${userStoreInitialized}`
+            );
+          }
+        }
+
         if (!userProfile?.auth_user_uuid) {
-          console.log("🗣️ ConversationStore: No user profile, skipping");
+          console.log(
+            "🗣️ ConversationStore: No user profile after waiting, skipping"
+          );
+          console.log(
+            `🗣️ ConversationStore: Final state - userProfile: ${!!userProfile}, auth_user_uuid: ${
+              userProfile?.auth_user_uuid
+            }, initialized: ${userStoreInitialized}`
+          );
           return;
         }
+
+        console.log(
+          `🗣️ ConversationStore: UserStore ready after ${attempts} attempts`
+        );
 
         try {
           console.log(
@@ -134,6 +170,7 @@ export const useConversationStore = create<ConversationStoreState>(
           set({
             conversations: conversationsMap,
             isLoading: false,
+            initialized: true,
           });
 
           console.log("✅ ConversationStore: Initialization complete");
@@ -141,10 +178,12 @@ export const useConversationStore = create<ConversationStoreState>(
           console.error("❌ ConversationStore: Initialization failed:", error);
           set({
             isLoading: false,
+            initialized: true,
             error: error instanceof Error ? error : new Error(String(error)),
           });
         }
       },
+
       // Called by authStore when user logs out
       clearData: () => {
         set({

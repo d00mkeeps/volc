@@ -1,5 +1,5 @@
 from app.services.db.base_service import BaseDBService
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,6 +8,9 @@ class ExerciseDefinitionService(BaseDBService):
     """
     Service for handling exercise definition operations in the database
     """
+    
+    def __init__(self, jwt_token: Optional[str] = None):
+        super().__init__(jwt_token)
     
     async def get_all_exercise_definitions(self) -> List[Dict[str, Any]]:
         """
@@ -25,7 +28,6 @@ class ExerciseDefinitionService(BaseDBService):
                 raise Exception(f"Failed to fetch exercise definitions: {result.error.message}")
                 
             definitions = result.data or []
-            
             logger.info(f"Fetched {len(definitions)} exercise definitions")
             return definitions
             
@@ -47,7 +49,7 @@ class ExerciseDefinitionService(BaseDBService):
                 del exercise_data['created_at']
             if 'updated_at' in exercise_data:
                 del exercise_data['updated_at']
-            
+                
             result = self.supabase.table("exercise_definitions") \
                 .insert(exercise_data) \
                 .execute()
@@ -59,7 +61,6 @@ class ExerciseDefinitionService(BaseDBService):
                 raise Exception("No data returned from insert")
                 
             created_definition = result.data[0]
-            
             logger.info(f"Exercise definition created with ID: {created_definition.get('id')}")
             return created_definition
             
@@ -86,7 +87,6 @@ class ExerciseDefinitionService(BaseDBService):
                 raise Exception(f"Exercise definition not found: {definition_id}")
                 
             definition = result.data[0]
-            
             logger.info(f"Retrieved exercise definition: {definition.get('standard_name')}")
             return definition
             
