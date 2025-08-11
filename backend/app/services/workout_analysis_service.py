@@ -20,56 +20,74 @@ class WorkoutAnalysisService:
     async def initiate_analysis_and_conversation(
         self, 
         request: WorkoutAnalysisRequest,
-        user: Dict
+        user: Dict,
+        jwt_token: str
     ) -> Dict[str, Any]:
         try:
             conversation = await self.conversation_service.create_conversation(
-                user_id=user.id,
                 title=f"Analysis - {datetime.now().strftime('%b %d')}",
-                config_name='workout-analysis'
+                config_name='workout-analysis',
+                user=user,
+                jwt_token=jwt_token
             )
-            conversation_id = conversation['id']
+            
+            logger.info(f"Conversation service returned: {conversation}")
+            
+            # Check if it's an error response - fix the condition
+            if not conversation.get('success', True) or conversation.get('error'):  # Changed: check if error is truthy
+                logger.error(f"Conversation creation failed: {conversation}")
+                raise Exception(f"Failed to create conversation: {conversation.get('error', 'Unknown error')}")
+            
+            # Extract the ID from the data field
+            conversation_id = conversation['data']['id']
 
-            asyncio.create_task(self._perform_analysis_task(request, conversation_id, user.id))
+            asyncio.create_task(self._perform_analysis_task(request, conversation_id, user.id, jwt_token))
 
             return {"conversation_id": conversation_id}
 
         except Exception as e:
             logger.error(f"Error initiating analysis and conversation: {e}", exc_info=True)
             raise
-    
-    async def _get_workout_data(self, request: WorkoutAnalysisRequest, user_id: str) -> Dict[str, Any]:
+
+    async def _get_workout_data(self, request: WorkoutAnalysisRequest, user_id: str, jwt_token: str) -> Dict[str, Any]:
         if request.exercise_definition_ids:
-            return await self.workout_service.get_workout_history_by_definition_ids(
+            result = await self.workout_service.get_workout_history_by_definition_ids(
                 user_id=user_id,
                 definition_ids=request.exercise_definition_ids,
+                jwt_token=jwt_token
             )
-        return None 
-    
-    async def _perform_analysis_task(self, request: WorkoutAnalysisRequest, conversation_id: str, user_id: str):
+            
+            # Unwrap the response to get the actual workout data
+            if result and result.get("success") and result.get("data"):
+                return result["data"]  # Extract the actual workout data
+            elif result:
+                return result  # Fallback in case it's not wrapped
+                
+        return None
+    async def _perform_analysis_task(self, request: WorkoutAnalysisRequest, conversation_id: str, user_id: str, jwt_token: str):
         bundle_id = None
         try:
             logger.info(f"Starting analysis task for conversation: {conversation_id}")
             
             # 1. Create empty bundle immediately
-            bundle_result = await self.analysis_bundle_service.create_empty_bundle(conversation_id, user_id)
+            bundle_result = await self.analysis_bundle_service.create_empty_bundle(conversation_id, user_id, jwt_token)
             if not bundle_result.get("success"):
                 logger.error(f"Failed to create empty bundle: {bundle_result.get('error')}")
                 return
             
-            bundle_id = bundle_result["bundle_id"]
+            bundle_id = bundle_result["data"]["bundle_id"]
             logger.info(f"Created empty bundle: {bundle_id}")
             
             # 2. Update status to in_progress
-            await self.analysis_bundle_service.update_bundle_status(bundle_id, 'in_progress')
+            await self.analysis_bundle_service.update_bundle_status(bundle_id, 'in_progress', jwt_token)
             
             # 3. Get raw workout data
-            raw_workout_data = await self._get_workout_data(request, user_id)
+            raw_workout_data = await self._get_workout_data(request, user_id, jwt_token)
             
             if not raw_workout_data or not raw_workout_data.get("workouts"):
                 logger.warning(f"No workout data for conversation {conversation_id}")
                 await self.analysis_bundle_service.update_bundle_status(
-                    bundle_id, 'failed', 'No workout data found'
+                    bundle_id, 'failed', jwt_token, 'No workout data found'
                 )
                 return
             
@@ -80,14 +98,14 @@ class WorkoutAnalysisService:
             complete_bundle = processor.process(bundle_id, conversation_id, user_id, raw_workout_data)
             
             # 5. Save the complete bundle to database
-            save_result = await self.analysis_bundle_service.save_analysis_bundle(bundle_id, complete_bundle)
+            save_result = await self.analysis_bundle_service.save_analysis_bundle(bundle_id, complete_bundle, jwt_token)
             
             if save_result.get("success"):
                 logger.info(f"Analysis task completed successfully for conversation {conversation_id}")
             else:
                 logger.error(f"Failed to save complete bundle: {save_result.get('error')}")
                 await self.analysis_bundle_service.update_bundle_status(
-                    bundle_id, 'failed', f"Bundle save failed: {save_result.get('error')}"
+                    bundle_id, 'failed', jwt_token, f"Bundle save failed: {save_result.get('error')}"
                 )
                 
         except Exception as e:
@@ -97,7 +115,7 @@ class WorkoutAnalysisService:
             if bundle_id:
                 try:
                     await self.analysis_bundle_service.update_bundle_status(
-                        bundle_id, 'failed', str(e)
+                        bundle_id, 'failed', jwt_token, str(e)
                     )
                 except Exception as cleanup_error:
                     logger.error(f"Failed to mark bundle as failed: {cleanup_error}")

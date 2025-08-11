@@ -208,7 +208,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           showsVerticalScrollIndicator={false}
         >
           <YStack gap="$3">
-            {currentWorkout?.workout_exercises
+            {(currentWorkout?.workout_exercises || [])
               .sort((a, b) => a.order_index - b.order_index)
               .map((exercise) => (
                 <ExerciseTracker

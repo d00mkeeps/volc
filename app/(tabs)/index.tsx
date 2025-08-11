@@ -15,9 +15,20 @@ import {
 } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
-import { EMPTY_WORKOUT_TEMPLATE } from "@/mockdata";
 import { CompleteWorkout } from "@/types/workout";
 let count = 0;
+
+export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
+  id: "empty-workout-template",
+  user_id: "",
+  name: "Start Empty Workout",
+  notes: "",
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  is_template: true,
+  workout_exercises: [],
+  description: "A blank template for creating custom workouts",
+};
 export default function HomeScreen() {
   console.log(`=== homescreen render count: ${count} ===`);
   count++;

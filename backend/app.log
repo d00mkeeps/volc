@@ -1,6 +1,15 @@
-2025-08-10 18:23:59,491 - app.main - INFO - Response status: 200
-2025-08-10 18:23:59,495 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-10 18:24:00,026 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-10 18:24:00,041 - app.main - INFO - Response status: 200
-2025-08-10 18:24:25,018 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-08-10 18:24:25,544 - app.main - INFO - Response status: 200
+2025-08-11 11:55:57,164 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 2cfcb331-dc8b-4cb2-8086-4dd8c791eea1 (expires in 30 min)
+2025-08-11 11:55:57,166 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.12s - 5 messages, 1 bundles
+2025-08-11 11:55:57,166 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 2cfcb331-dc8b-4cb2-8086-4dd8c791eea1
+2025-08-11 11:55:57,166 - app.services.llm.workout_analysis - INFO - Saved AI response with ID: None
+2025-08-11 12:00:57,233 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')

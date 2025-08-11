@@ -242,7 +242,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     }
     // If no existing template found, savedWorkout becomes the new template automatically
 
-    set({ currentWorkout: savedWorkout });
+    set({ currentWorkout: { ...currentWorkout, id: savedWorkout.id } });
 
     // 3. Extract definition IDs for analysis
     const definitionIds = savedWorkout.workout_exercises

@@ -22,6 +22,7 @@ class ConversationContextService:
     - Retry logic for pending analysis
     - Type conversion from database formats to typed objects
     - Cache invalidation when new data is added
+    - Both user (JWT) and server (admin) operations
     """
     
     def __init__(self):
@@ -37,10 +38,10 @@ class ConversationContextService:
         self.cache_expiry_minutes = 30
         self.pending_analysis_max_retries = 20  # 10 seconds at 500ms intervals
 
-    async def load_context(self, conversation_id: str, user_id: Optional[str] = None) -> ConversationContext:
-        """Load complete conversation context (messages + bundles)."""
+    async def load_context(self, conversation_id: str, jwt_token: str, user_id: Optional[str] = None) -> ConversationContext:
+        """Load complete conversation context (messages + bundles) using user JWT."""
         try:
-            start_time = datetime.now()  # Add timing
+            start_time = datetime.now()
             logger.info(f"🔄 UNIFIED SERVICE: Loading context for conversation: {conversation_id}")
             
             # FAST PATH: Check cache first
@@ -54,7 +55,7 @@ class ConversationContextService:
             elapsed = (datetime.now() - start_time).total_seconds()
             logger.info(f"💾 CACHE MISS: Loading from database for conversation: {conversation_id} (check took {elapsed:.2f}s)")
             
-            context = await self._load_from_database_with_retries(conversation_id, user_id)
+            context = await self._load_from_database_with_retries(conversation_id, jwt_token, user_id)
             
             # Store in cache for future requests
             self._store_in_cache(conversation_id, context)
@@ -68,17 +69,51 @@ class ConversationContextService:
             # Return empty context rather than crashing
             return ConversationContext(messages=[], bundles=[])
 
+    async def load_context_admin(self, conversation_id: str, user_id: Optional[str] = None) -> ConversationContext:
+        """Load complete conversation context using admin client for server operations."""
+        try:
+            start_time = datetime.now()
+            logger.info(f"🔄 ADMIN: Loading context for conversation: {conversation_id}")
+            
+            # FAST PATH: Check cache first
+            if self._is_cached_and_valid(conversation_id):
+                elapsed = (datetime.now() - start_time).total_seconds()
+                logger.info(f"⚡ CACHE HIT: Admin context loaded in {elapsed:.2f}s for conversation: {conversation_id}")
+                self._update_last_accessed(conversation_id)
+                return self._cache[conversation_id]["context"]
+            
+            # SLOW PATH: Cache miss - load from database with admin client
+            elapsed = (datetime.now() - start_time).total_seconds()
+            logger.info(f"💾 CACHE MISS: Loading from database with admin for conversation: {conversation_id} (check took {elapsed:.2f}s)")
+            
+            context = await self._load_from_database_with_retries_admin(conversation_id, user_id)
+            
+            # Store in cache for future requests
+            self._store_in_cache(conversation_id, context)
+            
+            total_elapsed = (datetime.now() - start_time).total_seconds()
+            logger.info(f"✅ ADMIN: Context loaded successfully in {total_elapsed:.2f}s - {len(context.messages)} messages, {len(context.bundles)} bundles")
+            
+            return context
+        except Exception as e:
+            logger.error(f"Error loading admin conversation context: {str(e)}", exc_info=True)
+            # Return empty context rather than crashing
+            return ConversationContext(messages=[], bundles=[])
 
-
-    async def refresh_context(self, conversation_id: str, user_id: Optional[str] = None):
-        """Force refresh context from database (invalidates cache)."""
+    async def refresh_context(self, conversation_id: str, jwt_token: str = None, user_id: Optional[str] = None):
+        """Force refresh context from database (invalidates cache). Handles both user and server operations."""
         logger.info(f"🔄 REFRESH: Force refreshing context for conversation: {conversation_id}")
         
         # Remove from cache to force database reload
         self.invalidate_cache(conversation_id)
         
         # Load fresh context (will hit database since cache is cleared)
-        await self.load_context(conversation_id, user_id)
+        if jwt_token:
+            # User operation - use JWT
+            await self.load_context(conversation_id, jwt_token, user_id)
+        else:
+            # Server operation - use admin client
+            await self.load_context_admin(conversation_id, user_id)
         
         logger.info(f"✅ REFRESH: Context refreshed for conversation: {conversation_id}")
 
@@ -112,11 +147,10 @@ class ConversationContextService:
     
     # =========================
     # INTERNAL IMPLEMENTATION 
-    # (You don't need to understand these details)
     # =========================
-    
 
-    async def _load_from_database_with_retries(self, conversation_id: str, user_id: Optional[str]) -> ConversationContext:
+    async def _load_from_database_with_retries(self, conversation_id: str, jwt_token: str, user_id: Optional[str]) -> ConversationContext:
+        """Load from database with retries using user JWT"""
         for attempt in range(self.pending_analysis_max_retries):
             # Try RPC approach first (more reliable, single call)
             try:
@@ -137,7 +171,7 @@ class ConversationContextService:
                 
             # Try fallback method
             try:
-                context = await self._load_via_separate_calls(conversation_id, user_id)
+                context = await self._load_via_separate_calls(conversation_id, jwt_token, user_id)
                 if context.bundles:
                     return context
                 await asyncio.sleep(0.5)
@@ -152,7 +186,30 @@ class ConversationContextService:
         except:
             return ConversationContext(messages=[], bundles=[])
 
-    async def _load_via_separate_calls(self, conversation_id: str, user_id: Optional[str]) -> ConversationContext:
+    async def _load_from_database_with_retries_admin(self, conversation_id: str, user_id: Optional[str]) -> ConversationContext:
+        """Load from database with retries using admin client"""
+        for attempt in range(self.pending_analysis_max_retries):
+            try:
+                # Use the conversation_attachments with admin client (it already uses admin client)
+                context_result = await load_conversation_context(conversation_id)
+                if context_result["success"]:
+                    context = context_result["data"]
+                    if context.bundles or not any(True for _ in context.bundles):
+                        return context
+                    await asyncio.sleep(0.5)
+                    continue
+            except Exception as e:
+                logger.warning(f"Admin RPC load failed: {str(e)}")
+                await asyncio.sleep(0.5)
+        
+        # Return what we can get
+        try:
+            context_result = await load_conversation_context(conversation_id)
+            return context_result["data"] if context_result["success"] else ConversationContext(messages=[], bundles=[])
+        except:
+            return ConversationContext(messages=[], bundles=[])
+
+    async def _load_via_separate_calls(self, conversation_id: str, jwt_token: str, user_id: Optional[str]) -> ConversationContext:
         """
         Load context using separate database calls (fallback method).
         
@@ -163,8 +220,8 @@ class ConversationContextService:
             raise ValueError("user_id required for separate call loading")
         
         # Load messages and bundles separately
-        messages = await self.message_service.get_conversation_messages(conversation_id)
-        bundles = await self.analysis_bundle_service.get_bundles_by_conversation(user_id, conversation_id)
+        messages = await self.message_service.get_conversation_messages(conversation_id, jwt_token)
+        bundles = await self.analysis_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
         
         # Convert to proper typed objects (this is complex - RPC does it for us)
         from ..db.base_service import ConversationAttachmentsService
@@ -191,16 +248,9 @@ class ConversationContextService:
         }
         logger.info(f"💾 CACHED: Stored context for conversation: {conversation_id} (expires in {self.cache_expiry_minutes} min)")
 
-
     def _update_last_accessed(self, conversation_id: str):
         """Update last accessed time for cache entry."""
         self._cache[conversation_id]["last_accessed"] = datetime.now()
-
-
-
-
-
-
 
 # Single shared instance - you just import and use this
 conversation_context_service = ConversationContextService()

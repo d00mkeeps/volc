@@ -13,7 +13,8 @@ class BaseDBService:
         return supabase_factory.get_user_client(jwt_token)
     
     def get_admin_client(self):
-        """Get Supabase client with admin context (bypasses RLS)"""
+        """Get Supabase client with service role for backend operations"""
+        from app.core.supabase.client import supabase_factory
         return supabase_factory.get_admin_client()
     
     async def handle_error(self, operation: str, error: Exception) -> Dict[str, Any]:

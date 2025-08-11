@@ -52,7 +52,7 @@ class WorkoutAnalysisLLMService:
             from app.services.context.conversation_context_service import conversation_context_service
             
             logger.info("Loading conversation context via unified service")
-            context = await conversation_context_service.load_context(conversation_id, user_id)
+            context = await conversation_context_service.load_context_admin(conversation_id, user_id)
             
             # Get or create conversation chain
             chain = self.get_chain(conversation_id, user_id)
@@ -76,7 +76,7 @@ class WorkoutAnalysisLLMService:
                 
                 # Save the AI's response as the first message
                 if full_response_content:
-                    await self.message_service.save_message(
+                    await self.message_service.save_server_message(
                         conversation_id=conversation_id,
                         content=full_response_content,
                         sender="assistant"
@@ -110,7 +110,7 @@ class WorkoutAnalysisLLMService:
                     message = data.get('message', '')
                     
                     # Save user message to database
-                    user_msg = await self.message_service.save_message(
+                    user_msg = await self.message_service.save_server_message(
                         conversation_id=conversation_id,
                         content=message, 
                         sender="user"
@@ -127,7 +127,7 @@ class WorkoutAnalysisLLMService:
                     
                     # Save AI response to database
                     if full_ai_response:
-                        ai_msg = await self.message_service.save_message(
+                        ai_msg = await self.message_service.save_server_message(
                             conversation_id=conversation_id,
                             content=full_ai_response,
                             sender="assistant" 

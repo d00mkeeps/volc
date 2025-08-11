@@ -31,14 +31,14 @@ class ConversationService(BaseDBService):
             if not result.data:
                 raise Exception("Failed to create conversation")
             
-            # Optional: Log to admin table
-            admin_client = self.get_admin_client()
-            admin_client.table("operation_logs").insert({
-                "operation": "create_conversation",
-                "user_id": user.id,
-                "conversation_id": result.data[0]["id"]
-            }).execute()
-            
+            # # Optional: Log to admin table
+            # admin_client = self.get_admin_client()
+            # admin_client.table("operation_logs").insert({
+            #     "operation": "create_conversation",
+            #     "user_id": user.id,
+            #     "conversation_id": result.data[0]["id"]
+            # }).execute()
+             
             return await self.format_response(result.data[0])
             
         except Exception as e:

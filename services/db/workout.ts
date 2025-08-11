@@ -6,6 +6,7 @@ export class WorkoutService extends BaseDBService {
   /**
    * Create a new workout and store it in the database with direct conversation ID
    */
+
   async createWorkout(
     userId: string,
     workout: CompleteWorkout | WorkoutWithConversation
@@ -21,8 +22,11 @@ export class WorkoutService extends BaseDBService {
         console.log(`    ${exercise.id} (${exercise.name}, ${setCount} sets)`);
       });
 
-      const data = await apiPost<CompleteWorkout>("/db/workouts", workout);
-      console.log("[WorkoutService] API Response:", data);
+      const response = await apiPost<CompleteWorkout>("/db/workouts", workout);
+      console.log("[WorkoutService] API Response:", response);
+
+      // Extract the actual workout data from the wrapped response
+      const data = (response as any).data || response;
 
       return data;
     } catch (error) {
