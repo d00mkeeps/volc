@@ -1,55 +1,65 @@
-2025-08-11 15:51:56,909 - app.services.db.workout_service - INFO - Workout creation complete for ID: a6e6b5fa-f1f7-4144-9b04-ead80aa18cc8
-2025-08-11 15:51:56,915 - app.main - INFO - Response status: 200
-2025-08-11 15:51:57,149 - app.main - INFO - Request: PUT /db/workouts/e54992cd-895a-46e6-9e48-8bcb40d04c44
-2025-08-11 15:51:57,150 - app.api.endpoints.db - INFO - API request to update workout: e54992cd-895a-46e6-9e48-8bcb40d04c44
-2025-08-11 15:51:57,150 - app.services.db.workout_service - INFO - Updating workout: e54992cd-895a-46e6-9e48-8bcb40d04c44
-2025-08-11 15:51:58,956 - app.services.db.workout_service - INFO - Successfully updated workout: e54992cd-895a-46e6-9e48-8bcb40d04c44
-2025-08-11 15:51:58,957 - app.main - INFO - Response status: 200
-2025-08-11 15:51:58,957 - app.main - INFO - Request: POST /images/temp-upload
-2025-08-11 15:51:58,958 - app.api.endpoints.images - INFO - API request to create temp image for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 15:51:58,959 - app.services.storage.image_service - INFO - Creating temp image record for path: images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/3eec3c6f-982f-4c60-ba40-4820029c5f63.jpg
-2025-08-11 15:51:59,399 - app.services.storage.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-08-11 15:51:59,399 - app.services.storage.image_service - INFO - Created temp image record with ID: ffde75a8-823a-4173-9d5c-de4adabc00aa
-2025-08-11 15:51:59,399 - app.services.storage.image_service - INFO - Successfully extracted upload URL
-2025-08-11 15:51:59,399 - app.services.storage.image_service - INFO - About to return response: {'image_id': 'ffde75a8-823a-4173-9d5c-de4adabc00aa', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/3eec3c6f-982f-4c60-ba40-4820029c5f63.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzLzNlZWMzYzZmLTk4MmYtNGM2MC1iYTQwLTQ4MjAwMjljNWY2My5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjM5MTksImV4cCI6MTc1NDkzMTExOX0.4qB4IeavL5bHwc2cgIYDqz7MPwXk_0A7GBt_QQ3h1Xc', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/3eec3c6f-982f-4c60-ba40-4820029c5f63.jpg'}
-2025-08-11 15:51:59,399 - app.services.storage.image_service - INFO - Final formatted response: {'success': True, 'data': {'image_id': 'ffde75a8-823a-4173-9d5c-de4adabc00aa', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/3eec3c6f-982f-4c60-ba40-4820029c5f63.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzLzNlZWMzYzZmLTk4MmYtNGM2MC1iYTQwLTQ4MjAwMjljNWY2My5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjM5MTksImV4cCI6MTc1NDkzMTExOX0.4qB4IeavL5bHwc2cgIYDqz7MPwXk_0A7GBt_QQ3h1Xc', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/3eec3c6f-982f-4c60-ba40-4820029c5f63.jpg'}, 'error': None}
-2025-08-11 15:51:59,400 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-11 15:51:59,400 - app.main - INFO - Response status: 200
-2025-08-11 15:51:59,401 - app.services.db.conversation_service - INFO - Creating conversation for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 15:51:59,710 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': '1b87c446-6a7f-4533-a2dd-8657f9baec8e', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'title': 'Analysis - Aug 11', 'config_name': 'workout-analysis', 'created_at': '2025-08-11T14:51:59.65304+00:00', 'updated_at': '2025-08-11T14:51:59.65304+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
-2025-08-11 15:51:59,710 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 1b87c446-6a7f-4533-a2dd-8657f9baec8e
-2025-08-11 15:51:59,710 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 002a7698-8edc-4b27-ac1e-9e476484449b for conversation: 1b87c446-6a7f-4533-a2dd-8657f9baec8e
-2025-08-11 15:52:00,033 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 002a7698-8edc-4b27-ac1e-9e476484449b
-2025-08-11 15:52:00,033 - app.services.workout_analysis_service - INFO - Created empty bundle: 002a7698-8edc-4b27-ac1e-9e476484449b
-2025-08-11 15:52:00,033 - app.services.db.analysis_service - INFO - Updating bundle 002a7698-8edc-4b27-ac1e-9e476484449b status to: in_progress
-2025-08-11 15:52:00,322 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 002a7698-8edc-4b27-ac1e-9e476484449b -> in_progress
-2025-08-11 15:52:00,322 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-11 15:52:00,593 - app.services.db.workout_service - INFO - RPC returned: 38 workouts
-2025-08-11 15:52:00,593 - app.services.workout_analysis_service - INFO - Processing analysis for 38 workouts
-2025-08-11 15:52:00,593 - app.services.workout_analysis.main_processor - INFO - Processing bundle 002a7698-8edc-4b27-ac1e-9e476484449b with 38 workouts
-2025-08-11 15:52:00,595 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
-2025-08-11 15:52:00,595 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
-2025-08-11 15:52:00,596 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
-2025-08-11 15:52:00,596 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
-2025-08-11 15:52:00,596 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.030915053692250845
-2025-08-11 15:52:00,662 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 002a7698-8edc-4b27-ac1e-9e476484449b
-2025-08-11 15:52:00,662 - app.services.db.analysis_service - INFO - Updating analysis bundle: 002a7698-8edc-4b27-ac1e-9e476484449b
-2025-08-11 15:52:00,928 - app.services.db.analysis_service - INFO - Bundle updated successfully: 002a7698-8edc-4b27-ac1e-9e476484449b
-2025-08-11 15:52:00,935 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 1b87c446-6a7f-4533-a2dd-8657f9baec8e
-2025-08-11 15:52:00,935 - app.main - INFO - Response status: 200
-2025-08-11 15:52:01,112 - app.main - INFO - Request: GET /api/dashboard
-2025-08-11 15:52:01,113 - app.main - INFO - Response status: 200
-2025-08-11 15:52:17,188 - app.main - INFO - Request: POST /images/temp-upload
-2025-08-11 15:52:17,191 - app.api.endpoints.images - INFO - API request to create temp image for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 15:52:17,191 - app.services.storage.image_service - INFO - Creating temp image record for path: images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/b95dd079-f774-43ba-8fa4-550b5a105abc.jpg
-2025-08-11 15:52:17,641 - app.services.storage.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-08-11 15:52:17,642 - app.services.storage.image_service - INFO - Created temp image record with ID: 3ec9d5b0-9e72-4a90-ad15-e16421427515
-2025-08-11 15:52:17,642 - app.services.storage.image_service - INFO - Successfully extracted upload URL
-2025-08-11 15:52:17,642 - app.services.storage.image_service - INFO - About to return response: {'image_id': '3ec9d5b0-9e72-4a90-ad15-e16421427515', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/b95dd079-f774-43ba-8fa4-550b5a105abc.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzL2I5NWRkMDc5LWY3NzQtNDNiYS04ZmE0LTU1MGI1YTEwNWFiYy5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjM5MzcsImV4cCI6MTc1NDkzMTEzN30.Krr5N12JEm5xtSon_Osl4LQyd2N9x8d_vAYHj3NSSwU', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/b95dd079-f774-43ba-8fa4-550b5a105abc.jpg'}
-2025-08-11 15:52:17,642 - app.services.storage.image_service - INFO - Final formatted response: {'success': True, 'data': {'image_id': '3ec9d5b0-9e72-4a90-ad15-e16421427515', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/b95dd079-f774-43ba-8fa4-550b5a105abc.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzL2I5NWRkMDc5LWY3NzQtNDNiYS04ZmE0LTU1MGI1YTEwNWFiYy5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjM5MzcsImV4cCI6MTc1NDkzMTEzN30.Krr5N12JEm5xtSon_Osl4LQyd2N9x8d_vAYHj3NSSwU', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/b95dd079-f774-43ba-8fa4-550b5a105abc.jpg'}, 'error': None}
-2025-08-11 15:52:17,643 - app.main - INFO - Response status: 200
-2025-08-11 15:54:28,051 - app - INFO - Logging has been set up
-2025-08-11 15:54:28,051 - app.main - INFO - Application starting
-2025-08-11 15:54:28,051 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-11 15:54:28,051 - app.main - INFO - SUPABASE_URL present: True
-2025-08-11 15:54:28,051 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-11 17:42:51,684 - app.main - INFO - Request: GET /images/a80814ae-8b20-4c00-b72f-25f90ca1ed74/url
+2025-08-11 17:42:51,689 - app.api.endpoints.images - INFO - API request to get image URL: a80814ae-8b20-4c00-b72f-25f90ca1ed74
+2025-08-11 17:42:51,689 - app.services.db.image_service - INFO - Getting image URL for ID: a80814ae-8b20-4c00-b72f-25f90ca1ed74
+2025-08-11 17:42:51,970 - app.services.db.base_service - ERROR - Error in get_image_url: Cannot find publicUrl in response
+2025-08-11 17:42:51,970 - app.main - INFO - Response status: 200
+2025-08-11 17:44:29,649 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-11 17:44:29,656 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 17:44:29,656 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x119302cf0>
+2025-08-11 17:44:30,012 - app.services.db.workout_service - INFO - Retrieved 47 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x119302cf0>
+2025-08-11 17:44:30,022 - app.main - INFO - Response status: 200
+2025-08-11 17:44:41,348 - app.main - INFO - Request: POST /db/workouts
+2025-08-11 17:44:41,350 - app.api.endpoints.db - INFO - API request to create workout: Monday arm workout ( test)
+2025-08-11 17:44:41,350 - app.services.db.workout_service - INFO - Creating workout: Monday arm workout ( test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 17:44:41,350 - app.services.db.workout_service - INFO - Inserting workout with data: Monday arm workout ( test)
+2025-08-11 17:44:41,659 - app.services.db.workout_service - INFO - Workout created with ID: b722e586-0816-4fd2-9b46-633f2d3bd828
+2025-08-11 17:44:41,660 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: b722e586-0816-4fd2-9b46-633f2d3bd828
+2025-08-11 17:44:41,660 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
+2025-08-11 17:44:41,728 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 33f6e385-841f-45f3-ae8f-00eb413f3439
+2025-08-11 17:44:41,817 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
+2025-08-11 17:44:41,892 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: dc1b9c44-1a30-4bdf-a64e-ab2b338be1f9
+2025-08-11 17:44:42,610 - app.services.db.workout_service - INFO - Workout creation complete for ID: b722e586-0816-4fd2-9b46-633f2d3bd828
+2025-08-11 17:44:42,612 - app.main - INFO - Response status: 200
+2025-08-11 17:44:42,866 - app.main - INFO - Request: PUT /db/workouts/bde12e35-a1af-4fca-aafd-0d25584d2d36
+2025-08-11 17:44:42,868 - app.api.endpoints.db - INFO - API request to update workout: bde12e35-a1af-4fca-aafd-0d25584d2d36
+2025-08-11 17:44:42,869 - app.services.db.workout_service - INFO - Updating workout: bde12e35-a1af-4fca-aafd-0d25584d2d36
+2025-08-11 17:44:44,104 - app.services.db.workout_service - INFO - Successfully updated workout: bde12e35-a1af-4fca-aafd-0d25584d2d36
+2025-08-11 17:44:44,105 - app.main - INFO - Response status: 200
+2025-08-11 17:44:44,487 - app.main - INFO - Request: POST /api/workout-analysis
+2025-08-11 17:44:44,490 - app.services.db.conversation_service - INFO - Creating conversation for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 17:44:44,724 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': '89cd47b5-d90a-4e00-bd4a-86641de148b3', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'title': 'Analysis - Aug 11', 'config_name': 'workout-analysis', 'created_at': '2025-08-11T16:44:44.693368+00:00', 'updated_at': '2025-08-11T16:44:44.693368+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
+2025-08-11 17:44:44,725 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:44:44,725 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:44:45,001 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b
+2025-08-11 17:44:45,001 - app.services.workout_analysis_service - INFO - Created empty bundle: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b
+2025-08-11 17:44:45,001 - app.services.db.analysis_service - INFO - Updating bundle a14d6d24-ac3b-4dfc-8282-cbeb2502f76b status to: in_progress
+2025-08-11 17:44:45,328 - app.services.db.analysis_service - INFO - Bundle status updated successfully: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b -> in_progress
+2025-08-11 17:44:45,328 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
+2025-08-11 17:44:45,593 - app.services.db.workout_service - INFO - RPC returned: 45 workouts
+2025-08-11 17:44:45,594 - app.services.workout_analysis_service - INFO - Processing analysis for 45 workouts
+2025-08-11 17:44:45,594 - app.services.workout_analysis.main_processor - INFO - Processing bundle a14d6d24-ac3b-4dfc-8282-cbeb2502f76b with 45 workouts
+2025-08-11 17:44:45,595 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
+2025-08-11 17:44:45,596 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
+2025-08-11 17:44:45,596 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
+2025-08-11 17:44:45,596 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
+2025-08-11 17:44:45,597 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.026544487059851175
+2025-08-11 17:44:45,667 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle a14d6d24-ac3b-4dfc-8282-cbeb2502f76b
+2025-08-11 17:44:45,667 - app.services.db.analysis_service - INFO - Updating analysis bundle: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b
+2025-08-11 17:44:45,897 - app.services.db.analysis_service - INFO - Bundle updated successfully: a14d6d24-ac3b-4dfc-8282-cbeb2502f76b
+2025-08-11 17:44:45,898 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:44:45,898 - app.main - INFO - Response status: 200
+2025-08-11 17:44:46,054 - app.main - INFO - Request: GET /api/dashboard
+2025-08-11 17:44:46,055 - app.main - INFO - Response status: 200
+2025-08-11 17:44:50,744 - app.main - INFO - Request: POST /images/temp-upload
+2025-08-11 17:44:50,746 - app.api.endpoints.images - INFO - User ID from endpoint: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 17:44:50,746 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
+2025-08-11 17:44:50,746 - app.api.endpoints.images - INFO - JWT token length: 871
+2025-08-11 17:44:50,746 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
+2025-08-11 17:44:50,857 - app.api.endpoints.images - INFO - User client created successfully: True
+2025-08-11 17:44:51,004 - app.api.endpoints.images - INFO - Test query successful: True
+2025-08-11 17:44:51,004 - app.services.db.image_service - INFO - Creating temp image with path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/4f1af611-200c-4641-ba3d-fe9a01987811.jpg
+2025-08-11 17:44:51,004 - app.services.db.image_service - INFO - User ID to insert: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3 (type: <class 'str'>)
+2025-08-11 17:44:51,154 - app.services.db.image_service - INFO - About to insert: {'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/4f1af611-200c-4641-ba3d-fe9a01987811.jpg', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'status': 'temporary', 'expires_at': '2025-08-12T16:44:51.154081'}
+2025-08-11 17:44:51,336 - app.services.db.image_service - INFO - Created temp image record with ID: 52db1980-f61f-481f-b4e4-648b3522b33f
+2025-08-11 17:44:51,336 - app.services.db.image_service - INFO - About to create signed URL...
+2025-08-11 17:44:51,505 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>

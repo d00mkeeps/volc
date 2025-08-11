@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabaseClient";
 import { BaseApiService } from "./baseService";
 
 export interface UploadUrlResponse {
@@ -134,29 +135,49 @@ export class ImageService extends BaseApiService {
   /**
    * Upload image directly to Supabase storage using signed URL
    */
+  // /services/api/imageService.ts - uploadImage method
   async uploadImage(uploadUrl: string, imageUri: string): Promise<boolean> {
     try {
       console.log("[ImageService] Starting direct upload to Supabase");
+      console.log("[ImageService] Upload URL:", uploadUrl);
 
-      // Create form data for upload
-      const formData = new FormData();
-      // For Expo, we need to handle the file properly
+      // Get the file blob
       const response = await fetch(imageUri);
       const blob = await response.blob();
-      formData.append("file", blob);
+      console.log("[ImageService] Blob type:", blob.type);
+      console.log("[ImageService] Blob size:", blob.size);
 
-      // Upload directly to Supabase storage
+      // Get token
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      // ✅ Try PUT method instead of POST
       const uploadResponse = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
+        method: "PUT", // Changed from POST
+        body: blob,
         headers: {
-          // Don't set Content-Type, let the browser set it with boundary
+          "Content-Type": blob.type,
+          ...(token && { Authorization: `Bearer ${token}` }), // Conditional auth header
         },
       });
 
+      console.log(
+        "[ImageService] Upload response status:",
+        uploadResponse.status
+      );
+      console.log(
+        "[ImageService] Upload response headers:",
+        Object.fromEntries(uploadResponse.headers.entries())
+      );
+
+      const responseText = await uploadResponse.text();
+      console.log("[ImageService] Upload response body:", responseText);
+
       if (!uploadResponse.ok) {
         throw new Error(
-          `Upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`
+          `Upload failed: ${uploadResponse.status} ${responseText}`
         );
       }
 
@@ -167,7 +188,6 @@ export class ImageService extends BaseApiService {
       return false;
     }
   }
-
   /**
    * Delete an image from storage
    */
@@ -193,3 +213,6 @@ export class ImageService extends BaseApiService {
 }
 
 export const imageService = new ImageService();
+function getFreshToken() {
+  throw new Error("Function not implemented.");
+}
