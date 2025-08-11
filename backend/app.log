@@ -1,15 +1,20 @@
-2025-08-11 11:55:57,164 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 2cfcb331-dc8b-4cb2-8086-4dd8c791eea1 (expires in 30 min)
-2025-08-11 11:55:57,166 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.12s - 5 messages, 1 bundles
-2025-08-11 11:55:57,166 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 2cfcb331-dc8b-4cb2-8086-4dd8c791eea1
-2025-08-11 11:55:57,166 - app.services.llm.workout_analysis - INFO - Saved AI response with ID: None
-2025-08-11 12:00:57,233 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-08-11 15:56:01,650 - app.main - INFO - Request: POST /images/temp-upload
+2025-08-11 15:56:01,656 - app.api.endpoints.images - INFO - API request to create temp image for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 15:56:01,656 - app.services.storage.image_service - INFO - Creating temp image record for path: images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/e3d464fd-d060-4b79-bd54-6af9916da956.jpg
+2025-08-11 15:56:03,158 - app.services.storage.image_service - INFO - Signed URL response type: <class 'dict'>
+2025-08-11 15:56:03,158 - app.services.storage.image_service - INFO - Created temp image record with ID: dbfc7466-ece4-4891-91a0-4d25a7d1d158
+2025-08-11 15:56:03,158 - app.services.storage.image_service - INFO - Successfully extracted upload URL
+2025-08-11 15:56:03,159 - app.services.storage.image_service - INFO - About to return response: {'image_id': 'dbfc7466-ece4-4891-91a0-4d25a7d1d158', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/e3d464fd-d060-4b79-bd54-6af9916da956.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzL2UzZDQ2NGZkLWQwNjAtNGI3OS1iZDU0LTZhZjk5MTZkYTk1Ni5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjQxNjIsImV4cCI6MTc1NDkzMTM2Mn0.Q9u0OkvJeouEMa3m6hGcw48HgeEgYMYUgs9u5Dl0SK0', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/e3d464fd-d060-4b79-bd54-6af9916da956.jpg'}
+2025-08-11 15:56:03,159 - app.services.storage.image_service - INFO - Final formatted response: {'success': True, 'data': {'image_id': 'dbfc7466-ece4-4891-91a0-4d25a7d1d158', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/e3d464fd-d060-4b79-bd54-6af9916da956.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy9pbWFnZXMvMWUyZDYxOTAtNWQ1Mi00ZjQ4LTk3NGMtN2E1YTQzYTUwYmYzL2UzZDQ2NGZkLWQwNjAtNGI3OS1iZDU0LTZhZjk5MTZkYTk1Ni5qcGciLCJ1cHNlcnQiOmZhbHNlLCJpYXQiOjE3NTQ5MjQxNjIsImV4cCI6MTc1NDkzMTM2Mn0.Q9u0OkvJeouEMa3m6hGcw48HgeEgYMYUgs9u5Dl0SK0', 'file_path': 'images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/e3d464fd-d060-4b79-bd54-6af9916da956.jpg'}, 'error': None}
+2025-08-11 15:56:03,160 - app.main - INFO - Response status: 200
+2025-08-11 15:56:09,582 - app - INFO - Logging has been set up
+2025-08-11 15:56:09,582 - app.main - INFO - Application starting
+2025-08-11 15:56:09,582 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-11 15:56:09,582 - app.main - INFO - SUPABASE_URL present: True
+2025-08-11 15:56:09,582 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-11 15:56:18,225 - app.main - INFO - Request: POST /images/temp-upload
+2025-08-11 15:56:18,227 - app.api.endpoints.images - INFO - API request to create temp image for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 15:56:18,227 - app.services.storage.image_service - INFO - Creating temp image record for path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/9ff322a7-590f-4b02-b602-85747d2be0b9.jpg
+2025-08-11 15:56:18,739 - app.services.storage.image_service - ERROR - Error creating temp image: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}
+2025-08-11 15:56:18,739 - app.services.db.base_service - ERROR - Error in create_temp_image: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}
+2025-08-11 15:56:18,740 - app.main - INFO - Response status: 200

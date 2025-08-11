@@ -213,9 +213,6 @@ export function useMessaging() {
         messageStore.addMessage(currentConversationId, userMessage);
 
         // Build payload with fresh data
-        const configName = await useConversationStore
-          .getState()
-          .getConversationConfig(currentConversationId);
         const updatedMessages =
           useMessageStore.getState().messages.get(currentConversationId) || [];
         const analysisResult = useWorkoutAnalysisStore.getState().getResult();

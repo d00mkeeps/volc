@@ -30,9 +30,6 @@ interface ConversationStoreState {
   deleteConversation: (id: string) => Promise<void>;
   setActiveConversation: (id: string | null) => void;
 
-  // Config resolution
-  getConversationConfig: (id: string) => Promise<ChatConfigName>;
-
   // Utility methods
   clearError: () => void;
 }
@@ -291,34 +288,6 @@ export const useConversationStore = create<ConversationStoreState>(
       getConversations: async () => {
         await loadConversations();
         return Array.from(get().conversations.values());
-      },
-
-      // Get conversation config
-      getConversationConfig: async (id) => {
-        const existingConfig = get().conversationConfigs.get(id);
-        if (existingConfig) {
-          return existingConfig;
-        }
-
-        try {
-          const conversation = await get().getConversation(id);
-          const configName =
-            (conversation.config_name as ChatConfigName) || "default";
-
-          set((state) => {
-            const newConfigs = new Map(state.conversationConfigs);
-            newConfigs.set(id, configName);
-            return { conversationConfigs: newConfigs };
-          });
-
-          return configName;
-        } catch (error) {
-          console.error(
-            "[ConversationStore] Error resolving conversation config:",
-            error
-          );
-          return "default";
-        }
       },
 
       deleteConversation: async (id) => {

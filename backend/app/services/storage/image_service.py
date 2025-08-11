@@ -22,7 +22,7 @@ class ImageService(BaseDBService):
         try:
             # Generate unique filename
             file_id = str(uuid.uuid4())
-            file_path = f"images/{user_id}/{file_id}.{file_extension}"
+            file_path = f"{user_id}/{file_id}.{file_extension}"
             
             logger.info(f"Creating temp image record for path: {file_path}")
             
@@ -44,22 +44,41 @@ class ImageService(BaseDBService):
             # Get signed URL for upload using user client for private bucket access
             signed_url = user_client.storage.from_(self.bucket_name).create_signed_upload_url(file_path)   
 
-            if signed_url.get('error'):
-                raise Exception(f"Failed to create signed URL: {signed_url['error']}")
-            
+            logger.info(f"Signed URL response type: {type(signed_url)}")
+
+            # Check for errors
+            if hasattr(signed_url, 'error') and signed_url.error:
+                raise Exception(f"Failed to create signed URL: {signed_url.error}")
+
             image_id = image_result.data[0]["id"]
             logger.info(f"Created temp image record with ID: {image_id}")
-            
-            return await self.format_response({
+
+            # Extract the signed URL - we know it's a dict with 'signedUrl' key
+            if isinstance(signed_url, dict) and 'signedUrl' in signed_url:
+                upload_url = signed_url['signedUrl']
+            else:
+                logger.error(f"Unexpected signed URL structure: {signed_url}")
+                raise Exception(f"Cannot find signedUrl in response")
+                
+            logger.info(f"Successfully extracted upload URL")
+
+            response_data = {
                 "image_id": image_id,
-                "upload_url": signed_url['data']['signedUrl'],
+                "upload_url": upload_url,
                 "file_path": file_path,
-            })
+            }
+            
+            logger.info(f"About to return response: {response_data}")
+            final_response = await self.format_response(response_data)
+            logger.info(f"Final formatted response: {final_response}")
+            
+            return final_response
             
         except Exception as e:
             logger.error(f"Error creating temp image: {str(e)}")
             return await self.handle_error("create_temp_image", e)
-    
+
+
     async def commit_image(self, image_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Make temp image permanent

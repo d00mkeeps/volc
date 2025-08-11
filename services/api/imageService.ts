@@ -14,7 +14,7 @@ export interface TempImageResponse {
   upload_url?: string;
   file_path?: string;
   expires_in?: number;
-  error?: string;
+  error?: string | null;
 }
 
 export interface CommitImageResponse {
@@ -50,17 +50,29 @@ export class ImageService extends BaseApiService {
       console.log(
         `[ImageService] Creating temp image for .${fileExtension} file`
       );
-      const response = await this.post<TempImageResponse>("/temp-upload", {
+      const response = await this.post<{
+        success: boolean;
+        data: TempImageResponse;
+        error: string | null;
+      }>("/temp-upload", {
         file_extension: fileExtension,
       });
+
       console.log("[ImageService] Temp image created:", response.success);
-      return response;
+
+      // Return the flattened structure that matches TempImageResponse
+      return {
+        success: response.success,
+        image_id: response.data?.image_id,
+        upload_url: response.data?.upload_url,
+        file_path: response.data?.file_path,
+        error: response.error,
+      };
     } catch (error) {
       console.error("[ImageService] Error creating temp image:", error);
       return this.handleError(error);
     }
   }
-
   /**
    * Commit temporary image to permanent status
    */
