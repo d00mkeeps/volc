@@ -1,61 +1,186 @@
-2025-08-11 17:42:06,630 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': 'a38c6c90-d449-47ac-ac2d-1d3c8006e5a3', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'title': 'Analysis - Aug 11', 'config_name': 'workout-analysis', 'created_at': '2025-08-11T16:42:06.613469+00:00', 'updated_at': '2025-08-11T16:42:06.613469+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
-2025-08-11 17:42:06,634 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: a38c6c90-d449-47ac-ac2d-1d3c8006e5a3
-2025-08-11 17:42:06,634 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: d4917a53-1de1-4c5e-919d-0059d6f57aa4 for conversation: a38c6c90-d449-47ac-ac2d-1d3c8006e5a3
-2025-08-11 17:42:07,237 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: d4917a53-1de1-4c5e-919d-0059d6f57aa4
-2025-08-11 17:42:07,238 - app.services.workout_analysis_service - INFO - Created empty bundle: d4917a53-1de1-4c5e-919d-0059d6f57aa4
-2025-08-11 17:42:07,238 - app.services.db.analysis_service - INFO - Updating bundle d4917a53-1de1-4c5e-919d-0059d6f57aa4 status to: in_progress
-2025-08-11 17:42:07,515 - app.services.db.analysis_service - INFO - Bundle status updated successfully: d4917a53-1de1-4c5e-919d-0059d6f57aa4 -> in_progress
-2025-08-11 17:42:07,515 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['e8f1f3a7-5443-42d3-8bd9-7dfadcfb29cc']
-2025-08-11 17:42:07,800 - app.services.db.workout_service - INFO - RPC returned: 5 workouts
-2025-08-11 17:42:07,800 - app.services.workout_analysis_service - INFO - Processing analysis for 5 workouts
-2025-08-11 17:42:07,801 - app.services.workout_analysis.main_processor - INFO - Processing bundle d4917a53-1de1-4c5e-919d-0059d6f57aa4 with 5 workouts
-2025-08-11 17:42:07,801 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
-2025-08-11 17:42:07,801 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
-2025-08-11 17:42:07,801 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
-2025-08-11 17:42:07,801 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
-2025-08-11 17:42:07,801 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.5, variance=0.27283156852676155
-2025-08-11 17:42:07,825 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle d4917a53-1de1-4c5e-919d-0059d6f57aa4
-2025-08-11 17:42:07,825 - app.services.db.analysis_service - INFO - Updating analysis bundle: d4917a53-1de1-4c5e-919d-0059d6f57aa4
-2025-08-11 17:42:08,161 - app.services.db.analysis_service - INFO - Bundle updated successfully: d4917a53-1de1-4c5e-919d-0059d6f57aa4
-2025-08-11 17:42:08,161 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation a38c6c90-d449-47ac-ac2d-1d3c8006e5a3
-2025-08-11 17:42:08,162 - app.main - INFO - Response status: 200
-2025-08-11 17:42:08,338 - app.main - INFO - Request: POST /images/temp-upload
-2025-08-11 17:42:08,341 - app.api.endpoints.images - INFO - User ID from endpoint: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:08,342 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
-2025-08-11 17:42:08,342 - app.api.endpoints.images - INFO - JWT token length: 871
-2025-08-11 17:42:08,342 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
-2025-08-11 17:42:08,485 - app.api.endpoints.images - INFO - User client created successfully: True
-2025-08-11 17:42:08,595 - app.api.endpoints.images - INFO - Test query successful: True
-2025-08-11 17:42:08,595 - app.services.db.image_service - INFO - Creating temp image with path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg
-2025-08-11 17:42:08,595 - app.services.db.image_service - INFO - User ID to insert: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3 (type: <class 'str'>)
-2025-08-11 17:42:08,720 - app.services.db.image_service - INFO - About to insert: {'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'status': 'temporary', 'expires_at': '2025-08-12T16:42:08.720858'}
-2025-08-11 17:42:08,879 - app.services.db.image_service - INFO - Created temp image record with ID: 065ac9dc-8359-4009-b6c4-4146be6adf76
-2025-08-11 17:42:08,879 - app.services.db.image_service - INFO - About to create signed URL...
-2025-08-11 17:42:09,062 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-08-11 17:42:09,062 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvMzZiZDU0M2EtOTc4NS00OTQwLWFlNTYtY2U0N2Q1ZTFkNmMzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDUyOSwiZXhwIjoxNzU0OTM3NzI5fQ.mRQA6wOnZ4eexH94MzAKR2r-VRqhz3_GKnXeMCs2_zY', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvMzZiZDU0M2EtOTc4NS00OTQwLWFlNTYtY2U0N2Q1ZTFkNmMzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDUyOSwiZXhwIjoxNzU0OTM3NzI5fQ.mRQA6wOnZ4eexH94MzAKR2r-VRqhz3_GKnXeMCs2_zY', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvMzZiZDU0M2EtOTc4NS00OTQwLWFlNTYtY2U0N2Q1ZTFkNmMzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDUyOSwiZXhwIjoxNzU0OTM3NzI5fQ.mRQA6wOnZ4eexH94MzAKR2r-VRqhz3_GKnXeMCs2_zY', 'path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg'}
-2025-08-11 17:42:09,062 - app.services.db.image_service - INFO - Successfully created upload URL
-2025-08-11 17:42:09,062 - app.services.db.image_service - INFO - Returning response: {'image_id': '065ac9dc-8359-4009-b6c4-4146be6adf76', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvMzZiZDU0M2EtOTc4NS00OTQwLWFlNTYtY2U0N2Q1ZTFkNmMzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDUyOSwiZXhwIjoxNzU0OTM3NzI5fQ.mRQA6wOnZ4eexH94MzAKR2r-VRqhz3_GKnXeMCs2_zY', 'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/36bd543a-9785-4940-ae56-ce47d5e1d6c3.jpg'}
-2025-08-11 17:42:09,064 - app.main - INFO - Response status: 200
-2025-08-11 17:42:09,064 - app.main - INFO - Request: GET /api/dashboard
-2025-08-11 17:42:09,066 - app.main - INFO - Response status: 200
-2025-08-11 17:42:10,207 - app.main - INFO - Request: GET /images/065ac9dc-8359-4009-b6c4-4146be6adf76/url
-2025-08-11 17:42:10,209 - app.api.endpoints.images - INFO - API request to get image URL: 065ac9dc-8359-4009-b6c4-4146be6adf76
-2025-08-11 17:42:10,209 - app.services.db.image_service - INFO - Getting image URL for ID: 065ac9dc-8359-4009-b6c4-4146be6adf76
-2025-08-11 17:42:10,517 - app.services.db.base_service - ERROR - Error in get_image_url: Cannot find publicUrl in response
-2025-08-11 17:42:10,517 - app.main - INFO - Response status: 200
-2025-08-11 17:42:41,316 - app.main - INFO - Request: GET /api/dashboard
-2025-08-11 17:42:41,321 - app.main - INFO - Response status: 200
-2025-08-11 17:42:41,324 - app.main - INFO - Request: GET /db/user-profile
-2025-08-11 17:42:41,325 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-11 17:42:41,326 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:41,326 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:41,591 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:41,593 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-11 17:42:41,891 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-11 17:42:41,905 - app.main - INFO - Response status: 200
-2025-08-11 17:42:41,906 - app.main - INFO - Response status: 200
-2025-08-11 17:42:42,230 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-11 17:42:42,232 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:42,232 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x119302ba0>
-2025-08-11 17:42:42,519 - app.services.db.workout_service - INFO - Retrieved 46 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x119302ba0>
-2025-08-11 17:42:42,530 - app.main - INFO - Response status: 200
+2025-08-11 17:53:22,462 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-08-11 17:53:22,464 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):
+2025-08-11 17:53:22,464 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
+
+Current workout data context:
+Available workout data:
+{
+  "metadata": {
+    "total_workouts": 45,
+    "total_exercises": 94,
+    "date_range": {
+      "start": "2025-08-08T21:43:47.629+00:00",
+      "end": "2025-08-11T16:44:41.136+00:00"
+    },
+    "exercises_included": [
+      "Barbell Skull Crusher",
+      "Face Pull",
+      "Preacher Curl",
+      "Running"
+    ],
+    "analysis_errors": []
+  },
+  "performance_summary": {
+    "strength_top_performers": [
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 9.2,
+        "last_value": 62.64,
+        "first_value": 53.44,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 17.2
+      },
+      {
+        "name": "Preacher Curl",
+        "change": 6.96,
+        "last_value": 83.53,
+        "first_value": 76.57,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 9.1
+      },
+      {
+        "name": "Face Pull",
+        "change": 0.0,
+        "last_value": 43.62,
+        "first_value": 43.62,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 0.0
+      }
+    ],
+    "volume_top_performers": [
+      {
+        "name": "Preacher Curl",
+        "change": 1105.0,
+        "last_value": 2040.0,
+        "first_value": 935.0,
+        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "change_percent": 118.2
+      },
+      {
+        "name": "Barbell Skull Crusher",
+        "change": 240.0,
+        "last_value": 765.0,
+        "first_value": 525.0,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 45.7
+      },
+      {
+        "name": "Face Pull",
+        "change": 0.0,
+        "last_value": 660.0,
+        "first_value": 660.0,
+        "definition_id": "b8d098e2-0cd1-4992-84b1-fd8a5c51a83f",
+        "change_percent": 0.0
+      }
+    ],
+    "frequency_performers": []
+  },
+  "consistency_analysis": {
+    "avg_gap": 0.0,
+    "variance": null
+  },
+  "correlation_summary": {
+    "significant_count": 0,
+    "total_analyzed": 0,
+    "top_correlations": [],
+    "data_quality": [
+      "Insufficient weekly data for Preacher Curl strength (2 weeks, need 4+)",
+      "Insufficient weekly data for Face Pull strength (1 weeks, need 4+)",
+      "Insufficient weekly data for Barbell Skull Crusher strength (2 weeks, need 4+)"
+    ]
+  },
+  "recent_workouts_sample": [
+    {
+      "date": "2025-08-09",
+      "name": "Friday arm workout (test)",
+      "notes": ""
+    },
+    {
+      "date": "2025-08-10",
+      "name": "Friday arm workout (test)",
+      "notes": ""
+    },
+    {
+      "date": "2025-08-10",
+      "name": "Friday arm workout (test)",
+      "notes": ""
+    },
+    {
+      "date": "2025-08-11",
+      "name": "Monday arm workout ( test)",
+      "notes": ""
+    },
+    {
+      "date": "2025-08-10",
+      "name": "Friday arm workout (test)",
+      "notes": ""
+    }
+  ]
+}
+
+Analysis insights:
+
+CONSISTENCY METRICS:
+- Average gap between workouts: 0.0 days
+- Workout frequency variance: Not calculated
+
+TOP PERFORMERS:
+- Strength gains: Barbell Skull Crusher: +17.2%, Preacher Curl: +9.1%
+- Volume increases: Preacher Curl: +118.2%, Barbell Skull Crusher: +45.7%
+- Most frequent exercises: Frequency data not available
+
+CORRELATION INSIGHTS:
+0 significant correlations found from 0 exercise pairs analyzed
+• No correlation patterns detected
+
+WORKOUT SUMMARY:
+- Total workouts analyzed: 45
+- Exercise variety: 4 different exercises
+
+2025-08-11 17:53:22,465 - app.services.chains.base_conversation_chain - INFO - 
+Message 2 (HumanMessage):
+2025-08-11 17:53:22,465 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
+2025-08-11 17:53:22,465 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-11 17:53:22,484 - app.main - INFO - Request: GET /db/conversations/89cd47b5-d90a-4e00-bd4a-86641de148b3/messages
+2025-08-11 17:53:22,485 - app.api.endpoints.db - INFO - API request to get messages for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:22,485 - app.services.db.message_service - INFO - Getting messages for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:22,750 - app.services.db.message_service - INFO - Retrieved 0 messages
+2025-08-11 17:53:22,751 - app.main - INFO - Response status: 200
+2025-08-11 17:53:31,048 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright team, let's dive into your recent workout data! I've got it all pulled up here, and it looks like you've been putting in some serious work over the last few days – from August 8th to August 11th,', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:31,374 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' to be exact!
+
+First off, **45 workouts in just a few days** is incredible dedication! You're clearly committed to getting after it. We're looking at a focused routine with exercises like Barbell Skull Crushers, Preacher Curls, Face Pulls, and some Running in the mix.
+
+', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:31,653 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Now, let's talk about those **gains**!
+
+*   **Strength-wise, you're crushing it!** Your **Barbell Skull Crushers** are up a fantastic **17.2%** in strength, and your **Preacher Curls** are showing a solid **9.1', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:31,862 - app.services.chains.base_conversation_chain - INFO - Chunk: content='%** increase. That's awesome progress in such a short timeframe – your triceps and biceps are definitely responding!
+*   And when it comes to **volume**, you're really pushing the limits. Your **Preacher Curl volume shot up by a massive 118.2%**, and **Barbell', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:32,090 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' Skull Crushers increased by 45.7%**. This tells me you're not just getting stronger, you're also doing more quality work, which is a fantastic recipe for growth. Keep that intensity going!
+
+Your **Face Pulls** are holding steady, which is great for maintaining that important posterior chain and', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:32,299 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' shoulder health.
+
+Now, a quick note on the data: because we're looking at such a concentrated period (just a few days), the system needs a bit more time to really dig into long-term consistency and correlation patterns. It's saying we need more weekly data to give you those deeper insights, which', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:32,547 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' is totally normal for a fresh batch of workouts like this.
+
+**What does this all mean for you?**
+
+You've got incredible momentum right now, especially with those arm exercises. Keep tracking consistently! As you continue to log your workouts over the coming weeks, we'll start to see even clearer trends in your', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-11 17:53:32,724 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' consistency and how different exercises might be influencing each other.
+
+For now, celebrate those strength and volume gains! You're clearly on the right track. What are your thoughts on this? Anything stand out to you?', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-11 17:53:32,729 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:32,889 - app.services.db.message_service - INFO - Server message saved with ID: ace04833-6caf-4a66-9c62-f42947913690
+2025-08-11 17:53:32,890 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:32,890 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:32,890 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:32,890 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (check took 0.00s)
+2025-08-11 17:53:32,890 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,017 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,017 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (expires in 30 min)
+2025-08-11 17:53:33,018 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.13s - 1 messages, 1 bundles
+2025-08-11 17:53:33,018 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3

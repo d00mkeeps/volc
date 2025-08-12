@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext"; // Add this import
 import ProfileHeader from "@/components/molecules/headers/ProfileHeader";
 import PersonalInfoCard from "@/components/molecules/PersonalInfoCard";
 import DataCard from "@/components/molecules/ProfileDataCard";
+import TestImageComponent from "@/components/atoms/buttons/TestImageButton";
 
 export default function ProfileScreen() {
   const { userProfile, loading, error } = useUserStore();
@@ -69,13 +70,15 @@ export default function ProfileScreen() {
       <ScrollView flex={1} padding="$3">
         <YStack gap="$3">
           <ProfileHeader profile={userProfile} />
-          <PersonalInfoCard profile={userProfile} />
+
+          <TestImageComponent />
+          {/* <PersonalInfoCard profile={userProfile} />
           <DataCard title="Goals" data={userProfile.goals} />
           <DataCard title="Current Stats" data={userProfile.current_stats} />
           <DataCard
             title="Training Preferences"
             data={userProfile.preferences}
-          />
+          /> */}
 
           {/* Logout Button */}
           <YStack paddingTop="$4" paddingBottom="$6">

@@ -1,3 +1,3 @@
 export const getLocalIpAddress = async (): Promise<string> => {
-  return "172.21.147.7";
+  return "172.20.10.5";
 };

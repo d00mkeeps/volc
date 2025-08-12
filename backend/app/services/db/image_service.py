@@ -116,19 +116,40 @@ class ImageService(BaseDBService):
                 raise Exception("Image not found")
             
             file_path = result.data[0]["file_path"]
+            logger.info(f"Found file path: {file_path}")
             
             # Get public URL from storage
             url_result = user_client.storage.from_(self.bucket_name).get_public_url(file_path)
             
-            if isinstance(url_result, dict) and 'data' in url_result and 'publicUrl' in url_result['data']:
-                public_url = url_result['data']['publicUrl']
-            else:
-                raise Exception("Cannot find publicUrl in response")
+            # ✅ DEBUG: Log the actual response structure
+            logger.info(f"Public URL response type: {type(url_result)}")
+            logger.info(f"Public URL response: {url_result}")
+            logger.info(f"Public URL keys: {list(url_result.keys()) if isinstance(url_result, dict) else 'Not a dict'}")
             
+            # Try multiple possible structures
+            if isinstance(url_result, str):
+                public_url = url_result
+                logger.info("Used direct string")
+            elif isinstance(url_result, dict):
+                if 'publicUrl' in url_result:
+                    public_url = url_result['publicUrl']
+                    logger.info("Used publicUrl key")
+                elif 'data' in url_result and isinstance(url_result['data'], dict) and 'publicUrl' in url_result['data']:
+                    public_url = url_result['data']['publicUrl']
+                    logger.info("Used data.publicUrl key")
+                elif 'url' in url_result:
+                    public_url = url_result['url']
+                    logger.info("Used url key")
+                else:
+                    logger.error(f"Unknown structure - available keys: {list(url_result.keys())}")
+                    raise Exception(f"Cannot find publicUrl in response: {url_result}")
+            else:
+                raise Exception(f"Unexpected response type: {type(url_result)}")
+            
+            logger.info(f"Final public URL: {public_url}")
             return await self.format_response({"url": public_url})
             
         except Exception as e:
             return await self.handle_error("get_image_url", e)
-
 # Create service instance
 image_service = ImageService()

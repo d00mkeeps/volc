@@ -1,59 +1,66 @@
-2025-08-11 17:42:45,474 - app.main - INFO - Request: POST /db/workouts
-2025-08-11 17:42:45,480 - app.api.endpoints.db - INFO - API request to create workout: Monday arm workout ( test)
-2025-08-11 17:42:45,480 - app.services.db.workout_service - INFO - Creating workout: Monday arm workout ( test) for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:45,480 - app.services.db.workout_service - INFO - Inserting workout with data: Monday arm workout ( test)
-2025-08-11 17:42:45,751 - app.services.db.workout_service - INFO - Workout created with ID: bde12e35-a1af-4fca-aafd-0d25584d2d36
-2025-08-11 17:42:45,752 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: bde12e35-a1af-4fca-aafd-0d25584d2d36
-2025-08-11 17:42:45,752 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-11 17:42:45,852 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 4caa4fcc-bb7f-4c3c-9e1d-6bb25b0c9e25
-2025-08-11 17:42:45,926 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-11 17:42:46,021 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 1e51e7ad-5caa-4cd3-b6c3-0cbc48a6b8a4
-2025-08-11 17:42:46,710 - app.services.db.workout_service - INFO - Workout creation complete for ID: bde12e35-a1af-4fca-aafd-0d25584d2d36
-2025-08-11 17:42:46,711 - app.main - INFO - Response status: 200
-2025-08-11 17:42:46,899 - app.main - INFO - Request: PUT /db/workouts/c5b232de-d988-4259-b8b7-38979cb777ac
-2025-08-11 17:42:46,902 - app.api.endpoints.db - INFO - API request to update workout: c5b232de-d988-4259-b8b7-38979cb777ac
-2025-08-11 17:42:46,902 - app.services.db.workout_service - INFO - Updating workout: c5b232de-d988-4259-b8b7-38979cb777ac
-2025-08-11 17:42:48,171 - app.services.db.workout_service - INFO - Successfully updated workout: c5b232de-d988-4259-b8b7-38979cb777ac
-2025-08-11 17:42:48,173 - app.main - INFO - Response status: 200
-2025-08-11 17:42:48,577 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-11 17:42:48,580 - app.services.db.conversation_service - INFO - Creating conversation for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:48,913 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': '792870b6-6f9f-41c8-8d61-0977d32c3a92', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'title': 'Analysis - Aug 11', 'config_name': 'workout-analysis', 'created_at': '2025-08-11T16:42:48.897263+00:00', 'updated_at': '2025-08-11T16:42:48.897263+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
-2025-08-11 17:42:48,914 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 792870b6-6f9f-41c8-8d61-0977d32c3a92
-2025-08-11 17:42:48,914 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 79255a88-9e4e-474d-91f7-d640fbef97ee for conversation: 792870b6-6f9f-41c8-8d61-0977d32c3a92
-2025-08-11 17:42:49,179 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 79255a88-9e4e-474d-91f7-d640fbef97ee
-2025-08-11 17:42:49,179 - app.services.workout_analysis_service - INFO - Created empty bundle: 79255a88-9e4e-474d-91f7-d640fbef97ee
-2025-08-11 17:42:49,179 - app.services.db.analysis_service - INFO - Updating bundle 79255a88-9e4e-474d-91f7-d640fbef97ee status to: in_progress
-2025-08-11 17:42:49,443 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 79255a88-9e4e-474d-91f7-d640fbef97ee -> in_progress
-2025-08-11 17:42:49,443 - app.services.db.workout_service - INFO - Calling RPC for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-11 17:42:49,717 - app.services.db.workout_service - INFO - RPC returned: 44 workouts
-2025-08-11 17:42:49,717 - app.services.workout_analysis_service - INFO - Processing analysis for 44 workouts
-2025-08-11 17:42:49,717 - app.services.workout_analysis.main_processor - INFO - Processing bundle 79255a88-9e4e-474d-91f7-d640fbef97ee with 44 workouts
-2025-08-11 17:42:49,718 - app.services.workout_analysis.calc.strength - INFO - Found 3 exercises with strength data, returning top 3
-2025-08-11 17:42:49,718 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 3 exercises
-2025-08-11 17:42:49,719 - app.services.workout_analysis.calc.volume - INFO - Found 3 exercises with volume data, returning top 3
-2025-08-11 17:42:49,719 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 3 exercises
-2025-08-11 17:42:49,719 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.027069971511792846
-2025-08-11 17:42:49,787 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 79255a88-9e4e-474d-91f7-d640fbef97ee
-2025-08-11 17:42:49,787 - app.services.db.analysis_service - INFO - Updating analysis bundle: 79255a88-9e4e-474d-91f7-d640fbef97ee
-2025-08-11 17:42:50,078 - app.services.db.analysis_service - INFO - Bundle updated successfully: 79255a88-9e4e-474d-91f7-d640fbef97ee
-2025-08-11 17:42:50,078 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 792870b6-6f9f-41c8-8d61-0977d32c3a92
-2025-08-11 17:42:50,079 - app.main - INFO - Response status: 200
-2025-08-11 17:42:50,079 - app.main - INFO - Request: POST /images/temp-upload
-2025-08-11 17:42:50,080 - app.api.endpoints.images - INFO - User ID from endpoint: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-11 17:42:50,080 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
-2025-08-11 17:42:50,080 - app.api.endpoints.images - INFO - JWT token length: 871
-2025-08-11 17:42:50,080 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
-2025-08-11 17:42:50,187 - app.api.endpoints.images - INFO - User client created successfully: True
-2025-08-11 17:42:50,353 - app.api.endpoints.images - INFO - Test query successful: True
-2025-08-11 17:42:50,354 - app.services.db.image_service - INFO - Creating temp image with path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg
-2025-08-11 17:42:50,354 - app.services.db.image_service - INFO - User ID to insert: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3 (type: <class 'str'>)
-2025-08-11 17:42:50,505 - app.services.db.image_service - INFO - About to insert: {'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'status': 'temporary', 'expires_at': '2025-08-12T16:42:50.505789'}
-2025-08-11 17:42:50,666 - app.services.db.image_service - INFO - Created temp image record with ID: a80814ae-8b20-4c00-b72f-25f90ca1ed74
-2025-08-11 17:42:50,667 - app.services.db.image_service - INFO - About to create signed URL...
-2025-08-11 17:42:50,842 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-08-11 17:42:50,843 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvNTk5MWRjNWQtYjc2OC00MDg0LTgyNzYtNjY4YjRjODhmNGY4LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDU3MCwiZXhwIjoxNzU0OTM3NzcwfQ.QFUCarTKKD7k_Ou3o71DwwTAsgAwF3l_SAizCsGG1h8', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvNTk5MWRjNWQtYjc2OC00MDg0LTgyNzYtNjY4YjRjODhmNGY4LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDU3MCwiZXhwIjoxNzU0OTM3NzcwfQ.QFUCarTKKD7k_Ou3o71DwwTAsgAwF3l_SAizCsGG1h8', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvNTk5MWRjNWQtYjc2OC00MDg0LTgyNzYtNjY4YjRjODhmNGY4LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDU3MCwiZXhwIjoxNzU0OTM3NzcwfQ.QFUCarTKKD7k_Ou3o71DwwTAsgAwF3l_SAizCsGG1h8', 'path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg'}
-2025-08-11 17:42:50,843 - app.services.db.image_service - INFO - Successfully created upload URL
-2025-08-11 17:42:50,843 - app.services.db.image_service - INFO - Returning response: {'image_id': 'a80814ae-8b20-4c00-b72f-25f90ca1ed74', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvNTk5MWRjNWQtYjc2OC00MDg0LTgyNzYtNjY4YjRjODhmNGY4LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMDU3MCwiZXhwIjoxNzU0OTM3NzcwfQ.QFUCarTKKD7k_Ou3o71DwwTAsgAwF3l_SAizCsGG1h8', 'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/5991dc5d-b768-4084-8276-668b4c88f4f8.jpg'}
-2025-08-11 17:42:50,844 - app.main - INFO - Request: GET /api/dashboard
-2025-08-11 17:42:50,845 - app.main - INFO - Response status: 200
-2025-08-11 17:42:50,846 - app.main - INFO - Response status: 200
+2025-08-11 17:53:33,018 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,021 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,021 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,021 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (check took 0.00s)
+2025-08-11 17:53:33,021 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,141 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,141 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (expires in 30 min)
+2025-08-11 17:53:33,141 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.12s - 1 messages, 1 bundles
+2025-08-11 17:53:33,141 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:53:33,141 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation 89cd47b5-d90a-4e00-bd4a-86641de148b3
+2025-08-11 17:54:12,631 - app.main - INFO - Request: POST /images/temp-upload
+2025-08-11 17:54:12,633 - app.api.endpoints.images - INFO - User ID from endpoint: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 17:54:12,633 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
+2025-08-11 17:54:12,634 - app.api.endpoints.images - INFO - JWT token length: 871
+2025-08-11 17:54:12,634 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
+2025-08-11 17:54:12,747 - app.api.endpoints.images - INFO - User client created successfully: True
+2025-08-11 17:54:12,912 - app.api.endpoints.images - INFO - Test query successful: True
+2025-08-11 17:54:12,912 - app.services.db.image_service - INFO - Creating temp image with path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg
+2025-08-11 17:54:12,912 - app.services.db.image_service - INFO - User ID to insert: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3 (type: <class 'str'>)
+2025-08-11 17:54:13,280 - app.services.db.image_service - INFO - About to insert: {'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'status': 'temporary', 'expires_at': '2025-08-12T16:54:13.280432'}
+2025-08-11 17:54:13,429 - app.services.db.image_service - INFO - Created temp image record with ID: a48793a6-83b9-4022-8bc3-2eb24c3348b4
+2025-08-11 17:54:13,430 - app.services.db.image_service - INFO - About to create signed URL...
+2025-08-11 17:54:13,753 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>
+2025-08-11 17:54:13,753 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDBiZTY0YWQtNjVkNy00MDNkLTg2MTAtY2FlNzNlMzcxOGU1LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMTI1MywiZXhwIjoxNzU0OTM4NDUzfQ.baBeKehlIowZAPCDEoJcXvFkY9Ado-6rqVMhD8NlpPA', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDBiZTY0YWQtNjVkNy00MDNkLTg2MTAtY2FlNzNlMzcxOGU1LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMTI1MywiZXhwIjoxNzU0OTM4NDUzfQ.baBeKehlIowZAPCDEoJcXvFkY9Ado-6rqVMhD8NlpPA', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDBiZTY0YWQtNjVkNy00MDNkLTg2MTAtY2FlNzNlMzcxOGU1LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMTI1MywiZXhwIjoxNzU0OTM4NDUzfQ.baBeKehlIowZAPCDEoJcXvFkY9Ado-6rqVMhD8NlpPA', 'path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg'}
+2025-08-11 17:54:13,753 - app.services.db.image_service - INFO - Successfully created upload URL
+2025-08-11 17:54:13,754 - app.services.db.image_service - INFO - Returning response: {'image_id': 'a48793a6-83b9-4022-8bc3-2eb24c3348b4', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDBiZTY0YWQtNjVkNy00MDNkLTg2MTAtY2FlNzNlMzcxOGU1LmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NDkzMTI1MywiZXhwIjoxNzU0OTM4NDUzfQ.baBeKehlIowZAPCDEoJcXvFkY9Ado-6rqVMhD8NlpPA', 'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d0be64ad-65d7-403d-8610-cae73e3718e5.jpg'}
+2025-08-11 17:54:13,754 - app.main - INFO - Response status: 200
+2025-08-11 17:56:14,263 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
+2025-08-11 20:10:20,076 - app - INFO - Logging has been set up
+2025-08-11 20:10:20,076 - app.main - INFO - Application starting
+2025-08-11 20:10:20,076 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-11 20:10:20,076 - app.main - INFO - SUPABASE_URL present: True
+2025-08-11 20:10:20,076 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-11 20:14:22,765 - app.main - INFO - Request: GET /api/dashboard
+2025-08-11 20:14:22,769 - app.main - INFO - Request: GET /db/user-profile
+2025-08-11 20:14:22,771 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:14:22,771 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:14:23,256 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:14:23,257 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-11 20:14:23,257 - app.main - INFO - Response status: 200
+2025-08-11 20:14:23,258 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-11 20:14:23,755 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-11 20:14:23,762 - app.main - INFO - Response status: 200
+2025-08-11 20:14:23,763 - app.main - INFO - Response status: 200
+2025-08-11 20:14:24,172 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-11 20:14:24,173 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:14:24,173 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d73770>
+2025-08-11 20:14:24,616 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d73770>
+2025-08-11 20:14:24,627 - app.main - INFO - Response status: 200
+2025-08-11 20:50:14,832 - app.main - INFO - Request: GET /api/dashboard
+2025-08-11 20:50:14,844 - app.main - INFO - Request: GET /db/user-profile
+2025-08-11 20:50:14,844 - app.main - INFO - Response status: 200
+2025-08-11 20:50:14,849 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:50:14,849 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:50:15,335 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-11 20:50:15,336 - app.main - INFO - Request: GET /db/exercise-definitions

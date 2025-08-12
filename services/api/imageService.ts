@@ -24,6 +24,7 @@ export interface CommitImageResponse {
 }
 
 export interface ImageUrlResponse {
+  data: any;
   success: boolean;
   url?: string;
   error?: string;
