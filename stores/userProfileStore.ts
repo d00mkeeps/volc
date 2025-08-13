@@ -100,27 +100,12 @@ export const useUserStore = create<UserStoreState>((set, get) => {
           throw new Error("No authenticated user found");
         }
 
-        const { userProfile } = get();
-        if (userProfile) {
-          const currentProfile = await userProfileService.getUserProfile();
-          const onboardingData: UserOnboarding = {
-            personalInfo: {
-              ...currentProfile.personalInfo,
-              ...(updates as any).personalInfo,
-            },
-            fitnessBackground: {
-              ...currentProfile.fitnessBackground,
-              ...(updates as any).fitnessBackground,
-            },
-            goal: "",
-          };
+        // Save updates directly using UserProfile format
+        await userProfileService.saveUserProfile(updates);
 
-          await userProfileService.saveUserProfile(onboardingData);
-          const updatedProfile = await userProfileService.getUserProfile();
-          set({ userProfile: updatedProfile });
-        } else {
-          throw new Error("Cannot update profile: No user profile loaded");
-        }
+        // Refresh the profile to get updated data
+        const updatedProfile = await userProfileService.getUserProfile();
+        set({ userProfile: updatedProfile });
       } catch (err) {
         set({
           error:

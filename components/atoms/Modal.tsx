@@ -1,4 +1,3 @@
-// atoms/BaseModal.tsx
 import React from "react";
 import { Modal, TouchableOpacity } from "react-native";
 

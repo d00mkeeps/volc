@@ -1,93 +1,92 @@
-2025-08-12 21:53:40,218 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-12 21:53:40,227 - app.api.endpoints.db - INFO - API request to get all workouts for user: 7e5d5cb7-99b8-4ae2-bd67-53beec14e273
-2025-08-12 21:53:40,227 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d72e40>
-2025-08-12 21:53:40,698 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d72e40>
-2025-08-12 21:53:40,699 - app.main - INFO - Response status: 200
-2025-08-12 23:16:23,300 - app.main - INFO - Request: GET /api/dashboard
-2025-08-12 23:16:23,312 - app.main - INFO - Request: GET /db/user-profile
-2025-08-12 23:16:23,314 - app.api.endpoints.db - INFO - API request to get profile for user: 7e5d5cb7-99b8-4ae2-bd67-53beec14e273
-2025-08-12 23:16:23,314 - app.services.db.user_profile_service - INFO - Getting profile for user: 7e5d5cb7-99b8-4ae2-bd67-53beec14e273
-2025-08-12 23:16:23,774 - app.services.db.user_profile_service - INFO - No profile found for user: 7e5d5cb7-99b8-4ae2-bd67-53beec14e273
-2025-08-12 23:16:23,774 - app.main - INFO - Response status: 200
-2025-08-12 23:16:23,776 - app.main - INFO - Response status: 200
-2025-08-12 23:16:23,960 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-12 23:16:23,961 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-12 23:16:24,557 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-12 23:16:24,572 - app.main - INFO - Response status: 200
-2025-08-12 23:16:28,255 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-08-12 23:16:28,697 - app.main - INFO - Response status: 200
-2025-08-12 23:46:55,072 - app.main - INFO - Request: GET /api/dashboard
-2025-08-12 23:46:55,081 - app.main - INFO - Request: GET /db/user-profile
-2025-08-12 23:46:55,083 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-12 23:46:55,083 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-12 23:46:55,576 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-12 23:46:55,577 - app.main - INFO - Response status: 200
-2025-08-12 23:46:55,578 - app.main - INFO - Response status: 200
-2025-08-12 23:46:55,717 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-12 23:46:55,718 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-12 23:46:55,718 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d72ba0>
-2025-08-12 23:46:56,190 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x143d72ba0>
-2025-08-12 23:46:56,196 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-12 23:46:56,196 - app.main - INFO - Response status: 200
-2025-08-12 23:46:56,197 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-12 23:46:56,622 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-12 23:46:56,637 - app.main - INFO - Response status: 200
-2025-08-12 23:46:58,109 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
-2025-08-12 23:46:58,150 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
-2025-08-12 23:46:58,150 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3
-2025-08-12 23:46:58,150 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (check took 0.00s)
-2025-08-12 23:46:58,150 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 89cd47b5-d90a-4e00-bd4a-86641de148b3
-2025-08-12 23:46:58,360 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 89cd47b5-d90a-4e00-bd4a-86641de148b3
-2025-08-12 23:46:58,360 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 89cd47b5-d90a-4e00-bd4a-86641de148b3 (expires in 30 min)
-2025-08-12 23:46:58,360 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.21s - 1 messages, 1 bundles
-2025-08-12 23:46:59,624 - app.services.chains.base_conversation_chain - INFO - Loaded 1 messages into conversation history
-2025-08-12 23:46:59,624 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-12 23:46:59,624 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 1 messages and 1 bundles
-2025-08-12 23:47:03,079 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-08-12 23:47:03,526 - app.main - INFO - Response status: 200
-2025-08-12 23:47:05,635 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-08-12 23:47:06,036 - app.main - INFO - Response status: 200
-2025-08-12 23:47:16,955 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-2025-08-13 00:15:46,848 - app.main - INFO - Request: GET /api/dashboard
-2025-08-13 00:15:46,862 - app.main - INFO - Request: GET /db/user-profile
-2025-08-13 00:15:46,862 - app.main - INFO - Response status: 200
-2025-08-13 00:15:46,871 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:15:46,871 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:15:47,401 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:15:47,402 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-13 00:15:47,404 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-13 00:15:47,892 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-13 00:15:47,902 - app.main - INFO - Response status: 200
-2025-08-13 00:15:47,902 - app.main - INFO - Response status: 200
-2025-08-13 00:15:48,190 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-13 00:15:48,190 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:15:48,191 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x144060980>
-2025-08-13 00:15:48,602 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x144060980>
-2025-08-13 00:15:48,614 - app.main - INFO - Response status: 200
-2025-08-13 00:18:27,623 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-13 00:18:27,625 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:18:27,625 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x144060980>
-2025-08-13 00:18:28,166 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x144060980>
-2025-08-13 00:18:28,179 - app.main - INFO - Response status: 200
-2025-08-13 00:24:51,939 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-08-13 00:24:52,719 - app.main - INFO - Response status: 200
-2025-08-13 00:26:29,265 - app.main - INFO - Request: GET /api/dashboard
-2025-08-13 00:26:29,275 - app.main - INFO - Response status: 200
-2025-08-13 00:26:29,276 - app.main - INFO - Request: GET /db/user-profile
-2025-08-13 00:26:29,277 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:26:29,278 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:26:29,934 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 00:26:29,935 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-13 00:26:29,937 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-13 00:26:30,633 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-13 00:26:30,644 - app.main - INFO - Response status: 200
+2025-08-13 15:38:15,085 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,090 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:15,091 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:15,091 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:15,091 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:15,092 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,092 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,444 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,446 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,446 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,852 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,853 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:15,854 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,274 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,275 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,275 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,661 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,662 - app.main - INFO - Response status: 200
+2025-08-13 15:38:16,663 - app.main - INFO - Response status: 200
+2025-08-13 15:38:16,663 - app.main - INFO - Response status: 200
+2025-08-13 15:38:16,663 - app.main - INFO - Response status: 200
+2025-08-13 15:38:16,663 - app.main - INFO - Response status: 200
+2025-08-13 15:38:16,926 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:16,927 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:16,927 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,269 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,269 - app.main - INFO - Response status: 200
+2025-08-13 15:38:17,496 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:17,497 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:17,497 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:17,497 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,497 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,835 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,837 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:17,837 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:18,268 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:18,268 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:18,268 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:18,606 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:18,607 - app.main - INFO - Response status: 200
+2025-08-13 15:38:18,607 - app.main - INFO - Response status: 200
+2025-08-13 15:38:18,607 - app.main - INFO - Response status: 200
+2025-08-13 15:38:22,892 - app.main - INFO - Request: GET /api/dashboard
+2025-08-13 15:38:22,893 - app.main - INFO - Response status: 200
+2025-08-13 15:38:22,904 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-13 15:38:22,904 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-13 15:38:23,401 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-13 15:38:23,438 - app.main - INFO - Response status: 200
+2025-08-13 15:38:23,438 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:38:23,439 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:23,439 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:23,894 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:23,895 - app.main - INFO - Response status: 200
+2025-08-13 15:38:24,151 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 15:38:24,151 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:38:24,152 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcaa50>
+2025-08-13 15:38:24,494 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcaa50>
+2025-08-13 15:38:24,495 - app.main - INFO - Response status: 200
+2025-08-13 15:47:44,588 - app.main - INFO - Request: POST /db/user-profile
+2025-08-13 15:47:44,600 - app.api.endpoints.db - INFO - API request to save profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:44,601 - app.services.db.user_profile_service - INFO - Saving profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,248 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,249 - app.main - INFO - Response status: 200
+2025-08-13 15:47:45,380 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:47:45,382 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,382 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,732 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,733 - app.main - INFO - Response status: 200
+2025-08-13 15:47:45,987 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:47:45,991 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:45,991 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:46,397 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:46,397 - app.main - INFO - Response status: 200
+2025-08-13 15:47:53,725 - app.main - INFO - Request: GET /api/dashboard
+2025-08-13 15:47:53,728 - app.main - INFO - Response status: 200
+2025-08-13 15:47:53,736 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-13 15:47:53,737 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-13 15:47:54,159 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-13 15:47:54,176 - app.main - INFO - Response status: 200
+2025-08-13 15:47:54,177 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 15:47:54,177 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:54,178 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:54,560 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:54,561 - app.main - INFO - Response status: 200
+2025-08-13 15:47:54,836 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 15:47:54,837 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-13 15:47:54,837 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 15:47:55,228 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 15:47:55,229 - app.main - INFO - Response status: 200
+2025-08-13 17:01:52,027 - app.main - INFO - Request: GET /api/dashboard
+2025-08-13 17:01:52,039 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 17:01:52,040 - app.main - INFO - Response status: 200

@@ -27,14 +27,14 @@ export interface Program {
 }
 
 export interface ProgramDetailSlideProps {
-  program: Program ;
+  program: Program;
   selectedWorkout: Workout | null;
   onWorkoutChange: (workout: Workout | null) => void;
 }
 
 export interface HeaderProps {
   title: string;
-  onClose: () => void
+  onClose: () => void;
 }
 
 export interface WorkoutDisplayProps {
@@ -57,7 +57,7 @@ export type RootStackParamList = {
 };
 export type ConversationListProps = {
   onConversationPress: (id: string) => void;
-}
+};
 
 export interface ConversationUIProps {
   title: string;
@@ -72,38 +72,36 @@ export interface Workout {
   id: string;
   name: string;
   description: string;
-  createdAt: string; 
-  user_id?: number; 
-  orderInWorkout?: number
-  exercises: WorkoutExercise[]
+  createdAt: string;
+  user_id?: number;
+  orderInWorkout?: number;
+  exercises: WorkoutExercise[];
 }
 export interface Program {
-id: string;
-name: string;
-description: string;
-createdAt: string;
-workouts: Workout[]
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  workouts: Workout[];
 }
-
 
 export interface ProfileGroupProps {
   profile: UserProfile;
 }
 
-
-
 export interface ProgramCardProps {
-program: Program;
-onPress?: (programId: string) => void;
+  program: Program;
+  onPress?: (programId: string) => void;
 }
 
 export interface ProgramListProps {
-programs: Program[];
-onProgramPress?: (programId: string) => void;
+  programs: Program[];
+  onProgramPress?: (programId: string) => void;
 }
 
 export interface ProgramsScreenProps {
-navigation: any;}
+  navigation: any;
+}
 
 export interface WorkoutSelectProps {
   workouts: string[];
@@ -125,7 +123,7 @@ export interface Message {
   conversation_id: string;
   conversation_sequence: number;
   content: string;
-  sender: 'user' | 'assistant';
+  sender: "user" | "assistant";
   timestamp: Date;
   expectsGraph?: boolean;
 }
@@ -134,14 +132,14 @@ export interface Conversation {
   id: string;
   user_id: string;
   title: string;
-  config_name: ChatConfigName;  // Add this
+  config_name: ChatConfigName; // Add this
   created_at: Date;
   updated_at: Date;
-  status: 'active' | 'archived' | 'deleted';
+  status: "active" | "archived" | "deleted";
   message_count: number;
 }
 export interface UserProfile {
-  preferences: unknown;
+  preferences: any;
   goals: any;
   current_stats: any;
   age_group: number;
@@ -151,8 +149,8 @@ export interface UserProfile {
   is_imperial: boolean;
   display_name: string | null;
   auth_user_uuid: string | null;
-  goal: string | null;
   training_history: any | null;
+  instagram_username: string | null; // Add this
 }
 
 export interface WorkoutExercise {
@@ -183,6 +181,4 @@ export interface WorkoutHeaderProps {
   onSelectWorkout: (workout: Workout) => void;
 }
 
-
 export { ChatConfigName };
-

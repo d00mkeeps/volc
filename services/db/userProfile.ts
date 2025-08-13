@@ -1,62 +1,52 @@
-// services/supabase/userProfile.ts
-import { BaseDBService } from './base';
-import { UserOnboarding } from '@/types/onboarding';
-import { apiGet, apiPost } from '../api/core/apiClient';
-
-const AGE_GROUP_MAP = {
-  '18-24': 1,
-  '25-34': 2,
-  '35-44': 3,
-  '45-54': 4,
-  '55-64': 5,
-  '65+': 6,
-} as const;
+import { BaseDBService } from "./base";
+import { UserOnboarding } from "@/types/onboarding";
+import { UserProfile } from "@/types";
+import { apiGet, apiPost } from "../api/core/apiClient";
 
 export class UserProfileService extends BaseDBService {
   /**
-   * Map an age group string to its corresponding number value
-   * @private
+   * Save or update a user's profile information - accepts UserProfile format
    */
-  private mapAgeGroupToNumber(ageGroup: string): number {
-    const mappedValue = AGE_GROUP_MAP[ageGroup as keyof typeof AGE_GROUP_MAP];
-    if (!mappedValue) {
-      throw new Error(`Invalid age group: ${ageGroup}`);
-    }
-    return mappedValue;
-  }
-
-  /**
-   * Save or update a user's profile information
-   */
-  async saveUserProfile(summary: UserOnboarding) {
+  async saveUserProfile(profileData: Partial<UserProfile>) {
     try {
-      console.log('Saving user profile:', summary);
-      
-      // Call backend API to save user profile
-      const data = await apiPost('/db/user-profile', summary);
-      
-      console.log('User profile saved successfully');
+      console.log("Saving user profile:", profileData);
+      // Send UserProfile format directly to backend
+      const data = await apiPost("/db/user-profile", profileData);
+      console.log("User profile saved successfully");
       return data;
     } catch (error) {
-      console.error('Error saving user profile:', error);
+      console.error("Error saving user profile:", error);
       throw error;
     }
   }
-  
+
+  /**
+   * Save onboarding data (legacy method for UserOnboarding format)
+   * Keep this for backward compatibility if needed elsewhere
+   */
+  async saveUserOnboarding(summary: UserOnboarding) {
+    try {
+      console.log("Saving user onboarding:", summary);
+      const data = await apiPost("/db/user-profile", summary);
+      console.log("User onboarding saved successfully");
+      return data;
+    } catch (error) {
+      console.error("Error saving user onboarding:", error);
+      throw error;
+    }
+  }
+
   /**
    * Get the current user's profile information
    */
-  async getUserProfile() {
+  async getUserProfile(): Promise<UserProfile> {
     try {
-      console.log('Getting user profile');
-      
-      // Call backend API to get user profile
-      const data = await apiGet('/db/user-profile');
-      
-      console.log('User profile retrieved successfully');
+      console.log("Getting user profile");
+      const data = await apiGet("/db/user-profile");
+      console.log("User profile retrieved successfully");
       return data;
     } catch (error) {
-      console.error('Error getting user profile:', error);
+      console.error("Error getting user profile:", error);
       throw error;
     }
   }

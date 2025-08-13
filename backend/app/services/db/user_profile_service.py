@@ -35,23 +35,28 @@ class UserProfileService(BaseDBService):
         try:
             logger.info(f"Saving profile for user: {user_id}")
             
-            # Extract from the onboarding data format and convert to database format
-            user_profile = {
-                "first_name": profile_data.get("personalInfo", {}).get("firstName"),
-                "last_name": profile_data.get("personalInfo", {}).get("lastName"),
-                "is_imperial": profile_data.get("personalInfo", {}).get("preferredUnits") == "imperial",
-                "goal": profile_data.get("goal"),
-                "training_history": profile_data.get("fitnessBackground")
-            }
+            # Handle UserProfile format (flat structure) from frontend
+            user_profile = {}
             
-            # Get age group and convert to number if present
-            age_group = profile_data.get("personalInfo", {}).get("ageGroup")
-            if age_group:
-                try:
-                    user_profile["age_group"] = self.map_age_group_to_number(age_group)
-                except ValueError as e:
-                    logger.warning(f"Invalid age group: {age_group}")
-                    # We'll continue without the age group rather than failing the entire operation
+            # Map frontend UserProfile fields to database fields
+            if "first_name" in profile_data:
+                user_profile["first_name"] = profile_data["first_name"]
+            if "last_name" in profile_data:
+                user_profile["last_name"] = profile_data["last_name"]
+            if "age_group" in profile_data:
+                user_profile["age_group"] = profile_data["age_group"]
+            if "is_imperial" in profile_data:
+                user_profile["is_imperial"] = profile_data["is_imperial"]
+            if "instagram_username" in profile_data:
+                user_profile["instagram_username"] = profile_data["instagram_username"]
+            if "goals" in profile_data:  # Note: 'goals' not 'goal'
+                user_profile["goals"] = profile_data["goals"]
+            if "current_stats" in profile_data:
+                user_profile["current_stats"] = profile_data["current_stats"]
+            if "preferences" in profile_data:
+                user_profile["preferences"] = profile_data["preferences"]
+            if "training_history" in profile_data:
+                user_profile["training_history"] = profile_data["training_history"]
             
             # Update the user profile - RLS handles user filtering
             user_client = self.get_user_client(jwt_token)
@@ -88,7 +93,8 @@ class UserProfileService(BaseDBService):
         except Exception as e:
             logger.error(f"Error saving user profile: {str(e)}")
             return await self.handle_error("save_user_profile", e)
-    
+
+
     async def get_user_profile(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Get a user's profile information

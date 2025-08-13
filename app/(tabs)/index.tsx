@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { Stack } from "tamagui";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
@@ -9,13 +9,11 @@ import { Keyboard } from "react-native"; // Add Keyboard to existing imports
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
 import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
-import {
-  createEmptyWorkout,
-  useUserSessionStore,
-} from "@/stores/userSessionStore";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
+import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
 let count = 0;
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
@@ -35,6 +33,7 @@ export default function HomeScreen() {
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
 
   // With selective selectors:
@@ -133,6 +132,27 @@ export default function HomeScreen() {
     }
   };
 
+  useEffect(() => {
+    if (userProfile !== null) {
+      // Profile has been loaded
+      const needsOnboarding =
+        !userProfile.first_name ||
+        !userProfile.goals ||
+        Object.keys(userProfile.goals || {}).length === 0;
+
+      if (needsOnboarding) {
+        console.log("User needs onboarding - showing modal");
+        setShowOnboardingModal(true);
+      }
+    }
+  }, [userProfile]);
+
+  const handleOnboardingComplete = () => {
+    setShowOnboardingModal(false);
+    // Optionally refresh the profile to get updated data
+    useUserStore.getState().refreshProfile();
+  };
+
   return (
     <>
       {/* Main Content */}
@@ -140,7 +160,7 @@ export default function HomeScreen() {
         <Stack flex={1} padding="$4">
           <Header
             greeting="Welcome to Volc!"
-            onSettingsPress={() => console.log("Settings pressed")}
+            onSettingsPress={() => setShowOnboardingModal(true)}
           />
           <Stack marginBottom="$5">
             <Dashboard />
@@ -185,6 +205,10 @@ export default function HomeScreen() {
       <WorkoutTracker
         ref={workoutTrackerRef}
         currentTemplateName={selectedTemplate?.name}
+      />
+      <OnboardingModal
+        isVisible={showOnboardingModal}
+        onComplete={handleOnboardingComplete}
       />
     </>
   );
