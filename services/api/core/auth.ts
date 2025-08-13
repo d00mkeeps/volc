@@ -3,30 +3,40 @@ import { supabase } from "@/lib/supabaseClient";
 import { AuthError, SignInCredentials, SignUpCredentials } from "@/types/auth";
 
 export const authService = {
-  signIn: async ({ email, password }: SignInCredentials) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      throw handleAuthError(error);
-    }
-  },
-
   signUp: async ({ email, password }: SignUpCredentials) => {
     try {
+      console.log("🚀 Starting signup process for:", email);
+      console.log("📧 Email length:", email.length);
+      console.log("🔐 Password length:", password.length);
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
 
-      if (error) throw error;
+      console.log(
+        "📦 Raw Supabase response data:",
+        JSON.stringify(data, null, 2)
+      );
+      console.log(
+        "📦 Raw Supabase response error:",
+        JSON.stringify(error, null, 2)
+      );
+
+      if (error) {
+        console.error("❌ Supabase error details:", {
+          name: error.name,
+          message: error.message,
+          status: error.status,
+          // Remove the protected property access
+        });
+        throw error;
+      }
+
+      console.log("✅ Signup successful:", data);
       return data;
     } catch (error) {
+      console.error("💥 Caught error in authService.signUp:", error);
       throw handleAuthError(error);
     }
   },

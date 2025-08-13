@@ -11,13 +11,17 @@ export function SignInForm() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    // Clean email thoroughly
+    const cleanEmail = email.trim().toLowerCase().replace(/\s+/g, "");
+
     try {
       console.log("Submit button pressed, starting sign-in...");
       setLoading(true);
-      const result = await signIn({ email, password });
+      const result = await signIn({ email: cleanEmail, password }); // ← Use cleaned email
       console.log("Sign-in completed successfully:", result);
     } catch (error) {
       console.error("Sign-in form submission error:", error);
+      setPassword(""); // ← Clear password on error
     } finally {
       setLoading(false);
     }

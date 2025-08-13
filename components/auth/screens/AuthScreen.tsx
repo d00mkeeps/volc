@@ -1,21 +1,31 @@
-import { useState } from "react";
-import { SafeAreaView } from "react-native";
+import { useState, useEffect } from "react";
+import { TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Stack } from "tamagui";
 import { SignInForm } from "../molecules/SignInForm";
 import { SignUpForm } from "../molecules/SignUpForm";
 import { AuthToggle } from "../atoms/AuthToggle";
-import { AuthError } from "../atoms/AuthError";
+import { SystemMessage } from "../../atoms/SystemMessage";
 import { useAuth } from "../../../context/AuthContext";
 import { AuthMode } from "@/types/auth";
 
 export function AuthScreen() {
   const [mode, setMode] = useState<AuthMode>("signIn");
-  const { error } = useAuth();
+  const { error, clearError } = useAuth();
+
+  // Auto-clear error messages after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Stack flex={1} backgroundColor="$background" padding="$4">
-        {error && <AuthError message={error.message} />}
+        {error && <SystemMessage message={error.message} type="error" />}
 
         <Stack flex={1} paddingTop="30%">
           {mode === "signIn" ? <SignInForm /> : <SignUpForm />}
@@ -28,6 +38,6 @@ export function AuthScreen() {
           />
         </Stack>
       </Stack>
-    </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

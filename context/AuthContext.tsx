@@ -14,6 +14,7 @@ interface AuthContextType extends AuthState {
   signOut: () => Promise<void>;
   resetPassword: typeof authService.resetPassword;
   error: AuthError | null;
+  clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +35,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const {
           data: { session },
         } = await supabase.auth.getSession();
-
         setState({
           session,
           user: session?.user ?? null,
@@ -53,7 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth state changed:", event);
-
       setState({
         session,
         user: session?.user ?? null,
@@ -69,6 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     ...state,
     error,
+    clearError: () => setError(null),
+
     signIn: async (credentials: SignInCredentials) => {
       try {
         const result = await authService.signIn(credentials);
@@ -78,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
+
     signUp: async (credentials: SignUpCredentials) => {
       try {
         const result = await authService.signUp(credentials);
@@ -87,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
+
     signOut: async () => {
       try {
         await authService.signOut();
@@ -95,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
+
     resetPassword: async (email: string) => {
       try {
         await authService.resetPassword(email);
