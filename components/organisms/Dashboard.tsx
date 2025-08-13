@@ -1,15 +1,16 @@
-// components/organisms/Dashboard.tsx
 import React from "react";
-import { Stack, ScrollView, Text } from "tamagui";
-import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
+import { Stack, Text } from "tamagui";
+import MuscleGroupStack from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
 import { useDashboardData } from "@/hooks/useDashboardData";
 
 let count = 0;
+
 export default function Dashboard() {
   console.log(`=== dashboard render count: ${count} ===`);
   count++;
-  const { muscleBalance, consistency, isLoading } = useDashboardData(); // Removed goalProgress
+
+  const { muscleBalance, consistency, isLoading } = useDashboardData();
 
   if (isLoading) {
     return (
@@ -29,9 +30,7 @@ export default function Dashboard() {
 
   return (
     <Stack gap="$3">
-      {/* Single muscle group chart - now bigger */}
-      {muscleBalance && <MuscleGroupSpider data={muscleBalance} />}
-
+      {muscleBalance && <MuscleGroupStack data={muscleBalance} />}
       {consistency && (
         <ConsistencyCalendar workoutDays={consistency.workoutDays} />
       )}

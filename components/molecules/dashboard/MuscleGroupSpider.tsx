@@ -1,8 +1,8 @@
 // /components/molecules/dashboard/MuscleGroupSpider.tsx
 import React, { useState } from "react";
-import { Stack, Text, YStack, XStack, Select } from "tamagui";
-import Svg, { Polygon, Circle, Line } from "react-native-svg";
-import { ChevronDown } from "@tamagui/lucide-icons";
+import { Stack, Text, YStack } from "tamagui";
+import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
+import Select from "@/components/atoms/Select";
 
 interface MuscleData {
   muscle: string;
@@ -14,9 +14,16 @@ interface MuscleGroupSpiderProps {
 }
 
 export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
-  const [timeframe, setTimeframe] = useState("2 weeks");
+  const [timeframe, setTimeframe] = useState("2weeks");
 
-  // Mock data with realistic sets across all muscle groups
+  const timeframeOptions = [
+    { value: "1week", label: "1 Week" },
+    { value: "2weeks", label: "2 Weeks" },
+    { value: "1month", label: "1 Month" },
+    { value: "2months", label: "2 Months" },
+  ];
+
+  // Mock data with realistic 2-week sets across all muscle groups
   const defaultData: MuscleData[] = [
     { muscle: "Chest", sets: 24 },
     { muscle: "Back", sets: 28 },
@@ -28,32 +35,9 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
 
   const muscleData = data || defaultData;
   const maxSets = Math.max(...muscleData.map((d) => d.sets));
-  const totalSets = muscleData.reduce((sum, m) => sum + m.sets, 0);
-
-  // Calculate stats based on timeframe
-  const getStats = () => {
-    switch (timeframe) {
-      case "1 week":
-        return {
-          sets: Math.round(totalSets * 0.5),
-          workouts: 4,
-          avgPerWorkout: 21,
-        };
-      case "2 weeks":
-        return { sets: totalSets, workouts: 8, avgPerWorkout: 16 };
-      case "1 month":
-        return { sets: totalSets * 2, workouts: 16, avgPerWorkout: 16 };
-      case "2 months":
-        return { sets: totalSets * 4, workouts: 32, avgPerWorkout: 16 };
-      default:
-        return { sets: totalSets, workouts: 8, avgPerWorkout: 16 };
-    }
-  };
-
-  const stats = getStats();
-  const size = 180; // Smaller since it's 60% of space
+  const size = 240;
   const center = size / 2;
-  const maxRadius = size / 2 - 20; // Reduced padding since no outer labels
+  const maxRadius = size / 2 - 40;
 
   // Calculate points for each muscle group
   const points = muscleData.map((item, index) => {
@@ -69,103 +53,56 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
   return (
     <Stack
       width="100%"
+      height={250}
       backgroundColor="$backgroundSoft"
       borderRadius="$3"
-      padding="$4"
-      gap="$3"
+      flexDirection="row"
+      paddingRight="$1.5"
     >
-      {/* Header with timeframe selector */}
-      <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$5" fontWeight="600" color="$color">
-          Muscle Balance
-        </Text>
+      {/* Left Stack - Data Display Area */}
+      <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
+        {/* Timeframe Select */}
+        <Select
+          options={timeframeOptions}
+          value={timeframe}
+          onValueChange={setTimeframe}
+        />
 
-        <Select value={timeframe} onValueChange={setTimeframe}>
-          <Select.Trigger width={120} iconAfter={ChevronDown}>
-            <Select.Value placeholder="Timeframe" />
-          </Select.Trigger>
-
-          <Select.Content zIndex={200000}>
-            <Select.ScrollUpButton />
-            <Select.Viewport>
-              <Select.Item index={0} value="1 week">
-                <Select.ItemText>1 week</Select.ItemText>
-              </Select.Item>
-              <Select.Item index={1} value="2 weeks">
-                <Select.ItemText>2 weeks</Select.ItemText>
-              </Select.Item>
-              <Select.Item index={2} value="1 month">
-                <Select.ItemText>1 month</Select.ItemText>
-              </Select.Item>
-              <Select.Item index={3} value="2 months">
-                <Select.ItemText>2 months</Select.ItemText>
-              </Select.Item>
-            </Select.Viewport>
-            <Select.ScrollDownButton />
-          </Select.Content>
-        </Select>
-      </XStack>
-
-      {/* Main content area */}
-      <XStack gap="$3" alignItems="center">
-        {/* Left side - Stats */}
-        <YStack flex={2} gap="$3">
-          <YStack gap="$2">
-            <YStack alignItems="center" gap="$0.5">
-              <Text fontSize="$7" fontWeight="700" color="$primary">
-                {stats.sets}
-              </Text>
-              <Text fontSize="$2" color="$textSoft" textAlign="center">
-                Total Sets
-              </Text>
-            </YStack>
-
-            <YStack alignItems="center" gap="$0.5">
-              <Text fontSize="$5" fontWeight="600" color="$color">
-                {stats.workouts}
-              </Text>
-              <Text fontSize="$2" color="$textSoft" textAlign="center">
+        {/* Metrics Area */}
+        <Stack gap="$2" paddingLeft="$2" paddingTop="$1">
+          <Stack flexDirection="row">
+            {/* Labels Stack */}
+            <YStack flex={2.5} gap="$5" justifyContent="space-between">
+              <Text color="$textSoft" fontSize="$4">
                 Workouts
               </Text>
-            </YStack>
-
-            <YStack alignItems="center" gap="$0.5">
-              <Text fontSize="$4" fontWeight="600" color="$color">
-                {stats.avgPerWorkout}
+              <Text color="$textSoft" fontSize="$4">
+                Exercises
               </Text>
-              <Text fontSize="$2" color="$textSoft" textAlign="center">
-                Avg Sets/Workout
+              <Text color="$textSoft" fontSize="$4">
+                Sets
               </Text>
             </YStack>
-          </YStack>
 
-          {/* Top muscle groups */}
-          <YStack gap="$1">
-            <Text fontSize="$3" fontWeight="600" color="$color">
-              Top Focus
-            </Text>
-            {muscleData
-              .sort((a, b) => b.sets - a.sets)
-              .slice(0, 3)
-              .map((muscle, index) => (
-                <XStack
-                  key={muscle.muscle}
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Text fontSize="$2" color="$textSoft">
-                    {index + 1}. {muscle.muscle}
-                  </Text>
-                  <Text fontSize="$2" fontWeight="600" color="$color">
-                    {muscle.sets}
-                  </Text>
-                </XStack>
-              ))}
-          </YStack>
-        </YStack>
+            {/* Values Stack */}
+            <YStack flex={1} gap="$2" justifyContent="space-between">
+              <Text fontSize="$4" fontWeight="600" color="$text">
+                12
+              </Text>
+              <Text fontSize="$4" fontWeight="600" color="$text">
+                58
+              </Text>
+              <Text fontSize="$4" fontWeight="600" color="$text">
+                174
+              </Text>
+            </YStack>
+          </Stack>
+        </Stack>
+      </Stack>
 
-        {/* Right side - Spider Chart */}
-        <Stack flex={3} justifyContent="center" alignItems="center">
+      {/* Right Stack - Spider Chart */}
+      <Stack flex={1} justifyContent="center" alignItems="flex-end">
+        <Stack justifyContent="center" alignItems="center">
           <Svg width={size} height={size}>
             {/* Background grid circles */}
             {[0.25, 0.5, 0.75, 1.0].map((ratio, i) => (
@@ -220,23 +157,33 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
                 fill="#f84f3e"
               />
             ))}
-          </Svg>
 
-          {/* Muscle group legend below chart */}
-          <XStack
-            gap="$2"
-            marginTop="$2"
-            flexWrap="wrap"
-            justifyContent="center"
-          >
-            {muscleData.map((muscle) => (
-              <Text key={muscle.muscle} fontSize="$1" color="$textSoft">
-                {muscle.muscle}
-              </Text>
-            ))}
-          </XStack>
+            {/* Labels */}
+            {points.map((point, index) => {
+              const angle =
+                (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
+              const labelRadius = maxRadius + 24;
+              const labelX = center + labelRadius * Math.cos(angle);
+              const labelY = center + labelRadius * Math.sin(angle);
+
+              return (
+                <SvgText
+                  key={index}
+                  x={labelX}
+                  y={labelY}
+                  fontSize="11"
+                  fill="#6b6466"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+                  fontWeight="500"
+                >
+                  {point.label}
+                </SvgText>
+              );
+            })}
+          </Svg>
         </Stack>
-      </XStack>
+      </Stack>
     </Stack>
   );
 }

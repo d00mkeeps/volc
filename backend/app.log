@@ -1,34 +1,42 @@
-2025-08-13 17:58:56,160 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-13 17:58:56,174 - app.main - INFO - Response status: 200
-2025-08-13 18:05:40,930 - app.main - INFO - Request: GET /api/dashboard
-2025-08-13 18:05:40,986 - app.main - INFO - Request: GET /db/user-profile
-2025-08-13 18:05:40,994 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:05:40,995 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:05:41,649 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:05:41,650 - app.main - INFO - Response status: 200
-2025-08-13 18:05:41,651 - app.main - INFO - Response status: 200
-2025-08-13 18:05:41,893 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-13 18:05:41,894 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:05:41,894 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
-2025-08-13 18:05:42,345 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
-2025-08-13 18:05:42,355 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-13 18:05:42,355 - app.main - INFO - Response status: 200
-2025-08-13 18:05:42,356 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-13 18:05:42,780 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-13 18:05:42,795 - app.main - INFO - Response status: 200
-2025-08-13 18:24:38,094 - app.main - INFO - Request: GET /db/user-profile
-2025-08-13 18:24:38,158 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:24:38,161 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:24:38,839 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:24:38,841 - app.main - INFO - Request: GET /api/dashboard
-2025-08-13 18:24:38,842 - app.main - INFO - Response status: 200
-2025-08-13 18:24:38,844 - app.main - INFO - Response status: 200
-2025-08-13 18:24:39,125 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-13 18:24:39,127 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-13 18:24:39,130 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-13 18:24:39,130 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
-2025-08-13 18:24:39,745 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
-2025-08-13 18:24:39,767 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-13 18:24:40,246 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-13 18:24:40,266 - app.main - INFO - Response status: 200
-2025-08-13 18:24:40,268 - app.main - INFO - Response status: 200
+2025-08-13 18:34:38,102 - app.main - INFO - Response status: 200
+2025-08-13 18:34:38,106 - app.main - INFO - Response status: 200
+2025-08-13 18:34:38,579 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 18:34:38,580 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:34:38,580 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:34:39,218 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:34:39,222 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-13 18:34:39,222 - app.main - INFO - Response status: 200
+2025-08-13 18:34:39,223 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-13 18:34:39,623 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-13 18:34:39,636 - app.main - INFO - Response status: 200
+2025-08-13 18:35:43,583 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 18:35:43,587 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:35:43,587 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:35:44,035 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:35:44,046 - app.main - INFO - Response status: 200
+2025-08-13 18:36:02,565 - app.main - INFO - Request: GET /api/dashboard
+2025-08-13 18:36:02,572 - app.main - INFO - Request: GET /db/user-profile
+2025-08-13 18:36:02,578 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:36:02,578 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:36:03,030 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:36:03,030 - app.main - INFO - Response status: 200
+2025-08-13 18:36:03,031 - app.main - INFO - Response status: 200
+2025-08-13 18:36:03,232 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 18:36:03,233 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:36:03,233 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:36:03,644 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:36:03,650 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-13 18:36:03,650 - app.main - INFO - Response status: 200
+2025-08-13 18:36:03,651 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-13 18:36:04,015 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-13 18:36:04,029 - app.main - INFO - Response status: 200
+2025-08-13 18:36:33,610 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 18:36:33,614 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 18:36:33,615 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:36:34,070 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 18:36:34,078 - app.main - INFO - Response status: 200
+2025-08-13 19:08:17,158 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-13 19:08:17,176 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-13 19:08:17,176 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 19:08:17,703 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11bbcacf0>
+2025-08-13 19:08:17,708 - app.main - INFO - Response status: 200
