@@ -1,4 +1,5 @@
-import React from "react";
+// /components/molecules/dashboard/ConsistencyCalendar.tsx
+import React, { useState, useRef, useEffect } from "react";
 import { ScrollView, Stack, Text, XStack, YStack } from "tamagui";
 
 interface DayData {
@@ -15,54 +16,70 @@ interface ConsistencyCalendarProps {
 export default function ConsistencyCalendar({
   workoutDays,
 }: ConsistencyCalendarProps) {
-  // Generate last 14 days
-  const generateDays = (): DayData[] => {
-    const days: DayData[] = [];
+  const [currentWeek, setCurrentWeek] = useState(0);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const totalWeeks = 9;
+
+  // Generate weeks of data (oldest to newest)
+  const generateWeeks = () => {
+    const weeks = [];
     const today = new Date();
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const defaultWorkoutDays = workoutDays || [
+      1, 3, 5, 8, 10, 12, 15, 17, 19, 22, 24, 26,
+    ];
 
-    // Mock workout data - realistic pattern
-    const defaultWorkoutDays = workoutDays || [1, 3, 5, 8, 10, 12, 14];
+    for (let weekOffset = 8; weekOffset >= 0; weekOffset--) {
+      const days: DayData[] = [];
 
-    for (let i = 13; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      const dayNumber = date.getDate();
-      const dayOfWeek = dayNames[date.getDay()];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - (weekOffset * 7 + i));
+        const dayNumber = date.getDate();
+        const dayOfWeek = dayNames[date.getDay()];
 
-      days.push({
-        day: dayNumber,
-        hasWorkout: defaultWorkoutDays.includes(14 - i),
-        isToday: i === 0,
-        dayOfWeek,
-      });
+        days.push({
+          day: dayNumber,
+          hasWorkout: defaultWorkoutDays.includes(weekOffset * 7 + (7 - i)),
+          isToday: weekOffset === 0 && i === 0,
+          dayOfWeek,
+        });
+      }
+
+      weeks.push({ weekOffset, days });
     }
 
-    return days;
+    return weeks;
   };
 
-  const days = generateDays();
-  const workoutCount = days.filter((d) => d.hasWorkout).length;
-  const consistencyPercentage = Math.round((workoutCount / 14) * 100);
+  const weeks = generateWeeks();
+
+  // Scroll to current week once we have the container width
+  useEffect(() => {
+    if (containerWidth > 0) {
+      const currentWeekIndex = totalWeeks - 1;
+      const targetOffset = currentWeekIndex * containerWidth;
+
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({
+          x: targetOffset,
+          animated: false,
+        });
+      }, 50);
+    }
+  }, [containerWidth]);
 
   const renderDay = (dayData: DayData) => (
-    <YStack key={dayData.day} alignItems="center" gap="$1">
-      {/* Day of week */}
-      <Text
-        fontSize="$1"
-        color="$colorPress"
-        fontWeight="500"
-        textAlign="center"
-        width={32}
-      >
-        {dayData.dayOfWeek}
-      </Text>
-
-      {/* Day circle */}
+    <YStack
+      key={`${dayData.day}-${dayData.dayOfWeek}`}
+      alignItems="center"
+      flex={1}
+    >
       <Stack
-        width={32}
-        height={32}
-        borderRadius="$10"
+        width={40}
+        height={40}
+        borderRadius="$3"
         backgroundColor={
           dayData.isToday
             ? "$primary"
@@ -75,24 +92,47 @@ export default function ConsistencyCalendar({
         borderWidth={dayData.isToday ? 2 : dayData.hasWorkout ? 1 : 0}
         borderColor={dayData.isToday ? "$primary" : "#f84f3e"}
       >
-        <Text
-          fontSize="$2"
-          color={
-            dayData.isToday
-              ? "white"
-              : dayData.hasWorkout
-              ? "#f84f3e"
-              : "$colorPress"
-          }
-          fontWeight={
-            dayData.isToday ? "700" : dayData.hasWorkout ? "600" : "400"
-          }
-        >
-          {dayData.day}
-        </Text>
+        <YStack alignItems="center" gap="$0.5">
+          <Text
+            fontSize="$2"
+            color={
+              dayData.isToday
+                ? "white"
+                : dayData.hasWorkout
+                ? "#f84f3e"
+                : "$colorPress"
+            }
+            fontWeight={
+              dayData.isToday ? "700" : dayData.hasWorkout ? "600" : "400"
+            }
+          >
+            {dayData.day}
+          </Text>
+          <Text
+            fontSize="$1"
+            color={
+              dayData.isToday
+                ? "white"
+                : dayData.hasWorkout
+                ? "#f84f3e"
+                : "$colorPress"
+            }
+            fontWeight="500"
+            opacity={0.8}
+          >
+            {dayData.dayOfWeek}
+          </Text>
+        </YStack>
       </Stack>
     </YStack>
   );
+
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const weekIndex = Math.round(offsetX / containerWidth);
+    const week = weeks[weekIndex];
+    setCurrentWeek(week?.weekOffset || 0);
+  };
 
   return (
     <Stack
@@ -101,75 +141,48 @@ export default function ConsistencyCalendar({
       padding="$3"
       gap="$3"
     >
-      {/* Header with stats */}
+      {/* Header */}
       <XStack justifyContent="space-between" alignItems="center">
-        <YStack gap="$0.5">
-          <Text fontSize="$4" fontWeight="600" color="$color">
-            2-Week Consistency
-          </Text>
+        <Text fontSize="$4" fontWeight="600" color="$color">
+          7-Day Consistency
+        </Text>
+
+        {currentWeek > 0 && (
           <Text fontSize="$2" color="$textSoft">
-            {workoutCount} workouts • {consistencyPercentage}% consistent
+            {currentWeek === 1 ? "Previous week" : `${currentWeek} weeks ago`}
           </Text>
-        </YStack>
+        )}
+      </XStack>
 
-        {/* Streak indicator */}
-        <Stack
-          backgroundColor="#fef7f6"
-          paddingHorizontal="$1.5"
-          paddingVertical="$1"
-          borderRadius="$2"
+      {/* Scrollable weeks */}
+      <Stack
+        onLayout={(event) => {
+          const { width } = event.nativeEvent.layout;
+          setContainerWidth(width);
+        }}
+      >
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={handleScroll}
+          snapToInterval={containerWidth}
+          decelerationRate="fast"
         >
-          <Text fontSize="$2" color="#f84f3e" fontWeight="600">
-            🔥 3 day streak
-          </Text>
-        </Stack>
-      </XStack>
-
-      {/* Calendar grid */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <XStack gap="$1.5" paddingHorizontal="$1">
-          {days.map(renderDay)}
-        </XStack>
-      </ScrollView>
-
-      {/* Legend */}
-      <XStack justifyContent="center" gap="$5">
-        <XStack alignItems="center" gap="$1.5">
-          <Stack
-            width={12}
-            height={12}
-            borderRadius="$1"
-            backgroundColor="#fef7f6"
-            borderWidth={1}
-            borderColor="#f84f3e"
-          />
-          <Text fontSize="$1" color="$textSoft" fontWeight="500">
-            Workout
-          </Text>
-        </XStack>
-        <XStack alignItems="center" gap="$1.5">
-          <Stack
-            width={12}
-            height={12}
-            borderRadius="$1"
-            backgroundColor="$backgroundPress"
-          />
-          <Text fontSize="$1" color="$textSoft" fontWeight="500">
-            Rest
-          </Text>
-        </XStack>
-        <XStack alignItems="center" gap="$1.5">
-          <Stack
-            width={12}
-            height={12}
-            borderRadius="$1"
-            backgroundColor="#f84f3e"
-          />
-          <Text fontSize="$1" color="$textSoft" fontWeight="500">
-            Today
-          </Text>
-        </XStack>
-      </XStack>
+          {weeks.map((week, index) => (
+            <XStack
+              key={index}
+              gap="$1"
+              width={containerWidth}
+              justifyContent="space-evenly"
+              alignItems="center"
+            >
+              {week.days.map(renderDay)}
+            </XStack>
+          ))}
+        </ScrollView>
+      </Stack>
     </Stack>
   );
 }
