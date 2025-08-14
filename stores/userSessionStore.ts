@@ -52,7 +52,6 @@ interface UserSessionState {
   getProgress: () => { completed: number; total: number };
 }
 
-// Helper function to create workout with proper UUIDs
 function createWorkoutWithIds(
   template: CompleteWorkout,
   userId: string

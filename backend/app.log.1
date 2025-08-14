@@ -1,84 +1,87 @@
-2025-08-14 15:16:34,232 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: Dashboard service error: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:16:34,235 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-14 15:16:34,235 - app.main - INFO - Response status: 500
-2025-08-14 15:16:34,236 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:16:34,236 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1472d3620>
-2025-08-14 15:16:34,644 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1472d3620>
-2025-08-14 15:16:34,651 - app.main - INFO - Response status: 200
-2025-08-14 15:19:29,126 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 15:19:29,138 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:19:29,139 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:19:29,139 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:19:29,683 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:19:29,684 - app.services.db.dashboard_service - ERROR - Error getting dashboard data for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:19:29,684 - app.services.db.base_service - ERROR - Error in get_dashboard_data: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:19:29,684 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: Dashboard service error: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:19:29,684 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-14 15:19:29,685 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:19:29,685 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1465db0e0>
-2025-08-14 15:19:30,109 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1465db0e0>
-2025-08-14 15:19:30,114 - app.main - INFO - Response status: 500
-2025-08-14 15:19:30,115 - app.main - INFO - Response status: 200
-2025-08-14 15:24:14,412 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 15:24:14,426 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:14,426 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:14,426 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:14,937 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:14,938 - app.services.db.dashboard_service - ERROR - Error getting dashboard data for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:24:14,938 - app.services.db.base_service - ERROR - Error in get_dashboard_data: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:24:14,938 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: Dashboard service error: can't compare offset-naive and offset-aware datetimes
-2025-08-14 15:24:14,938 - app.main - INFO - Request: GET /db/user-profile
-2025-08-14 15:24:14,939 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:14,939 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:15,338 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:15,338 - app.main - INFO - Response status: 500
-2025-08-14 15:24:15,339 - app.main - INFO - Response status: 200
-2025-08-14 15:24:15,469 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-14 15:24:15,470 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:24:15,471 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1465da900>
-2025-08-14 15:24:15,897 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1465da900>
-2025-08-14 15:24:15,923 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-14 15:24:15,924 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-14 15:24:16,402 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-14 15:24:16,413 - app.main - INFO - Response status: 200
-2025-08-14 15:24:16,414 - app.main - INFO - Response status: 200
-2025-08-14 15:30:06,381 - app - INFO - Logging has been set up
-2025-08-14 15:30:06,382 - app.main - INFO - Application starting
-2025-08-14 15:30:06,382 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-14 15:30:06,382 - app.main - INFO - SUPABASE_URL present: True
-2025-08-14 15:30:06,382 - app.main - INFO - SUPABASE_KEY present: False
-2025-08-14 15:30:06,394 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 15:30:06,395 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:30:06,395 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:30:06,395 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:30:07,049 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:30:07,049 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
-2025-08-14 15:31:18,053 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,058 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,062 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: 4 validation errors for AllTimeframeResponse
-1week
-  Field required [type=missing, input_value={'one_week': TimeframeDat...T14:31:18.053077+00:00'}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks
-  Field required [type=missing, input_value={'one_week': TimeframeDat...T14:31:18.053077+00:00'}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month
-  Field required [type=missing, input_value={'one_week': TimeframeDat...T14:31:18.053077+00:00'}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months
-  Field required [type=missing, input_value={'one_week': TimeframeDat...T14:31:18.053077+00:00'}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2025-08-14 15:31:18,071 - app.main - INFO - Request: GET /db/user-profile
-2025-08-14 15:31:18,076 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,076 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,458 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,462 - app.main - INFO - Response status: 500
-2025-08-14 15:31:18,463 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 15:31:18,463 - app.main - INFO - Response status: 200
-2025-08-14 15:31:18,464 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,464 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,464 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,865 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:31:18,865 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
-2025-08-14 15:32:30,883 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 15:32:30,887 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:48:34,158 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:48:34,174 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-14 16:48:34,174 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-14 16:48:34,561 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-14 16:48:34,576 - app.main - INFO - Response status: 200
+2025-08-14 16:48:34,577 - app.main - INFO - Response status: 200
+2025-08-14 16:49:00,571 - app.main - INFO - Request: GET /api/dashboard
+2025-08-14 16:49:00,575 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:00,575 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:00,576 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:00,980 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:00,980 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
+2025-08-14 16:49:01,172 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:01,344 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:01,575 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:01,784 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:01,784 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:01,785 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:01,785 - app.main - INFO - Request: GET /db/user-profile
+2025-08-14 16:49:01,786 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:01,786 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:02,131 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:02,132 - app.main - INFO - Response status: 200
+2025-08-14 16:49:02,133 - app.main - INFO - Response status: 200
+2025-08-14 16:49:02,600 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-14 16:49:02,602 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:02,602 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:03,013 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:03,025 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-14 16:49:03,026 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-14 16:49:03,383 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-14 16:49:03,396 - app.main - INFO - Response status: 200
+2025-08-14 16:49:03,397 - app.main - INFO - Response status: 200
+2025-08-14 16:49:15,018 - app.main - INFO - Request: GET /api/dashboard
+2025-08-14 16:49:15,020 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:15,020 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:15,020 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:15,420 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:15,421 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
+2025-08-14 16:49:15,609 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:15,802 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:16,009 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:16,220 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:16,221 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:16,221 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:16,221 - app.main - INFO - Request: GET /db/user-profile
+2025-08-14 16:49:16,221 - app.main - INFO - Response status: 200
+2025-08-14 16:49:16,222 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:16,222 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:16,603 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:16,605 - app.main - INFO - Response status: 200
+2025-08-14 16:49:17,096 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-14 16:49:17,096 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:17,097 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:17,459 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:17,463 - app.main - INFO - Response status: 200
+2025-08-14 16:49:18,951 - app.main - INFO - Request: GET /api/dashboard
+2025-08-14 16:49:18,953 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:18,953 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:18,953 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:19,426 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:19,427 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
+2025-08-14 16:49:19,623 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:19,873 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:20,045 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:20,260 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-14 16:49:20,261 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:20,262 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:20,263 - app.main - INFO - Request: GET /db/user-profile
+2025-08-14 16:49:20,264 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:20,264 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:20,628 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:20,629 - app.main - INFO - Response status: 200
+2025-08-14 16:49:20,629 - app.main - INFO - Response status: 200
+2025-08-14 16:49:21,082 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-14 16:49:21,082 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-14 16:49:21,082 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:49:21,082 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:21,473 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:49:21,485 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-14 16:49:21,892 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-14 16:49:21,902 - app.main - INFO - Response status: 200
+2025-08-14 16:49:21,903 - app.main - INFO - Response status: 200
+2025-08-14 16:52:02,549 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-14 16:52:02,551 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-14 16:52:02,551 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>
+2025-08-14 16:52:03,060 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x14316a900>

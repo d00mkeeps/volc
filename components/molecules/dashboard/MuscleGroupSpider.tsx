@@ -3,37 +3,12 @@ import { Stack } from "tamagui";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import Select from "@/components/atoms/Select";
 import MetricsDisplay from "./MetricsDisplay";
-
-interface MuscleData {
-  muscle: string;
-  sets: number;
-}
-
-interface ConsistencyData {
-  workoutDays: number[];
-  streak: number;
-  totalWorkouts: number;
-  score: number;
-}
-
-interface TimeframeData {
-  muscleBalance: MuscleData[];
-  consistency: ConsistencyData;
-}
-
-interface AllTimeframeData {
-  "1week": TimeframeData;
-  "2weeks": TimeframeData;
-  "1month": TimeframeData;
-  "2months": TimeframeData;
-  lastUpdated: string;
-}
+import { TimeframeData, MuscleData, AllTimeframeData } from "@/types/workout";
 
 interface MuscleGroupSpiderProps {
   allData: AllTimeframeData;
 }
 
-// Define valid timeframe keys
 type TimeframeKey = "1week" | "2weeks" | "1month" | "2months";
 
 export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {

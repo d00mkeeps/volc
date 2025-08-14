@@ -4,7 +4,6 @@ from typing import List
 from ...services.db.dashboard_service import DashboardService
 from ...core.supabase.auth import get_current_user, get_jwt_token 
 import logging
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -14,10 +13,8 @@ class MuscleBalance(BaseModel):
     sets: int
 
 class Consistency(BaseModel):
-    workoutDays: List[int]
-    streak: int
+    workoutDates: List[str] 
     totalWorkouts: int
-    score: int
 
 class TimeframeData(BaseModel):
     muscleBalance: List[MuscleBalance]
@@ -50,61 +47,10 @@ async def get_dashboard_data(
         
         raw_data = result["data"]
         
-        # Convert to response models for validation/debugging
-        response_data = {
-            "one_week": TimeframeData(
-                muscleBalance=[
-                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
-                    for item in raw_data.get("1week", {}).get("muscleBalance", [])
-                ],
-                consistency=Consistency(
-                    workoutDays=raw_data.get("1week", {}).get("consistency", {}).get("workoutDays", []),
-                    streak=raw_data.get("1week", {}).get("consistency", {}).get("streak", 0),
-                    totalWorkouts=raw_data.get("1week", {}).get("consistency", {}).get("totalWorkouts", 0),
-                    score=raw_data.get("1week", {}).get("consistency", {}).get("score", 0)
-                )
-            ),
-            "two_weeks": TimeframeData(
-                muscleBalance=[
-                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
-                    for item in raw_data.get("2weeks", {}).get("muscleBalance", [])
-                ],
-                consistency=Consistency(
-                    workoutDays=raw_data.get("2weeks", {}).get("consistency", {}).get("workoutDays", []),
-                    streak=raw_data.get("2weeks", {}).get("consistency", {}).get("streak", 0),
-                    totalWorkouts=raw_data.get("2weeks", {}).get("consistency", {}).get("totalWorkouts", 0),
-                    score=raw_data.get("2weeks", {}).get("consistency", {}).get("score", 0)
-                )
-            ),
-            "one_month": TimeframeData(
-                muscleBalance=[
-                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
-                    for item in raw_data.get("1month", {}).get("muscleBalance", [])
-                ],
-                consistency=Consistency(
-                    workoutDays=raw_data.get("1month", {}).get("consistency", {}).get("workoutDays", []),
-                    streak=raw_data.get("1month", {}).get("consistency", {}).get("streak", 0),
-                    totalWorkouts=raw_data.get("1month", {}).get("consistency", {}).get("totalWorkouts", 0),
-                    score=raw_data.get("1month", {}).get("consistency", {}).get("score", 0)
-                )
-            ),
-            "two_months": TimeframeData(
-                muscleBalance=[
-                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
-                    for item in raw_data.get("2months", {}).get("muscleBalance", [])
-                ],
-                consistency=Consistency(
-                    workoutDays=raw_data.get("2months", {}).get("consistency", {}).get("workoutDays", []),
-                    streak=raw_data.get("2months", {}).get("consistency", {}).get("streak", 0),
-                    totalWorkouts=raw_data.get("2months", {}).get("consistency", {}).get("totalWorkouts", 0),
-                    score=raw_data.get("2months", {}).get("consistency", {}).get("score", 0)
-                )
-            ),
-            "lastUpdated": raw_data.get("lastUpdated", datetime.now().isoformat())
-        }
-        
         logger.info(f"Successfully returned dashboard data for user: {user.id}")
-        return AllTimeframeResponse(**response_data)
+        
+        # Let Pydantic handle the alias mapping automatically
+        return AllTimeframeResponse(**raw_data)
         
     except Exception as e:
         logger.error(f"Error in dashboard endpoint: {str(e)}")

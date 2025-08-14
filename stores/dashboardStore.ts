@@ -1,30 +1,6 @@
 import { create } from "zustand";
 import { dashboardService } from "@/services/api/dashboard";
-
-interface MuscleData {
-  muscle: string;
-  sets: number;
-}
-
-interface ConsistencyData {
-  workoutDays: number[];
-  streak: number;
-  totalWorkouts: number;
-  score: number;
-}
-
-interface TimeframeData {
-  muscleBalance: MuscleData[];
-  consistency: ConsistencyData;
-}
-
-interface AllTimeframeData {
-  "1week": TimeframeData;
-  "2weeks": TimeframeData;
-  "1month": TimeframeData;
-  "2months": TimeframeData;
-  lastUpdated: string;
-}
+import { AllTimeframeData } from "@/types/workout";
 
 interface DashboardStore {
   // Data - complete object from API

@@ -1,4 +1,3 @@
-// /components/molecules/dashboard/ConsistencyCalendar.tsx
 import React, { useState, useRef, useEffect } from "react";
 import { ScrollView, Stack, Text, XStack, YStack } from "tamagui";
 
@@ -10,25 +9,25 @@ interface DayData {
 }
 
 interface ConsistencyCalendarProps {
-  workoutDays?: number[];
+  workoutDates?: string[]; // Changed from workoutDays to workoutDates (ISO date strings)
 }
 
 export default function ConsistencyCalendar({
-  workoutDays,
+  workoutDates = [],
 }: ConsistencyCalendarProps) {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
   const totalWeeks = 9;
 
+  // Convert workout date strings to Date objects for easy comparison
+  const workoutDateObjects = workoutDates.map((dateStr) => new Date(dateStr));
+
   // Generate weeks of data (oldest to newest)
   const generateWeeks = () => {
     const weeks = [];
     const today = new Date();
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const defaultWorkoutDays = workoutDays || [
-      1, 3, 5, 8, 10, 12, 15, 17, 19, 22, 24, 26,
-    ];
 
     for (let weekOffset = 8; weekOffset >= 0; weekOffset--) {
       const days: DayData[] = [];
@@ -39,10 +38,21 @@ export default function ConsistencyCalendar({
         const dayNumber = date.getDate();
         const dayOfWeek = dayNames[date.getDay()];
 
+        // Fix: Compare actual dates, not just day numbers
+        const hasWorkout = workoutDateObjects.some(
+          (workoutDate) =>
+            workoutDate.getFullYear() === date.getFullYear() &&
+            workoutDate.getMonth() === date.getMonth() &&
+            workoutDate.getDate() === date.getDate()
+        );
+
+        // Check if this date is actually today
+        const isToday = weekOffset === 0 && i === 0;
+
         days.push({
           day: dayNumber,
-          hasWorkout: defaultWorkoutDays.includes(weekOffset * 7 + (7 - i)),
-          isToday: weekOffset === 0 && i === 0,
+          hasWorkout,
+          isToday,
           dayOfWeek,
         });
       }
@@ -82,10 +92,10 @@ export default function ConsistencyCalendar({
         borderRadius="$3"
         backgroundColor={
           dayData.isToday
-            ? "$primary"
+            ? "$primary" // Red for today
             : dayData.hasWorkout
-            ? "#fef7f6"
-            : "$backgroundPress"
+            ? "white" // White for workout days
+            : "$backgroundPress" // Default for no workout
         }
         justifyContent="center"
         alignItems="center"
@@ -143,8 +153,8 @@ export default function ConsistencyCalendar({
     >
       {/* Header */}
       <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$4" fontWeight="600" color="$color">
-          7-Day Consistency
+        <Text fontSize="$6" fontWeight="600" color="$color">
+          Recent Workouts
         </Text>
 
         {currentWeek > 0 && (

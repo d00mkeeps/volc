@@ -180,3 +180,26 @@ export type WorkoutWithConversation = Workout & {
 };
 
 export type AttachmentType = "workout" | "graph_bundle" | "analysis_bundle";
+export interface MuscleData {
+  muscle: string;
+  sets: number;
+}
+
+export interface ConsistencyData {
+  workoutDates: string[]; // Changed from workoutDays to workoutDates
+  totalWorkouts: number;
+  // Removed streak, score
+}
+
+export interface TimeframeData {
+  muscleBalance: MuscleData[];
+  consistency: ConsistencyData;
+}
+
+export interface AllTimeframeData {
+  "1week": TimeframeData;
+  "2weeks": TimeframeData;
+  "1month": TimeframeData;
+  "2months": TimeframeData;
+  lastUpdated: string;
+}

@@ -114,9 +114,39 @@ class DashboardService(BaseDBService):
             "consistency": self._calculate_consistency(timeframe_workouts, days)
         }
 
+    def _get_all_exercise_definitions(self) -> Dict[str, List[str]]:
+        """Get all exercise definitions in one query and cache primary muscles"""
+        try:
+            admin_client = self.get_admin_client()
+            result = admin_client.table("exercise_definitions") \
+                .select("id, primary_muscles") \
+                .execute()
+            
+            if hasattr(result, 'error') and result.error:
+                logger.warning(f"Error batch fetching definitions: {result.error.message}")
+                return {}
+            
+            # Return mapping: {definition_id: [primary_muscles]}
+            definitions_map = {}
+            for row in (result.data or []):
+                definition_id = row.get("id")
+                primary_muscles = row.get("primary_muscles", [])
+                if definition_id:
+                    definitions_map[definition_id] = primary_muscles if isinstance(primary_muscles, list) else []
+            
+            logger.info(f"Cached {len(definitions_map)} exercise definitions")
+            return definitions_map
+            
+        except Exception as e:
+            logger.warning(f"Could not batch fetch definitions: {str(e)}")
+            return {}
+
     def _calculate_muscle_balance(self, workouts: List[Dict]) -> List[Dict[str, Any]]:
         """Calculate muscle group balance from workouts"""
         muscle_sets = {}
+        
+        # Batch fetch all exercise definitions once - PERFORMANCE FIX
+        exercise_definitions = self._get_all_exercise_definitions()
         
         for workout in workouts:
             for exercise in workout.get("workout_exercises", []):
@@ -124,8 +154,8 @@ class DashboardService(BaseDBService):
                 if not definition_id:
                     continue
                 
-                # Get primary muscles for this exercise using admin client
-                primary_muscles = self._get_primary_muscles_from_definition_id(definition_id)
+                # Use cached data instead of individual queries
+                primary_muscles = exercise_definitions.get(definition_id, [])
                 set_count = len(exercise.get("workout_exercise_sets", []))
                 
                 # Calculate distance for cardio
@@ -170,44 +200,14 @@ class DashboardService(BaseDBService):
         # Calculate metrics
         total_workouts = len(workout_dates)
         
-        # Calculate current streak
-        current_streak = self._calculate_current_streak(workout_dates)
-        
-        # Calculate score (percentage of days with workouts)
-        score = round((total_workouts / days) * 100) if days > 0 else 0
-        
-        # Get day numbers for calendar
-        workout_days = [date.day for date in sorted(workout_dates)]
+        # Return actual dates as ISO strings instead of just day numbers
+        workout_date_strings = [date.isoformat() for date in sorted(workout_dates)]
 
         return {
-            "workoutDays": workout_days,
-            "streak": current_streak,
-            "totalWorkouts": total_workouts,
-            "score": min(score, 100)  # Cap at 100%
+            "workoutDates": workout_date_strings,  # Changed from workoutDays to workoutDates
+            "totalWorkouts": total_workouts
+            # Removed streak, score - as you requested
         }
-
-    def _get_primary_muscles_from_definition_id(self, definition_id: str) -> List[str]:
-        """Get primary muscles for an exercise definition using admin client"""
-        try:
-            admin_client = self.get_admin_client()
-            result = admin_client.table("exercise_definitions") \
-                .select("primary_muscles") \
-                .eq("id", definition_id) \
-                .execute()
-            
-            if hasattr(result, 'error') and result.error:
-                logger.warning(f"Error fetching definition {definition_id}: {result.error.message}")
-                return []
-            
-            if result.data and len(result.data) > 0:
-                primary_muscles = result.data[0].get("primary_muscles", [])
-                return primary_muscles if isinstance(primary_muscles, list) else []
-            
-            return []
-            
-        except Exception as e:
-            logger.warning(f"Could not fetch definition {definition_id}: {str(e)}")
-            return []
 
     def _map_muscle_to_group(self, muscle: str) -> str:
         """Map muscle to group using static mapping"""

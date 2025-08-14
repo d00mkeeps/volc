@@ -2,31 +2,7 @@ import React from "react";
 import { Stack, Text } from "tamagui";
 import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
-
-interface MuscleData {
-  muscle: string;
-  sets: number;
-}
-
-interface ConsistencyData {
-  workoutDays: number[];
-  streak: number;
-  totalWorkouts: number;
-  score: number;
-}
-
-interface TimeframeData {
-  muscleBalance: MuscleData[];
-  consistency: ConsistencyData;
-}
-
-interface AllTimeframeData {
-  "1week": TimeframeData;
-  "2weeks": TimeframeData;
-  "1month": TimeframeData;
-  "2months": TimeframeData;
-  lastUpdated: string;
-}
+import { AllTimeframeData } from "@/types/workout";
 
 interface DashboardProps {
   allData: AllTimeframeData | null;
@@ -54,7 +30,7 @@ export default function Dashboard({
         gap="$3"
       >
         <Text color="$textSoft" fontSize="$4">
-          Loading your workout insights...
+          Loading dashboard...
         </Text>
       </Stack>
     );
@@ -99,7 +75,7 @@ export default function Dashboard({
 
       {/* ConsistencyCalendar always shows 2 months data */}
       <ConsistencyCalendar
-        workoutDays={allData["2months"].consistency.workoutDays}
+        workoutDates={allData["2months"].consistency.workoutDates}
       />
     </Stack>
   );
