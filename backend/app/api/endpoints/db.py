@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from typing import Dict, Any
 from app.core.supabase.auth import get_current_user, get_jwt_token
 import logging

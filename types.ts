@@ -142,15 +142,15 @@ export interface UserProfile {
   preferences: any;
   goals: any;
   current_stats: any;
-  age_group: number;
+  age: number | null;
   user_id: number;
   first_name: string | null;
   last_name: string | null;
   is_imperial: boolean;
-  display_name: string | null;
   auth_user_uuid: string | null;
   training_history: any | null;
-  instagram_username: string | null; // Add this
+  instagram_username: string | null;
+  avatar_image_id: string | null;
 }
 
 export interface WorkoutExercise {

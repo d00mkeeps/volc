@@ -1,110 +1,79 @@
-2025-08-14 16:43:17,356 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: 12 validation errors for AllTimeframeResponse
-1week.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1week.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1week.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2025-08-14 16:43:17,359 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-14 16:43:17,359 - app.main - INFO - Response status: 500
-2025-08-14 16:43:17,360 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:17,360 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12f1b3620>
-2025-08-14 16:43:17,746 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12f1b3620>
-2025-08-14 16:43:17,758 - app.main - INFO - Response status: 200
-2025-08-14 16:43:46,933 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-14 16:43:46,938 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:46,939 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12f1b2900>
-2025-08-14 16:43:47,308 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12f1b2900>
-2025-08-14 16:43:47,313 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 16:43:47,314 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:47,314 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:47,314 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:47,830 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:47,830 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
-2025-08-14 16:43:48,053 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:48,257 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:48,429 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:48,657 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:48,658 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:48,658 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:48,659 - app.api.endpoints.dashboard - ERROR - Error in dashboard endpoint: 12 validation errors for AllTimeframeResponse
-1week.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1week.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1week.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2weeks.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-1month.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.workoutDays
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.streak
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2months.consistency.score
-  Field required [type=missing, input_value={'workoutDates': ['2025-0...1'], 'totalWorkouts': 4}, input_type=dict]
-    For further information visit https://errors.pydantic.dev/2.11/v/missing
-2025-08-14 16:43:48,660 - app.main - INFO - Response status: 200
-2025-08-14 16:43:48,661 - app.main - INFO - Response status: 500
-2025-08-14 16:43:59,012 - app.main - INFO - Request: GET /api/dashboard
-2025-08-14 16:43:59,022 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:59,022 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:59,023 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:59,419 - app.services.db.workout_service - INFO - Retrieved 48 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:43:59,419 - app.services.db.dashboard_service - INFO - Processing 48 workouts for dashboard analytics
-2025-08-14 16:43:59,620 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:59,780 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:43:59,956 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:44:00,161 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-14 16:44:00,161 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-14 16:44:00,161 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-15 00:16:16,663 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:16:16,667 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1650ea900>
+2025-08-15 00:16:17,011 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1650ea900>
+2025-08-15 00:16:17,012 - app.main - INFO - Response status: 200
+2025-08-15 00:16:18,794 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url
+2025-08-15 00:16:18,795 - app.api.endpoints.images - INFO - API request to get image URL: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:16:18,795 - app.services.db.image_service - INFO - Getting image URL for ID: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:16:19,133 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg
+2025-08-15 00:16:19,153 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-15 00:16:19,153 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:16:19,153 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-15 00:16:19,153 - app.services.db.image_service - INFO - Used direct string
+2025-08-15 00:16:19,154 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:16:19,154 - app.main - INFO - Response status: 200
+2025-08-15 00:17:37,625 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url
+2025-08-15 00:17:37,630 - app.api.endpoints.images - INFO - API request to get image URL: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:17:37,630 - app.services.db.image_service - INFO - Getting image URL for ID: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:17:38,044 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg
+2025-08-15 00:17:38,063 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-15 00:17:38,063 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:17:38,063 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-15 00:17:38,063 - app.services.db.image_service - INFO - Used direct string
+2025-08-15 00:17:38,063 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:17:38,064 - app.main - INFO - Response status: 200
+2025-08-15 00:17:49,175 - app.main - INFO - Request: GET /api/dashboard
+2025-08-15 00:17:49,177 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:49,177 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:49,177 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:49,580 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:49,581 - app.services.db.dashboard_service - INFO - Processing 0 workouts for dashboard analytics
+2025-08-15 00:17:49,772 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-15 00:17:49,983 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-15 00:17:50,184 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-15 00:17:50,396 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-15 00:17:50,397 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:50,397 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:50,398 - app.main - INFO - Response status: 200
+2025-08-15 00:17:50,399 - app.main - INFO - Request: GET /db/user-profile
+2025-08-15 00:17:50,400 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:50,400 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:50,768 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:50,770 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-15 00:17:50,771 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-15 00:17:51,170 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-15 00:17:51,180 - app.main - INFO - Response status: 200
+2025-08-15 00:17:51,180 - app.main - INFO - Response status: 200
+2025-08-15 00:17:51,689 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url
+2025-08-15 00:17:51,690 - app.api.endpoints.images - INFO - API request to get image URL: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:17:51,690 - app.services.db.image_service - INFO - Getting image URL for ID: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:17:52,069 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg
+2025-08-15 00:17:52,087 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-15 00:17:52,088 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:17:52,088 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-15 00:17:52,088 - app.services.db.image_service - INFO - Used direct string
+2025-08-15 00:17:52,088 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:17:52,088 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-15 00:17:52,089 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:17:52,089 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1650ea900>
+2025-08-15 00:17:52,482 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1650ea900>
+2025-08-15 00:17:52,483 - app.main - INFO - Response status: 200
+2025-08-15 00:17:52,483 - app.main - INFO - Response status: 200
+2025-08-15 00:18:34,353 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url
+2025-08-15 00:18:34,357 - app.api.endpoints.images - INFO - API request to get image URL: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:18:34,357 - app.services.db.image_service - INFO - Getting image URL for ID: c032cee7-1c3c-4998-8c4a-778388b27ac9
+2025-08-15 00:18:34,740 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg
+2025-08-15 00:18:34,761 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-15 00:18:34,761 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:18:34,761 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-15 00:18:34,761 - app.services.db.image_service - INFO - Used direct string
+2025-08-15 00:18:34,761 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/0bdc6e66-529f-4971-acda-f41e959c615f.jpg?
+2025-08-15 00:18:34,762 - app.main - INFO - Response status: 200
+2025-08-15 00:18:46,674 - app.main - INFO - Request: GET /api/dashboard
+2025-08-15 00:18:46,678 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:18:46,678 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:18:46,678 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:18:47,073 - app.services.db.workout_service - INFO - Retrieved 0 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-15 00:18:47,074 - app.services.db.dashboard_service - INFO - Processing 0 workouts for dashboard analytics
+2025-08-15 00:18:47,283 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-15 00:18:47,504 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions

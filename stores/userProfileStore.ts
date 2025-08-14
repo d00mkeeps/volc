@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import type { UserProfile } from "@/types";
-import { UserOnboarding } from "@/types/onboarding";
 import { userProfileService } from "@/services/db/userProfile";
 import { authService } from "@/services/db/auth";
 

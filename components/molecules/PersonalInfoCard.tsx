@@ -1,21 +1,109 @@
-import React from "react";
-import { YStack, XStack, Text } from "tamagui";
+import React, { useState, useEffect } from "react";
+import { YStack, XStack, Text, Input, Button, Stack } from "tamagui";
 import { UserProfile } from "@/types";
 
 interface PersonalInfoCardProps {
   profile: UserProfile;
+  isEditing: boolean;
+  onSave: (updates: Partial<UserProfile>) => void;
+  onCancel: () => void;
 }
 
-const AGE_GROUPS = {
-  1: "Under 18",
-  2: "18-25",
-  3: "26-35",
-  4: "36-45",
-  5: "46-55",
-  6: "Over 55",
-};
+interface ProfileField {
+  label: string;
+  value: string | number;
+  key: keyof UserProfile; // Fix: Properly type this
+}
 
-export default function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
+export default function PersonalInfoCard({
+  profile,
+  isEditing,
+  onSave,
+  onCancel,
+}: PersonalInfoCardProps) {
+  const [editedValues, setEditedValues] = useState<Partial<UserProfile>>({});
+
+  // Initialize edited values when entering edit mode
+  useEffect(() => {
+    if (isEditing) {
+      setEditedValues({
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || "",
+        instagram_username: profile.instagram_username || "",
+        age: profile.age || null, // Changed from age_group
+        is_imperial: profile.is_imperial,
+      });
+    }
+  }, [isEditing, profile]);
+
+  const handleSave = () => {
+    // Check for actual changes
+    const changes: Partial<UserProfile> = {};
+    Object.entries(editedValues).forEach(([key, value]) => {
+      if (profile[key as keyof UserProfile] !== value) {
+        changes[key as keyof UserProfile] = value as any;
+      }
+    });
+
+    if (Object.keys(changes).length > 0) {
+      onSave(changes);
+    } else {
+      onCancel(); // No changes, just exit edit mode
+    }
+  };
+
+  const updateField = (key: keyof UserProfile, value: any) => {
+    setEditedValues((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Prepare display fields using MetricsDisplay pattern
+  const fields: ProfileField[] = [
+    // Fix: Add proper typing
+    {
+      label: "First Name",
+      value: isEditing
+        ? editedValues.first_name || ""
+        : profile.first_name || "Not set",
+      key: "first_name" as keyof UserProfile,
+    },
+    {
+      label: "Last Name",
+      value: isEditing
+        ? editedValues.last_name || ""
+        : profile.last_name || "Not set",
+      key: "last_name" as keyof UserProfile,
+    },
+    {
+      label: "Instagram",
+      value: isEditing
+        ? editedValues.instagram_username || ""
+        : profile.instagram_username
+        ? `@${profile.instagram_username}`
+        : "Not set",
+      key: "instagram_username" as keyof UserProfile,
+    },
+    {
+      label: "Age", // Changed from "Age Group"
+      value: isEditing
+        ? editedValues.age || ""
+        : profile.age
+        ? `${profile.age} years old`
+        : "Not set", // Changed logic
+      key: "age" as keyof UserProfile, // Changed from age_group
+    },
+    {
+      label: "Units",
+      value: isEditing
+        ? editedValues.is_imperial
+          ? "Imperial"
+          : "Metric"
+        : profile.is_imperial
+        ? "Imperial (lbs, ft)"
+        : "Metric (kg, cm)",
+      key: "is_imperial" as keyof UserProfile,
+    },
+  ];
+
   return (
     <YStack
       backgroundColor="$backgroundSoft"
@@ -23,28 +111,91 @@ export default function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
       padding="$3"
       gap="$3"
     >
-      <Text fontSize="$4" fontWeight="600" color="$color">
-        Personal Information
-      </Text>
-
-      <XStack justifyContent="space-between">
-        <Text fontSize="$3" color="$textSoft">
-          Age Group
+      <XStack justifyContent="space-between" alignItems="center">
+        <Text fontSize="$4" fontWeight="600" color="$color">
+          Personal Information
         </Text>
-        <Text fontSize="$3" color="$color" fontWeight="500">
-          {AGE_GROUPS[profile.age_group as keyof typeof AGE_GROUPS] ||
-            "Not set"}
-        </Text>
+        {isEditing && (
+          <XStack gap="$2">
+            <Button size="$2" onPress={onCancel} backgroundColor="$gray8">
+              Cancel
+            </Button>
+            <Button size="$2" onPress={handleSave} backgroundColor="$primary">
+              Save
+            </Button>
+          </XStack>
+        )}
       </XStack>
 
-      <XStack justifyContent="space-between">
-        <Text fontSize="$3" color="$textSoft">
-          Units
-        </Text>
-        <Text fontSize="$3" color="$color" fontWeight="500">
-          {profile.is_imperial ? "Imperial (lbs, ft)" : "Metric (kg, cm)"}
-        </Text>
-      </XStack>
+      {/* Using MetricsDisplay styling pattern */}
+      <Stack gap="$3" paddingLeft="$2" paddingTop="$3" borderRadius="$3">
+        <Stack flexDirection="row">
+          {/* Labels Stack - now on the left */}
+          <YStack
+            flex={1}
+            gap="$6"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            {fields.map((field, index) => (
+              <Text key={index} color="$textSoft" fontSize="$4">
+                {field.label}
+              </Text>
+            ))}
+          </YStack>
+
+          {/* Values Stack - now on the right with more width */}
+          <YStack
+            flex={2}
+            gap="$2"
+            justifyContent="space-between"
+            alignItems="flex-start"
+          >
+            {fields.map((field, index) => (
+              <YStack key={index} minHeight={24} justifyContent="center">
+                {isEditing ? (
+                  field.key === "is_imperial" ? (
+                    <Button
+                      size="$3"
+                      backgroundColor={
+                        editedValues.is_imperial ? "$primary" : "$gray8"
+                      }
+                      onPress={() =>
+                        updateField("is_imperial", !editedValues.is_imperial)
+                      }
+                    >
+                      <Text fontSize="$4" fontWeight="600" color="white">
+                        {editedValues.is_imperial ? "Imperial" : "Metric"}
+                      </Text>
+                    </Button>
+                  ) : (
+                    <Input
+                      value={String(field.value)}
+                      onChangeText={(text) =>
+                        updateField(
+                          field.key,
+                          field.key === "age" ? Number(text) || null : text
+                        )
+                      }
+                      fontSize="$4"
+                      fontWeight="600"
+                      backgroundColor="$background"
+                      borderWidth={1}
+                      borderColor="$borderColor"
+                      placeholder={field.label}
+                      keyboardType={field.key === "age" ? "numeric" : "default"}
+                    />
+                  )
+                ) : (
+                  <Text fontSize="$4" fontWeight="600" color="$text">
+                    {field.value}
+                  </Text>
+                )}
+              </YStack>
+            ))}
+          </YStack>
+        </Stack>
+      </Stack>
     </YStack>
   );
 }

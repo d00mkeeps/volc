@@ -4,29 +4,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Age group mapping
-AGE_GROUP_MAP = {
-    "18-24": 1,
-    "25-34": 2,
-    "35-44": 3,
-    "45-54": 4,
-    "55-64": 5,
-    "65+": 6
-}
-
 class UserProfileService(BaseDBService):
     """
     Service for handling user profile operations in the database
     """
     
-    def map_age_group_to_number(self, age_group: str) -> int:
-        """
-        Map an age group string to its corresponding number value
-        """
-        if age_group not in AGE_GROUP_MAP:
-            raise ValueError(f"Invalid age group: {age_group}")
-        
-        return AGE_GROUP_MAP[age_group]
+
     
     async def save_user_profile(self, user_id: str, profile_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
@@ -35,21 +18,21 @@ class UserProfileService(BaseDBService):
         try:
             logger.info(f"Saving profile for user: {user_id}")
             
-            # Handle UserProfile format (flat structure) from frontend
+       
             user_profile = {}
             
             # Map frontend UserProfile fields to database fields
             if "first_name" in profile_data:
                 user_profile["first_name"] = profile_data["first_name"]
+            if "avatar_image_id" in profile_data:
+                user_profile["avatar_image_id"] = profile_data["avatar_image_id"]
             if "last_name" in profile_data:
                 user_profile["last_name"] = profile_data["last_name"]
-            if "age_group" in profile_data:
-                user_profile["age_group"] = profile_data["age_group"]
             if "is_imperial" in profile_data:
                 user_profile["is_imperial"] = profile_data["is_imperial"]
             if "instagram_username" in profile_data:
                 user_profile["instagram_username"] = profile_data["instagram_username"]
-            if "goals" in profile_data:  # Note: 'goals' not 'goal'
+            if "goals" in profile_data: 
                 user_profile["goals"] = profile_data["goals"]
             if "current_stats" in profile_data:
                 user_profile["current_stats"] = profile_data["current_stats"]

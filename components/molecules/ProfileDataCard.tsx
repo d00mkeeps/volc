@@ -26,12 +26,12 @@ export default function DataCard({ title, data }: DataCardProps) {
           borderRadius="$2"
           padding="$2"
         >
-          <Text fontSize="$2" fontFamily="$mono" color="$color" lineHeight={18}>
+          <Text fontSize="$4" fontFamily="$mono" color="$color" lineHeight={18}>
             {JSON.stringify(data, null, 2)}
           </Text>
         </YStack>
       ) : (
-        <Text fontSize="$3" color="$textSoft" fontStyle="italic">
+        <Text fontSize="$4" color="$textSoft" fontStyle="italic">
           No data set
         </Text>
       )}

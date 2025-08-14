@@ -1,27 +1,40 @@
-import React, { useState } from "react";
-import { YStack, Text, ScrollView, Button } from "tamagui";
+import React, { useEffect, useState } from "react";
+import { YStack, Text, ScrollView, Button, XStack } from "tamagui";
 import { useUserStore } from "@/stores/userProfileStore";
-import { useAuth } from "@/context/AuthContext"; // Add this import
+import { useAuth } from "@/context/AuthContext";
 import ProfileHeader from "@/components/molecules/headers/ProfileHeader";
 import PersonalInfoCard from "@/components/molecules/PersonalInfoCard";
 import DataCard from "@/components/molecules/ProfileDataCard";
 import TestImageComponent from "@/components/atoms/buttons/TestImageButton";
+import { UserProfile } from "@/types";
 
 export default function ProfileScreen() {
-  const { userProfile, loading, error } = useUserStore();
-  const { signOut } = useAuth(); // Add this
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // Add loading state
+  const { userProfile, loading, error, updateProfile } = useUserStore();
+  const { signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
+  useEffect(() => {
+    console.log("[ProfileScreen] Component mounted");
+  }, []);
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
       await signOut();
-      // Navigation will be handled automatically by AuthGate
     } catch (error) {
       console.error("Logout failed:", error);
-      // Optionally show an error toast here
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+
+  const handleProfileSave = async (updates: Partial<UserProfile>) => {
+    try {
+      await updateProfile(updates);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
     }
   };
 
@@ -59,28 +72,58 @@ export default function ProfileScreen() {
         borderBottomWidth={1}
         borderBottomColor="$borderSoft"
       >
-        <Text fontSize="$7" fontWeight="bold" color="$color">
-          Profile
-        </Text>
-        <Text fontSize="$4" color="$textMuted">
-          Your account information
-        </Text>
+        <XStack justifyContent="space-between" alignItems="center">
+          <YStack>
+            <Text fontSize="$4" fontWeight="bold" color="$color">
+              Profile
+            </Text>
+            <Text fontSize="$4" color="$textMuted">
+              Your account information
+            </Text>
+          </YStack>
+
+          {!isEditing && (
+            <Button
+              size="$4"
+              backgroundColor="$backgroundSoft"
+              onPress={() => setIsEditing(true)}
+            >
+              Edit Profile
+            </Button>
+          )}
+        </XStack>
       </YStack>
 
       <ScrollView flex={1} padding="$3">
         <YStack gap="$3">
-          <ProfileHeader profile={userProfile} />
+          <ProfileHeader />
 
-          <TestImageComponent />
-          {/* <PersonalInfoCard profile={userProfile} />
+          {isUpdatingAvatar && (
+            <Text fontSize="$4" color="$textMuted" textAlign="center">
+              Updating avatar...
+            </Text>
+          )}
+          <PersonalInfoCard
+            profile={userProfile}
+            isEditing={isEditing}
+            onSave={handleProfileSave}
+            onCancel={() => setIsEditing(false)}
+          />
+
           <DataCard title="Goals" data={userProfile.goals} />
           <DataCard title="Current Stats" data={userProfile.current_stats} />
           <DataCard
             title="Training Preferences"
             data={userProfile.preferences}
-          /> */}
+          />
 
-          {/* Logout Button */}
+          {userProfile.training_history && (
+            <DataCard
+              title="Training History"
+              data={userProfile.training_history}
+            />
+          )}
+
           <YStack paddingTop="$4" paddingBottom="$6">
             <Button
               onPress={handleLogout}

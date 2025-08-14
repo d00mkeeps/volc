@@ -9,20 +9,20 @@ interface ImagePickerButtonProps {
   label?: string;
   icon?: string;
   size?: "sm" | "md" | "lg";
-  onImageUploaded?: (imageId: string) => void; // Changed: now returns imageId instead of imagePath
+  onImageUploaded?: (imageId: string) => void;
   onError?: (error: string) => void;
 }
 
 const sizeConfig = {
-  sm: { width: "40%", height: 45, fontSize: "$7", iconSize: 16 },
-  md: { width: "60%", height: 60, fontSize: "$9", iconSize: 20 },
-  lg: { width: "80%", height: 75, fontSize: "$11", iconSize: 24 },
+  sm: { width: 40, height: 40, fontSize: "$2", iconSize: 16 }, // Made square and smaller
+  md: { width: 48, height: 48, fontSize: "$3", iconSize: 20 }, // Made square
+  lg: { width: 64, height: 64, fontSize: "$4", iconSize: 24 }, // Made square
 };
 
 export default function ImagePickerButton({
-  label = "Add Photo",
-  icon = "camera",
-  size = "md",
+  label,
+  icon = "add", // Changed default from "camera" to "add"
+  size = "sm", // Changed default to sm for more subtle appearance
   onImageUploaded,
   onError,
 }: ImagePickerButtonProps) {
@@ -77,7 +77,7 @@ export default function ImagePickerButton({
         throw new Error("Upload failed");
       }
 
-      // 3. Notify parent with image_id (not path!)
+      // 3. Notify parent with image_id
       console.log(
         `[ImagePickerButton] Image uploaded successfully: ${tempResponse.image_id}`
       );
@@ -96,34 +96,35 @@ export default function ImagePickerButton({
       width={config.width}
       height={config.height}
       alignSelf="center"
-      backgroundColor="$primary"
-      borderRadius="$4"
-      pressStyle={{ backgroundColor: "$primaryLight" }}
+      backgroundColor="#374151" // Dark gray instead of $primary
+      borderRadius="$3" // Rounded square
+      pressStyle={{ backgroundColor: "#4B5563" }} // Slightly lighter on press
       onPress={handleImagePick}
       disabled={uploading}
       opacity={uploading ? 0.7 : 1}
+      padding={0} // Remove padding for clean square look
     >
       <Stack
         alignItems="center"
         justifyContent="center"
-        gap={icon ? "$1" : 0}
+        gap={label ? "$1" : 0}
         flex={1}
       >
-        {icon && (
-          <Ionicons
-            name={(uploading ? "sync" : icon) as any}
-            size={config.iconSize}
-            color="white"
-          />
-        )}
-        <Text
+        <Ionicons
+          name={(uploading ? "sync" : icon) as any}
+          size={config.iconSize}
           color="white"
-          fontSize={config.fontSize}
-          fontWeight="700"
-          textAlign="center"
-        >
-          {uploading ? "Uploading..." : label}
-        </Text>
+        />
+        {label && (
+          <Text
+            color="white"
+            fontSize={config.fontSize}
+            fontWeight="500" // Reduced from 700 for subtlety
+            textAlign="center"
+          >
+            {uploading ? "..." : label}
+          </Text>
+        )}
       </Stack>
     </Button>
   );
