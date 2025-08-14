@@ -1,20 +1,66 @@
-// /components/molecules/dashboard/MuscleGroupSpider.tsx
 import React, { useState } from "react";
-import { Stack, Text, YStack } from "tamagui";
+import { Stack } from "tamagui";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import Select from "@/components/atoms/Select";
+import MetricsDisplay from "./MetricsDisplay";
 
 interface MuscleData {
   muscle: string;
   sets: number;
 }
 
-interface MuscleGroupSpiderProps {
-  data?: MuscleData[];
+interface ConsistencyData {
+  workoutDays: number[];
+  streak: number;
+  totalWorkouts: number;
+  score: number;
 }
 
-export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
-  const [timeframe, setTimeframe] = useState("2weeks");
+interface TimeframeData {
+  muscleBalance: MuscleData[];
+  consistency: ConsistencyData;
+}
+
+interface AllTimeframeData {
+  "1week": TimeframeData;
+  "2weeks": TimeframeData;
+  "1month": TimeframeData;
+  "2months": TimeframeData;
+  lastUpdated: string;
+}
+
+interface MuscleGroupSpiderProps {
+  allData: AllTimeframeData;
+}
+
+// Define valid timeframe keys
+type TimeframeKey = "1week" | "2weeks" | "1month" | "2months";
+
+export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
+  const [timeframe, setTimeframe] = useState<TimeframeKey>("2weeks");
+
+  // Get data for current timeframe selection - now properly typed
+  const currentData: TimeframeData = allData[timeframe];
+  const muscleData: MuscleData[] = currentData.muscleBalance;
+
+  // Calculate metrics based on current data - with explicit types
+  const totalSets = muscleData.reduce(
+    (sum: number, m: MuscleData) => sum + m.sets,
+    0
+  );
+  const estimatedExercises =
+    muscleData.length > 0
+      ? muscleData.reduce(
+          (sum: number, m: MuscleData) => sum + Math.ceil(m.sets / 3),
+          0
+        )
+      : 0;
+
+  const metrics = [
+    { label: "Workouts", value: currentData.consistency.totalWorkouts },
+    { label: "Exercises", value: estimatedExercises },
+    { label: "Sets", value: totalSets },
+  ];
 
   const timeframeOptions = [
     { value: "1week", label: "1 Week" },
@@ -23,24 +69,16 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
     { value: "2months", label: "2 Months" },
   ];
 
-  // Mock data with realistic 2-week sets across all muscle groups
-  const defaultData: MuscleData[] = [
-    { muscle: "Chest", sets: 24 },
-    { muscle: "Back", sets: 28 },
-    { muscle: "Shoulders", sets: 18 },
-    { muscle: "Arms", sets: 22 },
-    { muscle: "Legs", sets: 16 },
-    { muscle: "Core", sets: 20 },
-  ];
-
-  const muscleData = data || defaultData;
-  const maxSets = Math.max(...muscleData.map((d) => d.sets));
-  const size = 240;
+  // Use real data or fallback to empty state
+  const maxSets =
+    muscleData.length > 0
+      ? Math.max(...muscleData.map((d: MuscleData) => d.sets))
+      : 1;
+  const size = 220;
   const center = size / 2;
   const maxRadius = size / 2 - 40;
 
-  // Calculate points for each muscle group
-  const points = muscleData.map((item, index) => {
+  const points = muscleData.map((item: MuscleData, index: number) => {
     const angle = (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
     const radius = (item.sets / maxSets) * maxRadius;
     const x = center + radius * Math.cos(angle);
@@ -48,12 +86,24 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
     return { x, y, angle, label: item.muscle, sets: item.sets };
   });
 
-  const polygonPoints = points.map((p) => `${p.x},${p.y}`).join(" ");
+  const polygonPoints = points.map((p: any) => `${p.x},${p.y}`).join(" ");
+
+  const handleTimeframeChange = (value: string) => {
+    // Type guard to ensure we only set valid timeframe values
+    if (
+      value === "1week" ||
+      value === "2weeks" ||
+      value === "1month" ||
+      value === "2months"
+    ) {
+      setTimeframe(value);
+    }
+  };
 
   return (
     <Stack
       width="100%"
-      height={250}
+      height={230}
       backgroundColor="$backgroundSoft"
       borderRadius="$3"
       flexDirection="row"
@@ -61,43 +111,14 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
     >
       {/* Left Stack - Data Display Area */}
       <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
-        {/* Timeframe Select */}
+        {/* Timeframe Select - updates component state only */}
         <Select
           options={timeframeOptions}
           value={timeframe}
-          onValueChange={setTimeframe}
+          onValueChange={handleTimeframeChange}
         />
 
-        {/* Metrics Area */}
-        <Stack gap="$2" paddingLeft="$2" paddingTop="$1">
-          <Stack flexDirection="row">
-            {/* Labels Stack */}
-            <YStack flex={2.5} gap="$5" justifyContent="space-between">
-              <Text color="$textSoft" fontSize="$4">
-                Workouts
-              </Text>
-              <Text color="$textSoft" fontSize="$4">
-                Exercises
-              </Text>
-              <Text color="$textSoft" fontSize="$4">
-                Sets
-              </Text>
-            </YStack>
-
-            {/* Values Stack */}
-            <YStack flex={1} gap="$2" justifyContent="space-between">
-              <Text fontSize="$4" fontWeight="600" color="$text">
-                12
-              </Text>
-              <Text fontSize="$4" fontWeight="600" color="$text">
-                58
-              </Text>
-              <Text fontSize="$4" fontWeight="600" color="$text">
-                174
-              </Text>
-            </YStack>
-          </Stack>
-        </Stack>
+        <MetricsDisplay metrics={metrics} />
       </Stack>
 
       {/* Right Stack - Spider Chart */}
@@ -105,7 +126,7 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
         <Stack justifyContent="center" alignItems="center">
           <Svg width={size} height={size}>
             {/* Background grid circles */}
-            {[0.25, 0.5, 0.75, 1.0].map((ratio, i) => (
+            {[0.25, 0.5, 0.75, 1.0].map((ratio: number, i: number) => (
               <Circle
                 key={i}
                 cx={center}
@@ -119,7 +140,7 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
             ))}
 
             {/* Grid lines to each muscle group */}
-            {points.map((point, index) => {
+            {points.map((point: any, index: number) => {
               const angle =
                 (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
               const endX = center + maxRadius * Math.cos(angle);
@@ -138,49 +159,51 @@ export default function MuscleGroupSpider({ data }: MuscleGroupSpiderProps) {
               );
             })}
 
-            {/* Data polygon */}
-            <Polygon
-              points={polygonPoints}
-              fill="#f84f3e"
-              fillOpacity={0.15}
-              stroke="#f84f3e"
-              strokeWidth={2}
-            />
+            {/* Only render polygon and points if we have data */}
+            {muscleData.length > 0 && (
+              <>
+                <Polygon
+                  points={polygonPoints}
+                  fill="#f84f3e"
+                  fillOpacity={0.15}
+                  stroke="#f84f3e"
+                  strokeWidth={2}
+                />
 
-            {/* Data points */}
-            {points.map((point, index) => (
-              <Circle
-                key={index}
-                cx={point.x}
-                cy={point.y}
-                r={4}
-                fill="#f84f3e"
-              />
-            ))}
+                {points.map((point: any, index: number) => (
+                  <Circle
+                    key={index}
+                    cx={point.x}
+                    cy={point.y}
+                    r={4}
+                    fill="#f84f3e"
+                  />
+                ))}
 
-            {/* Labels */}
-            {points.map((point, index) => {
-              const angle =
-                (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-              const labelRadius = maxRadius + 24;
-              const labelX = center + labelRadius * Math.cos(angle);
-              const labelY = center + labelRadius * Math.sin(angle);
+                {points.map((point: any, index: number) => {
+                  const angle =
+                    (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
+                  const labelRadius = maxRadius + 24;
+                  const labelX = center + labelRadius * Math.cos(angle);
+                  const labelY = center + labelRadius * Math.sin(angle);
 
-              return (
-                <SvgText
-                  key={index}
-                  x={labelX}
-                  y={labelY}
-                  fontSize="11"
-                  fill="#6b6466"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-                  fontWeight="500"
-                >
-                  {point.label}
-                </SvgText>
-              );
-            })}
+                  return (
+                    <SvgText
+                      key={index}
+                      x={labelX}
+                      y={labelY}
+                      fontSize="11"
+                      fill="#6b6466"
+                      textAnchor="middle"
+                      alignmentBaseline="middle"
+                      fontWeight="500"
+                    >
+                      {point.label}
+                    </SvgText>
+                  );
+                })}
+              </>
+            )}
           </Svg>
         </Stack>
       </Stack>

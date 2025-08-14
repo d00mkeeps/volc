@@ -39,13 +39,13 @@ export default function Select({
         pressStyle={{ backgroundColor: "$backgroundHover" }}
         onPress={() => setIsOpen(!isOpen)}
       >
-        <Text color={selectedOption ? "$text" : "$textSoft"} fontSize="$3">
+        <Text color={selectedOption ? "$text" : "$textSoft"} fontSize="$4">
           {selectedOption?.label || placeholder}
         </Text>
 
         {/* Dropdown Arrow */}
         <Stack position="absolute" right="$2.5" top="50%">
-          <Text color="$textSoft" fontSize="$3">
+          <Text color="$textSoft" fontSize="$4">
             {isOpen ? "▲" : "▼"}
           </Text>
         </Stack>

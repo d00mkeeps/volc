@@ -3,7 +3,6 @@ from typing import Dict, Any
 from app.core.supabase.auth import get_current_user, get_jwt_token
 import logging
 
-# Import service instances instead of classes
 from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
 from app.services.db.conversation_service import conversation_service

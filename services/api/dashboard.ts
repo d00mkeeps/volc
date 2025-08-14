@@ -1,27 +1,32 @@
-// services/dashboardService.ts
-import { apiGet } from './core/apiClient';
+import { apiGet } from "./core/apiClient";
 
-interface DashboardResponse {
-  goalProgress: {
-    percentage: number;
-    currentValue: string;
-    targetValue: string;
-    label: string;
-  };
-  muscleBalance: Array<{
-    muscle: string;
-    sets: number;
-  }>;
-  consistency: {
-    workoutDays: number[];
-    streak: number;
-    totalWorkouts: number;
-    score: number;
-  };
+interface MuscleData {
+  muscle: string;
+  sets: number;
+}
+
+interface ConsistencyData {
+  workoutDays: number[];
+  streak: number;
+  totalWorkouts: number;
+  score: number;
+}
+
+interface TimeframeData {
+  muscleBalance: MuscleData[];
+  consistency: ConsistencyData;
+}
+
+interface AllTimeframeData {
+  "1week": TimeframeData;
+  "2weeks": TimeframeData;
+  "1month": TimeframeData;
+  "2months": TimeframeData;
+  lastUpdated: string;
 }
 
 export const dashboardService = {
-  getDashboardData: async (): Promise<DashboardResponse> => {
-    return apiGet<DashboardResponse>('/api/dashboard');
-  }
+  getAllDashboardData: async (): Promise<AllTimeframeData> => {
+    return apiGet<AllTimeframeData>("/api/dashboard");
+  },
 };

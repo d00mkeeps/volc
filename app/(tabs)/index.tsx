@@ -5,7 +5,7 @@ import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/WorkoutTracker";
-import { Keyboard } from "react-native"; // Add Keyboard to existing imports
+import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
 import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
@@ -14,6 +14,8 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
 import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
+import { useDashboardStore } from "@/stores/dashboardStore"; // Add dashboard store
+
 let count = 0;
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
@@ -27,14 +29,24 @@ export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   workout_exercises: [],
   description: "A blank template for creating custom workouts",
 };
+
 export default function HomeScreen() {
   console.log(`=== homescreen render count: ${count} ===`);
   count++;
+
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
+
+  // Dashboard state from store
+  const {
+    allData: dashboardAllData,
+    isLoading: dashboardLoading,
+    error: dashboardError,
+    refreshDashboard,
+  } = useDashboardStore();
 
   // With selective selectors:
   const isActive = useUserSessionStore((state) => state.isActive);
@@ -69,6 +81,11 @@ export default function HomeScreen() {
     return [emptyTemplate, ...templates];
   }, [templates, userProfile?.user_id]);
 
+  // Auto-load dashboard data on mount
+  useEffect(() => {
+    refreshDashboard();
+  }, []); // Only on mount
+
   const handleTemplateSelect = (template: CompleteWorkout) => {
     console.log("Selected template:", {
       id: template.id,
@@ -91,6 +108,7 @@ export default function HomeScreen() {
       }, 100);
     }
   };
+
   const handleTemplateClose = () => {
     setIntendedToStart(false); // RESET INTENT
     closeTemplateSelector();
@@ -163,7 +181,11 @@ export default function HomeScreen() {
             onSettingsPress={() => setShowOnboardingModal(true)}
           />
           <Stack marginBottom="$5">
-            <Dashboard />
+            <Dashboard
+              allData={dashboardAllData}
+              isLoading={dashboardLoading}
+              error={dashboardError}
+            />
           </Stack>
         </Stack>
 

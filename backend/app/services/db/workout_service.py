@@ -427,7 +427,6 @@ class WorkoutService(BaseDBService):
         try:
             user_client = self.get_user_client(jwt_token)
             
-            # Get workout with exercises and definitions
             result = user_client.table("workout_exercises").select(
                 "*, workout_exercise_sets(*), exercise_definitions!inner(*)"
             ).eq("workout_id", workout_id).execute()

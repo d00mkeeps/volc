@@ -1,14 +1,13 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 from typing import List
+from ...services.db.dashboard_service import DashboardService
+from ...core.supabase.auth import get_current_user, get_jwt_token 
+import logging
+from datetime import datetime
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
-
-class GoalProgress(BaseModel):
-    percentage: int
-    currentValue: str
-    targetValue: str
-    label: str
 
 class MuscleBalance(BaseModel):
     muscle: str
@@ -20,57 +19,93 @@ class Consistency(BaseModel):
     totalWorkouts: int
     score: int
 
-class DashboardResponse(BaseModel):
-    goalProgress: GoalProgress
+class TimeframeData(BaseModel):
     muscleBalance: List[MuscleBalance]
     consistency: Consistency
 
-def get_muscle_balance_data():
-    """Group detailed muscle data into display categories"""
-    MUSCLE_GROUPS = {
-        "Shoulders": ["Front delts", "Side delts", "Rear delts"],
-        "Back": ["Lats", "Lower back", "Traps"],  
-        "Core": ["Abdominals", "Obliques", "Hip flexors"],
-        "Chest": ["Chest"],
-        "Arms": ["Biceps", "Triceps", "Forearms"],
-        "Legs": ["Calves", "Quads", "Hamstrings", "Glutes"],
-        "Cardio": ["Cardio"]
-    }
+class AllTimeframeResponse(BaseModel):
+    one_week: TimeframeData = Field(..., alias="1week")
+    two_weeks: TimeframeData = Field(..., alias="2weeks")
+    one_month: TimeframeData = Field(..., alias="1month") 
+    two_months: TimeframeData = Field(..., alias="2months")
+    lastUpdated: str
 
-    raw_muscle_data = {
-        "Chest": 24,
-        "Front delts": 6, "Side delts": 8, "Rear delts": 4,
-        "Lats": 16, "Lower back": 4, "Traps": 8,
-        "Biceps": 8, "Triceps": 10, "Forearms": 4,
-        "Quads": 8, "Hamstrings": 4, "Glutes": 2, "Calves": 2,
-        "Abdominals": 12, "Obliques": 4, "Hip flexors": 4,
-        "Cardio": 3
-    }
-    
-    # Group and sum
-    grouped = []
-    for group_name, muscles in MUSCLE_GROUPS.items():
-        total_sets = sum(raw_muscle_data.get(muscle, 0) for muscle in muscles)
-        if total_sets > 0:
-            grouped.append(MuscleBalance(muscle=group_name, sets=total_sets))
-    
-    return grouped
+    class Config:
+        allow_population_by_field_name = True
 
-@router.get("/api/dashboard", response_model=DashboardResponse)
-async def get_dashboard_data():
-    """Get dashboard analytics data"""
-    return DashboardResponse(
-        goalProgress=GoalProgress(
-            percentage=75,
-            currentValue="90kg",
-            targetValue="120kg",
-            label="30kg to goal"
-        ),
-        muscleBalance=get_muscle_balance_data(),
-        consistency=Consistency(
-            workoutDays=[1, 3, 5, 8, 10, 12, 14],
-            streak=3,
-            totalWorkouts=7,
-            score=85
-        )
-    )
+@router.get("/api/dashboard", response_model=AllTimeframeResponse)
+async def get_dashboard_data(
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get dashboard analytics data for all timeframes"""
+    try:
+        logger.info(f"API request for dashboard data for user: {user.id}")
+        
+        dashboard_service = DashboardService()
+        result = await dashboard_service.get_dashboard_data(user.id, jwt_token)
+        
+        if not result.get("success"):
+            raise Exception(f"Dashboard service error: {result.get('error')}")
+        
+        raw_data = result["data"]
+        
+        # Convert to response models for validation/debugging
+        response_data = {
+            "one_week": TimeframeData(
+                muscleBalance=[
+                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
+                    for item in raw_data.get("1week", {}).get("muscleBalance", [])
+                ],
+                consistency=Consistency(
+                    workoutDays=raw_data.get("1week", {}).get("consistency", {}).get("workoutDays", []),
+                    streak=raw_data.get("1week", {}).get("consistency", {}).get("streak", 0),
+                    totalWorkouts=raw_data.get("1week", {}).get("consistency", {}).get("totalWorkouts", 0),
+                    score=raw_data.get("1week", {}).get("consistency", {}).get("score", 0)
+                )
+            ),
+            "two_weeks": TimeframeData(
+                muscleBalance=[
+                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
+                    for item in raw_data.get("2weeks", {}).get("muscleBalance", [])
+                ],
+                consistency=Consistency(
+                    workoutDays=raw_data.get("2weeks", {}).get("consistency", {}).get("workoutDays", []),
+                    streak=raw_data.get("2weeks", {}).get("consistency", {}).get("streak", 0),
+                    totalWorkouts=raw_data.get("2weeks", {}).get("consistency", {}).get("totalWorkouts", 0),
+                    score=raw_data.get("2weeks", {}).get("consistency", {}).get("score", 0)
+                )
+            ),
+            "one_month": TimeframeData(
+                muscleBalance=[
+                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
+                    for item in raw_data.get("1month", {}).get("muscleBalance", [])
+                ],
+                consistency=Consistency(
+                    workoutDays=raw_data.get("1month", {}).get("consistency", {}).get("workoutDays", []),
+                    streak=raw_data.get("1month", {}).get("consistency", {}).get("streak", 0),
+                    totalWorkouts=raw_data.get("1month", {}).get("consistency", {}).get("totalWorkouts", 0),
+                    score=raw_data.get("1month", {}).get("consistency", {}).get("score", 0)
+                )
+            ),
+            "two_months": TimeframeData(
+                muscleBalance=[
+                    MuscleBalance(muscle=item["muscle"], sets=item["sets"])
+                    for item in raw_data.get("2months", {}).get("muscleBalance", [])
+                ],
+                consistency=Consistency(
+                    workoutDays=raw_data.get("2months", {}).get("consistency", {}).get("workoutDays", []),
+                    streak=raw_data.get("2months", {}).get("consistency", {}).get("streak", 0),
+                    totalWorkouts=raw_data.get("2months", {}).get("consistency", {}).get("totalWorkouts", 0),
+                    score=raw_data.get("2months", {}).get("consistency", {}).get("score", 0)
+                )
+            ),
+            "lastUpdated": raw_data.get("lastUpdated", datetime.now().isoformat())
+        }
+        
+        logger.info(f"Successfully returned dashboard data for user: {user.id}")
+        return AllTimeframeResponse(**response_data)
+        
+    except Exception as e:
+        logger.error(f"Error in dashboard endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
