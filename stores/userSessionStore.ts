@@ -21,8 +21,11 @@ interface UserSessionState {
   selectedTemplate: CompleteWorkout | null;
   showTemplateSelector: boolean;
 
-  // NEW: Conversation state
+  // Conversation state
   activeConversationId: string | null;
+
+  // NEW: Image state
+  pendingImageId: string | null;
 
   // Actions
   startWorkout: (workout: CompleteWorkout) => void;
@@ -44,8 +47,11 @@ interface UserSessionState {
   closeTemplateSelector: () => void;
   selectTemplate: (template: CompleteWorkout) => void;
 
-  // NEW: Conversation actions
+  // Conversation actions
   setActiveConversation: (id: string | null) => void;
+
+  // NEW: Image actions
+  setPendingImage: (imageId: string | null) => void;
 
   // Computed values
   getTimeString: () => string;
@@ -110,9 +116,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   scheduledTime: undefined,
   selectedTemplate: null,
   showTemplateSelector: false,
-  activeConversationId: null, // NEW
-
-  // Actions
+  activeConversationId: null,
+  pendingImageId: null,
   startWorkout: (workout) => {
     console.log("[UserSession] Starting workout:", workout.name);
     set({
@@ -213,7 +218,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
         .filter(Boolean)
     );
 
-    // Find existing template with same definition_ids
     const existingTemplate = Array.from(workouts.values()).find((workout) => {
       const templateDefIds = new Set(
         workout.workout_exercises.map((ex) => ex.definition_id).filter(Boolean)
@@ -274,6 +278,11 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     useDashboardStore.getState().refreshDashboard();
   },
 
+  setPendingImage: (imageId) => {
+    console.log("[UserSession] Setting pending image:", imageId);
+    set({ pendingImageId: imageId });
+  },
+
   resetSession: () => {
     set({
       currentWorkout: null,
@@ -283,7 +292,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       elapsedSeconds: 0,
       scheduledTime: undefined,
       selectedTemplate: null,
-      activeConversationId: null, // NEW: Reset conversation ID
+      activeConversationId: null,
+      pendingImageId: null,
     });
   },
 

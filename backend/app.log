@@ -1,24 +1,27 @@
-2025-08-15 00:56:30,591 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvYjgzOWU1NjctZWQ4Ny00NDg4LWJkMjQtZmNlYzQ5NjUzYzIzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTIxNTc5MCwiZXhwIjoxNzU1MjIyOTkwfQ.TWOrG4eF4N8frgLxcdmF-8OpdgHpCey2pCncjCjoY24', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvYjgzOWU1NjctZWQ4Ny00NDg4LWJkMjQtZmNlYzQ5NjUzYzIzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTIxNTc5MCwiZXhwIjoxNzU1MjIyOTkwfQ.TWOrG4eF4N8frgLxcdmF-8OpdgHpCey2pCncjCjoY24', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvYjgzOWU1NjctZWQ4Ny00NDg4LWJkMjQtZmNlYzQ5NjUzYzIzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTIxNTc5MCwiZXhwIjoxNzU1MjIyOTkwfQ.TWOrG4eF4N8frgLxcdmF-8OpdgHpCey2pCncjCjoY24', 'path': '1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg'}
-2025-08-15 00:56:30,597 - app.services.db.image_service - INFO - Successfully created upload URL
-2025-08-15 00:56:30,597 - app.services.db.image_service - INFO - Returning response: {'image_id': '9d5c3c24-342d-4bf4-ad6c-34c45160699a', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvYjgzOWU1NjctZWQ4Ny00NDg4LWJkMjQtZmNlYzQ5NjUzYzIzLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTIxNTc5MCwiZXhwIjoxNzU1MjIyOTkwfQ.TWOrG4eF4N8frgLxcdmF-8OpdgHpCey2pCncjCjoY24', 'file_path': '1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg'}
-2025-08-15 00:56:30,597 - app.main - INFO - Response status: 200
-2025-08-15 00:56:31,438 - app.main - INFO - Request: POST /db/user-profile
-2025-08-15 00:56:31,440 - app.api.endpoints.db - INFO - API request to save profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:31,440 - app.services.db.user_profile_service - INFO - Saving profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:31,929 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:31,930 - app.main - INFO - Response status: 200
-2025-08-15 00:56:32,013 - app.main - INFO - Request: GET /db/user-profile
-2025-08-15 00:56:32,015 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:32,015 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:32,418 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 00:56:32,420 - app.main - INFO - Response status: 200
-2025-08-15 00:56:32,755 - app.main - INFO - Request: GET /images/9d5c3c24-342d-4bf4-ad6c-34c45160699a/url
-2025-08-15 00:56:32,756 - app.api.endpoints.images - INFO - API request to get image URL: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-15 00:56:32,756 - app.services.db.image_service - INFO - Getting image URL for ID: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-15 00:56:33,098 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg
-2025-08-15 00:56:33,117 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-08-15 00:56:33,117 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-15 00:56:33,117 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-08-15 00:56:33,117 - app.services.db.image_service - INFO - Used direct string
-2025-08-15 00:56:33,117 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-15 00:56:33,117 - app.main - INFO - Response status: 200
+2025-08-15 14:46:02,929 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''ll be able to see your consistency patterns, how often you're training, and how your strength and volume are progressing over time.
+*   **Deeper Analysis:** The system needs more weekly data (at least 4 weeks) to start finding cool correlations between your exercises – like if improving your Arnold Press helps your', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-15 14:46:03,560 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' overhead strength, for example. The more you log, the smarter the insights become!
+
+**My take?** You've got a fantastic start, especially with those impressive gains on the Barbell Hip Thrust! Keep logging those sessions, stay consistent, and we'll watch you get stronger and fitter every single week', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-15 14:46:03,649 - app.services.chains.base_conversation_chain - INFO - Chunk: content='. You're doing great!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-15 14:46:03,671 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,083 - app.services.db.message_service - INFO - Server message saved with ID: caafbf8f-28fd-4650-b4a7-2f21b3cff7ea
+2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (check took 0.00s)
+2025-08-15 14:46:04,084 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,434 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,434 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (expires in 30 min)
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.35s - 1 messages, 1 bundles
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (check took 0.00s)
+2025-08-15 14:46:04,435 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,821 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (expires in 30 min)
+2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.39s - 1 messages, 1 bundles
+2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-15 14:46:04,821 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2

@@ -139,7 +139,7 @@ export class WorkoutService extends BaseDBService {
    */
   async updateWorkout(
     workoutId: string,
-    workout: CompleteWorkout
+    workout: Partial<CompleteWorkout> // ✅ Changed from CompleteWorkout to Partial<CompleteWorkout>
   ): Promise<CompleteWorkout> {
     try {
       console.log(`[WorkoutService] Updating workout: ${workoutId}`);
@@ -269,27 +269,6 @@ export class WorkoutService extends BaseDBService {
       );
     } catch (error) {
       console.error(`[WorkoutService] Error deleting workout:`, error);
-      return this.handleError(error);
-    }
-  }
-
-  async updateWorkoutImage(
-    workoutId: string,
-    imagePath: string
-  ): Promise<CompleteWorkout> {
-    try {
-      console.log(
-        `[WorkoutService] Updating workout ${workoutId} with image: ${imagePath}`
-      );
-
-      const data = await apiPut<CompleteWorkout>(`/db/workouts/${workoutId}`, {
-        image_path: imagePath,
-      });
-
-      console.log(`[WorkoutService] Successfully updated workout image`);
-      return data;
-    } catch (error) {
-      console.error(`[WorkoutService] Error updating workout image:`, error);
       return this.handleError(error);
     }
   }

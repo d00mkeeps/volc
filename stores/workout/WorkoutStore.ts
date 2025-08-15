@@ -3,6 +3,7 @@ import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 import { authService } from "@/services/db/auth";
 import { imageService } from "@/services/api/imageService";
+import { useUserSessionStore } from "../userSessionStore";
 
 interface WorkoutState {
   // State
@@ -20,7 +21,10 @@ interface WorkoutState {
   loadWorkouts: () => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (workout: CompleteWorkout) => Promise<void>;
-  updateWorkout: (workoutId: string, updates: CompleteWorkout) => Promise<void>;
+  updateWorkout: (
+    workoutId: string,
+    updates: Partial<CompleteWorkout>
+  ) => Promise<void>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
   fetchTemplates: () => Promise<void>;
@@ -29,7 +33,6 @@ interface WorkoutState {
     conversationId: string
   ) => Promise<WorkoutWithConversation[]>;
   deleteConversationWorkouts: (conversationId: string) => Promise<void>;
-  updateWorkoutImage: (workoutId: string, imageId: string) => Promise<void>;
 }
 
 export const useWorkoutStore = create<WorkoutState>((set, get) => {
@@ -94,61 +97,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       await loadWorkoutsData();
     },
 
-    updateWorkoutImage: async (workoutId: string, imageId: string) => {
-      try {
-        set({ loading: true, error: null });
-
-        // Get the workout to update
-        const { currentWorkout, workouts } = get();
-        const workoutToUpdate =
-          currentWorkout?.id === workoutId
-            ? currentWorkout
-            : workouts.find((w) => w.id === workoutId);
-
-        if (!workoutToUpdate) {
-          throw new Error("Workout not found");
-        }
-
-        // 1. Update workout with image_id
-        const updatedWorkout = await workoutService.updateWorkout(workoutId, {
-          ...workoutToUpdate,
-          image_id: imageId, // Changed from image_path to image_id
-        });
-
-        // 2. Commit the temp image to permanent
-        const commitResult = await imageService.commitImage(imageId);
-        if (!commitResult.success) {
-          throw new Error(commitResult.error || "Failed to commit image");
-        }
-
-        // 3. Update store state
-        set((state) => ({
-          workouts: state.workouts.map((w) =>
-            w.id === workoutId ? updatedWorkout : w
-          ),
-          currentWorkout:
-            state.currentWorkout?.id === workoutId
-              ? updatedWorkout
-              : state.currentWorkout,
-        }));
-
-        console.log(
-          `[WorkoutStore] Image committed and workout updated: ${imageId}`
-        );
-      } catch (err) {
-        console.error("[WorkoutStore] Error updating workout image:", err);
-        set({
-          error:
-            err instanceof Error
-              ? err
-              : new Error("Failed to update workout image"),
-        });
-        throw err;
-      } finally {
-        set({ loading: false });
-      }
-    },
-
     getWorkout: async (workoutId: string) => {
       try {
         set({ loading: true, error: null });
@@ -202,12 +150,16 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       }
     },
 
-    updateWorkout: async (workoutId: string, updates: CompleteWorkout) => {
+    updateWorkout: async (
+      workoutId: string,
+      updates: Partial<CompleteWorkout>
+    ) => {
+      // ✅ Changed parameter type
       try {
         set({ loading: true, error: null });
         const updatedWorkout = await workoutService.updateWorkout(
           workoutId,
-          updates
+          updates // ✅ Now accepts partial updates
         );
         set((state) => ({
           workouts: state.workouts.map((w) =>
