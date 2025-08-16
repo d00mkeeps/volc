@@ -1,27 +1,53 @@
-2025-08-15 14:46:02,929 - app.services.chains.base_conversation_chain - INFO - Chunk: content=''ll be able to see your consistency patterns, how often you're training, and how your strength and volume are progressing over time.
-*   **Deeper Analysis:** The system needs more weekly data (at least 4 weeks) to start finding cool correlations between your exercises – like if improving your Arnold Press helps your', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:03,560 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' overhead strength, for example. The more you log, the smarter the insights become!
+2025-08-16 13:59:10,937 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' hard with exercises like **Arnold Press, Barbell Skull Crusher, and Barbell Bench Press**, which seem to be your go-to's for strength and volume right now. You've also included **Ab Wheel Rollouts, Chin-Ups, Preacher Curls, and even some Running** – great', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:11,128 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' variety!
 
-**My take?** You've got a fantastic start, especially with those impressive gains on the Barbell Hip Thrust! Keep logging those sessions, stay consistent, and we'll watch you get stronger and fitter every single week', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:03,649 - app.services.chains.base_conversation_chain - INFO - Chunk: content='. You're doing great!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-15 14:46:03,671 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,083 - app.services.db.message_service - INFO - Server message saved with ID: caafbf8f-28fd-4650-b4a7-2f21b3cff7ea
-2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,083 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (check took 0.00s)
-2025-08-15 14:46:04,084 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,434 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,434 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (expires in 30 min)
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.35s - 1 messages, 1 bundles
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,435 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (check took 0.00s)
-2025-08-15 14:46:04,435 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,821 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (expires in 30 min)
-2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.39s - 1 messages, 1 bundles
-2025-08-15 14:46:04,821 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:46:04,821 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+*   **Strength & Volume:** For exercises like Arnold Press, Barbell Skull Crusher, and Barbell Bench Press, you've got some solid numbers logged. For example, your last recorded Barbell Bench Press was at 106.43 units, and you've put in ', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:11,503 - app.services.chains.base_conversation_chain - INFO - Chunk: content='2040 units of volume there. That's a great foundation!
+
+*   **Consistency & Frequency:** The data shows you've been incredibly active within this two-day window, logging multiple workouts. That's some serious commitment!
+
+**Now, here's the key thing to understand:** Because', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:12,124 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' this data covers such a short period (just two days), we don't have enough information *yet* to see long-term trends, strength gains, or volume increases over time. Think of it like trying to predict the weather for the whole year based on just two days – it's just not enough data!', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:12,364 - app.services.chains.base_conversation_chain - INFO - Chunk: content='
+
+The system is telling us:
+*   "Insufficient weekly data for Arnold Press strength (1 weeks, need 4+)"
+*   "Insufficient weekly data for Preacher Curl strength (1 weeks, need 4+)"
+*   "Insufficient weekly data for Barbell Skull Crusher strength (1 weeks, need', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:13,505 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' 4+)"
+
+This just means we need more time and more workouts logged to really start seeing those exciting progress charts fill up!
+
+**My Coaching Takeaway for You:**
+
+You've got incredible momentum and consistency in these first couple of days. That's a huge win! To truly unlock the power of this tracking,', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:13,589 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' keep doing exactly what you're doing:
+
+1.  **Keep Logging:** The more workouts you log over the coming weeks and months, the clearer your progress will become. We'll start seeing those strength numbers climb and your volume increase!
+2.  **Focus on Form:** As you continue, always', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:14,224 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' prioritize good form to prevent injuries and ensure you're getting the most out of every rep.
+3.  **Listen to Your Body:** Even with great enthusiasm, remember to allow for recovery.
+
+You're off to a fantastic start! Keep up the amazing work, and let's watch those numbers grow as', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:14,296 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' you build a stronger, fitter you!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-16 13:59:14,306 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,445 - app.services.db.message_service - INFO - Server message saved with ID: a293f5f7-25ef-4da3-9625-a5214c8281f6
+2025-08-16 13:59:14,445 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,445 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,446 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,446 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
+2025-08-16 13:59:14,446 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.13s - 1 messages, 1 bundles
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
+2025-08-16 13:59:14,577 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,706 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
+2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.13s - 1 messages, 1 bundles
+2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:14,707 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation 959461a8-b16a-4284-9a79-459585cb4c62

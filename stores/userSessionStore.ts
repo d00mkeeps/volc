@@ -245,7 +245,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     }
     // If no existing template found, savedWorkout becomes the new template automatically
 
-    set({ currentWorkout: { ...currentWorkout, id: savedWorkout.id } });
+    // 🔥 ENSURE: Update session with the actual saved workout
+    set({ currentWorkout: savedWorkout }); // Use savedWorkout, not partial update
 
     // 3. Extract definition IDs for analysis
     const definitionIds = savedWorkout.workout_exercises
@@ -334,6 +335,12 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       is_template: false,
       created_at: now,
       updated_at: now,
+
+      // 🔥 DON'T carry over template metadata
+      name: "", // Force user to set new name
+      notes: "", // Start with empty notes
+      image_id: null, // Don't carry over template image
+
       // Reset workout exercise IDs and set states
       workout_exercises: template.workout_exercises.map((exercise, index) => ({
         ...exercise,

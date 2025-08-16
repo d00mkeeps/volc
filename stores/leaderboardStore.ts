@@ -10,7 +10,6 @@ interface LeaderboardState {
   error: string | null;
   lastRefresh: Date | null;
 
-  // Actions
   fetchLeaderboard: () => Promise<void>;
   refreshLeaderboard: () => Promise<void>;
   clearError: () => void;

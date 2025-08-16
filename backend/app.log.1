@@ -1,60 +1,64 @@
-2025-08-15 14:45:55,067 - app.services.db.image_service - INFO - Successfully committed image: 2890551e-a4f8-4186-ab1e-de063b58ae8a
-2025-08-15 14:45:55,071 - app.main - INFO - Response status: 200
-2025-08-15 14:45:55,421 - app.main - INFO - Request: GET /db/workouts/templates
-2025-08-15 14:45:55,423 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-15 14:45:55,424 - app.services.db.workout_service - INFO - Getting workout templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d4aee40>
-2025-08-15 14:45:56,095 - app.services.db.workout_service - INFO - Retrieved 5 templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d4aee40>
-2025-08-15 14:45:56,101 - app.main - INFO - Response status: 200
-2025-08-15 14:45:56,548 - app.main - INFO - Request: GET /db/conversations/6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2/messages
-2025-08-15 14:45:56,549 - app.api.endpoints.db - INFO - API request to get messages for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:56,549 - app.services.db.message_service - INFO - Getting messages for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:57,155 - app.services.db.message_service - INFO - Retrieved 0 messages
-2025-08-15 14:45:57,156 - app.main - INFO - Response status: 200
-2025-08-15 14:45:57,157 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:57,160 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
-2025-08-15 14:45:57,161 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:57,161 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (check took 0.00s)
-2025-08-15 14:45:57,161 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:57,473 - app.core.utils.conversation_attachments - INFO - Successfully loaded 0 messages and 1 complete bundles for conversation 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
-2025-08-15 14:45:57,473 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2 (expires in 30 min)
-2025-08-15 14:45:57,473 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.31s - 0 messages, 1 bundles
-2025-08-15 14:45:57,476 - app.services.chains.base_conversation_chain - INFO - Loaded 0 messages into conversation history
-2025-08-15 14:45:57,476 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-15 14:45:57,476 - app.services.llm.workout_analysis - INFO - New conversation with workout data - sending proactive analysis
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-16 13:58:46,924 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?
+2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Used direct string
+2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?
+2025-08-16 13:58:46,928 - app.main - INFO - Response status: 200
+2025-08-16 13:59:02,805 - app.main - INFO - Request: PUT /db/workouts/28f72f21-6d12-45d0-b44d-b149d78c1fec
+2025-08-16 13:59:02,808 - app.api.endpoints.db - INFO - API request to update workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
+2025-08-16 13:59:02,809 - app.services.db.workout_service - INFO - Updating workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
+2025-08-16 13:59:03,544 - app.services.db.workout_service - INFO - Successfully updated workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
+2025-08-16 13:59:03,544 - app.main - INFO - Response status: 200
+2025-08-16 13:59:04,152 - app.main - INFO - Request: POST /images/cd4f1e1e-eec4-42be-9e8a-5a6de8056910/commit
+2025-08-16 13:59:04,153 - app.api.endpoints.images - INFO - API request to commit image: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
+2025-08-16 13:59:04,153 - app.services.db.image_service - INFO - Committing image to permanent: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
+2025-08-16 13:59:04,422 - app.services.db.image_service - INFO - Successfully committed image: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
+2025-08-16 13:59:04,422 - app.main - INFO - Response status: 200
+2025-08-16 13:59:04,740 - app.main - INFO - Request: GET /db/workouts/templates
+2025-08-16 13:59:04,741 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 13:59:04,741 - app.services.db.workout_service - INFO - Getting workout templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12a37f770>
+2025-08-16 13:59:05,022 - app.services.db.workout_service - INFO - Retrieved 18 templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12a37f770>
+2025-08-16 13:59:05,030 - app.main - INFO - Response status: 200
+2025-08-16 13:59:05,485 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,486 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
+2025-08-16 13:59:05,486 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,486 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
+2025-08-16 13:59:05,487 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,629 - app.core.utils.conversation_attachments - INFO - Successfully loaded 0 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,629 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
+2025-08-16 13:59:05,629 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.14s - 0 messages, 1 bundles
+2025-08-16 13:59:05,633 - app.services.chains.base_conversation_chain - INFO - Loaded 0 messages into conversation history
+2025-08-16 13:59:05,633 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
+2025-08-16 13:59:05,633 - app.services.llm.workout_analysis - INFO - New conversation with workout data - sending proactive analysis
+2025-08-16 13:59:05,634 - app.services.chains.base_conversation_chain - INFO - 
 === Formatted Messages ===
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - 
 Message 1 (SystemMessage):
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
+2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
 
 Current workout data context:
 Available workout data:
 {
   "metadata": {
-    "total_workouts": 5,
-    "total_exercises": 13,
+    "total_workouts": 11,
+    "total_exercises": 30,
     "date_range": {
-      "start": "2025-08-15T10:16:30.661+00:00",
-      "end": "2025-08-15T13:45:21.748+00:00"
+      "start": "2025-08-15T13:44:14.21+00:00",
+      "end": "2025-08-16T12:58:25.085+00:00"
     },
     "exercises_included": [
       "Ab Wheel Rollout",
       "Arnold Press",
-      "Barbell Hip Thrust",
-      "Preacher Curl"
+      "Barbell Bench Press",
+      "Barbell Skull Crusher",
+      "Chin-Up",
+      "Preacher Curl",
+      "Running"
     ],
     "analysis_errors": []
   },
   "performance_summary": {
     "strength_top_performers": [
-      {
-        "name": "Barbell Hip Thrust",
-        "change": 11.75,
-        "last_value": 207.33,
-        "first_value": 195.58,
-        "definition_id": "cd7a616a-85b1-448f-8994-d3ed858b8742",
-        "change_percent": 6.0
-      },
       {
         "name": "Arnold Press",
         "change": 0.0,
@@ -64,23 +68,23 @@ Available workout data:
         "change_percent": 0.0
       },
       {
-        "name": "Preacher Curl",
+        "name": "Barbell Skull Crusher",
         "change": 0.0,
-        "last_value": 51.53,
-        "first_value": 51.53,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "last_value": 57.22,
+        "first_value": 57.22,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 0.0
+      },
+      {
+        "name": "Barbell Bench Press",
+        "change": 0.0,
+        "last_value": 106.43,
+        "first_value": 106.43,
+        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
         "change_percent": 0.0
       }
     ],
     "volume_top_performers": [
-      {
-        "name": "Barbell Hip Thrust",
-        "change": 3640.0,
-        "last_value": 8680.0,
-        "first_value": 5040.0,
-        "definition_id": "cd7a616a-85b1-448f-8994-d3ed858b8742",
-        "change_percent": 72.2
-      },
       {
         "name": "Arnold Press",
         "change": 0.0,
@@ -90,11 +94,19 @@ Available workout data:
         "change_percent": 0.0
       },
       {
-        "name": "Preacher Curl",
+        "name": "Barbell Skull Crusher",
         "change": 0.0,
-        "last_value": 1950.0,
-        "first_value": 1950.0,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
+        "last_value": 2400.0,
+        "first_value": 2400.0,
+        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
+        "change_percent": 0.0
+      },
+      {
+        "name": "Barbell Bench Press",
+        "change": 0.0,
+        "last_value": 2040.0,
+        "first_value": 2040.0,
+        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
         "change_percent": 0.0
       }
     ],
@@ -111,18 +123,13 @@ Available workout data:
     "data_quality": [
       "Insufficient weekly data for Arnold Press strength (1 weeks, need 4+)",
       "Insufficient weekly data for Preacher Curl strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Barbell Hip Thrust strength (1 weeks, need 4+)"
+      "Insufficient weekly data for Barbell Skull Crusher strength (1 weeks, need 4+)"
     ]
   },
   "recent_workouts_sample": [
     {
       "date": "2025-08-15",
-      "name": "New workout name ",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-15",
-      "name": "Start Empty Workout",
+      "name": null,
       "notes": ""
     },
     {
@@ -131,14 +138,19 @@ Available workout data:
       "notes": ""
     },
     {
-      "date": "2025-08-15",
-      "name": "New workout name ",
-      "notes": "Barbell Hip Thrust:\nNote\n\nAb Wheel Rollout:\nNote\n\nArnold Press:\nNote\n"
+      "date": "2025-08-16",
+      "name": "",
+      "notes": ""
     },
     {
-      "date": "2025-08-15",
-      "name": ".",
-      "notes": "Barbell Hip Thrust:\nGlute\n\nAb Wheel Rollout:\n\n"
+      "date": "2025-08-16",
+      "name": null,
+      "notes": ""
+    },
+    {
+      "date": "2025-08-16",
+      "name": "",
+      "notes": ""
     }
   ]
 }
@@ -150,8 +162,8 @@ CONSISTENCY METRICS:
 - Workout frequency variance: Not calculated
 
 TOP PERFORMERS:
-- Strength gains: Barbell Hip Thrust: +6.0%
-- Volume increases: Barbell Hip Thrust: +72.2%
+- Strength gains: No significant strength gains detected
+- Volume increases: No significant volume increases detected
 - Most frequent exercises: Frequency data not available
 
 CORRELATION INSIGHTS:
@@ -159,36 +171,23 @@ CORRELATION INSIGHTS:
 • No correlation patterns detected
 
 WORKOUT SUMMARY:
-- Total workouts analyzed: 5
-- Exercise variety: 4 different exercises
+- Total workouts analyzed: 11
+- Exercise variety: 7 different exercises
 
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - 
+2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - 
 Message 2 (HumanMessage):
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
-2025-08-15 14:45:57,478 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-15 14:46:00,584 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, let's dive into your workout data and see what kind of awesome progress you're making! I'm pumped to look at this with you.
+2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
+2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-16 13:59:05,657 - app.main - INFO - Request: GET /db/conversations/959461a8-b16a-4284-9a79-459585cb4c62/messages
+2025-08-16 13:59:05,660 - app.api.endpoints.db - INFO - API request to get messages for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,660 - app.services.db.message_service - INFO - Getting messages for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 13:59:05,917 - app.services.db.message_service - INFO - Retrieved 0 messages
+2025-08-16 13:59:05,918 - app.main - INFO - Response status: 200
+2025-08-16 13:59:10,010 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, let's dive into your workout data and see what we've got! It's awesome that you're tracking your progress – that's the first step to making real gains.
 
-From what I'm seeing here, you've logged **5 workouts** today, all within a few hours on', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:00,885 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' August 15th. That's some serious dedication to getting started! You've hit **4 different exercises**, which is a great start for variety.
+From what I'm seeing here, you've been putting in some serious work! You've logged **', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 13:59:10,508 - app.services.chains.base_conversation_chain - INFO - Chunk: content='11 workouts** with **7 different exercises** in a very short timeframe, just **two days** (August 15th and 16th). That's fantastic dedication right out of the gate!
 
 Here's the breakdown:
 
-### **Your Star Performer: Barbell Hip Thrust!**
-
-*   **Strength Gains:** You've seen', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:01,266 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' a fantastic **6% increase in strength** on your Barbell Hip Thrust, going from 195.58 to 207.33. That's awesome! Your glutes are definitely getting stronger.
-*   **Volume Boost:** And check this out – your **volume for Bar', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:01,810 - app.services.chains.base_conversation_chain - INFO - Chunk: content='bell Hip Thrust shot up by a massive 72.2%**! You're putting in the work, moving more weight for more reps, and that's exactly how you build those powerful glutes. Keep that up!
-
-### **Solid Performance Elsewhere:**
-
-*   You've also included **Arnold Press** and **', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:02,020 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Preacher Curl** in your sessions, maintaining consistent performance there. That shows you're hitting different muscle groups and keeping things balanced.
-*   And don't forget the **Ab Wheel Rollout** – a fantastic core exercise!
-
-### **Looking Ahead & Getting More Insights:**
-
-Right now, all your workouts are', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-15 14:46:02,726 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' logged on the same day, which is cool for a burst of activity! However, to really see your progress and get the best insights, we'll want to track your workouts over a longer period.
-
-*   **Consistency is Key:** As you continue to log workouts over days, weeks, and months, we', metadata={'safety_ratings': [], 'usage_metadata': {}}
+*   **Activity Snapshot:** You've been hitting it', metadata={'safety_ratings': [], 'usage_metadata': {}}

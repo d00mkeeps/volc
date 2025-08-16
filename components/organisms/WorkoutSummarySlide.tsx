@@ -5,6 +5,7 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import ImagePickerButton from "../atoms/buttons/ImagePickerButton";
 import WorkoutImage from "../molecules/WorkoutImage";
 import { imageService } from "@/services/api/imageService";
+import { CompleteWorkout } from "@/types/workout";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -83,6 +84,17 @@ export function WorkoutSummarySlide({
 
     if (currentWorkout) {
       try {
+        // 🔥 ADD GUARD: Check if workout has valid ID
+        if (!currentWorkout.id || currentWorkout.id.startsWith("temp-")) {
+          console.error(
+            "❌ Cannot update workout: Invalid ID",
+            currentWorkout.id
+          );
+          return;
+        }
+
+        console.log("✅ Updating workout with valid ID:", currentWorkout.id);
+
         console.log("=== BEFORE UPDATES ===");
         console.log(
           "currentWorkout.workout_exercises length:",
@@ -110,92 +122,53 @@ export function WorkoutSummarySlide({
         console.log("hasNotesChanged:", hasNotesChanged);
         console.log("hasImageChanged:", hasImageChanged);
 
-        // Update workout data (name/notes) if changed
+        // 🔥 COLLECT ALL UPDATES INTO SINGLE CALL
+        const updates: Partial<CompleteWorkout> = {};
+        let needsUpdate = false;
+
         if (hasNameChanged || hasNotesChanged) {
+          updates.name = workoutName;
+          updates.notes = workoutNotes;
+          needsUpdate = true;
+        }
+
+        if (hasImageChanged && pendingImageId) {
+          updates.image_id = pendingImageId;
+          needsUpdate = true;
+        }
+
+        // 🔥 SINGLE API CALL FOR ALL METADATA
+        if (needsUpdate) {
           console.log("=== UPDATING METADATA ===");
-          const updatedWorkout = {
-            ...currentWorkout,
-            name: workoutName,
-            notes: workoutNotes,
-            updated_at: new Date().toISOString(),
-          };
+          console.log("About to call updateWorkout with updates:", updates);
 
-          console.log(
-            "About to call updateCurrentWorkout with workout_exercises:",
-            updatedWorkout.workout_exercises?.length
+          const apiUpdatedWorkout = await updateWorkout(
+            currentWorkout.id,
+            updates
           );
-          updateCurrentWorkout(updatedWorkout);
-
-          console.log("=== AFTER updateCurrentWorkout ===");
-          const stateAfterUpdate =
-            useUserSessionStore.getState().currentWorkout;
-          console.log(
-            "Store state workout_exercises:",
-            stateAfterUpdate?.workout_exercises?.length
-          );
-
-          console.log("About to call API updateWorkout");
-          await updateWorkout(updatedWorkout.id, updatedWorkout);
 
           console.log("=== AFTER API updateWorkout ===");
-          const stateAfterAPI = useUserSessionStore.getState().currentWorkout;
-          console.log(
-            "Store state after API:",
-            stateAfterAPI?.workout_exercises?.length
-          );
-          console.log("Workout metadata updated");
-        }
+          console.log("API response:", apiUpdatedWorkout);
 
-        // ✅ SIMPLIFIED: Handle image with regular updateWorkout
-        if (hasImageChanged && pendingImageId) {
-          console.log("=== UPDATING IMAGE ===");
-          console.log(
-            "Store state before image update:",
-            useUserSessionStore.getState().currentWorkout?.workout_exercises
-              ?.length
-          );
+          updateCurrentWorkout(apiUpdatedWorkout);
+          console.log("Workout metadata updated in session store");
 
-          console.log("Updating workout with image ID...");
-
-          // 1. Update workout with image_id
-          await updateWorkout(currentWorkout.id, { image_id: pendingImageId });
-
-          // 2. Commit the temp image to permanent
-          const commitResult = await imageService.commitImage(pendingImageId);
-          if (!commitResult.success) {
-            throw new Error(commitResult.error || "Failed to commit image");
+          // Handle image commit if image was updated
+          if (hasImageChanged && pendingImageId) {
+            console.log("=== COMMITTING IMAGE ===");
+            const commitResult = await imageService.commitImage(pendingImageId);
+            if (!commitResult.success) {
+              throw new Error(commitResult.error || "Failed to commit image");
+            }
+            setPendingImage(null);
+            console.log("Image committed successfully");
           }
-
-          // 3. Update session store with image_id
-          updateCurrentWorkout({
-            ...currentWorkout,
-            image_id: pendingImageId,
-          });
-
-          // 4. Clear pending image after successful commit
-          setPendingImage(null);
-
-          console.log("=== AFTER IMAGE UPDATE ===");
-          const stateAfterImage = useUserSessionStore.getState().currentWorkout;
-          console.log(
-            "Store state after image update:",
-            stateAfterImage?.workout_exercises?.length
-          );
-          console.log("Image committed and workout updated");
         }
 
-        if (hasNameChanged || hasNotesChanged || hasImageChanged) {
+        if (needsUpdate) {
           console.log("=== REFRESHING TEMPLATES ===");
           const { fetchTemplates } = useWorkoutStore.getState();
           await fetchTemplates();
-
-          console.log("=== AFTER fetchTemplates ===");
-          const stateAfterTemplates =
-            useUserSessionStore.getState().currentWorkout;
-          console.log(
-            "Store state after templates:",
-            stateAfterTemplates?.workout_exercises?.length
-          );
           console.log("Templates refreshed");
         } else {
           console.log("No real changes detected, skipping database updates");

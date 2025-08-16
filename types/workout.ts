@@ -101,7 +101,7 @@ export interface CompleteWorkout {
   workout_exercises: WorkoutExercise[];
   scheduled_time?: string; // Format: "HH:MM" in 24-hour time
   description?: string;
-  image_id?: string;
+  image_id?: string | null;
 }
 
 export type BundleMetadata = {

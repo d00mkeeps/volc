@@ -255,6 +255,38 @@ export class WorkoutService extends BaseDBService {
   }
 
   /**
+   * Get a public workout by ID (for leaderboard viewing)
+   */
+
+  /**
+   * Get a public workout by ID (for leaderboard viewing)
+   */
+  async getPublicWorkout(workoutId: string): Promise<CompleteWorkout> {
+    try {
+      console.log(`[WorkoutService] Getting public workout: ${workoutId}`);
+
+      // Make API call to get public workout
+      const response = await apiGet<CompleteWorkout>(
+        `/db/workouts/public/${workoutId}`
+      );
+
+      // Extract the actual workout data from the wrapped response
+      const data = (response as any).data || response;
+
+      console.log(
+        `[WorkoutService] Successfully retrieved public workout: ${workoutId}`
+      );
+
+      return data;
+    } catch (error) {
+      console.error(
+        `[WorkoutService] Error fetching public workout ${workoutId}:`,
+        error
+      );
+      return this.handleError(error);
+    }
+  }
+  /**
    * Delete a workout
    */
   async deleteWorkout(workoutId: string): Promise<void> {

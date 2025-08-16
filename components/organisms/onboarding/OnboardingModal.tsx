@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { YStack, XStack, Text, Button } from "tamagui";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import BaseModal from "../../atoms/Modal";
+import BaseModal from "../../atoms/BaseModal";
 import { useUserStore } from "@/stores/userProfileStore";
 import { OnboardingSlide1 } from "./Slide1";
 import { OnboardingSlide2 } from "./Slide2";

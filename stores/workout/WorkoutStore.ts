@@ -2,8 +2,6 @@ import { create } from "zustand";
 import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 import { authService } from "@/services/db/auth";
-import { imageService } from "@/services/api/imageService";
-import { useUserSessionStore } from "../userSessionStore";
 
 interface WorkoutState {
   // State
@@ -24,7 +22,7 @@ interface WorkoutState {
   updateWorkout: (
     workoutId: string,
     updates: Partial<CompleteWorkout>
-  ) => Promise<void>;
+  ) => Promise<CompleteWorkout>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
   fetchTemplates: () => Promise<void>;
@@ -33,6 +31,7 @@ interface WorkoutState {
     conversationId: string
   ) => Promise<WorkoutWithConversation[]>;
   deleteConversationWorkouts: (conversationId: string) => Promise<void>;
+  getPublicWorkout: (workoutId: string) => Promise<void>;
 }
 
 export const useWorkoutStore = create<WorkoutState>((set, get) => {
@@ -120,6 +119,32 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         set({ loading: false });
       }
     },
+    getPublicWorkout: async (workoutId: string) => {
+      try {
+        set({ loading: true, error: null });
+        const { workouts } = get();
+        const existingWorkout = workouts.find((w) => w.id === workoutId);
+
+        if (existingWorkout) {
+          set({ currentWorkout: existingWorkout });
+          return;
+        }
+
+        const workout = await workoutService.getPublicWorkout(workoutId);
+        console.log("🔍 Public workout data received:", workout);
+        set({ currentWorkout: workout });
+      } catch (err) {
+        console.error("[WorkoutStore] Error getting public workout:", err);
+        set({
+          error:
+            err instanceof Error
+              ? err
+              : new Error("Failed to load public workout"),
+        });
+      } finally {
+        set({ loading: false });
+      }
+    },
 
     createWorkout: async (workout: CompleteWorkout) => {
       try {
@@ -153,23 +178,22 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     updateWorkout: async (
       workoutId: string,
       updates: Partial<CompleteWorkout>
-    ) => {
-      // ✅ Changed parameter type
+    ): Promise<CompleteWorkout> => {
+      // 🔥 Change return type
       try {
         set({ loading: true, error: null });
         const updatedWorkout = await workoutService.updateWorkout(
           workoutId,
-          updates // ✅ Now accepts partial updates
+          updates
         );
+
         set((state) => ({
           workouts: state.workouts.map((w) =>
             w.id === workoutId ? updatedWorkout : w
           ),
-          currentWorkout:
-            state.currentWorkout?.id === workoutId
-              ? updatedWorkout
-              : state.currentWorkout,
         }));
+
+        return updatedWorkout;
       } catch (err) {
         console.error("[WorkoutStore] Error updating workout:", err);
         set({
@@ -181,7 +205,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         set({ loading: false });
       }
     },
-
     deleteWorkout: async (workoutId: string) => {
       // Optimistic update - remove immediately
       const { workouts, currentWorkout } = get();

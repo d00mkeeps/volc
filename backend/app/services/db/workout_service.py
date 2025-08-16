@@ -45,6 +45,42 @@ class WorkoutService(BaseDBService):
             logger.error(f"Error getting workout: {str(e)}")
             return await self.handle_error("get_workout", e)
 
+    async def get_public_workout(self, workout_id: str, jwt_token: str) -> Dict[str, Any]:
+        """
+        Get a workout by ID using admin privileges (for leaderboard viewing)
+        """
+        try:
+            logger.info(f"Getting public workout: {workout_id}")
+
+            # Use admin client to bypass RLS
+            admin_client = self.get_admin_client()
+            result = admin_client.table("workouts") \
+                .select("*, workout_exercises(*, workout_exercise_sets(*))") \
+                .eq("id", workout_id) \
+                .execute()
+
+            if not hasattr(result, "data") or not result.data:
+                raise Exception(f"Workout not found: {workout_id}")
+
+            # Format the response
+            workout = result.data[0]
+
+            # Sort exercises by order_index
+            workout["workout_exercises"].sort(key=lambda x: x["order_index"])
+
+            # Sort sets by set_number
+            for exercise in workout["workout_exercises"]:
+                exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
+
+            logger.info(f"Successfully retrieved public workout: {workout_id}")
+            return await self.format_response(workout)
+
+        except Exception as e:
+            logger.error(f"Error getting public workout: {str(e)}")
+            return await self.handle_error("get_public_workout", e)
+
+
+
     async def delete_workout(self, workout_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Delete a workout by ID (this cascades to exercises and sets)

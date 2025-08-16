@@ -215,6 +215,24 @@ async def delete_workout(
             detail=str(e)
         )
 
+@router.get("/workouts/public/{workout_id}")
+async def get_public_workout(
+    workout_id: str,
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get a workout by ID with admin privileges (for leaderboard viewing)"""
+    try:
+        logger.info(f"API request to get public workout: {workout_id}")
+        result = await workout_service.get_public_workout(workout_id, jwt_token)
+        return result
+    except Exception as e:
+        logger.error(f"Error getting public workout: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+    
 @router.put("/workouts/template/{template_id}")
 async def update_template_usage(
     template_id: str,

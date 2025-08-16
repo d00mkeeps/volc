@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { YStack, XStack, Text, Button, TextArea } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";
-import BaseModal from "../../atoms/Modal";
+import BaseModal from "../../atoms/BaseModal";
 
 interface NotesModalProps {
   isVisible: boolean;

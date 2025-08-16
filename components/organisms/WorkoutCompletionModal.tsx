@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack, XStack, Text, Button, ScrollView } from "tamagui";
-import BaseModal from "../atoms/Modal";
+import BaseModal from "../atoms/BaseModal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
@@ -63,13 +63,6 @@ export function WorkoutCompletionModal({
   };
 
   const handleContinueToChat = useCallback(async () => {
-    // REMOVE the direct service call since we're handling it in the summary slide now
-    // const freshWorkout = useUserSessionStore.getState().currentWorkout;
-    // if (freshWorkout) {
-    //   console.log("Using fresh workout data for update");
-    //   workoutService.updateWorkout(freshWorkout.id, freshWorkout);
-    // }
-
     console.log("Continuing to chat slide");
     setCurrentSlide("chat");
   }, []);
