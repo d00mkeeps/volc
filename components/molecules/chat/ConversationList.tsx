@@ -15,10 +15,12 @@ export default function ConversationList({
   const { conversations, isLoading, getConversations, deleteConversation } =
     useConversationStore();
 
-  const allConversations = Array.from(conversations.values()).sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
+  const allConversations = Array.from(conversations.values())
+    .filter((conversation) => conversation.message_count > 0) // Add this line
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
   const displayedConversations = allConversations.slice(0, limit);
 

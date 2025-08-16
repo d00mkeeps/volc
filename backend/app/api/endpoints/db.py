@@ -5,7 +5,7 @@ import logging
 
 from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
-from app.services.db.conversation_service import conversation_service
+from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
 from app.services.db.user_profile_service import UserProfileService
 from app.services.db.message_service import MessageService
@@ -13,6 +13,7 @@ from app.services.db.message_service import MessageService
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/db")
 
+conversation_service = ConversationService()
 analysis_bundle_service = AnalysisBundleService()
 workout_service = WorkoutService()
 exercise_definition_service = ExerciseDefinitionService()
@@ -98,6 +99,24 @@ async def delete_analysis_bundle(
             detail=str(e)
         )
 
+@router.delete("/conversations/{conversation_id}")
+async def delete_conversation(
+    conversation_id: str,
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Delete a conversation"""
+    try:
+        logger.info(f"API request to delete conversation: {conversation_id}")
+        # This line needs to be: conversation_service.delete_conversation(conversation_id, user, jwt_token)
+        result = await conversation_service.delete_conversation(conversation_id, user, jwt_token)
+        return result
+    except Exception as e:
+        logger.error(f"Error deleting conversation: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.delete("/analysis-bundles/conversation/{conversation_id}")
 async def delete_conversation_bundles(
     conversation_id: str,
@@ -260,7 +279,7 @@ async def create_conversation(
     """Create a new conversation with the first message"""
     try:
         logger.info(f"API request to create conversation: {data.get('title')}")
-        result = await conversation_service.create_conversation(
+        result = await ConversationService.create_conversation(
             data.get("title"), 
             data.get("configName"),
             user,
@@ -282,7 +301,7 @@ async def get_user_conversations(
     """Get all active conversations for a user"""
     try:
         logger.info(f"API request to get active conversations for user: {user.id}")
-        result = await conversation_service.get_user_conversations(user, jwt_token)
+        result = await ConversationService.get_user_conversations(user, jwt_token)
         
         if result.get("success"):
             conversations = result.get("data", [])

@@ -44,6 +44,32 @@ class ConversationService(BaseDBService):
         except Exception as e:
             return await self.handle_error("create_conversation", e)
     
+
+    async def delete_conversation(
+        self,
+        conversation_id: str,
+        user,
+        jwt_token: str
+    ) -> Dict[str, Any]:
+        """Soft delete a conversation by setting status to 'deleted'"""
+        try:
+            logger.info(f"Deleting conversation: {conversation_id}")
+            
+            # Use user context for RLS
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("conversations") \
+                .update({"status": "deleted"}) \
+                .eq("id", conversation_id) \
+                .execute()
+            
+            if not result.data:
+                raise Exception("Failed to delete conversation")
+            
+            return await self.format_response(result.data[0])
+            
+        except Exception as e:
+            return await self.handle_error("delete_conversation", e)
+
     async def get_user_conversations(
         self,
         user,

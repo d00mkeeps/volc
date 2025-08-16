@@ -40,7 +40,6 @@ export function WorkoutSummarySlide({
       return currentWorkout.notes;
     }
 
-    // Safe fallback with logging
     const exercises = currentWorkout?.workout_exercises || [];
     console.log("Using exercises fallback:", exercises);
 
@@ -51,14 +50,9 @@ export function WorkoutSummarySlide({
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
-    if (currentWorkout) {
-      updateCurrentWorkout({
-        ...currentWorkout,
-        name,
-        updated_at: new Date().toISOString(),
-      });
-    }
   };
+
+  const isNameValid = workoutName.trim().length > 0;
 
   const handleImageUploaded = (imageId: string) => {
     console.log(`[WorkoutSummary] Image uploaded with ID: ${imageId}`);
@@ -84,7 +78,6 @@ export function WorkoutSummarySlide({
 
     if (currentWorkout) {
       try {
-        // 🔥 ADD GUARD: Check if workout has valid ID
         if (!currentWorkout.id || currentWorkout.id.startsWith("temp-")) {
           console.error(
             "❌ Cannot update workout: Invalid ID",
@@ -257,7 +250,13 @@ export function WorkoutSummarySlide({
         />
       </YStack>
 
-      <Button size="$4" backgroundColor="$primary" onPress={handleContinue}>
+      <Button
+        size="$4"
+        backgroundColor={isNameValid ? "$primary" : "$gray6"}
+        onPress={handleContinue}
+        disabled={!isNameValid}
+        opacity={isNameValid ? 1 : 0.6}
+      >
         Continue to Coach
       </Button>
     </YStack>

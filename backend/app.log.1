@@ -1,193 +1,100 @@
-2025-08-16 13:58:46,924 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?
-2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Used direct string
-2025-08-16 13:58:46,928 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?
-2025-08-16 13:58:46,928 - app.main - INFO - Response status: 200
-2025-08-16 13:59:02,805 - app.main - INFO - Request: PUT /db/workouts/28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:59:02,808 - app.api.endpoints.db - INFO - API request to update workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:59:02,809 - app.services.db.workout_service - INFO - Updating workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:59:03,544 - app.services.db.workout_service - INFO - Successfully updated workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:59:03,544 - app.main - INFO - Response status: 200
-2025-08-16 13:59:04,152 - app.main - INFO - Request: POST /images/cd4f1e1e-eec4-42be-9e8a-5a6de8056910/commit
-2025-08-16 13:59:04,153 - app.api.endpoints.images - INFO - API request to commit image: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:59:04,153 - app.services.db.image_service - INFO - Committing image to permanent: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:59:04,422 - app.services.db.image_service - INFO - Successfully committed image: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:59:04,422 - app.main - INFO - Response status: 200
-2025-08-16 13:59:04,740 - app.main - INFO - Request: GET /db/workouts/templates
-2025-08-16 13:59:04,741 - app.api.endpoints.db - INFO - API request to get workout templates for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-16 13:59:04,741 - app.services.db.workout_service - INFO - Getting workout templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12a37f770>
-2025-08-16 13:59:05,022 - app.services.db.workout_service - INFO - Retrieved 18 templates for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12a37f770>
-2025-08-16 13:59:05,030 - app.main - INFO - Response status: 200
-2025-08-16 13:59:05,485 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,486 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
-2025-08-16 13:59:05,486 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,486 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
-2025-08-16 13:59:05,487 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,629 - app.core.utils.conversation_attachments - INFO - Successfully loaded 0 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,629 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
-2025-08-16 13:59:05,629 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.14s - 0 messages, 1 bundles
-2025-08-16 13:59:05,633 - app.services.chains.base_conversation_chain - INFO - Loaded 0 messages into conversation history
-2025-08-16 13:59:05,633 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-16 13:59:05,633 - app.services.llm.workout_analysis - INFO - New conversation with workout data - sending proactive analysis
-2025-08-16 13:59:05,634 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
-2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
-
-Current workout data context:
-Available workout data:
-{
-  "metadata": {
-    "total_workouts": 11,
-    "total_exercises": 30,
-    "date_range": {
-      "start": "2025-08-15T13:44:14.21+00:00",
-      "end": "2025-08-16T12:58:25.085+00:00"
-    },
-    "exercises_included": [
-      "Ab Wheel Rollout",
-      "Arnold Press",
-      "Barbell Bench Press",
-      "Barbell Skull Crusher",
-      "Chin-Up",
-      "Preacher Curl",
-      "Running"
-    ],
-    "analysis_errors": []
-  },
-  "performance_summary": {
-    "strength_top_performers": [
-      {
-        "name": "Arnold Press",
-        "change": 0.0,
-        "last_value": 34.92,
-        "first_value": 34.92,
-        "definition_id": "0d669895-ab29-4a87-a293-99b77950a5c4",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Barbell Skull Crusher",
-        "change": 0.0,
-        "last_value": 57.22,
-        "first_value": 57.22,
-        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Barbell Bench Press",
-        "change": 0.0,
-        "last_value": 106.43,
-        "first_value": 106.43,
-        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
-        "change_percent": 0.0
-      }
-    ],
-    "volume_top_performers": [
-      {
-        "name": "Arnold Press",
-        "change": 0.0,
-        "last_value": 600.0,
-        "first_value": 600.0,
-        "definition_id": "0d669895-ab29-4a87-a293-99b77950a5c4",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Barbell Skull Crusher",
-        "change": 0.0,
-        "last_value": 2400.0,
-        "first_value": 2400.0,
-        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Barbell Bench Press",
-        "change": 0.0,
-        "last_value": 2040.0,
-        "first_value": 2040.0,
-        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
-        "change_percent": 0.0
-      }
-    ],
-    "frequency_performers": []
-  },
-  "consistency_analysis": {
-    "avg_gap": 0.0,
-    "variance": null
-  },
-  "correlation_summary": {
-    "significant_count": 0,
-    "total_analyzed": 0,
-    "top_correlations": [],
-    "data_quality": [
-      "Insufficient weekly data for Arnold Press strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Preacher Curl strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Barbell Skull Crusher strength (1 weeks, need 4+)"
-    ]
-  },
-  "recent_workouts_sample": [
-    {
-      "date": "2025-08-15",
-      "name": null,
-      "notes": ""
-    },
-    {
-      "date": "2025-08-15",
-      "name": "New workout name ",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": "",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": null,
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": "",
-      "notes": ""
-    }
-  ]
-}
-
-Analysis insights:
-
-CONSISTENCY METRICS:
-- Average gap between workouts: 0.0 days
-- Workout frequency variance: Not calculated
-
-TOP PERFORMERS:
-- Strength gains: No significant strength gains detected
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Frequency data not available
-
-CORRELATION INSIGHTS:
-0 significant correlations found from 0 exercise pairs analyzed
-• No correlation patterns detected
-
-WORKOUT SUMMARY:
-- Total workouts analyzed: 11
-- Exercise variety: 7 different exercises
-
-2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
-2025-08-16 13:59:05,635 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-16 13:59:05,657 - app.main - INFO - Request: GET /db/conversations/959461a8-b16a-4284-9a79-459585cb4c62/messages
-2025-08-16 13:59:05,660 - app.api.endpoints.db - INFO - API request to get messages for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,660 - app.services.db.message_service - INFO - Getting messages for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:05,917 - app.services.db.message_service - INFO - Retrieved 0 messages
-2025-08-16 13:59:05,918 - app.main - INFO - Response status: 200
-2025-08-16 13:59:10,010 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, let's dive into your workout data and see what we've got! It's awesome that you're tracking your progress – that's the first step to making real gains.
-
-From what I'm seeing here, you've been putting in some serious work! You've logged **', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:10,508 - app.services.chains.base_conversation_chain - INFO - Chunk: content='11 workouts** with **7 different exercises** in a very short timeframe, just **two days** (August 15th and 16th). That's fantastic dedication right out of the gate!
-
-Here's the breakdown:
-
-*   **Activity Snapshot:** You've been hitting it', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-16 22:17:28,057 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:28,063 - app.main - INFO - Response status: 404
+2025-08-16 22:17:28,489 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:28,490 - app.main - INFO - Response status: 404
+2025-08-16 22:17:28,986 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:28,987 - app.main - INFO - Response status: 404
+2025-08-16 22:17:29,451 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:29,480 - app.main - INFO - Response status: 404
+2025-08-16 22:17:29,703 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:29,704 - app.main - INFO - Response status: 404
+2025-08-16 22:17:30,118 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:30,119 - app.main - INFO - Response status: 404
+2025-08-16 22:17:30,410 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:30,410 - app.main - INFO - Response status: 404
+2025-08-16 22:17:30,638 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:30,639 - app.main - INFO - Response status: 404
+2025-08-16 22:17:30,818 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:30,819 - app.main - INFO - Response status: 404
+2025-08-16 22:17:30,997 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:30,998 - app.main - INFO - Response status: 404
+2025-08-16 22:17:31,298 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:17:31,300 - app.main - INFO - Response status: 404
+2025-08-16 22:23:06,989 - app - INFO - Logging has been set up
+2025-08-16 22:23:06,989 - app.main - INFO - Application starting
+2025-08-16 22:23:06,989 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:23:06,989 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:23:06,990 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:25:52,062 - app - INFO - Logging has been set up
+2025-08-16 22:25:52,062 - app.main - INFO - Application starting
+2025-08-16 22:25:52,062 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:25:52,062 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:25:52,062 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:27:43,427 - app - INFO - Logging has been set up
+2025-08-16 22:27:43,427 - app.main - INFO - Application starting
+2025-08-16 22:27:43,427 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:27:43,427 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:27:43,427 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:28:17,760 - app - INFO - Logging has been set up
+2025-08-16 22:28:17,760 - app.main - INFO - Application starting
+2025-08-16 22:28:17,760 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:28:17,760 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:28:17,760 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:28:31,956 - app - INFO - Logging has been set up
+2025-08-16 22:28:31,956 - app.main - INFO - Application starting
+2025-08-16 22:28:31,957 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:28:31,957 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:28:31,957 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:28:36,816 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:36,820 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
+2025-08-16 22:28:36,820 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:36,820 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb (check took 0.00s)
+2025-08-16 22:28:36,820 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:37,123 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:37,124 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb (expires in 30 min)
+2025-08-16 22:28:37,124 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.30s - 1 messages, 1 bundles
+2025-08-16 22:28:38,038 - app.services.chains.base_conversation_chain - INFO - Loaded 1 messages into conversation history
+2025-08-16 22:28:38,039 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
+2025-08-16 22:28:38,039 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 1 messages and 1 bundles
+2025-08-16 22:28:41,363 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:41,365 - app.api.endpoints.db - INFO - API request to delete conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:28:41,365 - app.api.endpoints.db - ERROR - Error deleting conversation: ConversationService.delete_conversation() missing 1 required positional argument: 'jwt_token'
+2025-08-16 22:28:41,365 - app.main - INFO - Response status: 500
+2025-08-16 22:29:03,328 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:29:03,334 - app.api.endpoints.db - INFO - API request to delete conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:29:03,334 - app.api.endpoints.db - ERROR - Error deleting conversation: ConversationService.delete_conversation() missing 1 required positional argument: 'jwt_token'
+2025-08-16 22:29:03,334 - app.main - INFO - Response status: 500
+2025-08-16 22:30:17,349 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1012, None)
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1012, None)
+2025-08-16 22:30:20,189 - app - INFO - Logging has been set up
+2025-08-16 22:30:20,189 - app.main - INFO - Application starting
+2025-08-16 22:30:20,189 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:30:20,189 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:30:20,189 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:30:44,036 - app - INFO - Logging has been set up
+2025-08-16 22:30:44,037 - app.main - INFO - Application starting
+2025-08-16 22:30:44,037 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:30:44,037 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:30:44,037 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:30:55,132 - app - INFO - Logging has been set up
+2025-08-16 22:30:55,132 - app.main - INFO - Application starting
+2025-08-16 22:30:55,132 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:30:55,132 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:30:55,132 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:30:59,958 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:30:59,960 - app.api.endpoints.db - INFO - API request to delete conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:30:59,960 - app.api.endpoints.db - ERROR - Error deleting conversation: ConversationService.delete_conversation() missing 1 required positional argument: 'jwt_token'
+2025-08-16 22:30:59,961 - app.main - INFO - Response status: 500
+2025-08-16 22:33:26,925 - app - INFO - Logging has been set up
+2025-08-16 22:33:26,925 - app.main - INFO - Application starting
+2025-08-16 22:33:26,925 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:33:26,925 - app.main - INFO - SUPABASE_URL present: True

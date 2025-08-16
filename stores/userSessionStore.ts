@@ -7,6 +7,16 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
+function getUserPreferredUnits() {
+  const { userProfile } = useUserStore.getState();
+  const isImperial = userProfile?.is_imperial ?? false;
+
+  return {
+    weight: isImperial ? ("lbs" as const) : ("kg" as const),
+    distance: isImperial ? ("mi" as const) : ("km" as const),
+  };
+}
+
 interface UserSessionState {
   // Session state
   currentWorkout: CompleteWorkout | null;
@@ -200,11 +210,26 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       throw new Error("No user profile found");
     }
 
-    // 1. ALWAYS create new workout record (for history/analysis)
+    // Get user's preferred units
+    const isImperial = userProfile.is_imperial ?? false;
+    const preferredUnits = {
+      weight: isImperial ? ("lbs" as const) : ("kg" as const),
+      distance: isImperial ? ("mi" as const) : ("km" as const),
+    };
+
+    // 1. ALWAYS create new workout record (for history/analysis) with normalized units
     const workoutForSaving = createWorkoutWithIds(
-      currentWorkout,
+      {
+        ...currentWorkout,
+        workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
+          ...exercise,
+          weight_unit: preferredUnits.weight,
+          distance_unit: preferredUnits.distance,
+        })),
+      },
       userProfile.user_id.toString()
     );
+
     const savedWorkout = await workoutService.saveCompletedWorkout(
       userProfile.user_id.toString(),
       { ...workoutForSaving, notes: "" }
@@ -231,7 +256,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     });
 
     if (existingTemplate) {
-      // Update existing template with latest version
+      // Update existing template with latest version (also with normalized units)
       console.log(
         "[UserSession] Updating existing template:",
         existingTemplate.id
@@ -241,6 +266,11 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
         ...currentWorkout,
         id: existingTemplate.id,
         updated_at: new Date().toISOString(),
+        workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
+          ...exercise,
+          weight_unit: preferredUnits.weight,
+          distance_unit: preferredUnits.distance,
+        })),
       });
     }
     // If no existing template found, savedWorkout becomes the new template automatically
@@ -278,7 +308,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     // 5. Refresh dashboard
     useDashboardStore.getState().refreshDashboard();
   },
-
   setPendingImage: (imageId) => {
     console.log("[UserSession] Setting pending image:", imageId);
     set({ pendingImageId: imageId });

@@ -9,6 +9,7 @@ interface WorkoutImageProps {
   height?: number;
   borderRadius?: number;
   fallbackText?: string;
+  imageId?: string;
 }
 
 export default function WorkoutImage({
@@ -16,14 +17,14 @@ export default function WorkoutImage({
   height = 150,
   borderRadius = 8,
   fallbackText = "No Image",
+  imageId: propImageId,
 }: WorkoutImageProps) {
   const { currentWorkout, pendingImageId } = useUserSessionStore();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Priority: pendingImageId > currentWorkout.image_id
-  const imageId = pendingImageId || currentWorkout?.image_id;
-
+  const imageId = propImageId || pendingImageId || currentWorkout?.image_id;
   useEffect(() => {
     const loadImageUrl = async () => {
       if (imageId) {

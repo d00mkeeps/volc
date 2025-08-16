@@ -1,58 +1,112 @@
-2025-08-16 13:57:30,634 - app.services.db.workout_service - INFO - Retrieved 17 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x12a37fb60>
-2025-08-16 13:57:30,644 - app.main - INFO - Response status: 200
-2025-08-16 13:58:25,419 - app.main - INFO - Request: POST /db/workouts
-2025-08-16 13:58:25,425 - app.api.endpoints.db - INFO - API request to create workout: 
-2025-08-16 13:58:25,426 - app.services.db.workout_service - INFO - Creating workout:  for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-16 13:58:25,426 - app.services.db.workout_service - INFO - Inserting workout with data: 
-2025-08-16 13:58:25,744 - app.services.db.workout_service - INFO - Workout created with ID: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:58:25,745 - app.services.db.workout_service - INFO - Creating 2 exercises for workout: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:58:25,745 - app.services.db.workout_service - INFO - Creating exercise 1/2: Barbell Skull Crusher
-2025-08-16 13:58:25,832 - app.services.db.workout_service - INFO - Exercise created: Barbell Skull Crusher with ID: 67bb6d69-7ef7-4ed8-8294-586b06e44ea6
-2025-08-16 13:58:26,046 - app.services.db.workout_service - INFO - Creating exercise 2/2: Preacher Curl
-2025-08-16 13:58:26,125 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 69308013-95ca-4304-b9ec-8f81b8dd67ea
-2025-08-16 13:58:26,639 - app.services.db.workout_service - INFO - Workout creation complete for ID: 28f72f21-6d12-45d0-b44d-b149d78c1fec
-2025-08-16 13:58:26,640 - app.main - INFO - Response status: 200
-2025-08-16 13:58:27,053 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-16 13:58:27,056 - app.services.db.conversation_service - INFO - Creating conversation for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-16 13:58:27,330 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': '959461a8-b16a-4284-9a79-459585cb4c62', 'user_id': '1b6aebb0-1107-42fc-97f2-892cc56b706b', 'title': 'Analysis - Aug 16', 'config_name': 'workout-analysis', 'created_at': '2025-08-16T12:58:27.329317+00:00', 'updated_at': '2025-08-16T12:58:27.329317+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
-2025-08-16 13:58:27,331 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:58:27,331 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 70187cf5-07a7-4d05-be37-219430d5b9d1 for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:58:27,599 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 70187cf5-07a7-4d05-be37-219430d5b9d1
-2025-08-16 13:58:27,600 - app.services.workout_analysis_service - INFO - Created empty bundle: 70187cf5-07a7-4d05-be37-219430d5b9d1
-2025-08-16 13:58:27,600 - app.services.db.analysis_service - INFO - Updating bundle 70187cf5-07a7-4d05-be37-219430d5b9d1 status to: in_progress
-2025-08-16 13:58:27,889 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 70187cf5-07a7-4d05-be37-219430d5b9d1 -> in_progress
-2025-08-16 13:58:27,890 - app.services.db.workout_service - INFO - Calling RPC for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b, definitions: ['bbb2acc5-935c-4fab-ab74-eabc6cf94eec', 'f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa']
-2025-08-16 13:58:28,204 - app.services.db.workout_service - INFO - RPC returned: 11 workouts
-2025-08-16 13:58:28,204 - app.services.workout_analysis_service - INFO - Processing analysis for 11 workouts
-2025-08-16 13:58:28,205 - app.services.workout_analysis.main_processor - INFO - Processing bundle 70187cf5-07a7-4d05-be37-219430d5b9d1 with 11 workouts
-2025-08-16 13:58:28,205 - app.services.workout_analysis.calc.strength - INFO - Found 4 exercises with strength data, returning top 3
-2025-08-16 13:58:28,205 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 4 exercises
-2025-08-16 13:58:28,205 - app.services.workout_analysis.calc.volume - INFO - Found 4 exercises with volume data, returning top 3
-2025-08-16 13:58:28,206 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 4 exercises
-2025-08-16 13:58:28,206 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.1, variance=0.03026624904306909
-2025-08-16 13:58:28,275 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 70187cf5-07a7-4d05-be37-219430d5b9d1
-2025-08-16 13:58:28,275 - app.services.db.analysis_service - INFO - Updating analysis bundle: 70187cf5-07a7-4d05-be37-219430d5b9d1
-2025-08-16 13:58:28,525 - app.services.db.analysis_service - INFO - Bundle updated successfully: 70187cf5-07a7-4d05-be37-219430d5b9d1
-2025-08-16 13:58:28,526 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:58:28,526 - app.main - INFO - Response status: 200
-2025-08-16 13:58:39,481 - app.main - INFO - Request: POST /images/temp-upload
-2025-08-16 13:58:39,486 - app.api.endpoints.images - INFO - User ID from endpoint: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-16 13:58:39,486 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
-2025-08-16 13:58:39,486 - app.api.endpoints.images - INFO - JWT token length: 875
-2025-08-16 13:58:39,486 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
-2025-08-16 13:58:39,640 - app.api.endpoints.images - INFO - User client created successfully: True
-2025-08-16 13:58:39,772 - app.api.endpoints.images - INFO - Test query successful: True
-2025-08-16 13:58:39,773 - app.services.db.image_service - INFO - Creating temp image with path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png
-2025-08-16 13:58:39,773 - app.services.db.image_service - INFO - User ID to insert: 1b6aebb0-1107-42fc-97f2-892cc56b706b (type: <class 'str'>)
-2025-08-16 13:58:39,944 - app.services.db.image_service - INFO - About to insert: {'file_path': '1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png', 'user_id': '1b6aebb0-1107-42fc-97f2-892cc56b706b', 'status': 'temporary', 'expires_at': '2025-08-17T12:58:39.944152'}
-2025-08-16 13:58:40,089 - app.services.db.image_service - INFO - Created temp image record with ID: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:58:40,089 - app.services.db.image_service - INFO - About to create signed URL...
-2025-08-16 13:58:40,343 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-08-16 13:58:40,345 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvN2JlMDdkMDQtYjBjMi00ODUzLTgwNjgtMGM0NTYxN2RiYWNiLnBuZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTM0OTEyMCwiZXhwIjoxNzU1MzU2MzIwfQ.yO28wzmiRexf2UriYHhPv4rlIT40sjSELdb2_ONqNh8', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvN2JlMDdkMDQtYjBjMi00ODUzLTgwNjgtMGM0NTYxN2RiYWNiLnBuZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTM0OTEyMCwiZXhwIjoxNzU1MzU2MzIwfQ.yO28wzmiRexf2UriYHhPv4rlIT40sjSELdb2_ONqNh8', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvN2JlMDdkMDQtYjBjMi00ODUzLTgwNjgtMGM0NTYxN2RiYWNiLnBuZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTM0OTEyMCwiZXhwIjoxNzU1MzU2MzIwfQ.yO28wzmiRexf2UriYHhPv4rlIT40sjSELdb2_ONqNh8', 'path': '1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png'}
-2025-08-16 13:58:40,345 - app.services.db.image_service - INFO - Successfully created upload URL
-2025-08-16 13:58:40,345 - app.services.db.image_service - INFO - Returning response: {'image_id': 'cd4f1e1e-eec4-42be-9e8a-5a6de8056910', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFiNmFlYmIwLTExMDctNDJmYy05N2YyLTg5MmNjNTZiNzA2YiIsInVybCI6ImltYWdlcy8xYjZhZWJiMC0xMTA3LTQyZmMtOTdmMi04OTJjYzU2YjcwNmIvN2JlMDdkMDQtYjBjMi00ODUzLTgwNjgtMGM0NTYxN2RiYWNiLnBuZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NTM0OTEyMCwiZXhwIjoxNzU1MzU2MzIwfQ.yO28wzmiRexf2UriYHhPv4rlIT40sjSELdb2_ONqNh8', 'file_path': '1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png'}
-2025-08-16 13:58:40,346 - app.main - INFO - Response status: 200
-2025-08-16 13:58:46,651 - app.main - INFO - Request: GET /images/cd4f1e1e-eec4-42be-9e8a-5a6de8056910/url
-2025-08-16 13:58:46,652 - app.api.endpoints.images - INFO - API request to get image URL: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:58:46,652 - app.services.db.image_service - INFO - Getting image URL for ID: cd4f1e1e-eec4-42be-9e8a-5a6de8056910
-2025-08-16 13:58:46,905 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/7be07d04-b0c2-4853-8068-0c45617dbacb.png
+2025-08-16 21:56:59,436 - app.services.chains.base_conversation_chain - ERROR - Error processing message: 503 recvmsg:Connection reset by peer
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/google/api_core/grpc_helpers_async.py", line 77, in wait_for_connection
+    await self._call.wait_for_connection()
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/grpc/aio/_call.py", line 659, in wait_for_connection
+    await self._raise_for_status()
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/grpc/aio/_call.py", line 272, in _raise_for_status
+    raise _create_rpc_error(
+        await self.initial_metadata(), await self._cython_call.status()
+    )
+grpc.aio._call.AioRpcError: <AioRpcError of RPC that terminated with:
+	status = StatusCode.UNAVAILABLE
+	details = "recvmsg:Connection reset by peer"
+	debug_error_string = "UNKNOWN:Error received from peer  {grpc_status:14, grpc_message:"recvmsg:Connection reset by peer"}"
+>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/chains/base_conversation_chain.py", line 46, in process_message
+    async for chunk in self.chat_model.astream(input=formatted_prompt):
+    ...<8 lines>...
+            }
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/langchain_core/language_models/chat_models.py", line 615, in astream
+    async for chunk in self._astream(
+    ...<11 lines>...
+        yield chunk.message
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/langchain_google_vertexai/chat_models.py", line 1853, in _astream
+    async for response_chunk in await response_iter:
+                                ^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/langchain_google_vertexai/chat_models.py", line 750, in _acompletion_with_retry
+    return await _completion_with_retry_inner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 189, in async_wrapped
+    return await copy(fn, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 111, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 153, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/_utils.py", line 99, in inner
+    return call(*args, **kwargs)
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 418, in exc_check
+    raise retry_exc.reraise()
+          ~~~~~~~~~~~~~~~~~^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/__init__.py", line 185, in reraise
+    raise self.last_attempt.result()
+          ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.3/Frameworks/Python.framework/Versions/3.13/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/tenacity/asyncio/__init__.py", line 114, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/langchain_google_vertexai/chat_models.py", line 745, in _completion_with_retry_inner
+    return await generation_method(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/google/api_core/grpc_helpers_async.py", line 178, in error_remapped_callable
+    await call.wait_for_connection()
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/google/api_core/grpc_helpers_async.py", line 79, in wait_for_connection
+    raise exceptions.from_grpc_error(rpc_error) from rpc_error
+google.api_core.exceptions.ServiceUnavailable: 503 recvmsg:Connection reset by peer
+2025-08-16 22:01:59,483 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, 'Normal closure')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, 'Normal closure')
+2025-08-16 22:07:35,155 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-16 22:07:35,161 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:07:35,161 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d58f0e0>
+2025-08-16 22:07:35,526 - app.services.db.workout_service - INFO - Retrieved 24 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d58f0e0>
+2025-08-16 22:07:35,550 - app.main - INFO - Response status: 200
+2025-08-16 22:08:19,476 - app.main - INFO - Request: GET /api/dashboard
+2025-08-16 22:08:19,483 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:19,484 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:19,484 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:19,830 - app.services.db.workout_service - INFO - Retrieved 24 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:19,830 - app.services.db.dashboard_service - INFO - Processing 24 workouts for dashboard analytics
+2025-08-16 22:08:19,964 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-16 22:08:20,103 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-16 22:08:20,225 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-16 22:08:20,436 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-16 22:08:20,437 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:20,437 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:20,440 - app.main - INFO - Response status: 200
+2025-08-16 22:08:20,441 - app.main - INFO - Request: GET /db/user-profile
+2025-08-16 22:08:20,442 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:20,443 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:20,696 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:20,697 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-16 22:08:20,698 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-16 22:08:20,963 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-16 22:08:20,968 - app.main - INFO - Response status: 200
+2025-08-16 22:08:20,968 - app.main - INFO - Response status: 200
+2025-08-16 22:08:21,176 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-16 22:08:21,177 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-16 22:08:21,177 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d58f0e0>
+2025-08-16 22:08:21,473 - app.services.db.workout_service - INFO - Retrieved 24 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13d58f0e0>
+2025-08-16 22:08:21,480 - app.main - INFO - Response status: 200

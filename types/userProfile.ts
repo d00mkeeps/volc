@@ -21,7 +21,6 @@ export interface UserPreferences {
 }
 
 export interface UserProfile {
-  // Existing fields
   first_name?: string;
   last_name?: string;
   is_imperial: boolean;

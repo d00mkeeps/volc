@@ -1,53 +1,78 @@
-2025-08-16 13:59:10,937 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' hard with exercises like **Arnold Press, Barbell Skull Crusher, and Barbell Bench Press**, which seem to be your go-to's for strength and volume right now. You've also included **Ab Wheel Rollouts, Chin-Ups, Preacher Curls, and even some Running** – great', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:11,128 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' variety!
-
-*   **Strength & Volume:** For exercises like Arnold Press, Barbell Skull Crusher, and Barbell Bench Press, you've got some solid numbers logged. For example, your last recorded Barbell Bench Press was at 106.43 units, and you've put in ', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:11,503 - app.services.chains.base_conversation_chain - INFO - Chunk: content='2040 units of volume there. That's a great foundation!
-
-*   **Consistency & Frequency:** The data shows you've been incredibly active within this two-day window, logging multiple workouts. That's some serious commitment!
-
-**Now, here's the key thing to understand:** Because', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:12,124 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' this data covers such a short period (just two days), we don't have enough information *yet* to see long-term trends, strength gains, or volume increases over time. Think of it like trying to predict the weather for the whole year based on just two days – it's just not enough data!', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:12,364 - app.services.chains.base_conversation_chain - INFO - Chunk: content='
-
-The system is telling us:
-*   "Insufficient weekly data for Arnold Press strength (1 weeks, need 4+)"
-*   "Insufficient weekly data for Preacher Curl strength (1 weeks, need 4+)"
-*   "Insufficient weekly data for Barbell Skull Crusher strength (1 weeks, need', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:13,505 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' 4+)"
-
-This just means we need more time and more workouts logged to really start seeing those exciting progress charts fill up!
-
-**My Coaching Takeaway for You:**
-
-You've got incredible momentum and consistency in these first couple of days. That's a huge win! To truly unlock the power of this tracking,', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:13,589 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' keep doing exactly what you're doing:
-
-1.  **Keep Logging:** The more workouts you log over the coming weeks and months, the clearer your progress will become. We'll start seeing those strength numbers climb and your volume increase!
-2.  **Focus on Form:** As you continue, always', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:14,224 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' prioritize good form to prevent injuries and ensure you're getting the most out of every rep.
-3.  **Listen to Your Body:** Even with great enthusiasm, remember to allow for recovery.
-
-You're off to a fantastic start! Keep up the amazing work, and let's watch those numbers grow as', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-16 13:59:14,296 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' you build a stronger, fitter you!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-16 13:59:14,306 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,445 - app.services.db.message_service - INFO - Server message saved with ID: a293f5f7-25ef-4da3-9625-a5214c8281f6
-2025-08-16 13:59:14,445 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,445 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,446 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,446 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
-2025-08-16 13:59:14,446 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.13s - 1 messages, 1 bundles
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,577 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (check took 0.00s)
-2025-08-16 13:59:14,577 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,706 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 959461a8-b16a-4284-9a79-459585cb4c62 (expires in 30 min)
-2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.13s - 1 messages, 1 bundles
-2025-08-16 13:59:14,706 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 959461a8-b16a-4284-9a79-459585cb4c62
-2025-08-16 13:59:14,707 - app.services.llm.workout_analysis - INFO - Saved proactive AI message for conversation 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 22:33:26,925 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:34:15,225 - app - INFO - Logging has been set up
+2025-08-16 22:34:15,225 - app.main - INFO - Application starting
+2025-08-16 22:34:15,225 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-16 22:34:15,225 - app.main - INFO - SUPABASE_URL present: True
+2025-08-16 22:34:15,225 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-16 22:34:16,895 - app.main - INFO - Request: DELETE /db/conversations/865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:34:16,896 - app.api.endpoints.db - INFO - API request to delete conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:34:16,896 - app.services.db.conversation_service - INFO - Deleting conversation: 865b15ac-9ce2-4676-ae37-374a9dc890fb
+2025-08-16 22:34:17,372 - app.main - INFO - Response status: 200
+2025-08-16 22:34:18,208 - app.main - INFO - Request: DELETE /db/conversations/d09b28bc-5479-434a-b9c2-07039167238d
+2025-08-16 22:34:18,209 - app.api.endpoints.db - INFO - API request to delete conversation: d09b28bc-5479-434a-b9c2-07039167238d
+2025-08-16 22:34:18,209 - app.services.db.conversation_service - INFO - Deleting conversation: d09b28bc-5479-434a-b9c2-07039167238d
+2025-08-16 22:34:18,584 - app.main - INFO - Response status: 200
+2025-08-16 22:34:18,837 - app.main - INFO - Request: DELETE /db/conversations/bf4c5079-6dbb-4c0e-8eda-e99703d76881
+2025-08-16 22:34:18,838 - app.api.endpoints.db - INFO - API request to delete conversation: bf4c5079-6dbb-4c0e-8eda-e99703d76881
+2025-08-16 22:34:18,838 - app.services.db.conversation_service - INFO - Deleting conversation: bf4c5079-6dbb-4c0e-8eda-e99703d76881
+2025-08-16 22:34:19,188 - app.main - INFO - Response status: 200
+2025-08-16 22:34:19,259 - app.main - INFO - Request: DELETE /db/conversations/959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 22:34:19,260 - app.api.endpoints.db - INFO - API request to delete conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 22:34:19,260 - app.services.db.conversation_service - INFO - Deleting conversation: 959461a8-b16a-4284-9a79-459585cb4c62
+2025-08-16 22:34:19,612 - app.main - INFO - Response status: 200
+2025-08-16 22:34:19,613 - app.main - INFO - Request: DELETE /db/conversations/ccc4f88e-96dd-4abc-b5ff-ef64c22faa45
+2025-08-16 22:34:19,614 - app.api.endpoints.db - INFO - API request to delete conversation: ccc4f88e-96dd-4abc-b5ff-ef64c22faa45
+2025-08-16 22:34:19,614 - app.services.db.conversation_service - INFO - Deleting conversation: ccc4f88e-96dd-4abc-b5ff-ef64c22faa45
+2025-08-16 22:34:19,910 - app.main - INFO - Response status: 200
+2025-08-16 22:34:19,911 - app.main - INFO - Request: DELETE /db/conversations/e294245c-5144-41c7-b5ef-78ea7a2e4ed1
+2025-08-16 22:34:19,912 - app.api.endpoints.db - INFO - API request to delete conversation: e294245c-5144-41c7-b5ef-78ea7a2e4ed1
+2025-08-16 22:34:19,912 - app.services.db.conversation_service - INFO - Deleting conversation: e294245c-5144-41c7-b5ef-78ea7a2e4ed1
+2025-08-16 22:34:20,202 - app.main - INFO - Request: DELETE /db/conversations/b8c188ec-4827-4755-bf5e-7f35bfcc8524
+2025-08-16 22:34:20,203 - app.api.endpoints.db - INFO - API request to delete conversation: b8c188ec-4827-4755-bf5e-7f35bfcc8524
+2025-08-16 22:34:20,203 - app.services.db.conversation_service - INFO - Deleting conversation: b8c188ec-4827-4755-bf5e-7f35bfcc8524
+2025-08-16 22:34:20,495 - app.main - INFO - Request: DELETE /db/conversations/13d75a7b-2df3-4f46-896b-85a7c0a618d0
+2025-08-16 22:34:20,496 - app.main - INFO - Request: DELETE /db/conversations/fff02899-9dbc-438b-8a2e-a73a032dfbf6
+2025-08-16 22:34:20,496 - app.main - INFO - Response status: 200
+2025-08-16 22:34:20,497 - app.api.endpoints.db - INFO - API request to delete conversation: 13d75a7b-2df3-4f46-896b-85a7c0a618d0
+2025-08-16 22:34:20,498 - app.services.db.conversation_service - INFO - Deleting conversation: 13d75a7b-2df3-4f46-896b-85a7c0a618d0
+2025-08-16 22:34:20,764 - app.api.endpoints.db - INFO - API request to delete conversation: fff02899-9dbc-438b-8a2e-a73a032dfbf6
+2025-08-16 22:34:20,764 - app.services.db.conversation_service - INFO - Deleting conversation: fff02899-9dbc-438b-8a2e-a73a032dfbf6
+2025-08-16 22:34:20,999 - app.main - INFO - Request: DELETE /db/conversations/39645b4e-ace0-4d3f-93e4-e1dc847935be
+2025-08-16 22:34:20,999 - app.main - INFO - Request: DELETE /db/conversations/65a397ec-8bf5-4e4c-9908-45e0468ca6b7
+2025-08-16 22:34:21,000 - app.main - INFO - Response status: 200
+2025-08-16 22:34:21,000 - app.api.endpoints.db - INFO - API request to delete conversation: 39645b4e-ace0-4d3f-93e4-e1dc847935be
+2025-08-16 22:34:21,000 - app.services.db.conversation_service - INFO - Deleting conversation: 39645b4e-ace0-4d3f-93e4-e1dc847935be
+2025-08-16 22:34:21,253 - app.api.endpoints.db - INFO - API request to delete conversation: 65a397ec-8bf5-4e4c-9908-45e0468ca6b7
+2025-08-16 22:34:21,253 - app.services.db.conversation_service - INFO - Deleting conversation: 65a397ec-8bf5-4e4c-9908-45e0468ca6b7
+2025-08-16 22:34:21,582 - app.main - INFO - Response status: 200
+2025-08-16 22:34:21,583 - app.main - INFO - Response status: 200
+2025-08-16 22:34:21,584 - app.main - INFO - Response status: 200
+2025-08-16 22:34:21,584 - app.main - INFO - Response status: 200
+2025-08-16 22:34:21,585 - app.main - INFO - Request: DELETE /db/conversations/8a182f0a-a224-4ec7-a24e-43273a8ed849
+2025-08-16 22:34:21,586 - app.api.endpoints.db - INFO - API request to delete conversation: 8a182f0a-a224-4ec7-a24e-43273a8ed849
+2025-08-16 22:34:21,586 - app.services.db.conversation_service - INFO - Deleting conversation: 8a182f0a-a224-4ec7-a24e-43273a8ed849
+2025-08-16 22:34:21,848 - app.main - INFO - Request: DELETE /db/conversations/8cf77b5a-d379-4514-b66a-1ee3c4e6f503
+2025-08-16 22:34:21,849 - app.api.endpoints.db - INFO - API request to delete conversation: 8cf77b5a-d379-4514-b66a-1ee3c4e6f503
+2025-08-16 22:34:21,849 - app.services.db.conversation_service - INFO - Deleting conversation: 8cf77b5a-d379-4514-b66a-1ee3c4e6f503
+2025-08-16 22:34:22,095 - app.main - INFO - Request: DELETE /db/conversations/6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-16 22:34:22,095 - app.main - INFO - Request: DELETE /db/conversations/9fa691f3-2545-410b-b143-3239a1645a59
+2025-08-16 22:34:22,095 - app.main - INFO - Response status: 200
+2025-08-16 22:34:22,096 - app.api.endpoints.db - INFO - API request to delete conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-16 22:34:22,096 - app.services.db.conversation_service - INFO - Deleting conversation: 6ff776c4-ca19-4ab5-bea1-347b3b5ea5f2
+2025-08-16 22:34:22,408 - app.api.endpoints.db - INFO - API request to delete conversation: 9fa691f3-2545-410b-b143-3239a1645a59
+2025-08-16 22:34:22,408 - app.services.db.conversation_service - INFO - Deleting conversation: 9fa691f3-2545-410b-b143-3239a1645a59
+2025-08-16 22:34:22,662 - app.main - INFO - Request: DELETE /db/conversations/2ff9f519-10e5-43c2-8977-9d6f43e7d27e
+2025-08-16 22:34:22,663 - app.main - INFO - Request: DELETE /db/conversations/dfe052e2-e2ae-4e3a-9834-b6abaf0e927e
+2025-08-16 22:34:22,663 - app.main - INFO - Response status: 200
+2025-08-16 22:34:22,664 - app.api.endpoints.db - INFO - API request to delete conversation: 2ff9f519-10e5-43c2-8977-9d6f43e7d27e
+2025-08-16 22:34:22,664 - app.services.db.conversation_service - INFO - Deleting conversation: 2ff9f519-10e5-43c2-8977-9d6f43e7d27e
+2025-08-16 22:34:22,947 - app.api.endpoints.db - INFO - API request to delete conversation: dfe052e2-e2ae-4e3a-9834-b6abaf0e927e
+2025-08-16 22:34:22,947 - app.services.db.conversation_service - INFO - Deleting conversation: dfe052e2-e2ae-4e3a-9834-b6abaf0e927e
+2025-08-16 22:34:23,229 - app.main - INFO - Response status: 200
+2025-08-16 22:34:23,234 - app.main - INFO - Response status: 200
+2025-08-16 22:34:23,238 - app.main - INFO - Response status: 200
+2025-08-16 22:34:23,238 - app.main - INFO - Response status: 200
+2025-08-16 22:34:23,239 - app.main - INFO - Request: DELETE /db/conversations/537591eb-ca39-49b0-9fea-6f0d68f467c5
+2025-08-16 22:34:23,243 - app.api.endpoints.db - INFO - API request to delete conversation: 537591eb-ca39-49b0-9fea-6f0d68f467c5
+2025-08-16 22:34:23,244 - app.services.db.conversation_service - INFO - Deleting conversation: 537591eb-ca39-49b0-9fea-6f0d68f467c5
+2025-08-16 22:34:23,490 - app.main - INFO - Response status: 200
