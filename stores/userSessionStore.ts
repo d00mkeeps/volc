@@ -5,7 +5,7 @@ import { workoutService } from "@/services/db/workout";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
-import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { imageService } from "@/services/api/imageService";
 
 function getUserPreferredUnits() {
   const { userProfile } = useUserStore.getState();
@@ -42,7 +42,13 @@ interface UserSessionState {
   pauseWorkout: () => void;
   resumeWorkout: () => void;
   togglePause: () => void;
-  finishWorkout: () => Promise<void>;
+  finishWorkout: () => void; // ← Now synchronous
+  saveCompletedWorkout: (metadata: {
+    name: string;
+    notes: string;
+    imageId?: string;
+  }) => Promise<CompleteWorkout>; // ← New
+  initializeAnalysisAndChat: () => Promise<any>;
   updateElapsedTime: () => void;
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
   updateExercise: (
@@ -200,15 +206,54 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     set({ currentWorkout: updatedWorkout });
   },
-
-  finishWorkout: async () => {
+  initializeAnalysisAndChat: async () => {
     const { currentWorkout } = get();
-    if (!currentWorkout) return;
+    if (!currentWorkout) {
+      throw new Error("No workout for analysis");
+    }
+
+    console.log("[UserSession] Initializing analysis and chat");
+
+    // Extract definition IDs for analysis
+    const definitionIds = currentWorkout.workout_exercises
+      .map((ex) => ex.definition_id)
+      .filter((id): id is string => Boolean(id));
+
+    if (definitionIds.length === 0) {
+      throw new Error("No exercises found for analysis");
+    }
+
+    // Start analysis and create conversation
+    const analysisResult = await useWorkoutAnalysisStore
+      .getState()
+      .initiateBackgroundAnalysis(definitionIds);
+
+    if (analysisResult?.conversation_id) {
+      set({ activeConversationId: analysisResult.conversation_id });
+      console.log(
+        "[UserSession] Analysis and chat initialized:",
+        analysisResult.conversation_id
+      );
+    }
+
+    return analysisResult;
+  },
+  saveCompletedWorkout: async (metadata: {
+    name: string;
+    notes: string;
+    imageId?: string;
+  }) => {
+    const { currentWorkout, pendingImageId } = get();
+    if (!currentWorkout) {
+      throw new Error("No workout to save");
+    }
 
     const userProfile = useUserStore.getState().userProfile;
     if (!userProfile?.user_id) {
       throw new Error("No user profile found");
     }
+
+    console.log("[UserSession] Saving completed workout with metadata");
 
     // Get user's preferred units
     const isImperial = userProfile.is_imperial ?? false;
@@ -217,96 +262,60 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       distance: isImperial ? ("mi" as const) : ("km" as const),
     };
 
-    // 1. ALWAYS create new workout record (for history/analysis) with normalized units
-    const workoutForSaving = createWorkoutWithIds(
-      {
-        ...currentWorkout,
-        workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
-          ...exercise,
-          weight_unit: preferredUnits.weight,
-          distance_unit: preferredUnits.distance,
-        })),
-      },
-      userProfile.user_id.toString()
-    );
+    // Create complete workout with metadata and normalized units
+    const workoutToSave: CompleteWorkout = {
+      ...currentWorkout,
+      name: metadata.name,
+      notes: metadata.notes,
+      image_id: metadata.imageId || pendingImageId || null,
+      workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
+        ...exercise,
+        weight_unit: preferredUnits.weight,
+        distance_unit: preferredUnits.distance,
+      })),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
+    // Single database save with complete data
     const savedWorkout = await workoutService.saveCompletedWorkout(
       userProfile.user_id.toString(),
-      { ...workoutForSaving, notes: "" }
+      workoutToSave
     );
 
-    // 2. Handle template deduplication
-    const { workouts } = useWorkoutStore.getState();
-    const currentDefIds = new Set(
-      currentWorkout.workout_exercises
-        .map((ex) => ex.definition_id)
-        .filter(Boolean)
-    );
+    // Handle image commit if needed
+    if (pendingImageId) {
+      const commitResult = await imageService.commitImage(pendingImageId);
+      if (!commitResult.success) {
+        throw new Error(commitResult.error || "Failed to commit image");
+      }
+      set({ pendingImageId: null });
+    }
 
-    const existingTemplate = Array.from(workouts.values()).find((workout) => {
-      const templateDefIds = new Set(
-        workout.workout_exercises.map((ex) => ex.definition_id).filter(Boolean)
-      );
+    // Update session with saved workout
+    set({ currentWorkout: savedWorkout });
 
-      // Same exercises regardless of order
-      return (
-        currentDefIds.size === templateDefIds.size &&
-        [...currentDefIds].every((id) => templateDefIds.has(id))
-      );
+    console.log("[UserSession] Workout saved successfully");
+    return savedWorkout;
+  },
+  finishWorkout: () => {
+    const { currentWorkout } = get();
+    if (!currentWorkout) {
+      throw new Error("No workout to finish");
+    }
+
+    console.log("[UserSession] Marking workout as completed");
+
+    // ONLY: Mark workout as completed in session (no DB save yet)
+    set({
+      isActive: false,
+      isPaused: false,
     });
 
-    if (existingTemplate) {
-      // Update existing template with latest version (also with normalized units)
-      console.log(
-        "[UserSession] Updating existing template:",
-        existingTemplate.id
-      );
-      const { updateWorkout } = useWorkoutStore.getState();
-      await updateWorkout(existingTemplate.id, {
-        ...currentWorkout,
-        id: existingTemplate.id,
-        updated_at: new Date().toISOString(),
-        workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
-          ...exercise,
-          weight_unit: preferredUnits.weight,
-          distance_unit: preferredUnits.distance,
-        })),
-      });
-    }
-    // If no existing template found, savedWorkout becomes the new template automatically
-
-    // 🔥 ENSURE: Update session with the actual saved workout
-    set({ currentWorkout: savedWorkout }); // Use savedWorkout, not partial update
-
-    // 3. Extract definition IDs for analysis
-    const definitionIds = savedWorkout.workout_exercises
-      .map((ex) => ex.definition_id)
-      .filter((id): id is string => Boolean(id));
-
-    // 4. Trigger analysis with definition IDs
-    if (definitionIds.length > 0) {
-      try {
-        const analysisResult = await useWorkoutAnalysisStore
-          .getState()
-          .initiateBackgroundAnalysis(definitionIds);
-
-        // Store conversation ID in session
-        if (analysisResult?.conversation_id) {
-          set({ activeConversationId: analysisResult.conversation_id });
-          console.log(
-            "[UserSession] Set active conversation:",
-            analysisResult.conversation_id
-          );
-        }
-
-        console.log("Analysis initiated successfully");
-      } catch (error) {
-        console.error("Analysis failed:", error);
-      }
-    }
-
-    // 5. Refresh dashboard
+    // Refresh dashboard for immediate UI feedback
     useDashboardStore.getState().refreshDashboard();
+
+    console.log("[UserSession] Workout marked as completed, ready for summary");
   },
   setPendingImage: (imageId) => {
     console.log("[UserSession] Setting pending image:", imageId);
@@ -358,19 +367,17 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     const now = new Date().toISOString();
     const newWorkout: CompleteWorkout = {
       ...template,
-      id: `temp-${Date.now()}`,
+      id: uuidv4(),
       user_id: userProfile.user_id.toString(),
       template_id: template.id,
       is_template: false,
       created_at: now,
       updated_at: now,
 
-      // 🔥 DON'T carry over template metadata
-      name: "", // Force user to set new name
-      notes: "", // Start with empty notes
-      image_id: null, // Don't carry over template image
+      name: "",
+      notes: "",
+      image_id: null,
 
-      // Reset workout exercise IDs and set states
       workout_exercises: template.workout_exercises.map((exercise, index) => ({
         ...exercise,
         id: `exercise-${Date.now()}-${index}`,
@@ -380,7 +387,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
             ...set,
             id: `set-${Date.now()}-${index}-${setIndex}`,
             exercise_id: `exercise-${Date.now()}-${index}`,
-            is_completed: false, // Reset completion status
+            is_completed: false,
           })
         ),
       })),

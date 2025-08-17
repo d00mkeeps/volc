@@ -17,6 +17,7 @@ interface WorkoutState {
   clearData: () => void;
 
   loadWorkouts: () => Promise<void>;
+  handleTemplateDeduplication: () => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (workout: CompleteWorkout) => Promise<void>;
   updateWorkout: (
@@ -94,6 +95,62 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     // Actions
     loadWorkouts: async () => {
       await loadWorkoutsData();
+    },
+
+    handleTemplateDeduplication: async () => {
+      const { workouts } = get();
+
+      // Filter for templates (completed workouts become templates)
+      const templates: CompleteWorkout[] = workouts.filter(
+        (w: CompleteWorkout) => w.is_template !== false
+      );
+
+      // Get last 10 templates (most recent)
+      const recentTemplates = templates
+        .sort(
+          (a: CompleteWorkout, b: CompleteWorkout) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+        .slice(0, 10);
+
+      // Group by normalized definition ID sets
+      const groups = new Map<string, CompleteWorkout[]>();
+
+      recentTemplates.forEach((template: CompleteWorkout) => {
+        const definitionIds = template.workout_exercises
+          .map((ex: any) => ex.definition_id) // ← Fixed type annotation
+          .filter(Boolean)
+          .sort();
+
+        const key = definitionIds.join(",");
+        const existingGroup = groups.get(key);
+        if (!existingGroup) {
+          groups.set(key, []);
+        }
+        groups.get(key)!.push(template); // ← Non-null assertion since we just created it
+      });
+
+      // For each group with duplicates, keep newest and delete others
+      for (const [key, templateGroup] of groups) {
+        if (templateGroup.length > 1) {
+          const sorted = templateGroup.sort(
+            (a: CompleteWorkout, b: CompleteWorkout) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          );
+          const [newest, ...duplicates] = sorted;
+
+          console.log(
+            `[WorkoutStore] Deduplicating ${duplicates.length} template duplicates, keeping:`,
+            newest.name
+          );
+
+          // Delete the duplicates
+          for (const duplicate of duplicates) {
+            await get().deleteWorkout(duplicate.id);
+          }
+        }
+      }
     },
 
     getWorkout: async (workoutId: string) => {
@@ -255,6 +312,8 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
         const templateList = await workoutService.getTemplates(session.user.id);
         set({ templates: templateList });
+
+        await get().handleTemplateDeduplication();
       } catch (err) {
         console.error("[WorkoutStore] Error fetching templates:", err);
         set({

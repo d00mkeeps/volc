@@ -82,6 +82,7 @@ export function WorkoutCompletionModal({
           >
             <ScrollView flex={1} padding="$3">
               <WorkoutSummarySlide
+                onSkip={handleClose}
                 onContinue={handleContinueToChat}
                 showContinueButton={true}
               />
