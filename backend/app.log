@@ -1,43 +1,20 @@
-2025-08-17 15:56:18,088 - app.services.chains.base_conversation_chain - INFO - Content: Hey there, fitness warrior! Let's dive into your recent workout data and see what awesome progress you've been making!
-
-First off, you've been absolutely crushing it with **19 workouts** packed into just a couple of days – that's some serious dedication and commitment! You've also hit **7 different exercises**, which is great for a well-rounded approach to your training.
-
-Now, let's talk **strength gains** – and this is where you're really shining! Your **Preacher Curl** strength is up by a fantastic **11%**! That's incredible progress in such a short timeframe. It shows your muscles are adapting and getting stronger. Keep that momentum going – it's like watching a little hummingbird gain strength to hover even more gracefully!
-
-On the **volume** side, it looks like your overall volume for Preacher Curls actually saw a slight decrease, even with the strength gains. This can sometimes happen if you're focusing on heavier weights for fewer reps, which is a valid strategy for strength! For other exercises like Arnold Press and Barbell Bench Press, your volume has been consistent. We'll want to keep an eye on overall volume as you progress to ensure you're providing enough stimulus for growth across the board.
-
-When it comes to **consistency**, the data shows an average gap of 0.0 days between workouts, which is pretty wild! It looks like you're either doing multiple sessions a day or just logging them super close together. That's some serious commitment! Just remember, recovery is key too, so make sure you're listening to your body.
-
-One thing to note is that because this data covers a very short period (just a couple of days), we don't have enough weekly data yet to see long-term trends or correlations between exercises. Think of it like trying to predict a bird's migration pattern from just one day of observation – you need more time to see the full flight path! As you log more workouts, we'll be able to unlock even deeper insights into how everything is connected.
-
-I also spotted a workout named 'Bluebird' – love the creativity there! Naming your workouts can be a fun way to stay motivated.
-
-**My take-home for you:**
-*   **Celebrate those Preacher Curl gains!** You're clearly getting stronger.
-*   **Keep logging!** The more data we have over time, the better we can analyze your progress and fine-tune your program.
-*   **Consider your overall volume.** While strength is up, ensure you're challenging yourself with enough total work for all muscle groups.
-*   **Listen to your body for recovery.** With such frequent sessions, make sure you're getting enough rest and nutrition.
-
-You're off to a fantastic start! Keep up the amazing work, and let's keep building that stronger, fitter you!
-2025-08-17 15:56:18,091 - app.services.chains.base_conversation_chain - INFO - 
-Message 4 (HumanMessage):
-2025-08-17 15:56:18,091 - app.services.chains.base_conversation_chain - INFO - Content: How fantastic! The refactor works 0 shot
-2025-08-17 15:56:18,091 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-17 15:56:20,321 - app.services.chains.base_conversation_chain - INFO - Chunk: content='That's absolutely fantastic to hear! It sounds like you've hit a perfect stride, like a magnificent **blue** jay taking flight with zero effort!
-
-When everything just clicks into place like that, it's truly a beautiful thing. It's like when you've refined your form on an exercise so', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:20,630 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' much that every rep feels smooth and powerful, or when your nutrition plan just perfectly fuels your workouts. That kind of seamless execution is what we're always striving for!
-
-Keep that momentum going, just like a flock of vibrant **cardinals** soaring through the sky – strong, coordinated, and unstoppable!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-17 15:56:20,633 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:20,942 - app.services.db.message_service - INFO - Server message saved with ID: f7b4bd0d-5c4f-4ec8-a7ea-01b13b7f0cf6
-2025-08-17 15:56:20,942 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:20,942 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:20,942 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:20,942 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0 (check took 0.00s)
-2025-08-17 15:56:20,942 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:21,310 - app.core.utils.conversation_attachments - INFO - Successfully loaded 3 messages and 1 complete bundles for conversation 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:21,310 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0 (expires in 30 min)
-2025-08-17 15:56:21,310 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.37s - 3 messages, 1 bundles
-2025-08-17 15:56:21,310 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:21,311 - app.services.llm.workout_analysis - INFO - Saved AI response with ID: None
+2025-08-17 19:44:38,793 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:44:38,923 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:44:39,046 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:44:39,046 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,047 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,048 - app.main - INFO - Request: GET /db/user-profile
+2025-08-17 19:44:39,049 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,049 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,294 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,294 - app.main - INFO - Response status: 200
+2025-08-17 19:44:39,295 - app.main - INFO - Response status: 200
+2025-08-17 19:44:39,769 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-17 19:44:39,770 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:44:39,770 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:44:40,069 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:44:40,078 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-17 19:44:40,078 - app.main - INFO - Response status: 200
+2025-08-17 19:44:40,079 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-17 19:44:40,368 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-17 19:44:40,376 - app.main - INFO - Response status: 200

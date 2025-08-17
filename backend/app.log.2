@@ -1,183 +1,88 @@
-2025-08-17 15:55:52,050 - app.services.chains.base_conversation_chain - INFO - Content: Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours.
-
-Current workout data context:
-Available workout data:
-{
-  "metadata": {
-    "total_workouts": 19,
-    "total_exercises": 49,
-    "date_range": {
-      "start": "2025-08-15T13:44:14.21+00:00",
-      "end": "2025-08-17T14:55:43.462+00:00"
-    },
-    "exercises_included": [
-      "Ab Wheel Rollout",
-      "Arnold Press",
-      "Barbell Bench Press",
-      "Barbell Skull Crusher",
-      "Chin-Up",
-      "Preacher Curl",
-      "Running"
-    ],
-    "analysis_errors": []
-  },
-  "performance_summary": {
-    "strength_top_performers": [
-      {
-        "name": "Preacher Curl",
-        "change": 5.69,
-        "last_value": 57.22,
-        "first_value": 51.53,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
-        "change_percent": 11.0
-      },
-      {
-        "name": "Barbell Skull Crusher",
-        "change": 0.0,
-        "last_value": 57.22,
-        "first_value": 57.22,
-        "definition_id": "bbb2acc5-935c-4fab-ab74-eabc6cf94eec",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Arnold Press",
-        "change": 0.0,
-        "last_value": 34.92,
-        "first_value": 34.92,
-        "definition_id": "0d669895-ab29-4a87-a293-99b77950a5c4",
-        "change_percent": 0.0
-      }
-    ],
-    "volume_top_performers": [
-      {
-        "name": "Arnold Press",
-        "change": 0.0,
-        "last_value": 600.0,
-        "first_value": 600.0,
-        "definition_id": "0d669895-ab29-4a87-a293-99b77950a5c4",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Barbell Bench Press",
-        "change": 0.0,
-        "last_value": 2040.0,
-        "first_value": 2040.0,
-        "definition_id": "46a6427a-127d-4127-9219-884075d863e8",
-        "change_percent": 0.0
-      },
-      {
-        "name": "Preacher Curl",
-        "change": -350.0,
-        "last_value": 1600.0,
-        "first_value": 1950.0,
-        "definition_id": "f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa",
-        "change_percent": -17.9
-      }
-    ],
-    "frequency_performers": []
-  },
-  "consistency_analysis": {
-    "avg_gap": 0.0,
-    "variance": null
-  },
-  "correlation_summary": {
-    "significant_count": 0,
-    "total_analyzed": 0,
-    "top_correlations": [],
-    "data_quality": [
-      "Insufficient weekly data for Preacher Curl strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Barbell Skull Crusher strength (1 weeks, need 4+)",
-      "Insufficient weekly data for Arnold Press strength (1 weeks, need 4+)"
-    ]
-  },
-  "recent_workouts_sample": [
-    {
-      "date": "2025-08-16",
-      "name": "Lkj;lkj",
-      "notes": "Barbell Skull Crusher:\n\nLkj\nPreacher Curl:\n\nLkj;lkj;lklhb"
-    },
-    {
-      "date": "2025-08-16",
-      "name": "",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": "",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": "",
-      "notes": ""
-    },
-    {
-      "date": "2025-08-16",
-      "name": "Bluebird",
-      "notes": "Barbell Skull Crusher:\n\nGgfbfvd"
-    }
-  ]
-}
-
-Analysis insights:
-
-CONSISTENCY METRICS:
-- Average gap between workouts: 0.0 days
-- Workout frequency variance: Not calculated
-
-TOP PERFORMERS:
-- Strength gains: Preacher Curl: +11.0%
-- Volume increases: No significant volume increases detected
-- Most frequent exercises: Frequency data not available
-
-CORRELATION INSIGHTS:
-0 significant correlations found from 0 exercise pairs analyzed
-• No correlation patterns detected
-
-WORKOUT SUMMARY:
-- Total workouts analyzed: 19
-- Exercise variety: 7 different exercises
-
-2025-08-17 15:55:52,052 - app.services.chains.base_conversation_chain - INFO - 
-Message 2 (HumanMessage):
-2025-08-17 15:55:52,052 - app.services.chains.base_conversation_chain - INFO - Content: Analyze my workout
-2025-08-17 15:55:52,052 - app.services.chains.base_conversation_chain - INFO - =====================
-2025-08-17 15:56:00,968 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Hey there, fitness warrior! Let's dive into your recent workout data and see what awesome progress you've been making!
-
-First off, you've been absolutely crushing it with **19 workouts** packed into just a couple of days – that's some serious dedication and commitment! You've also hit', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:01,085 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' **7 different exercises**, which is great for a well-rounded approach to your training.
-
-Now, let's talk **strength gains** – and this is where you're really shining! Your **Preacher Curl** strength is up by a fantastic **11%**! That's incredible progress in such', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:01,385 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' a short timeframe. It shows your muscles are adapting and getting stronger. Keep that momentum going – it's like watching a little hummingbird gain strength to hover even more gracefully!
-
-On the **volume** side, it looks like your overall volume for Preacher Curls actually saw a slight decrease, even with the strength', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:01,565 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' gains. This can sometimes happen if you're focusing on heavier weights for fewer reps, which is a valid strategy for strength! For other exercises like Arnold Press and Barbell Bench Press, your volume has been consistent. We'll want to keep an eye on overall volume as you progress to ensure you're providing enough stimulus', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:01,743 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' for growth across the board.
-
-When it comes to **consistency**, the data shows an average gap of 0.0 days between workouts, which is pretty wild! It looks like you're either doing multiple sessions a day or just logging them super close together. That's some serious commitment! Just remember, recovery is', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:01,937 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' key too, so make sure you're listening to your body.
-
-One thing to note is that because this data covers a very short period (just a couple of days), we don't have enough weekly data yet to see long-term trends or correlations between exercises. Think of it like trying to predict a bird'', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:02,097 - app.services.chains.base_conversation_chain - INFO - Chunk: content='s migration pattern from just one day of observation – you need more time to see the full flight path! As you log more workouts, we'll be able to unlock even deeper insights into how everything is connected.
-
-I also spotted a workout named 'Bluebird' – love the creativity there! Naming your workouts can be', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:02,296 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' a fun way to stay motivated.
-
-**My take-home for you:**
-*   **Celebrate those Preacher Curl gains!** You're clearly getting stronger.
-*   **Keep logging!** The more data we have over time, the better we can analyze your progress and fine-tune your program.
-', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:02,475 - app.services.chains.base_conversation_chain - INFO - Chunk: content='*   **Consider your overall volume.** While strength is up, ensure you're challenging yourself with enough total work for all muscle groups.
-*   **Listen to your body for recovery.** With such frequent sessions, make sure you're getting enough rest and nutrition.
-
-You're off to a fantastic start! Keep', metadata={'safety_ratings': [], 'usage_metadata': {}}
-2025-08-17 15:56:02,511 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' up the amazing work, and let's keep building that stronger, fitter you!', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
-2025-08-17 15:56:02,519 - app.services.db.message_service - INFO - Saving server assistant message to conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:02,865 - app.services.db.message_service - INFO - Server message saved with ID: e5d153e5-e733-472f-9855-3e29e57d660f
-2025-08-17 15:56:02,865 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:02,865 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:02,865 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:02,865 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0 (check took 0.00s)
-2025-08-17 15:56:02,866 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:03,208 - app.core.utils.conversation_attachments - INFO - Successfully loaded 1 messages and 1 complete bundles for conversation 39bda5e9-9502-43cd-a0cc-5fa80ea648b0
-2025-08-17 15:56:03,208 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 39bda5e9-9502-43cd-a0cc-5fa80ea648b0 (expires in 30 min)
+2025-08-17 19:16:35,108 - app.main - INFO - Response status: 200
+2025-08-17 19:17:11,538 - app.main - INFO - Request: GET /api/dashboard
+2025-08-17 19:17:11,543 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:11,543 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:11,543 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:11,852 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:11,852 - app.services.db.dashboard_service - INFO - Processing 20 workouts for dashboard analytics
+2025-08-17 19:17:12,002 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:17:12,146 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:17:12,302 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:17:12,466 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:17:12,467 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:12,467 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:12,470 - app.main - INFO - Request: GET /db/user-profile
+2025-08-17 19:17:12,471 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:12,471 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:12,761 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:12,761 - app.main - INFO - Response status: 200
+2025-08-17 19:17:12,762 - app.main - INFO - Response status: 200
+2025-08-17 19:17:13,226 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-17 19:17:13,227 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:17:13,227 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:17:13,512 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:17:13,521 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-17 19:17:13,521 - app.main - INFO - Response status: 200
+2025-08-17 19:17:13,522 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-17 19:17:13,790 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-17 19:17:13,803 - app.main - INFO - Response status: 200
+2025-08-17 19:20:41,133 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-17 19:20:41,140 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:20:41,140 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:20:42,088 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:20:42,098 - app.main - INFO - Response status: 200
+2025-08-17 19:21:11,682 - app.main - INFO - Request: GET /api/dashboard
+2025-08-17 19:21:11,691 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:11,692 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:11,692 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:12,673 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:12,673 - app.services.db.dashboard_service - INFO - Processing 20 workouts for dashboard analytics
+2025-08-17 19:21:13,013 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:21:13,266 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:21:13,517 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:21:13,769 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:21:13,769 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:13,770 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:13,772 - app.main - INFO - Response status: 200
+2025-08-17 19:21:13,773 - app.main - INFO - Request: GET /db/user-profile
+2025-08-17 19:21:13,774 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:13,774 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:14,535 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:14,536 - app.main - INFO - Response status: 200
+2025-08-17 19:21:15,010 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-17 19:21:15,012 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:21:15,012 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:21:15,998 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:21:16,008 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-17 19:21:16,009 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-17 19:21:17,215 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-17 19:21:17,233 - app.main - INFO - Response status: 200
+2025-08-17 19:21:17,234 - app.main - INFO - Response status: 200
+2025-08-17 19:22:43,668 - app.main - INFO - Request: GET /api/dashboard
+2025-08-17 19:22:43,676 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:43,677 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:43,677 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:44,782 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:44,782 - app.services.db.dashboard_service - INFO - Processing 20 workouts for dashboard analytics
+2025-08-17 19:22:45,320 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:22:45,832 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:22:46,424 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:22:47,023 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-17 19:22:47,024 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:47,024 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:47,027 - app.main - INFO - Request: GET /db/user-profile
+2025-08-17 19:22:47,028 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:47,028 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:48,289 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:48,290 - app.main - INFO - Response status: 200
+2025-08-17 19:22:48,291 - app.main - INFO - Response status: 200
+2025-08-17 19:22:48,631 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-17 19:22:48,632 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-17 19:22:48,632 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:22:49,905 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
+2025-08-17 19:22:49,914 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-17 19:22:49,915 - app.main - INFO - Response status: 200
+2025-08-17 19:22:49,915 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-17 19:22:51,288 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-17 19:22:51,301 - app.main - INFO - Response status: 200
+2025-08-17 19:23:07,316 - app.main - INFO - Request: GET /db/user-profile

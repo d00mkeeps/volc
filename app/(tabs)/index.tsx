@@ -208,7 +208,6 @@ export default function HomeScreen() {
         {/* Other Modals */}
         <TemplateSelector
           isVisible={showTemplateSelector}
-          templates={templatesWithEmpty}
           selectedTemplateId={selectedTemplate?.id || null}
           onSelectTemplate={handleTemplateSelect}
           onClose={handleTemplateClose}

@@ -6,6 +6,7 @@ import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface WorkoutCompletionModalProps {
   isVisible: boolean;
@@ -59,6 +60,7 @@ export function WorkoutCompletionModal({
     workoutAnalysisStore.resetAnalysis();
     // Clear active conversation when modal closes
     useUserSessionStore.getState().setActiveConversation(null);
+
     onClose();
   };
 

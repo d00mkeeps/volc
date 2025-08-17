@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { YStack, Text, Input, Button, TextArea, XStack } from "tamagui";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import ImagePickerButton from "../atoms/buttons/ImagePickerButton";
 import WorkoutImage from "../molecules/WorkoutImage";
+import { imageService } from "@/services/api/imageService";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
-  onSkip: () => void; // ← New prop
+  onSkip: () => void;
   showContinueButton?: boolean;
 }
 
 export function WorkoutSummarySlide({
   onContinue,
-  onSkip, // ← New prop
+  onSkip,
   showContinueButton = true,
 }: WorkoutSummarySlideProps) {
   const {
@@ -20,12 +22,15 @@ export function WorkoutSummarySlide({
     pendingImageId,
     setPendingImage,
     selectedTemplate,
-    saveCompletedWorkout, // ← New method
-    initializeAnalysisAndChat, // ← New method
+    saveCompletedWorkout,
+    initializeAnalysisAndChat,
   } = useUserSessionStore();
 
   const [workoutName, setWorkoutName] = useState("");
   const [showNameError, setShowNameError] = useState(false);
+  const [loadingState, setLoadingState] = useState<
+    "none" | "skip" | "continue"
+  >("none"); // ← New loading state
   const [workoutNotes, setWorkoutNotes] = useState(() => {
     console.log("=== WORKOUT SUMMARY DEBUG ===");
     console.log("currentWorkout:", currentWorkout);
@@ -59,7 +64,6 @@ export function WorkoutSummarySlide({
   };
 
   const handleContinue = async () => {
-    // Validate workout name first
     if (!workoutName.trim()) {
       setShowNameError(true);
       return;
@@ -67,31 +71,24 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE CONTINUE ===");
-    console.log("Workout name:", workoutName);
-    console.log("Workout notes:", workoutNotes);
-    console.log("Pending image ID:", pendingImageId);
+    setLoadingState("continue"); // ← Start loading
 
     try {
-      // Step 1: Save workout with metadata
       await saveCompletedWorkout({
         name: workoutName,
         notes: workoutNotes,
         imageId: pendingImageId || undefined,
       });
-
-      // Step 2: Initialize analysis and chat
+      await useWorkoutStore.getState().fetchTemplates(); // ← And here
       await initializeAnalysisAndChat();
-
-      // Step 3: Navigate to chat
       onContinue();
     } catch (error) {
       console.error("Failed to continue to chat:", error);
-      // Could add error toast here
+      setLoadingState("none"); // ← Reset on error
     }
   };
 
   const handleSkipChat = async () => {
-    // Validate workout name first
     if (!workoutName.trim()) {
       setShowNameError(true);
       return;
@@ -99,21 +96,19 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE SKIP ===");
-    console.log("Saving workout and exiting");
+    setLoadingState("skip"); // ← Start loading
 
     try {
-      // Just save workout with metadata and close
       await saveCompletedWorkout({
         name: workoutName,
         notes: workoutNotes,
         imageId: pendingImageId || undefined,
       });
-
-      // Close modal
+      await useWorkoutStore.getState().fetchTemplates(); // ← Refresh here
       onSkip();
     } catch (error) {
       console.error("Failed to save workout:", error);
-      // Could add error toast here
+      setLoadingState("none"); // ← Reset on error
     }
   };
 
@@ -181,28 +176,35 @@ export function WorkoutSummarySlide({
         />
       </YStack>
 
-      {/* ← Updated button section */}
+      {/* ← Updated loading-aware button section */}
       <XStack gap="$3" paddingTop="$2">
-        <Button
-          size="$4"
-          variant="outlined"
-          onPress={handleSkipChat}
-          disabled={!isNameValid}
-          opacity={isNameValid ? 1 : 0.6}
-          flex={1}
-        >
-          Save & Exit
-        </Button>
-        <Button
-          size="$4"
-          backgroundColor={isNameValid ? "$primary" : "$gray6"}
-          onPress={handleContinue}
-          disabled={!isNameValid}
-          opacity={isNameValid ? 1 : 0.6}
-          flex={1}
-        >
-          Continue to Coach
-        </Button>
+        {loadingState !== "continue" && (
+          <Button
+            size="$4"
+            variant="outlined"
+            onPress={handleSkipChat}
+            disabled={!isNameValid || loadingState === "skip"}
+            opacity={isNameValid && loadingState !== "skip" ? 1 : 0.6}
+            flex={1}
+          >
+            {loadingState === "skip" ? "Loading..." : "Save & Exit"}
+          </Button>
+        )}
+
+        {loadingState !== "skip" && (
+          <Button
+            size="$4"
+            backgroundColor={
+              isNameValid && loadingState !== "continue" ? "$primary" : "$gray6"
+            }
+            onPress={handleContinue}
+            disabled={!isNameValid || loadingState === "continue"}
+            opacity={isNameValid && loadingState !== "continue" ? 1 : 0.6}
+            flex={1}
+          >
+            {loadingState === "continue" ? "Loading..." : "Continue to Coach"}
+          </Button>
+        )}
       </XStack>
     </YStack>
   );

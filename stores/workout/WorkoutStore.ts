@@ -7,7 +7,7 @@ interface WorkoutState {
   // State
   workouts: CompleteWorkout[];
   currentWorkout: CompleteWorkout | null;
-  templates: CompleteWorkout[];
+  templates: CompleteWorkout[]; // Filtered from workouts
   loading: boolean;
   error: Error | null;
   initialized: boolean;
@@ -17,7 +17,6 @@ interface WorkoutState {
   clearData: () => void;
 
   loadWorkouts: () => Promise<void>;
-  handleTemplateDeduplication: () => Promise<void>;
   getWorkout: (workoutId: string) => Promise<void>;
   createWorkout: (workout: CompleteWorkout) => Promise<void>;
   updateWorkout: (
@@ -26,7 +25,11 @@ interface WorkoutState {
   ) => Promise<CompleteWorkout>;
   deleteWorkout: (workoutId: string) => Promise<void>;
   clearError: () => void;
+
+  // Template methods - work from workouts array, no separate API
   fetchTemplates: () => Promise<void>;
+  handleTemplateDeduplication: () => Promise<void>;
+
   saveAsTemplate: (workout: CompleteWorkout) => Promise<CompleteWorkout>;
   getWorkoutsByConversation: (
     conversationId: string
@@ -97,13 +100,36 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       await loadWorkoutsData();
     },
 
-    handleTemplateDeduplication: async () => {
-      const { workouts } = get();
+    fetchTemplates: async () => {
+      try {
+        console.log("[WorkoutStore] Fetching templates from workouts array");
+        const { workouts } = get();
 
-      // Filter for templates (completed workouts become templates)
-      const templates: CompleteWorkout[] = workouts.filter(
-        (w: CompleteWorkout) => w.is_template !== false
-      );
+        // Filter workouts to get templates (completed workouts with exercises)
+        const templateList = workouts.filter(
+          (workout: CompleteWorkout) =>
+            workout.workout_exercises.length > 0 &&
+            !workout.is_template === false
+        );
+
+        console.log(
+          `[WorkoutStore] Found ${templateList.length} templates from ${workouts.length} workouts`
+        );
+        set({ templates: templateList });
+
+        // Run deduplication on templates
+        await get().handleTemplateDeduplication();
+      } catch (err) {
+        console.error("[WorkoutStore] Error fetching templates:", err);
+        set({
+          error:
+            err instanceof Error ? err : new Error("Failed to load templates"),
+        });
+      }
+    },
+
+    handleTemplateDeduplication: async () => {
+      const { templates } = get();
 
       // Get last 10 templates (most recent)
       const recentTemplates = templates
@@ -118,16 +144,16 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
       recentTemplates.forEach((template: CompleteWorkout) => {
         const definitionIds = template.workout_exercises
-          .map((ex: any) => ex.definition_id) // ← Fixed type annotation
+          .map((ex: any) => ex.definition_id)
           .filter(Boolean)
-          .sort();
+          .sort(); // Sort for consistent grouping regardless of order
 
         const key = definitionIds.join(",");
         const existingGroup = groups.get(key);
         if (!existingGroup) {
           groups.set(key, []);
         }
-        groups.get(key)!.push(template); // ← Non-null assertion since we just created it
+        groups.get(key)!.push(template);
       });
 
       // For each group with duplicates, keep newest and delete others
@@ -151,6 +177,14 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           }
         }
       }
+
+      // Refresh templates after deduplication
+      const { workouts } = get();
+      const updatedTemplates = workouts.filter(
+        (workout: CompleteWorkout) =>
+          workout.workout_exercises.length > 0 && !workout.is_template === false
+      );
+      set({ templates: updatedTemplates });
     },
 
     getWorkout: async (workoutId: string) => {
@@ -176,6 +210,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         set({ loading: false });
       }
     },
+
     getPublicWorkout: async (workoutId: string) => {
       try {
         set({ loading: true, error: null });
@@ -236,7 +271,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       workoutId: string,
       updates: Partial<CompleteWorkout>
     ): Promise<CompleteWorkout> => {
-      // 🔥 Change return type
       try {
         set({ loading: true, error: null });
         const updatedWorkout = await workoutService.updateWorkout(
@@ -262,6 +296,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         set({ loading: false });
       }
     },
+
     deleteWorkout: async (workoutId: string) => {
       // Optimistic update - remove immediately
       const { workouts, currentWorkout } = get();
@@ -301,35 +336,14 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       }
     },
 
-    fetchTemplates: async () => {
-      try {
-        set({ loading: true, error: null });
-
-        const session = await authService.getSession();
-        if (!session?.user?.id) {
-          throw new Error("No authenticated user found");
-        }
-
-        const templateList = await workoutService.getTemplates(session.user.id);
-        set({ templates: templateList });
-
-        await get().handleTemplateDeduplication();
-      } catch (err) {
-        console.error("[WorkoutStore] Error fetching templates:", err);
-        set({
-          error:
-            err instanceof Error ? err : new Error("Failed to load templates"),
-        });
-      } finally {
-        set({ loading: false });
-      }
-    },
-
     saveAsTemplate: async (workout: CompleteWorkout) => {
       try {
         set({ loading: true, error: null });
         const template = await workoutService.saveAsTemplate(workout);
-        set((state) => ({ templates: [template, ...state.templates] }));
+        set((state) => ({
+          workouts: [template, ...state.workouts],
+          templates: [template, ...state.templates],
+        }));
         return template;
       } catch (err) {
         console.error("[WorkoutStore] Error saving template:", err);
