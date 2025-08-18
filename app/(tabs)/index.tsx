@@ -1,5 +1,6 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { Stack } from "tamagui";
+import { RefreshControl, ScrollView } from "react-native";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
@@ -14,7 +15,7 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
 import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
-import { useDashboardStore } from "@/stores/dashboardStore"; // Add dashboard store
+import { useDashboardStore } from "@/stores/dashboardStore";
 
 let count = 0;
 
@@ -39,6 +40,7 @@ export default function HomeScreen() {
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Dashboard state from store
   const {
@@ -85,6 +87,18 @@ export default function HomeScreen() {
   useEffect(() => {
     refreshDashboard();
   }, []); // Only on mount
+
+  // Pull-to-refresh handler - refreshes dashboard data, savvy!
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshDashboard();
+    } catch (error) {
+      console.error("Failed to refresh dashboard:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleTemplateSelect = (template: CompleteWorkout) => {
     console.log("Selected template:", {
@@ -175,19 +189,26 @@ export default function HomeScreen() {
     <>
       {/* Main Content */}
       <Stack flex={1} backgroundColor="$background">
-        <Stack flex={1} padding="$4">
-          <Header
-            greeting="Welcome to Volc!"
-            onSettingsPress={() => setShowOnboardingModal(true)}
-          />
-          <Stack marginBottom="$5">
-            <Dashboard
-              allData={dashboardAllData}
-              isLoading={dashboardLoading}
-              error={dashboardError}
+        <ScrollView
+          style={{ flex: 1 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <Stack flex={1} padding="$4">
+            <Header
+              greeting="Welcome to Volc!"
+              onSettingsPress={() => setShowOnboardingModal(true)}
             />
+            <Stack marginBottom="$5">
+              <Dashboard
+                allData={dashboardAllData}
+                isLoading={dashboardLoading}
+                error={dashboardError}
+              />
+            </Stack>
           </Stack>
-        </Stack>
+        </ScrollView>
 
         {/* Floating Action Button */}
         <Stack

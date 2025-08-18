@@ -279,7 +279,7 @@ async def create_conversation(
     """Create a new conversation with the first message"""
     try:
         logger.info(f"API request to create conversation: {data.get('title')}")
-        result = await ConversationService.create_conversation(
+        result = await conversation_service.create_conversation(
             data.get("title"), 
             data.get("configName"),
             user,
@@ -301,7 +301,7 @@ async def get_user_conversations(
     """Get all active conversations for a user"""
     try:
         logger.info(f"API request to get active conversations for user: {user.id}")
-        result = await ConversationService.get_user_conversations(user, jwt_token)
+        result = await conversation_service.get_user_conversations(user, jwt_token)
         
         if result.get("success"):
             conversations = result.get("data", [])
