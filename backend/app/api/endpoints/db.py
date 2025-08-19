@@ -2,6 +2,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 from typing import Dict, Any
 from app.core.supabase.auth import get_current_user, get_jwt_token
 import logging
+from app.core.rate_limit import rate_limit
 
 from app.services.db.analysis_service import AnalysisBundleService
 from app.services.db.workout_service import WorkoutService
@@ -136,6 +137,7 @@ async def delete_conversation_bundles(
         )
     
 @router.post("/workouts")
+@rate_limit("workout_create") 
 async def create_workout(
     workout: Dict[str, Any],
     user = Depends(get_current_user),

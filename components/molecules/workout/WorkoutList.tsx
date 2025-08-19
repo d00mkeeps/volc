@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Stack, Text, ScrollView } from "tamagui";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
-import WorkoutDetail from "@/components/organisms/WorkoutDetail";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface WorkoutListProps {
@@ -73,12 +72,6 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
           ))}
         </Stack>
       </ScrollView>
-
-      <WorkoutDetail
-        workoutId={selectedWorkoutId || ""}
-        visible={!!selectedWorkoutId}
-        onClose={() => setSelectedWorkoutId(null)}
-      />
     </Stack>
   );
 }

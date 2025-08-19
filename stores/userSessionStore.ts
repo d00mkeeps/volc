@@ -74,40 +74,6 @@ interface UserSessionState {
   getProgress: () => { completed: number; total: number };
 }
 
-function createWorkoutWithIds(
-  template: CompleteWorkout,
-  userId: string
-): CompleteWorkout {
-  const workoutId = uuidv4();
-  const now = new Date().toISOString();
-
-  return {
-    ...template,
-    id: workoutId,
-    user_id: userId,
-    template_id: template.id,
-    is_template: false,
-    created_at: now,
-    updated_at: now,
-    workout_exercises: template.workout_exercises.map((exercise) => {
-      const exerciseId = uuidv4();
-
-      return {
-        ...exercise,
-        id: exerciseId,
-        workout_id: workoutId,
-        workout_exercise_sets: exercise.workout_exercise_sets.map((set) => ({
-          ...set,
-          id: uuidv4(),
-          exercise_id: exerciseId,
-          is_completed: false,
-        })),
-      };
-    }),
-  };
-}
-
-// At the top of the file, outside the store
 export function createEmptyWorkout(userId: string): CompleteWorkout {
   const now = new Date().toISOString();
   return {

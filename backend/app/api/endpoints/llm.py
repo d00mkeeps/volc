@@ -193,10 +193,11 @@ async def onboarding_websocket(
             pass
 
 # Workout analysis interpretation endpoint
-@router.websocket("/api/llm/workout-analysis/{conversation_id}")
+@router.websocket("/api/llm/workout-analysis/{conversation_id}/{user_id}")
 async def llm_workout_analysis(
     websocket: WebSocket, 
     conversation_id: str,
+    user_id: str,
     llm_service: WorkoutAnalysisLLMService = Depends(get_workout_llm_service)
 ):
     """
@@ -214,12 +215,12 @@ async def llm_workout_analysis(
     
     The server streams back responses with:
     - type: 'content' for content chunks
-    - type: 'error' for error messages  
+    - type: 'error' for error messages (including rate limits)
     - type: 'complete' when the response is complete
     - type: 'connection_status' for connection confirmation
     """
     try:
-        await llm_service.process_websocket(websocket, conversation_id, user_id=None)
+        await llm_service.process_websocket(websocket, conversation_id, user_id=user_id)
     except WebSocketDisconnect:
         logger.info(f"Workout analysis WebSocket disconnected: {conversation_id}")
     except Exception as e:

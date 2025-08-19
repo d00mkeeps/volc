@@ -118,7 +118,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
           }
           color="$color"
           placeholderTextColor="$textMuted"
-          fontSize="$5"
+          fontSize="$4"
           fontWeight="600"
           borderRadius="$3"
           paddingHorizontal="$3"

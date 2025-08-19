@@ -29,7 +29,7 @@ export default function ExerciseTrackerHeader({
       alignItems="center"
       paddingVertical="$2"
     >
-      <Text fontSize="$5" fontWeight="600" color="$color" flex={1}>
+      <Text fontSize="$4" fontWeight="600" color="$color" flex={1}>
         {exerciseName || "Select Exercise"}
       </Text>
 

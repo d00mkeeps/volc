@@ -1,52 +1,65 @@
-2025-08-17 20:59:00,521 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-17 20:59:00,531 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 20:59:00,532 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
-2025-08-17 20:59:00,865 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
-2025-08-17 20:59:00,868 - app.main - INFO - Response status: 200
-2025-08-17 20:59:16,585 - app.main - INFO - Request: GET /images/9d5c3c24-342d-4bf4-ad6c-34c45160699a/url
-2025-08-17 20:59:16,589 - app.api.endpoints.images - INFO - API request to get image URL: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-17 20:59:16,589 - app.services.db.image_service - INFO - Getting image URL for ID: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-17 20:59:16,857 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg
-2025-08-17 20:59:16,877 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-08-17 20:59:16,877 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-17 20:59:16,877 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-08-17 20:59:16,877 - app.services.db.image_service - INFO - Used direct string
-2025-08-17 20:59:16,877 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-17 20:59:16,878 - app.main - INFO - Response status: 200
-2025-08-17 20:59:18,919 - app.main - INFO - Request: GET /db/user-profile
-2025-08-17 20:59:18,919 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 20:59:18,920 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 20:59:19,286 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 20:59:19,286 - app.main - INFO - Response status: 200
-2025-08-17 20:59:19,463 - app.main - INFO - Request: GET /images/9d5c3c24-342d-4bf4-ad6c-34c45160699a/url
-2025-08-17 20:59:19,464 - app.api.endpoints.images - INFO - API request to get image URL: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-17 20:59:19,464 - app.services.db.image_service - INFO - Getting image URL for ID: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-17 20:59:19,741 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg
-2025-08-17 20:59:19,762 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-08-17 20:59:19,762 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-17 20:59:19,762 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-08-17 20:59:19,762 - app.services.db.image_service - INFO - Used direct string
-2025-08-17 20:59:19,762 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-17 20:59:19,762 - app.main - INFO - Response status: 200
-2025-08-17 21:05:04,760 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-17 21:05:04,801 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:05:04,803 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
-2025-08-17 21:05:05,133 - app.services.db.workout_service - INFO - Retrieved 20 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x13524d400>
-2025-08-17 21:05:05,138 - app.main - INFO - Response status: 200
-2025-08-17 21:05:54,987 - app.main - INFO - Request: GET /db/conversations
-2025-08-17 21:05:54,997 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:05:54,998 - app.api.endpoints.db - ERROR - Error getting user conversations: ConversationService.get_user_conversations() missing 1 required positional argument: 'jwt_token'
-2025-08-17 21:05:55,003 - app.main - INFO - Response status: 500
-2025-08-17 21:10:29,200 - app - INFO - Logging has been set up
-2025-08-17 21:10:29,200 - app.main - INFO - Application starting
-2025-08-17 21:10:29,200 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-17 21:10:29,200 - app.main - INFO - SUPABASE_URL present: True
-2025-08-17 21:10:29,200 - app.main - INFO - SUPABASE_KEY present: False
-2025-08-17 21:10:29,579 - app.main - INFO - Request: GET /db/conversations
-2025-08-17 21:10:29,581 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:10:29,962 - app.api.endpoints.db - INFO - Retrieved 8 active conversations for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:10:29,963 - app.main - INFO - Response status: 200
-2025-08-17 21:10:31,479 - app.main - INFO - Request: GET /db/conversations
-2025-08-17 21:10:31,482 - app.api.endpoints.db - INFO - API request to get active conversations for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:10:31,786 - app.api.endpoints.db - INFO - Retrieved 8 active conversations for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-17 21:10:31,787 - app.main - INFO - Response status: 200
+2025-08-18 16:16:09,654 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1012, None)
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1012, None)
+2025-08-18 16:16:13,253 - app - INFO - Logging has been set up
+2025-08-18 16:16:13,253 - app.main - INFO - Application starting
+2025-08-18 16:16:13,253 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
+2025-08-18 16:16:13,253 - app.main - INFO - SUPABASE_URL present: True
+2025-08-18 16:16:13,253 - app.main - INFO - SUPABASE_KEY present: False
+2025-08-18 16:16:13,266 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
+2025-08-18 16:16:13,269 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
+2025-08-18 16:16:13,269 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
+2025-08-18 16:16:13,269 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348 (check took 0.00s)
+2025-08-18 16:16:13,269 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
+2025-08-18 16:16:13,657 - app.core.utils.conversation_attachments - INFO - Successfully loaded 21 messages and 1 complete bundles for conversation 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
+2025-08-18 16:16:13,657 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348 (expires in 30 min)
+2025-08-18 16:16:13,657 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.39s - 21 messages, 1 bundles
+2025-08-18 16:16:14,587 - app.services.chains.base_conversation_chain - INFO - Loaded 21 messages into conversation history
+2025-08-18 16:16:14,587 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
+2025-08-18 16:16:14,587 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 21 messages and 1 bundles
+2025-08-18 16:16:14,595 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (1000, '')
+Traceback (most recent call last):
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
+    data = await websocket.receive_json()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
+    self._raise_on_disconnect(message)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
+    raise WebSocketDisconnect(message["code"], message.get("reason"))
+starlette.websockets.WebSocketDisconnect: (1000, '')
+2025-08-18 16:16:18,318 - app.main - INFO - Request: GET /api/dashboard
+2025-08-18 16:16:18,326 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:18,326 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:18,326 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:18,990 - app.services.db.workout_service - INFO - Retrieved 22 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:18,991 - app.services.db.dashboard_service - INFO - Processing 22 workouts for dashboard analytics
+2025-08-18 16:16:19,275 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-18 16:16:19,533 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-18 16:16:19,821 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-18 16:16:20,118 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-18 16:16:20,133 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:20,134 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:20,135 - app.main - INFO - Response status: 200
+2025-08-18 16:16:20,135 - app.main - INFO - Request: GET /db/user-profile
+2025-08-18 16:16:20,136 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:20,136 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:20,694 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:20,694 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-18 16:16:20,694 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-18 16:16:21,266 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-18 16:16:21,282 - app.main - INFO - Response status: 200
+2025-08-18 16:16:21,282 - app.main - INFO - Response status: 200
+2025-08-18 16:16:21,708 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-18 16:16:21,710 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-18 16:16:21,710 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11ed41e80>
+2025-08-18 16:16:22,373 - app.services.db.workout_service - INFO - Retrieved 22 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11ed41e80>
+2025-08-18 16:16:22,383 - app.main - INFO - Response status: 200

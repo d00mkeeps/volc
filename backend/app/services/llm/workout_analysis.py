@@ -109,6 +109,34 @@ class WorkoutAnalysisLLMService:
                 if data.get('type') == 'message' or 'message' in data:
                     message = data.get('message', '')
                     
+                    # RATE LIMIT CHECK FIRST - before any processing
+                    if user_id:  # Only rate limit if we have a user_id
+                        from app.services.rate_limiter import rate_limiter
+                        rate_check = await rate_limiter.check_rate_limit(user_id, "message_send", "")  # Empty JWT
+                        
+                        if not rate_check.get("success", False):
+                            logger.error(f"Rate limiter error: {rate_check.get('error')}")
+                            await websocket.send_json({
+                                "type": "error", 
+                                "data": {"message": "Rate limiting error"}
+                            })
+                            continue
+                            
+                        rate_limit_data = rate_check["data"]
+                        if not rate_limit_data["allowed"]:
+                            logger.info(f"Message rate limit exceeded for user {user_id}")
+                            await websocket.send_json({
+                                "type": "error",
+                                "data": {
+                                    "code": "rate_limit",
+                                    "message": f"Message rate limit exceeded. You have sent too many messages. Try again at {rate_limit_data['reset_at']}",
+                                    "remaining": 0,
+                                    "reset_at": rate_limit_data["reset_at"]
+                                }
+                            })
+                            continue  # Skip all processing - no LLM, no database saves
+                    
+                    # Only proceed if rate limit passed (or no user_id for testing)
                     # Save user message to database
                     user_msg = await self.message_service.save_server_message(
                         conversation_id=conversation_id,
@@ -134,7 +162,6 @@ class WorkoutAnalysisLLMService:
                         )
                         if ai_msg.get('success') != False:
                             logger.info(f"Saved AI response with ID: {ai_msg.get('id')}")
-            
         except google.api_core.exceptions.ResourceExhausted as e:
             logger.error(f"Rate limit exceeded: {str(e)}")
             try:

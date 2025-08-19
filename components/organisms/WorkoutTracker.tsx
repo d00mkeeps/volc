@@ -256,10 +256,10 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 borderRadius="$3"
                 marginTop="$3"
               >
-                <Text fontSize="$5" color="$textSoft" textAlign="center">
+                <Text fontSize="$4" color="$textSoft" textAlign="center">
                   No exercises in this workout
                 </Text>
-                <Text fontSize="$3" color="$textMuted" textAlign="center">
+                <Text fontSize="$4" color="$textMuted" textAlign="center">
                   Select a template or add exercises to get started
                 </Text>
               </YStack>

@@ -104,7 +104,7 @@ export default function ConsistencyCalendar({
       >
         <YStack alignItems="center" gap="$0.5">
           <Text
-            fontSize="$2"
+            fontSize="$4"
             color={
               dayData.isToday
                 ? "white"
@@ -119,7 +119,7 @@ export default function ConsistencyCalendar({
             {dayData.day}
           </Text>
           <Text
-            fontSize="$1"
+            fontSize="$4"
             color={
               dayData.isToday
                 ? "white"
@@ -153,12 +153,12 @@ export default function ConsistencyCalendar({
     >
       {/* Header */}
       <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$6" fontWeight="600" color="$color">
+        <Text fontSize="$4" fontWeight="600" color="$color">
           Recent Workouts
         </Text>
 
         {currentWeek > 0 && (
-          <Text fontSize="$2" color="$textSoft">
+          <Text fontSize="$4" color="$textSoft">
             {currentWeek === 1 ? "Previous week" : `${currentWeek} weeks ago`}
           </Text>
         )}

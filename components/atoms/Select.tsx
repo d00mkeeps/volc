@@ -41,7 +41,7 @@ export default function Select({
       >
         <Text
           color={selectedOption ? "$text" : "$textSoft"}
-          fontSize="$5"
+          fontSize="$4"
           paddingLeft="$2"
           fontWeight="600"
         >
@@ -50,7 +50,7 @@ export default function Select({
 
         {/* Dropdown Arrow */}
         <Stack position="absolute" right="$3" top="40%">
-          <Text color="$textSoft" fontSize="$5">
+          <Text color="$textSoft" fontSize="$4">
             {isOpen ? "▲" : "▼"}
           </Text>
         </Stack>
@@ -80,7 +80,7 @@ export default function Select({
                   setIsOpen(false);
                 }}
               >
-                <Text color="$text" fontSize="$3">
+                <Text color="$text" fontSize="$4">
                   {option.label}
                 </Text>
               </Stack>

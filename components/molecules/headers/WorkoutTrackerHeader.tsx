@@ -80,7 +80,7 @@ export default function WorkoutTrackerHeader({
 
         {/* Timer - from store */}
         <Text
-          fontSize="$7"
+          fontSize="$8"
           fontWeight="700"
           color="$color"
           fontFamily="$heading"
@@ -128,7 +128,7 @@ export default function WorkoutTrackerHeader({
           }
           animation="quick"
         />
-        <Text fontSize="$2" color="$textSoft" fontWeight="500">
+        <Text fontSize="$4" color="$textSoft" fontWeight="500">
           {!isActive
             ? "Workout not started"
             : isPaused
@@ -147,11 +147,11 @@ export default function WorkoutTrackerHeader({
         borderTopColor="$borderSoft"
       >
         <YStack flex={1} marginRight="$3">
-          <Text fontSize="$2" color="$textMuted" fontWeight="500">
+          <Text fontSize="$4" color="$textMuted" fontWeight="500">
             Template
           </Text>
           <Text
-            fontSize="$3"
+            fontSize="$4"
             color="$textSoft"
             numberOfLines={1}
             marginTop="$0.5"
@@ -173,7 +173,7 @@ export default function WorkoutTrackerHeader({
           onPress={handleTemplatePress}
         >
           <XStack alignItems="center" gap="$1.5">
-            <Text fontSize="$2" color="$textSoft">
+            <Text fontSize="$4" color="$textSoft">
               Change
             </Text>
             <Ionicons name="chevron-down" size={14} color="$textSoft" />

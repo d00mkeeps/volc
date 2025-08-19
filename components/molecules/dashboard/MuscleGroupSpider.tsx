@@ -167,7 +167,7 @@ export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
                       key={index}
                       x={labelX}
                       y={labelY}
-                      fontSize="11"
+                      fontSize="12"
                       fill="#6b6466"
                       textAnchor="middle"
                       alignmentBaseline="middle"

@@ -3,6 +3,7 @@ import EventEmitter from "eventemitter3";
 import Toast from "react-native-toast-message";
 import { getWsBaseUrl } from "../api/core/apiClient";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { authService } from "@/services/db/auth";
 
 export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
@@ -14,6 +15,13 @@ export type ConnectionState =
   | "connecting"
   | "connected"
   | "reconnecting";
+
+export type RateLimitCallback = (data: {
+  message: string;
+  resetAt: string;
+  remaining: number;
+  code: string;
+}) => void;
 
 /**
  * Persistent WebSocket service - maintains single active connection per conversation
@@ -42,6 +50,11 @@ export class WebSocketService {
   private disconnectReason: string = "";
   private previousConversationId: string | null = null;
   private disconnectTimestamp: number = 0;
+
+  onRateLimit(callback: RateLimitCallback): () => void {
+    this.events.on("rateLimit", callback);
+    return () => this.events.off("rateLimit", callback);
+  }
 
   /**
    * Ensure connection to current conversation from session store
@@ -154,12 +167,17 @@ export class WebSocketService {
     this.cleanup();
     this.setConnectionState("connecting");
 
-    // DON'T update currentConversationId until connection succeeds
-    // This prevents race conditions during conversation switching
-
     const baseUrl = await getWsBaseUrl();
+
+    const session = await authService.getSession();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      throw new Error("No authenticated user found for WebSocket connection");
+    }
+
     const configName = "workout-analysis";
-    const url = `${baseUrl}/${configName}/${conversationId}`;
+    const url = `${baseUrl}/${configName}/${conversationId}/${userId}`;
 
     console.log(`[WSService] Connecting to: ${url}`);
     this.socket = new WebSocket(url);
@@ -339,8 +357,40 @@ export class WebSocketService {
           break;
 
         case "error":
-          console.error("[WSService] Server error:", message.error);
-          this.events.emit("error", new Error(message.error || "Server error"));
+          console.error("[WSService] Server error:", message);
+
+          // Check if this is a rate limit error
+          if (message.data?.code === "rate_limit") {
+            console.warn("[WSService] Rate limit exceeded:", message.data);
+
+            Toast.show({
+              type: "error",
+              text1: "Too Many Messages",
+              text2: message.data.message || "Please slow down your messaging.",
+              visibilityTime: 6000,
+            });
+
+            this.events.emit("rateLimit", {
+              message: message.data.message,
+              resetAt: message.data.reset_at,
+              remaining: message.data.remaining || 0,
+              code: message.data.code,
+            });
+          } else {
+            // Handle other server errors
+            const errorMessage =
+              message.data?.message || message.error || "Server error";
+            console.error("[WSService] Generic server error:", errorMessage);
+
+            Toast.show({
+              type: "error",
+              text1: "Connection Error",
+              text2: errorMessage,
+              visibilityTime: 4000,
+            });
+
+            this.events.emit("error", new Error(errorMessage));
+          }
           break;
 
         case "connection_status":
@@ -359,7 +409,6 @@ export class WebSocketService {
       this.events.emit("error", new Error("Failed to parse WebSocket message"));
     }
   }
-
   /**
    * Handle connection disconnect
    */

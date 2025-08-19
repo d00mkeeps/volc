@@ -58,32 +58,32 @@ export default function ContentCard({
         marginBottom="$2"
       >
         <Stack flex={1} marginRight="$1">
-          <Text fontSize="$6" fontWeight="600" color="$text" numberOfLines={1}>
+          <Text fontSize="$4" fontWeight="600" color="$text" numberOfLines={1}>
             {title}
           </Text>
         </Stack>
 
         <Stack flexDirection="row" alignItems="center" gap="$2">
           {!showDelete && (
-            <Text fontSize="$2" color="$textSoft" fontWeight={800}>
+            <Text fontSize="$4" color="$textSoft" fontWeight={800}>
               {formatDate(date)}
             </Text>
           )}
 
           {showDelete && (
             <Stack
-              padding="$1"
+              padding="$2"
               borderRadius="$2"
               pressStyle={{ backgroundColor: "$backgroundHover" }}
               onPress={handleDelete}
             >
-              <Ionicons name="trash-outline" size={16} color="#dc2626" />
+              <Ionicons name="trash-outline" size={18} color="#dc2626" />
             </Stack>
           )}
         </Stack>
       </Stack>
 
-      <Text fontSize="$3" color="$textSoft" numberOfLines={2} fontWeight="500">
+      <Text fontSize="$4" color="$textSoft" numberOfLines={2} fontWeight="500">
         {subtitle}
       </Text>
     </Stack>

@@ -86,7 +86,7 @@ export default function MetricInput({
           backgroundColor="$backgroundPress"
           onPress={() => handleIncrement("down")}
         >
-          <Text fontSize="$3" color="$primary">
+          <Text fontSize="$4" color="$primary">
             −{getIncrement()}
           </Text>
         </Stack>
@@ -129,7 +129,7 @@ export default function MetricInput({
           backgroundColor="$backgroundPress"
           onPress={() => handleIncrement("up")}
         >
-          <Text fontSize="$3" color="$primary">
+          <Text fontSize="$4" color="$primary">
             +{getIncrement()}
           </Text>
         </Stack>

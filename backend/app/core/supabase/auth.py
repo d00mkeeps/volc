@@ -3,7 +3,6 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import logging
-import os
 
 logger = logging.getLogger(__name__)
 security = HTTPBearer()

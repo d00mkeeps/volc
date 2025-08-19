@@ -525,4 +525,3 @@ class WorkoutService(BaseDBService):
         
         except Exception as e:
             logger.error(f"Error updating leaderboard: {e}")
-            # Don't fail the workout save if leaderboard update fails
