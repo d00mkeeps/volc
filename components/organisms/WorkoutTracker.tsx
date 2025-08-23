@@ -1,4 +1,3 @@
-// components/organisms/WorkoutTracker.tsx
 import React, {
   useCallback,
   useMemo,
@@ -150,6 +149,9 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       updateCurrentWorkout(updatedWorkout);
     }, [isActive, currentWorkout, updateCurrentWorkout]);
 
+    const isExerciseLimitReached =
+      (currentWorkout?.workout_exercises || []).length >= 10;
+
     return (
       <BottomSheet
         ref={bottomSheetRef}
@@ -221,7 +223,18 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 />
               ))}
 
-            {isActive && (
+            {isActive && isExerciseLimitReached && (
+              <Text
+                color="$textMuted"
+                fontSize="$3"
+                textAlign="center"
+                marginTop="$2"
+              >
+                Exercise limit reached (10/10)
+              </Text>
+            )}
+
+            {isActive && !isExerciseLimitReached && (
               <Stack
                 marginTop="$2"
                 padding="$3"

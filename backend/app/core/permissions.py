@@ -9,8 +9,8 @@ class PermissionLevels:
     
     # Rate limits: action_type -> {tester_limit, admin_limit, window_hours}
     RATE_LIMITS = {
-        "workout_create": {"tester": 2, "admin": 20, "window_hours": 24},
-        "message_send": {"tester": 10, "admin": 100, "window_hours": 24},
+        "workout_create": {"tester": 5, "admin": 20, "window_hours": 24},
+        "message_send": {"tester": 20, "admin": 100, "window_hours": 24},
     }
     
     @classmethod

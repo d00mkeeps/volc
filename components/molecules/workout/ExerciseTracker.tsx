@@ -154,6 +154,7 @@ export default function ExerciseTracker({
 
     onExerciseUpdate(updatedExercise);
   };
+  const isSetLimitReached = exercise.workout_exercise_sets.length >= 10;
 
   return (
     <>
@@ -215,8 +216,20 @@ export default function ExerciseTracker({
                 onUpdate={handleSetUpdate}
               />
             ))}
-
-          <NewSetButton isActive={isActive} onPress={handleAddSet} />
+          {isActive && isSetLimitReached && (
+            <Text
+              color="$textMuted"
+              fontSize="$3"
+              textAlign="center"
+              marginTop="$1"
+            >
+              Set limit reached (10/10)
+            </Text>
+          )}
+          <NewSetButton
+            isActive={isActive && !isSetLimitReached}
+            onPress={handleAddSet}
+          />
         </YStack>
       </YStack>
 
