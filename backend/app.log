@@ -1,71 +1,54 @@
-2025-08-19 11:50:18,492 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348 (expires in 30 min)
-2025-08-19 11:50:18,494 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.27s - 21 messages, 1 bundles
-2025-08-19 11:50:19,285 - app.services.chains.base_conversation_chain - INFO - Loaded 21 messages into conversation history
-2025-08-19 11:50:19,285 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-19 11:50:19,285 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 21 messages and 1 bundles
-2025-08-19 11:50:59,344 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-2025-08-19 11:51:11,057 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
-2025-08-19 11:51:11,059 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
-2025-08-19 11:51:11,059 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
-2025-08-19 11:51:11,060 - app.services.context.conversation_context_service - INFO - ⚡ CACHE HIT: Admin context loaded in 0.00s for conversation: 5d6a90fc-bf74-4ace-9a73-8d5a43a0f348
-2025-08-19 11:51:11,065 - app.services.chains.base_conversation_chain - INFO - Loaded 21 messages into conversation history
-2025-08-19 11:51:11,065 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-19 11:51:11,065 - app.services.llm.workout_analysis - INFO - Existing conversation loaded with 21 messages and 1 bundles
-2025-08-19 11:51:16,687 - app.services.llm.workout_analysis - ERROR - Error in LLM websocket: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-Traceback (most recent call last):
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/services/llm/workout_analysis.py", line 98, in process_websocket
-    data = await websocket.receive_json()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 136, in receive_json
-    self._raise_on_disconnect(message)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/.venv/lib/python3.13/site-packages/starlette/websockets.py", line 114, in _raise_on_disconnect
-    raise WebSocketDisconnect(message["code"], message.get("reason"))
-starlette.websockets.WebSocketDisconnect: (<CloseCode.ABNORMAL_CLOSURE: 1006>, '')
-2025-08-19 21:20:21,202 - app - INFO - Logging has been set up
-2025-08-19 21:20:21,202 - app.main - INFO - Application starting
-2025-08-19 21:20:21,202 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-19 21:20:21,203 - app.main - INFO - SUPABASE_URL present: True
-2025-08-19 21:20:21,203 - app.main - INFO - SUPABASE_KEY present: False
-2025-08-23 13:35:01,852 - app - INFO - Logging has been set up
-2025-08-23 13:35:01,852 - app.main - INFO - Application starting
-2025-08-23 13:35:01,852 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/app/.env (exists: False)
-2025-08-23 13:35:01,853 - app.main - INFO - SUPABASE_URL present: True
-2025-08-23 13:35:01,853 - app.main - INFO - SUPABASE_KEY present: False
-2025-08-23 13:48:58,931 - app.main - INFO - Request: GET /api/dashboard
-2025-08-23 13:48:58,938 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:48:58,938 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:48:58,938 - app.services.db.workout_service - INFO - Getting all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:00,218 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:00,218 - app.services.db.dashboard_service - INFO - Processing 23 workouts for dashboard analytics
-2025-08-23 13:49:00,493 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 13:49:00,668 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 13:49:00,887 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 13:49:01,316 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 13:49:01,316 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:01,317 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:01,318 - app.main - INFO - Request: GET /db/user-profile
-2025-08-23 13:49:01,319 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:01,319 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:01,703 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:01,703 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-23 13:49:01,704 - app.main - INFO - Response status: 200
-2025-08-23 13:49:01,704 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-23 13:49:02,080 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-23 13:49:02,095 - app.main - INFO - Response status: 200
-2025-08-23 13:49:02,096 - app.main - INFO - Response status: 200
-2025-08-23 13:49:03,069 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-23 13:49:03,070 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 13:49:03,070 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6b8c0>
-2025-08-23 13:49:03,534 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6b8c0>
-2025-08-23 13:49:03,539 - app.main - INFO - Response status: 200
+2025-08-23 16:22:24,089 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 📊 STEP 1 - Raw from service: 23 workouts, 55 exercises, 146 sets
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 📅 Filtering workouts created after: 2025-06-24 15:22:24.092448+00:00
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 📊 STEP 2 - After 60-day filter: 23 workouts, 55 exercises, 146 sets
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - Processing 23 workouts for dashboard analytics
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 🔍 _calculate_timeframe_data for 7 days: cutoff_date=2025-08-16 15:22:24.092739+00:00
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 🔍 Input: 23 workouts to filter
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 🔍 Workout 1: date_str=2025-08-18T16:01:54.982+00:00, parsed=2025-08-18 16:01:54.982000+00:00, passes=True
+2025-08-23 16:22:24,092 - app.services.db.dashboard_service - INFO - 🔍 Workout 2: date_str=2025-08-18T13:48:17.789+00:00, parsed=2025-08-18 13:48:17.789000+00:00, passes=True
+2025-08-23 16:22:24,093 - app.services.db.dashboard_service - INFO - 🔍 Workout 3: date_str=2025-08-18T13:47:57.832+00:00, parsed=2025-08-18 13:47:57.832000+00:00, passes=True
+2025-08-23 16:22:24,093 - app.services.db.dashboard_service - INFO - 🔍 Output: 8 workouts after 7-day filter
+2025-08-23 16:22:24,317 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:22:24,317 - app.services.db.dashboard_service - INFO - 🔍 _calculate_timeframe_data for 14 days: cutoff_date=2025-08-09 15:22:24.317736+00:00
+2025-08-23 16:22:24,317 - app.services.db.dashboard_service - INFO - 🔍 Input: 23 workouts to filter
+2025-08-23 16:22:24,317 - app.services.db.dashboard_service - INFO - 🔍 Workout 1: date_str=2025-08-18T16:01:54.982+00:00, parsed=2025-08-18 16:01:54.982000+00:00, passes=True
+2025-08-23 16:22:24,317 - app.services.db.dashboard_service - INFO - 🔍 Workout 2: date_str=2025-08-18T13:48:17.789+00:00, parsed=2025-08-18 13:48:17.789000+00:00, passes=True
+2025-08-23 16:22:24,318 - app.services.db.dashboard_service - INFO - 🔍 Workout 3: date_str=2025-08-18T13:47:57.832+00:00, parsed=2025-08-18 13:47:57.832000+00:00, passes=True
+2025-08-23 16:22:24,318 - app.services.db.dashboard_service - INFO - 🔍 Output: 23 workouts after 14-day filter
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 _calculate_timeframe_data for 30 days: cutoff_date=2025-07-24 15:22:24.471362+00:00
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 Input: 23 workouts to filter
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 Workout 1: date_str=2025-08-18T16:01:54.982+00:00, parsed=2025-08-18 16:01:54.982000+00:00, passes=True
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 Workout 2: date_str=2025-08-18T13:48:17.789+00:00, parsed=2025-08-18 13:48:17.789000+00:00, passes=True
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 Workout 3: date_str=2025-08-18T13:47:57.832+00:00, parsed=2025-08-18 13:47:57.832000+00:00, passes=True
+2025-08-23 16:22:24,471 - app.services.db.dashboard_service - INFO - 🔍 Output: 23 workouts after 30-day filter
+2025-08-23 16:22:24,603 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 _calculate_timeframe_data for 60 days: cutoff_date=2025-06-24 15:22:24.604077+00:00
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 Input: 23 workouts to filter
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 Workout 1: date_str=2025-08-18T16:01:54.982+00:00, parsed=2025-08-18 16:01:54.982000+00:00, passes=True
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 Workout 2: date_str=2025-08-18T13:48:17.789+00:00, parsed=2025-08-18 13:48:17.789000+00:00, passes=True
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 Workout 3: date_str=2025-08-18T13:47:57.832+00:00, parsed=2025-08-18 13:47:57.832000+00:00, passes=True
+2025-08-23 16:22:24,604 - app.services.db.dashboard_service - INFO - 🔍 Output: 23 workouts after 60-day filter
+2025-08-23 16:22:24,741 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:22:24,742 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1week: 8 workouts, muscle_sets: 62
+2025-08-23 16:22:24,742 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2weeks: 23 workouts, muscle_sets: 182
+2025-08-23 16:22:24,742 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1month: 23 workouts, muscle_sets: 182
+2025-08-23 16:22:24,742 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2months: 23 workouts, muscle_sets: 182
+2025-08-23 16:22:24,742 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:24,743 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:24,744 - app.main - INFO - Response status: 200
+2025-08-23 16:22:24,745 - app.main - INFO - Request: GET /db/user-profile
+2025-08-23 16:22:24,746 - app.api.endpoints.db - INFO - API request to get profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:24,746 - app.services.db.user_profile_service - INFO - Getting profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:25,061 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:25,062 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-23 16:22:25,063 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-23 16:22:25,351 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-23 16:22:25,359 - app.main - INFO - Response status: 200
+2025-08-23 16:22:25,359 - app.main - INFO - Response status: 200
+2025-08-23 16:22:26,012 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-23 16:22:26,012 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 16:22:26,012 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11941f8c0>
+2025-08-23 16:22:26,351 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11941f8c0>
+2025-08-23 16:22:26,361 - app.main - INFO - Response status: 200

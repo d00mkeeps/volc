@@ -1,48 +1,86 @@
-2025-08-18 17:02:19,924 - app.services.db.workout_service - INFO - Creating exercise 3/3: Running
-2025-08-18 17:02:20,028 - app.services.db.workout_service - INFO - Exercise created: Running with ID: 8785870b-a4de-41c4-a3f3-0d00d552e9bc
-2025-08-18 17:02:21,099 - app.services.db.workout_service - INFO - Updated bicep leaderboard for user 1b6aebb0-1107-42fc-97f2-892cc56b706b: 71.53 1RM
-2025-08-18 17:02:21,099 - app.services.db.workout_service - INFO - Workout creation complete for ID: 15024c83-acc5-4cc0-bb56-273bb957f8a3
-2025-08-18 17:02:21,099 - app.main - INFO - Response status: 200
-2025-08-18 17:02:21,810 - app.main - INFO - Request: POST /api/workout-analysis
-2025-08-18 17:02:21,814 - app.services.db.conversation_service - INFO - Creating conversation for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-18 17:02:22,347 - app.services.workout_analysis_service - INFO - Conversation service returned: {'success': True, 'data': {'id': 'ba5ea40b-e394-4e60-b82a-79f1e8d70fc0', 'user_id': '1b6aebb0-1107-42fc-97f2-892cc56b706b', 'title': 'Analysis - Aug 18', 'config_name': 'workout-analysis', 'created_at': '2025-08-18T16:02:22.309786+00:00', 'updated_at': '2025-08-18T16:02:22.309786+00:00', 'status': 'active', 'message_count': 0}, 'error': None}
-2025-08-18 17:02:22,348 - app.services.workout_analysis_service - INFO - Starting analysis task for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:22,348 - app.services.db.analysis_service - INFO - Creating empty analysis bundle: 21685257-85b2-4e7f-843f-c6cc77ca1648 for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:22,714 - app.services.db.analysis_service - INFO - Empty bundle created successfully with ID: 21685257-85b2-4e7f-843f-c6cc77ca1648
-2025-08-18 17:02:22,714 - app.services.workout_analysis_service - INFO - Created empty bundle: 21685257-85b2-4e7f-843f-c6cc77ca1648
-2025-08-18 17:02:22,714 - app.services.db.analysis_service - INFO - Updating bundle 21685257-85b2-4e7f-843f-c6cc77ca1648 status to: in_progress
-2025-08-18 17:02:23,281 - app.services.db.analysis_service - INFO - Bundle status updated successfully: 21685257-85b2-4e7f-843f-c6cc77ca1648 -> in_progress
-2025-08-18 17:02:23,282 - app.services.db.workout_service - INFO - Calling RPC for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b, definitions: ['f42cf0c2-51cf-4e22-9b1c-d7b83f5c62fa', '46a6427a-127d-4127-9219-884075d863e8', 'e8f1f3a7-5443-42d3-8bd9-7dfadcfb29cc']
-2025-08-18 17:02:23,718 - app.services.db.workout_service - INFO - RPC returned: 16 workouts
-2025-08-18 17:02:23,718 - app.services.workout_analysis_service - INFO - Processing analysis for 16 workouts
-2025-08-18 17:02:23,719 - app.services.workout_analysis.main_processor - INFO - Processing bundle 21685257-85b2-4e7f-843f-c6cc77ca1648 with 16 workouts
-2025-08-18 17:02:23,719 - app.services.workout_analysis.calc.strength - INFO - Found 5 exercises with strength data, returning top 3
-2025-08-18 17:02:23,720 - app.services.workout_analysis.calc.strength - INFO - Generated time series for 5 exercises
-2025-08-18 17:02:23,720 - app.services.workout_analysis.calc.volume - INFO - Found 5 exercises with volume data, returning top 3
-2025-08-18 17:02:23,720 - app.services.workout_analysis.calc.volume - INFO - Generated time series for 5 exercises
-2025-08-18 17:02:23,720 - app.services.workout_analysis.calc.consistency - INFO - Calculated consistency: avg_gap=0.2, variance=0.08783494329608965
-2025-08-18 17:02:23,780 - app.services.workout_analysis.main_processor - INFO - Successfully processed bundle 21685257-85b2-4e7f-843f-c6cc77ca1648
-2025-08-18 17:02:23,780 - app.services.db.analysis_service - INFO - Updating analysis bundle: 21685257-85b2-4e7f-843f-c6cc77ca1648
-2025-08-18 17:02:24,192 - app.services.db.analysis_service - INFO - Bundle updated successfully: 21685257-85b2-4e7f-843f-c6cc77ca1648
-2025-08-18 17:02:24,200 - app.services.workout_analysis_service - INFO - Analysis task completed successfully for conversation ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:24,200 - app.main - INFO - Response status: 200
-2025-08-18 17:02:24,474 - app.main - INFO - Request: GET /db/conversations/ba5ea40b-e394-4e60-b82a-79f1e8d70fc0/messages
-2025-08-18 17:02:24,475 - app.api.endpoints.db - INFO - API request to get messages for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:24,475 - app.services.db.message_service - INFO - Getting messages for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:24,895 - app.services.db.message_service - INFO - Retrieved 0 messages
-2025-08-18 17:02:24,897 - app.main - INFO - Response status: 200
-2025-08-18 17:02:24,900 - app.services.llm.workout_analysis - INFO - WebSocket connection accepted for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:24,901 - app.services.llm.workout_analysis - INFO - Loading conversation context via unified service
-2025-08-18 17:02:24,901 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:24,901 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0 (check took 0.00s)
-2025-08-18 17:02:24,901 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:25,104 - app.core.utils.conversation_attachments - INFO - Successfully loaded 0 messages and 1 complete bundles for conversation ba5ea40b-e394-4e60-b82a-79f1e8d70fc0
-2025-08-18 17:02:25,105 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: ba5ea40b-e394-4e60-b82a-79f1e8d70fc0 (expires in 30 min)
-2025-08-18 17:02:25,105 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.20s - 0 messages, 1 bundles
-2025-08-18 17:02:26,256 - app.services.chains.base_conversation_chain - INFO - Loaded 0 messages into conversation history
-2025-08-18 17:02:26,256 - app.services.chains.workout_analysis_chain - INFO - Loaded 1 workout bundles into conversation context
-2025-08-18 17:02:26,256 - app.services.llm.workout_analysis - INFO - New conversation with workout data - sending proactive analysis
-2025-08-18 17:02:26,257 - app.services.chains.base_conversation_chain - INFO - 
-=== Formatted Messages ===
-2025-08-18 17:02:26,257 - app.services.chains.base_conversation_chain - INFO - 
-Message 1 (SystemMessage):
+2025-08-23 14:15:46,951 - app.main - INFO - Response status: 200
+2025-08-23 14:15:46,955 - app.main - INFO - Response status: 200
+2025-08-23 14:15:47,771 - app.main - INFO - Request: GET /images/9d5c3c24-342d-4bf4-ad6c-34c45160699a/url
+2025-08-23 14:15:47,771 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-23 14:15:47,772 - app.api.endpoints.images - INFO - API request to get image URL: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
+2025-08-23 14:15:47,772 - app.services.db.image_service - INFO - Getting image URL for ID: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
+2025-08-23 14:15:48,162 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg
+2025-08-23 14:15:48,169 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
+2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Used direct string
+2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
+2025-08-23 14:15:48,170 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
+2025-08-23 14:15:48,170 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:15:48,627 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:15:48,633 - app.main - INFO - Response status: 200
+2025-08-23 14:15:48,633 - app.main - INFO - Response status: 200
+2025-08-23 14:16:03,207 - app.main - INFO - Request: GET /db/user-profile
+2025-08-23 14:16:03,208 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:03,208 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:03,525 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:03,526 - app.main - INFO - Response status: 200
+2025-08-23 14:16:03,986 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-23 14:16:03,987 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:03,987 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:16:04,392 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:16:04,394 - app.main - INFO - Response status: 200
+2025-08-23 14:16:04,395 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-23 14:16:04,396 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-23 14:16:04,814 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-23 14:16:04,825 - app.main - INFO - Response status: 200
+2025-08-23 14:16:15,425 - app.main - INFO - Request: GET /api/dashboard
+2025-08-23 14:16:15,430 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:15,431 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:15,431 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:15,846 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:15,846 - app.services.db.dashboard_service - INFO - Processing 2 workouts for dashboard analytics
+2025-08-23 14:16:15,985 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 14:16:16,166 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 14:16:16,346 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 14:16:16,508 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 14:16:16,509 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:16,509 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:16,509 - app.main - INFO - Response status: 200
+2025-08-23 14:16:16,510 - app.main - INFO - Request: GET /db/user-profile
+2025-08-23 14:16:16,510 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:16,510 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:16,809 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:16,810 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-23 14:16:16,811 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-23 14:16:17,181 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-23 14:16:17,193 - app.main - INFO - Response status: 200
+2025-08-23 14:16:17,194 - app.main - INFO - Response status: 200
+2025-08-23 14:16:17,762 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-23 14:16:17,762 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 14:16:17,762 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:16:18,072 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 14:16:18,073 - app.main - INFO - Response status: 200
+2025-08-23 16:06:12,510 - app.main - INFO - Request: GET /api/dashboard
+2025-08-23 16:06:12,518 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:12,518 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:12,518 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:13,349 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:13,350 - app.services.db.dashboard_service - INFO - Processing 2 workouts for dashboard analytics
+2025-08-23 16:06:13,632 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:06:13,856 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:06:14,166 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:06:14,363 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
+2025-08-23 16:06:14,364 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:14,364 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:14,367 - app.main - INFO - Request: GET /db/user-profile
+2025-08-23 16:06:14,369 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:14,369 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:14,766 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:14,767 - app.main - INFO - Response status: 200
+2025-08-23 16:06:14,769 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-08-23 16:06:14,770 - app.main - INFO - Response status: 200
+2025-08-23 16:06:14,771 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-08-23 16:06:15,257 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-08-23 16:06:15,276 - app.main - INFO - Response status: 200
+2025-08-23 16:06:16,112 - app.main - INFO - Request: GET /db/workouts/user
+2025-08-23 16:06:16,113 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-08-23 16:06:16,113 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 16:06:16,541 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
+2025-08-23 16:06:16,542 - app.main - INFO - Response status: 200
+2025-08-23 16:06:17,661 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url

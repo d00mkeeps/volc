@@ -66,9 +66,20 @@ class DashboardService(BaseDBService):
 
             workouts = workouts_result["data"]
             
+            # 🔍 STEP 1: Log raw workout data from service
+            total_exercises = sum(len(w.get("workout_exercises", [])) for w in workouts)
+            total_sets = sum(
+                len(ex.get("workout_exercise_sets", [])) 
+                for w in workouts 
+                for ex in w.get("workout_exercises", [])
+            )
+            logger.info(f"📊 STEP 1 - Raw from service: {len(workouts)} workouts, {total_exercises} exercises, {total_sets} sets")
+            
             # Filter to last 60 days - use UTC timezone-aware datetime
             sixty_days_ago = datetime.now(timezone.utc) - timedelta(days=60)
             recent_workouts = []
+            
+            logger.info(f"📅 Filtering workouts created after: {sixty_days_ago}")
             
             for w in workouts:
                 workout_date_str = w["created_at"]
@@ -76,6 +87,15 @@ class DashboardService(BaseDBService):
                 workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00'))
                 if workout_date >= sixty_days_ago:
                     recent_workouts.append(w)
+
+            # 🔍 STEP 2: Log after 60-day filter
+            filtered_exercises = sum(len(w.get("workout_exercises", [])) for w in recent_workouts)
+            filtered_sets = sum(
+                len(ex.get("workout_exercise_sets", [])) 
+                for w in recent_workouts 
+                for ex in w.get("workout_exercises", [])
+            )
+            logger.info(f"📊 STEP 2 - After 60-day filter: {len(recent_workouts)} workouts, {filtered_exercises} exercises, {filtered_sets} sets")
 
             logger.info(f"Processing {len(recent_workouts)} workouts for dashboard analytics")
 
@@ -88,6 +108,12 @@ class DashboardService(BaseDBService):
                 "lastUpdated": datetime.now(timezone.utc).isoformat()
             }
 
+            # 🔍 STEP 3: Log final dashboard numbers
+            for timeframe, data in dashboard_data.items():
+                if timeframe != "lastUpdated":
+                    total_muscle_sets = sum(m["sets"] for m in data["muscleBalance"])
+                    logger.info(f"📊 STEP 3 - {timeframe}: {data['consistency']['totalWorkouts']} workouts, muscle_sets: {total_muscle_sets}")
+
             logger.info(f"Successfully processed dashboard data for user: {user_id}")
             return await self.format_response(dashboard_data)
 
@@ -95,24 +121,35 @@ class DashboardService(BaseDBService):
             logger.error(f"Error getting dashboard data for user {user_id}: {str(e)}")
             return await self.handle_error("get_dashboard_data", e)
 
+
     def _calculate_timeframe_data(self, workouts: List[Dict], days: int) -> Dict[str, Any]:
         """Calculate muscle balance and consistency for a specific timeframe"""
         # Use UTC timezone-aware datetime
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
         
+        # 🔍 Log the filtering process
+        logger.info(f"🔍 _calculate_timeframe_data for {days} days: cutoff_date={cutoff_date}")
+        logger.info(f"🔍 Input: {len(workouts)} workouts to filter")
+        
         # Filter workouts for this timeframe
         timeframe_workouts = []
-        for w in workouts:
+        for i, w in enumerate(workouts):
             workout_date_str = w["created_at"]
             # Parse datetime with timezone info
             workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00'))
-            if workout_date >= cutoff_date:
+            passes_filter = workout_date >= cutoff_date
+            if i < 3:  # Log first 3 for debugging
+                logger.info(f"🔍 Workout {i+1}: date_str={workout_date_str}, parsed={workout_date}, passes={passes_filter}")
+            if passes_filter:
                 timeframe_workouts.append(w)
+        
+        logger.info(f"🔍 Output: {len(timeframe_workouts)} workouts after {days}-day filter")
 
         return {
             "muscleBalance": self._calculate_muscle_balance(timeframe_workouts),
             "consistency": self._calculate_consistency(timeframe_workouts, days)
         }
+
 
     def _get_all_exercise_definitions(self) -> Dict[str, List[str]]:
         """Get all exercise definitions in one query and cache primary muscles"""
@@ -186,27 +223,24 @@ class DashboardService(BaseDBService):
             if sets > 0
         ]
 
+
     def _calculate_consistency(self, workouts: List[Dict], days: int) -> Dict[str, Any]:
-        """Calculate consistency metrics"""
-        
-        # Get unique workout dates
+        # Get unique workout dates (for calendar display)
         workout_dates = set()
         for workout in workouts:
             workout_date_str = workout["created_at"]
-            # Parse and convert to date (removes time and timezone)
             workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00')).date()
             workout_dates.add(workout_date)
 
         # Calculate metrics
-        total_workouts = len(workout_dates)
+        total_workouts = len(workouts)  # ✅ Count actual workouts, not unique dates
         
-        # Return actual dates as ISO strings instead of just day numbers
+        # Return actual dates as ISO strings
         workout_date_strings = [date.isoformat() for date in sorted(workout_dates)]
 
         return {
-            "workoutDates": workout_date_strings,  # Changed from workoutDays to workoutDates
-            "totalWorkouts": total_workouts
-            # Removed streak, score - as you requested
+            "workoutDates": workout_date_strings,
+            "totalWorkouts": total_workouts  # ✅ Now shows real workout count
         }
 
     def _map_muscle_to_group(self, muscle: str) -> str:

@@ -13,6 +13,7 @@ interface DashboardStore {
   cacheValidForHours: number;
 
   // Actions
+  clearData: () => void;
   refreshDashboard: () => Promise<void>;
   invalidateAfterWorkout: () => void;
   shouldRefresh: () => boolean;
@@ -35,7 +36,15 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60);
     return hoursSinceUpdate >= cacheValidForHours;
   },
-
+  clearData: () => {
+    console.log("🧹 Clearing dashboard cache");
+    set({
+      allData: null,
+      isLoading: false,
+      lastUpdated: null,
+      error: null,
+    });
+  },
   // Main refresh method - calls API
   refreshDashboard: async () => {
     const { shouldRefresh } = get();

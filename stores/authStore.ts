@@ -4,6 +4,7 @@ import { useUserStore } from "./userProfileStore";
 import { useExerciseStore } from "./workout/exerciseStore";
 import { useConversationStore } from "./chat/ConversationStore";
 import { useWorkoutStore } from "./workout/WorkoutStore";
+import { useDashboardStore } from "./dashboardStore";
 
 /**
  * Central auth state manager that coordinates all store initialization
@@ -15,38 +16,28 @@ export function useAuthStore() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        console.log("🔐 Auth detected - initializing stores...");
+        console.log("[AuthStore] Initializing stores...");
 
         const initializeStores = async () => {
           try {
-            console.log("Initializing UserStore...");
             await useUserStore.getState().initializeIfAuthenticated();
-            console.log("✅ UserStore done");
-
-            console.log("Initializing ExerciseStore...");
             await useExerciseStore.getState().initializeIfAuthenticated();
-            console.log("✅ ExerciseStore done");
-
-            console.log("Initializing ConversationStore...");
             await useConversationStore.getState().initializeIfAuthenticated();
-            console.log("✅ ConversationStore done");
-
-            console.log("Initializing WorkoutStore...");
             await useWorkoutStore.getState().initializeIfAuthenticated();
-            console.log("✅ WorkoutStore done");
+            console.log("[AuthStore] All stores initialized");
           } catch (error) {
             console.error("❌ Store initialization failed:", error);
           }
         };
         initializeStores();
       } else {
-        console.log("🚪 User logged out - clearing stores...");
-        // Clear all stores on logout
+        console.log("[AuthStore] User logged out - clearing stores...");
         useUserStore.getState().clearData();
         useExerciseStore.getState().clearData();
         useConversationStore.getState().clearData();
         useWorkoutStore.getState().clearData();
-        console.log("🧹 All stores cleared");
+        useDashboardStore.getState().clearData();
+        console.log("[AuthStore] All stores cleared");
       }
     }
   }, [user, loading]);
