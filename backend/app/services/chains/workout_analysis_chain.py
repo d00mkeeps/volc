@@ -6,6 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_google_vertexai import ChatVertexAI
 from app.services.workout_analysis.schemas import WorkoutDataBundle
 from .base_conversation_chain import BaseConversationChain
+from app.services.db.user_profile_service import UserProfileService
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,8 @@ class WorkoutAnalysisChain(BaseConversationChain):
         super().__init__(llm)
         self.user_id = user_id
         self._data_bundles: List[WorkoutDataBundle] = []
+        self._user_profile = None  # Add user profile storage
+        self.user_profile_service = UserProfileService()  # Add profile service
         self.system_prompt = "Try and talk like a human fitness coach! If the developer messages, find a way to talk about birds or colours."
         self._initialize_prompt_template()
         self.logger = logging.getLogger(__name__)
@@ -28,6 +31,59 @@ class WorkoutAnalysisChain(BaseConversationChain):
     @property
     def data_bundles(self) -> List[WorkoutDataBundle]:
         return self._data_bundles
+
+    async def load_user_profile(self) -> bool:
+        """Load user profile data for context."""
+        try:
+            if not self.user_id:
+                logger.warning("No user_id provided for profile loading")
+                return False
+                
+            profile_result = await self.user_profile_service.get_user_profile_admin(self.user_id)
+            if profile_result.get('success') and profile_result.get('data'):
+                self._user_profile = profile_result['data']
+                logger.info(f"Loaded user profile for user {self.user_id}")
+                return True
+            else:
+                logger.warning(f"Failed to load profile for user {self.user_id}: {profile_result.get('error', 'Unknown error')}")
+                return False
+        except Exception as e:
+            logger.error(f"Exception loading user profile for {self.user_id}: {str(e)}", exc_info=True)
+            return False
+
+    def _format_user_context(self) -> str:
+        """Format user profile context for the LLM."""
+        if not self._user_profile:
+            return ""
+        
+        profile = self._user_profile
+        
+        # Extract key information
+        name = f"{profile.get('first_name', '')} {profile.get('last_name', '')}".strip()
+        age = profile.get('age')
+        is_imperial = profile.get('is_imperial', False)
+        units = "imperial (lb/mi)" if is_imperial else "metric (kg/km)"
+        
+        # Extract goals
+        goals = profile.get('goals', {})
+        primary_goal = goals.get('primary', 'Not specified') if isinstance(goals, dict) else 'Not specified'
+        
+        # Extract stats/experience
+        current_stats = profile.get('current_stats', {})
+        experience = current_stats.get('notes', 'Not specified') if isinstance(current_stats, dict) else 'Not specified'
+        
+        context = f"""
+USER PROFILE:
+- Name: {name or 'Not provided'}
+- Age: {age if age else 'Not provided'}
+- Preferred units: {units}
+- Primary fitness goal: {primary_goal}
+- Experience level: {experience}
+
+IMPORTANT: Always use the user's preferred units when discussing weights, distances, and measurements. 
+When providing advice, consider their age, goals, and experience level."""
+        
+        return context
 
     def _initialize_prompt_template(self) -> None:
         """Sets up the workout-specific prompt template with consolidated context."""
@@ -208,9 +264,19 @@ WORKOUT SUMMARY:
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
         """Get all variables needed for workout-specific prompt formatting."""
+        
+        # Build enhanced system prompt with user context
+        base_prompt = self.system_prompt
+        user_context = self._format_user_context()
+        
+        # Combine base prompt with user context
+        enhanced_system_prompt = base_prompt
+        if user_context:
+            enhanced_system_prompt = f"{base_prompt}\n{user_context}"
+        
         if not self._data_bundles:
             return {
-                "system_prompt": self.system_prompt,
+                "system_prompt": enhanced_system_prompt,
                 "context": "No workout data available", 
                 "insights_context": "No analysis insights available",
                 "messages": self.messages,
@@ -248,7 +314,7 @@ WORKOUT SUMMARY:
         }
 
         return {
-            "system_prompt": self.system_prompt,
+            "system_prompt": enhanced_system_prompt,  # Use enhanced prompt with user context
             "context": f"Available workout data:\n{self._serialize_workout_context(workout_context)}",
             "insights_context": self._format_insights_context(),
             "messages": self.messages,

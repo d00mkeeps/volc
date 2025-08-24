@@ -136,6 +136,49 @@ async def delete_conversation_bundles(
             detail=str(e)
         )
     
+
+@router.post("/account/delete")
+async def delete_user_account(
+    confirmation: Dict[str, Any] = Body(...),
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Delete the current user's account permanently"""
+    try:
+        # Validate confirmation
+        if not confirmation.get("confirmed"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Account deletion must be confirmed"
+            )
+        
+        if confirmation.get("typed_confirmation") != "DELETE MY ACCOUNT":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid confirmation text"
+            )
+        
+        logger.info(f"API request to delete account for user: {user.id}")
+        result = await user_profile_service.delete_user_account(user.id, jwt_token)
+        
+        if not result.get("success"):
+            raise Exception(result.get("error", "Account deletion failed"))
+        
+        logger.info(f"Account successfully deleted for user: {user.id}")
+        return {
+            "success": True,
+            "message": "Account deleted successfully",
+            "data": result.get("data")
+        }
+        
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions as-is
+    except Exception as e:
+        logger.error(f"Error deleting user account: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 @router.post("/workouts")
 @rate_limit("workout_create") 
 async def create_workout(

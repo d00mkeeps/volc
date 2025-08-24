@@ -12,7 +12,7 @@ interface PersonalInfoCardProps {
 interface ProfileField {
   label: string;
   value: string | number;
-  key: keyof UserProfile; // Fix: Properly type this
+  key: keyof UserProfile;
 }
 
 export default function PersonalInfoCard({
@@ -23,14 +23,13 @@ export default function PersonalInfoCard({
 }: PersonalInfoCardProps) {
   const [editedValues, setEditedValues] = useState<Partial<UserProfile>>({});
 
-  // Initialize edited values when entering edit mode
+  // Initialize edited values when entering edit mode (excluding age - not editable)
   useEffect(() => {
     if (isEditing) {
       setEditedValues({
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
         instagram_username: profile.instagram_username || "",
-        age: profile.age || null, // Changed from age_group
         is_imperial: profile.is_imperial,
       });
     }
@@ -56,9 +55,8 @@ export default function PersonalInfoCard({
     setEditedValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Prepare display fields using MetricsDisplay pattern
+  // Prepare display fields
   const fields: ProfileField[] = [
-    // Fix: Add proper typing
     {
       label: "First Name",
       value: isEditing
@@ -83,13 +81,9 @@ export default function PersonalInfoCard({
       key: "instagram_username" as keyof UserProfile,
     },
     {
-      label: "Age", // Changed from "Age Group"
-      value: isEditing
-        ? editedValues.age || ""
-        : profile.age
-        ? `${profile.age} years old`
-        : "Not set", // Changed logic
-      key: "age" as keyof UserProfile, // Changed from age_group
+      label: "Age",
+      value: profile.age ? `${profile.age} years old` : "Not set",
+      key: "age" as keyof UserProfile,
     },
     {
       label: "Units",
@@ -168,22 +162,21 @@ export default function PersonalInfoCard({
                         {editedValues.is_imperial ? "Imperial" : "Metric"}
                       </Text>
                     </Button>
+                  ) : field.key === "age" ? (
+                    // Age is always read-only, even in edit mode
+                    <Text fontSize="$4" fontWeight="600" color="$text">
+                      {field.value}
+                    </Text>
                   ) : (
                     <Input
                       value={String(field.value)}
-                      onChangeText={(text) =>
-                        updateField(
-                          field.key,
-                          field.key === "age" ? Number(text) || null : text
-                        )
-                      }
+                      onChangeText={(text) => updateField(field.key, text)}
                       fontSize="$4"
                       fontWeight="600"
                       backgroundColor="$background"
                       borderWidth={1}
                       borderColor="$borderColor"
                       placeholder={field.label}
-                      keyboardType={field.key === "age" ? "numeric" : "default"}
                     />
                   )
                 ) : (

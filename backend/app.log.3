@@ -1,86 +1,79 @@
-2025-08-23 14:15:46,951 - app.main - INFO - Response status: 200
-2025-08-23 14:15:46,955 - app.main - INFO - Response status: 200
-2025-08-23 14:15:47,771 - app.main - INFO - Request: GET /images/9d5c3c24-342d-4bf4-ad6c-34c45160699a/url
-2025-08-23 14:15:47,771 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-23 14:15:47,772 - app.api.endpoints.images - INFO - API request to get image URL: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-23 14:15:47,772 - app.services.db.image_service - INFO - Getting image URL for ID: 9d5c3c24-342d-4bf4-ad6c-34c45160699a
-2025-08-23 14:15:48,162 - app.services.db.image_service - INFO - Found file path: 1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg
-2025-08-23 14:15:48,169 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Used direct string
-2025-08-23 14:15:48,170 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1b6aebb0-1107-42fc-97f2-892cc56b706b/b839e567-ed87-4488-bd24-fcec49653c23.jpg?
-2025-08-23 14:15:48,170 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1b6aebb0-1107-42fc-97f2-892cc56b706b
-2025-08-23 14:15:48,170 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:15:48,627 - app.services.db.workout_service - INFO - Retrieved 23 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:15:48,633 - app.main - INFO - Response status: 200
-2025-08-23 14:15:48,633 - app.main - INFO - Response status: 200
-2025-08-23 14:16:03,207 - app.main - INFO - Request: GET /db/user-profile
-2025-08-23 14:16:03,208 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:03,208 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:03,525 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:03,526 - app.main - INFO - Response status: 200
-2025-08-23 14:16:03,986 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-23 14:16:03,987 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:03,987 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:16:04,392 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:16:04,394 - app.main - INFO - Response status: 200
-2025-08-23 14:16:04,395 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-23 14:16:04,396 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-23 14:16:04,814 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-23 14:16:04,825 - app.main - INFO - Response status: 200
-2025-08-23 14:16:15,425 - app.main - INFO - Request: GET /api/dashboard
-2025-08-23 14:16:15,430 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:15,431 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:15,431 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:15,846 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:15,846 - app.services.db.dashboard_service - INFO - Processing 2 workouts for dashboard analytics
-2025-08-23 14:16:15,985 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 14:16:16,166 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 14:16:16,346 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 14:16:16,508 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 14:16:16,509 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:16,509 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:16,509 - app.main - INFO - Response status: 200
-2025-08-23 14:16:16,510 - app.main - INFO - Request: GET /db/user-profile
-2025-08-23 14:16:16,510 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:16,510 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:16,809 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:16,810 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-23 14:16:16,811 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-23 14:16:17,181 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-23 14:16:17,193 - app.main - INFO - Response status: 200
-2025-08-23 14:16:17,194 - app.main - INFO - Response status: 200
-2025-08-23 14:16:17,762 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-23 14:16:17,762 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 14:16:17,762 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:16:18,072 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 14:16:18,073 - app.main - INFO - Response status: 200
-2025-08-23 16:06:12,510 - app.main - INFO - Request: GET /api/dashboard
-2025-08-23 16:06:12,518 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:12,518 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:12,518 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:13,349 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:13,350 - app.services.db.dashboard_service - INFO - Processing 2 workouts for dashboard analytics
-2025-08-23 16:06:13,632 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 16:06:13,856 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 16:06:14,166 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 16:06:14,363 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-08-23 16:06:14,364 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:14,364 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:14,367 - app.main - INFO - Request: GET /db/user-profile
-2025-08-23 16:06:14,369 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:14,369 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:14,766 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:14,767 - app.main - INFO - Response status: 200
-2025-08-23 16:06:14,769 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-08-23 16:06:14,770 - app.main - INFO - Response status: 200
-2025-08-23 16:06:14,771 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-08-23 16:06:15,257 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-08-23 16:06:15,276 - app.main - INFO - Response status: 200
-2025-08-23 16:06:16,112 - app.main - INFO - Request: GET /db/workouts/user
-2025-08-23 16:06:16,113 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-08-23 16:06:16,113 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 16:06:16,541 - app.services.db.workout_service - INFO - Retrieved 2 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x11dc6aba0>
-2025-08-23 16:06:16,542 - app.main - INFO - Response status: 200
-2025-08-23 16:06:17,661 - app.main - INFO - Request: GET /images/c032cee7-1c3c-4998-8c4a-778388b27ac9/url
+2025-08-24 14:55:11,207 - app.services.chains.base_conversation_chain - INFO - Content: So how do you know my name then?
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - 
+Message 10 (AIMessage):
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - Content: That's a sharp question, Miles! You caught me there, and it's a really good point.
+
+You're absolutely right to call me out on that! The reason I know your name, Miles, is because it was provided to me right at the very beginning of our conversation, in the initial instructions I received for *this specific interaction*. It was part of the "user profile" information given to me to help me talk to you like a human fitness coach.
+
+So, while I don't have access to a persistent "profile" or a database of users, the information like your name, age, preferred units, and those... interesting goals you mentioned (Gfccfrddcfffdfft and Dngngneskkzlxlcgmrbwbwjkorkgynynekwpqpxkfmfmzlxpvpgprmsmdnfng) were all given to me as context for *this chat*.
+
+My apologies if that was confusing! I should have been clearer that I don't *access* your profile, but rather, the details were *provided* to me for our current conversation.
+
+Does that make more sense? What else can I help you with today, Miles?
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - 
+Message 11 (HumanMessage):
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - Content: So you _can_ see my profile?
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - 
+Message 12 (AIMessage):
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - Content: Okay, Miles, let's clear this up once and for all, because it's super important you understand how this works!
+
+When I say I don't "see" your profile, I mean I don't have access to a persistent database or a file that stores your information long-term, like a user account on a website. I can't go and "look up" your profile whenever I want.
+
+What *did* happen is that the information about you – your name (Miles Hillary), your age (21), your preferred units (imperial), and your primary fitness goal (Gfccfrddcfffdfft) – was *given to me* as part of the initial instructions for *this specific conversation we are having right now*. It's like someone handed me a note at the very beginning of our chat that said, "Hey, you're talking to Miles, he's 21, uses imperial, and his goal is Gfccfrddcfffdfft."
+
+So, I don't *access* a profile; the information was *provided* to me as context for our current interaction. It's temporary, just for this chat session.
+
+Does that distinction make sense? It's a subtle but important difference when it comes to data privacy and how AI models operate. My core function remains analyzing the workout data you provide *in the moment*.
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - 
+Message 13 (HumanMessage):
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - Content: Come up with a good acronym that my goal stands for
+2025-08-24 14:55:11,209 - app.services.chains.base_conversation_chain - INFO - =====================
+2025-08-24 14:55:27,143 - app.services.chains.base_conversation_chain - INFO - Chunk: content='Alright, Miles, I love this challenge! That "Gfccfrddcfffdfft" goal is certainly... unique! But hey, every great fitness journey starts with a vision, no matter how abstract it seems at first.
+
+Given that string, let's turn it into something powerful and motivating that', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-24 14:55:27,422 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' truly represents your fitness journey! How about this for an acronym:
+
+**G.F.C.D.T.**
+
+Which stands for:
+
+*   **G**reat
+*   **F**itness
+*   **C**onsistency
+*   **D**rives
+*   **T**ransformation!', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-24 14:55:27,669 - app.services.chains.base_conversation_chain - INFO - Chunk: content='
+
+And all those extra 'F's, 'C's, and 'D's in there? They just mean even *more* **F**ocus, **C**onsistency, and **D**edication to fuel that transformation! It's like a flock of **yellow** finches, each', metadata={'safety_ratings': [], 'usage_metadata': {}}
+2025-08-24 14:55:27,977 - app.services.chains.base_conversation_chain - INFO - Chunk: content=' one adding to the vibrant energy of the whole group, all flying towards the same bright future!
+
+What do you think, Miles? Does that resonate with the kind of progress you're looking to make?', metadata={'safety_ratings': [], 'usage_metadata': {}, 'finish_reason': 'STOP', 'model_name': 'gemini-2.5-flash'}
+2025-08-24 14:55:27,979 - app.services.db.message_service - INFO - Saving server assistant message to conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:28,580 - app.services.db.message_service - INFO - Server message saved with ID: 7e76730d-5fe2-44fc-b0e0-0395f01133db
+2025-08-24 14:55:28,580 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:28,581 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:28,581 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:28,581 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c (check took 0.00s)
+2025-08-24 14:55:28,581 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:29,137 - app.core.utils.conversation_attachments - INFO - Successfully loaded 13 messages and 1 complete bundles for conversation f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:29,137 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c (expires in 30 min)
+2025-08-24 14:55:29,137 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.56s - 13 messages, 1 bundles
+2025-08-24 14:55:29,137 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:29,138 - app.services.llm.workout_analysis - INFO - Saved AI response with ID: None
+2025-08-24 14:55:49,315 - app.services.rate_limiter - INFO - No JWT provided, using database lookup for permissions
+2025-08-24 14:55:50,248 - app.services.db.message_service - INFO - Saving server user message to conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,589 - app.services.db.message_service - INFO - Server message saved with ID: 69436eeb-575f-4e21-8cd7-4b35c3f3e5a7
+2025-08-24 14:55:50,590 - app.services.context.conversation_context_service - INFO - 🔄 REFRESH: Force refreshing context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,590 - app.services.context.conversation_context_service - INFO - Invalidated cache for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,590 - app.services.context.conversation_context_service - INFO - 🔄 ADMIN: Loading context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,590 - app.services.context.conversation_context_service - INFO - 💾 CACHE MISS: Loading from database with admin for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c (check took 0.00s)
+2025-08-24 14:55:50,590 - app.core.utils.conversation_attachments - INFO - Loading conversation context (admin) for: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,933 - app.core.utils.conversation_attachments - INFO - Successfully loaded 14 messages and 1 complete bundles for conversation f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,933 - app.services.context.conversation_context_service - INFO - 💾 CACHED: Stored context for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c (expires in 30 min)
+2025-08-24 14:55:50,933 - app.services.context.conversation_context_service - INFO - ✅ ADMIN: Context loaded successfully in 0.34s - 14 messages, 1 bundles
+2025-08-24 14:55:50,933 - app.services.context.conversation_context_service - INFO - ✅ REFRESH: Context refreshed for conversation: f8c5f9d7-acff-47b5-9291-873e2ee8dd9c
+2025-08-24 14:55:50,933 - app.services.llm.workout_analysis - INFO - Saved user message with ID: None
+2025-08-24 14:55:50,933 - app.services.chains.base_conversation_chain - INFO - 
+=== Formatted Messages ===
+2025-08-24 14:55:50,933 - app.services.chains.base_conversation_chain - INFO - 
+Message 1 (SystemMessage):

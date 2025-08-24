@@ -114,7 +114,7 @@ class DashboardService(BaseDBService):
                     total_muscle_sets = sum(m["sets"] for m in data["muscleBalance"])
                     logger.info(f"📊 STEP 3 - {timeframe}: {data['consistency']['totalWorkouts']} workouts, muscle_sets: {total_muscle_sets}")
 
-            logger.info(f"Successfully processed dashboard data for user: {user_id}")
+            logger.info(f"Successfully processed dashboard data for user: {user_id}  Final dashboard data structure: {dashboard_data}")
             return await self.format_response(dashboard_data)
 
         except Exception as e:
@@ -127,28 +127,33 @@ class DashboardService(BaseDBService):
         # Use UTC timezone-aware datetime
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
         
-        # 🔍 Log the filtering process
-        logger.info(f"🔍 _calculate_timeframe_data for {days} days: cutoff_date={cutoff_date}")
-        logger.info(f"🔍 Input: {len(workouts)} workouts to filter")
-        
         # Filter workouts for this timeframe
         timeframe_workouts = []
-        for i, w in enumerate(workouts):
+        for w in workouts:
             workout_date_str = w["created_at"]
-            # Parse datetime with timezone info
             workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00'))
-            passes_filter = workout_date >= cutoff_date
-            if i < 3:  # Log first 3 for debugging
-                logger.info(f"🔍 Workout {i+1}: date_str={workout_date_str}, parsed={workout_date}, passes={passes_filter}")
-            if passes_filter:
+            if workout_date >= cutoff_date:
                 timeframe_workouts.append(w)
         
-        logger.info(f"🔍 Output: {len(timeframe_workouts)} workouts after {days}-day filter")
-
+        # Calculate actual metrics (straight from DB)
+        actual_workouts = len(timeframe_workouts)
+        actual_exercises = sum(len(w.get("workout_exercises", [])) for w in timeframe_workouts)
+        actual_sets = sum(
+            len(ex.get("workout_exercise_sets", [])) 
+            for w in timeframe_workouts 
+            for ex in w.get("workout_exercises", [])
+        )
+        
         return {
+            "actualMetrics": {
+                "workouts": actual_workouts,
+                "exercises": actual_exercises, 
+                "sets": actual_sets
+            },
             "muscleBalance": self._calculate_muscle_balance(timeframe_workouts),
             "consistency": self._calculate_consistency(timeframe_workouts, days)
         }
+
 
 
     def _get_all_exercise_definitions(self) -> Dict[str, List[str]]:
@@ -182,7 +187,7 @@ class DashboardService(BaseDBService):
         """Calculate muscle group balance from workouts"""
         muscle_sets = {}
         
-        # Batch fetch all exercise definitions once - PERFORMANCE FIX
+        # Batch fetch all exercise definitions once
         exercise_definitions = self._get_all_exercise_definitions()
         
         for workout in workouts:
@@ -191,7 +196,6 @@ class DashboardService(BaseDBService):
                 if not definition_id:
                     continue
                 
-                # Use cached data instead of individual queries
                 primary_muscles = exercise_definitions.get(definition_id, [])
                 set_count = len(exercise.get("workout_exercise_sets", []))
                 
@@ -204,17 +208,14 @@ class DashboardService(BaseDBService):
                 for muscle in primary_muscles:
                     muscle_group = self._map_muscle_to_group(muscle)
                     if muscle_group != "Other":
-                        
                         if muscle_group not in muscle_sets:
                             muscle_sets[muscle_group] = 0
                         
-                        # Apply set counting logic
+                        # Remove 0.75x penalty - give full count to compound exercises
                         if muscle_group == "Cardio":
                             muscle_sets[muscle_group] += total_distance
-                        elif len(primary_muscles) > 1:
-                            muscle_sets[muscle_group] += set_count * 0.75
                         else:
-                            muscle_sets[muscle_group] += set_count
+                            muscle_sets[muscle_group] += set_count  # ✅ Full count
 
         # Convert to list format
         return [
@@ -222,7 +223,6 @@ class DashboardService(BaseDBService):
             for group, sets in sorted(muscle_sets.items(), key=lambda x: x[1], reverse=True)
             if sets > 0
         ]
-
 
     def _calculate_consistency(self, workouts: List[Dict], days: int) -> Dict[str, Any]:
         # Get unique workout dates (for calendar display)

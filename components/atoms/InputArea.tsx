@@ -1,6 +1,6 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
-import { XStack, Input, Button, Text } from "tamagui";
+import { XStack, Input, Button } from "tamagui";
 import { Send } from "@tamagui/lucide-icons";
 
 interface InputAreaProps {

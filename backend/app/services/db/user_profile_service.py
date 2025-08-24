@@ -26,6 +26,8 @@ class UserProfileService(BaseDBService):
                 user_profile["first_name"] = profile_data["first_name"]
             if "avatar_image_id" in profile_data:
                 user_profile["avatar_image_id"] = profile_data["avatar_image_id"]
+            if "age" in profile_data:
+                user_profile["age"] = profile_data["age"]
             if "last_name" in profile_data:
                 user_profile["last_name"] = profile_data["last_name"]
             if "is_imperial" in profile_data:
@@ -101,3 +103,55 @@ class UserProfileService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting user profile: {str(e)}")
             return await self.handle_error("get_user_profile", e)
+        
+
+    async def delete_user_account(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
+        """Delete user account and all associated data"""
+        try:
+            logger.info(f"Deleting account for user: {user_id}")
+            
+            # Call our secure deletion function
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.rpc('delete_user_account', {
+                'user_uuid': user_id
+            }).execute()
+            
+            if not hasattr(result, 'data') or not result.data:
+                raise Exception("Account deletion failed: No response from database")
+                
+            deletion_result = result.data[0] if isinstance(result.data, list) else result.data
+            
+            logger.info(f"Successfully deleted account for user: {user_id}")
+            return await self.format_response(deletion_result)
+            
+        except Exception as e:
+            logger.error(f"Error deleting user account: {str(e)}")
+            return await self.handle_error("delete_user_account", e)
+
+
+    async def get_user_profile_admin(self, user_id: str) -> Dict[str, Any]:
+        """Get user profile by user ID using admin client (no auth required)"""
+        try:
+            response = self.get_admin_client().table('user_profiles').select(
+                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, instagram_username'
+            ).eq('auth_user_uuid', user_id).execute()
+            
+            if response.data:
+                logger.info(f"Successfully loaded profile for user {user_id}")
+                return {
+                    "success": True,
+                    "data": response.data[0]
+                }
+            else:
+                logger.warning(f"No profile found for user {user_id}")
+                return {
+                    "success": False,
+                    "error": "User profile not found"
+                }
+                
+        except Exception as e:
+            logger.error(f"Error fetching user profile for {user_id}: {str(e)}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e)
+            }

@@ -16,7 +16,7 @@ import Animated, {
 import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
 import GradientBlur from "@/components/atoms/GradientBlur";
-import { WorkoutExercise } from "@/types/workout";
+import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -130,14 +130,37 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
             )
           : -1;
 
+      // Create default empty set
+      const defaultSet: WorkoutExerciseSet = {
+        id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        exercise_id: `exercise-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}`, // Will be updated with actual exercise ID
+        set_number: 1,
+        weight: undefined,
+        reps: undefined,
+        distance: undefined,
+        duration: undefined,
+        rpe: undefined,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      const exerciseId = `exercise-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      // Update the set's exercise_id
+      defaultSet.exercise_id = exerciseId;
+
       const newExercise: WorkoutExercise = {
-        id: `exercise-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: exerciseId,
         definition_id: undefined,
         workout_id: currentWorkout.id,
         name: "",
         order_index: maxOrderIndex + 1,
         weight_unit: "kg",
-        workout_exercise_sets: [],
+        workout_exercise_sets: [defaultSet], // Include the default set
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
@@ -236,23 +259,20 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
             {isActive && !isExerciseLimitReached && (
               <Stack
-                marginTop="$2"
+                marginTop="$3"
                 padding="$3"
-                borderRadius="$3"
-                borderWidth={1}
-                borderColor="$borderSoft"
-                borderStyle="dashed"
+                borderRadius="$4"
+                backgroundColor="$primary"
                 alignItems="center"
-                backgroundColor="transparent"
                 pressStyle={{
-                  backgroundColor: "$primaryTint",
-                  borderColor: "$primary",
+                  backgroundColor: "$primaryPress",
+                  scale: 0.98,
                 }}
                 onPress={handleAddExercise}
               >
                 <XStack gap="$2" alignItems="center">
-                  <Ionicons name="add" size={20} color="$primary" />
-                  <Text color="$primary" fontSize="$4" fontWeight="500">
+                  <Ionicons name="add-circle" size={20} color="white" />
+                  <Text color="white" fontSize="$4" fontWeight="600">
                     Add Exercise
                   </Text>
                 </XStack>
@@ -262,19 +282,32 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
             {(!currentWorkout?.workout_exercises ||
               currentWorkout.workout_exercises.length === 0) && (
               <YStack
-                padding="$5"
+                padding="$6"
                 alignItems="center"
-                gap="$3"
+                gap="$4"
                 backgroundColor="$backgroundSoft"
-                borderRadius="$3"
-                marginTop="$3"
+                borderRadius="$4"
+                marginTop="$4"
               >
-                <Text fontSize="$4" color="$textSoft" textAlign="center">
-                  No exercises in this workout
-                </Text>
-                <Text fontSize="$4" color="$textMuted" textAlign="center">
-                  Select a template or add exercises to get started
-                </Text>
+                <Text fontSize="$6">💪</Text>
+                <YStack alignItems="center" gap="$2">
+                  <Text
+                    fontSize="$5"
+                    color="$color"
+                    textAlign="center"
+                    fontWeight="600"
+                  >
+                    Ready to start?
+                  </Text>
+                  <Text
+                    fontSize="$4"
+                    color="$textMuted"
+                    textAlign="center"
+                    lineHeight="$1"
+                  >
+                    Add your first exercise to begin tracking
+                  </Text>
+                </YStack>
               </YStack>
             )}
           </YStack>

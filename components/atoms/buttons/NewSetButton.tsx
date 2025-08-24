@@ -18,7 +18,8 @@ export default function NewSetButton({ isActive, onPress }: NewSetButtonProps) {
       borderColor={isActive ? "$borderSoft" : "$borderMuted"}
       borderStyle="dashed"
       alignItems="center"
-      backgroundColor="transparent"
+      backgroundColor="$backgroundMuted"
+      flex={0.5}
       pressStyle={
         isActive
           ? {
@@ -31,8 +32,8 @@ export default function NewSetButton({ isActive, onPress }: NewSetButtonProps) {
       cursor={isActive ? "pointer" : "default"}
     >
       <XStack gap="$1.5" alignItems="center">
-        <Ionicons name="add" size={18} color="#fff" />
-        <Text fontSize="$4" color="$color" fontWeight="500">
+        <Ionicons name="add" size={18} color="#f84f3e" />
+        <Text fontSize="$4" color="$primary" fontWeight="500">
           Add Set
         </Text>
       </XStack>

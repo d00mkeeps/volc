@@ -16,9 +16,16 @@ class Consistency(BaseModel):
     workoutDates: List[str] 
     totalWorkouts: int
 
+# ✅ Add the missing ActualMetrics model
+class ActualMetrics(BaseModel):
+    workouts: int
+    exercises: int
+    sets: int
+
 class TimeframeData(BaseModel):
     muscleBalance: List[MuscleBalance]
     consistency: Consistency
+    actualMetrics: ActualMetrics  # ✅ Add this field!
 
 class AllTimeframeResponse(BaseModel):
     one_week: TimeframeData = Field(..., alias="1week")

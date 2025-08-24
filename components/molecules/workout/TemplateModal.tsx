@@ -256,7 +256,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                         <XStack alignItems="center" gap="$2">
                           <Text fontSize="$4">🎯</Text>
                           <Text fontSize="$4" fontWeight="600" color="#111">
-                            Start Fresh
+                            Fresh Start
                           </Text>
                         </XStack>
                         <Text
@@ -265,7 +265,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                           opacity={0.9}
                           textAlign="center"
                         >
-                          Create a new workout from scratch
+                          Create a new workout now!
                         </Text>
                       </YStack>
                     </Button>

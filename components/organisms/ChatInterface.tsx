@@ -49,14 +49,16 @@ export const ChatInterface = ({
 
   // Show loading indicator when expecting AI message
   const shouldShowLoadingIndicator = connectionState === "expecting_ai_message";
-
+  const lastMessage = messages[messages.length - 1];
   // Disable input when expecting AI message
-  const isInputDisabled = connectionState === "expecting_ai_message";
-
+  const isInputDisabled =
+    connectionState === "expecting_ai_message" ||
+    (streamingMessage && !streamingMessage.isComplete) ||
+    (lastMessage?.sender === "user" && !streamingMessage);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
       style={{ flex: 1 }}
     >
       <YStack flex={1}>

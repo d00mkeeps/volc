@@ -1,16 +1,25 @@
 import React from "react";
 import { Stack, Text, YStack } from "tamagui";
 
-interface MetricItem {
-  label: string;
-  value: string | number;
+interface ActualMetrics {
+  workouts: number;
+  exercises: number;
+  sets: number;
 }
 
 interface MetricsDisplayProps {
-  metrics: MetricItem[];
+  actualMetrics?: ActualMetrics; // Make it optional for safety
 }
 
-export default function MetricsDisplay({ metrics }: MetricsDisplayProps) {
+export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
+  console.log("📊 [MetricsDisplay] Received actualMetrics:", actualMetrics);
+  const metrics = [
+    { label: "Workouts", value: actualMetrics?.workouts || 0 },
+    { label: "Exercises", value: actualMetrics?.exercises || 0 },
+    { label: "Sets", value: actualMetrics?.sets || 0 },
+  ];
+  console.log("📋 [MetricsDisplay] Computed metrics:", metrics);
+
   return (
     <Stack gap="$3" paddingLeft="$2" paddingTop="$3" borderRadius="$3">
       <Stack flexDirection="row">
@@ -22,6 +31,7 @@ export default function MetricsDisplay({ metrics }: MetricsDisplayProps) {
             </Text>
           ))}
         </YStack>
+
         {/* Labels Stack */}
         <YStack flex={2.5} gap="$6" justifyContent="space-between">
           {metrics.map((metric, index) => (

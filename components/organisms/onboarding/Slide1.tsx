@@ -36,13 +36,38 @@ export function OnboardingSlide1({
   };
 
   const handleInstagramChange = (value: string) => {
-    // Auto-add @ if user starts typing without it
-    if (value.length > 0 && !value.startsWith("@")) {
-      setInstagramUsername("@" + value.toLowerCase());
-    } else {
-      setInstagramUsername(value);
+    // Remove any existing @ and add it back, limit length
+    const cleanValue = value.replace(/^@/, "").toLowerCase();
+    if (cleanValue.length <= 30) {
+      // Instagram username limit
+      setInstagramUsername(cleanValue ? "@" + cleanValue : "");
     }
   };
+
+  const handleAgeChange = (value: string) => {
+    // Only allow numbers and limit to 3 digits
+    const numericValue = value.replace(/[^0-9]/g, "");
+    if (numericValue.length <= 3) {
+      setAgeGroup(numericValue);
+    }
+  };
+
+  const handleFirstNameChange = (value: string) => {
+    if (value.length <= 50) {
+      setFirstName(value);
+    }
+  };
+
+  const handleLastNameChange = (value: string) => {
+    if (value.length <= 50) {
+      setLastName(value);
+    }
+  };
+
+  // Validation states
+  const firstNameValid = firstName.trim().length >= 2;
+  const lastNameValid = lastName.trim().length >= 2;
+  const ageValid = parseInt(ageGroup) >= 13 && parseInt(ageGroup) <= 100;
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -61,44 +86,68 @@ export function OnboardingSlide1({
             Name
           </Text>
           <XStack gap="$3">
-            <Input
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="First"
-              placeholderTextColor="$textMuted"
-              size="$4"
-              flex={1}
-              onSubmitEditing={dismissKeyboard}
-            />
-            <Input
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Last"
-              placeholderTextColor="$textMuted"
-              size="$4"
-              flex={1}
-              onSubmitEditing={dismissKeyboard}
-            />
+            <YStack flex={1}>
+              <Input
+                value={firstName}
+                onChangeText={handleFirstNameChange}
+                placeholder="First"
+                placeholderTextColor="$textMuted"
+                size="$4"
+                borderColor={
+                  firstName && !firstNameValid ? "$red8" : "$borderColor"
+                }
+                onSubmitEditing={dismissKeyboard}
+              />
+              {firstName && !firstNameValid && (
+                <Text fontSize="$2" color="$red8" marginTop="$1">
+                  At least 2 characters
+                </Text>
+              )}
+            </YStack>
+            <YStack flex={1}>
+              <Input
+                value={lastName}
+                onChangeText={handleLastNameChange}
+                placeholder="Last"
+                placeholderTextColor="$textMuted"
+                size="$4"
+                borderColor={
+                  lastName && !lastNameValid ? "$red8" : "$borderColor"
+                }
+                onSubmitEditing={dismissKeyboard}
+              />
+              {lastName && !lastNameValid && (
+                <Text fontSize="$2" color="$red8" marginTop="$1">
+                  At least 2 characters
+                </Text>
+              )}
+            </YStack>
           </XStack>
         </YStack>
 
-        <XStack gap="$4" alignItems="flex-end">
+        <XStack gap="$4" alignItems="flex-start">
           <YStack gap="$2" flex={0.4}>
             <Text fontSize="$5" fontWeight="600">
               Age
             </Text>
             <Input
               value={ageGroup}
-              onChangeText={setAgeGroup}
+              onChangeText={handleAgeChange}
               placeholder="25"
               placeholderTextColor="$textMuted"
               size="$4"
               keyboardType="numeric"
+              borderColor={ageGroup && !ageValid ? "$red8" : "$borderColor"}
               onSubmitEditing={dismissKeyboard}
             />
+            {ageGroup && !ageValid && (
+              <Text fontSize="$2" color="$red8">
+                13-100 years
+              </Text>
+            )}
           </YStack>
 
-          <YStack gap="$2" flex={0.6}>
+          <YStack gap="$2" flex={0.6} paddingTop="$6">
             <Text fontSize="$5" fontWeight="600">
               Units
             </Text>
@@ -136,8 +185,13 @@ export function OnboardingSlide1({
             placeholder="@username"
             placeholderTextColor="$textMuted"
             size="$4"
+            autoCapitalize="none"
+            autoCorrect={false}
             onSubmitEditing={dismissKeyboard}
           />
+          <Text fontSize="$2" color="$textMuted">
+            {instagramUsername.length}/31 characters
+          </Text>
         </YStack>
 
         <Button
@@ -145,6 +199,7 @@ export function OnboardingSlide1({
           backgroundColor={canContinue ? "$primary" : "$gray6"}
           onPress={onContinue}
           disabled={!canContinue}
+          marginTop="$2"
         >
           Continue
         </Button>

@@ -7,6 +7,7 @@ interface BaseModalProps {
   children: React.ReactNode;
   widthPercent?: number;
   heightPercent?: number;
+  topOffset?: number; // Add this new prop
 }
 
 export default function BaseModal({
@@ -15,6 +16,7 @@ export default function BaseModal({
   children,
   widthPercent = 90,
   heightPercent = 55,
+  topOffset = 0, // Default to 0 (no offset)
 }: BaseModalProps) {
   return (
     <Modal
@@ -45,9 +47,10 @@ export default function BaseModal({
             shadowOpacity: 0.3,
             shadowRadius: 12,
             elevation: 8,
+            marginTop: topOffset, // Apply the offset here
           }}
           activeOpacity={1}
-          onPress={() => {}}
+          onPress={() => {}} // Keep this! It prevents tap bubbling
         >
           {children}
         </TouchableOpacity>

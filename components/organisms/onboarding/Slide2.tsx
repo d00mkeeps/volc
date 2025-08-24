@@ -1,5 +1,5 @@
 import React from "react";
-import { YStack, Text, Input, Button } from "tamagui";
+import { YStack, XStack, Text, Input, Button } from "tamagui";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 interface OnboardingSlide2Props {
@@ -23,6 +23,20 @@ export function OnboardingSlide2({
     Keyboard.dismiss();
   };
 
+  const handleGoalsChange = (value: string) => {
+    if (value.length <= 250) {
+      setGoals(value);
+    }
+  };
+
+  const handleStatsChange = (value: string) => {
+    if (value.length <= 250) {
+      setCurrentStats(value);
+    }
+  };
+
+  const goalsValid = goals.trim().length >= 10;
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <YStack gap="$4" paddingBottom="$4">
@@ -32,18 +46,30 @@ export function OnboardingSlide2({
 
         <YStack gap="$2">
           <Text fontSize="$5" fontWeight="600">
-            What are your fitness goals?
+            What are your fitness goals? *
           </Text>
           <Input
             value={goals}
-            onChangeText={setGoals}
+            onChangeText={handleGoalsChange}
             placeholder="e.g., Build muscle, lose weight, get stronger..."
             placeholderTextColor="$textMuted"
             size="$4"
             multiline
             minHeight={80}
+            borderColor={goals && !goalsValid ? "$red8" : "$borderColor"}
             onSubmitEditing={dismissKeyboard}
           />
+          <XStack justifyContent="space-between">
+            <Text
+              fontSize="$2"
+              color={goals && !goalsValid ? "$red8" : "$textMuted"}
+            >
+              {goals && !goalsValid ? "At least 10 characters" : ""}
+            </Text>
+            <Text fontSize="$2" color="$textMuted">
+              {goals.length}/250
+            </Text>
+          </XStack>
         </YStack>
 
         <YStack gap="$2">
@@ -52,7 +78,7 @@ export function OnboardingSlide2({
           </Text>
           <Input
             value={currentStats}
-            onChangeText={setCurrentStats}
+            onChangeText={handleStatsChange}
             placeholder="Tell us about your current training experience..."
             placeholderTextColor="$textMuted"
             size="$4"
@@ -60,6 +86,11 @@ export function OnboardingSlide2({
             minHeight={100}
             onSubmitEditing={dismissKeyboard}
           />
+          <XStack justifyContent="flex-end">
+            <Text fontSize="$2" color="$textMuted">
+              {currentStats.length}/250
+            </Text>
+          </XStack>
         </YStack>
 
         <Button
@@ -67,6 +98,7 @@ export function OnboardingSlide2({
           backgroundColor={canContinue ? "$primary" : "$gray6"}
           onPress={onContinue}
           disabled={!canContinue}
+          marginTop="$2"
         >
           Continue
         </Button>

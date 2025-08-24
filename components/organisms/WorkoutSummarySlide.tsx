@@ -5,6 +5,7 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import ImagePickerButton from "../atoms/buttons/ImagePickerButton";
 import WorkoutImage from "../molecules/WorkoutImage";
 import { imageService } from "@/services/api/imageService";
+import { useDashboardStore } from "@/stores/dashboardStore";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -79,7 +80,6 @@ export function WorkoutSummarySlide({
         notes: workoutNotes,
         imageId: pendingImageId || undefined,
       });
-      await useWorkoutStore.getState().fetchTemplates(); // ← And here
       await initializeAnalysisAndChat();
       onContinue();
     } catch (error) {
@@ -104,7 +104,6 @@ export function WorkoutSummarySlide({
         notes: workoutNotes,
         imageId: pendingImageId || undefined,
       });
-      await useWorkoutStore.getState().fetchTemplates(); // ← Refresh here
       onSkip();
     } catch (error) {
       console.error("Failed to save workout:", error);

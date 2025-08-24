@@ -15,7 +15,9 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
 import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
+import { SettingsModal } from "@/components/molecules/SettingsModal";
 import { useDashboardStore } from "@/stores/dashboardStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 let count = 0;
 
@@ -39,6 +41,7 @@ export default function HomeScreen() {
   const { userProfile } = useUserStore();
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false); // Add this state
   const [intendedToStart, setIntendedToStart] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -198,7 +201,7 @@ export default function HomeScreen() {
           <Stack flex={1} padding="$4">
             <Header
               greeting="Welcome to Volc!"
-              onSettingsPress={() => setShowOnboardingModal(true)}
+              onSettingsPress={() => setShowSettingsModal(true)} // Changed this line
             />
             <Stack marginBottom="$5">
               <Dashboard
@@ -239,7 +242,15 @@ export default function HomeScreen() {
             setShowCompletionModal(false);
             setIntendedToStart(false);
             resetSession();
+            useWorkoutStore.getState().fetchTemplates();
+            useDashboardStore.getState().invalidateAfterWorkout();
           }}
+        />
+
+        {/* Settings Modal - Add this */}
+        <SettingsModal
+          visible={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
         />
       </Stack>
 

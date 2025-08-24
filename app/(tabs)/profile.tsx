@@ -16,6 +16,7 @@ export default function ProfileScreen() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editingCard, setEditingCard] = useState<string | null>(null);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -40,6 +41,18 @@ export default function ProfileScreen() {
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update profile:", error);
+    }
+  };
+
+  const handleCardSave = async (
+    cardType: "goals" | "current_stats",
+    updates: Record<string, any>
+  ) => {
+    try {
+      await updateProfile({ [cardType]: updates });
+      setEditingCard(null);
+    } catch (error) {
+      console.error(`Failed to update ${cardType}:`, error);
     }
   };
 
@@ -116,7 +129,7 @@ export default function ProfileScreen() {
               </YStack>
             </XStack>
 
-            {!isEditing && (
+            {!isEditing && !editingCard && (
               <YStack gap="$2" alignItems="flex-end">
                 <Button
                   size="$4"
@@ -150,11 +163,22 @@ export default function ProfileScreen() {
             onCancel={() => setIsEditing(false)}
           />
 
-          <DataCard title="Goals" data={userProfile.goals} />
-          <DataCard title="Current Stats" data={userProfile.current_stats} />
           <DataCard
-            title="Training Preferences"
-            data={userProfile.preferences}
+            title="Goals"
+            data={userProfile.goals || {}}
+            isEditing={editingCard === "goals"}
+            onEdit={() => setEditingCard("goals")}
+            onSave={(updates) => handleCardSave("goals", updates)}
+            onCancel={() => setEditingCard(null)}
+          />
+
+          <DataCard
+            title="Current Stats"
+            data={userProfile.current_stats || {}}
+            isEditing={editingCard === "current_stats"}
+            onEdit={() => setEditingCard("current_stats")}
+            onSave={(updates) => handleCardSave("current_stats", updates)}
+            onCancel={() => setEditingCard(null)}
           />
 
           {userProfile.training_history && (

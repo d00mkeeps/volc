@@ -10,7 +10,6 @@ interface WorkoutViewModalProps {
   workoutId: string;
   userId?: string;
 }
-
 export default function WorkoutViewModal({
   isVisible,
   onClose,
@@ -19,9 +18,6 @@ export default function WorkoutViewModal({
 }: WorkoutViewModalProps) {
   const { currentWorkout, loading, getPublicWorkout, clearError } =
     useWorkoutStore();
-
-  console.log("🎯 Modal currentWorkout:", currentWorkout);
-  console.log("🎯 Modal loading:", loading);
 
   useEffect(() => {
     if (isVisible && workoutId) {
@@ -42,23 +38,20 @@ export default function WorkoutViewModal({
     if (!duration) return null;
 
     const parts = duration.split(":");
-    if (parts.length !== 3) return duration; // fallback
+    if (parts.length !== 3) return duration;
 
     const hours = parseInt(parts[0]);
     const minutes = parseInt(parts[1]);
     const seconds = parseInt(parts[2]);
 
-    // If only seconds
     if (hours === 0 && minutes === 0) {
       return `${seconds}s`;
     }
 
-    // If no hours
     if (hours === 0) {
       return `${minutes}:${parts[2]}`;
     }
 
-    // Full format with hours
     return duration;
   };
 
@@ -79,14 +72,11 @@ export default function WorkoutViewModal({
       <YStack gap="$4">
         {sets.map((set: any, index: number) => (
           <YStack key={index} gap="$2">
-            {/* Set Header */}
             <Text fontSize="$4" fontWeight="600" color="white">
               Set {set.set_number || index + 1}
             </Text>
 
-            {/* Stacked Metrics */}
             <YStack gap="$1" paddingLeft="$3">
-              {/* Distance */}
               {set.distance !== null && set.distance !== undefined && (
                 <Text fontSize="$4" color="$textSoft">
                   Distance:{" "}
@@ -97,7 +87,6 @@ export default function WorkoutViewModal({
                 </Text>
               )}
 
-              {/* Duration */}
               {set.duration !== null && set.duration !== undefined && (
                 <Text fontSize="$4" color="$textSoft">
                   Time:{" "}
@@ -105,7 +94,6 @@ export default function WorkoutViewModal({
                 </Text>
               )}
 
-              {/* Weight */}
               {set.weight !== null && set.weight !== undefined && (
                 <Text fontSize="$4" color="$textSoft">
                   Weight:{" "}
@@ -116,14 +104,12 @@ export default function WorkoutViewModal({
                 </Text>
               )}
 
-              {/* Reps */}
               {set.reps !== null && set.reps !== undefined && (
                 <Text fontSize="$4" color="$textSoft">
                   Reps: <Text color="white">{set.reps}</Text>
                 </Text>
               )}
 
-              {/* RPE */}
               {set.rpe !== null && set.rpe !== undefined && (
                 <Text fontSize="$4" color="$textSoft">
                   RPE: <Text color="white">{set.rpe}</Text>
@@ -179,67 +165,77 @@ export default function WorkoutViewModal({
       </BaseModal>
     );
   }
-
   return (
     <BaseModal
       isVisible={isVisible}
       onClose={onClose}
-      widthPercent={90}
-      heightPercent={70}
+      widthPercent={100}
+      heightPercent={85}
     >
-      <YStack flex={1} padding="$4">
-        {/* Header */}
-        <XStack
-          justifyContent="space-between"
-          alignItems="center"
-          marginBottom="$4"
-        >
-          <XStack alignItems="center" gap="$2" flex={1}>
+      <YStack flex={1}>
+        {/* Fixed header outside scroll */}
+        <YStack padding="$4" paddingBottom="$2">
+          <XStack justifyContent="space-between" alignItems="center">
             <Text fontSize="$4" fontWeight="600" color="white">
               {currentWorkout.name}
             </Text>
-            {/* TODO: Add verified tick when we know the field name */}
+            <Text fontSize="$4" color="$textSoft">
+              {formatDate(currentWorkout.created_at)}
+            </Text>
           </XStack>
-          <Text fontSize="$4" color="$textSoft">
-            {formatDate(currentWorkout.created_at)}
-          </Text>
-        </XStack>
-
-        {/* Workout Image */}
-        <YStack marginBottom="$4" alignItems="center">
-          <WorkoutImage
-            width={280}
-            height={200}
-            imageId={currentWorkout.image_id || undefined}
-            fallbackText="No image available"
-          />
         </YStack>
 
-        {/* Notes */}
-        <YStack marginBottom="$4">
-          <Text fontSize="$4" color="white">
+        {/* ScrollView with specific height */}
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+          bounces={true}
+          keyboardShouldPersistTaps="handled" // Add this
+          onContentSizeChange={() => {}} // Force measurem
+        >
+          {/* Image */}
+          {currentWorkout.image_id ? (
+            <YStack marginBottom="$4" alignItems="center">
+              <WorkoutImage
+                width={200}
+                height={120}
+                imageId={currentWorkout.image_id}
+              />
+            </YStack>
+          ) : (
+            <Text
+              paddingTop="$4"
+              fontSize="$4"
+              color="$textSoft"
+              fontStyle="italic"
+              marginBottom="$4"
+              textAlign="center"
+            >
+              No image
+            </Text>
+          )}
+
+          {/* Notes */}
+          <Text fontSize="$4" color="white" marginBottom="$4">
             {currentWorkout.notes || "no notes"}
           </Text>
-        </YStack>
 
-        {/* Exercises and Sets */}
-        <ScrollView flex={1} showsVerticalScrollIndicator={false}>
+          {/* All your existing exercise rendering code here... */}
           <YStack gap="$4">
             {currentWorkout.workout_exercises?.length > 0 ? (
               currentWorkout.workout_exercises.map((exercise, index) => (
                 <YStack key={exercise.id || index}>
-                  <YStack gap="$3" paddingBottom="$4">
-                    <Text fontSize="$4" fontWeight="600" color="white">
-                      {exercise.name}
-                    </Text>
-
-                    {/* Indented sets container */}
-                    <YStack paddingLeft="$4" gap="$3">
-                      {renderExerciseSets(exercise)}
-                    </YStack>
+                  <Text
+                    fontSize="$4"
+                    fontWeight="600"
+                    color="white"
+                    marginBottom="$3"
+                  >
+                    {exercise.name}
+                  </Text>
+                  <YStack paddingLeft="$4" gap="$3" marginBottom="$4">
+                    {renderExerciseSets(exercise)}
                   </YStack>
-
-                  {/* Separator (except for last item) */}
                   {index < currentWorkout.workout_exercises.length - 1 && (
                     <YStack
                       height={1}

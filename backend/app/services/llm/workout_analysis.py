@@ -57,6 +57,15 @@ class WorkoutAnalysisLLMService:
             # Get or create conversation chain
             chain = self.get_chain(conversation_id, user_id)
 
+            # Load user profile into chain (NEW - load once when chain is created)
+            if conversation_id not in self._conversation_chains or not hasattr(chain, '_user_profile') or chain._user_profile is None:
+                logger.info(f"Loading user profile for conversation: {conversation_id}")
+                profile_loaded = await chain.load_user_profile()
+                if profile_loaded:
+                    logger.info(f"User profile loaded successfully for conversation: {conversation_id}")
+                else:
+                    logger.info(f"No user profile available for conversation: {conversation_id} - continuing without user context")
+
             # Load context into the chain
             chain.load_conversation_context(context)
             if context.bundles:

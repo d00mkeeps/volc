@@ -43,11 +43,19 @@ export function OnboardingModal({
 
   const canContinueSlide1 = Boolean(
     firstName.trim() &&
+      firstName.trim().length >= 2 &&
+      firstName.trim().length <= 50 &&
       lastName.trim() &&
+      lastName.trim().length >= 2 &&
+      lastName.trim().length <= 50 &&
       ageGroup.trim() &&
-      parseInt(ageGroup) > 0
+      parseInt(ageGroup) >= 13 &&
+      parseInt(ageGroup) <= 100
   );
-  const canContinueSlide2 = Boolean(goals.trim());
+
+  const canContinueSlide2 = Boolean(
+    goals.trim() && goals.trim().length >= 10 && goals.trim().length <= 250
+  );
 
   const handleSlide1Continue = () => {
     if (canContinueSlide1) {
@@ -67,7 +75,7 @@ export function OnboardingModal({
       await updateProfile({
         first_name: firstName,
         last_name: lastName,
-        age_group: parseInt(ageGroup),
+        age: parseInt(ageGroup), // Changed from age_group
         is_imperial: isImperial,
         instagram_username: instagramUsername.startsWith("@")
           ? instagramUsername.substring(1)
@@ -82,17 +90,17 @@ export function OnboardingModal({
     }
   };
 
-  // Adjust height based on current slide
+  // Adjust height based on current slide - refined heights
   const getModalHeight = () => {
     switch (currentSlide) {
       case 1:
-        return 50; // Slide 1 has more fields
+        return 58; // Slide 1 has multiple fields but not too many
       case 2:
-        return 70; // Slide 2 has text areas
+        return 55; // Slide 2 has text areas
       case 3:
-        return 25; // Slide 3 is just text and button
+        return 22; // Slide 3 is minimal
       default:
-        return 70;
+        return 68;
     }
   };
 
@@ -102,6 +110,7 @@ export function OnboardingModal({
       onClose={handleClose}
       widthPercent={95}
       heightPercent={getModalHeight()}
+      topOffset={-100} // Shift up by 80 points
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -141,6 +150,7 @@ export function OnboardingModal({
             />
           )}
 
+          {/* Exit warning overlay */}
           {showExitWarning && (
             <YStack
               position="absolute"

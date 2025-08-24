@@ -1,41 +1,29 @@
 import React, { useState } from "react";
-import { Stack } from "tamagui";
+import { Stack, Text } from "tamagui";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import Select from "@/components/atoms/Select";
 import MetricsDisplay from "./MetricsDisplay";
-import { TimeframeData, MuscleData, AllTimeframeData } from "@/types/workout";
-
-interface MuscleGroupSpiderProps {
-  allData: AllTimeframeData;
-}
+import { TimeframeData, MuscleData } from "@/types/workout";
+import { useDashboardStore } from "@/stores/dashboardStore";
 
 type TimeframeKey = "1week" | "2weeks" | "1month" | "2months";
 
-export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
+export default function MuscleGroupSpider() {
   const [timeframe, setTimeframe] = useState<TimeframeKey>("2weeks");
 
-  // Get data for current timeframe selection - now properly typed
-  const currentData: TimeframeData = allData[timeframe];
-  const muscleData: MuscleData[] = currentData.muscleBalance;
+  // Use individual selectors to avoid infinite loop
+  const allData = useDashboardStore((state) => state.allData);
+  const isLoading = useDashboardStore((state) => state.isLoading);
+  const error = useDashboardStore((state) => state.error);
 
-  // Calculate metrics based on current data - with explicit types
-  const totalSets = muscleData.reduce(
-    (sum: number, m: MuscleData) => sum + m.sets,
-    0
+  console.log("🕷️ [MuscleGroupSpider] Component render:");
+  console.log("📊 [MuscleGroupSpider] isLoading:", isLoading);
+  console.log("❌ [MuscleGroupSpider] error:", error);
+  console.log(
+    "📦 [MuscleGroupSpider] allData:",
+    allData ? Object.keys(allData) : "null"
   );
-  const estimatedExercises =
-    muscleData.length > 0
-      ? muscleData.reduce(
-          (sum: number, m: MuscleData) => sum + Math.ceil(m.sets / 3),
-          0
-        )
-      : 0;
-
-  const metrics = [
-    { label: "Workouts", value: currentData.consistency.totalWorkouts },
-    { label: "Exercises", value: estimatedExercises },
-    { label: "Sets", value: totalSets },
-  ];
+  console.log("⏰ [MuscleGroupSpider] selected timeframe:", timeframe);
 
   const timeframeOptions = [
     { value: "1week", label: "1 Week" },
@@ -43,6 +31,98 @@ export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
     { value: "1month", label: "1 Month" },
     { value: "2months", label: "2 Months" },
   ];
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Stack
+        width="100%"
+        height={230}
+        backgroundColor="$backgroundSoft"
+        borderRadius="$3"
+        flexDirection="row"
+        paddingRight="$1.5"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$textSoft">Loading dashboard...</Text>
+      </Stack>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <Stack
+        width="100%"
+        height={230}
+        backgroundColor="$backgroundSoft"
+        borderRadius="$3"
+        flexDirection="row"
+        paddingRight="$1.5"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$red">Error: {error}</Text>
+      </Stack>
+    );
+  }
+
+  // Handle no data
+  if (!allData) {
+    return (
+      <Stack
+        width="100%"
+        height={230}
+        backgroundColor="$backgroundSoft"
+        borderRadius="$3"
+        flexDirection="row"
+        paddingRight="$1.5"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$textSoft">No data available</Text>
+      </Stack>
+    );
+  }
+
+  // Get current timeframe data with safe access
+  const currentData: TimeframeData | undefined = allData[timeframe];
+  console.log(
+    "🎯 [MuscleGroupSpider] currentData for",
+    timeframe,
+    ":",
+    currentData
+  );
+
+  if (currentData) {
+    console.log(
+      "📈 [MuscleGroupSpider] actualMetrics:",
+      currentData.actualMetrics
+    );
+    console.log(
+      "💪 [MuscleGroupSpider] muscleBalance:",
+      currentData.muscleBalance
+    );
+  }
+  if (!currentData) {
+    return (
+      <Stack
+        width="100%"
+        height={230}
+        backgroundColor="$backgroundSoft"
+        borderRadius="$3"
+        flexDirection="row"
+        paddingRight="$1.5"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text color="$textSoft">No data for selected timeframe</Text>
+      </Stack>
+    );
+  }
+
+  const muscleData: MuscleData[] = currentData.muscleBalance || [];
 
   // Use real data or fallback to empty state
   const maxSets =
@@ -64,7 +144,6 @@ export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
   const polygonPoints = points.map((p: any) => `${p.x},${p.y}`).join(" ");
 
   const handleTimeframeChange = (value: string) => {
-    // Type guard to ensure we only set valid timeframe values
     if (
       value === "1week" ||
       value === "2weeks" ||
@@ -86,14 +165,14 @@ export default function MuscleGroupSpider({ allData }: MuscleGroupSpiderProps) {
     >
       {/* Left Stack - Data Display Area */}
       <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
-        {/* Timeframe Select - updates component state only */}
         <Select
           options={timeframeOptions}
           value={timeframe}
           onValueChange={handleTimeframeChange}
         />
 
-        <MetricsDisplay metrics={metrics} />
+        {/* Pass actualMetrics directly to MetricsDisplay */}
+        <MetricsDisplay actualMetrics={currentData.actualMetrics} />
       </Stack>
 
       {/* Right Stack - Spider Chart */}

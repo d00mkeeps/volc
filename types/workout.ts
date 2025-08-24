@@ -51,6 +51,12 @@ export type WorkoutSet = {
 
 export type WorkoutField = "weight" | "reps" | "rpe" | "distance" | "duration";
 
+interface ActualMetrics {
+  workouts: number;
+  exercises: number;
+  sets: number;
+}
+
 export type WorkoutExercise = {
   id: string;
   definition_id?: string; // New field to link to exercise definitions
@@ -186,14 +192,14 @@ export interface MuscleData {
 }
 
 export interface ConsistencyData {
-  workoutDates: string[]; // Changed from workoutDays to workoutDates
+  workoutDates: string[];
   totalWorkouts: number;
-  // Removed streak, score
 }
 
 export interface TimeframeData {
   muscleBalance: MuscleData[];
   consistency: ConsistencyData;
+  actualMetrics: ActualMetrics;
 }
 
 export interface AllTimeframeData {
