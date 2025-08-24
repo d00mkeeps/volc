@@ -19,7 +19,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 logger.info("Application starting")
 
-project_root = Path(__file__).parent.absolute()
+project_root = Path(__file__).parent.parent.absolute()
 env_path = project_root / '.env'
 load_dotenv(dotenv_path=env_path)
 logger.info(f"Loading .env from: {env_path} (exists: {os.path.exists(str(env_path))})")

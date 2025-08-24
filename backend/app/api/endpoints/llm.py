@@ -6,6 +6,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPExce
 from dotenv import load_dotenv
 from langchain_google_vertexai import ChatVertexAI
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
+from google.oauth2 import service_account
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -19,31 +20,41 @@ async def verify_token(token: str) -> Optional[str]:
     return "test_user"
 
 def get_google_credentials():
-    """Verify Google Cloud credentials are properly set"""
-    credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    """Initialize Google Cloud credentials directly from JSON"""
+    credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
     
-    if not credentials_path:
-        logger.error("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+    if not credentials_json:
+        logger.error("GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable not set")
         raise HTTPException(status_code=500, detail="Google Cloud credentials not configured")
     
     if not project_id:
         logger.error("GOOGLE_CLOUD_PROJECT environment variable not set")
         raise HTTPException(status_code=500, detail="Google Cloud project not configured")
     
-    return {"credentials_path": credentials_path, "project_id": project_id}
+    try:
+        credentials_info = json.loads(credentials_json)
+        credentials = service_account.Credentials.from_service_account_info(credentials_info)
+        return {"credentials": credentials, "project_id": project_id}
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Invalid Google Cloud credentials JSON")
 
 def get_llm(credentials: dict = Depends(get_google_credentials)):
     return ChatVertexAI(
         model="gemini-2.5-flash",
         streaming=True,
         max_retries=0,
-        temperature=0
+        temperature=0,
+        credentials=credentials["credentials"],  
+        project=credentials["project_id"]       
     )
 
 # Dependency to get workout LLM service
 def get_workout_llm_service(credentials: dict = Depends(get_google_credentials)):
-    return WorkoutAnalysisLLMService()
+    return WorkoutAnalysisLLMService(
+        credentials=credentials["credentials"],
+        project_id=credentials["project_id"]
+    )
 
 # Custom JSON encoder that handles datetime objects
 class DateTimeEncoder(json.JSONEncoder):

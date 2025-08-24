@@ -1,21 +1,28 @@
 # backend/app/core/supabase/client.py
 import os
 import logging
+from pathlib import Path
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
-load_dotenv()
+current_file = Path(__file__)
+backend_dir = current_file.parents[3] 
+env_path = backend_dir / '.env'
+load_dotenv(dotenv_path=env_path)
 
 class SupabaseClientFactory:
     """Simple factory for creating Supabase clients with proper context"""
-    
     def __init__(self):
         self.url = os.environ.get("SUPABASE_URL")
-        self.anon_key = os.environ.get("SUPABASE_ANON_KEY")
-        self.service_key = os.environ.get("SUPABASE_SERVICE_KEY")  # Add this line
+        self.anon_key = os.environ.get("SUPABASE_KEY")  # Changed from SUPABASE_ANON_KEY
+        self.service_key = os.environ.get("SUPABASE_SERVICE_KEY")
         
         if not all([self.url, self.anon_key]):
+            print(f"🔍 SUPABASE_URL: {self.url}")
+            print(f"🔍 SUPABASE_KEY: {'***' if self.anon_key else None}")
+            print(f"🔍 .env path: {env_path}")
+            print(f"🔍 .env exists: {env_path.exists()}")
             raise ValueError("Missing required Supabase environment variables")
             
         if not self.service_key:

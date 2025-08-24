@@ -1,5 +1,4 @@
 import logging
-import asyncio
 from fastapi import WebSocket
 import google.api_core.exceptions
 from langchain_google_vertexai import ChatVertexAI
@@ -12,10 +11,12 @@ logger = logging.getLogger(__name__)
 class WorkoutAnalysisLLMService:
     """Service for LLM interpretation of workout data"""
     
-    def __init__(self):
+    def __init__(self,  credentials=None, project_id=None):
         self._conversation_chains = {}  # Store chains by conversation_id
         self.message_service = MessageService()
-        self.analysis_bundle_service = AnalysisBundleService()
+        self.analysis_bundle_service = AnalysisBundleService(),
+        self.credentials = credentials  
+        self.project_id = project_id 
         
     def get_chain(self, conversation_id: str, user_id: str = None) -> WorkoutAnalysisChain:
         """Get or create a conversation chain"""
@@ -25,7 +26,9 @@ class WorkoutAnalysisLLMService:
                 model="gemini-2.5-flash",
                 streaming=True,
                 max_retries=0,
-                temperature=0
+                temperature=0,
+                credentials=self.credentials,
+                project=self.project_id
             )
                     
             # Create new chain
