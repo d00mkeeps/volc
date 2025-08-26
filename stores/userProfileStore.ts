@@ -22,7 +22,6 @@ interface UserStoreState {
 export const useUserStore = create<UserStoreState>((set, get) => {
   const loadProfile = async () => {
     try {
-      console.log("Getting user profile");
       set({ loading: true, error: null });
 
       const session = await authService.getSession();
@@ -31,7 +30,6 @@ export const useUserStore = create<UserStoreState>((set, get) => {
       }
 
       const data = await userProfileService.getUserProfile();
-      console.log("User profile retrieved successfully");
       set({ userProfile: data, initialized: true });
     } catch (err) {
       set({

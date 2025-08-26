@@ -17,9 +17,6 @@ export default function Dashboard({
   isLoading,
   error,
 }: DashboardProps) {
-  console.log(`=== dashboard render count: ${count} ===`);
-  count++;
-
   if (isLoading) {
     return (
       <Stack
@@ -71,7 +68,7 @@ export default function Dashboard({
   return (
     <Stack gap="$3">
       {/* MuscleGroupSpider handles its own timeframe selection */}
-      <MuscleGroupSpider allData={allData} />
+      <MuscleGroupSpider />
 
       {/* ConsistencyCalendar always shows 2 months data */}
       <ConsistencyCalendar

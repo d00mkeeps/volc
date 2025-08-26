@@ -1,6 +1,7 @@
 const config = {
 expo: {
-name: "Volc",
+owner: "d00mkeeps"
+,name: "Volc",
 slug: "Volc",
 version: "1.0.0",
 orientation: "portrait",
@@ -14,15 +15,18 @@ backgroundColor: "#ffffff"
  },
 ios: {
 supportsTablet: true,
-bundleIdentifier: "com.d00mkeeps.trainsmart",
-minimumOSVersion: "15.1" 
+bundleIdentifier: "com.d00mkeeps.Volc",
+minimumOSVersion: "15.1" ,
+infoPlist: {
+    "ITSAppUsesNonExemptEncryption": false
+  }
  },
 android: {
 adaptiveIcon: {
 foregroundImage: "./assets/images/adaptive-icon.png",
 backgroundColor: "#ffffff"
  },
-package: "com.d00mkeeps.trainsmart",
+package: "com.d00mkeeps.Volc",
 minSdkVersion: 24,       
 compileSdkVersion: 35 
  },
@@ -44,8 +48,7 @@ router: {
 origin: false
  },
 eas: {
-projectId: "5e8c9085-5d3d-4a87-a841-3e1b55340ff8"
- },
+    "projectId": "a637c490-51f0-41e3-8208-37ed1ea09d97" },
 apiUrl: process.env.API_URL || "https://localhost:8000",
  },
 jsEngine: "hermes",

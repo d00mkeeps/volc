@@ -38,7 +38,6 @@ export const useConversationStore = create<ConversationStoreState>(
   (set, get) => {
     const loadConversations = async () => {
       try {
-        console.log("Getting user conversations");
         set({ isLoading: true, error: null });
 
         const session = await authService.getSession();
@@ -66,8 +65,6 @@ export const useConversationStore = create<ConversationStoreState>(
           conversationConfigs: newConfigs,
           initialized: true,
         });
-
-        console.log(`Loaded ${conversations.length} conversations`);
       } catch (err) {
         console.error("Error loading conversations:", err);
         set({
@@ -92,18 +89,10 @@ export const useConversationStore = create<ConversationStoreState>(
       initialized: false,
 
       async initializeIfAuthenticated() {
-        console.log("🗣️ ConversationStore: Starting initialization...");
-
-        // Wait for UserStore to fully initialize first
         let attempts = 0;
         const maxAttempts = 50; // 5 seconds max wait
         let userProfile = useUserStore.getState().userProfile;
-        let userStoreInitialized = useUserStore.getState().initialized;
-
-        console.log(
-          "🗣️ ConversationStore: Waiting for UserStore to complete..."
-        );
-
+        let userStoreInitialized = useUserStore.getState().initialized; //are we doing this in authstore as well??
         while (
           (!userProfile?.auth_user_uuid || !userStoreInitialized) &&
           attempts < maxAttempts
@@ -117,47 +106,20 @@ export const useConversationStore = create<ConversationStoreState>(
             console.log(
               `🗣️ ConversationStore: Still waiting... attempt ${attempts}/50, userProfile exists: ${!!userProfile}, initialized: ${userStoreInitialized}`
             );
-          }
+          } //are we sure we need to attempt 50 times?
         }
 
         if (!userProfile?.auth_user_uuid) {
-          console.log(
-            "🗣️ ConversationStore: No user profile after waiting, skipping"
-          );
-          console.log(
-            `🗣️ ConversationStore: Final state - userProfile: ${!!userProfile}, auth_user_uuid: ${
-              userProfile?.auth_user_uuid
-            }, initialized: ${userStoreInitialized}`
-          );
           return;
         }
 
-        console.log(
-          `🗣️ ConversationStore: UserStore ready after ${attempts} attempts`
-        );
-
         try {
-          console.log(
-            "🗣️ ConversationStore: Loading conversations with messages..."
-          );
           set({ isLoading: true, error: null });
 
           const result =
             await conversationService.getConversationsWithRecentMessages(
               userProfile.auth_user_uuid
             );
-
-          console.log(
-            "🗣️ ConversationStore: Got",
-            result.conversations.length,
-            "conversations"
-          );
-          console.log(
-            "🗣️ ConversationStore: Got messages for",
-            Object.keys(result.messages).length,
-            "conversations"
-          );
-
           const conversationsMap = new Map(
             result.conversations.map((conv) => [conv.id, conv])
           );
@@ -169,8 +131,6 @@ export const useConversationStore = create<ConversationStoreState>(
             isLoading: false,
             initialized: true,
           });
-
-          console.log("✅ ConversationStore: Initialization complete");
         } catch (error) {
           console.error("❌ ConversationStore: Initialization failed:", error);
           set({

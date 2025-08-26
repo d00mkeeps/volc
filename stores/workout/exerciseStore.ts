@@ -23,7 +23,6 @@ export const useExerciseStore = create<ExerciseStoreState>((set, get) => {
 
   const fetchExercises = async () => {
     try {
-      console.log("🏋️‍♂️ ExerciseStore: Initializing exercise data fetch...");
       set({ loading: true, error: null });
 
       const session = await authService.getSession();
@@ -32,9 +31,6 @@ export const useExerciseStore = create<ExerciseStoreState>((set, get) => {
       }
 
       const data = await exerciseService.getAllExerciseDefinitions();
-      console.log(
-        `✅ ExerciseStore: Loaded ${data.length} exercises successfully`
-      );
 
       set({ exercises: data, initialized: true });
     } catch (err) {

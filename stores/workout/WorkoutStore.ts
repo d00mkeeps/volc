@@ -41,7 +41,6 @@ interface WorkoutState {
 export const useWorkoutStore = create<WorkoutState>((set, get) => {
   const loadWorkoutsData = async () => {
     try {
-      console.log("Loading workouts...");
       set({ loading: true, error: null });
 
       const session = await authService.getSession();
@@ -53,7 +52,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         session.user.id
       );
       set({ workouts: userWorkouts, initialized: true });
-      console.log(`Loaded ${userWorkouts.length} workouts`);
     } catch (err) {
       console.error("[WorkoutStore] Error loading workouts:", err);
       set({
@@ -102,7 +100,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
     fetchTemplates: async () => {
       try {
-        console.log("[WorkoutStore] Fetching templates from workouts array");
         const { workouts } = get();
 
         // Filter workouts to get templates (completed workouts with exercises)
@@ -110,10 +107,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           (workout: CompleteWorkout) =>
             workout.workout_exercises.length > 0 &&
             !workout.is_template === false
-        );
-
-        console.log(
-          `[WorkoutStore] Found ${templateList.length} templates from ${workouts.length} workouts`
         );
         set({ templates: templateList });
 
@@ -165,11 +158,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
               new Date(a.created_at).getTime()
           );
           const [newest, ...duplicates] = sorted;
-
-          console.log(
-            `[WorkoutStore] Deduplicating ${duplicates.length} template duplicates, keeping:`,
-            newest.name
-          );
 
           // Delete the duplicates
           for (const duplicate of duplicates) {
@@ -223,7 +211,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         }
 
         const workout = await workoutService.getPublicWorkout(workoutId);
-        console.log("🔍 Public workout data received:", workout);
+
         set({ currentWorkout: workout });
       } catch (err) {
         console.error("[WorkoutStore] Error getting public workout:", err);

@@ -11,19 +11,9 @@ type TimeframeKey = "1week" | "2weeks" | "1month" | "2months";
 export default function MuscleGroupSpider() {
   const [timeframe, setTimeframe] = useState<TimeframeKey>("2weeks");
 
-  // Use individual selectors to avoid infinite loop
   const allData = useDashboardStore((state) => state.allData);
   const isLoading = useDashboardStore((state) => state.isLoading);
   const error = useDashboardStore((state) => state.error);
-
-  console.log("🕷️ [MuscleGroupSpider] Component render:");
-  console.log("📊 [MuscleGroupSpider] isLoading:", isLoading);
-  console.log("❌ [MuscleGroupSpider] error:", error);
-  console.log(
-    "📦 [MuscleGroupSpider] allData:",
-    allData ? Object.keys(allData) : "null"
-  );
-  console.log("⏰ [MuscleGroupSpider] selected timeframe:", timeframe);
 
   const timeframeOptions = [
     { value: "1week", label: "1 Week" },
@@ -88,23 +78,6 @@ export default function MuscleGroupSpider() {
 
   // Get current timeframe data with safe access
   const currentData: TimeframeData | undefined = allData[timeframe];
-  console.log(
-    "🎯 [MuscleGroupSpider] currentData for",
-    timeframe,
-    ":",
-    currentData
-  );
-
-  if (currentData) {
-    console.log(
-      "📈 [MuscleGroupSpider] actualMetrics:",
-      currentData.actualMetrics
-    );
-    console.log(
-      "💪 [MuscleGroupSpider] muscleBalance:",
-      currentData.muscleBalance
-    );
-  }
   if (!currentData) {
     return (
       <Stack

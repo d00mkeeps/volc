@@ -101,7 +101,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   activeConversationId: null,
   pendingImageId: null,
   startWorkout: (workout) => {
-    console.log("[UserSession] Starting workout:", workout.name);
     set({
       currentWorkout: workout,
       isActive: true,
@@ -113,54 +112,34 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
 
   pauseWorkout: () => {
-    console.log("[UserSession] Pausing workout");
     set({ isPaused: true });
   },
 
   resumeWorkout: () => {
-    console.log("[UserSession] Resuming workout");
     set({ isPaused: false });
   },
 
   togglePause: () => {
     const { isPaused } = get();
     if (isPaused) {
-      console.log("[UserSession] Resuming workout");
       set({ isPaused: false });
     } else {
-      console.log("[UserSession] Pausing workout");
       set({ isPaused: true });
     }
   },
 
   updateCurrentWorkout: (workout) => {
-    console.log("=== UPDATE CURRENT WORKOUT ===");
-    console.log("Incoming workout ID:", workout.id);
-    console.log("Incoming workout notes:", workout.notes);
-    console.log("Incoming workout notes length:", workout.notes?.length);
-
     const { isActive, currentWorkout: oldWorkout } = get();
-    console.log("Store isActive:", isActive);
-    console.log("Old workout notes:", oldWorkout?.notes);
-    console.log("Old workout notes length:", oldWorkout?.notes?.length);
 
     set({ currentWorkout: workout });
 
     // Verify the update took effect
     const { currentWorkout: newWorkout } = get();
-    console.log("After update - new workout notes:", newWorkout?.notes);
-    console.log(
-      "After update - new workout notes length:",
-      newWorkout?.notes?.length
-    );
-    console.log("Update successful:", newWorkout?.notes === workout.notes);
   },
 
   updateExercise: (exerciseId, updatedExercise) => {
     const { currentWorkout, isActive } = get();
     if (!isActive || !currentWorkout) return;
-
-    console.log("[UserSession] Updating exercise:", exerciseId);
 
     const updatedWorkout = {
       ...currentWorkout,
@@ -178,8 +157,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       throw new Error("No workout for analysis");
     }
 
-    console.log("[UserSession] Initializing analysis and chat");
-
     // Extract definition IDs for analysis
     const definitionIds = currentWorkout.workout_exercises
       .map((ex) => ex.definition_id)
@@ -196,10 +173,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     if (analysisResult?.conversation_id) {
       set({ activeConversationId: analysisResult.conversation_id });
-      console.log(
-        "[UserSession] Analysis and chat initialized:",
-        analysisResult.conversation_id
-      );
     }
 
     return analysisResult;
@@ -218,8 +191,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     if (!userProfile?.user_id) {
       throw new Error("No user profile found");
     }
-
-    console.log("[UserSession] Saving completed workout with metadata");
 
     // Get user's preferred units
     const isImperial = userProfile.is_imperial ?? false;
@@ -260,8 +231,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Update session with saved workout
     set({ currentWorkout: savedWorkout });
-
-    console.log("[UserSession] Workout saved successfully");
     return savedWorkout;
   },
   finishWorkout: () => {
@@ -269,8 +238,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     if (!currentWorkout) {
       throw new Error("No workout to finish");
     }
-
-    console.log("[UserSession] Marking workout as completed");
 
     // ONLY: Mark workout as completed in session (no DB save yet)
     set({
@@ -280,11 +247,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Refresh dashboard for immediate UI feedback
     useDashboardStore.getState().refreshDashboard();
-
-    console.log("[UserSession] Workout marked as completed, ready for summary");
   },
   setPendingImage: (imageId) => {
-    console.log("[UserSession] Setting pending image:", imageId);
     set({ pendingImageId: imageId });
   },
 
@@ -368,7 +332,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
   // NEW: Conversation actions
   setActiveConversation: (id) => {
-    console.log("[UserSession] Setting active conversation:", id);
     set({ activeConversationId: id });
   },
 
