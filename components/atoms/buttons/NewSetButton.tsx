@@ -1,4 +1,3 @@
-// atoms/buttons/NewSetButton.tsx
 import React from "react";
 import { Stack, XStack, Text } from "tamagui";
 import { Ionicons } from "@expo/vector-icons";

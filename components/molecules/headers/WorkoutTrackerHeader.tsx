@@ -9,14 +9,12 @@ interface WorkoutTrackerHeaderProps {
   workoutDescription?: string;
   isActive: boolean;
   currentTemplateName?: string;
-  // Removed: timeString, isPaused, togglePause - getting from store
 }
 
 export default function WorkoutTrackerHeader({
   isActive,
   currentTemplateName,
 }: WorkoutTrackerHeaderProps) {
-  // Get everything from store - no more prop drilling!
   const {
     openTemplateSelector,
     getTimeString,
@@ -24,10 +22,6 @@ export default function WorkoutTrackerHeader({
     togglePause,
     updateElapsedTime,
   } = useUserSessionStore();
-
-  const handleNotesPress = () => {
-    console.log("Opening notes interface");
-  };
 
   const handleTemplatePress = () => {
     openTemplateSelector();
@@ -53,31 +47,6 @@ export default function WorkoutTrackerHeader({
     >
       {/* Timer and Controls Row */}
       <XStack justifyContent="center" alignItems="center" gap="$3">
-        {/* Info button */}
-        <Circle
-          size={28}
-          backgroundColor="transparent"
-          justifyContent="center"
-          alignItems="center"
-          pressStyle={
-            isActive
-              ? {
-                  backgroundColor: "$backgroundPress",
-                  scale: 0.9,
-                }
-              : {}
-          }
-          onPress={isActive ? handleNotesPress : undefined}
-          opacity={isActive ? 1 : 0.4}
-          animation="quick"
-        >
-          <Ionicons
-            name="information-circle-outline"
-            size={20}
-            color={isActive ? "$textSoft" : "$textMuted"}
-          />
-        </Circle>
-
         {/* Timer - from store */}
         <Text
           fontSize="$8"

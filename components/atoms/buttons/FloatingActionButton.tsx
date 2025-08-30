@@ -1,4 +1,3 @@
-// components/atoms/buttons/ActionButton.tsx
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Button, Stack, Text } from "tamagui";
@@ -9,7 +8,7 @@ interface ActionButtonProps {
   onPress: () => void;
 }
 
-export default function ActionButton({
+export default function FloatingActionButton({
   icon,
   label,
   onPress,

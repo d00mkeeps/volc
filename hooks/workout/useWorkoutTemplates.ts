@@ -1,4 +1,3 @@
-// hooks/workout/useWorkoutTemplates.ts
 import { useEffect, useMemo } from "react";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { createTemplatesFromWorkouts } from "@/utils/createTemplatesFromWorkouts";
