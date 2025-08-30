@@ -1,0 +1,59 @@
+// metro.config.js
+const { getDefaultConfig } = require('expo/metro-config');
+
+const config = getDefaultConfig(__dirname);
+
+// SVG transformer support
+config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer');
+config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== 'svg');
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'svg'];
+
+// Speed optimizations - minifier config
+config.transformer.minifierConfig = {
+  keep_classnames: true,
+  keep_fnames: true,
+  mangle: {
+    keep_classnames: true,
+    keep_fnames: true,
+  },
+};
+
+// Better caching for your folder structure
+config.resolver.alias = {
+  '@': __dirname,
+  '@/components': __dirname + '/components',
+  '@/stores': __dirname + '/stores',
+  '@/context': __dirname + '/context',
+  '@/utils': __dirname + '/utils',
+  '@/types': __dirname + '/types',
+  '@/constants': __dirname + '/constants',
+  '@/hooks': __dirname + '/hooks',
+  '@/services': __dirname + '/services',
+  '@/lib': __dirname + '/lib',
+};
+
+// Platform-specific optimizations
+config.resolver.platforms = ['ios', 'android', 'native'];
+
+// Tree shaking for Tamagui
+config.transformer.unstable_allowRequireContext = true;
+
+// Watchman optimizations
+config.watchFolders = [__dirname];
+config.resolver.watchman = {
+  defer_states: ['hg.update'],
+  settle: 20,
+};
+
+// Exclude heavy folders from watching
+config.resolver.blockList = [
+  /node_modules\/.*\/node_modules\/react-native\/.*/,
+  /.*\/ios\/build\/.*/,
+  /.*\/android\/build\/.*/,
+  /.*\/.expo\/.*/,
+  /.*\/backend\/.*/,
+  /.*\/.venv\/.*/,
+  /.*\/.vscode\/.*/,
+];
+
+module.exports = config;

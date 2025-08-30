@@ -52,7 +52,7 @@ eas: {
 apiUrl: process.env.API_URL || "https://localhost:8000",
  },
 jsEngine: "hermes",
-newArchEnabled: true,
+newArchEnabled: false,
  }
 }
 export default config

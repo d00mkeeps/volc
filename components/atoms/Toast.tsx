@@ -1,4 +1,3 @@
-// @/components/atoms/Toast.tsx (Updated to use react-native-toast-message)
 import Toast from "react-native-toast-message";
 
 export interface ToastNotification {

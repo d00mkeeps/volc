@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { useAnalysisBundleStore } from "@/stores/attachments/AnalysisBundleStore";
 import { getWebSocketService } from "@/services/websocket/WebSocketService";
