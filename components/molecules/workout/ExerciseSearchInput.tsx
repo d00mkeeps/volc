@@ -4,7 +4,7 @@ import { Input, YStack, Text, Stack, ScrollView } from "tamagui";
 import { View, TouchableOpacity } from "react-native"; // Use native components
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
-import { Ionicons } from "@expo/vector-icons";
+import { Check, X } from "lucide-react";
 
 interface ExerciseSearchInputProps {
   value: string;
@@ -138,11 +138,11 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
             transform={[{ translateY: -10 }]}
             zIndex={1}
           >
-            <Ionicons
-              name={isValid ? "checkmark" : "close"}
-              size={20}
-              color={isValid ? "#22c55e" : "#ef4444"}
-            />
+            {isValid ? (
+              <Check size={20} color="#22c55e" />
+            ) : (
+              <X size={20} color="#ef4444" />
+            )}
           </Stack>
         )}
       </Stack>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Plus, RotateCw } from "lucide-react";
 import { Button, Stack, Text } from "tamagui";
 import { imageService } from "@/services/api/imageService";
 
@@ -29,6 +29,11 @@ export default function ImagePickerButton({
   const [uploading, setUploading] = useState(false);
 
   const config = sizeConfig[size];
+
+  const getIconComponent = (iconName: string, uploading: boolean) => {
+    if (uploading) return RotateCw;
+    return iconName === "add" ? Plus : Plus; // Default to Plus
+  };
 
   const handleImagePick = async () => {
     setUploading(true);
@@ -110,11 +115,10 @@ export default function ImagePickerButton({
         gap={label ? "$1" : 0}
         flex={1}
       >
-        <Ionicons
-          name={(uploading ? "sync" : icon) as any}
-          size={config.iconSize}
-          color="white"
-        />
+        {React.createElement(getIconComponent(icon, uploading), {
+          size: config.iconSize,
+          color: "white",
+        })}
         {label && (
           <Text
             color="white"

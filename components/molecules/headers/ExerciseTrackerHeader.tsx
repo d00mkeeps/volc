@@ -1,6 +1,6 @@
 import React from "react";
 import { XStack, Stack, Text } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { FileText, ArrowLeftRight } from "lucide-react";
 
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
@@ -41,11 +41,7 @@ export default function ExerciseTrackerHeader({
             borderRadius="$2"
             pressStyle={{ backgroundColor: "$backgroundPress" }}
           >
-            <Ionicons
-              name="document-text-outline"
-              size={24}
-              color={hasNotes ? "#0ea5e9" : "#999999"}
-            />
+            <FileText size={24} color={hasNotes ? "#0ea5e9" : "#999999"} />
           </Stack>
 
           <Stack
@@ -54,11 +50,7 @@ export default function ExerciseTrackerHeader({
             borderRadius="$2"
             pressStyle={{ backgroundColor: "$backgroundPress" }}
           >
-            <Ionicons
-              name="swap-horizontal-outline"
-              size={24}
-              color="#999999"
-            />
+            <ArrowLeftRight size={24} color="#999999" />
           </Stack>
         </XStack>
       )}

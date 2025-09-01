@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, Text } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { Trash2 } from "lucide-react";
 
 interface ContentCardProps {
   title: string;
@@ -77,7 +77,7 @@ export default function ContentCard({
               pressStyle={{ backgroundColor: "$backgroundHover" }}
               onPress={handleDelete}
             >
-              <Ionicons name="trash-outline" size={18} color="#dc2626" />
+              <Trash2 size={18} color="#dc2626" />
             </Stack>
           )}
         </Stack>

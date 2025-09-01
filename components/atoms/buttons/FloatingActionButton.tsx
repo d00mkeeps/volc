@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { PlusCircle, Settings, Play, Pause } from "lucide-react";
 import React from "react";
 import { Button, Stack, Text } from "tamagui";
 
@@ -7,6 +7,16 @@ interface ActionButtonProps {
   label: string;
   onPress: () => void;
 }
+
+const getIconComponent = (iconName: string) => {
+  const iconMap: Record<string, any> = {
+    "add-circle": PlusCircle,
+    "settings-outline": Settings,
+    play: Play,
+    pause: Pause,
+  };
+  return iconMap[iconName] || PlusCircle;
+};
 
 export default function FloatingActionButton({
   icon,
@@ -36,7 +46,11 @@ export default function FloatingActionButton({
         gap={icon ? "$1" : 0}
         flex={1}
       >
-        {icon && <Ionicons name={icon as any} size={20} color="white" />}
+        {icon &&
+          React.createElement(getIconComponent(icon), {
+            size: 20,
+            color: "white",
+          })}
         <Text color="white" fontSize="$8" fontWeight="700" textAlign="center">
           {label}
         </Text>

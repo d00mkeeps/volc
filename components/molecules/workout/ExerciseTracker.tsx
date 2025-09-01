@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Text, Separator } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { X } from "lucide-react";
 import SetRow from "./SetRow";
 import {
   WorkoutExercise,
@@ -187,7 +187,7 @@ export default function ExerciseTracker({
           {isEditing && (
             <XStack justifyContent="flex-end" gap="$2" marginTop="$2">
               <Stack onPress={handleDelete} cursor="pointer">
-                <Ionicons name="close" size={20} color="#ef4444" />
+                <X size={20} color="#ef4444" />
               </Stack>
             </XStack>
           )}

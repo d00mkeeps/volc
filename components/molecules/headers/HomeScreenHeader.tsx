@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, Button, Text } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { Settings } from "lucide-react";
 
 interface HeaderProps {
   greeting?: string;
@@ -22,7 +22,7 @@ export default function Header({
         {greeting}
       </Text>
       <Button size="$3" circular onPress={onSettingsPress}>
-        <Ionicons name="settings-outline" size={20} color="white" />
+        <Settings size={20} color="white" />
       </Button>
     </Stack>
   );

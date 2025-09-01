@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { YStack, XStack, Text, Input, ScrollView, Button } from "tamagui";
 import { View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { X } from "lucide-react";
 import { CompleteWorkout } from "@/types/workout";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import TemplateItem from "../../atoms/TemplateItem";
@@ -168,7 +168,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           onPress={onClose}
           pressStyle={{ backgroundColor: "$backgroundPress" }}
         >
-          <Ionicons name="close" size={20} color="$textSoft" />
+          <X size={20} color="$textSoft" />
         </Button>
       </XStack>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, XStack, Text } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { Plus } from "lucide-react";
 
 interface NewSetButtonProps {
   isActive: boolean;
@@ -31,7 +31,7 @@ export default function NewSetButton({ isActive, onPress }: NewSetButtonProps) {
       cursor={isActive ? "pointer" : "default"}
     >
       <XStack gap="$1.5" alignItems="center">
-        <Ionicons name="add" size={18} color="#f84f3e" />
+        <Plus size={18} color="#f84f3e" />
         <Text fontSize="$4" color="$primary" fontWeight="500">
           Add Set
         </Text>

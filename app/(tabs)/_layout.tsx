@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Home, User, MessageCircle, Trophy } from "lucide-react";
 import { useColorScheme } from "react-native";
 
 export default function TabLayout() {
@@ -32,9 +32,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
 
@@ -42,9 +40,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -52,7 +48,7 @@ export default function TabLayout() {
         options={{
           title: "Chats",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-outline" size={size} color={color} />
+            <MessageCircle size={size} color={color} />
           ),
         }}
       />
@@ -60,9 +56,7 @@ export default function TabLayout() {
         name="workouts"
         options={{
           title: "Leaderboard",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="podium-outline" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Trophy size={size} color={color} />,
         }}
       />
     </Tabs>

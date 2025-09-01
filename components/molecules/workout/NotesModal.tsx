@@ -1,7 +1,7 @@
 // components/molecules/NotesModal.tsx
 import React, { useState, useEffect } from "react";
 import { YStack, XStack, Text, Button, TextArea } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { X } from "lucide-react";
 import BaseModal from "../../atoms/BaseModal";
 
 interface NotesModalProps {
@@ -51,7 +51,7 @@ export default function NotesModal({
           onPress={onClose}
           pressStyle={{ backgroundColor: "$backgroundPress" }}
         >
-          <Ionicons name="close" size={20} color="$textSoft" />
+          <X size={20} color="$textSoft" />
         </Button>
       </XStack>
 

@@ -1,7 +1,7 @@
 // components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
 import { YStack, XStack, Text, Circle, Stack, Button } from "tamagui";
-import { Ionicons } from "@expo/vector-icons";
+import { Play, Pause, ChevronDown } from "lucide-react";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutTrackerHeaderProps {
@@ -75,11 +75,11 @@ export default function WorkoutTrackerHeader({
           opacity={isActive ? 1 : 0.4}
           animation="quick"
         >
-          <Ionicons
-            name={isPaused ? "play" : "pause"}
-            size={16}
-            color={isActive ? "white" : "$textMuted"}
-          />
+          {isPaused ? (
+            <Play size={16} color={isActive ? "white" : "$textMuted"} />
+          ) : (
+            <Pause size={16} color={isActive ? "white" : "$textMuted"} />
+          )}
         </Circle>
       </XStack>
 
@@ -145,7 +145,7 @@ export default function WorkoutTrackerHeader({
             <Text fontSize="$4" color="$textSoft">
               Change
             </Text>
-            <Ionicons name="chevron-down" size={14} color="$textSoft" />
+            <ChevronDown size={14} color="$textSoft" />
           </XStack>
         </Button>
       </XStack>

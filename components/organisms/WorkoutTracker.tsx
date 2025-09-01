@@ -19,8 +19,7 @@ import GradientBlur from "@/components/atoms/GradientBlur";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-
+import { PlusCircle } from "lucide-react";
 interface WorkoutTrackerProps {
   currentTemplateName?: string;
 }
@@ -271,7 +270,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 onPress={handleAddExercise}
               >
                 <XStack gap="$2" alignItems="center">
-                  <Ionicons name="add-circle" size={20} color="white" />
+                  <PlusCircle size={20} color="white" />
                   <Text color="white" fontSize="$4" fontWeight="600">
                     Add Exercise
                   </Text>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { XStack, Stack, Text } from "tamagui";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
-import { Ionicons } from "@expo/vector-icons";
+import { Trash2 } from "lucide-react";
 import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -124,11 +124,7 @@ export default function SetRow({
         cursor={isActive ? "pointer" : "default"}
         animation="quick"
       >
-        <Ionicons
-          name={pendingDelete ? "trash" : "trash-outline"}
-          size={16}
-          color="#ef4444"
-        />
+        <Trash2 size={16} color="#ef4444" />
       </Stack>
     </XStack>
   );
