@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { XStack, Stack, Text } from "tamagui";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
-import { Trash2 } from "lucide-react";
-import * as Haptics from "expo-haptics";
+import { Trash2 } from '@/assets/icons/IconMap';import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
 import DurationInput from "@/components/atoms/DurationInput";

@@ -1,8 +1,7 @@
 // components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
 import { YStack, XStack, Text, Circle, Stack, Button } from "tamagui";
-import { Play, Pause, ChevronDown } from "lucide-react";
-import { useUserSessionStore } from "@/stores/userSessionStore";
+import { Play, Pause, ChevronDown } from '@/assets/icons/IconMap';import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutTrackerHeaderProps {
   workoutName?: string;

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { Plus, RotateCw } from "lucide-react";
-import { Button, Stack, Text } from "tamagui";
+import { Plus, RotateCw } from '@/assets/icons/IconMap';import { Button, Stack, Text } from "tamagui";
 import { imageService } from "@/services/api/imageService";
 
 interface ImagePickerButtonProps {

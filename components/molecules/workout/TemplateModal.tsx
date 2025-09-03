@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { YStack, XStack, Text, Input, ScrollView, Button } from "tamagui";
 import { View } from "react-native";
-import { X } from "lucide-react";
-import { CompleteWorkout } from "@/types/workout";
+import { X } from '@/assets/icons/IconMap';import { CompleteWorkout } from "@/types/workout";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import TemplateItem from "../../atoms/TemplateItem";
 import BaseModal from "../../atoms/BaseModal";

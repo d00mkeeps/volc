@@ -1,8 +1,6 @@
 import React from "react";
 import { Stack, Text } from "tamagui";
-import { Trash2 } from "lucide-react";
-
-interface ContentCardProps {
+import { Trash2 } from '@/assets/icons/IconMap';interface ContentCardProps {
   title: string;
   subtitle: string;
   date: Date;

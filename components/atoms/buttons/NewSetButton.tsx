@@ -1,8 +1,6 @@
 import React from "react";
 import { Stack, XStack, Text } from "tamagui";
-import { Plus } from "lucide-react";
-
-interface NewSetButtonProps {
+import { Plus } from '@/assets/icons/IconMap';interface NewSetButtonProps {
   isActive: boolean;
   onPress: () => void;
 }

@@ -1,7 +1,6 @@
 import React from "react";
 import { XStack, Stack, Text } from "tamagui";
-import { FileText, ArrowLeftRight } from "lucide-react";
-
+import { FileText, ArrowLeftRight } from "@/assets/icons/IconMap";
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
   hasNotes: boolean;

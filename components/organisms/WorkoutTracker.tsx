@@ -19,8 +19,7 @@ import GradientBlur from "@/components/atoms/GradientBlur";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
-import { PlusCircle } from "lucide-react";
-interface WorkoutTrackerProps {
+import { PlusCircle } from '@/assets/icons/IconMap';interface WorkoutTrackerProps {
   currentTemplateName?: string;
 }
 

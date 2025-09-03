@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, User, MessageCircle, Trophy } from "lucide-react";
+import { Home, User, MessageCircle, Trophy } from "@/assets/icons/IconMap";
 import { useColorScheme } from "react-native";
 
 export default function TabLayout() {

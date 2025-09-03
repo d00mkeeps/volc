@@ -1,8 +1,7 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
 import { XStack, Input, Button } from "tamagui";
-import { Send } from "lucide-react";
-interface InputAreaProps {
+import { Send } from '@/assets/icons/IconMap';interface InputAreaProps {
   disabled?: boolean;
   placeholder?: string;
   onSendMessage: (message: string) => void;

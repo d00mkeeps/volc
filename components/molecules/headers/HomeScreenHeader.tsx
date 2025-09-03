@@ -1,7 +1,6 @@
 import React from "react";
 import { Stack, Button, Text } from "tamagui";
-import { Settings } from "lucide-react";
-
+import { Settings } from "@/assets/icons/IconMap";
 interface HeaderProps {
   greeting?: string;
   onSettingsPress?: () => void;

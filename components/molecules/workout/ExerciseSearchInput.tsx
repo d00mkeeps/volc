@@ -4,9 +4,7 @@ import { Input, YStack, Text, Stack, ScrollView } from "tamagui";
 import { View, TouchableOpacity } from "react-native"; // Use native components
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
-import { Check, X } from "lucide-react";
-
-interface ExerciseSearchInputProps {
+import { Check, X } from '@/assets/icons/IconMap';interface ExerciseSearchInputProps {
   value: string;
   onSelect: (exerciseName: string) => void;
   placeholder?: string;

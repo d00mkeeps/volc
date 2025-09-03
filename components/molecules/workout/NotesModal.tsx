@@ -1,8 +1,7 @@
 // components/molecules/NotesModal.tsx
 import React, { useState, useEffect } from "react";
 import { YStack, XStack, Text, Button, TextArea } from "tamagui";
-import { X } from "lucide-react";
-import BaseModal from "../../atoms/BaseModal";
+import { X } from '@/assets/icons/IconMap';import BaseModal from "../../atoms/BaseModal";
 
 interface NotesModalProps {
   isVisible: boolean;

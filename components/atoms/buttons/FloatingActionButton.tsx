@@ -1,5 +1,4 @@
-import { PlusCircle, Settings, Play, Pause } from "lucide-react";
-import React from "react";
+import { PlusCircle, Settings, Play, Pause } from '@/assets/icons/IconMap';import React from "react";
 import { Button, Stack, Text } from "tamagui";
 
 interface ActionButtonProps {

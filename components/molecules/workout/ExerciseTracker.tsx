@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Text, Separator } from "tamagui";
-import { X } from "lucide-react";
-import SetRow from "./SetRow";
+import { X } from '@/assets/icons/IconMap';import SetRow from "./SetRow";
 import {
   WorkoutExercise,
   WorkoutExerciseSet,

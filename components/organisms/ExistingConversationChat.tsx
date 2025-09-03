@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { YStack, XStack, Button, Text } from "tamagui";
-import { ArrowLeft } from "lucide-react";
-import { ChatInterface } from "./ChatInterface";
+import { ArrowLeft } from '@/assets/icons/IconMap';import { ChatInterface } from "./ChatInterface";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
