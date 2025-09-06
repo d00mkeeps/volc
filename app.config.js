@@ -51,7 +51,7 @@ eas: {
     "projectId": "a637c490-51f0-41e3-8208-37ed1ea09d97" },
 apiUrl: process.env.API_URL || "https://localhost:8000",
  },
-jsEngine: "hermes",
+jsEngine: "jsc",
 newArchEnabled: false,
  }
 }

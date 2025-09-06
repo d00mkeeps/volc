@@ -26,7 +26,6 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-// FIX: Better component implementation
 function AuthStoreManager({ children }: { children: React.ReactNode }) {
   useAuthStore();
   return children as React.ReactElement;
