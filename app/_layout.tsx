@@ -20,6 +20,12 @@ import "react-native-get-random-values";
 
 export { ErrorBoundary } from "expo-router";
 
+console.log("🎯 Layout debug:", {
+  configExists: !!config,
+  configTokens: !!config?.tokens,
+  configThemes: !!config?.themes,
+  isProduction: process.env.NODE_ENV === "production",
+});
 export const unstable_settings = {
   initialRouteName: "(drawer)",
 };

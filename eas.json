@@ -8,6 +8,13 @@
       "developmentClient": true,
       "distribution": "internal"
     },
+    
+      "production-test": {
+        "distribution": "internal",
+        "ios": {
+          "buildConfiguration": "Release"
+        }
+      },
     "preview": {
       "distribution": "internal"
     },

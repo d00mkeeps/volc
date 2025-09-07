@@ -1,21 +1,20 @@
-// tamagui.config.ts - MINIMAL VERSION
+// tamagui.config.ts
 import { createTamagui } from "tamagui";
+
+console.log("🔧 Creating Tamagui config...");
 
 const tamaguiConfig = createTamagui({
   tokens: {
     color: {
-      // Your custom colors
       primary: "#f84f3e",
       primaryLight: "#f86b5c",
       primaryMuted: "#d4412f",
-      primaryTint: "#fef7f6", // light theme
-      primaryPress: "#d4412f", // Add this for press states
+      primaryTint: "#fef7f6",
+      primaryPress: "#d4412f",
 
-      // Basic colors
       white: "#ffffff",
       black: "#231f20",
 
-      // Text colors (you'll define these in themes)
       red: "#ef4444",
       red8: "#dc2626",
       red9: "#b91c1c",
@@ -25,7 +24,6 @@ const tamaguiConfig = createTamagui({
       gray6: "#6b7280",
       gray8: "#374151",
 
-      // Error
       error: "#ef4444",
     },
     space: {
@@ -33,10 +31,16 @@ const tamaguiConfig = createTamagui({
       2: 8,
       3: 12,
       4: 16,
+      5: 20,
+      true: 8, // default space
     },
     size: {
-      2: 32, // Button sizes
+      1: 20,
+      2: 32,
+      3: 44,
       4: 48,
+      5: 52,
+      true: 48, // default size
     },
     fontSize: {
       1: 12,
@@ -46,9 +50,28 @@ const tamaguiConfig = createTamagui({
       5: 20,
       8: 28,
       9: 32,
+      true: 18, // default fontSize
+    },
+    radius: {
+      0: 0,
+      1: 3,
+      2: 5,
+      3: 7,
+      4: 9,
+      true: 5, // default radius
+    },
+    zIndex: {
+      0: 0,
+      1: 100,
+      2: 200,
+      3: 300,
+      4: 400,
+      5: 500,
+      true: 100,
     },
   },
   themes: {
+    // Your existing themes...
     dark: {
       background: "#231f20",
       backgroundSoft: "#2a2629",
@@ -109,6 +132,7 @@ const tamaguiConfig = createTamagui({
         5: 20,
         8: 28,
         9: 32,
+        true: 18,
       },
     },
     body: {
@@ -121,10 +145,14 @@ const tamaguiConfig = createTamagui({
         5: 20,
         8: 28,
         9: 32,
+        true: 18,
       },
     },
   },
 });
+
+console.log("✅ Tamagui config created:", !!tamaguiConfig);
+console.log("🔍 Config keys:", Object.keys(tamaguiConfig || {}));
 
 export type AppConfig = typeof tamaguiConfig;
 declare module "tamagui" {

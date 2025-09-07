@@ -52,7 +52,7 @@ eas: {
 apiUrl: process.env.API_URL || "https://localhost:8000",
  },
 jsEngine: "jsc",
-newArchEnabled: false,
+newArchEnabled: true,
  }
 }
 export default config
