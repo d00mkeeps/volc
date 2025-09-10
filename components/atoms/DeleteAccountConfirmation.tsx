@@ -1,14 +1,9 @@
-// components/DeleteAccountConfirmation.tsx
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { Modal, Alert } from "react-native";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Text from "@/components/atoms/Text";
 import { userService } from "@/services/api/userService";
 
 interface DeleteAccountConfirmationProps {
@@ -17,9 +12,11 @@ interface DeleteAccountConfirmationProps {
   onConfirm: () => void;
 }
 
-export const DeleteAccountConfirmation: React.FC<
-  DeleteAccountConfirmationProps
-> = ({ visible, onClose, onConfirm }) => {
+export const DeleteAccountConfirmation = ({
+  visible,
+  onClose,
+  onConfirm,
+}: DeleteAccountConfirmationProps) => {
   const [confirmations, setConfirmations] = useState({
     understand_permanent: false,
     understand_data_loss: false,
@@ -27,6 +24,8 @@ export const DeleteAccountConfirmation: React.FC<
   });
   const [typedConfirmation, setTypedConfirmation] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // ... rest of your component logic stays exactly the same
 
   const resetState = () => {
     setConfirmations({
@@ -82,27 +81,37 @@ export const DeleteAccountConfirmation: React.FC<
     onToggle: () => void;
     text: string;
   }) => (
-    <TouchableOpacity
-      style={{ flexDirection: "row", alignItems: "center", marginBottom: 15 }}
+    <Button
+      backgroundColor="transparent"
+      justifyContent="flex-start"
+      alignSelf="stretch"
+      maxWidth="100%"
+      padding="$0"
+      marginBottom="$3"
       onPress={onToggle}
     >
-      <View
-        style={{
-          width: 20,
-          height: 20,
-          borderWidth: 2,
-          borderColor: checked ? "#FF3B30" : "#C7C7CC",
-          backgroundColor: checked ? "#FF3B30" : "transparent",
-          marginRight: 10,
-          borderRadius: 3,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {checked && <Text style={{ color: "white", fontSize: 12 }}>✓</Text>}
-      </View>
-      <Text style={{ flex: 1, fontSize: 14 }}>{text}</Text>
-    </TouchableOpacity>
+      <XStack alignItems="center" gap="$2">
+        <YStack
+          width={20}
+          height={20}
+          borderWidth={2}
+          borderColor={checked ? "$red9" : "$borderSoft"}
+          backgroundColor={checked ? "$red9" : "transparent"}
+          borderRadius="$1"
+          justifyContent="center"
+          alignItems="center"
+        >
+          {checked && (
+            <Text size="small" color="$white" fontWeight="600">
+              ✓
+            </Text>
+          )}
+        </YStack>
+        <Text size="medium" flex={1}>
+          {text}
+        </Text>
+      </XStack>
+    </Button>
   );
 
   return (
@@ -111,109 +120,105 @@ export const DeleteAccountConfirmation: React.FC<
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 30,
-          }}
-        >
-          <Text style={{ fontSize: 24, fontWeight: "bold", color: "#FF3B30" }}>
-            Delete Account
+      <ScrollView
+        flex={1}
+        backgroundColor="$background"
+        contentContainerStyle={{ padding: 20 }}
+      >
+        <YStack gap="$4">
+          {/* Header */}
+          <XStack justifyContent="space-between" alignItems="center">
+            <Text size="xl" fontWeight="600" color="$red9">
+              Delete Account
+            </Text>
+            <Button
+              size="medium"
+              backgroundColor="transparent"
+              color="$primary"
+              onPress={handleClose}
+            >
+              Cancel
+            </Button>
+          </XStack>
+
+          {/* Warning Text */}
+          <Text size="medium" lineHeight={24}>
+            This action will permanently delete your account and all associated
+            data. This cannot be undone.
           </Text>
-          <TouchableOpacity onPress={handleClose}>
-            <Text style={{ fontSize: 18, color: "#007AFF" }}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
 
-        <Text style={{ fontSize: 16, marginBottom: 20, lineHeight: 24 }}>
-          This action will permanently delete your account and all associated
-          data. This cannot be undone.
-        </Text>
-
-        <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 15 }}>
-          Please confirm you understand:
-        </Text>
-
-        <ConfirmationCheckbox
-          checked={confirmations.understand_permanent}
-          onToggle={() =>
-            setConfirmations((prev) => ({
-              ...prev,
-              understand_permanent: !prev.understand_permanent,
-            }))
-          }
-          text="I understand this action is permanent and cannot be undone"
-        />
-
-        <ConfirmationCheckbox
-          checked={confirmations.understand_data_loss}
-          onToggle={() =>
-            setConfirmations((prev) => ({
-              ...prev,
-              understand_data_loss: !prev.understand_data_loss,
-            }))
-          }
-          text="I understand I will lose all my workouts, conversations, and data"
-        />
-
-        <ConfirmationCheckbox
-          checked={confirmations.no_refund}
-          onToggle={() =>
-            setConfirmations((prev) => ({
-              ...prev,
-              no_refund: !prev.no_refund,
-            }))
-          }
-          text="I understand this does not entitle me to any refunds"
-        />
-
-        <View style={{ marginTop: 30, marginBottom: 20 }}>
-          <Text style={{ fontSize: 16, marginBottom: 10 }}>
-            Type{" "}
-            <Text style={{ fontWeight: "bold", color: "#FF3B30" }}>
-              DELETE MY ACCOUNT
-            </Text>{" "}
-            to confirm:
+          <Text size="large" fontWeight="600">
+            Please confirm you understand:
           </Text>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: "#C7C7CC",
-              borderRadius: 8,
-              padding: 15,
-              fontSize: 16,
-            }}
-            value={typedConfirmation}
-            onChangeText={setTypedConfirmation}
-            placeholder="DELETE MY ACCOUNT"
-            autoCapitalize="characters"
-          />
-        </View>
 
-        <TouchableOpacity
-          style={{
-            backgroundColor: isReadyToDelete() ? "#FF3B30" : "#C7C7CC",
-            padding: 15,
-            borderRadius: 8,
-            alignItems: "center",
-            opacity: loading ? 0.7 : 1,
-          }}
-          onPress={handleDeleteAccount}
-          disabled={!isReadyToDelete() || loading}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 16,
-              fontWeight: "600",
-            }}
+          {/* Checkboxes */}
+          <YStack gap="$2">
+            <ConfirmationCheckbox
+              checked={confirmations.understand_permanent}
+              onToggle={() =>
+                setConfirmations((prev) => ({
+                  ...prev,
+                  understand_permanent: !prev.understand_permanent,
+                }))
+              }
+              text="I understand this action is permanent and cannot be undone"
+            />
+
+            <ConfirmationCheckbox
+              checked={confirmations.understand_data_loss}
+              onToggle={() =>
+                setConfirmations((prev) => ({
+                  ...prev,
+                  understand_data_loss: !prev.understand_data_loss,
+                }))
+              }
+              text="I understand I will lose all my workouts, conversations, and data"
+            />
+
+            <ConfirmationCheckbox
+              checked={confirmations.no_refund}
+              onToggle={() =>
+                setConfirmations((prev) => ({
+                  ...prev,
+                  no_refund: !prev.no_refund,
+                }))
+              }
+              text="I understand this does not entitle me to any refunds"
+            />
+          </YStack>
+
+          {/* Confirmation Input */}
+          <YStack gap="$2">
+            <Text size="medium">
+              Type{" "}
+              <Text fontWeight="600" color="$red9">
+                DELETE MY ACCOUNT
+              </Text>{" "}
+              to confirm:
+            </Text>
+            <Input
+              value={typedConfirmation}
+              onChangeText={setTypedConfirmation}
+              placeholder="DELETE MY ACCOUNT"
+              autoCapitalize="characters"
+              alignSelf="stretch"
+              maxWidth="100%"
+            />
+          </YStack>
+
+          {/* Delete Button */}
+          <Button
+            backgroundColor={isReadyToDelete() ? "$red9" : "$backgroundMuted"}
+            color="$white"
+            disabled={!isReadyToDelete() || loading}
+            opacity={loading ? 0.7 : 1}
+            alignSelf="stretch"
+            maxWidth="100%"
+            onPress={handleDeleteAccount}
           >
             {loading ? "Deleting Account..." : "DELETE MY ACCOUNT"}
-          </Text>
-        </TouchableOpacity>
+          </Button>
+        </YStack>
       </ScrollView>
     </Modal>
   );

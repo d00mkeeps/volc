@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { Plus, RotateCw } from '@/assets/icons/IconMap';import { Button, Stack, Text } from "tamagui";
+import { Plus, RotateCw } from "@/assets/icons/IconMap";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { imageService } from "@/services/api/imageService";
 
 interface ImagePickerButtonProps {
@@ -121,7 +124,7 @@ export default function ImagePickerButton({
         {label && (
           <Text
             color="white"
-            fontSize={config.fontSize}
+            size="medium"
             fontWeight="500" // Reduced from 700 for subtlety
             textAlign="center"
           >

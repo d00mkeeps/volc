@@ -1,5 +1,7 @@
 import React from "react";
-import { Stack, Button, Text } from "tamagui";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { Settings } from "@/assets/icons/IconMap";
 interface HeaderProps {
   greeting?: string;
@@ -17,7 +19,7 @@ export default function Header({
       alignItems="center"
       marginBottom="$3" // This stays $3 as it's the gap from header to dashboard content
     >
-      <Text fontSize="$9" fontWeight="700" color="$text">
+      <Text size="medium" fontWeight="700" color="$text">
         {greeting}
       </Text>
       <Button size="$3" circular onPress={onSettingsPress}>

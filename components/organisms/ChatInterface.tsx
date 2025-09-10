@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
-import { YStack, Text } from "tamagui";
+import { YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/InputArea";
 import { Message } from "@/types";
@@ -70,9 +71,9 @@ export const ChatInterface = ({
 
         {getStatusText() && (
           <Text
-            ta="center"
+            textAlign="center"
             color="$textMuted"
-            fontSize="$2"
+            size="medium"
             paddingVertical="$1"
           >
             {getStatusText()}

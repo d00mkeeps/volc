@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { YStack, Text, Input, Button, TextArea, XStack } from "tamagui";
+import { TextArea, XStack, YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import ImagePickerButton from "../atoms/buttons/ImagePickerButton";
-import WorkoutImage from "../molecules/WorkoutImage";
-import { imageService } from "@/services/api/imageService";
-import { useDashboardStore } from "@/stores/dashboardStore";
+import ImagePickerButton from "../../atoms/buttons/ImagePickerButton";
+import WorkoutImage from "../../molecules/workout/WorkoutImage";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -113,7 +113,7 @@ export function WorkoutSummarySlide({
 
   return (
     <YStack gap="$4" paddingBottom="$4">
-      <Text fontSize="$4" fontWeight="bold">
+      <Text size="medium" fontWeight="bold">
         Workout Complete!
       </Text>
 
@@ -127,14 +127,14 @@ export function WorkoutSummarySlide({
           borderColor={showNameError ? "$red9" : "$borderColor"}
         />
         {showNameError && (
-          <Text color="$red9" fontSize="$2">
+          <Text color="$red9" size="medium">
             Please enter a workout name to continue
           </Text>
         )}
       </YStack>
 
       <YStack gap="$2">
-        <Text fontSize="$4" fontWeight="600">
+        <Text size="medium" fontWeight="600">
           Add a Photo
         </Text>
 
@@ -163,7 +163,7 @@ export function WorkoutSummarySlide({
       </YStack>
 
       <YStack gap="$2">
-        <Text fontSize="$4" fontWeight="600">
+        <Text size="medium" fontWeight="600">
           Notes
         </Text>
         <TextArea
@@ -175,7 +175,6 @@ export function WorkoutSummarySlide({
         />
       </YStack>
 
-      {/* ← Updated loading-aware button section */}
       <XStack gap="$3" paddingTop="$2">
         {loadingState !== "continue" && (
           <Button

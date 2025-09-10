@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Stack, Text, ScrollView } from "tamagui";
+import { Stack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
 import ContentCard from "@/components/atoms/ContentCard";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 
@@ -46,7 +47,7 @@ export default function ConversationList({
 
   return (
     <Stack flex={1}>
-      <Text fontSize="$4" fontWeight="500" color="$text" marginBottom="$2">
+      <Text size="medium" fontWeight="500" color="$text" marginBottom="$2">
         Recent Conversations
       </Text>
       <ScrollView showsVerticalScrollIndicator={false}>

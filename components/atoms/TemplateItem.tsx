@@ -1,5 +1,7 @@
 import React from "react";
-import { YStack, XStack, Text, Button } from "tamagui";
+import { YStack, XStack } from "tamagui";
+import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/Text";
 import { CompleteWorkout } from "@/types/workout";
 
 interface TemplateItemProps {
@@ -31,13 +33,17 @@ const TemplateItem: React.FC<TemplateItemProps> = ({
   return (
     <Button
       backgroundColor={isSelected ? "$primaryTint" : "$backgroundSoft"}
-      height={"$7"}
+      minHeight="$4" // Use minHeight instead of height for flexibility
+      height="auto" // Allow content to determine height
       borderColor={isSelected ? "$primary" : "$borderSoft"}
       borderWidth={1}
       borderRadius="$4"
       padding="$4"
-      marginBottom="$3"
+      paddingVertical="$2" // Add extra vertical padding for better spacing
+      marginBottom="$2"
       justifyContent="flex-start"
+      alignSelf="stretch" // Full width instead of constrained
+      maxWidth="100%" // Override the 70% default from Button component
       onPress={() => onSelect(template)}
       pressStyle={{
         backgroundColor: "$primaryTint",
@@ -45,7 +51,7 @@ const TemplateItem: React.FC<TemplateItemProps> = ({
         scale: 0.98,
       }}
     >
-      <YStack gap="$2" alignItems="flex-start" width="100%">
+      <YStack gap="$3" alignItems="flex-start" width="100%">
         {/* Template Name and Exercise Count */}
         <XStack
           justifyContent="space-between"
@@ -53,7 +59,7 @@ const TemplateItem: React.FC<TemplateItemProps> = ({
           width="100%"
         >
           <Text
-            fontSize="$5"
+            size="medium"
             fontWeight="600"
             color={isSelected ? "$primary" : "$color"}
             flex={1}
@@ -63,7 +69,7 @@ const TemplateItem: React.FC<TemplateItemProps> = ({
             {template.name}
           </Text>
           <Text
-            fontSize="$3"
+            size="medium"
             color="$textMuted"
             fontWeight="500"
             minWidth={60}
@@ -74,12 +80,11 @@ const TemplateItem: React.FC<TemplateItemProps> = ({
         </XStack>
 
         {/* Exercise Preview */}
-        <Text fontSize="$3" color="$textSoft" numberOfLines={2} lineHeight="$1">
+        <Text size="medium" color="$textSoft" numberOfLines={2} lineHeight={22}>
           {getExercisePreview(template)}
         </Text>
 
-        {/* Date */}
-        <Text fontSize="$2" color="$textMuted">
+        <Text size="medium" color="$textMuted">
           {new Date(template.created_at).toLocaleDateString()}
         </Text>
       </YStack>

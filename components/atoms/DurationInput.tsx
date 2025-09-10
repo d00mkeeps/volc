@@ -1,7 +1,7 @@
-// /components/atoms/DurationInput.tsx
-
 import React, { useState, useEffect, useRef } from "react";
-import { XStack, Input, Text } from "tamagui";
+import { XStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
 import { WorkoutValidation } from "@/utils/validation";
 
 interface DurationInputProps {
@@ -94,7 +94,7 @@ export default function DurationInput({
         width={45}
         maxLength={2}
       />
-      <Text fontSize="$3" color="$textMuted">
+      <Text size="medium" color="$textMuted">
         :
       </Text>
       <Input
@@ -114,7 +114,7 @@ export default function DurationInput({
         width={45}
         maxLength={2}
       />
-      <Text fontSize="$3" color="$textMuted">
+      <Text size="medium" color="$textMuted">
         :
       </Text>
       <Input

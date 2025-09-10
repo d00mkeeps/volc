@@ -6,7 +6,8 @@ import React, {
   useImperativeHandle,
   useEffect,
 } from "react";
-import { YStack, Text, XStack, Stack } from "tamagui";
+import { YStack, XStack, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Animated, {
   useAnimatedStyle,
@@ -19,7 +20,8 @@ import GradientBlur from "@/components/atoms/GradientBlur";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
-import { PlusCircle } from '@/assets/icons/IconMap';interface WorkoutTrackerProps {
+import { PlusCircle } from "@/assets/icons/IconMap";
+interface WorkoutTrackerProps {
   currentTemplateName?: string;
 }
 
@@ -185,7 +187,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         animatedIndex={animatedIndex}
         animatedPosition={animatedPosition}
         backgroundStyle={{
-          backgroundColor: "#1a1a1a",
+          backgroundColor: "$backgroundStrong",
         }}
         handleIndicatorStyle={{
           backgroundColor: "#666",
@@ -209,7 +211,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           style={[
             {
               position: "absolute",
-              top: 108, // Covers from top of content area (below header)
+              top: 130, // Covers from top of content area (below header)
               left: 0,
               right: 0,
               bottom: 0,
@@ -247,7 +249,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
             {isActive && isExerciseLimitReached && (
               <Text
                 color="$textMuted"
-                fontSize="$3"
+                size="medium"
                 textAlign="center"
                 marginTop="$2"
               >
@@ -270,7 +272,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
               >
                 <XStack gap="$2" alignItems="center">
                   <PlusCircle size={20} color="white" />
-                  <Text color="white" fontSize="$4" fontWeight="600">
+                  <Text color="white" size="medium" fontWeight="600">
                     Add Exercise
                   </Text>
                 </XStack>
@@ -287,10 +289,10 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                 borderRadius="$4"
                 marginTop="$4"
               >
-                <Text fontSize="$6">💪</Text>
+                <Text size="medium">💪</Text>
                 <YStack alignItems="center" gap="$2">
                   <Text
-                    fontSize="$5"
+                    size="medium"
                     color="$color"
                     textAlign="center"
                     fontWeight="600"
@@ -298,10 +300,10 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                     Ready to start?
                   </Text>
                   <Text
-                    fontSize="$4"
+                    size="medium"
                     color="$textMuted"
                     textAlign="center"
-                    lineHeight="$1"
+                    lineHeight={18}
                   >
                     Add your first exercise to begin tracking
                   </Text>

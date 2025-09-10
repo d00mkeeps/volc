@@ -1,7 +1,9 @@
-// components/molecules/NotesModal.tsx
 import React, { useState, useEffect } from "react";
-import { YStack, XStack, Text, Button, TextArea } from "tamagui";
-import { X } from '@/assets/icons/IconMap';import BaseModal from "../../atoms/BaseModal";
+import { YStack, XStack, TextArea } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
+import { X } from "@/assets/icons/IconMap";
+import BaseModal from "../../atoms/BaseModal";
 
 interface NotesModalProps {
   isVisible: boolean;
@@ -40,7 +42,7 @@ export default function NotesModal({
         borderBottomWidth={1}
         borderBottomColor="$borderSoft"
       >
-        <Text fontSize="$5" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           {exerciseName} Notes
         </Text>
         <Button

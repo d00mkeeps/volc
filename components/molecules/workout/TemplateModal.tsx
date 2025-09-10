@@ -1,9 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { YStack, XStack, Text, Input, ScrollView, Button } from "tamagui";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 import { View } from "react-native";
-import { X } from '@/assets/icons/IconMap';import { CompleteWorkout } from "@/types/workout";
+import { X } from "@/assets/icons/IconMap";
+import { CompleteWorkout } from "@/types/workout";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import TemplateItem from "../../atoms/TemplateItem";
+import EmptyTemplateItem from "../../atoms/EmptyTemplateItem";
 import BaseModal from "../../atoms/BaseModal";
 
 interface TemplateSelectorProps {
@@ -20,13 +25,13 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onClose,
 }) => {
   const { workouts, loading: workoutsLoading, initialized } = useWorkoutStore();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [availableTemplates, setAvailableTemplates] = useState<
     CompleteWorkout[]
   >([]);
-  const [processingTemplates, setProcessingTemplates] = useState(false);
+  const [processingTemplates, setProcessingTemplates] =
+    useState<boolean>(false);
 
-  // When modal opens, prepare templates with proper deduplication
   useEffect(() => {
     if (!isVisible || !initialized || workoutsLoading) return;
 
@@ -50,7 +55,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       // Group by definition ID sets
       const groups = new Map<string, CompleteWorkout[]>();
 
-      workoutsWithExercises.forEach((workout) => {
+      workoutsWithExercises.forEach((workout: CompleteWorkout) => {
         // Get sorted definition IDs for this workout
         const definitionIds = workout.workout_exercises
           .map((ex: any) => ex.definition_id)
@@ -77,7 +82,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       for (const [definitionKey, groupWorkouts] of groups) {
         // Sort by creation date, newest first
         const sortedGroup = groupWorkouts.sort(
-          (a, b) =>
+          (a: CompleteWorkout, b: CompleteWorkout) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
 
@@ -94,7 +99,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
       // Sort final templates by creation date (newest first)
       const finalTemplates = deduplicatedTemplates.sort(
-        (a, b) =>
+        (a: CompleteWorkout, b: CompleteWorkout) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
@@ -130,13 +135,15 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     // If searching, filter but always keep empty workout if it matches
     if (searchQuery.trim()) {
       const searchLower = searchQuery.toLowerCase();
-      const filtered = availableTemplates.filter((template) => {
-        // Always include empty workout, or check if name matches search
-        return (
-          template.id === "empty-workout-template" ||
-          template.name.toLowerCase().includes(searchLower)
-        );
-      });
+      const filtered = availableTemplates.filter(
+        (template: CompleteWorkout) => {
+          // Always include empty workout, or check if name matches search
+          return (
+            template.id === "empty-workout-template" ||
+            template.name.toLowerCase().includes(searchLower)
+          );
+        }
+      );
       templates = filtered;
     }
 
@@ -157,7 +164,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         borderBottomWidth={1}
         borderBottomColor="$borderSoft"
       >
-        <Text fontSize="$4" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           Select Template
         </Text>
         <Button
@@ -171,8 +178,10 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         </Button>
       </XStack>
 
-      {/* Search */}
-      <View style={{ padding: 16, paddingBottom: 12 }}>
+      {/* Search - Matching template items width */}
+      <View
+        style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12 }}
+      >
         <Input
           placeholder="Search templates..."
           value={searchQuery}
@@ -181,6 +190,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           borderColor="$borderSoft"
           size="$4"
           disabled={isLoading}
+          style={{ width: "100%" }}
         />
       </View>
 
@@ -188,10 +198,10 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       <View style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 16 }}>
         {isLoading ? (
           <YStack flex={1} justifyContent="center" alignItems="center" gap="$3">
-            <Text fontSize="$4" color="$textSoft" fontWeight="500">
+            <Text size="medium" color="$textSoft" fontWeight="500">
               Loading templates...
             </Text>
-            <Text fontSize="$4" color="$textMuted" textAlign="center">
+            <Text size="medium" color="$textMuted" textAlign="center">
               Finding your workout patterns and removing duplicates
             </Text>
           </YStack>
@@ -205,7 +215,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             borderRadius="$4"
           >
             <Text
-              fontSize="$4"
+              size="medium"
               color="$textSoft"
               textAlign="center"
               fontWeight="500"
@@ -213,10 +223,10 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               {searchQuery ? "No matching templates" : "No templates available"}
             </Text>
             <Text
-              fontSize="$4"
+              size="medium"
               color="$textMuted"
               textAlign="center"
-              lineHeight="$1"
+              lineHeight={18}
             >
               {searchQuery
                 ? "Try adjusting your search terms"
@@ -229,45 +239,19 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             contentContainerStyle={{ paddingBottom: 8 }}
           >
             <YStack gap="$2">
-              {filteredTemplates.map((template) => {
-                // Special styling for empty workout
+              {filteredTemplates.map((template: CompleteWorkout) => {
+                // Special component for empty workout
                 if (template.id === "empty-workout-template") {
                   return (
-                    <Button
+                    <EmptyTemplateItem
                       key={template.id}
-                      marginBottom="$2"
-                      size="$4"
-                      backgroundColor="#f5a623"
-                      borderRadius="$3"
-                      onPress={() => {
-                        onSelectTemplate(template);
+                      template={template}
+                      isSelected={selectedTemplateId === template.id}
+                      onSelect={(t: CompleteWorkout) => {
+                        onSelectTemplate(t);
                         onClose();
                       }}
-                      pressStyle={{ backgroundColor: "#e6951f" }}
-                      borderWidth={selectedTemplateId === template.id ? 2 : 0}
-                      borderColor={
-                        selectedTemplateId === template.id
-                          ? "#d4851b"
-                          : "transparent"
-                      }
-                    >
-                      <YStack alignItems="center" padding="$3" width="100%">
-                        <XStack alignItems="center" gap="$2">
-                          <Text fontSize="$4">🎯</Text>
-                          <Text fontSize="$4" fontWeight="600" color="#111">
-                            Fresh Start
-                          </Text>
-                        </XStack>
-                        <Text
-                          fontSize="$4"
-                          color="#111"
-                          opacity={0.9}
-                          textAlign="center"
-                        >
-                          Create a new workout now!
-                        </Text>
-                      </YStack>
-                    </Button>
+                    />
                   );
                 }
 
@@ -277,7 +261,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     key={template.id}
                     template={template}
                     isSelected={selectedTemplateId === template.id}
-                    onSelect={(t) => {
+                    onSelect={(t: CompleteWorkout) => {
                       onSelectTemplate(t);
                       onClose();
                     }}

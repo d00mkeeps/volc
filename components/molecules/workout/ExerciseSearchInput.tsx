@@ -1,10 +1,13 @@
 // components/molecules/ExerciseSearchInput.tsx
 import React, { useState, useEffect } from "react";
-import { Input, YStack, Text, Stack, ScrollView } from "tamagui";
+import { YStack, Stack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
 import { View, TouchableOpacity } from "react-native"; // Use native components
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
-import { Check, X } from '@/assets/icons/IconMap';interface ExerciseSearchInputProps {
+import { Check, X } from "@/assets/icons/IconMap";
+interface ExerciseSearchInputProps {
   value: string;
   onSelect: (exerciseName: string) => void;
   placeholder?: string;
@@ -17,7 +20,8 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
   placeholder = "Search exercises...",
   onValidationChange,
 }) => {
-  const [searchText, setSearchText] = useState(value);
+  const [searchText, setSearchText] = useState("");
+  const [searchsetSearchText] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
   const { exercises, loading } = useExerciseStore();
   const [isValid, setIsValid] = useState(false);
@@ -97,7 +101,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
         backgroundColor: "#222",
       }}
     >
-      <Text color="$color" fontSize="$4" fontWeight="500">
+      <Text color="$color" size="medium" fontWeight="500">
         {item.standard_name}
       </Text>
     </TouchableOpacity>
@@ -116,7 +120,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
           }
           color="$color"
           placeholderTextColor="$textMuted"
-          fontSize="$4"
+          size="medium"
           fontWeight="600"
           borderRadius="$3"
           paddingHorizontal="$3"
@@ -167,7 +171,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
                 backgroundColor: "#222",
               }}
             >
-              <Text color="$color" fontSize="$4" fontWeight="500">
+              <Text color="$color" size="medium" fontWeight="500">
                 {exercise.standard_name}
               </Text>
             </TouchableOpacity>

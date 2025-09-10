@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Stack, Text, ScrollView } from "tamagui";
+import { Stack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { useRouter } from "expo-router";
 import ContentCard from "@/components/atoms/ContentCard";
-import WorkoutViewModal from "@/components/organisms/WorkoutViewModal";
+import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface WorkoutListProps {
@@ -44,7 +45,7 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
   if (loading && workouts.length === 0) {
     return (
       <Stack flex={1}>
-        <Text fontSize="$4" fontWeight="500" color="$text" marginBottom="$2">
+        <Text size="medium" fontWeight="500" color="$text" marginBottom="$2">
           Workouts
         </Text>
         <Text color="$textSoft">Loading workouts...</Text>
@@ -54,9 +55,6 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
 
   return (
     <Stack flex={1}>
-      <Text fontSize="$4" fontWeight="500" color="$text" marginBottom="$2">
-        Recent Workouts
-      </Text>
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>
         <Stack gap="$2">
           {displayedWorkouts.map((workout) => (

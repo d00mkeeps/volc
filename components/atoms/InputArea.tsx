@@ -1,12 +1,14 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
-import { XStack, Input, Button } from "tamagui";
-import { Send } from '@/assets/icons/IconMap';interface InputAreaProps {
+import { XStack } from "tamagui";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import { Send } from "@/assets/icons/IconMap";
+interface InputAreaProps {
   disabled?: boolean;
   placeholder?: string;
   onSendMessage: (message: string) => void;
 }
-
 export const InputArea = ({
   disabled = false,
   placeholder = "Type a message...",

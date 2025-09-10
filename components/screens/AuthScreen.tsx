@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Stack } from "tamagui";
-import { SignInForm } from "../molecules/SignInForm";
-import { SignUpForm } from "../molecules/SignUpForm";
+import { SignInForm } from "../molecules/auth/SignInForm";
+import { SignUpForm } from "../molecules/auth/SignUpForm";
 import { AuthToggle } from "../atoms/AuthToggle";
-import { SystemMessage } from "../../atoms/SystemMessage";
-import { useAuth } from "../../../context/AuthContext";
+import { SystemMessage } from "../atoms/SystemMessage";
+import { useAuth } from "../../context/AuthContext";
 import { AuthMode } from "@/types/auth";
 
 export function AuthScreen() {

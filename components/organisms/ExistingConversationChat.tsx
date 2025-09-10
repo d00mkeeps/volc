@@ -1,6 +1,9 @@
 import React, { useEffect, useCallback } from "react";
-import { YStack, XStack, Button, Text } from "tamagui";
-import { ArrowLeft } from '@/assets/icons/IconMap';import { ChatInterface } from "./ChatInterface";
+import { YStack, XStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
+import { ArrowLeft } from "@/assets/icons/IconMap";
+import { ChatInterface } from "./ChatInterface";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
@@ -18,7 +21,6 @@ export const ExistingConversationChat = ({
     (state) => state.setActiveConversation
   );
 
-  // Set active conversation on mount
   useEffect(() => {
     setActiveConversation(conversationId);
     return () => {
@@ -56,7 +58,7 @@ export const ExistingConversationChat = ({
       <YStack flex={1} padding="$4" gap="$4">
         <XStack alignItems="center" gap="$2">
           <Button size="$3" chromeless onPress={handleBack}>
-            <ArrowLeft size="$1" />
+            <ArrowLeft size={18} />
           </Button>
           <Text>Error</Text>
         </XStack>
@@ -87,9 +89,9 @@ export const ExistingConversationChat = ({
         borderBottomColor="$borderSoft"
       >
         <Button size="$3" chromeless onPress={handleBack}>
-          <ArrowLeft size="$1" />
+          <ArrowLeft size={18} />
         </Button>
-        <Text fontSize="$5" fontWeight="600">
+        <Text size="medium" fontWeight="600">
           Workout Analysis
         </Text>
       </XStack>

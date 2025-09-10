@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { RefreshControl } from "react-native";
-import { YStack, XStack, Text, ScrollView, Button } from "tamagui";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
-import WorkoutViewModal from "@/components/organisms/WorkoutViewModal";
+import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 const EmptyState = () => (
   <YStack flex={1} justifyContent="center" alignItems="center" padding="$8">
-    <Text fontSize="$4" marginBottom="$2">
+    <Text size="medium" marginBottom="$2">
       💪
     </Text>
-    <Text fontSize="$4" fontWeight="600" textAlign="center" marginBottom="$2">
+    <Text size="medium" fontWeight="600" textAlign="center" marginBottom="$2">
       No bicep champions yet
     </Text>
-    <Text fontSize="$4" color="$textMuted" textAlign="center">
+    <Text size="medium" color="$textMuted" textAlign="center">
       Complete a bicep workout to see your name on the leaderboard
     </Text>
   </YStack>
@@ -29,12 +31,10 @@ const ErrorState = ({
   onRetry: () => void;
 }) => (
   <YStack flex={1} justifyContent="center" alignItems="center" padding="$8">
-    <Text fontSize="$4" color="$red10" textAlign="center" marginBottom="$4">
+    <Text size="medium" color="$red10" textAlign="center" marginBottom="$4">
       {error}
     </Text>
-    <Button onPress={onRetry} theme="blue">
-      Try Again
-    </Button>
+    <Button onPress={onRetry}>Try Again</Button>
   </YStack>
 );
 
@@ -71,10 +71,10 @@ export const LeaderboardScreen = () => {
     <YStack flex={1} backgroundColor="$background">
       {/* Header */}
       <XStack padding="$4" alignItems="center" justifyContent="space-between">
-        <Text fontSize="$4" fontWeight="700">
+        <Text size="medium" fontWeight="700">
           Bicep Leaderboard
         </Text>
-        <Text fontSize="$4" color="$textMuted">
+        <Text size="medium" color="$textMuted">
           Last 14 days
         </Text>
       </XStack>

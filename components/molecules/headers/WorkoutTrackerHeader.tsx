@@ -1,7 +1,10 @@
 // components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
-import { YStack, XStack, Text, Circle, Stack, Button } from "tamagui";
-import { Play, Pause, ChevronDown } from '@/assets/icons/IconMap';import { useUserSessionStore } from "@/stores/userSessionStore";
+import { YStack, XStack, Circle, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
+import { Play, Pause, ChevronDown } from "@/assets/icons/IconMap";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutTrackerHeaderProps {
   workoutName?: string;
@@ -48,7 +51,7 @@ export default function WorkoutTrackerHeader({
       <XStack justifyContent="center" alignItems="center" gap="$3">
         {/* Timer - from store */}
         <Text
-          fontSize="$8"
+          size="medium"
           fontWeight="700"
           color="$color"
           fontFamily="$heading"
@@ -72,7 +75,6 @@ export default function WorkoutTrackerHeader({
           }
           onPress={isActive ? togglePause : undefined}
           opacity={isActive ? 1 : 0.4}
-          animation="quick"
         >
           {isPaused ? (
             <Play size={16} color={isActive ? "white" : "$textMuted"} />
@@ -82,7 +84,6 @@ export default function WorkoutTrackerHeader({
         </Circle>
       </XStack>
 
-      {/* Status indicator - using store state */}
       <XStack
         justifyContent="center"
         alignItems="center"
@@ -94,9 +95,8 @@ export default function WorkoutTrackerHeader({
           backgroundColor={
             !isActive ? "$textMuted" : isPaused ? "$primaryLight" : "$primary"
           }
-          animation="quick"
         />
-        <Text fontSize="$4" color="$textSoft" fontWeight="500">
+        <Text size="medium" color="$textSoft" fontWeight="500">
           {!isActive
             ? "Workout not started"
             : isPaused
@@ -105,7 +105,6 @@ export default function WorkoutTrackerHeader({
         </Text>
       </XStack>
 
-      {/* Template Selection Row */}
       <XStack
         justifyContent="space-between"
         alignItems="center"
@@ -115,11 +114,11 @@ export default function WorkoutTrackerHeader({
         borderTopColor="$borderSoft"
       >
         <YStack flex={1} marginRight="$3">
-          <Text fontSize="$4" color="$textMuted" fontWeight="500">
+          <Text size="medium" color="$textMuted" fontWeight="500">
             Template
           </Text>
           <Text
-            fontSize="$4"
+            size="medium"
             color="$textSoft"
             numberOfLines={1}
             marginTop="$0.5"
@@ -129,11 +128,11 @@ export default function WorkoutTrackerHeader({
         </YStack>
 
         <Button
-          size="$2"
+          size="medium"
           backgroundColor="transparent"
           borderColor="$borderSoft"
           borderWidth={1}
-          paddingHorizontal="$3"
+          paddingHorizontal="$2"
           pressStyle={{
             backgroundColor: "$backgroundPress",
             borderColor: "$primary",
@@ -141,7 +140,7 @@ export default function WorkoutTrackerHeader({
           onPress={handleTemplatePress}
         >
           <XStack alignItems="center" gap="$1.5">
-            <Text fontSize="$4" color="$textSoft">
+            <Text size="medium" color="$textSoft">
               Change
             </Text>
             <ChevronDown size={14} color="$textSoft" />

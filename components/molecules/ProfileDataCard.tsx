@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { YStack, XStack, Text, TextArea, Button } from "tamagui";
+import { YStack, XStack, TextArea } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 
 interface DataCardProps {
   title: string;
@@ -19,6 +21,7 @@ export default function DataCard({
   onEdit,
 }: DataCardProps) {
   const [editedText, setEditedText] = useState("");
+  const [editedsetEditedText] = useState("");
 
   useEffect(() => {
     if (isEditing) {
@@ -46,7 +49,7 @@ export default function DataCard({
       gap="$3"
     >
       <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$4" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           {title}
         </Text>
         {!isEditing && onEdit && (
@@ -81,20 +84,20 @@ export default function DataCard({
               value={editedText}
               onChangeText={setEditedText}
               placeholder={`Enter your ${title.toLowerCase()}...`}
-              fontSize="$4"
+              size="medium"
               minHeight={120}
               backgroundColor="$background"
               borderWidth={1}
               borderColor="$borderColor"
             />
           ) : (
-            <Text fontSize="$4" color="$color" lineHeight={22}>
+            <Text size="medium" color="$color" lineHeight={22}>
               {Object.values(data).join("\n\n") || "No data set"}
             </Text>
           )}
         </YStack>
       ) : (
-        <Text fontSize="$4" color="$textSoft" fontStyle="italic">
+        <Text size="medium" color="$textSoft" fontStyle="italic">
           No data set
         </Text>
       )}

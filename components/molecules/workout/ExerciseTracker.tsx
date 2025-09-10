@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Stack, YStack, XStack, Text, Separator } from "tamagui";
-import { X } from '@/assets/icons/IconMap';import SetRow from "./SetRow";
+import { Stack, YStack, XStack, Separator } from "tamagui";
+import Text from "@/components/atoms/Text";
+import { X } from "@/assets/icons/IconMap";
+import SetRow from "./SetRow";
 import {
   WorkoutExercise,
   WorkoutExerciseSet,
@@ -218,7 +220,7 @@ export default function ExerciseTracker({
           {isActive && isSetLimitReached && (
             <Text
               color="$textMuted"
-              fontSize="$3"
+              size="medium"
               textAlign="center"
               marginTop="$1"
             >

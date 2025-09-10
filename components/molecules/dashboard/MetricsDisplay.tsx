@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, Text, YStack } from "tamagui";
+import { Stack, YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 
 interface ActualMetrics {
   workouts: number;
@@ -26,7 +27,7 @@ export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
         {/* Values Stack */}
         <YStack flex={1} gap="$2" justifyContent="space-between">
           {metrics.map((metric, index) => (
-            <Text key={index} fontSize="$4" fontWeight="600" color="$text">
+            <Text key={index} size="medium" fontWeight="600" color="$text">
               {metric.value}
             </Text>
           ))}
@@ -35,7 +36,7 @@ export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
         {/* Labels Stack */}
         <YStack flex={2.5} gap="$6" justifyContent="space-between">
           {metrics.map((metric, index) => (
-            <Text key={index} color="$textSoft" fontSize="$4">
+            <Text key={index} color="$textSoft" size="medium">
               {metric.label}
             </Text>
           ))}

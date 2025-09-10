@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { YStack } from "tamagui";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { ChatInterface } from "./ChatInterface";
+import { ChatInterface } from "../ChatInterface";
 
 interface WorkoutAnalysisSlideProps {
   onError?: (error: Error) => void;

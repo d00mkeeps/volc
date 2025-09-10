@@ -1,6 +1,7 @@
 // /components/atoms/Select.tsx
 import React, { useState } from "react";
-import { Stack, Text } from "tamagui";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 
 interface SelectOption {
   value: string;
@@ -41,7 +42,7 @@ export default function Select({
       >
         <Text
           color={selectedOption ? "$text" : "$textSoft"}
-          fontSize="$4"
+          size="medium"
           paddingLeft="$2"
           fontWeight="600"
         >
@@ -50,7 +51,7 @@ export default function Select({
 
         {/* Dropdown Arrow */}
         <Stack position="absolute" right="$3" top="40%">
-          <Text color="$textSoft" fontSize="$4">
+          <Text color="$textSoft" size="medium">
             {isOpen ? "▲" : "▼"}
           </Text>
         </Stack>
@@ -80,7 +81,7 @@ export default function Select({
                   setIsOpen(false);
                 }}
               >
-                <Text color="$text" fontSize="$4">
+                <Text color="$text" size="medium">
                   {option.label}
                 </Text>
               </Stack>

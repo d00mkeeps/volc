@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ScrollView, Stack, Text, XStack, YStack } from "tamagui";
+import { ScrollView, Stack, XStack, YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 
 interface DayData {
   day: number;
@@ -104,7 +105,7 @@ export default function ConsistencyCalendar({
       >
         <YStack alignItems="center" gap="$0.5">
           <Text
-            fontSize="$4"
+            size="medium"
             color={
               dayData.isToday
                 ? "white"
@@ -119,7 +120,7 @@ export default function ConsistencyCalendar({
             {dayData.day}
           </Text>
           <Text
-            fontSize="$4"
+            size="medium"
             color={
               dayData.isToday
                 ? "white"
@@ -153,12 +154,12 @@ export default function ConsistencyCalendar({
     >
       {/* Header */}
       <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$4" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           Recent Workouts
         </Text>
 
         {currentWeek > 0 && (
-          <Text fontSize="$4" color="$textSoft">
+          <Text size="medium" color="$textSoft">
             {currentWeek === 1 ? "Previous week" : `${currentWeek} weeks ago`}
           </Text>
         )}

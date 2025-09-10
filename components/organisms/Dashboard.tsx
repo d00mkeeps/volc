@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, Text } from "tamagui";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
 import { AllTimeframeData } from "@/types/workout";
@@ -26,7 +27,7 @@ export default function Dashboard({
         alignItems="center"
         gap="$3"
       >
-        <Text color="$textSoft" fontSize="$4">
+        <Text color="$textSoft" size="medium">
           Loading dashboard...
         </Text>
       </Stack>
@@ -42,7 +43,7 @@ export default function Dashboard({
         alignItems="center"
         gap="$3"
       >
-        <Text color="$red10" fontSize="$4">
+        <Text color="$red10" size="medium">
           Failed to load dashboard: {error}
         </Text>
       </Stack>
@@ -58,7 +59,7 @@ export default function Dashboard({
         alignItems="center"
         gap="$3"
       >
-        <Text color="$textSoft" fontSize="$4">
+        <Text color="$textSoft" size="medium">
           No dashboard data available
         </Text>
       </Stack>

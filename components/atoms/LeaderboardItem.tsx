@@ -1,5 +1,6 @@
 import React from "react";
-import { YStack, XStack, Text, Circle } from "tamagui";
+import { YStack, XStack, Circle } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
 
 interface LeaderboardItemProps {
@@ -35,7 +36,7 @@ export default function LeaderboardItem({
       {/* Rank Badge */}
       <XStack width={40} justifyContent="center" alignItems="center">
         {trophy ? (
-          <Text fontSize="$4">{trophy}</Text>
+          <Text size="medium">{trophy}</Text>
         ) : (
           <Circle
             size={30}
@@ -43,7 +44,7 @@ export default function LeaderboardItem({
             alignItems="center"
             justifyContent="center"
           >
-            <Text fontSize="$4" fontWeight="600">
+            <Text size="medium" fontWeight="600">
               {entry.rank}
             </Text>
           </Circle>
@@ -52,24 +53,24 @@ export default function LeaderboardItem({
 
       {/* User Info */}
       <YStack flex={1} paddingLeft="$3">
-        <Text fontSize="$4" fontWeight="600">
+        <Text size="medium" fontWeight="600">
           {entry.first_name} {entry.last_name}
         </Text>
-        <Text fontSize="$4" color="$textMuted">
+        <Text size="medium" color="$textMuted">
           {entry.exercise_name}
         </Text>
-        <Text fontSize="$4" color="$textMuted">
+        <Text size="medium" color="$textMuted">
           {new Date(entry.performed_at).toLocaleDateString()}
         </Text>
       </YStack>
 
       {/* Performance Stats */}
       <YStack alignItems="flex-end">
-        <Text fontSize="$4" fontWeight="700" color="$primary">
+        <Text size="medium" fontWeight="700" color="$primary">
           {entry.estimated_1rm}kg
         </Text>
         {entry.verified && (
-          <Text fontSize="$4" color="$green10">
+          <Text size="medium" color="$green10">
             ✓ Verified
           </Text>
         )}

@@ -13,14 +13,16 @@ image: "./assets/images/splash.png",
 resizeMode: "contain",
 backgroundColor: "#ffffff"
  },
-ios: {
-supportsTablet: true,
-bundleIdentifier: "com.d00mkeeps.Volc",
-minimumOSVersion: "15.1" ,
-infoPlist: {
-    "ITSAppUsesNonExemptEncryption": false
-  }
- },
+ ios: {
+    supportsTablet: true,
+    bundleIdentifier: "com.d00mkeeps.Volc",
+    minimumOSVersion: "15.1",
+    infoPlist: {
+      "ITSAppUsesNonExemptEncryption": false,
+      "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
+      "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos."
+    }
+  },
 android: {
 adaptiveIcon: {
 foregroundImage: "./assets/images/adaptive-icon.png",

@@ -1,5 +1,8 @@
 import React from "react";
-import { YStack, XStack, Text, Input, Button } from "tamagui";
+import { YStack, XStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 interface OnboardingSlide2Props {
@@ -40,12 +43,12 @@ export function OnboardingSlide2({
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <YStack gap="$4" paddingBottom="$4">
-        <Text fontSize="$6" fontWeight="bold">
+        <Text size="medium" fontWeight="bold">
           Tell us about your goals
         </Text>
 
         <YStack gap="$2">
-          <Text fontSize="$5" fontWeight="600">
+          <Text size="medium" fontWeight="600">
             What are your fitness goals? *
           </Text>
           <Input
@@ -61,19 +64,19 @@ export function OnboardingSlide2({
           />
           <XStack justifyContent="space-between">
             <Text
-              fontSize="$2"
+              size="medium"
               color={goals && !goalsValid ? "$red8" : "$textMuted"}
             >
               {goals && !goalsValid ? "At least 10 characters" : ""}
             </Text>
-            <Text fontSize="$2" color="$textMuted">
+            <Text size="medium" color="$textMuted">
               {goals.length}/250
             </Text>
           </XStack>
         </YStack>
 
         <YStack gap="$2">
-          <Text fontSize="$5" fontWeight="600">
+          <Text size="medium" fontWeight="600">
             Current fitness level (Optional)
           </Text>
           <Input
@@ -87,7 +90,7 @@ export function OnboardingSlide2({
             onSubmitEditing={dismissKeyboard}
           />
           <XStack justifyContent="flex-end">
-            <Text fontSize="$2" color="$textMuted">
+            <Text size="medium" color="$textMuted">
               {currentStats.length}/250
             </Text>
           </XStack>

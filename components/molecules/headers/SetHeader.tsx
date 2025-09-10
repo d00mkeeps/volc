@@ -1,5 +1,6 @@
 import React from "react";
-import { XStack, Stack, Text } from "tamagui";
+import { XStack, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { ExerciseDefinition } from "@/types/workout";
 
 interface SetHeaderProps {
@@ -26,7 +27,7 @@ export default function SetHeader({
       headers.push(
         <Stack key="weight" flex={1} alignItems="center">
           <Text
-            fontSize="$4"
+            size="medium"
             fontWeight="600"
             color={isActive ? "$color" : "$textSoft"}
           >
@@ -38,7 +39,7 @@ export default function SetHeader({
       headers.push(
         <Stack key="reps" flex={1} alignItems="center">
           <Text
-            fontSize="$4"
+            size="medium"
             fontWeight="600"
             color={isActive ? "$color" : "$textSoft"}
           >
@@ -50,7 +51,7 @@ export default function SetHeader({
       headers.push(
         <Stack key="distance" flex={1} alignItems="center">
           <Text
-            fontSize="$4"
+            size="medium"
             fontWeight="600"
             color={isActive ? "$color" : "$textSoft"}
           >
@@ -62,7 +63,7 @@ export default function SetHeader({
       headers.push(
         <Stack key="duration" flex={1} alignItems="center">
           <Text
-            fontSize="$4"
+            size="medium"
             fontWeight="600"
             color={isActive ? "$color" : "$textSoft"}
           >
@@ -77,7 +78,7 @@ export default function SetHeader({
     <XStack gap="$3" alignItems="center" paddingBottom="$1">
       <Stack width={30} alignItems="center">
         <Text
-          fontSize="$4"
+          size="medium"
           fontWeight="600"
           color={isActive ? "$color" : "$textSoft"}
         >

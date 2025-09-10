@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Stack, Text, YStack } from "tamagui";
+import { Stack, YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { Image } from "expo-image";
 import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";

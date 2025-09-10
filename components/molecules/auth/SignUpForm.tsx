@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { Stack, Spinner } from "tamagui";
 import { useAuth } from "../../../context/AuthContext";
-import { AuthInput } from "../atoms/AuthInput";
-import { AuthButton } from "../atoms/AuthButton";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/Text";
 import { SystemMessage } from "../../atoms/SystemMessage";
 
 export function SignUpForm() {
@@ -18,6 +19,7 @@ export function SignUpForm() {
     setPassword("");
     setConfirmPassword("");
   };
+
   const clearPasswords = () => {
     setPassword("");
     setConfirmPassword("");
@@ -41,9 +43,7 @@ export function SignUpForm() {
     try {
       setLoading(true);
       setSuccess(false);
-
       await signUp({ email: cleanEmail, password });
-
       clearForm();
       setSuccess(true);
     } catch (error) {
@@ -55,7 +55,7 @@ export function SignUpForm() {
   };
 
   return (
-    <View style={styles.container}>
+    <Stack flex={1} position="relative" paddingHorizontal="$4">
       {success && (
         <SystemMessage
           message="Account created! Please check your email to verify your account before signing in."
@@ -63,48 +63,77 @@ export function SignUpForm() {
         />
       )}
 
-      <View style={styles.inputsContainer}>
-        <AuthInput
+      <Stack gap="$2" width="100%">
+        <Input
+          width="70%"
+          height="$6"
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
           autoCapitalize="none"
           keyboardType="email-address"
+          backgroundColor="$backgroundStrong"
+          borderRadius="$4"
+          padding="$3"
+          size="medium"
+          borderWidth={1}
+          borderColor="$borderSoft"
+          color="$color"
+          placeholderTextColor="$textMuted"
         />
-        <AuthInput
+
+        <Input
+          width="70%"
+          height="$6"
           value={password}
           onChangeText={setPassword}
           placeholder="Password"
           secureTextEntry
+          backgroundColor="$backgroundStrong"
+          borderRadius="$4"
+          padding="$3"
+          size="medium"
+          borderWidth={1}
+          borderColor="$borderSoft"
+          color="$color"
+          placeholderTextColor="$textMuted"
         />
-        <AuthInput
+
+        <Input
+          width="70%"
+          height="$6"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           placeholder="Confirm Password"
           secureTextEntry
+          backgroundColor="$backgroundStrong"
+          borderRadius="$4"
+          padding="$3"
+          size="medium"
+          borderWidth={1}
+          borderColor="$borderSoft"
+          color="$color"
+          placeholderTextColor="$textMuted"
         />
-      </View>
+      </Stack>
 
-      <View style={styles.buttonPosition}>
-        <AuthButton onPress={handleSubmit} loading={loading} title="Sign Up" />
-      </View>
-    </View>
+      <Stack
+        position="absolute"
+        left={0}
+        right={0}
+        bottom="50%"
+        paddingHorizontal="$4"
+      >
+        <Button onPress={handleSubmit} disabled={loading} width="30%">
+          {loading ? (
+            <Spinner color="white" />
+          ) : (
+            <Text color="white" size="medium" fontWeight="600">
+              Sign Up
+            </Text>
+          )}
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: "relative",
-  },
-  inputsContainer: {
-    gap: 8,
-  },
-  buttonPosition: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: "50%",
-    paddingHorizontal: 20,
-  },
-});

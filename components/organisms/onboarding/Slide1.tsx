@@ -1,5 +1,8 @@
 import React from "react";
-import { YStack, XStack, Text, Input, Button, Switch } from "tamagui";
+import { YStack, XStack, Switch } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 interface OnboardingSlide1Props {
@@ -73,16 +76,16 @@ export function OnboardingSlide1({
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <YStack gap="$4" paddingBottom="$4">
         <YStack gap="$2">
-          <Text fontSize="$8" fontWeight="bold" color="$primary">
+          <Text size="medium" fontWeight="bold" color="$primary">
             Welcome to Volc!
           </Text>
-          <Text fontSize="$4" color="$textMuted">
+          <Text size="medium" color="$textMuted">
             Let's get your profile set up
           </Text>
         </YStack>
 
         <YStack gap="$2">
-          <Text fontSize="$5" fontWeight="600">
+          <Text size="medium" fontWeight="600">
             Name
           </Text>
           <XStack gap="$3">
@@ -99,7 +102,7 @@ export function OnboardingSlide1({
                 onSubmitEditing={dismissKeyboard}
               />
               {firstName && !firstNameValid && (
-                <Text fontSize="$2" color="$red8" marginTop="$1">
+                <Text size="medium" color="$red8" marginTop="$1">
                   At least 2 characters
                 </Text>
               )}
@@ -117,7 +120,7 @@ export function OnboardingSlide1({
                 onSubmitEditing={dismissKeyboard}
               />
               {lastName && !lastNameValid && (
-                <Text fontSize="$2" color="$red8" marginTop="$1">
+                <Text size="medium" color="$red8" marginTop="$1">
                   At least 2 characters
                 </Text>
               )}
@@ -127,7 +130,7 @@ export function OnboardingSlide1({
 
         <XStack gap="$4" alignItems="flex-start">
           <YStack gap="$2" flex={0.4}>
-            <Text fontSize="$5" fontWeight="600">
+            <Text size="medium" fontWeight="600">
               Age
             </Text>
             <Input
@@ -141,14 +144,14 @@ export function OnboardingSlide1({
               onSubmitEditing={dismissKeyboard}
             />
             {ageGroup && !ageValid && (
-              <Text fontSize="$2" color="$red8">
+              <Text size="medium" color="$red8">
                 13-100 years
               </Text>
             )}
           </YStack>
 
           <YStack gap="$2" flex={0.6} paddingTop="$6">
-            <Text fontSize="$5" fontWeight="600">
+            <Text size="medium" fontWeight="600">
               Units
             </Text>
             <XStack alignItems="center" gap="$3" justifyContent="center">
@@ -176,7 +179,7 @@ export function OnboardingSlide1({
         </XStack>
 
         <YStack gap="$2">
-          <Text fontSize="$5" fontWeight="600">
+          <Text size="medium" fontWeight="600">
             Instagram Username (Optional)
           </Text>
           <Input
@@ -189,7 +192,7 @@ export function OnboardingSlide1({
             autoCorrect={false}
             onSubmitEditing={dismissKeyboard}
           />
-          <Text fontSize="$2" color="$textMuted">
+          <Text size="medium" color="$textMuted">
             {instagramUsername.length}/31 characters
           </Text>
         </YStack>

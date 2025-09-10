@@ -1,6 +1,8 @@
 import React from "react";
-import { Stack, XStack, Text } from "tamagui";
-import { Plus } from '@/assets/icons/IconMap';interface NewSetButtonProps {
+import { Stack, XStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import { Plus } from "@/assets/icons/IconMap";
+interface NewSetButtonProps {
   isActive: boolean;
   onPress: () => void;
 }
@@ -30,7 +32,7 @@ export default function NewSetButton({ isActive, onPress }: NewSetButtonProps) {
     >
       <XStack gap="$1.5" alignItems="center">
         <Plus size={18} color="#f84f3e" />
-        <Text fontSize="$4" color="$primary" fontWeight="500">
+        <Text size="medium" color="$primary" fontWeight="500">
           Add Set
         </Text>
       </XStack>

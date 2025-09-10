@@ -1,5 +1,6 @@
 import React from "react";
-import { YStack, Text } from "tamagui";
+import { YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import BaseModal from "@/components/atoms/BaseModal";
 import WorkoutList from "@/components/molecules/workout/WorkoutList";
 
@@ -26,11 +27,8 @@ export default function WorkoutListModal({
           borderBottomWidth={1}
           borderBottomColor="$borderSoft"
         >
-          <Text fontSize="$5" fontWeight="600" color="$color">
+          <Text size="medium" fontWeight="600" color="$color">
             Your Workouts
-          </Text>
-          <Text fontSize="$3" color="$textMuted" paddingTop="$1">
-            All yer training sessions, captain
           </Text>
         </YStack>
 

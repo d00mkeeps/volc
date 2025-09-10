@@ -4,6 +4,11 @@ import { createTamagui } from "tamagui";
 console.log("🔧 Creating Tamagui config...");
 
 const tamaguiConfig = createTamagui({
+  // Add responsive breakpoints
+  media: {
+    xs: { maxWidth: 660 }, // Phone
+    sm: { minWidth: 661 }, // iPad+
+  },
   tokens: {
     color: {
       primary: "#f84f3e",
@@ -32,6 +37,11 @@ const tamaguiConfig = createTamagui({
       3: 12,
       4: 16,
       5: 20,
+      6: 24, // Added for large components
+      7: 30,
+      8: 36,
+      9: 42,
+      10: 50,
       true: 8, // default space
     },
     size: {
@@ -40,6 +50,7 @@ const tamaguiConfig = createTamagui({
       3: 44,
       4: 48,
       5: 52,
+      6: 56, // Added for large components
       true: 48, // default size
     },
     fontSize: {
@@ -48,6 +59,7 @@ const tamaguiConfig = createTamagui({
       3: 16,
       4: 18,
       5: 20,
+      6: 24, // Added for large components
       8: 28,
       9: 32,
       true: 18, // default fontSize
@@ -71,7 +83,6 @@ const tamaguiConfig = createTamagui({
     },
   },
   themes: {
-    // Your existing themes...
     dark: {
       background: "#231f20",
       backgroundSoft: "#2a2629",
@@ -95,6 +106,7 @@ const tamaguiConfig = createTamagui({
       borderSoft: "rgba(248, 79, 62, 0.1)",
       borderMuted: "rgba(255, 255, 255, 0.05)",
       borderColor: "rgba(255, 255, 255, 0.1)",
+      accentColor: "#fcb825",
     },
     light: {
       background: "#ffffff",
@@ -119,6 +131,7 @@ const tamaguiConfig = createTamagui({
       borderSoft: "#f0f0f0",
       borderMuted: "#f8f8f8",
       borderColor: "#e5e5e5",
+      accentColor: "#fcb825",
     },
   },
   fonts: {
@@ -130,6 +143,7 @@ const tamaguiConfig = createTamagui({
         3: 16,
         4: 18,
         5: 20,
+        6: 24, // Added for large components
         8: 28,
         9: 32,
         true: 18,
@@ -143,6 +157,7 @@ const tamaguiConfig = createTamagui({
         3: 16,
         4: 18,
         5: 20,
+        6: 24, // Added for large components
         8: 28,
         9: 32,
         true: 18,

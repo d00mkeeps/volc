@@ -1,5 +1,5 @@
 import { View, ActivityIndicator } from "react-native";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { AuthScreen } from "./screens/AuthScreen";
 import { AuthGateProps } from "@/types/auth";
 

@@ -1,6 +1,8 @@
 import React from "react";
-import { XStack, Stack, Text } from "tamagui";
-import { FileText, ArrowLeftRight } from "@/assets/icons/IconMap";
+import { XStack, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import { ArrowLeftRight, FileText } from "@/assets/icons/IconMap";
+
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
   hasNotes: boolean;
@@ -28,7 +30,7 @@ export default function ExerciseTrackerHeader({
       alignItems="center"
       paddingVertical="$2"
     >
-      <Text fontSize="$4" fontWeight="600" color="$color" flex={1}>
+      <Text size="medium" fontWeight="600" color="$color" flex={1}>
         {exerciseName || "Select Exercise"}
       </Text>
 

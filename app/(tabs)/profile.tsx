@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { YStack, Text, ScrollView, Button, XStack } from "tamagui";
+import { YStack, ScrollView, XStack, Stack } from "tamagui";
 import { RefreshControl } from "react-native";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useAuth } from "@/context/AuthContext";
 import ProfileAvatar from "@/components/molecules/ProfileAvatar";
 import PersonalInfoCard from "@/components/molecules/PersonalInfoCard";
 import DataCard from "@/components/molecules/ProfileDataCard";
-import WorkoutListModal from "@/components/organisms/WorkoutListModal";
+import WorkoutListModal from "@/components/organisms/workout/WorkoutListModal";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { UserProfile } from "@/types";
 
 export default function ProfileScreen() {
@@ -116,13 +118,13 @@ export default function ProfileScreen() {
             <XStack alignItems="center" gap="$3" flex={1}>
               <ProfileAvatar />
               <YStack flex={1} paddingLeft="$4">
-                <Text fontSize="$4" fontWeight="600" color="$color">
+                <Text size="medium" fontWeight="600" color="$color">
                   {`${userProfile.first_name || ""} ${
                     userProfile.last_name || ""
                   }`.trim() || "User"}
                 </Text>
                 {userProfile.instagram_username && (
-                  <Text fontSize="$4" color="$textMuted" paddingTop="$2">
+                  <Text size="medium" color="$textMuted" paddingTop="$2">
                     @{userProfile.instagram_username}
                   </Text>
                 )}
@@ -130,17 +132,18 @@ export default function ProfileScreen() {
             </XStack>
 
             {!isEditing && !editingCard && (
-              <YStack gap="$2" alignItems="flex-end">
+              <YStack gap="$2" alignItems="flex-end" width="30%">
                 <Button
-                  size="$4"
+                  size="small"
+                  width="100%"
                   backgroundColor="$backgroundStrong"
                   onPress={() => setIsEditing(true)}
                 >
                   Edit Profile
                 </Button>
                 <Button
-                  size="$4"
-                  fontSize="$4"
+                  size="small"
+                  width="100%"
                   backgroundColor="$backgroundStrong"
                   onPress={() => setShowWorkoutModal(true)}
                 >
@@ -151,7 +154,7 @@ export default function ProfileScreen() {
           </XStack>
 
           {isUpdatingAvatar && (
-            <Text fontSize="$4" color="$textMuted" textAlign="center">
+            <Text size="medium" color="$textMuted" textAlign="center">
               Updating avatar...
             </Text>
           )}
@@ -188,18 +191,20 @@ export default function ProfileScreen() {
             />
           )}
 
-          <YStack paddingTop="$4" paddingBottom="$6">
+          <Stack paddingTop="$10">
             <Button
               onPress={handleLogout}
               disabled={isLoggingOut}
               backgroundColor="$red9"
               color="white"
-              size="$4"
+              size="medium"
               borderRadius="$3"
+              width="50%"
+              alignSelf="center"
             >
               {isLoggingOut ? "Logging out..." : "Logout"}
             </Button>
-          </YStack>
+          </Stack>
         </YStack>
       </ScrollView>
 

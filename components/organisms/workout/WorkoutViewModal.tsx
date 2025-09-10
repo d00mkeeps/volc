@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { YStack, XStack, Text, ScrollView } from "tamagui";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
 import BaseModal from "@/components/atoms/BaseModal";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import WorkoutImage from "@/components/molecules/WorkoutImage";
+import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
 
 interface WorkoutViewModalProps {
   isVisible: boolean;
@@ -10,6 +11,7 @@ interface WorkoutViewModalProps {
   workoutId: string;
   userId?: string;
 }
+
 export default function WorkoutViewModal({
   isVisible,
   onClose,
@@ -62,7 +64,7 @@ export default function WorkoutViewModal({
 
     if (sets.length === 0) {
       return (
-        <Text fontSize="$4" color="$textSoft" fontStyle="italic">
+        <Text size="medium" color="$textSoft" fontStyle="italic">
           No data set
         </Text>
       );
@@ -72,15 +74,15 @@ export default function WorkoutViewModal({
       <YStack gap="$4">
         {sets.map((set: any, index: number) => (
           <YStack key={index} gap="$2">
-            <Text fontSize="$4" fontWeight="600" color="white">
+            <Text size="medium" fontWeight="600" color="$color">
               Set {set.set_number || index + 1}
             </Text>
 
             <YStack gap="$1" paddingLeft="$3">
               {set.distance !== null && set.distance !== undefined && (
-                <Text fontSize="$4" color="$textSoft">
+                <Text size="medium" color="$textSoft">
                   Distance:{" "}
-                  <Text color="white">
+                  <Text color="$color">
                     {set.distance}
                     {distanceUnit}
                   </Text>
@@ -88,16 +90,16 @@ export default function WorkoutViewModal({
               )}
 
               {set.duration !== null && set.duration !== undefined && (
-                <Text fontSize="$4" color="$textSoft">
+                <Text size="medium" color="$textSoft">
                   Time:{" "}
-                  <Text color="white">{formatDuration(set.duration)}</Text>
+                  <Text color="$color">{formatDuration(set.duration)}</Text>
                 </Text>
               )}
 
               {set.weight !== null && set.weight !== undefined && (
-                <Text fontSize="$4" color="$textSoft">
+                <Text size="medium" color="$textSoft">
                   Weight:{" "}
-                  <Text color="white">
+                  <Text color="$color">
                     {set.weight}
                     {weightUnit}
                   </Text>
@@ -105,14 +107,14 @@ export default function WorkoutViewModal({
               )}
 
               {set.reps !== null && set.reps !== undefined && (
-                <Text fontSize="$4" color="$textSoft">
-                  Reps: <Text color="white">{set.reps}</Text>
+                <Text size="medium" color="$textSoft">
+                  Reps: <Text color="$color">{set.reps}</Text>
                 </Text>
               )}
 
               {set.rpe !== null && set.rpe !== undefined && (
-                <Text fontSize="$4" color="$textSoft">
-                  RPE: <Text color="white">{set.rpe}</Text>
+                <Text size="medium" color="$textSoft">
+                  RPE: <Text color="$color">{set.rpe}</Text>
                 </Text>
               )}
             </YStack>
@@ -136,7 +138,7 @@ export default function WorkoutViewModal({
           alignItems="center"
           padding="$4"
         >
-          <Text fontSize="$4" color="white">
+          <Text size="medium" color="$color">
             Loading workout...
           </Text>
         </YStack>
@@ -158,13 +160,14 @@ export default function WorkoutViewModal({
           alignItems="center"
           padding="$4"
         >
-          <Text fontSize="$4" color="white">
+          <Text size="medium" color="$color">
             Workout not found
           </Text>
         </YStack>
       </BaseModal>
     );
   }
+
   return (
     <BaseModal
       isVisible={isVisible}
@@ -176,10 +179,10 @@ export default function WorkoutViewModal({
         {/* Fixed header outside scroll */}
         <YStack padding="$4" paddingBottom="$2">
           <XStack justifyContent="space-between" alignItems="center">
-            <Text fontSize="$4" fontWeight="600" color="white">
+            <Text size="medium" fontWeight="600" color="$color">
               {currentWorkout.name}
             </Text>
-            <Text fontSize="$4" color="$textSoft">
+            <Text size="medium" color="$textSoft">
               {formatDate(currentWorkout.created_at)}
             </Text>
           </XStack>
@@ -190,8 +193,8 @@ export default function WorkoutViewModal({
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
           bounces={true}
-          keyboardShouldPersistTaps="handled" // Add this
-          onContentSizeChange={() => {}} // Force measurem
+          keyboardShouldPersistTaps="handled"
+          onContentSizeChange={() => {}}
         >
           {/* Image */}
           {currentWorkout.image_id ? (
@@ -205,7 +208,7 @@ export default function WorkoutViewModal({
           ) : (
             <Text
               paddingTop="$4"
-              fontSize="$4"
+              size="medium"
               color="$textSoft"
               fontStyle="italic"
               marginBottom="$4"
@@ -216,19 +219,19 @@ export default function WorkoutViewModal({
           )}
 
           {/* Notes */}
-          <Text fontSize="$4" color="white" marginBottom="$4">
+          <Text size="medium" color="$color" marginBottom="$4">
             {currentWorkout.notes || "no notes"}
           </Text>
 
-          {/* All your existing exercise rendering code here... */}
+          {/* Exercises */}
           <YStack gap="$4">
             {currentWorkout.workout_exercises?.length > 0 ? (
               currentWorkout.workout_exercises.map((exercise, index) => (
                 <YStack key={exercise.id || index}>
                   <Text
-                    fontSize="$4"
+                    size="medium"
                     fontWeight="600"
-                    color="white"
+                    color="$color"
                     marginBottom="$3"
                   >
                     {exercise.name}
@@ -239,14 +242,14 @@ export default function WorkoutViewModal({
                   {index < currentWorkout.workout_exercises.length - 1 && (
                     <YStack
                       height={1}
-                      backgroundColor="#111"
+                      backgroundColor="$borderSoft"
                       marginVertical="$2"
                     />
                   )}
                 </YStack>
               ))
             ) : (
-              <Text fontSize="$4" color="$textSoft" fontStyle="italic">
+              <Text size="medium" color="$textSoft" fontStyle="italic">
                 No exercises found
               </Text>
             )}

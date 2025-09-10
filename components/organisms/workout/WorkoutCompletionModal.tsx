@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
-import { YStack, XStack, Text, Button, ScrollView } from "tamagui";
-import BaseModal from "../atoms/BaseModal";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
+import BaseModal from "../../atoms/BaseModal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 
 interface WorkoutCompletionModalProps {
   isVisible: boolean;
@@ -114,7 +115,7 @@ export function WorkoutCompletionModal({
               maxWidth={300}
               gap="$3"
             >
-              <Text fontSize="$4" fontWeight="bold" textAlign="center">
+              <Text size="medium" fontWeight="bold" textAlign="center">
                 Exit Workout Summary?
               </Text>
               <XStack gap="$3" justifyContent="center">

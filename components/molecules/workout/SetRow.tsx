@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { XStack, Stack, Text } from "tamagui";
+import { XStack, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
-import { Trash2 } from '@/assets/icons/IconMap';import * as Haptics from "expo-haptics";
+import { Trash2 } from "@/assets/icons/IconMap";
+import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
 import DurationInput from "@/components/atoms/DurationInput";
@@ -65,7 +67,7 @@ export default function SetRow({
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
       <Stack width={30} alignItems="center" justifyContent="center" height={40}>
-        <Text fontSize="$4" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           {set.set_number}
         </Text>
       </Stack>
@@ -121,7 +123,6 @@ export default function SetRow({
         }}
         onPress={handleDeletePress}
         cursor={isActive ? "pointer" : "default"}
-        animation="quick"
       >
         <Trash2 size={16} color="#ef4444" />
       </Stack>

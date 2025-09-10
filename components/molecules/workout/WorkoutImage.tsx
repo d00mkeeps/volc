@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Stack, Text } from "tamagui";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { Image } from "expo-image";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { imageService } from "@/services/api/imageService";
@@ -69,7 +70,7 @@ export default function WorkoutImage({
       overflow="hidden"
     >
       {loading ? (
-        <Text color="$textMuted" fontSize="$3">
+        <Text color="$textMuted" size="medium">
           Loading...
         </Text>
       ) : imageUrl ? (
@@ -79,7 +80,7 @@ export default function WorkoutImage({
           contentFit="cover"
         />
       ) : (
-        <Text color="$textMuted" fontSize="$3">
+        <Text color="$textMuted" size="medium">
           {fallbackText}
         </Text>
       )}

@@ -5,14 +5,14 @@ import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
-} from "@/components/organisms/WorkoutTracker";
+} from "@/components/organisms/workout/WorkoutTracker";
 import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
 import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
-import { WorkoutCompletionModal } from "../../components/organisms/WorkoutCompletionModal";
+import { WorkoutCompletionModal } from "@/components/organisms/workout/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
 import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
 import { SettingsModal } from "@/components/molecules/SettingsModal";
@@ -214,20 +214,6 @@ export default function HomeScreen() {
         </ScrollView>
 
         {/* Floating Action Button */}
-        <Stack
-          position="absolute"
-          bottom={0}
-          left={0}
-          right={0}
-          paddingBottom="$5"
-          zIndex={10}
-          pointerEvents="box-none"
-        >
-          <FloatingActionButton
-            label={isActive ? "FINISH" : "START"}
-            onPress={handleToggleWorkout}
-          />
-        </Stack>
 
         {/* Other Modals */}
         <TemplateSelector
@@ -263,6 +249,19 @@ export default function HomeScreen() {
         isVisible={showOnboardingModal}
         onComplete={handleOnboardingComplete}
       />
+      <Stack
+        position="absolute"
+        bottom={0}
+        left={0}
+        right={0}
+        paddingBottom="$5"
+        pointerEvents="box-none"
+      >
+        <FloatingActionButton
+          label={isActive ? "FINISH" : "START"}
+          onPress={handleToggleWorkout}
+        />
+      </Stack>
     </>
   );
 }

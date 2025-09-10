@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { YStack, XStack, Text, Button } from "tamagui";
+import { YStack, XStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import BaseModal from "../../atoms/BaseModal";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -170,7 +172,7 @@ export function OnboardingModal({
                 maxWidth={300}
                 gap="$3"
               >
-                <Text fontSize="$4" fontWeight="bold" textAlign="center">
+                <Text size="medium" fontWeight="bold" textAlign="center">
                   Complete Your Profile
                 </Text>
                 <Text textAlign="center" color="$textMuted">

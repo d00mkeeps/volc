@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useColorScheme, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/AuthContext";
-import { AuthGate } from "@/components/auth/AuthGate";
+import { AuthGate } from "@/components/AuthGate";
 import { useAuthStore } from "@/stores/authStore";
 import Toast from "react-native-toast-message";
 import React from "react";

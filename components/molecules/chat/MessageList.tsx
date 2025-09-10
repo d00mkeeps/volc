@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
-import { YStack, Text } from "tamagui";
+import { YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import { MessageItem } from "../../atoms/MessageItem";
 import { LoadingMessage } from "../../atoms/LoadingMessage";
 import { Message } from "@/types";
@@ -76,7 +77,7 @@ export const MessageList = ({
   if (allMessages.length === 0) {
     return (
       <YStack flex={1} justifyContent="center" alignItems="center">
-        <Text color="$textMuted" fontSize="$4">
+        <Text color="$textMuted" size="medium">
           Start a conversation about your workout
         </Text>
       </YStack>

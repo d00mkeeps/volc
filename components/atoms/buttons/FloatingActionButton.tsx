@@ -1,5 +1,8 @@
-import { PlusCircle, Settings, Play, Pause } from '@/assets/icons/IconMap';import React from "react";
-import { Button, Stack, Text } from "tamagui";
+import { PlusCircle, Settings, Play, Pause } from "@/assets/icons/IconMap";
+import React from "react";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 
 interface ActionButtonProps {
   icon?: string;
@@ -37,7 +40,6 @@ export default function FloatingActionButton({
         backgroundColor: "$primaryLight",
       }}
       onPress={onPress}
-      animation="quick"
     >
       <Stack
         alignItems="center"
@@ -50,7 +52,7 @@ export default function FloatingActionButton({
             size: 20,
             color: "white",
           })}
-        <Text color="white" fontSize="$8" fontWeight="700" textAlign="center">
+        <Text color="white" size="large" fontWeight="700" textAlign="center">
           {label}
         </Text>
       </Stack>

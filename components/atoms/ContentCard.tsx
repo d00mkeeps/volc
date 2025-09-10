@@ -1,6 +1,8 @@
 import React from "react";
-import { Stack, Text } from "tamagui";
-import { Trash2 } from '@/assets/icons/IconMap';interface ContentCardProps {
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import { Trash2 } from "@/assets/icons/IconMap";
+interface ContentCardProps {
   title: string;
   subtitle: string;
   date: Date;
@@ -56,14 +58,14 @@ export default function ContentCard({
         marginBottom="$2"
       >
         <Stack flex={1} marginRight="$1">
-          <Text fontSize="$4" fontWeight="600" color="$text" numberOfLines={1}>
+          <Text size="medium" fontWeight="600" color="$text" numberOfLines={1}>
             {title}
           </Text>
         </Stack>
 
         <Stack flexDirection="row" alignItems="center" gap="$2">
           {!showDelete && (
-            <Text fontSize="$4" color="$textSoft" fontWeight={800}>
+            <Text size="medium" color="$textSoft" fontWeight={800}>
               {formatDate(date)}
             </Text>
           )}
@@ -81,7 +83,7 @@ export default function ContentCard({
         </Stack>
       </Stack>
 
-      <Text fontSize="$4" color="$textSoft" numberOfLines={2} fontWeight="500">
+      <Text size="medium" color="$textSoft" numberOfLines={2} fontWeight="500">
         {subtitle}
       </Text>
     </Stack>

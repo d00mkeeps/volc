@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { YStack, XStack, Text, Input, Button, Stack } from "tamagui";
+import { YStack, XStack, Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
 import { UserProfile } from "@/types";
 
 interface PersonalInfoCardProps {
@@ -106,7 +109,7 @@ export default function PersonalInfoCard({
       gap="$3"
     >
       <XStack justifyContent="space-between" alignItems="center">
-        <Text fontSize="$4" fontWeight="600" color="$color">
+        <Text size="medium" fontWeight="600" color="$color">
           Personal Information
         </Text>
         {isEditing && (
@@ -121,7 +124,6 @@ export default function PersonalInfoCard({
         )}
       </XStack>
 
-      {/* Using MetricsDisplay styling pattern */}
       <Stack gap="$3" paddingLeft="$2" paddingTop="$3" borderRadius="$3">
         <Stack flexDirection="row">
           {/* Labels Stack - now on the left */}
@@ -132,7 +134,7 @@ export default function PersonalInfoCard({
             alignItems="flex-start"
           >
             {fields.map((field, index) => (
-              <Text key={index} color="$textSoft" fontSize="$4">
+              <Text key={index} color="$textSoft" size="medium">
                 {field.label}
               </Text>
             ))}
@@ -158,20 +160,20 @@ export default function PersonalInfoCard({
                         updateField("is_imperial", !editedValues.is_imperial)
                       }
                     >
-                      <Text fontSize="$4" fontWeight="600" color="white">
+                      <Text size="medium" fontWeight="600" color="white">
                         {editedValues.is_imperial ? "Imperial" : "Metric"}
                       </Text>
                     </Button>
                   ) : field.key === "age" ? (
                     // Age is always read-only, even in edit mode
-                    <Text fontSize="$4" fontWeight="600" color="$text">
+                    <Text size="medium" fontWeight="600" color="$text">
                       {field.value}
                     </Text>
                   ) : (
                     <Input
                       value={String(field.value)}
                       onChangeText={(text) => updateField(field.key, text)}
-                      fontSize="$4"
+                      size="medium"
                       fontWeight="600"
                       backgroundColor="$background"
                       borderWidth={1}
@@ -180,7 +182,7 @@ export default function PersonalInfoCard({
                     />
                   )
                 ) : (
-                  <Text fontSize="$4" fontWeight="600" color="$text">
+                  <Text size="medium" fontWeight="600" color="$text">
                     {field.value}
                   </Text>
                 )}

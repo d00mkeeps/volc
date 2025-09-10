@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Stack, Text } from "tamagui";
+import { Stack } from "tamagui";
+import Text from "@/components/atoms/Text";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import Select from "@/components/atoms/Select";
 import MetricsDisplay from "./MetricsDisplay";
@@ -138,11 +139,13 @@ export default function MuscleGroupSpider() {
     >
       {/* Left Stack - Data Display Area */}
       <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
-        <Select
-          options={timeframeOptions}
-          value={timeframe}
-          onValueChange={handleTimeframeChange}
-        />
+        <Stack zIndex={1000}>
+          <Select
+            options={timeframeOptions}
+            value={timeframe}
+            onValueChange={handleTimeframeChange}
+          />
+        </Stack>
 
         {/* Pass actualMetrics directly to MetricsDisplay */}
         <MetricsDisplay actualMetrics={currentData.actualMetrics} />

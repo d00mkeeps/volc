@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, TouchableOpacity } from "react-native";
+import { useTheme } from "tamagui";
 
 interface BaseModalProps {
   isVisible: boolean;
@@ -7,7 +8,7 @@ interface BaseModalProps {
   children: React.ReactNode;
   widthPercent?: number;
   heightPercent?: number;
-  topOffset?: number; // Add this new prop
+  topOffset?: number;
 }
 
 export default function BaseModal({
@@ -16,8 +17,10 @@ export default function BaseModal({
   children,
   widthPercent = 90,
   heightPercent = 55,
-  topOffset = 0, // Default to 0 (no offset)
+  topOffset = 0,
 }: BaseModalProps) {
+  const theme = useTheme();
+
   return (
     <Modal
       visible={isVisible}
@@ -40,14 +43,14 @@ export default function BaseModal({
           style={{
             width: `${widthPercent}%`,
             height: `${heightPercent}%`,
-            backgroundColor: "#231f20",
+            backgroundColor: theme.background.val, // ← Fixed! Now theme-responsive
             borderRadius: 16,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 12,
             elevation: 8,
-            marginTop: topOffset, // Apply the offset here
+            marginTop: topOffset,
           }}
           activeOpacity={1}
           onPress={() => {}} // Keep this! It prevents tap bubbling

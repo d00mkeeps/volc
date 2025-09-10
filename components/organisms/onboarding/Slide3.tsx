@@ -1,5 +1,7 @@
 import React from "react";
-import { YStack, Text, Button } from "tamagui";
+import { YStack } from "tamagui";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 
 interface OnboardingSlide3Props {
   firstName: string;
@@ -12,10 +14,10 @@ export function OnboardingSlide3({
 }: OnboardingSlide3Props) {
   return (
     <YStack gap="$4" paddingBottom="$4" alignItems="center">
-      <Text fontSize="$6" fontWeight="bold" textAlign="center">
+      <Text size="medium" fontWeight="bold" textAlign="center">
         You're all set up!
       </Text>
-      <Text fontSize="$4" color="$textMuted" textAlign="center">
+      <Text size="medium" color="$textMuted" textAlign="center">
         Welcome to Volc, {firstName}! Your profile is ready and you can start
         tracking workouts.
       </Text>
