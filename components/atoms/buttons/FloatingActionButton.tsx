@@ -8,6 +8,7 @@ interface ActionButtonProps {
   icon?: string;
   label: string;
   onPress: () => void;
+  disabled?: boolean; // Add this
 }
 
 const getIconComponent = (iconName: string) => {
@@ -24,22 +25,32 @@ export default function FloatingActionButton({
   icon,
   label,
   onPress,
+  disabled = false, // Add this
 }: ActionButtonProps) {
   return (
     <Button
       width="50%"
       height={60}
       alignSelf="center"
-      backgroundColor="$primary"
+      backgroundColor={disabled ? "$backgroundMuted" : "$primary"}
       borderRadius="$4"
-      pressStyle={{
-        backgroundColor: "$primaryMuted",
-        scale: 0.98,
-      }}
-      hoverStyle={{
-        backgroundColor: "$primaryLight",
-      }}
-      onPress={onPress}
+      pressStyle={
+        disabled
+          ? {}
+          : {
+              backgroundColor: "$primaryMuted",
+              scale: 0.98,
+            }
+      }
+      hoverStyle={
+        disabled
+          ? {}
+          : {
+              backgroundColor: "$primaryLight",
+            }
+      }
+      opacity={disabled ? 0.6 : 1}
+      onPress={disabled ? () => {} : onPress}
     >
       <Stack
         alignItems="center"
@@ -50,9 +61,14 @@ export default function FloatingActionButton({
         {icon &&
           React.createElement(getIconComponent(icon), {
             size: 20,
-            color: "white",
+            color: disabled ? "#999" : "white",
           })}
-        <Text color="white" size="large" fontWeight="700" textAlign="center">
+        <Text
+          color={disabled ? "$textMuted" : "white"}
+          size="large"
+          fontWeight="700"
+          textAlign="center"
+        >
           {label}
         </Text>
       </Stack>

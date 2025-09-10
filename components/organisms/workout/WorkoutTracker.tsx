@@ -21,6 +21,7 @@ import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
 import { PlusCircle } from "@/assets/icons/IconMap";
+import { useTheme } from "tamagui";
 interface WorkoutTrackerProps {
   currentTemplateName?: string;
 }
@@ -38,6 +39,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
     const { currentWorkout, isActive, updateCurrentWorkout, updateExercise } =
       useUserSessionStore();
+    const theme = useTheme();
 
     // Animated values for tracking sheet position
     const animatedIndex = useSharedValue(1);
@@ -187,7 +189,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         animatedIndex={animatedIndex}
         animatedPosition={animatedPosition}
         backgroundStyle={{
-          backgroundColor: "$backgroundStrong",
+          backgroundColor: theme.background.val,
         }}
         handleIndicatorStyle={{
           backgroundColor: "#666",

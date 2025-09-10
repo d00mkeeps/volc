@@ -106,7 +106,7 @@ const tamaguiConfig = createTamagui({
       borderSoft: "rgba(248, 79, 62, 0.1)",
       borderMuted: "rgba(255, 255, 255, 0.05)",
       borderColor: "rgba(255, 255, 255, 0.1)",
-      accentColor: "#fcb825",
+      accentColor: "#dbab00",
     },
     light: {
       background: "#ffffff",
@@ -131,7 +131,7 @@ const tamaguiConfig = createTamagui({
       borderSoft: "#f0f0f0",
       borderMuted: "#f8f8f8",
       borderColor: "#e5e5e5",
-      accentColor: "#fcb825",
+      accentColor: "#967601",
     },
   },
   fonts: {

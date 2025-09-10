@@ -16,7 +16,6 @@ export const Button: React.FC<ButtonProps> = ({
   color = "$white",
   pressStyle,
   disabledStyle,
-  maxWidth = "70%",
   alignSelf = "center",
   ...props
 }) => {
@@ -72,7 +71,6 @@ export const Button: React.FC<ButtonProps> = ({
       borderRadius={borderRadius}
       fontWeight={fontWeight}
       color={color}
-      maxWidth={maxWidth}
       alignSelf={alignSelf}
       pressStyle={{
         backgroundColor: "$primaryPress",

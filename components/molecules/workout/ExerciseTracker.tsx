@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Separator } from "tamagui";
 import Text from "@/components/atoms/Text";
-import { X } from "@/assets/icons/IconMap";
+import Button from "@/components/atoms/Button";
+import { X, Plus } from "@/assets/icons/IconMap";
 import SetRow from "./SetRow";
 import {
   WorkoutExercise,
@@ -12,7 +13,6 @@ import { Alert } from "react-native";
 import ExerciseSearchInput from "./ExerciseSearchInput";
 import ExerciseTrackerHeader from "../headers/ExerciseTrackerHeader";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
-import NewSetButton from "../../atoms/buttons/NewSetButton";
 import SetHeader from "../headers/SetHeader";
 import NotesModal from "./NotesModal";
 
@@ -143,7 +143,6 @@ export default function ExerciseTracker({
       distance: lastSet?.distance || undefined,
       duration: lastSet?.duration || undefined,
       rpe: lastSet?.rpe || undefined,
-      // is_completed removed - not using anymore
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -155,6 +154,7 @@ export default function ExerciseTracker({
 
     onExerciseUpdate(updatedExercise);
   };
+
   const isSetLimitReached = exercise.workout_exercise_sets.length >= 10;
 
   return (
@@ -217,6 +217,8 @@ export default function ExerciseTracker({
                 onUpdate={handleSetUpdate}
               />
             ))}
+
+          {/* Inline Add Set Button */}
           {isActive && isSetLimitReached && (
             <Text
               color="$textMuted"
@@ -227,10 +229,31 @@ export default function ExerciseTracker({
               Set limit reached (10/10)
             </Text>
           )}
-          <NewSetButton
-            isActive={isActive && !isSetLimitReached}
-            onPress={handleAddSet}
-          />
+
+          {isActive && !isSetLimitReached && (
+            <Button
+              size="medium"
+              backgroundColor="$backgroundMuted"
+              borderWidth={1}
+              borderColor="$borderSoft"
+              borderStyle="dashed"
+              color="$primary"
+              alignSelf="stretch"
+              marginTop="$1"
+              pressStyle={{
+                backgroundColor: "$primaryTint",
+                borderColor: "$primary",
+                scale: 0.98,
+              }}
+              onPress={handleAddSet}
+            >
+              <XStack gap="$1.5" alignItems="center">
+                <Text size="medium" color="$primary" fontWeight="600">
+                  Add Set
+                </Text>
+              </XStack>
+            </Button>
+          )}
         </YStack>
       </YStack>
 

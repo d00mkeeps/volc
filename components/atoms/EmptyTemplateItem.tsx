@@ -31,7 +31,7 @@ const FreshStartTemplateItem: React.FC<FreshStartTemplateItemProps> = ({
       maxWidth="100%"
       onPress={() => onSelect(template)}
       pressStyle={{
-        backgroundColor: "$primaryTint",
+        backgroundColor: "$d4412f",
         borderColor: "$primary",
         scale: 0.98,
       }}
@@ -48,7 +48,7 @@ const FreshStartTemplateItem: React.FC<FreshStartTemplateItemProps> = ({
             <Text
               size="medium"
               fontWeight="600"
-              color={isSelected ? "$primary" : "$color"}
+              color="$textMuted"
               flex={1}
               numberOfLines={1}
             >
@@ -67,7 +67,12 @@ const FreshStartTemplateItem: React.FC<FreshStartTemplateItemProps> = ({
         </XStack>
 
         {/* Description */}
-        <Text size="medium" color="$textSoft" numberOfLines={2} lineHeight={22}>
+        <Text
+          size="medium"
+          color="$textMuted"
+          numberOfLines={2}
+          lineHeight={22}
+        >
           Create a new workout from scratch
         </Text>
 

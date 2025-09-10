@@ -57,6 +57,7 @@ export default function DataCard({
             size="$2"
             onPress={onEdit}
             backgroundColor="$backgroundStrong"
+            color="$text"
           >
             Edit
           </Button>

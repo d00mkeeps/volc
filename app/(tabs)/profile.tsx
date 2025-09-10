@@ -100,24 +100,23 @@ export default function ProfileScreen() {
     <YStack flex={1} backgroundColor="$background">
       <ScrollView
         flex={1}
-        padding="$3"
+        padding="$2"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <YStack gap="$3">
-          {/* Profile header with stacked buttons - clean as a whistle! */}
           <XStack
             backgroundColor="$backgroundSoft"
             borderRadius="$3"
-            padding="$4"
+            padding="$2"
             alignItems="center"
             gap="$3"
             justifyContent="space-between"
           >
             <XStack alignItems="center" gap="$3" flex={1}>
               <ProfileAvatar />
-              <YStack flex={1} paddingLeft="$4">
+              <YStack flex={1} paddingLeft="$2">
                 <Text size="medium" fontWeight="600" color="$color">
                   {`${userProfile.first_name || ""} ${
                     userProfile.last_name || ""
@@ -131,13 +130,14 @@ export default function ProfileScreen() {
               </YStack>
             </XStack>
 
-            {!isEditing && !editingCard && (
-              <YStack gap="$2" alignItems="flex-end" width="30%">
+            {!editingCard && (
+              <YStack gap="$2" alignItems="flex-end" width="35%">
                 <Button
                   size="small"
                   width="100%"
                   backgroundColor="$backgroundStrong"
                   onPress={() => setIsEditing(true)}
+                  color="$text"
                 >
                   Edit Profile
                 </Button>
@@ -146,6 +146,7 @@ export default function ProfileScreen() {
                   width="100%"
                   backgroundColor="$backgroundStrong"
                   onPress={() => setShowWorkoutModal(true)}
+                  color="$text"
                 >
                   View Workouts
                 </Button>
@@ -154,7 +155,7 @@ export default function ProfileScreen() {
           </XStack>
 
           {isUpdatingAvatar && (
-            <Text size="medium" color="$textMuted" textAlign="center">
+            <Text size="medium" color="$text" textAlign="center">
               Updating avatar...
             </Text>
           )}

@@ -34,7 +34,7 @@ export const MessageItem = memo(
     const renderContent = safeContent + (isStreaming ? "..." : "");
 
     // Use fontSize tokens for markdown
-    const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$2.val;
+    const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
     const h2Size = isTablet ? tokens.fontSize.$6.val : tokens.fontSize.$4.val;
     const h1Size = isTablet ? tokens.fontSize.$8.val : tokens.fontSize.$6.val;
 
