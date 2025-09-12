@@ -1,3 +1,6 @@
-2025-08-24 15:40:00,874 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/.env (exists: True)
-2025-08-24 15:40:00,875 - app.main - INFO - SUPABASE_URL present: True
-2025-08-24 15:40:00,875 - app.main - INFO - SUPABASE_KEY present: True
+2025-09-12 22:58:16,705 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-12 22:58:16,707 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-12 22:58:16,707 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-12 22:58:16,707 - app.services.db.image_service - INFO - Used direct string
+2025-09-12 22:58:16,707 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-12 22:58:16,707 - app.main - INFO - Response status: 200

@@ -10,31 +10,35 @@ import { imageService } from "@/services/api/imageService";
 interface ImagePickerButtonProps {
   label?: string;
   icon?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "small" | "medium" | "large"; // Use Button's size system
   onImageUploaded?: (imageId: string) => void;
   onError?: (error: string) => void;
 }
 
-const sizeConfig = {
-  sm: { width: 40, height: 40, fontSize: "$2", iconSize: 16 }, // Made square and smaller
-  md: { width: 48, height: 48, fontSize: "$3", iconSize: 20 }, // Made square
-  lg: { width: 64, height: 64, fontSize: "$4", iconSize: 24 }, // Made square
+// Icon sizes that work well with Button's semantic sizes
+const getIconSize = (size: "small" | "medium" | "large") => {
+  switch (size) {
+    case "small":
+      return 18;
+    case "medium":
+      return 22;
+    case "large":
+      return 26;
+  }
 };
 
 export default function ImagePickerButton({
   label,
-  icon = "add", // Changed default from "camera" to "add"
-  size = "sm", // Changed default to sm for more subtle appearance
+  icon = "add",
+  size = "medium", // Better default
   onImageUploaded,
   onError,
 }: ImagePickerButtonProps) {
   const [uploading, setUploading] = useState(false);
 
-  const config = sizeConfig[size];
-
   const getIconComponent = (iconName: string, uploading: boolean) => {
     if (uploading) return RotateCw;
-    return iconName === "add" ? Plus : Plus; // Default to Plus
+    return iconName === "add" ? Plus : Plus;
   };
 
   const handleImagePick = async () => {
@@ -54,7 +58,7 @@ export default function ImagePickerButton({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1], // Square for profile pics
+        aspect: [1, 1],
         quality: 0.8,
       });
 
@@ -63,7 +67,6 @@ export default function ImagePickerButton({
       const imageUri = result.assets[0].uri;
       const fileExtension = imageUri.split(".").pop() || "jpg";
 
-      // 1. Create temp image record + get upload URL
       const tempResponse = await imageService.createTempImage(fileExtension);
 
       if (
@@ -74,7 +77,6 @@ export default function ImagePickerButton({
         throw new Error(tempResponse.error || "Failed to create temp image");
       }
 
-      // 2. Upload file to Supabase storage
       const uploadSuccess = await imageService.uploadImage(
         tempResponse.upload_url,
         imageUri
@@ -84,7 +86,6 @@ export default function ImagePickerButton({
         throw new Error("Upload failed");
       }
 
-      // 3. Notify parent with image_id
       console.log(
         `[ImagePickerButton] Image uploaded successfully: ${tempResponse.image_id}`
       );
@@ -100,34 +101,28 @@ export default function ImagePickerButton({
 
   return (
     <Button
-      width={config.width}
-      height={config.height}
+      size={size} // Use Button's built-in sizing
       alignSelf="center"
-      backgroundColor="#374151" // Dark gray instead of $primary
-      borderRadius="$3" // Rounded square
-      pressStyle={{ backgroundColor: "#4B5563" }} // Slightly lighter on press
+      backgroundColor="#374151"
+      borderRadius="$3"
+      pressStyle={{ backgroundColor: "#4B5563" }}
       onPress={handleImagePick}
       disabled={uploading}
       opacity={uploading ? 0.7 : 1}
-      padding={0} // Remove padding for clean square look
+      // Remove hardcoded width/height and padding overrides
     >
       <Stack
         alignItems="center"
         justifyContent="center"
         gap={label ? "$1" : 0}
-        flex={1}
+        flexDirection={label ? "column" : "row"} // Stack vertically if there's a label
       >
         {React.createElement(getIconComponent(icon, uploading), {
-          size: config.iconSize,
+          size: getIconSize(size),
           color: "white",
         })}
         {label && (
-          <Text
-            color="white"
-            size="medium"
-            fontWeight="500" // Reduced from 700 for subtlety
-            textAlign="center"
-          >
+          <Text color="white" size="medium" fontWeight="500" textAlign="center">
             {uploading ? "..." : label}
           </Text>
         )}

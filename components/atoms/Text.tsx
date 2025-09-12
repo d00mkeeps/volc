@@ -60,7 +60,7 @@ export const Text: React.FC<TextProps> = ({
       case "small":
         return "$2"; // 14px mobile
       case "medium":
-        return "$4"; // 18px mobile
+        return "$4";
       case "large":
         return "$5"; // 20px mobile
       case "xl":

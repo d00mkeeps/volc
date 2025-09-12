@@ -199,11 +199,7 @@ export default function WorkoutViewModal({
           {/* Image */}
           {currentWorkout.image_id ? (
             <YStack marginBottom="$4" alignItems="center">
-              <WorkoutImage
-                width={200}
-                height={120}
-                imageId={currentWorkout.image_id}
-              />
+              <WorkoutImage size={300} imageId={currentWorkout.image_id} />
             </YStack>
           ) : (
             <Text

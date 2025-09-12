@@ -124,7 +124,9 @@ export function WorkoutSummarySlide({
           placeholder={selectedTemplate?.name || "Name your workout..."}
           placeholderTextColor="$textMuted"
           size="$4"
+          width="100%"
           borderColor={showNameError ? "$red9" : "$borderColor"}
+          backgroundColor="$backgroundMuted"
         />
         {showNameError && (
           <Text color="$red9" size="medium">
@@ -135,16 +137,15 @@ export function WorkoutSummarySlide({
 
       <YStack gap="$2">
         <Text size="medium" fontWeight="600">
-          Add a Photo
+          Photo
         </Text>
 
         {pendingImageId || currentWorkout?.image_id ? (
           <YStack alignItems="center" gap="$2">
-            <WorkoutImage width={300} height={240} />
+            <WorkoutImage size={300} />
             <ImagePickerButton
               label="Change Photo"
               icon="camera"
-              size="lg"
               onImageUploaded={handleImageUploaded}
               onError={handleImageError}
             />
@@ -154,7 +155,7 @@ export function WorkoutSummarySlide({
             <ImagePickerButton
               label="Add Photo"
               icon="camera"
-              size="md"
+              size="medium"
               onImageUploaded={handleImageUploaded}
               onError={handleImageError}
             />
@@ -171,7 +172,7 @@ export function WorkoutSummarySlide({
           onChangeText={setWorkoutNotes}
           placeholder="Add notes for your workout..."
           minHeight={300}
-          backgroundColor="$background"
+          backgroundColor="$backgroundMuted"
         />
       </YStack>
 
@@ -179,11 +180,14 @@ export function WorkoutSummarySlide({
         {loadingState !== "continue" && (
           <Button
             size="$4"
-            variant="outlined"
+            backgroundColor="$background" // Changed from variant="outlined" to grey background
+            color="$text" // Add text color for grey button
             onPress={handleSkipChat}
             disabled={!isNameValid || loadingState === "skip"}
             opacity={isNameValid && loadingState !== "skip" ? 1 : 0.6}
-            flex={1}
+            borderColor="$primary"
+            borderWidth={1}
+            flex={0.4} // Reduced from flex={1} to take less space
           >
             {loadingState === "skip" ? "Loading..." : "Save & Exit"}
           </Button>
@@ -198,9 +202,9 @@ export function WorkoutSummarySlide({
             onPress={handleContinue}
             disabled={!isNameValid || loadingState === "continue"}
             opacity={isNameValid && loadingState !== "continue" ? 1 : 0.6}
-            flex={1}
+            flex={0.6} // Increased to take more space
           >
-            {loadingState === "continue" ? "Loading..." : "Continue to Coach"}
+            {loadingState === "continue" ? "Loading..." : "Chat to Coach"}
           </Button>
         )}
       </XStack>

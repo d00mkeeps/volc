@@ -262,6 +262,7 @@ class WorkoutService(BaseDBService):
                 "user_id": user_id,  # Keep user_id for business logic
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),
+                "image_id": workout_data.get("image_id"),
                 "created_at": workout_data.get("created_at") or now,
                 "used_as_template": now,  # Set this to creation date by default
             }

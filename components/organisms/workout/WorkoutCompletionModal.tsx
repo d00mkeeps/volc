@@ -119,12 +119,19 @@ export function WorkoutCompletionModal({
                 Exit Workout Summary?
               </Text>
               <XStack gap="$3" justifyContent="center">
-                <Button onPress={handleCancelClose} variant="outlined" flex={1}>
+                <Button
+                  onPress={handleCancelClose}
+                  backgroundColor="$background" // Changed from variant="outlined" to grey
+                  color="$text" // Add text color
+                  borderColor="$primary"
+                  borderWidth={1}
+                  flex={1}
+                >
                   Stay
                 </Button>
                 <Button
                   onPress={handleConfirmClose}
-                  backgroundColor="$red9"
+                  backgroundColor="$red9" // Keep red
                   color="white"
                   flex={1}
                 >

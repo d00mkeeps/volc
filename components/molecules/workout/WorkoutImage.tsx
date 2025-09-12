@@ -6,16 +6,14 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import { imageService } from "@/services/api/imageService";
 
 interface WorkoutImageProps {
-  width?: number;
-  height?: number;
+  size?: number;
   borderRadius?: number;
   fallbackText?: string;
   imageId?: string;
 }
 
 export default function WorkoutImage({
-  width = 200,
-  height = 150,
+  size = 200,
   borderRadius = 8,
   fallbackText = "No Image",
   imageId: propImageId,
@@ -26,6 +24,7 @@ export default function WorkoutImage({
 
   // Priority: pendingImageId > currentWorkout.image_id
   const imageId = propImageId || pendingImageId || currentWorkout?.image_id;
+
   useEffect(() => {
     const loadImageUrl = async () => {
       if (imageId) {
@@ -34,7 +33,6 @@ export default function WorkoutImage({
           console.log(
             `[WorkoutImage] Loading image ID: ${imageId.slice(0, 8)}`
           );
-
           const urlResponse = await imageService.getImageUrl(imageId);
           if (urlResponse.success && urlResponse.data.url) {
             // ✅ Fixed: use urlResponse.data.url
@@ -61,8 +59,8 @@ export default function WorkoutImage({
 
   return (
     <Stack
-      width={width}
-      height={height}
+      width={size}
+      height={size}
       borderRadius={borderRadius}
       backgroundColor="$backgroundSoft"
       justifyContent="center"
@@ -76,7 +74,7 @@ export default function WorkoutImage({
       ) : imageUrl ? (
         <Image
           source={{ uri: imageUrl }}
-          style={{ width, height }}
+          style={{ width: size, height: size }}
           contentFit="cover"
         />
       ) : (

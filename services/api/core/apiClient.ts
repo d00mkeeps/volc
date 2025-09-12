@@ -1,3 +1,4 @@
+import { getLocalIpAddress } from "@/utils/network";
 import { supabase } from "@/lib/supabaseClient";
 
 // State variables for base URLs
@@ -9,12 +10,37 @@ let WS_BASE_URL: string | null = null;
  */
 export async function initializeApiClient(): Promise<void> {
   if (!API_BASE_URL) {
-    // Production URLs - no more local IP detection needed
-    API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
-    WS_BASE_URL = "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
-    console.log(`[apiClient] Initialized with base URL: ${API_BASE_URL}`);
+    if (__DEV__) {
+      // Development mode - use local IP
+      try {
+        const ipAddress = await getLocalIpAddress();
+        API_BASE_URL = `http://${ipAddress}:8000`;
+        WS_BASE_URL = `ws://${ipAddress}:8000/api/llm`;
+        console.log(
+          `[apiClient] 🟢 Development mode - Local backend: ${API_BASE_URL}`
+        );
+      } catch (error) {
+        console.error(
+          "[apiClient] Failed to get local IP, falling back to production:",
+          error
+        );
+        // Fallback to production if local fails
+        API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
+        WS_BASE_URL =
+          "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
+      }
+    } else {
+      // Production mode - use Railway
+      API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
+      WS_BASE_URL =
+        "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
+      console.log(
+        `[apiClient] 🔴 Production mode - Railway backend: ${API_BASE_URL}`
+      );
+    }
   }
 }
+
 /**
  * Get the current base URL for API requests
  */
@@ -45,9 +71,6 @@ function requiresAuth(endpoint: string): boolean {
   );
 }
 
-/**
- * Get fresh JWT token from Supabase
- */
 /**
  * Get fresh JWT token from Supabase
  */
@@ -99,6 +122,7 @@ async function getFreshToken(): Promise<string | null> {
     return null;
   }
 }
+
 /**
  * Simplified API request function
  */

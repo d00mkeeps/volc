@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, TouchableOpacity } from "react-native";
+import { Modal, TouchableOpacity, View } from "react-native";
 import { useTheme } from "tamagui";
 
 interface BaseModalProps {
@@ -28,7 +28,7 @@ export default function BaseModal({
       transparent={true}
       onRequestClose={onClose}
     >
-      <TouchableOpacity
+      <View
         style={{
           flex: 1,
           backgroundColor: "rgba(0,0,0,0.8)",
@@ -36,14 +36,26 @@ export default function BaseModal({
           alignItems: "center",
           padding: 20,
         }}
-        activeOpacity={1}
-        onPress={onClose}
       >
+        {/* Backdrop - positioned absolutely behind modal */}
         <TouchableOpacity
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          }}
+          activeOpacity={1}
+          onPress={onClose}
+        />
+
+        {/* Modal content - plain View, no TouchableOpacity */}
+        <View
           style={{
             width: `${widthPercent}%`,
             height: `${heightPercent}%`,
-            backgroundColor: theme.background.val, // ← Fixed! Now theme-responsive
+            backgroundColor: theme.background.val,
             borderRadius: 16,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
@@ -52,12 +64,10 @@ export default function BaseModal({
             elevation: 8,
             marginTop: topOffset,
           }}
-          activeOpacity={1}
-          onPress={() => {}} // Keep this! It prevents tap bubbling
         >
           {children}
-        </TouchableOpacity>
-      </TouchableOpacity>
+        </View>
+      </View>
     </Modal>
   );
 }
