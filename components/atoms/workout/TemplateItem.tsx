@@ -1,7 +1,7 @@
 import React from "react";
 import { YStack, XStack } from "tamagui";
-import Button from "@/components/atoms/Button";
-import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
 import { CompleteWorkout } from "@/types/workout";
 
 interface TemplateItemProps {

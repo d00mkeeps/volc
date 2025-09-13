@@ -1,15 +1,15 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { YStack, XStack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Input from "@/components/atoms/core/Input";
+import Button from "@/components/atoms/core/Button";
 import { View } from "react-native";
 import { X } from "@/assets/icons/IconMap";
 import { CompleteWorkout } from "@/types/workout";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import TemplateItem from "../../atoms/TemplateItem";
-import EmptyTemplateItem from "../../atoms/EmptyTemplateItem";
-import BaseModal from "../../atoms/BaseModal";
+import TemplateItem from "../../atoms/workout/TemplateItem";
+import EmptyTemplateItem from "../../atoms/workout/EmptyTemplateItem";
+import BaseModal from "../../atoms/core/BaseModal";
 
 interface TemplateSelectorProps {
   isVisible: boolean;

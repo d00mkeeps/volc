@@ -1,9 +1,9 @@
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
 import { YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import { MessageItem } from "../../atoms/MessageItem";
-import { LoadingMessage } from "../../atoms/LoadingMessage";
+import Text from "@/components/atoms/core/Text";
+import { MessageItem } from "../../atoms/chat/MessageItem";
+import { LoadingMessage } from "../../atoms/chat/LoadingMessage";
 import { Message } from "@/types";
 
 interface MessageListProps {

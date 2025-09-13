@@ -1,9 +1,9 @@
 // components/SettingsModal.tsx
 import React, { useState } from "react";
 import { YStack, XStack } from "tamagui";
-import BaseModal from "@/components/atoms/BaseModal";
-import Button from "@/components/atoms/Button";
-import Text from "@/components/atoms/Text";
+import BaseModal from "@/components/atoms/core/BaseModal";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
 import { DeleteAccountConfirmation } from "../atoms/DeleteAccountConfirmation";
 
 interface SettingsModalProps {

@@ -1,7 +1,7 @@
 import React from "react";
 import { YStack } from "tamagui";
-import Button from "@/components/atoms/Button";
-import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
 import type { AuthToggleProps } from "@/types/auth";
 
 export function AuthToggle({ mode, onToggle }: AuthToggleProps) {

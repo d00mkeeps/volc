@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { YStack, XStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 export const LoadingMessage = () => {
   const [dotIndex, setDotIndex] = useState(0);
   const [scale, setScale] = useState(1);

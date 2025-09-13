@@ -1,64 +1,67 @@
-2025-09-11 22:15:50,846 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/bae6347b-2dbc-4e30-8bdf-35998e64d6b3.jpg?
-2025-09-11 22:15:50,849 - app.main - INFO - Response status: 200
-2025-09-11 22:15:57,585 - app.main - INFO - Request: DELETE /db/workouts/f3384147-352c-4f96-8c64-4b12b89346c6
-2025-09-11 22:15:57,588 - app.api.endpoints.db - INFO - API request to delete workout: f3384147-352c-4f96-8c64-4b12b89346c6
-2025-09-11 22:15:57,588 - app.services.db.workout_service - INFO - Deleting workout: f3384147-352c-4f96-8c64-4b12b89346c6
-2025-09-11 22:15:58,110 - app.services.db.workout_service - INFO - Successfully deleted workout: f3384147-352c-4f96-8c64-4b12b89346c6
-2025-09-11 22:15:58,111 - app.main - INFO - Response status: 200
-2025-09-11 22:15:58,112 - app.main - INFO - Request: DELETE /db/workouts/99b3cf8a-f579-4c4b-b6b6-386cbf110962
-2025-09-11 22:15:58,112 - app.api.endpoints.db - INFO - API request to delete workout: 99b3cf8a-f579-4c4b-b6b6-386cbf110962
-2025-09-11 22:15:58,113 - app.services.db.workout_service - INFO - Deleting workout: 99b3cf8a-f579-4c4b-b6b6-386cbf110962
-2025-09-11 22:15:58,657 - app.services.db.workout_service - INFO - Successfully deleted workout: 99b3cf8a-f579-4c4b-b6b6-386cbf110962
-2025-09-11 22:15:58,658 - app.main - INFO - Response status: 200
-2025-09-11 22:15:59,932 - app.main - INFO - Request: DELETE /db/workouts/e7524ef9-3da6-4096-954c-9326cb564d73
-2025-09-11 22:15:59,933 - app.api.endpoints.db - INFO - API request to delete workout: e7524ef9-3da6-4096-954c-9326cb564d73
-2025-09-11 22:15:59,933 - app.services.db.workout_service - INFO - Deleting workout: e7524ef9-3da6-4096-954c-9326cb564d73
-2025-09-11 22:16:01,120 - app.services.db.workout_service - INFO - Successfully deleted workout: e7524ef9-3da6-4096-954c-9326cb564d73
-2025-09-11 22:16:01,121 - app.main - INFO - Response status: 200
-2025-09-11 22:32:43,043 - app.main - INFO - Request: GET /api/leaderboard/biceps
-2025-09-11 22:32:44,217 - app.main - INFO - Response status: 200
-2025-09-11 22:33:32,584 - app.main - INFO - Request: POST /images/temp-upload
-2025-09-11 22:33:32,589 - app.api.endpoints.images - INFO - User ID from endpoint: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-11 22:33:32,589 - app.api.endpoints.images - INFO - User ID type: <class 'str'>
-2025-09-11 22:33:32,589 - app.api.endpoints.images - INFO - JWT token length: 871
-2025-09-11 22:33:32,589 - app.api.endpoints.images - INFO - JWT starts with: eyJhbGciOiJIUzI1NiIsImtpZCI6IlZxeno3RjFVNVFDSmkvN2...
-2025-09-11 22:33:32,799 - app.api.endpoints.images - INFO - User client created successfully: True
-2025-09-11 22:33:33,008 - app.api.endpoints.images - INFO - Test query successful: True
-2025-09-11 22:33:33,009 - app.services.db.image_service - INFO - Creating temp image with path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg
-2025-09-11 22:33:33,009 - app.services.db.image_service - INFO - User ID to insert: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3 (type: <class 'str'>)
-2025-09-11 22:33:33,152 - app.services.db.image_service - INFO - About to insert: {'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg', 'user_id': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3', 'status': 'temporary', 'expires_at': '2025-09-12T21:33:33.152498'}
-2025-09-11 22:33:33,429 - app.services.db.image_service - INFO - Created temp image record with ID: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:33:33,429 - app.services.db.image_service - INFO - About to create signed URL...
-2025-09-11 22:33:33,715 - app.services.db.image_service - INFO - Signed URL response type: <class 'dict'>
-2025-09-11 22:33:33,715 - app.services.db.image_service - INFO - Signed URL response: {'signed_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDlhZGZmMGEtNDZiMy00ZDVjLWJjZDUtNzE2MGJjZjExNjBiLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NzYyNjQxMywiZXhwIjoxNzU3NjMzNjEzfQ.wBHUvskmi_CFa5_iKEeew0K6T7NG26vEiKvTKFoMtBg', 'signedUrl': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDlhZGZmMGEtNDZiMy00ZDVjLWJjZDUtNzE2MGJjZjExNjBiLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NzYyNjQxMywiZXhwIjoxNzU3NjMzNjEzfQ.wBHUvskmi_CFa5_iKEeew0K6T7NG26vEiKvTKFoMtBg', 'token': 'eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDlhZGZmMGEtNDZiMy00ZDVjLWJjZDUtNzE2MGJjZjExNjBiLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NzYyNjQxMywiZXhwIjoxNzU3NjMzNjEzfQ.wBHUvskmi_CFa5_iKEeew0K6T7NG26vEiKvTKFoMtBg', 'path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg'}
-2025-09-11 22:33:33,716 - app.services.db.image_service - INFO - Successfully created upload URL
-2025-09-11 22:33:33,716 - app.services.db.image_service - INFO - Returning response: {'image_id': '989150eb-25b7-4a6b-9db3-7123cd48fa42', 'upload_url': 'https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/upload/sign/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wNDg3ODljNy1mYmQ1LTQ4OWQtYjVmNC03NjM1NWFhMDRhODYiLCJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjFlMmQ2MTkwLTVkNTItNGY0OC05NzRjLTdhNWE0M2E1MGJmMyIsInVybCI6ImltYWdlcy8xZTJkNjE5MC01ZDUyLTRmNDgtOTc0Yy03YTVhNDNhNTBiZjMvZDlhZGZmMGEtNDZiMy00ZDVjLWJjZDUtNzE2MGJjZjExNjBiLmpwZyIsInVwc2VydCI6ZmFsc2UsImlhdCI6MTc1NzYyNjQxMywiZXhwIjoxNzU3NjMzNjEzfQ.wBHUvskmi_CFa5_iKEeew0K6T7NG26vEiKvTKFoMtBg', 'file_path': '1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg'}
-2025-09-11 22:33:33,716 - app.main - INFO - Response status: 200
-2025-09-11 22:33:34,380 - app.main - INFO - Request: GET /images/989150eb-25b7-4a6b-9db3-7123cd48fa42/url
-2025-09-11 22:33:34,383 - app.api.endpoints.images - INFO - API request to get image URL: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:33:34,383 - app.services.db.image_service - INFO - Getting image URL for ID: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:33:35,023 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg
-2025-09-11 22:33:35,041 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
-2025-09-11 22:33:35,041 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg?
-2025-09-11 22:33:35,041 - app.services.db.image_service - INFO - Public URL keys: Not a dict
-2025-09-11 22:33:35,041 - app.services.db.image_service - INFO - Used direct string
-2025-09-11 22:33:35,041 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/d9adff0a-46b3-4d5c-bcd5-7160bcf1160b.jpg?
-2025-09-11 22:33:35,042 - app.main - INFO - Response status: 200
-2025-09-11 22:34:02,385 - app.main - INFO - Request: POST /db/workouts
-2025-09-11 22:34:02,391 - app.services.rate_limiter - INFO - Permission level not in JWT, looking up from database for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-11 22:34:02,952 - app.api.endpoints.db - INFO - API request to create workout: Name name
-2025-09-11 22:34:02,952 - app.services.db.workout_service - INFO - Creating workout: Name name for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-11 22:34:02,952 - app.services.db.workout_service - INFO - Inserting workout with data: Name name
-2025-09-11 22:34:03,325 - app.services.db.workout_service - INFO - Workout created with ID: 788abd4f-cd86-4b6f-87da-2fa4f09eefdd
-2025-09-11 22:34:03,325 - app.services.db.workout_service - INFO - Creating 1 exercises for workout: 788abd4f-cd86-4b6f-87da-2fa4f09eefdd
-2025-09-11 22:34:03,326 - app.services.db.workout_service - INFO - Creating exercise 1/1: Preacher Curl
-2025-09-11 22:34:03,486 - app.services.db.workout_service - INFO - Exercise created: Preacher Curl with ID: 3ddffeca-ef8c-4999-a955-5f314c12bdbb
-2025-09-11 22:34:04,414 - app.services.db.workout_service - INFO - Updated bicep leaderboard for user 1e2d6190-5d52-4f48-974c-7a5a43a50bf3: 85.83 1RM
-2025-09-11 22:34:04,414 - app.services.db.workout_service - INFO - Workout creation complete for ID: 788abd4f-cd86-4b6f-87da-2fa4f09eefdd
-2025-09-11 22:34:04,416 - app.main - INFO - Response status: 200
-2025-09-11 22:34:04,549 - app.main - INFO - Request: POST /images/989150eb-25b7-4a6b-9db3-7123cd48fa42/commit
-2025-09-11 22:34:04,550 - app.api.endpoints.images - INFO - API request to commit image: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:34:04,550 - app.services.db.image_service - INFO - Committing image to permanent: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:34:04,869 - app.services.db.image_service - INFO - Successfully committed image: 989150eb-25b7-4a6b-9db3-7123cd48fa42
-2025-09-11 22:34:04,880 - app.main - INFO - Response status: 200
-2025-09-11 22:34:05,304 - app.main - INFO - Request: GET /api/dashboard
+2025-09-13 09:38:31,319 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3  Final dashboard data structure: {'1week': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '2weeks': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '1month': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, '2months': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, 'lastUpdated': '2025-09-13T08:38:31.319211+00:00'}
+2025-09-13 09:38:31,322 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:38:31,323 - app.main - INFO - Response status: 200
+2025-09-13 09:38:31,324 - app.main - INFO - Request: GET /db/exercise-definitions
+2025-09-13 09:38:31,324 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
+2025-09-13 09:38:31,717 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
+2025-09-13 09:38:31,723 - app.main - INFO - Request: GET /db/user-profile
+2025-09-13 09:38:31,724 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:38:31,724 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:38:32,121 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:38:32,121 - app.main - INFO - Response status: 200
+2025-09-13 09:38:32,122 - app.main - INFO - Response status: 200
+2025-09-13 09:38:32,449 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-13 09:38:32,450 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:38:32,450 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:38:32,751 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-13 09:38:32,786 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-13 09:38:32,787 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:38:32,787 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-13 09:38:32,787 - app.services.db.image_service - INFO - Used direct string
+2025-09-13 09:38:32,787 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:38:32,787 - app.main - INFO - Request: GET /db/workouts/user
+2025-09-13 09:38:32,790 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:38:32,790 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1430eaba0>
+2025-09-13 09:38:33,145 - app.services.db.workout_service - INFO - Retrieved 10 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1430eaba0>
+2025-09-13 09:38:33,151 - app.main - INFO - Response status: 200
+2025-09-13 09:38:33,152 - app.main - INFO - Response status: 200
+2025-09-13 09:40:11,494 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-13 09:40:11,499 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:40:11,499 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:40:11,853 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-13 09:40:11,860 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-13 09:40:11,860 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:40:11,860 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-13 09:40:11,860 - app.services.db.image_service - INFO - Used direct string
+2025-09-13 09:40:11,860 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:40:11,861 - app.main - INFO - Response status: 200
+2025-09-13 09:53:23,188 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-13 09:53:23,195 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:53:23,195 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:53:24,187 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-13 09:53:24,196 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-13 09:53:24,197 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:53:24,197 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-13 09:53:24,197 - app.services.db.image_service - INFO - Used direct string
+2025-09-13 09:53:24,197 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:53:24,198 - app.main - INFO - Response status: 200
+2025-09-13 09:54:04,131 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-13 09:54:04,156 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:54:04,156 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:54:04,574 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-13 09:54:04,584 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-13 09:54:04,584 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:54:04,584 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-13 09:54:04,584 - app.services.db.image_service - INFO - Used direct string
+2025-09-13 09:54:04,584 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-13 09:54:04,585 - app.main - INFO - Response status: 200
+2025-09-13 09:55:46,035 - app.main - INFO - Request: GET /db/workouts/user
+2025-09-13 09:55:46,043 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-13 09:55:46,043 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1430eaba0>
+2025-09-13 09:55:46,596 - app.services.db.workout_service - INFO - Retrieved 10 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x1430eaba0>
+2025-09-13 09:55:46,599 - app.main - INFO - Response status: 200
+2025-09-13 09:57:06,407 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-13 09:57:06,412 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:57:06,412 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-13 09:57:06,764 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-13 09:57:06,781 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>

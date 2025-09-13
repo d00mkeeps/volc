@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
 import { AllTimeframeData } from "@/types/workout";

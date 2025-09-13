@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Stack, YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { Image } from "expo-image";
 import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";
-import ImagePickerButton from "@/components/atoms/buttons/ImagePickerButton";
 
 export default function ProfileAvatar() {
   const { userProfile, updateProfile } = useUserStore();
@@ -73,9 +72,10 @@ export default function ProfileAvatar() {
   return (
     <YStack alignItems="center" gap="$2">
       <Stack
-        width={80}
-        height={80}
-        borderRadius={36}
+        width="100%"
+        aspectRatio={1}
+        minWidth={70}
+        borderRadius={32}
         backgroundColor="$primary"
         justifyContent="center"
         alignItems="center"
@@ -88,7 +88,7 @@ export default function ProfileAvatar() {
         ) : avatarUrl ? (
           <Image
             source={{ uri: avatarUrl }}
-            style={{ width: 80, height: 80 }}
+            style={{ width: "100%", height: "100%" }}
             contentFit="cover"
           />
         ) : (
@@ -97,12 +97,6 @@ export default function ProfileAvatar() {
           </Text>
         )}
       </Stack>
-
-      <ImagePickerButton
-        size="sm"
-        onImageUploaded={handleImageUploaded}
-        onError={handleImageError}
-      />
     </YStack>
   );
 }

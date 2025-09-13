@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
-import Select from "@/components/atoms/Select";
+import Select from "@/components/atoms/core/Select";
 import MetricsDisplay from "./MetricsDisplay";
 import { TimeframeData, MuscleData } from "@/types/workout";
 import { useDashboardStore } from "@/stores/dashboardStore";

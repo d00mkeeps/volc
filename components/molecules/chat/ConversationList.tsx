@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Stack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import ContentCard from "@/components/atoms/ContentCard";
+import Text from "@/components/atoms/core/Text";
+import ContentCard from "@/components/atoms/core/ContentCard";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface ConversationListProps {

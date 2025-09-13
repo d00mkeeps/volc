@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { YStack, XStack, TextArea } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 
 interface DataCardProps {
   title: string;

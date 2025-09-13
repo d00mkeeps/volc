@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Stack, Spinner } from "tamagui";
 import { useAuth } from "../../../context/AuthContext";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
-import Text from "@/components/atoms/Text";
+import Input from "@/components/atoms/core/Input";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
 import { SystemMessage } from "../../atoms/SystemMessage";
 
 export function SignUpForm() {

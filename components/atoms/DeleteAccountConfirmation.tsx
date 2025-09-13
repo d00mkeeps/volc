@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Modal, Alert } from "react-native";
 import { YStack, XStack, ScrollView } from "tamagui";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/core/Button";
+import Input from "@/components/atoms/core/Input";
+import Text from "@/components/atoms/core/Text";
 import { userService } from "@/services/api/userService";
 
 interface DeleteAccountConfirmationProps {

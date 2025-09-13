@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { Image } from "expo-image";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { imageService } from "@/services/api/imageService";

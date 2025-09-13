@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Stack, YStack, XStack, Separator } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { X, Plus } from "@/assets/icons/IconMap";
 import SetRow from "./SetRow";
 import {

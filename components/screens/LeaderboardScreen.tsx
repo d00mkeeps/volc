@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { RefreshControl } from "react-native";
 import { YStack, XStack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
 import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";

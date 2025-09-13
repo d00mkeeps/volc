@@ -1,8 +1,8 @@
 import React from "react";
 import { YStack, XStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Input from "@/components/atoms/core/Input";
+import Button from "@/components/atoms/core/Button";
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 interface OnboardingSlide2Props {

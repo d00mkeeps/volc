@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { Trash2 } from "@/assets/icons/IconMap";
 interface ContentCardProps {
   title: string;
@@ -38,8 +38,8 @@ export default function ContentCard({
       borderRadius="$3"
       paddingHorizontal="$3"
       paddingVertical="$2"
-      borderWidth={1}
-      borderColor="transparent"
+      borderWidth={0.25}
+      borderColor="$primaryMuted"
       pressStyle={{
         borderColor: "$primary",
         backgroundColor: "$background",

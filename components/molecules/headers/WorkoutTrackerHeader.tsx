@@ -1,8 +1,8 @@
 // components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
 import { YStack, XStack, Circle, Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { Play, Pause, ChevronDown } from "@/assets/icons/IconMap";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 

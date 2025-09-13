@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";

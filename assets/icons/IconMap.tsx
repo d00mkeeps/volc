@@ -19,7 +19,8 @@ export type AppIconName =
   | "Home" // Add these new ones
   | "User"
   | "MessageCircle"
-  | "Trophy";
+  | "Trophy"
+  | "Pencil"; // Add this
 
 // Map your app's icon names to @expo/vector-icons
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
@@ -41,6 +42,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   User: "person-outline",
   MessageCircle: "chatbubble-outline",
   Trophy: "trophy-outline",
+  Pencil: "create-outline",
 };
 
 // Icon component with your app's API
@@ -112,4 +114,7 @@ export const MessageCircle = (props: Omit<AppIconProps, "name">) => (
 );
 export const Trophy = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Trophy" {...props} />
+);
+export const Pencil = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Pencil" {...props} />
 );

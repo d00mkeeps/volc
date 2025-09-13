@@ -1,8 +1,8 @@
 // components/molecules/ExerciseSearchInput.tsx
 import React, { useState, useEffect } from "react";
 import { YStack, Stack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Input from "@/components/atoms/Input";
+import Text from "@/components/atoms/core/Text";
+import Input from "@/components/atoms/core/Input";
 import { View, TouchableOpacity } from "react-native"; // Use native components
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";

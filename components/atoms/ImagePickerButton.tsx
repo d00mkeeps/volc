@@ -3,8 +3,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 import { Plus, RotateCw } from "@/assets/icons/IconMap";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { imageService } from "@/services/api/imageService";
 
 interface ImagePickerButtonProps {

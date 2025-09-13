@@ -1,7 +1,7 @@
 // /components/atoms/MetricInput.tsx
 import React, { useState } from "react";
 import { XStack } from "tamagui";
-import Input from "@/components/atoms/Input";
+import Input from "@/components/atoms/core/Input";
 import { WorkoutValidation } from "@/utils/validation";
 
 interface MetricInputProps {

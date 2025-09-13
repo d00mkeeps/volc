@@ -1,9 +1,9 @@
 import React from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { MessageList } from "../molecules/chat/MessageList";
-import { InputArea } from "../atoms/InputArea";
+import { InputArea } from "../atoms/chat/InputArea";
 import { Message } from "@/types";
 
 interface StreamingMessageState {

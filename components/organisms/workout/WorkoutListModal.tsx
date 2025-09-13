@@ -1,7 +1,7 @@
 import React from "react";
 import { YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import BaseModal from "@/components/atoms/BaseModal";
+import Text from "@/components/atoms/core/Text";
+import BaseModal from "@/components/atoms/core/BaseModal";
 import WorkoutList from "@/components/molecules/workout/WorkoutList";
 
 interface WorkoutListModalProps {

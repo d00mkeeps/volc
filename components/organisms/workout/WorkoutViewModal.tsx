@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { YStack, XStack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import BaseModal from "@/components/atoms/BaseModal";
+import Text from "@/components/atoms/core/Text";
+import BaseModal from "@/components/atoms/core/BaseModal";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
 

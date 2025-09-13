@@ -13,7 +13,7 @@ import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/workout/WorkoutTracker";
 import { Keyboard } from "react-native";
-import FloatingActionButton from "@/components/atoms/buttons/FloatingActionButton";
+import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
 import TemplateSelector from "@/components/molecules/workout/TemplateModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";

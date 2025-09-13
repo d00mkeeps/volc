@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { YStack, XStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { ArrowLeft } from "@/assets/icons/IconMap";
 import { ChatInterface } from "./ChatInterface";
 import { useMessaging } from "@/hooks/chat/useMessaging";

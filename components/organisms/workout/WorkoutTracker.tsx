@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import { YStack, XStack, Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Animated, {
   useAnimatedStyle,
@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
-import GradientBlur from "@/components/atoms/GradientBlur";
+import GradientBlur from "@/components/atoms/core/GradientBlur";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 import { Settings } from "@/assets/icons/IconMap";
 interface HeaderProps {
   greeting?: string;

@@ -1,8 +1,8 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
 import { XStack } from "tamagui";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/core/Input";
+import Button from "@/components/atoms/core/Button";
 import { Send } from "@/assets/icons/IconMap";
 interface InputAreaProps {
   disabled?: boolean;

@@ -1,7 +1,7 @@
 // /components/atoms/Select.tsx
 import React, { useState } from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 
 interface SelectOption {
   value: string;

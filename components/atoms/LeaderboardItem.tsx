@@ -1,6 +1,6 @@
 import React from "react";
 import { YStack, XStack, Circle } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
 
 interface LeaderboardItemProps {

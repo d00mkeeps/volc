@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Platform, KeyboardAvoidingView } from "react-native";
 import { YStack, XStack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
-import BaseModal from "../../atoms/BaseModal";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
+import BaseModal from "../../atoms/core/BaseModal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
 import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";

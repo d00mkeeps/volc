@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, XStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { Plus } from "@/assets/icons/IconMap";
 interface NewSetButtonProps {
   isActive: boolean;

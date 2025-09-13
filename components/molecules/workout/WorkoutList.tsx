@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Stack, ScrollView } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { useRouter } from "expo-router";
-import ContentCard from "@/components/atoms/ContentCard";
+import ContentCard from "@/components/atoms/core/ContentCard";
 import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 

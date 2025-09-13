@@ -1,7 +1,7 @@
 import React from "react";
 import { YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 
 interface OnboardingSlide3Props {
   firstName: string;

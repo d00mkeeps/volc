@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { XStack, Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
 import { Trash2 } from "@/assets/icons/IconMap";
 import * as Haptics from "expo-haptics";
-import MetricInput from "@/components/atoms/MetricInput";
+import MetricInput from "@/components/atoms/workout/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
-import DurationInput from "@/components/atoms/DurationInput";
+import DurationInput from "@/components/atoms/workout/DurationInput";
 
 interface SetRowProps {
   set: WorkoutExerciseSet;

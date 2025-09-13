@@ -1,8 +1,8 @@
 import { PlusCircle, Settings, Play, Pause } from "@/assets/icons/IconMap";
 import React from "react";
 import { Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Button from "@/components/atoms/core/Button";
 
 interface ActionButtonProps {
   icon?: string;

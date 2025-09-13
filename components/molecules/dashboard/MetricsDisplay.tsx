@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 
 interface ActualMetrics {
   workouts: number;

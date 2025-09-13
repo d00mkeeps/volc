@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { TextArea, XStack, YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
+import Text from "@/components/atoms/core/Text";
+import Input from "@/components/atoms/core/Input";
+import Button from "@/components/atoms/core/Button";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import ImagePickerButton from "../../atoms/buttons/ImagePickerButton";
+import ImagePickerButton from "../../atoms/ImagePickerButton";
 import WorkoutImage from "../../molecules/workout/WorkoutImage";
 
 interface WorkoutSummarySlideProps {

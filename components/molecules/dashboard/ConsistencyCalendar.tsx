@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ScrollView, Stack, XStack, YStack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 
 interface DayData {
   day: number;

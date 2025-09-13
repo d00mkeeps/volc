@@ -1,6 +1,6 @@
 import React from "react";
 import { XStack, Stack } from "tamagui";
-import Text from "@/components/atoms/Text";
+import Text from "@/components/atoms/core/Text";
 import { ExerciseDefinition } from "@/types/workout";
 
 interface SetHeaderProps {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { XStack } from "tamagui";
-import Text from "@/components/atoms/Text";
-import Input from "@/components/atoms/Input";
+import Text from "@/components/atoms/core/Text";
+import Input from "@/components/atoms/core/Input";
 import { WorkoutValidation } from "@/utils/validation";
 
 interface DurationInputProps {
