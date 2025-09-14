@@ -106,7 +106,7 @@ export default function ProfileHeader({
               lineHeight={20}
               ellipsizeMode="tail"
             >
-              {editedBio}
+              {userProfile.bio || "Tell us about yourself..."}
             </Text>
           )}
         </YStack>

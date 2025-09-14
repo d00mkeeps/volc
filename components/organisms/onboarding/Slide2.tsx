@@ -1,111 +1,224 @@
-import React from "react";
-import { YStack, XStack } from "tamagui";
+import React, { useState, useEffect } from "react";
+import { YStack, TextArea, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import Input from "@/components/atoms/core/Input";
 import Button from "@/components/atoms/core/Button";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import Select from "@/components/atoms/core/Select";
+import SystemMessage from "@/components/atoms/SystemMessage";
 
-interface OnboardingSlide2Props {
-  goals: string;
-  setGoals: (value: string) => void;
-  currentStats: string;
-  setCurrentStats: (value: string) => void;
-  onContinue: () => void;
-  canContinue: boolean;
+const fitnessLevelOptions = [
+  { value: "beginner", label: "Beginner: under 1 year" },
+  { value: "intermediate", label: "Intermediate: 1-5 years" },
+  { value: "advanced", label: "Advanced: 5-10 years" },
+  { value: "elite", label: "Elite: 10+ years" },
+];
+
+interface Step2Props {
+  onNext: (data: { bio: string; goals: string; fitnessLevel: string }) => void;
 }
 
-export function OnboardingSlide2({
-  goals,
-  setGoals,
-  currentStats,
-  setCurrentStats,
-  onContinue,
-  canContinue,
-}: OnboardingSlide2Props) {
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+interface ValidationState {
+  goals: { isValid: boolean; message: string };
+  fitnessLevel: { isValid: boolean; message: string }; // Add this line
+}
 
-  const handleGoalsChange = (value: string) => {
-    if (value.length <= 250) {
-      setGoals(value);
+export default function OnboardingStep2({ onNext }: Step2Props) {
+  const [bio, setBio] = useState("");
+  const [goals, setGoals] = useState("");
+  const [fitnessLevel, setFitnessLevel] = useState("");
+  const [showSystemMessage, setShowSystemMessage] = useState(false);
+  const [systemMessage, setSystemMessage] = useState("");
+
+  const [validation, setValidation] = useState<ValidationState>({
+    goals: { isValid: true, message: "" },
+    fitnessLevel: { isValid: true, message: "" }, // Add this line
+  });
+
+  // Auto-hide system message after 3 seconds
+  useEffect(() => {
+    if (showSystemMessage) {
+      const timer = setTimeout(() => {
+        setShowSystemMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSystemMessage]);
+
+  // /components/onboarding/OnboardingStep2.validateField
+  const validateField = (
+    field: keyof ValidationState,
+    value: string
+  ): { isValid: boolean; message: string } => {
+    switch (field) {
+      case "fitnessLevel":
+        if (!value.trim()) {
+          return {
+            isValid: false,
+            message: "Please select your experience level",
+          };
+        }
+        return { isValid: true, message: "" };
+      case "goals":
+        if (!value.trim()) {
+          return { isValid: false, message: "Fitness goals are required" };
+        }
+        if (value.trim().length < 10) {
+          return {
+            isValid: false,
+            message: "Please provide more detail (at least 10 characters)",
+          };
+        }
+        return { isValid: true, message: "" };
+      default:
+        return { isValid: true, message: "" };
     }
   };
 
-  const handleStatsChange = (value: string) => {
-    if (value.length <= 250) {
-      setCurrentStats(value);
+  // /components/onboarding/OnboardingStep2.handleBlur
+  const handleBlur = (field: keyof ValidationState, value: string) => {
+    const fieldValidation = validateField(field, value);
+    setValidation((prev) => ({
+      ...prev,
+      [field]: fieldValidation,
+    }));
+  };
+
+  // /components/onboarding/OnboardingStep2.handleContinue
+  const handleContinue = () => {
+    // Validate goals and fitness level
+    const goalsValidation = validateField("goals", goals);
+    const fitnessLevelValid = fitnessLevel.length > 0;
+
+    const newValidation: ValidationState = {
+      goals: goalsValidation,
+      fitnessLevel: {
+        isValid: false,
+        message: "",
+      },
+    };
+
+    setValidation(newValidation);
+
+    // Check if form is valid
+    if (goalsValidation.isValid && fitnessLevelValid) {
+      onNext({
+        bio: bio.trim(),
+        goals: goals.trim(),
+        fitnessLevel,
+      });
+    } else {
+      // Show error message
+      const invalidFields = [];
+
+      if (!goalsValidation.isValid) invalidFields.push("fitness goals");
+      if (!fitnessLevelValid) invalidFields.push("experience level");
+
+      const message = `Please fix: ${invalidFields.join(", ")}`;
+      setSystemMessage(message);
+      setShowSystemMessage(true);
     }
   };
 
-  const goalsValid = goals.trim().length >= 10;
+  const canContinue = goals.trim().length >= 10 && fitnessLevel.length > 0;
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <YStack gap="$4" paddingBottom="$4">
-        <Text size="medium" fontWeight="bold">
-          Tell us about your goals
+    <YStack flex={1} gap="$4">
+      {/* Header - matching Step1 pattern */}
+      <YStack gap="$2" alignItems="center">
+        <Text size="medium" fontWeight="600" color="$primary">
+          Almost there..
         </Text>
+      </YStack>
 
-        <YStack gap="$2">
-          <Text size="medium" fontWeight="600">
-            What are your fitness goals? *
+      {/* System Message */}
+      {showSystemMessage && (
+        <YStack>
+          <SystemMessage message={systemMessage} type="error" />
+        </YStack>
+      )}
+
+      {/* Form Content */}
+      <YStack flex={1} gap="$6">
+        {/* Bio Section */}
+        <YStack gap="$3">
+          <Text size="medium" fontWeight="600" color="$color">
+            Short intro about yourself
           </Text>
-          <Input
-            value={goals}
-            onChangeText={handleGoalsChange}
-            placeholder="e.g., Build muscle, lose weight, get stronger..."
-            placeholderTextColor="$textMuted"
-            size="$4"
-            multiline
-            minHeight={80}
-            borderColor={goals && !goalsValid ? "$red8" : "$borderColor"}
-            onSubmitEditing={dismissKeyboard}
-          />
-          <XStack justifyContent="space-between">
-            <Text
-              size="medium"
-              color={goals && !goalsValid ? "$red8" : "$textMuted"}
+          <YStack gap="$2">
+            <TextArea
+              value={bio}
+              onChangeText={setBio}
+              placeholder="I like sunshine ☀️ and puppies 🐶"
+              minHeight={80}
+              maxLength={250}
+              borderColor="$borderColor"
+            />
+            <Text size="small" color="$textSoft" alignSelf="flex-end">
+              {bio.length}/250
+            </Text>
+          </YStack>
+        </YStack>
+        {/* Goals Section - required */}
+        <YStack gap="$3">
+          <Text size="medium" fontWeight="600" color="$color">
+            What are your fitness goals? (Be specific!)
+          </Text>
+          <YStack>
+            <TextArea
+              value={goals}
+              onChangeText={setGoals}
+              onBlur={() => handleBlur("goals", goals)}
+              placeholder="Build muscle, lose weight, be active..."
+              minHeight={100}
+              maxLength={250}
+              borderColor={!validation.goals.isValid ? "$red9" : "$borderColor"}
+            />
+            <XStack
+              justifyContent="space-between"
+              alignItems="center"
+              marginTop="$1"
             >
-              {goals && !goalsValid ? "At least 10 characters" : ""}
-            </Text>
-            <Text size="medium" color="$textMuted">
-              {goals.length}/250
-            </Text>
-          </XStack>
+              {!validation.goals.isValid && (
+                <Text size="medium" color="$red9">
+                  {validation.goals.message}
+                </Text>
+              )}
+              <Text size="small" color="$textSoft" marginLeft="auto">
+                {goals.length}/250
+              </Text>
+            </XStack>
+          </YStack>
         </YStack>
 
+        {/* Fitness Level - required select */}
         <YStack gap="$2">
-          <Text size="medium" fontWeight="600">
-            Current fitness level (Optional)
+          <Text size="medium" fontWeight="600" color="$color">
+            How long have you been consistently training?
           </Text>
-          <Input
-            value={currentStats}
-            onChangeText={handleStatsChange}
-            placeholder="Tell us about your current training experience..."
-            placeholderTextColor="$textMuted"
-            size="$4"
-            multiline
-            minHeight={100}
-            onSubmitEditing={dismissKeyboard}
-          />
-          <XStack justifyContent="flex-end">
-            <Text size="medium" color="$textMuted">
-              {currentStats.length}/250
+          <Stack zIndex={1}>
+            <Select
+              options={fitnessLevelOptions}
+              value={fitnessLevel}
+              placeholder="Select your experience level"
+              onValueChange={setFitnessLevel}
+            />
+          </Stack>
+          {!validation.fitnessLevel.isValid && (
+            <Text size="medium" color="$red9" marginTop="$1">
+              {validation.fitnessLevel.message}
             </Text>
-          </XStack>
+          )}
         </YStack>
-
+        {/* Continue Button */}
         <Button
-          size="$4"
-          backgroundColor={canContinue ? "$primary" : "$gray6"}
-          onPress={onContinue}
-          disabled={!canContinue}
-          marginTop="$2"
+          onPress={handleContinue}
+          backgroundColor="$primary"
+          color="white"
+          size="large"
+          zIndex={-1}
         >
           Continue
         </Button>
       </YStack>
-    </TouchableWithoutFeedback>
+    </YStack>
   );
 }

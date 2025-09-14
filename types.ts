@@ -143,6 +143,7 @@ export interface UserProfile {
   goals: any;
   current_stats: any;
   age: number | null;
+  bio: string | null;
   user_id: number;
   first_name: string | null;
   last_name: string | null;

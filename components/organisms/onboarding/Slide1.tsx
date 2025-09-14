@@ -1,212 +1,310 @@
-import React from "react";
-import { YStack, XStack, Switch } from "tamagui";
+import React, { useState, useEffect } from "react";
+import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import Input from "@/components/atoms/core/Input";
 import Button from "@/components/atoms/core/Button";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import Input from "@/components/atoms/core/Input";
+import SystemMessage from "@/components/atoms/SystemMessage";
 
-interface OnboardingSlide1Props {
-  firstName: string;
-  setFirstName: (value: string) => void;
-  lastName: string;
-  setLastName: (value: string) => void;
-  ageGroup: string;
-  setAgeGroup: (value: string) => void;
-  isImperial: boolean;
-  setIsImperial: (value: boolean) => void;
-  instagramUsername: string;
-  setInstagramUsername: (value: string) => void;
-  onContinue: () => void;
-  canContinue: boolean;
+interface Step1Props {
+  onNext: (data: {
+    firstName: string;
+    lastName: string;
+    age: string;
+    units: "metric" | "imperial";
+  }) => void;
 }
 
-export function OnboardingSlide1({
-  firstName,
-  setFirstName,
-  lastName,
-  setLastName,
-  ageGroup,
-  setAgeGroup,
-  isImperial,
-  setIsImperial,
-  instagramUsername,
-  setInstagramUsername,
-  onContinue,
-  canContinue,
-}: OnboardingSlide1Props) {
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+interface ValidationState {
+  firstName: { isValid: boolean; message: string };
+  lastName: { isValid: boolean; message: string };
+  age: { isValid: boolean; message: string };
+}
 
-  const handleInstagramChange = (value: string) => {
-    // Remove any existing @ and add it back, limit length
-    const cleanValue = value.replace(/^@/, "").toLowerCase();
-    if (cleanValue.length <= 30) {
-      // Instagram username limit
-      setInstagramUsername(cleanValue ? "@" + cleanValue : "");
+export default function OnboardingStep1({ onNext }: Step1Props) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [units, setUnits] = useState<"metric" | "imperial">("imperial");
+  const [showSystemMessage, setShowSystemMessage] = useState(false);
+  const [systemMessage, setSystemMessage] = useState("");
+
+  const [validation, setValidation] = useState<ValidationState>({
+    firstName: { isValid: true, message: "" },
+    lastName: { isValid: true, message: "" },
+    age: { isValid: true, message: "" },
+  });
+
+  // Auto-hide system message after 3 seconds (increased from 1s for debugging)
+  useEffect(() => {
+    if (showSystemMessage) {
+      const timer = setTimeout(() => {
+        setShowSystemMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [showSystemMessage]);
 
+  // Handle age input to only allow numbers
   const handleAgeChange = (value: string) => {
-    // Only allow numbers and limit to 3 digits
+    // Only allow numbers
     const numericValue = value.replace(/[^0-9]/g, "");
-    if (numericValue.length <= 3) {
-      setAgeGroup(numericValue);
+    setAge(numericValue);
+  };
+
+  const validateField = (
+    field: keyof ValidationState,
+    value: string
+  ): { isValid: boolean; message: string } => {
+    switch (field) {
+      case "firstName":
+      case "lastName":
+        if (!value.trim()) {
+          return { isValid: false, message: "This field is required" };
+        }
+        if (value.trim().length < 2) {
+          return { isValid: false, message: "Must be at least 2 characters" };
+        }
+        if (value.trim().length > 50) {
+          return { isValid: false, message: "Must be less than 50 characters" };
+        }
+        return { isValid: true, message: "" };
+      case "age":
+        if (!value.trim()) {
+          return { isValid: false, message: "Age is required" };
+        }
+        const ageNum = parseInt(value);
+        if (isNaN(ageNum) || ageNum < 16 || ageNum > 120) {
+          // Changed from 100 to 120
+          return {
+            isValid: false,
+            message: "Please enter a valid age (16-120)", // Updated message
+          };
+        }
+        return { isValid: true, message: "" };
+
+      default:
+        return { isValid: true, message: "" };
     }
   };
 
-  const handleFirstNameChange = (value: string) => {
-    if (value.length <= 50) {
-      setFirstName(value);
-    }
+  const handleBlur = (field: keyof ValidationState, value: string) => {
+    const fieldValidation = validateField(field, value);
+    setValidation((prev) => ({
+      ...prev,
+      [field]: fieldValidation,
+    }));
   };
 
-  const handleLastNameChange = (value: string) => {
-    if (value.length <= 50) {
-      setLastName(value);
-    }
+  const isFormValid = () => {
+    const firstNameValid = validateField("firstName", firstName).isValid;
+    const lastNameValid = validateField("lastName", lastName).isValid;
+    const ageValid = validateField("age", age).isValid;
+
+    return firstNameValid && lastNameValid && ageValid;
   };
 
-  // Validation states
-  const firstNameValid = firstName.trim().length >= 2;
-  const lastNameValid = lastName.trim().length >= 2;
-  const ageValid = parseInt(ageGroup) >= 13 && parseInt(ageGroup) <= 100;
+  const handleContinue = () => {
+    console.log("Continue pressed"); // Debug log
+
+    // Always show validation errors when Continue is pressed
+    const firstNameValidation = validateField("firstName", firstName);
+    const lastNameValidation = validateField("lastName", lastName);
+    const ageValidation = validateField("age", age);
+
+    const newValidation: ValidationState = {
+      firstName: firstNameValidation,
+      lastName: lastNameValidation,
+      age: ageValidation,
+    };
+
+    setValidation(newValidation);
+
+    // Check if form is valid
+    if (
+      firstNameValidation.isValid &&
+      lastNameValidation.isValid &&
+      ageValidation.isValid
+    ) {
+      onNext({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        age: age.trim(),
+        units,
+      });
+    } else {
+      // Show error message
+      const invalidFields = [];
+
+      if (!firstNameValidation.isValid) invalidFields.push("first name");
+      if (!lastNameValidation.isValid) invalidFields.push("last name");
+      if (!ageValidation.isValid) invalidFields.push("age");
+
+      const message = `Please fix: ${invalidFields.join(", ")}`;
+      console.log("Showing system message:", message); // Debug log
+
+      setSystemMessage(message);
+      setShowSystemMessage(true);
+    }
+  };
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <YStack gap="$4" paddingBottom="$4">
-        <YStack gap="$2">
-          <Text size="medium" fontWeight="bold" color="$primary">
-            Welcome to Volc!
-          </Text>
-          <Text size="medium" color="$textMuted">
-            Let's get your profile set up
+    <YStack flex={1} gap="$4">
+      <Text size="large" fontWeight="600" color="$primary">
+        Welcome to Volc!
+      </Text>
+
+      {/* System Message - moved to top and always rendered for debugging */}
+      {showSystemMessage && (
+        <YStack>
+          <SystemMessage message={systemMessage} type="error" />
+          <Text size="small" color="$textSoft">
+            Debug: Message is showing
           </Text>
         </YStack>
+      )}
 
-        <YStack gap="$2">
-          <Text size="medium" fontWeight="600">
+      {/* Form Content */}
+      <YStack flex={1} gap="$6">
+        {/* Name Section */}
+        <YStack gap="$3" paddingBottom="$3">
+          <Text size="large" fontWeight="600" color="$color">
             Name
           </Text>
-          <XStack gap="$3">
+          <XStack gap="$3" justifyContent="flex-start">
             <YStack flex={1}>
               <Input
                 value={firstName}
-                onChangeText={handleFirstNameChange}
+                onChangeText={setFirstName}
+                onBlur={() => handleBlur("firstName", firstName)}
                 placeholder="First"
-                placeholderTextColor="$textMuted"
-                size="$4"
+                size="medium"
+                width="80%"
+                alignSelf="flex-start"
                 borderColor={
-                  firstName && !firstNameValid ? "$red8" : "$borderColor"
+                  !validation.firstName.isValid ? "$red9" : "$borderSoft"
                 }
-                onSubmitEditing={dismissKeyboard}
               />
-              {firstName && !firstNameValid && (
-                <Text size="medium" color="$red8" marginTop="$1">
-                  At least 2 characters
+              {!validation.firstName.isValid && (
+                <Text
+                  size="medium"
+                  color="$red9"
+                  position="absolute"
+                  top="100%"
+                  left={0}
+                  marginTop="$1"
+                  zIndex={1}
+                >
+                  {validation.firstName.message}
                 </Text>
               )}
             </YStack>
             <YStack flex={1}>
               <Input
                 value={lastName}
-                onChangeText={handleLastNameChange}
+                onChangeText={setLastName}
+                onBlur={() => handleBlur("lastName", lastName)}
                 placeholder="Last"
-                placeholderTextColor="$textMuted"
-                size="$4"
+                size="medium"
+                width="80%"
+                alignSelf="flex-start"
                 borderColor={
-                  lastName && !lastNameValid ? "$red8" : "$borderColor"
+                  !validation.lastName.isValid ? "$red9" : "$borderSoft"
                 }
-                onSubmitEditing={dismissKeyboard}
               />
-              {lastName && !lastNameValid && (
-                <Text size="medium" color="$red8" marginTop="$1">
-                  At least 2 characters
+              {!validation.lastName.isValid && (
+                <Text
+                  size="medium"
+                  color="$red9"
+                  position="absolute"
+                  top="100%"
+                  left={0}
+                  marginTop="$1"
+                  zIndex={1}
+                >
+                  {validation.lastName.message}
                 </Text>
               )}
             </YStack>
           </XStack>
         </YStack>
 
-        <XStack gap="$4" alignItems="flex-start">
-          <YStack gap="$2" flex={0.4}>
-            <Text size="medium" fontWeight="600">
-              Age
-            </Text>
+        {/* Age Section */}
+        <YStack gap="$3" paddingTop="$3">
+          <Text size="large" fontWeight="600" color="$color">
+            Age
+          </Text>
+          <YStack>
             <Input
-              value={ageGroup}
+              value={age}
               onChangeText={handleAgeChange}
+              onBlur={() => handleBlur("age", age)}
               placeholder="25"
-              placeholderTextColor="$textMuted"
-              size="$4"
               keyboardType="numeric"
-              borderColor={ageGroup && !ageValid ? "$red8" : "$borderColor"}
-              onSubmitEditing={dismissKeyboard}
+              size="medium"
+              maxLength={3}
+              width={80}
+              borderColor={!validation.age.isValid ? "$red9" : "$borderSoft"}
+              alignSelf="flex-start"
             />
-            {ageGroup && !ageValid && (
-              <Text size="medium" color="$red8">
-                13-100 years
+            {!validation.age.isValid && (
+              <Text
+                size="medium"
+                color="$red9"
+                position="absolute"
+                top="100%"
+                left={0}
+                marginTop="$1"
+                zIndex={1}
+              >
+                {validation.age.message}
               </Text>
             )}
           </YStack>
-
-          <YStack gap="$2" flex={0.6} paddingTop="$6">
-            <Text size="medium" fontWeight="600">
-              Units
-            </Text>
-            <XStack alignItems="center" gap="$3" justifyContent="center">
-              <Text
-                color={!isImperial ? "$primary" : "$textMuted"}
-                fontWeight={!isImperial ? "600" : "400"}
-              >
-                kg/km
-              </Text>
-              <Switch
-                checked={isImperial}
-                onCheckedChange={setIsImperial}
-                backgroundColor={isImperial ? "$primary" : "$gray6"}
-              >
-                <Switch.Thumb backgroundColor="white" />
-              </Switch>
-              <Text
-                color={isImperial ? "$primary" : "$textMuted"}
-                fontWeight={isImperial ? "600" : "400"}
-              >
-                lb/mi
-              </Text>
-            </XStack>
-          </YStack>
-        </XStack>
-
-        <YStack gap="$2">
-          <Text size="medium" fontWeight="600">
-            Instagram Username (Optional)
-          </Text>
-          <Input
-            value={instagramUsername}
-            onChangeText={handleInstagramChange}
-            placeholder="@username"
-            placeholderTextColor="$textMuted"
-            size="$4"
-            autoCapitalize="none"
-            autoCorrect={false}
-            onSubmitEditing={dismissKeyboard}
-          />
-          <Text size="medium" color="$textMuted">
-            {instagramUsername.length}/31 characters
-          </Text>
         </YStack>
 
-        <Button
-          size="$4"
-          backgroundColor={canContinue ? "$primary" : "$gray6"}
-          onPress={onContinue}
-          disabled={!canContinue}
-          marginTop="$2"
-        >
-          Continue
-        </Button>
+        {/* Units Section */}
+        <YStack gap="$3">
+          <Text size="large" fontWeight="600" color="$color">
+            Units
+          </Text>
+          <XStack alignItems="center" gap="$4">
+            <Button
+              size="$2"
+              backgroundColor={
+                units === "metric" ? "$primary" : "$backgroundSoft"
+              }
+              color={units === "metric" ? "white" : "$textSoft"}
+              onPress={() => setUnits("metric")}
+              borderRadius="$3"
+              paddingHorizontal="$4"
+            >
+              kg/km
+            </Button>
+            <Button
+              size="$2"
+              backgroundColor={
+                units === "imperial" ? "$primary" : "$backgroundSoft"
+              }
+              color={units === "imperial" ? "white" : "$textSoft"}
+              onPress={() => setUnits("imperial")}
+              borderRadius="$3"
+              paddingHorizontal="$4"
+            >
+              lb/mi
+            </Button>
+          </XStack>
+        </YStack>
       </YStack>
-    </TouchableWithoutFeedback>
+
+      {/* Continue Button - removed disabled state for debugging */}
+      <Button
+        onPress={handleContinue}
+        backgroundColor="$primary"
+        color="white"
+        size="large"
+      >
+        Continue
+      </Button>
+    </YStack>
   );
 }

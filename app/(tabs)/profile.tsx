@@ -9,7 +9,6 @@ import WorkoutListModal from "@/components/organisms/workout/WorkoutListModal";
 import WorkoutList from "@/components/molecules/workout/WorkoutList";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { UserProfile } from "@/types";
 
 const PLACEHOLDER_BIO =
   "This is my fitness journey! I love working out and staying healthy. Always pushing myself to be better than yesterday. 💪";
@@ -38,15 +37,14 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (isEditMode) {
       // Initialize bio
-      setEditedBio(PLACEHOLDER_BIO);
-      // Initialize goals
+      setEditedBio(userProfile?.bio || PLACEHOLDER_BIO); // Initialize goals
       const currentGoals =
         userProfile?.goals?.content ||
         Object.values(userProfile?.goals || {}).join("\n\n") ||
         "";
       setEditedGoals(currentGoals);
     }
-  }, [isEditMode, userProfile?.goals]);
+  }, [isEditMode, userProfile?.goals, userProfile?.bio]);
 
   const handleToggleEdit = () => {
     setIsEditMode(!isEditMode);
@@ -54,11 +52,9 @@ export default function ProfileScreen() {
 
   const handleSaveAll = async () => {
     try {
-      // TODO: Save bio when backend supports it
-      console.log("Would save bio:", editedBio);
-
-      // Save goals
+      // Save both bio and goals
       await updateProfile({
+        bio: editedBio.trim(), // Remove the TODO - actually save the bio!
         goals: editedGoals.trim() ? { content: editedGoals.trim() } : {},
       });
 

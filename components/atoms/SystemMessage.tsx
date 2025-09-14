@@ -1,4 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import React from "react";
+import { YStack } from "tamagui";
+import Text from "@/components/atoms/core/Text";
 
 type MessageType = "error" | "success" | "info";
 
@@ -8,46 +10,55 @@ interface SystemMessageProps {
 }
 
 export function SystemMessage({ message, type }: SystemMessageProps) {
-  const styles = getStyles(type);
+  const getBackgroundColor = (type: MessageType) => {
+    switch (type) {
+      case "error":
+        return "#ffebee";
+      case "success":
+        return "#e8f5e8";
+      case "info":
+        return "#e3f2fd";
+    }
+  };
+
+  const getBorderColor = (type: MessageType) => {
+    switch (type) {
+      case "error":
+        return "#ffcdd2";
+      case "success":
+        return "#c8e6c9";
+      case "info":
+        return "#bbdefb";
+    }
+  };
+
+  const getTextColor = (type: MessageType) => {
+    switch (type) {
+      case "error":
+        return "#c62828";
+      case "success":
+        return "#2e7d32";
+      case "info":
+        return "#1565c0";
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>
+    <YStack
+      backgroundColor={getBackgroundColor(type)}
+      padding="$3"
+      borderRadius="$3"
+      marginBottom="$4"
+      borderWidth={1}
+      borderColor={getBorderColor(type)}
+    >
+      <Text size="small" color={getTextColor(type)}>
         {type === "success" && "✅ "}
         {type === "error" && "❌ "}
         {message}
       </Text>
-    </View>
+    </YStack>
   );
 }
 
-const getStyles = (type: MessageType) =>
-  StyleSheet.create({
-    container: {
-      backgroundColor:
-        type === "error"
-          ? "#ffebee"
-          : type === "success"
-          ? "#e8f5e8"
-          : "#e3f2fd",
-      padding: 12,
-      borderRadius: 8,
-      marginBottom: 16,
-      borderWidth: 1,
-      borderColor:
-        type === "error"
-          ? "#ffcdd2"
-          : type === "success"
-          ? "#c8e6c9"
-          : "#bbdefb",
-    },
-    text: {
-      color:
-        type === "error"
-          ? "#c62828"
-          : type === "success"
-          ? "#2e7d32"
-          : "#1565c0",
-      fontSize: 14,
-    },
-  });
+export default SystemMessage;

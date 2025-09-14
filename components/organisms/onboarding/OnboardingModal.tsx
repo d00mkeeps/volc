@@ -1,3 +1,4 @@
+// /components/organisms/onboarding/OnboardingModal.tsx
 import React, { useState } from "react";
 import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -5,8 +6,8 @@ import Button from "@/components/atoms/core/Button";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import BaseModal from "../../atoms/core/BaseModal";
 import { useUserStore } from "@/stores/userProfileStore";
-import { OnboardingSlide1 } from "./Slide1";
-import { OnboardingSlide2 } from "./Slide2";
+import OnboardingStep1 from "./Slide1";
+import OnboardingStep2 from "./Slide2";
 import { OnboardingSlide3 } from "./Slide3";
 
 interface OnboardingModalProps {
@@ -24,13 +25,16 @@ export function OnboardingModal({
   // Slide 1 - Basic Info
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [ageGroup, setAgeGroup] = useState("");
-  const [isImperial, setIsImperial] = useState(true);
-  const [instagramUsername, setInstagramUsername] = useState("");
+  const [age, setAge] = useState("");
+  const [units, setUnits] = useState<"metric" | "imperial">("imperial");
 
-  // Slide 2 - Goals
+  // Slide 2 - Personal Info
+  const [bio, setBio] = useState("");
   const [goals, setGoals] = useState("");
-  const [currentStats, setCurrentStats] = useState("");
+  const [fitnessLevel, setFitnessLevel] = useState("");
+
+  // Slide 3 - Instagram
+  const [instagramUsername, setInstagramUsername] = useState("");
 
   const { updateProfile } = useUserStore();
 
@@ -49,41 +53,57 @@ export function OnboardingModal({
       firstName.trim().length <= 50 &&
       lastName.trim() &&
       lastName.trim().length >= 2 &&
-      lastName.trim().length <= 50 &&
-      ageGroup.trim() &&
-      parseInt(ageGroup) >= 13 &&
-      parseInt(ageGroup) <= 100
+      lastName.trim().length <= 50
   );
 
   const canContinueSlide2 = Boolean(
-    goals.trim() && goals.trim().length >= 10 && goals.trim().length <= 250
+    goals.trim() &&
+      goals.trim().length >= 10 &&
+      goals.trim().length <= 250 &&
+      fitnessLevel.length > 0
   );
 
-  const handleSlide1Continue = () => {
-    if (canContinueSlide1) {
-      setCurrentSlide(2);
-    }
+  const handleSlide1Continue = (data: {
+    firstName: string;
+    lastName: string;
+    age: string;
+    units: "metric" | "imperial";
+  }) => {
+    setFirstName(data.firstName);
+    setLastName(data.lastName);
+    setAge(data.age);
+    setUnits(data.units);
+    setCurrentSlide(2);
   };
 
-  const handleSlide2Continue = () => {
-    if (canContinueSlide2) {
-      setCurrentSlide(3);
-    }
+  const handleSlide2Continue = (data: {
+    bio: string;
+    goals: string;
+    fitnessLevel: string;
+  }) => {
+    setBio(data.bio);
+    setGoals(data.goals);
+    setFitnessLevel(data.fitnessLevel);
+    setCurrentSlide(3);
   };
 
-  const handleComplete = async () => {
+  const handleComplete = async (data: { instagramUsername: string }) => {
+    setInstagramUsername(data.instagramUsername);
+
+    const cleanInstagramUsername = data.instagramUsername
+      .replace(/^@/, "")
+      .trim();
+
     try {
-      // Save the profile data
       await updateProfile({
         first_name: firstName,
         last_name: lastName,
-        age: parseInt(ageGroup), // Changed from age_group
-        is_imperial: isImperial,
-        instagram_username: instagramUsername.startsWith("@")
-          ? instagramUsername.substring(1)
-          : instagramUsername || null,
-        goals: { primary: goals },
-        current_stats: { notes: currentStats },
+        age: age ? parseInt(age) : null,
+        is_imperial: units === "imperial",
+        bio: bio || null,
+        goals: { content: goals },
+        current_stats: fitnessLevel,
+        instagram_username: cleanInstagramUsername || null, // Store without @ symbol
       });
 
       onComplete();
@@ -91,18 +111,17 @@ export function OnboardingModal({
       console.error("Failed to save onboarding data:", error);
     }
   };
-
-  // Adjust height based on current slide - refined heights
+  // Adjust height based on current slide
   const getModalHeight = () => {
     switch (currentSlide) {
       case 1:
-        return 58; // Slide 1 has multiple fields but not too many
+        return 55; // Basic info form
       case 2:
-        return 55; // Slide 2 has text areas
+        return 65; // Longer form with bio, goals, select
       case 3:
-        return 22; // Slide 3 is minimal
+        return 25; // Instagram input screen
       default:
-        return 68;
+        return 60;
     }
   };
 
@@ -112,7 +131,7 @@ export function OnboardingModal({
       onClose={handleClose}
       widthPercent={95}
       heightPercent={getModalHeight()}
-      topOffset={-100} // Shift up by 80 points
+      topOffset={-100}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -120,30 +139,10 @@ export function OnboardingModal({
       >
         <YStack flex={1} padding="$4">
           {currentSlide === 1 && (
-            <OnboardingSlide1
-              firstName={firstName}
-              setFirstName={setFirstName}
-              lastName={lastName}
-              setLastName={setLastName}
-              ageGroup={ageGroup}
-              setAgeGroup={setAgeGroup}
-              isImperial={isImperial}
-              setIsImperial={setIsImperial}
-              instagramUsername={instagramUsername}
-              setInstagramUsername={setInstagramUsername}
-              onContinue={handleSlide1Continue}
-              canContinue={canContinueSlide1}
-            />
+            <OnboardingStep1 onNext={handleSlide1Continue} />
           )}
           {currentSlide === 2 && (
-            <OnboardingSlide2
-              goals={goals}
-              setGoals={setGoals}
-              currentStats={currentStats}
-              setCurrentStats={setCurrentStats}
-              onContinue={handleSlide2Continue}
-              canContinue={canContinueSlide2}
-            />
+            <OnboardingStep2 onNext={handleSlide2Continue} />
           )}
           {currentSlide === 3 && (
             <OnboardingSlide3

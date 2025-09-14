@@ -42,6 +42,8 @@ class UserProfileService(BaseDBService):
                 user_profile["preferences"] = profile_data["preferences"]
             if "training_history" in profile_data:
                 user_profile["training_history"] = profile_data["training_history"]
+            if "bio" in profile_data:
+                user_profile["bio"] = profile_data["bio"]
             
             # Update the user profile - RLS handles user filtering
             user_client = self.get_user_client(jwt_token)
