@@ -6,6 +6,7 @@ import { useDashboardStore } from "@/stores/dashboardStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
 import { imageService } from "@/services/api/imageService";
+import { useWorkoutStore } from "./workout/WorkoutStore";
 
 function getUserPreferredUnits() {
   const { userProfile } = useUserStore.getState();
@@ -231,6 +232,12 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Update session with saved workout
     set({ currentWorkout: savedWorkout });
+
+    useDashboardStore.getState().refreshDashboard();
+
+    // Refresh workout store to show the new workout in workout lists
+    useWorkoutStore.getState().loadWorkouts();
+
     return savedWorkout;
   },
   finishWorkout: () => {

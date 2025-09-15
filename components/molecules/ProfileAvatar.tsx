@@ -4,8 +4,15 @@ import Text from "@/components/atoms/core/Text";
 import { Image } from "expo-image";
 import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";
+import ImagePickerButton from "../atoms/ImagePickerButton";
 
-export default function ProfileAvatar() {
+interface ProfileAvatarProps {
+  editMode?: boolean;
+}
+
+export default function ProfileAvatar({
+  editMode = false,
+}: ProfileAvatarProps) {
   const { userProfile, updateProfile } = useUserStore();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
@@ -32,7 +39,6 @@ export default function ProfileAvatar() {
               5
             )}`
           );
-
           const urlResponse = await imageService.getImageUrl(
             userProfile.avatar_image_id
           );
@@ -76,12 +82,19 @@ export default function ProfileAvatar() {
         aspectRatio={1}
         minWidth={70}
         borderRadius={32}
-        backgroundColor="$primary"
+        backgroundColor={editMode ? "$backgroundMuted" : "$transparent"}
         justifyContent="center"
         alignItems="center"
         overflow="hidden"
       >
-        {loadingImage ? (
+        {editMode ? (
+          <ImagePickerButton
+            label="Change Photo"
+            size="medium"
+            onImageUploaded={handleImageUploaded}
+            onError={handleImageError}
+          />
+        ) : loadingImage ? (
           <Text color="white" fontSize="$3">
             ...
           </Text>

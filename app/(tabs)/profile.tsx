@@ -37,7 +37,8 @@ export default function ProfileScreen() {
   useEffect(() => {
     if (isEditMode) {
       // Initialize bio
-      setEditedBio(userProfile?.bio || PLACEHOLDER_BIO); // Initialize goals
+      setEditedBio(userProfile?.bio || PLACEHOLDER_BIO);
+      // Initialize goals
       const currentGoals =
         userProfile?.goals?.content ||
         Object.values(userProfile?.goals || {}).join("\n\n") ||
@@ -52,13 +53,13 @@ export default function ProfileScreen() {
 
   const handleSaveAll = async () => {
     try {
+      setIsEditMode(false);
+
       // Save both bio and goals
       await updateProfile({
-        bio: editedBio.trim(), // Remove the TODO - actually save the bio!
+        bio: editedBio.trim(),
         goals: editedGoals.trim() ? { content: editedGoals.trim() } : {},
       });
-
-      setIsEditMode(false);
     } catch (error) {
       console.error("Failed to save changes:", error);
     }
@@ -87,20 +88,8 @@ export default function ProfileScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <YStack
-        flex={1}
-        backgroundColor="$background"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text color="$textSoft">Loading profile...</Text>
-      </YStack>
-    );
-  }
-
-  if (error || !userProfile) {
+  // Only show error screen for critical errors, not missing data
+  if (error) {
     return (
       <YStack
         flex={1}
@@ -197,7 +186,7 @@ export default function ProfileScreen() {
             )}
           </YStack>
 
-          {/* Goals Section - now uses unified edit mode */}
+          {/* Goals Section */}
           <YStack
             backgroundColor="$background"
             borderRadius="$3"
@@ -227,16 +216,18 @@ export default function ProfileScreen() {
                 padding="$3"
               >
                 <Text size="medium" color="$color" lineHeight={22}>
-                  {userProfile.goals?.content ||
-                    Object.values(userProfile.goals || {}).join("\n\n") ||
-                    "No goals set"}
+                  {userProfile === null
+                    ? "Loading..."
+                    : userProfile.goals?.content ||
+                      Object.values(userProfile.goals || {}).join("\n\n") ||
+                      "No goals set"}
                 </Text>
               </YStack>
             )}
           </YStack>
 
           {/* Training History */}
-          {userProfile.training_history && (
+          {userProfile?.training_history && (
             <YStack
               backgroundColor="$backgroundSoft"
               borderRadius="$3"

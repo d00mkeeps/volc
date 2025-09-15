@@ -62,7 +62,6 @@ export default function HomeScreen() {
     refreshDashboard,
   } = useDashboardStore();
 
-  // Use our custom hook for session state
   const {
     isActive,
     currentWorkout,

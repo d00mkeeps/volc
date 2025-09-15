@@ -103,7 +103,7 @@ export default function ImagePickerButton({
     <Button
       size={size} // Use Button's built-in sizing
       alignSelf="center"
-      backgroundColor="#374151"
+      backgroundColor="$backgroundMuted"
       borderRadius="$3"
       pressStyle={{ backgroundColor: "#4B5563" }}
       onPress={handleImagePick}

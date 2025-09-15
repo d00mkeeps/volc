@@ -9,7 +9,7 @@ const PLACEHOLDER_BIO =
   "This is my fitness journey! I love working out and staying healthy. Always pushing myself to be better than yesterday. 💪";
 
 interface ProfileHeaderProps {
-  userProfile: UserProfile;
+  userProfile: UserProfile | null; // ← Allow null
   editingCard: string | null;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
   isEditMode: boolean;
@@ -43,19 +43,8 @@ export default function ProfileHeader({
     >
       {/* Left side - Avatar with name/age/instagram below */}
       <YStack alignItems="center" gap="$3" width="35%" flex={0.5}>
-        <ProfileAvatar />
-        {isEditMode && (
-          <Button
-            size="small"
-            backgroundColor="$primary"
-            color="white"
-            onPress={() => {
-              /* TODO: implement photo picker */
-            }}
-          >
-            Change Photo
-          </Button>
-        )}
+        <ProfileAvatar editMode={isEditMode} />
+
         <YStack alignItems="center" gap="$1">
           <Text
             size="medium"
@@ -63,16 +52,22 @@ export default function ProfileHeader({
             color="$color"
             textAlign="center"
           >
-            {`${userProfile.first_name || ""} ${
-              userProfile.last_name || ""
-            }`.trim() || "User"}
-            {userProfile.age && `, ${userProfile.age}`}
+            {userProfile
+              ? `${userProfile.first_name || ""} ${
+                  userProfile.last_name || ""
+                }`.trim() || "User"
+              : "Loading..."}
+            {userProfile?.age && `, ${userProfile.age}`}
           </Text>
-          {userProfile.instagram_username && (
+          {userProfile?.instagram_username ? (
             <Text size="medium" color="$textMuted" textAlign="center">
               @{userProfile.instagram_username}
             </Text>
-          )}
+          ) : userProfile === null ? (
+            <Text size="medium" color="$textMuted" textAlign="center">
+              Loading...
+            </Text>
+          ) : null}
         </YStack>
       </YStack>
 
@@ -106,7 +101,9 @@ export default function ProfileHeader({
               lineHeight={20}
               ellipsizeMode="tail"
             >
-              {userProfile.bio || "Tell us about yourself..."}
+              {userProfile === null
+                ? "Loading..."
+                : userProfile.bio || "Tell us about yourself..."}
             </Text>
           )}
         </YStack>

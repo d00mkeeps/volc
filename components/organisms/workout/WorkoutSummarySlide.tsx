@@ -6,6 +6,7 @@ import Button from "@/components/atoms/core/Button";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import ImagePickerButton from "../../atoms/ImagePickerButton";
 import WorkoutImage from "../../molecules/workout/WorkoutImage";
+import { WorkoutExercise } from "@/types/workout";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -13,6 +14,9 @@ interface WorkoutSummarySlideProps {
   showContinueButton?: boolean;
 }
 
+const generateSkeletonNotes = (exercises: WorkoutExercise[]): string => {
+  return exercises.map((exercise) => `${exercise.name}:\n\n`).join("\n");
+};
 export function WorkoutSummarySlide({
   onContinue,
   onSkip,
@@ -26,12 +30,14 @@ export function WorkoutSummarySlide({
     saveCompletedWorkout,
     initializeAnalysisAndChat,
   } = useUserSessionStore();
-
+  const [originalSkeleton] = useState(() =>
+    generateSkeletonNotes(currentWorkout?.workout_exercises || [])
+  );
   const [workoutName, setWorkoutName] = useState("");
   const [showNameError, setShowNameError] = useState(false);
   const [loadingState, setLoadingState] = useState<
     "none" | "skip" | "continue"
-  >("none"); // ← New loading state
+  >("none");
   const [workoutNotes, setWorkoutNotes] = useState(() => {
     console.log("=== WORKOUT SUMMARY DEBUG ===");
     console.log("currentWorkout:", currentWorkout);
@@ -41,13 +47,13 @@ export function WorkoutSummarySlide({
       return currentWorkout.notes;
     }
 
-    const exercises = currentWorkout?.workout_exercises || [];
-    console.log("Using exercises fallback:", exercises);
-
-    return (
-      exercises.map((exercise) => `${exercise.name}:\n\n`).join("\n") || ""
-    );
+    return originalSkeleton || "";
   });
+
+  const isSkeletonUnchanged = (notes: string, skeleton: string): boolean => {
+    const normalizeNotes = (text: string) => text.trim().replace(/\n+/g, "\n");
+    return normalizeNotes(notes) === normalizeNotes(skeleton);
+  };
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
@@ -77,7 +83,9 @@ export function WorkoutSummarySlide({
     try {
       await saveCompletedWorkout({
         name: workoutName,
-        notes: workoutNotes,
+        notes: isSkeletonUnchanged(workoutNotes, originalSkeleton)
+          ? ""
+          : workoutNotes,
         imageId: pendingImageId || undefined,
       });
       await initializeAnalysisAndChat();
@@ -101,7 +109,9 @@ export function WorkoutSummarySlide({
     try {
       await saveCompletedWorkout({
         name: workoutName,
-        notes: workoutNotes,
+        notes: isSkeletonUnchanged(workoutNotes, originalSkeleton)
+          ? ""
+          : workoutNotes,
         imageId: pendingImageId || undefined,
       });
       onSkip();

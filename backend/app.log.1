@@ -1,61 +1,84 @@
-2025-09-14 14:51:49,528 - app.services.db.dashboard_service - INFO - 📊 STEP 1 - Raw from service: 10 workouts, 26 exercises, 69 sets
-2025-09-14 14:51:49,532 - app.services.db.dashboard_service - INFO - 📅 Filtering workouts created after: 2025-07-16 13:51:49.532747+00:00
-2025-09-14 14:51:49,533 - app.services.db.dashboard_service - INFO - 📊 STEP 2 - After 60-day filter: 10 workouts, 26 exercises, 69 sets
-2025-09-14 14:51:49,533 - app.services.db.dashboard_service - INFO - Processing 10 workouts for dashboard analytics
-2025-09-14 14:51:49,760 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:51:49,916 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:51:50,084 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:51:50,247 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:51:50,248 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1week: 5 workouts, muscle_sets: 31
-2025-09-14 14:51:50,248 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2weeks: 5 workouts, muscle_sets: 31
-2025-09-14 14:51:50,248 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1month: 10 workouts, muscle_sets: 89
-2025-09-14 14:51:50,248 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2months: 10 workouts, muscle_sets: 89
-2025-09-14 14:51:50,248 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3  Final dashboard data structure: {'1week': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '2weeks': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '1month': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, '2months': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, 'lastUpdated': '2025-09-14T13:51:50.248074+00:00'}
-2025-09-14 14:51:50,248 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:51:50,248 - app.main - INFO - Response status: 200
-2025-09-14 14:51:50,249 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-09-14 14:51:50,249 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-09-14 14:51:50,524 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-09-14 14:51:50,537 - app.main - INFO - Request: GET /db/user-profile
-2025-09-14 14:51:50,539 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:51:50,539 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:51:50,930 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:51:50,931 - app.main - INFO - Response status: 200
-2025-09-14 14:51:50,931 - app.main - INFO - Response status: 200
-2025-09-14 14:51:51,153 - app.main - INFO - Request: GET /db/workouts/user
-2025-09-14 14:51:51,154 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:51:51,154 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x145d32ba0>
-2025-09-14 14:51:51,498 - app.services.db.workout_service - INFO - Retrieved 10 workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x145d32ba0>
-2025-09-14 14:51:51,502 - app.main - INFO - Response status: 200
-2025-09-14 14:55:36,062 - app.main - INFO - Request: GET /api/dashboard
-2025-09-14 14:55:36,071 - app.api.endpoints.dashboard - INFO - API request for dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:36,072 - app.services.db.dashboard_service - INFO - Getting dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:36,072 - app.services.db.workout_service - INFO - Getting all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:36,483 - app.services.db.workout_service - INFO - Retrieved 10 workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:36,483 - app.services.db.dashboard_service - INFO - 📊 STEP 1 - Raw from service: 10 workouts, 26 exercises, 69 sets
-2025-09-14 14:55:36,483 - app.services.db.dashboard_service - INFO - 📅 Filtering workouts created after: 2025-07-16 13:55:36.483903+00:00
-2025-09-14 14:55:36,484 - app.services.db.dashboard_service - INFO - 📊 STEP 2 - After 60-day filter: 10 workouts, 26 exercises, 69 sets
-2025-09-14 14:55:36,484 - app.services.db.dashboard_service - INFO - Processing 10 workouts for dashboard analytics
-2025-09-14 14:55:36,713 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:55:36,875 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:55:37,005 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - Cached 167 exercise definitions
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1week: 5 workouts, muscle_sets: 31
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2weeks: 5 workouts, muscle_sets: 31
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 1month: 10 workouts, muscle_sets: 89
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - 📊 STEP 3 - 2months: 10 workouts, muscle_sets: 89
-2025-09-14 14:55:37,213 - app.services.db.dashboard_service - INFO - Successfully processed dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3  Final dashboard data structure: {'1week': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '2weeks': {'actualMetrics': {'workouts': 5, 'exercises': 11, 'sets': 31}, 'muscleBalance': [{'muscle': 'Arms', 'sets': 11}, {'muscle': 'Chest', 'sets': 11}, {'muscle': 'Legs', 'sets': 9}], 'consistency': {'workoutDates': ['2025-09-10', '2025-09-11'], 'totalWorkouts': 5}}, '1month': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, '2months': {'actualMetrics': {'workouts': 10, 'exercises': 26, 'sets': 69}, 'muscleBalance': [{'muscle': 'Chest', 'sets': 26}, {'muscle': 'Arms', 'sets': 23}, {'muscle': 'Legs', 'sets': 15}, {'muscle': 'Cardio', 'sets': 11}, {'muscle': 'Shoulders', 'sets': 9}, {'muscle': 'Core', 'sets': 5}], 'consistency': {'workoutDates': ['2025-08-18', '2025-08-24', '2025-09-10', '2025-09-11'], 'totalWorkouts': 10}}, 'lastUpdated': '2025-09-14T13:55:37.213667+00:00'}
-2025-09-14 14:55:37,214 - app.api.endpoints.dashboard - INFO - Successfully returned dashboard data for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:37,214 - app.main - INFO - Response status: 200
-2025-09-14 14:55:37,215 - app.main - INFO - Request: GET /db/exercise-definitions
-2025-09-14 14:55:37,216 - app.services.db.exercise_definition_service - INFO - Fetching all exercise definitions
-2025-09-14 14:55:37,555 - app.services.db.exercise_definition_service - INFO - Fetched 167 exercise definitions
-2025-09-14 14:55:37,569 - app.main - INFO - Request: GET /db/user-profile
-2025-09-14 14:55:37,571 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:37,571 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:37,808 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:37,808 - app.main - INFO - Response status: 200
-2025-09-14 14:55:37,809 - app.main - INFO - Response status: 200
-2025-09-14 14:55:38,084 - app.main - INFO - Request: GET /db/workouts/user
-2025-09-14 14:55:38,084 - app.api.endpoints.db - INFO - API request to get all workouts for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
-2025-09-14 14:55:38,084 - app.services.db.workout_service - INFO - Getting all workouts for user: <app.core.supabase.auth.get_current_user.<locals>.User object at 0x145d32ba0>
+2025-09-14 23:00:28,123 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:28,468 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:28,469 - app.main - INFO - Response status: 200
+2025-09-14 23:00:28,483 - app.main - INFO - Request: GET /db/user-profile
+2025-09-14 23:00:28,484 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:28,484 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:28,730 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:28,730 - app.main - INFO - Response status: 200
+2025-09-14 23:00:30,413 - app.main - INFO - Request: POST /db/user-profile
+2025-09-14 23:00:30,413 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:30,413 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:30,729 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:30,730 - app.main - INFO - Response status: 200
+2025-09-14 23:00:30,746 - app.main - INFO - Request: GET /db/user-profile
+2025-09-14 23:00:30,748 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:30,748 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:31,009 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:31,010 - app.main - INFO - Response status: 200
+2025-09-14 23:00:35,643 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-14 23:00:35,645 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:00:35,645 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:00:35,883 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-14 23:00:35,898 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-14 23:00:35,898 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:00:35,898 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-14 23:00:35,898 - app.services.db.image_service - INFO - Used direct string
+2025-09-14 23:00:35,898 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:00:35,899 - app.main - INFO - Response status: 200
+2025-09-14 23:00:37,370 - app.main - INFO - Request: POST /db/user-profile
+2025-09-14 23:00:37,372 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,372 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,685 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,687 - app.main - INFO - Response status: 200
+2025-09-14 23:00:37,708 - app.main - INFO - Request: GET /db/user-profile
+2025-09-14 23:00:37,709 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,709 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,944 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:37,944 - app.main - INFO - Response status: 200
+2025-09-14 23:00:48,219 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-14 23:00:48,222 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:00:48,222 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:00:48,892 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-14 23:00:48,912 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-14 23:00:48,913 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:00:48,913 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-14 23:00:48,913 - app.services.db.image_service - INFO - Used direct string
+2025-09-14 23:00:48,913 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:00:48,914 - app.main - INFO - Response status: 200
+2025-09-14 23:00:50,266 - app.main - INFO - Request: POST /db/user-profile
+2025-09-14 23:00:50,269 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:50,269 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:55,067 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:55,069 - app.main - INFO - Response status: 200
+2025-09-14 23:00:55,069 - app.main - INFO - Request: POST /db/user-profile
+2025-09-14 23:00:55,071 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:55,071 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:56,842 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:56,843 - app.main - INFO - Request: GET /db/user-profile
+2025-09-14 23:00:56,843 - app.main - INFO - Response status: 200
+2025-09-14 23:00:56,844 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:56,844 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:58,905 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:58,907 - app.main - INFO - Response status: 200
+2025-09-14 23:00:58,925 - app.main - INFO - Request: GET /db/user-profile
+2025-09-14 23:00:58,926 - app.api.endpoints.db - INFO - API request to get profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:00:58,926 - app.services.db.user_profile_service - INFO - Getting profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:01:01,188 - app.services.db.user_profile_service - INFO - Successfully retrieved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:01:01,189 - app.main - INFO - Response status: 200
+2025-09-14 23:01:07,472 - app.main - INFO - Request: GET /images/2c74a7f3-5731-4825-9543-d0697fb2eb3d/url
+2025-09-14 23:01:07,478 - app.api.endpoints.images - INFO - API request to get image URL: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:01:07,478 - app.services.db.image_service - INFO - Getting image URL for ID: 2c74a7f3-5731-4825-9543-d0697fb2eb3d
+2025-09-14 23:01:09,406 - app.services.db.image_service - INFO - Found file path: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg
+2025-09-14 23:01:09,419 - app.services.db.image_service - INFO - Public URL response type: <class 'str'>
+2025-09-14 23:01:09,420 - app.services.db.image_service - INFO - Public URL response: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:01:09,420 - app.services.db.image_service - INFO - Public URL keys: Not a dict
+2025-09-14 23:01:09,420 - app.services.db.image_service - INFO - Used direct string
+2025-09-14 23:01:09,420 - app.services.db.image_service - INFO - Final public URL: https://sfniyudipwsaqwuhsdcq.supabase.co/storage/v1/object/public/images/1e2d6190-5d52-4f48-974c-7a5a43a50bf3/2b40d682-bde8-4c3b-861b-747d81da93a0.jpg?
+2025-09-14 23:01:09,420 - app.main - INFO - Response status: 200
+2025-09-14 23:01:10,922 - app.main - INFO - Request: POST /db/user-profile
+2025-09-14 23:01:10,924 - app.api.endpoints.db - INFO - API request to save profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:01:10,924 - app.services.db.user_profile_service - INFO - Saving profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:01:13,628 - app.services.db.user_profile_service - INFO - Successfully saved profile for user: 1e2d6190-5d52-4f48-974c-7a5a43a50bf3
+2025-09-14 23:01:13,631 - app.main - INFO - Response status: 200
+2025-09-14 23:01:13,632 - app.main - INFO - Request: POST /db/user-profile
