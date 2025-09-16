@@ -26,6 +26,13 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
+backend/app.log
+backend/app.log.*
+# Log files
+backend/*.log
+backend/*.log.*
+
+*.ipa
 /.vscode
 .DS_Store
 *.pem

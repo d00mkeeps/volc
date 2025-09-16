@@ -17,6 +17,7 @@ import { TamaguiProvider, Theme } from "@tamagui/core";
 import config from "../tamagui.config";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -76,57 +77,25 @@ function RootLayoutNav() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <TamaguiProvider config={config}>
             <Theme name={colorScheme === "dark" ? "dark" : "light"}>
-              <AuthProvider>
-                <AuthStoreManager>
-                  <ThemeProvider
-                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                  >
-                    <AuthGate>
-                      {supabaseStatus && (
-                        <View
-                          style={{
-                            position: "absolute",
-                            bottom: 40,
-                            right: 10,
-                            padding: 8,
-                            borderRadius: 4,
-                            backgroundColor: supabaseStatus.success
-                              ? "rgba(248, 79, 62, 0.2)"
-                              : "rgba(255, 0, 0, 0.2)",
-                            zIndex: 9999,
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: supabaseStatus.success
-                                ? "#d4412f"
-                                : "#721c24",
-                              fontSize: 12,
-                            }}
-                          >
-                            Supabase: {supabaseStatus.success ? "✓" : "✗"}{" "}
-                            {supabaseStatus.message}
-                            {supabaseStatus.url &&
-                              `\nURL: ${supabaseStatus.url.substring(
-                                0,
-                                15
-                              )}...`}
-                            {supabaseStatus.error &&
-                              `\nDetails: ${supabaseStatus.error}`}
-                          </Text>
-                        </View>
-                      )}
-                      <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="(tabs)" />
-                        <Stack.Screen
-                          name="modal"
-                          options={{ presentation: "modal" }}
-                        />
-                      </Stack>
-                    </AuthGate>
-                  </ThemeProvider>
-                </AuthStoreManager>
-              </AuthProvider>
+              <BottomSheetModalProvider>
+                <AuthProvider>
+                  <AuthStoreManager>
+                    <ThemeProvider
+                      value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                    >
+                      <AuthGate>
+                        <Stack screenOptions={{ headerShown: false }}>
+                          <Stack.Screen name="(tabs)" />
+                          <Stack.Screen
+                            name="modal"
+                            options={{ presentation: "modal" }}
+                          />
+                        </Stack>
+                      </AuthGate>
+                    </ThemeProvider>
+                  </AuthStoreManager>
+                </AuthProvider>
+              </BottomSheetModalProvider>
             </Theme>
           </TamaguiProvider>
           <Toast />

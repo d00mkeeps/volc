@@ -1,14 +1,24 @@
-// /components/organisms/onboarding/OnboardingModal.tsx
-import React, { useState } from "react";
-import { YStack, XStack } from "tamagui";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { KeyboardAvoidingView, Platform } from "react-native";
-import BaseModal from "../../atoms/core/BaseModal";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useUserStore } from "@/stores/userProfileStore";
 import OnboardingStep1 from "./Slide1";
 import OnboardingStep2 from "./Slide2";
 import { OnboardingSlide3 } from "./Slide3";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
+import type { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { useTheme } from "tamagui";
 
 interface OnboardingModalProps {
   isVisible: boolean;
@@ -19,8 +29,13 @@ export function OnboardingModal({
   isVisible,
   onComplete,
 }: OnboardingModalProps) {
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const theme = useTheme();
   const [currentSlide, setCurrentSlide] = useState<1 | 2 | 3>(1);
   const [showExitWarning, setShowExitWarning] = useState(false);
+
+  // Fixed snap point that works for all slides - about 75% of screen
+  const snapPoints = useMemo(() => ["85%"], []);
 
   // Slide 1 - Basic Info
   const [firstName, setFirstName] = useState("");
@@ -37,6 +52,31 @@ export function OnboardingModal({
   const [instagramUsername, setInstagramUsername] = useState("");
 
   const { updateProfile } = useUserStore();
+
+  // Handle visibility changes - present/dismiss bottom sheet
+  useEffect(() => {
+    if (isVisible) {
+      bottomSheetModalRef.current?.present();
+    } else {
+      bottomSheetModalRef.current?.dismiss();
+    }
+  }, [isVisible]);
+
+  // Custom backdrop that prevents dismissal
+  const renderBackdrop = (props: BottomSheetDefaultBackdropProps) => (
+    <BottomSheetBackdrop
+      {...props}
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+      opacity={0.8}
+      enableTouchThrough={false}
+      pressBehavior="none" // Prevents backdrop tap from dismissing
+      onPress={() => {
+        // Show exit warning instead of dismissing
+        setShowExitWarning(true);
+      }}
+    />
+  );
 
   const handleClose = () => {
     setShowExitWarning(true);
@@ -87,12 +127,16 @@ export function OnboardingModal({
     setCurrentSlide(3);
   };
 
+  // Update the handleComplete function
   const handleComplete = async (data: { instagramUsername: string }) => {
     setInstagramUsername(data.instagramUsername);
 
     const cleanInstagramUsername = data.instagramUsername
       .replace(/^@/, "")
       .trim();
+
+    // Dismiss keyboard before saving and closing
+    Keyboard.dismiss();
 
     try {
       await updateProfile({
@@ -103,88 +147,97 @@ export function OnboardingModal({
         bio: bio || null,
         goals: { content: goals },
         current_stats: fitnessLevel,
-        instagram_username: cleanInstagramUsername || null, // Store without @ symbol
+        instagram_username: cleanInstagramUsername || null,
       });
 
-      onComplete();
+      // Small delay to ensure keyboard dismissal completes before modal closes
+      setTimeout(() => {
+        onComplete();
+      }, 100);
     } catch (error) {
       console.error("Failed to save onboarding data:", error);
     }
   };
-  // Adjust height based on current slide
-  const getModalHeight = () => {
-    switch (currentSlide) {
-      case 1:
-        return 55; // Basic info form
-      case 2:
-        return 65; // Longer form with bio, goals, select
-      case 3:
-        return 25; // Instagram input screen
-      default:
-        return 60;
-    }
-  };
 
   return (
-    <BaseModal
-      isVisible={isVisible}
-      onClose={handleClose}
-      widthPercent={95}
-      heightPercent={getModalHeight()}
-      topOffset={-100}
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      index={0}
+      snapPoints={snapPoints}
+      backgroundStyle={{
+        backgroundColor: theme.background.val,
+      }}
+      handleIndicatorStyle={{
+        backgroundColor: theme.borderColor.val,
+      }}
+      backdropComponent={renderBackdrop}
+      enablePanDownToClose={false}
+      enableDismissOnClose={false}
+      enableHandlePanningGesture={false}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
-        <YStack flex={1} padding="$4">
-          {currentSlide === 1 && (
-            <OnboardingStep1 onNext={handleSlide1Continue} />
-          )}
-          {currentSlide === 2 && (
-            <OnboardingStep2 onNext={handleSlide2Continue} />
-          )}
-          {currentSlide === 3 && (
-            <OnboardingSlide3
-              firstName={firstName}
-              onComplete={handleComplete}
-            />
-          )}
+      <BottomSheetView style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <YStack flex={1} padding="$4">
+              {currentSlide === 1 && (
+                <OnboardingStep1 onNext={handleSlide1Continue} />
+              )}
+              {currentSlide === 2 && (
+                <OnboardingStep2 onNext={handleSlide2Continue} />
+              )}
+              {currentSlide === 3 && (
+                <OnboardingSlide3
+                  firstName={firstName}
+                  onComplete={handleComplete}
+                />
+              )}
 
-          {/* Exit warning overlay */}
-          {showExitWarning && (
-            <YStack
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              backgroundColor="rgba(0,0,0,0.8)"
-              justifyContent="center"
-              alignItems="center"
-              zIndex={1000}
-            >
-              <YStack
-                backgroundColor="$background"
-                padding="$4"
-                borderRadius="$4"
-                maxWidth={300}
-                gap="$3"
-              >
-                <Text size="medium" fontWeight="bold" textAlign="center">
-                  Complete Your Profile
-                </Text>
-                <Text textAlign="center" color="$textMuted">
-                  Please finish setting up your profile to continue using Volc.
-                </Text>
-                <Button onPress={handleConfirmExit} backgroundColor="$primary">
-                  Continue Setup
-                </Button>
-              </YStack>
+              {/* Exit warning overlay */}
+              {showExitWarning && (
+                <YStack
+                  position="absolute"
+                  top={0}
+                  left={0}
+                  right={0}
+                  bottom={0}
+                  backgroundColor="rgba(0,0,0,0.8)"
+                  justifyContent="center"
+                  alignItems="center"
+                  zIndex={1000}
+                >
+                  <YStack
+                    backgroundColor="$background"
+                    padding="$4"
+                    borderRadius="$4"
+                    maxWidth={300}
+                    gap="$3"
+                  >
+                    <Text size="medium" fontWeight="bold" textAlign="center">
+                      Complete Your Profile
+                    </Text>
+                    <Text textAlign="center" color="$textMuted">
+                      Please finish setting up your profile to continue using
+                      Volc.
+                    </Text>
+                    <Button
+                      onPress={handleConfirmExit}
+                      backgroundColor="$primary"
+                    >
+                      Continue Setup
+                    </Button>
+                  </YStack>
+                </YStack>
+              )}
             </YStack>
-          )}
-        </YStack>
-      </KeyboardAvoidingView>
-    </BaseModal>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </BottomSheetView>
+    </BottomSheetModal>
   );
 }
