@@ -20,6 +20,7 @@ interface ChatInterfaceProps {
   placeholder?: string;
   connectionState?: "ready" | "expecting_ai_message";
   queuedMessageCount?: number;
+  keyboardVerticalOffset?: number;
 }
 
 export const ChatInterface = ({
@@ -29,11 +30,12 @@ export const ChatInterface = ({
   placeholder = "Type a message...",
   connectionState = "ready",
   queuedMessageCount = 0,
+  keyboardVerticalOffset = 120,
 }: ChatInterfaceProps) => {
   const getPlaceholder = () => {
     switch (connectionState) {
       case "expecting_ai_message":
-        return "Loading..."; // Simple and clean
+        return "Loading...";
       default:
         return placeholder;
     }
@@ -51,15 +53,19 @@ export const ChatInterface = ({
   // Show loading indicator when expecting AI message
   const shouldShowLoadingIndicator = connectionState === "expecting_ai_message";
   const lastMessage = messages[messages.length - 1];
+
   // Disable input when expecting AI message
   const isInputDisabled =
     connectionState === "expecting_ai_message" ||
     (streamingMessage && !streamingMessage.isComplete) ||
     (lastMessage?.sender === "user" && !streamingMessage);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 0}
+      keyboardVerticalOffset={
+        Platform.OS === "ios" ? keyboardVerticalOffset : 0
+      }
       style={{ flex: 1 }}
     >
       <YStack flex={1}>

@@ -5,6 +5,8 @@ from typing import Dict, Any, Optional
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPException
 from dotenv import load_dotenv
 from langchain_google_vertexai import ChatVertexAI
+
+from app.services.llm.workout_planning import WorkoutPlanningLLMService
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 from google.oauth2 import service_account
 
@@ -19,10 +21,17 @@ async def verify_token(token: str) -> Optional[str]:
     # This is a placeholder that always returns success
     return "test_user"
 
+
 def get_google_credentials():
     """Initialize Google Cloud credentials directly from JSON"""
     credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+    
+    # DEBUG: Log environment variable status
+    logger.info(f"GOOGLE_APPLICATION_CREDENTIALS_JSON present: {credentials_json is not None}")
+    logger.info(f"GOOGLE_CLOUD_PROJECT present: {project_id is not None}")
+    if credentials_json:
+        logger.info(f"Credentials JSON length: {len(credentials_json)}")
     
     if not credentials_json:
         logger.error("GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable not set")
@@ -35,10 +44,11 @@ def get_google_credentials():
     try:
         credentials_info = json.loads(credentials_json)
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
+        logger.info("Google credentials loaded successfully")
         return {"credentials": credentials, "project_id": project_id}
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="Invalid Google Cloud credentials JSON")
-
+    
 def get_llm(credentials: dict = Depends(get_google_credentials)):
     return ChatVertexAI(
         model="gemini-2.5-flash",
@@ -203,6 +213,27 @@ async def onboarding_websocket(
         except:
             pass
 
+# Add new dependency
+def get_workout_planning_service(credentials: dict = Depends(get_google_credentials)):
+    return WorkoutPlanningLLMService(
+        credentials=credentials["credentials"],
+        project_id=credentials["project_id"]
+    )
+
+@router.websocket("/api/llm/workout-planning/{user_id}")
+async def llm_workout_planning(
+    websocket: WebSocket, 
+    user_id: str,
+    planning_service: WorkoutPlanningLLMService = Depends(get_workout_planning_service)
+):
+    """WebSocket endpoint for workout planning conversations"""
+    try:
+        await planning_service.process_websocket(websocket, user_id)
+    except WebSocketDisconnect:
+        logger.info(f"Workout planning WebSocket disconnected for user: {user_id}")
+    except Exception as e:
+        logger.error(f"Error in workout planning websocket: {str(e)}", exc_info=True)
+        
 # Workout analysis interpretation endpoint
 @router.websocket("/api/llm/workout-analysis/{conversation_id}/{user_id}")
 async def llm_workout_analysis(

@@ -14,7 +14,7 @@ import WorkoutTracker, {
 } from "@/components/organisms/workout/WorkoutTracker";
 import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
-import TemplateSelector from "@/components/molecules/workout/TemplateModal";
+import { WorkoutPlanningModal } from "@/components/organisms/workout/WorkoutPlanningModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -249,10 +249,8 @@ export default function HomeScreen() {
           </Stack>
         </ScrollView>
 
-        {/* Other Modals */}
-        <TemplateSelector
+        <WorkoutPlanningModal
           isVisible={showTemplateSelector}
-          selectedTemplateId={selectedTemplate?.id || null}
           onSelectTemplate={handleTemplateSelect}
           onClose={handleTemplateClose}
         />

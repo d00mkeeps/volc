@@ -213,7 +213,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           style={[
             {
               position: "absolute",
-              top: 130, // Covers from top of content area (below header)
+              top: 80, // Covers from top of content area (below header)
               left: 0,
               right: 0,
               bottom: 0,

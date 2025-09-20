@@ -60,8 +60,9 @@ export const WorkoutAnalysisSlide = ({
         messages={messaging.messages}
         streamingMessage={messaging.streamingMessage}
         onSend={handleSend}
-        placeholder="Ask about your workout analysis..."
+        placeholder="Ask about your workout..."
         connectionState={getConnectionState()}
+        keyboardVerticalOffset={100}
       />
     </YStack>
   );

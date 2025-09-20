@@ -58,7 +58,7 @@ export const Text: React.FC<TextProps> = ({
   const getSizeToken = (size: "small" | "medium" | "large" | "xl") => {
     switch (size) {
       case "small":
-        return "$2"; // 14px mobile
+        return "$3"; // 14px mobile
       case "medium":
         return "$4";
       case "large":

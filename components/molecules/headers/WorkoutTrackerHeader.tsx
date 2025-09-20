@@ -89,6 +89,7 @@ export default function WorkoutTrackerHeader({
         alignItems="center"
         gap="$1.5"
         marginTop="$1"
+        paddingVertical="$3"
       >
         <Circle
           size={6}
@@ -105,15 +106,15 @@ export default function WorkoutTrackerHeader({
         </Text>
       </XStack>
 
-      <XStack
+      {/* <XStack
         justifyContent="space-between"
         alignItems="center"
         marginTop="$3"
         paddingTop="$2"
         borderTopWidth={1}
         borderTopColor="$borderSoft"
-      >
-        <YStack flex={1} marginRight="$3">
+      > */}
+      {/* <YStack flex={1} marginRight="$3">
           <Text size="medium" color="$textMuted" fontWeight="500">
             Template
           </Text>
@@ -125,9 +126,9 @@ export default function WorkoutTrackerHeader({
           >
             {currentTemplateName || "No template selected"}
           </Text>
-        </YStack>
+        </YStack> */}
 
-        <Button
+      {/* <Button
           size="medium"
           backgroundColor="transparent"
           borderColor="$borderSoft"
@@ -138,15 +139,15 @@ export default function WorkoutTrackerHeader({
             borderColor: "$primary",
           }}
           onPress={handleTemplatePress}
-        >
-          <XStack alignItems="center" gap="$1.5">
+        > */}
+      {/* <XStack alignItems="center" gap="$1.5">
             <Text size="medium" color="$textSoft">
               Change
             </Text>
             <ChevronDown size={14} color="$textSoft" />
-          </XStack>
-        </Button>
-      </XStack>
+          </XStack> */}
+      {/* </Button> */}
+      {/* </XStack> */}
     </YStack>
   );
 }

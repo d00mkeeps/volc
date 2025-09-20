@@ -192,7 +192,6 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
             </YStack>
           </YStack>
 
-          {/* Goals Section - required */}
           <YStack gap="$3">
             <Text size="medium" fontWeight="600" color="$color">
               What are your fitness goals? (Be specific!)
