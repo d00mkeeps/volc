@@ -4,6 +4,7 @@ import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import Input from "@/components/atoms/core/Input";
 import SystemMessage from "@/components/atoms/SystemMessage";
+import { KeyboardAvoidingView, Platform } from "react-native";
 
 interface Step1Props {
   onNext: (data: {
@@ -148,10 +149,21 @@ export default function OnboardingStep1({ onNext }: Step1Props) {
   };
 
   return (
-    <YStack flex={1} gap="$4">
-      <Text size="large" fontWeight="600" color="$primary">
-        Welcome to Volc!
-      </Text>
+    <YStack gap="$4">
+      <XStack justifyContent="space-between" alignItems="center">
+        <Text size="large" fontWeight="600" color="$primary">
+          Welcome to Volc!
+        </Text>
+        <Button
+          onPress={handleContinue}
+          backgroundColor="$primary"
+          color="white"
+          size="medium"
+          paddingHorizontal="$4"
+        >
+          Continue
+        </Button>
+      </XStack>
 
       {/* System Message - moved to top and always rendered for debugging */}
       {showSystemMessage && (
@@ -162,9 +174,8 @@ export default function OnboardingStep1({ onNext }: Step1Props) {
           </Text>
         </YStack>
       )}
-
       {/* Form Content */}
-      <YStack flex={1} gap="$6">
+      <YStack gap="$6">
         {/* Name Section */}
         <YStack gap="$3" paddingBottom="$3">
           <Text size="large" fontWeight="600" color="$color">
@@ -295,16 +306,6 @@ export default function OnboardingStep1({ onNext }: Step1Props) {
           </XStack>
         </YStack>
       </YStack>
-
-      {/* Continue Button - removed disabled state for debugging */}
-      <Button
-        onPress={handleContinue}
-        backgroundColor="$primary"
-        color="white"
-        size="large"
-      >
-        Continue
-      </Button>
     </YStack>
   );
 }

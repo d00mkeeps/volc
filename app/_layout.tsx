@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { useColorScheme, Text, View } from "react-native";
+import { useColorScheme } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthGate } from "@/components/AuthGate";
@@ -21,12 +21,6 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export { ErrorBoundary } from "expo-router";
 
-console.log("🎯 Layout debug:", {
-  configExists: !!config,
-  configTokens: !!config?.tokens,
-  configThemes: !!config?.themes,
-  isProduction: process.env.NODE_ENV === "production",
-});
 export const unstable_settings = {
   initialRouteName: "(drawer)",
 };

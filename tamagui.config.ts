@@ -1,7 +1,4 @@
-// tamagui.config.ts
 import { createTamagui } from "tamagui";
-
-console.log("🔧 Creating Tamagui config...");
 
 const tamaguiConfig = createTamagui({
   // Add responsive breakpoints
@@ -165,9 +162,6 @@ const tamaguiConfig = createTamagui({
     },
   },
 });
-
-console.log("✅ Tamagui config created:", !!tamaguiConfig);
-console.log("🔍 Config keys:", Object.keys(tamaguiConfig || {}));
 
 export type AppConfig = typeof tamaguiConfig;
 declare module "tamagui" {

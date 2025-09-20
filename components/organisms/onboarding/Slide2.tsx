@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { YStack, TextArea, XStack, Stack } from "tamagui";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import Select from "@/components/atoms/core/Select";
@@ -18,7 +19,7 @@ interface Step2Props {
 
 interface ValidationState {
   goals: { isValid: boolean; message: string };
-  fitnessLevel: { isValid: boolean; message: string }; // Add this line
+  fitnessLevel: { isValid: boolean; message: string };
 }
 
 export default function OnboardingStep2({ onNext }: Step2Props) {
@@ -30,7 +31,7 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
 
   const [validation, setValidation] = useState<ValidationState>({
     goals: { isValid: true, message: "" },
-    fitnessLevel: { isValid: true, message: "" }, // Add this line
+    fitnessLevel: { isValid: true, message: "" },
   });
 
   // Auto-hide system message after 3 seconds
@@ -91,8 +92,8 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
     const newValidation: ValidationState = {
       goals: goalsValidation,
       fitnessLevel: {
-        isValid: false,
-        message: "",
+        isValid: fitnessLevelValid,
+        message: fitnessLevelValid ? "" : "Please select your experience level",
       },
     };
 
@@ -121,104 +122,111 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
   const canContinue = goals.trim().length >= 10 && fitnessLevel.length > 0;
 
   return (
-    <YStack flex={1} gap="$4">
-      {/* Header - matching Step1 pattern */}
-      <YStack gap="$2" alignItems="center">
-        <Text size="medium" fontWeight="600" color="$primary">
-          Almost there..
-        </Text>
-      </YStack>
+    <YStack gap="$4">
+      {/* Header with title and button */}
+      <YStack gap="$3">
+        <XStack justifyContent="space-between" alignItems="center">
+          <Text size="medium" fontWeight="600" color="$primary">
+            Almost there..
+          </Text>
+          <Button
+            onPress={handleContinue}
+            backgroundColor="$primary"
+            color="white"
+            size="medium"
+            paddingHorizontal="$4"
+          >
+            Continue
+          </Button>
+        </XStack>
 
-      {/* System Message */}
-      {showSystemMessage && (
-        <YStack>
+        {/* System Message */}
+        {showSystemMessage && (
           <SystemMessage message={systemMessage} type="error" />
-        </YStack>
-      )}
-
-      {/* Form Content */}
-      <YStack flex={1} gap="$6">
-        {/* Bio Section */}
-        <YStack gap="$3">
-          <Text size="medium" fontWeight="600" color="$color">
-            Short intro about yourself
-          </Text>
-          <YStack gap="$2">
-            <TextArea
-              value={bio}
-              onChangeText={setBio}
-              placeholder="I like sunshine ☀️ and puppies 🐶"
-              minHeight={80}
-              maxLength={250}
-              borderColor="$borderColor"
-            />
-            <Text size="small" color="$textSoft" alignSelf="flex-end">
-              {bio.length}/250
-            </Text>
-          </YStack>
-        </YStack>
-        {/* Goals Section - required */}
-        <YStack gap="$3">
-          <Text size="medium" fontWeight="600" color="$color">
-            What are your fitness goals? (Be specific!)
-          </Text>
-          <YStack>
-            <TextArea
-              value={goals}
-              onChangeText={setGoals}
-              onBlur={() => handleBlur("goals", goals)}
-              placeholder="Build muscle, lose weight, be active..."
-              minHeight={100}
-              maxLength={250}
-              borderColor={!validation.goals.isValid ? "$red9" : "$borderColor"}
-            />
-            <XStack
-              justifyContent="space-between"
-              alignItems="center"
-              marginTop="$1"
-            >
-              {!validation.goals.isValid && (
-                <Text size="medium" color="$red9">
-                  {validation.goals.message}
-                </Text>
-              )}
-              <Text size="small" color="$textSoft" marginLeft="auto">
-                {goals.length}/250
-              </Text>
-            </XStack>
-          </YStack>
-        </YStack>
-
-        {/* Fitness Level - required select */}
-        <YStack gap="$2">
-          <Text size="medium" fontWeight="600" color="$color">
-            How long have you been consistently training?
-          </Text>
-          <Stack zIndex={1}>
-            <Select
-              options={fitnessLevelOptions}
-              value={fitnessLevel}
-              placeholder="Select your experience level"
-              onValueChange={setFitnessLevel}
-            />
-          </Stack>
-          {!validation.fitnessLevel.isValid && (
-            <Text size="medium" color="$red9" marginTop="$1">
-              {validation.fitnessLevel.message}
-            </Text>
-          )}
-        </YStack>
-        {/* Continue Button */}
-        <Button
-          onPress={handleContinue}
-          backgroundColor="$primary"
-          color="white"
-          size="large"
-          zIndex={-1}
-        >
-          Continue
-        </Button>
+        )}
       </YStack>
+
+      {/* Form Content - Wrapped in KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <YStack gap="$6">
+          {/* Fitness Level - required select */}
+          <YStack gap="$2">
+            <Text size="medium" fontWeight="600" color="$color">
+              How long have you been consistently training?
+            </Text>
+            <Stack zIndex={1}>
+              <Select
+                options={fitnessLevelOptions}
+                value={fitnessLevel}
+                placeholder="Select your experience level"
+                onValueChange={setFitnessLevel}
+              />
+            </Stack>
+            {!validation.fitnessLevel.isValid && (
+              <Text size="medium" color="$red9" marginTop="$1">
+                {validation.fitnessLevel.message}
+              </Text>
+            )}
+          </YStack>
+
+          {/* Bio Section */}
+          <YStack gap="$3">
+            <Text size="medium" fontWeight="600" color="$color">
+              Short intro/bio about yourself
+            </Text>
+            <YStack gap="$2">
+              <TextArea
+                value={bio}
+                onChangeText={setBio}
+                placeholder="I like sunshine ☀️ and puppies 🐶"
+                minHeight={80}
+                maxLength={250}
+                borderColor="$borderColor"
+              />
+              <Text size="small" color="$textSoft" alignSelf="flex-end">
+                {bio.length}/250
+              </Text>
+            </YStack>
+          </YStack>
+
+          {/* Goals Section - required */}
+          <YStack gap="$3">
+            <Text size="medium" fontWeight="600" color="$color">
+              What are your fitness goals? (Be specific!)
+            </Text>
+            <YStack>
+              <TextArea
+                value={goals}
+                onChangeText={setGoals}
+                onBlur={() => handleBlur("goals", goals)}
+                placeholder="Build muscle, lose weight, be active..."
+                minHeight={100}
+                maxLength={250}
+                borderColor={
+                  !validation.goals.isValid ? "$red9" : "$borderColor"
+                }
+              />
+              <XStack
+                justifyContent="space-between"
+                alignItems="center"
+                marginTop="$1"
+              >
+                {!validation.goals.isValid && (
+                  <Text size="medium" color="$red9">
+                    {validation.goals.message}
+                  </Text>
+                )}
+                <Text size="small" color="$textSoft" marginLeft="auto">
+                  {goals.length}/250
+                </Text>
+              </XStack>
+            </YStack>
+          </YStack>
+        </YStack>
+      </KeyboardAvoidingView>
     </YStack>
   );
 }
