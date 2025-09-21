@@ -526,3 +526,35 @@ class WorkoutService(BaseDBService):
         
         except Exception as e:
             logger.error(f"Error updating leaderboard: {e}")
+
+    async def get_user_workouts_admin(self, user_id: str, days_back: int = 14) -> Dict[str, Any]:
+        """Get user workouts using admin client for planning context (no auth required)"""
+        try:
+            from datetime import datetime, timedelta
+            
+            from_date = datetime.now() - timedelta(days=days_back)
+            logger.info(f"Loading workouts for user {user_id} from {from_date}")
+            
+            response = self.get_admin_client().table('workouts').select(
+                '*, workout_exercises(name, definition_id, workout_exercise_sets(weight, reps, rpe))'
+            ).eq('user_id', user_id).gte('created_at', from_date.isoformat()).order('created_at', desc=True).execute()
+            
+            if response.data:
+                logger.info(f"Successfully loaded {len(response.data)} workouts for user {user_id}")
+                return {
+                    "success": True,
+                    "data": response.data
+                }
+            else:
+                logger.info(f"No recent workouts found for user {user_id}")
+                return {
+                    "success": True,
+                    "data": []
+                }
+                
+        except Exception as e:
+            logger.error(f"Error fetching workouts for {user_id}: {str(e)}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e)
+            }

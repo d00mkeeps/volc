@@ -32,7 +32,36 @@ class ExerciseDefinitionService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting exercise definitions: {str(e)}")
             return await self.handle_error("get_all_exercise_definitions", e)
+
+
+    async def get_all_exercise_definitions_admin(self) -> Dict[str, Any]:
+        """Get all exercise definitions using admin client (no auth required)"""
+        try:
+            response = self.get_admin_client().table('exercise_definitions').select(
+                'id, standard_name, primary_muscles, secondary_muscles, equipment, movement_pattern, description'
+            ).order('standard_name').execute()
             
+            if response.data:
+                logger.info(f"Successfully loaded {len(response.data)} exercise definitions")
+                return {
+                    "success": True,
+                    "data": response.data
+                }
+            else:
+                logger.warning("No exercise definitions found")
+                return {
+                    "success": False,
+                    "error": "No exercise definitions found"
+                }
+                
+        except Exception as e:
+            logger.error(f"Error fetching exercise definitions: {str(e)}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+
     async def create_exercise_definition(self, exercise_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
         Create a new exercise definition
