@@ -1,17 +1,19 @@
-// components/molecules/ExerciseSearchInput.tsx
 import React, { useState, useEffect } from "react";
-import { YStack, Stack, ScrollView } from "tamagui";
+import { YStack, Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
-import { View, TouchableOpacity } from "react-native"; // Use native components
+import { View, TouchableOpacity } from "react-native";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
-import { Check, X } from "@/assets/icons/IconMap";
+import { Check, X, Info } from "@/assets/icons/IconMap";
+import ExerciseDefinitionView from "./ExerciseDefinitionView";
+
 interface ExerciseSearchInputProps {
   value: string;
   onSelect: (exerciseName: string) => void;
   placeholder?: string;
   onValidationChange?: (isValid: boolean) => void;
+  isReplacing?: boolean; // New prop to indicate if we're replacing an existing exercise
 }
 
 const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
@@ -19,12 +21,17 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
   onSelect,
   placeholder = "Search exercises...",
   onValidationChange,
+  isReplacing = false,
 }) => {
   const [searchText, setSearchText] = useState("");
-  const [searchsetSearchText] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
-  const { exercises, loading } = useExerciseStore();
   const [isValid, setIsValid] = useState(false);
+  const [definitionModalVisible, setDefinitionModalVisible] = useState(false);
+  const [selectedDefinitionId, setSelectedDefinitionId] = useState<
+    string | null
+  >(null);
+
+  const { exercises, loading } = useExerciseStore();
 
   useEffect(() => {
     setSearchText(value);
@@ -72,44 +79,71 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
     onSelect(exercise.standard_name);
   };
 
+  const handleShowDefinition = (exercise: ExerciseDefinition) => {
+    setSelectedDefinitionId(exercise.id);
+    setDefinitionModalVisible(true);
+  };
+
   const handleFocus = () => {
     if (searchText.length > 0) {
       setShowDropdown(true);
     }
   };
 
-  const handleBlur = () => {
-    // Don't hide dropdown on blur - let user tap
-  };
-
-  const renderExerciseItem = ({
-    item,
-    index,
-  }: {
-    item: ExerciseDefinition;
-    index: number;
-  }) => (
-    <TouchableOpacity
-      onPress={() => {
-        console.log("🔥 TouchableOpacity pressed:", item.standard_name);
-        handleSelectExercise(item);
-      }}
+  const renderExerciseItem = (exercise: ExerciseDefinition, index: number) => (
+    <View
+      key={exercise.id}
       style={{
+        flexDirection: "row",
+        alignItems: "center",
         padding: 12,
         borderBottomWidth: index < filteredExercises.length - 1 ? 1 : 0,
         borderBottomColor: "#333",
         backgroundColor: "#222",
       }}
     >
-      <Text color="$color" size="medium" fontWeight="500">
-        {item.standard_name}
-      </Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleSelectExercise(exercise)}
+        style={{ flex: 1 }}
+      >
+        <Text color="$color" size="medium" fontWeight="500">
+          {exercise.standard_name}
+        </Text>
+        {exercise.primary_muscles && exercise.primary_muscles.length > 0 && (
+          <Text color="$textMuted" size="small" marginTop="$0.5">
+            {exercise.primary_muscles
+              .slice(0, 2)
+              .map((muscle) =>
+                muscle
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())
+              )
+              .join(", ")}
+            {exercise.primary_muscles.length > 2 && "..."}
+          </Text>
+        )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={(e) => {
+          e.stopPropagation();
+          handleShowDefinition(exercise);
+        }}
+        style={{
+          padding: 8,
+          marginLeft: 8,
+          borderRadius: 6,
+          backgroundColor: "#333",
+        }}
+      >
+        <Info size={16} color="#666" />
+      </TouchableOpacity>
+    </View>
   );
 
   return (
-    <YStack flex={1}>
-      <Stack position="relative">
+    <>
+      <XStack flex={1} gap="$2" justifyContent="center" alignContent="center">
         <Input
           value={searchText}
           onChangeText={handleTextChange}
@@ -125,31 +159,22 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
           borderRadius="$3"
           paddingHorizontal="$3"
           paddingVertical="$2"
-          paddingRight={searchText.trim() ? "$6" : "$3"}
           onFocus={handleFocus}
-          onBlur={handleBlur}
           autoCorrect={false}
           autoCapitalize="words"
         />
-
-        {searchText.trim() && (
-          <Stack
-            position="absolute"
-            right="$2"
-            top="50%"
-            transform={[{ translateY: -10 }]}
-            zIndex={1}
-          >
-            {isValid ? (
-              <Check size={20} color="#22c55e" />
-            ) : (
-              <X size={20} color="#ef4444" />
-            )}
+        {isValid ? (
+          <Stack justifyContent="center">
+            <Check size={20} color="#22c55e" />
+          </Stack>
+        ) : (
+          <Stack justifyContent="center">
+            <X size={20} color="#ef4444" />
           </Stack>
         )}
-      </Stack>
+      </XStack>
 
-      {/* Replace the FlatList section with: */}
+      {/* Search Results */}
       {showDropdown && !loading && filteredExercises.length > 0 && (
         <View
           style={{
@@ -157,28 +182,53 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
             borderColor: "#333",
             borderWidth: 1,
             borderRadius: 12,
-            marginTop: 4,
+            maxHeight: 300,
           }}
         >
-          {filteredExercises.map((exercise, index) => (
-            <TouchableOpacity
-              key={exercise.id}
-              onPress={() => handleSelectExercise(exercise)}
-              style={{
-                padding: 12,
-                borderBottomWidth: index < filteredExercises.length - 1 ? 1 : 0,
-                borderBottomColor: "#333",
-                backgroundColor: "#222",
-              }}
-            >
-              <Text color="$color" size="medium" fontWeight="500">
-                {exercise.standard_name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {filteredExercises.map((exercise, index) =>
+            renderExerciseItem(exercise, index)
+          )}
         </View>
       )}
-    </YStack>
+
+      {/* No Results */}
+      {showDropdown &&
+        !loading &&
+        searchText.length > 0 &&
+        filteredExercises.length === 0 && (
+          <View
+            style={{
+              backgroundColor: "#222",
+              borderColor: "#333",
+              borderWidth: 1,
+              borderRadius: 12,
+              padding: 16,
+              alignItems: "center",
+            }}
+          >
+            <Text color="$textMuted" size="medium" textAlign="center">
+              No exercises found for "{searchText}"
+            </Text>
+          </View>
+        )}
+
+      {/* Search Instructions */}
+      {!showDropdown && !searchText.trim() && (
+        <Text size="small" color="$textMuted">
+          Start typing to search exercises by name or muscle group
+        </Text>
+      )}
+
+      {/* Exercise Definition Modal */}
+      <ExerciseDefinitionView
+        definitionId={selectedDefinitionId || ""}
+        isVisible={definitionModalVisible && !!selectedDefinitionId}
+        onClose={() => {
+          setDefinitionModalVisible(false);
+          setSelectedDefinitionId(null);
+        }}
+      />
+    </>
   );
 };
 

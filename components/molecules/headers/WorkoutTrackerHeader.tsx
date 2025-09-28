@@ -1,10 +1,10 @@
-// components/molecules/WorkoutTrackerHeader.tsx
 import React from "react";
-import { YStack, XStack, Circle, Stack } from "tamagui";
+import { YStack, XStack, Circle } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Play, Pause, ChevronDown } from "@/assets/icons/IconMap";
+import { Play, Pause } from "@/assets/icons/IconMap";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { Alert } from "react-native";
 
 interface WorkoutTrackerHeaderProps {
   workoutName?: string;
@@ -23,10 +23,22 @@ export default function WorkoutTrackerHeader({
     isPaused,
     togglePause,
     updateElapsedTime,
+    cancelWorkout,
   } = useUserSessionStore();
 
-  const handleTemplatePress = () => {
-    openTemplateSelector();
+  const handleCancelWorkout = () => {
+    Alert.alert(
+      "Cancel Workout",
+      "Are you sure you want to cancel this workout? All progress will be lost.",
+      [
+        { text: "Keep Going", style: "cancel" },
+        {
+          text: "Cancel Workout",
+          style: "destructive",
+          onPress: () => cancelWorkout(),
+        },
+      ]
+    );
   };
 
   React.useEffect(() => {
@@ -48,21 +60,18 @@ export default function WorkoutTrackerHeader({
       borderBottomColor="$borderSoft"
     >
       {/* Timer and Controls Row */}
-      <XStack justifyContent="center" alignItems="center" gap="$3">
-        {/* Timer - from store */}
-        <Text
-          size="medium"
-          fontWeight="700"
-          color="$color"
-          fontFamily="$heading"
-        >
-          {getTimeString()}
-        </Text>
-
-        {/* Pause/Play button - using store methods */}
+      <XStack
+        justifyContent="center"
+        alignItems="center"
+        gap="$4"
+        paddingTop="$2"
+      >
+        {/* Pause/Play button - moved to left */}
         <Circle
-          size={28}
-          backgroundColor={isActive ? "$primary" : "transparent"}
+          size={32}
+          backgroundColor={isActive ? "$background" : "transparent"}
+          borderColor="$primary"
+          borderWidth={1}
           justifyContent="center"
           alignItems="center"
           pressStyle={
@@ -77,11 +86,43 @@ export default function WorkoutTrackerHeader({
           opacity={isActive ? 1 : 0.4}
         >
           {isPaused ? (
-            <Play size={16} color={isActive ? "white" : "$textMuted"} />
+            <Play size={18} color={isActive ? "white" : "$textMuted"} />
           ) : (
-            <Pause size={16} color={isActive ? "white" : "$textMuted"} />
+            <Pause size={18} color={isActive ? "white" : "$textMuted"} />
           )}
         </Circle>
+
+        {/* Timer - made bigger */}
+        <Text
+          size="large"
+          fontWeight="700"
+          color="$color"
+          fontFamily="$heading"
+        >
+          {getTimeString()}
+        </Text>
+
+        {/* Cancel button - red outline */}
+        <Button
+          size="small"
+          backgroundColor="transparent"
+          borderColor="$red8"
+          borderWidth={1}
+          color="$red9"
+          paddingHorizontal="$3"
+          paddingVertical="$1.5"
+          pressStyle={{
+            backgroundColor: "$red3",
+            borderColor: "$red9",
+            scale: 0.95,
+          }}
+          onPress={isActive ? handleCancelWorkout : undefined}
+          opacity={isActive ? 1 : 0.4}
+        >
+          <Text size="small" color="$red9" fontWeight="600">
+            Cancel
+          </Text>
+        </Button>
       </XStack>
 
       <XStack
@@ -105,49 +146,6 @@ export default function WorkoutTrackerHeader({
             : "Workout in progress"}
         </Text>
       </XStack>
-
-      {/* <XStack
-        justifyContent="space-between"
-        alignItems="center"
-        marginTop="$3"
-        paddingTop="$2"
-        borderTopWidth={1}
-        borderTopColor="$borderSoft"
-      > */}
-      {/* <YStack flex={1} marginRight="$3">
-          <Text size="medium" color="$textMuted" fontWeight="500">
-            Template
-          </Text>
-          <Text
-            size="medium"
-            color="$textSoft"
-            numberOfLines={1}
-            marginTop="$0.5"
-          >
-            {currentTemplateName || "No template selected"}
-          </Text>
-        </YStack> */}
-
-      {/* <Button
-          size="medium"
-          backgroundColor="transparent"
-          borderColor="$borderSoft"
-          borderWidth={1}
-          paddingHorizontal="$2"
-          pressStyle={{
-            backgroundColor: "$backgroundPress",
-            borderColor: "$primary",
-          }}
-          onPress={handleTemplatePress}
-        > */}
-      {/* <XStack alignItems="center" gap="$1.5">
-            <Text size="medium" color="$textSoft">
-              Change
-            </Text>
-            <ChevronDown size={14} color="$textSoft" />
-          </XStack> */}
-      {/* </Button> */}
-      {/* </XStack> */}
     </YStack>
   );
 }

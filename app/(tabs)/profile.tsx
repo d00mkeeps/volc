@@ -144,6 +144,8 @@ export default function ProfileScreen() {
             isEditMode={isEditMode}
             editedBio={editedBio}
             onBioChange={setEditedBio}
+            refreshProfile={refreshProfile}
+            setIsEditMode={setIsEditMode}
           />
 
           {isUpdatingAvatar && (

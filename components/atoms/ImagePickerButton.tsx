@@ -43,7 +43,6 @@ export default function ImagePickerButton({
 
   const handleImagePick = async () => {
     setUploading(true);
-
     try {
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -68,7 +67,6 @@ export default function ImagePickerButton({
       const fileExtension = imageUri.split(".").pop() || "jpg";
 
       const tempResponse = await imageService.createTempImage(fileExtension);
-
       if (
         !tempResponse.success ||
         !tempResponse.upload_url ||
@@ -81,13 +79,23 @@ export default function ImagePickerButton({
         tempResponse.upload_url,
         imageUri
       );
-
       if (!uploadSuccess) {
         throw new Error("Upload failed");
       }
 
+      // ✅ ADD THIS: Commit image to permanent status
       console.log(
-        `[ImagePickerButton] Image uploaded successfully: ${tempResponse.image_id}`
+        `[ImagePickerButton] Committing image to permanent: ${tempResponse.image_id}`
+      );
+      const commitResponse = await imageService.commitImage(
+        tempResponse.image_id
+      );
+      if (!commitResponse.success) {
+        throw new Error(commitResponse.error || "Failed to commit image");
+      }
+
+      console.log(
+        `[ImagePickerButton] Image uploaded and committed successfully: ${tempResponse.image_id}`
       );
       onImageUploaded?.(tempResponse.image_id);
     } catch (error) {

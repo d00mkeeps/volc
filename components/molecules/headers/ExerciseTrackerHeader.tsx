@@ -1,60 +1,161 @@
-import React from "react";
-import { XStack, Stack } from "tamagui";
+import React, { useState, useEffect } from "react";
+import { XStack, YStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { ArrowLeftRight, FileText } from "@/assets/icons/IconMap";
+import Button from "@/components/atoms/core/Button";
+import { Info, Trash2 } from "@/assets/icons/IconMap";
+import { TouchableOpacity } from "react-native";
+import * as Haptics from "expo-haptics";
 
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
-  hasNotes: boolean;
   isActive: boolean;
-  isEditing: boolean;
+  isEditing?: boolean; // Add this
   onEditPress: () => void;
-  onNotesPress: () => void;
+  onCancelEdit?: () => void; // Add this
+  exerciseNotes?: string; // ADD THIS LINE
   onDelete: () => void;
-  onSave: () => void;
+  onShowDefinition?: () => void;
+  canDelete: boolean;
+  canCancelEdit?: boolean; // Add this
 }
 
 export default function ExerciseTrackerHeader({
   exerciseName,
-  hasNotes,
+  exerciseNotes, // ADD THIS LINE
   isActive,
-  isEditing,
   onEditPress,
-  onNotesPress,
   onDelete,
-  onSave,
+  onShowDefinition,
+  isEditing = false,
+  onCancelEdit,
+  canCancelEdit,
+  canDelete,
 }: ExerciseTrackerHeaderProps) {
+  const [pendingDelete, setPendingDelete] = useState(false);
+
+  useEffect(() => {
+    if (pendingDelete) {
+      const timer = setTimeout(() => setPendingDelete(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingDelete]);
+
+  const handleDeletePress = () => {
+    if (!isActive || !canDelete) return;
+
+    if (pendingDelete) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      onDelete();
+    } else {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setPendingDelete(true);
+    }
+  };
+
   return (
-    <XStack
-      justifyContent="space-between"
-      alignItems="center"
-      paddingVertical="$2"
-    >
-      <Text size="medium" fontWeight="600" color="$color" flex={1}>
-        {exerciseName || "Select Exercise"}
-      </Text>
-
-      {isActive && !isEditing && (
-        <XStack gap="$2" alignItems="center">
-          <Stack
-            onPress={onNotesPress}
-            padding="$1.5"
-            borderRadius="$2"
-            pressStyle={{ backgroundColor: "$backgroundPress" }}
+    <YStack gap="$2" paddingVertical="$2">
+      <XStack alignItems="center" justifyContent="space-between">
+        <TouchableOpacity
+          onPress={onShowDefinition}
+          disabled={!exerciseName || !onShowDefinition}
+        >
+          <Text
+            size="large"
+            color="$color"
+            fontWeight="600"
+            numberOfLines={2}
+            flex={1}
+            textDecorationLine={
+              exerciseName && onShowDefinition && !isEditing
+                ? "underline"
+                : "none"
+            }
           >
-            <FileText size={24} color={hasNotes ? "#0ea5e9" : "#999999"} />
-          </Stack>
+            {isEditing
+              ? "Select new exercise"
+              : exerciseName || "Select an exercise"}
+          </Text>
+        </TouchableOpacity>
 
-          <Stack
-            onPress={onEditPress}
-            padding="$1.5"
-            borderRadius="$2"
-            pressStyle={{ backgroundColor: "$backgroundPress" }}
-          >
-            <ArrowLeftRight size={24} color="#999999" />
-          </Stack>
-        </XStack>
+        {/* Action Buttons - moved up inline */}
+        {isActive && (
+          <XStack gap="$2" alignItems="center">
+            {/* Delete Button */}
+            {canDelete && (
+              <Stack
+                width={40}
+                height={40}
+                borderRadius="$2"
+                backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
+                justifyContent="center"
+                alignItems="center"
+                pressStyle={{
+                  backgroundColor: pendingDelete
+                    ? "#ef444450"
+                    : "$backgroundPress",
+                }}
+                onPress={handleDeletePress}
+                cursor="pointer"
+              >
+                <Trash2 size={20} color="#ef4444" />
+              </Stack>
+            )}
+
+            {isEditing ? (
+              // Cancel Button
+              canCancelEdit && (
+                <Button
+                  size="small"
+                  backgroundColor="$backgroundMuted"
+                  borderColor="$borderSoft"
+                  borderWidth={1}
+                  paddingHorizontal="$3"
+                  paddingVertical="$1.5"
+                  pressStyle={{
+                    backgroundColor: "$backgroundPress",
+                    scale: 0.95,
+                  }}
+                  onPress={onCancelEdit}
+                >
+                  <Text size="small" color="$text" fontWeight="500">
+                    Back
+                  </Text>
+                </Button>
+              )
+            ) : (
+              // Change Button
+              <Button
+                size="small"
+                backgroundColor="$backgroundStrong"
+                borderColor="$borderSoft"
+                borderWidth={1}
+                paddingHorizontal="$3"
+                paddingVertical="$1.5"
+                pressStyle={{
+                  backgroundColor: "$backgroundPress",
+                  scale: 0.95,
+                }}
+                onPress={onEditPress}
+              >
+                <Text size="small" color="$text" fontWeight="500">
+                  Change
+                </Text>
+              </Button>
+            )}
+          </XStack>
+        )}
+      </XStack>
+
+      {exerciseNotes && !isEditing && (
+        <Text
+          size="medium"
+          color="$textSoft"
+          fontStyle="italic"
+          lineHeight={18}
+        >
+          {exerciseNotes}
+        </Text>
       )}
-    </XStack>
+    </YStack>
   );
 }

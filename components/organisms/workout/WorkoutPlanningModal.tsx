@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { X } from "@/assets/icons/IconMap";
 import BaseModal from "../../atoms/core/BaseModal";
 import { ChatInterface } from "../ChatInterface";
 import { useWorkoutPlanning } from "@/hooks/chat/useWorkoutPlanning";
@@ -23,6 +22,122 @@ export const WorkoutPlanningModal = ({
 }: WorkoutPlanningModalProps) => {
   const planning = useWorkoutPlanning();
   const { userProfile } = useUserStore();
+
+  // Convert backend template data to CompleteWorkout format
+  // Convert backend template data to CompleteWorkout format
+  const convertTemplateToWorkout = useCallback(
+    (templateData: any): CompleteWorkout | null => {
+      // The template data comes directly, not wrapped in workout_template
+      if (!templateData || !userProfile?.user_id) {
+        console.error(
+          "[WorkoutPlanningModal] Missing template data or user profile:",
+          {
+            hasTemplate: !!templateData,
+            hasUserId: !!userProfile?.user_id,
+            templateData,
+          }
+        );
+        return null;
+      }
+
+      // Use templateData directly since it's the template, not wrapped
+      const template = templateData;
+      const now = new Date().toISOString();
+
+      const convertedWorkout: CompleteWorkout = {
+        id: `ai-template-${Date.now()}`,
+        user_id: userProfile.user_id.toString(),
+        name: template.name || "AI Generated Workout",
+        notes: template.notes || "",
+        is_template: true,
+        workout_exercises:
+          template.workout_exercises?.map((exercise: any, index: number) => ({
+            id: `exercise-${Date.now()}-${index}`,
+            definition_id: exercise.definition_id || undefined,
+            workout_id: `ai-template-${Date.now()}`,
+            name: exercise.name || `Exercise ${index + 1}`,
+            order_index: exercise.order_index ?? index,
+            weight_unit: "kg",
+            distance_unit: "km",
+            workout_exercise_sets:
+              exercise.workout_exercise_sets?.map(
+                (set: any, setIndex: number) => ({
+                  id: `set-${Date.now()}-${index}-${setIndex}`,
+                  exercise_id: `exercise-${Date.now()}-${index}`,
+                  set_number: set.set_number || setIndex + 1,
+                  reps: set.reps || undefined,
+                  weight: set.weight || undefined,
+                  distance: set.distance || undefined,
+                  duration: set.duration || undefined,
+                  rpe: set.rpe || undefined,
+                  is_completed: false,
+                  created_at: now,
+                  updated_at: now,
+                })
+              ) || [],
+            created_at: now,
+            updated_at: now,
+          })) || [],
+        created_at: now,
+        updated_at: now,
+      };
+
+      console.log("[WorkoutPlanningModal] Converted template:", {
+        originalName: template.name,
+        convertedName: convertedWorkout.name,
+        exerciseCount: convertedWorkout.workout_exercises.length,
+      });
+
+      return convertedWorkout;
+    },
+    [userProfile?.user_id]
+  );
+
+  // Handle approved template from AI
+  const handleTemplateApproved = useCallback(
+    (templateData: any) => {
+      console.log(
+        "[WorkoutPlanningModal] Template approved, processing data:",
+        templateData
+      );
+
+      const workout = convertTemplateToWorkout(templateData);
+      if (workout && onSelectTemplate) {
+        console.log(
+          "[WorkoutPlanningModal] Successfully converted template, selecting workout"
+        );
+        onSelectTemplate(workout);
+        onClose();
+      } else {
+        console.error(
+          "[WorkoutPlanningModal] Failed to convert template data to workout"
+        );
+      }
+    },
+    [convertTemplateToWorkout, onSelectTemplate, onClose]
+  );
+
+  // Register/unregister template approval handler based on modal visibility
+  useEffect(() => {
+    if (isVisible && planning.setTemplateApprovalHandler) {
+      console.log(
+        "[WorkoutPlanningModal] Registering template approval handler"
+      );
+      planning.setTemplateApprovalHandler(handleTemplateApproved);
+    } else if (!isVisible && planning.setTemplateApprovalHandler) {
+      console.log(
+        "[WorkoutPlanningModal] Unregistering template approval handler"
+      );
+      planning.setTemplateApprovalHandler(() => {});
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (planning.setTemplateApprovalHandler) {
+        planning.setTemplateApprovalHandler(() => {});
+      }
+    };
+  }, [isVisible, planning.setTemplateApprovalHandler, handleTemplateApproved]);
 
   // Handle sending messages
   const handleSend = async (content: string) => {

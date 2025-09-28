@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useEffect,
+  useState,
 } from "react";
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -22,6 +23,7 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
 import { PlusCircle } from "@/assets/icons/IconMap";
 import { useTheme } from "tamagui";
+
 interface WorkoutTrackerProps {
   currentTemplateName?: string;
 }
@@ -36,6 +38,7 @@ export interface WorkoutTrackerRef {
 const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
   ({ currentTemplateName }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
 
     const { currentWorkout, isActive, updateCurrentWorkout, updateExercise } =
       useUserSessionStore();
@@ -90,6 +93,11 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       return { opacity };
     });
 
+    // Track editing state across all exercises
+    const handleEditingChange = useCallback((isEditing: boolean) => {
+      setIsAnyExerciseEditing(isEditing);
+    }, []);
+
     // Exercise update handlers
     const handleExerciseUpdate = useCallback(
       (updatedExercise: WorkoutExercise) => {
@@ -123,7 +131,14 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     );
 
     const handleAddExercise = useCallback(() => {
-      if (!isActive || !currentWorkout) return;
+      if (!isActive || !currentWorkout || isAnyExerciseEditing) return;
+
+      // Check if there are any unnamed exercises
+      const hasUnnamedExercise = currentWorkout.workout_exercises.some(
+        (exercise) => !exercise.name
+      );
+
+      if (hasUnnamedExercise) return; // Don't add if there's already an unnamed exercise
 
       const maxOrderIndex =
         currentWorkout.workout_exercises.length > 0
@@ -172,10 +187,16 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         workout_exercises: [...currentWorkout.workout_exercises, newExercise],
       };
       updateCurrentWorkout(updatedWorkout);
-    }, [isActive, currentWorkout, updateCurrentWorkout]);
+    }, [isActive, currentWorkout, updateCurrentWorkout, isAnyExerciseEditing]);
 
     const isExerciseLimitReached =
       (currentWorkout?.workout_exercises || []).length >= 10;
+
+    // Check if we should disable the add button
+    const hasUnnamedExercise = (currentWorkout?.workout_exercises || []).some(
+      (exercise) => !exercise.name
+    );
+    const shouldDisableAddButton = isAnyExerciseEditing || hasUnnamedExercise;
 
     return (
       <BottomSheet
@@ -213,7 +234,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           style={[
             {
               position: "absolute",
-              top: 80, // Covers from top of content area (below header)
+              top: 90, // Covers from top of content area (below header)
               left: 0,
               right: 0,
               bottom: 0,
@@ -245,6 +266,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                   onExerciseUpdate={handleExerciseUpdate}
                   onExerciseDelete={handleExerciseDelete}
                   startInEditMode={exercise.name === ""}
+                  onEditingChange={handleEditingChange}
                 />
               ))}
 
@@ -262,19 +284,36 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
             {isActive && !isExerciseLimitReached && (
               <Stack
                 marginTop="$3"
-                padding="$3"
+                padding="$4"
                 borderRadius="$4"
-                backgroundColor="$primary"
+                width="60%"
+                alignSelf="center"
+                backgroundColor={
+                  shouldDisableAddButton ? "$backgroundMuted" : "$primary"
+                }
                 alignItems="center"
-                pressStyle={{
-                  backgroundColor: "$primaryPress",
-                  scale: 0.98,
-                }}
+                opacity={shouldDisableAddButton ? 0.6 : 1}
+                pressStyle={
+                  shouldDisableAddButton
+                    ? {} // No press style when disabled
+                    : {
+                        backgroundColor: "$primaryPress",
+                        scale: 0.98,
+                      }
+                }
                 onPress={handleAddExercise}
+                cursor={shouldDisableAddButton ? "default" : "pointer"}
               >
                 <XStack gap="$2" alignItems="center">
-                  <PlusCircle size={20} color="white" />
-                  <Text color="white" size="medium" fontWeight="600">
+                  <PlusCircle
+                    size={20}
+                    color={shouldDisableAddButton ? "#666" : "white"}
+                  />
+                  <Text
+                    color={shouldDisableAddButton ? "$textMuted" : "white"}
+                    size="medium"
+                    fontWeight="600"
+                  >
                     Add Exercise
                   </Text>
                 </XStack>
@@ -299,7 +338,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                     textAlign="center"
                     fontWeight="600"
                   >
-                    Ready to start?
+                    Are you ready?
                   </Text>
                   <Text
                     size="medium"
@@ -307,7 +346,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                     textAlign="center"
                     lineHeight={18}
                   >
-                    Add your first exercise to begin tracking
+                    Press start below to begin a workout
                   </Text>
                 </YStack>
               </YStack>

@@ -43,6 +43,7 @@ interface UserSessionState {
   pauseWorkout: () => void;
   resumeWorkout: () => void;
   togglePause: () => void;
+  cancelWorkout: () => void;
   finishWorkout: () => void; // ← Now synchronous
   saveCompletedWorkout: (metadata: {
     name: string;
@@ -136,6 +137,20 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Verify the update took effect
     const { currentWorkout: newWorkout } = get();
+  },
+
+  cancelWorkout: () => {
+    const { currentWorkout } = get();
+    if (!currentWorkout) return;
+
+    set({
+      currentWorkout: null,
+      isActive: false,
+      isPaused: false,
+      startTime: null,
+      elapsedSeconds: 0,
+      scheduledTime: undefined,
+    });
   },
 
   updateExercise: (exerciseId, updatedExercise) => {

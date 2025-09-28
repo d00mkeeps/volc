@@ -130,12 +130,11 @@ class UserProfileService(BaseDBService):
             logger.error(f"Error deleting user account: {str(e)}")
             return await self.handle_error("delete_user_account", e)
 
-
     async def get_user_profile_admin(self, user_id: str) -> Dict[str, Any]:
         """Get user profile by user ID using admin client (no auth required)"""
         try:
             response = self.get_admin_client().table('user_profiles').select(
-                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, instagram_username'
+                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username'
             ).eq('auth_user_uuid', user_id).execute()
             
             if response.data:

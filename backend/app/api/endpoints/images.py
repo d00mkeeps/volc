@@ -72,20 +72,24 @@ async def get_image_url(
     user = Depends(get_current_user),
     jwt_token: str = Depends(get_jwt_token)
 ):
-    """
-    Get public URL for an image by ID
-    """
+    """Get image URL - allows access to public workout images"""
     try:
         logger.info(f"API request to get image URL: {image_id}")
         
-        result = await image_service.get_image_url(image_id, jwt_token)
-        return result
-    except Exception as e:
-        logger.error(f"Error getting image URL: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+        result = await image_service.get_image_url(
+            image_id=image_id,
+            user_id=user.id,  # ✅ Pass user_id
+            jwt_token=jwt_token
         )
+        
+        if not result.get("success"):
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Error in get image URL endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Existing endpoints (keeping for backward compatibility)
 @router.post("/upload-url")

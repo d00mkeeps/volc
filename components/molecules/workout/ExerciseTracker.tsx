@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Stack, YStack, XStack, Separator } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { X, Plus } from "@/assets/icons/IconMap";
 import SetRow from "./SetRow";
 import {
   WorkoutExercise,
@@ -14,7 +13,8 @@ import ExerciseSearchInput from "./ExerciseSearchInput";
 import ExerciseTrackerHeader from "../headers/ExerciseTrackerHeader";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import SetHeader from "../headers/SetHeader";
-import NotesModal from "./NotesModal";
+import ExerciseDefinitionView from "./ExerciseDefinitionView";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
@@ -22,6 +22,7 @@ interface ExerciseTrackerProps {
   onExerciseUpdate?: (updatedExercise: WorkoutExercise) => void;
   onExerciseDelete?: (exerciseId: string) => void;
   startInEditMode?: boolean;
+  onEditingChange?: (isEditing: boolean) => void;
 }
 
 export default function ExerciseTracker({
@@ -29,29 +30,55 @@ export default function ExerciseTracker({
   isActive = true,
   onExerciseUpdate,
   onExerciseDelete,
+  onEditingChange,
   startInEditMode,
 }: ExerciseTrackerProps) {
   const [isEditing, setIsEditing] = useState(
     startInEditMode || exercise.name === ""
   );
   const [selectedExercise, setSelectedExercise] = useState(exercise.name);
-  const [notesModalVisible, setNotesModalVisible] = useState(false);
+  const [definitionModalVisible, setDefinitionModalVisible] = useState(false);
 
   const { exercises } = useExerciseStore();
+  const { currentWorkout } = useUserSessionStore();
+
   const exerciseDefinition = exercises.find(
     (ex: ExerciseDefinition) => ex.id === exercise.definition_id
   );
 
+  const handleCancelEdit = () => {
+    if (exercise.name) {
+      // Existing exercise: revert to original name
+      setIsEditing(false);
+      setSelectedExercise(exercise.name);
+      onEditingChange?.(false); // Notify parent
+    } else {
+      // New exercise: delete completely
+      if (onExerciseDelete) {
+        onExerciseDelete(exercise.id);
+        onEditingChange?.(false); // Notify parent
+      }
+    }
+  };
+
   const handleEditPress = () => {
     setIsEditing(true);
     setSelectedExercise(exercise.name);
+    onEditingChange?.(true);
   };
 
-  const handleNotesPress = () => setNotesModalVisible(true);
+  const namedExercisesCount =
+    currentWorkout?.workout_exercises.filter((ex) => ex.name).length || 0;
 
-  const handleNotesSave = (notes: string) => {
-    if (!onExerciseUpdate) return;
-    onExerciseUpdate({ ...exercise, notes });
+  const canDeleteExercise = exercise.name
+    ? namedExercisesCount > 1
+    : namedExercisesCount >= 1;
+  const canCancelEdit = canDeleteExercise || !!exercise.name;
+
+  const handleShowDefinition = () => {
+    if (exercise.definition_id) {
+      setDefinitionModalVisible(true);
+    }
   };
 
   const handleExerciseSelect = (exerciseName: string) => {
@@ -69,6 +96,7 @@ export default function ExerciseTracker({
 
     onExerciseUpdate(updatedExercise);
     setIsEditing(false);
+    onEditingChange?.(false);
   };
 
   const handleDelete = () => {
@@ -99,6 +127,16 @@ export default function ExerciseTracker({
 
   const handleSetDelete = (setId: string) => {
     if (!isActive || !onExerciseUpdate) return;
+
+    // Prevent deleting the last set
+    if (exercise.workout_exercise_sets.length <= 1) {
+      Alert.alert(
+        "Cannot Delete Set",
+        "Each exercise must have at least one set. Delete the entire exercise instead if needed.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
 
     const updatedSets = exercise.workout_exercise_sets
       .filter((set) => set.id !== setId)
@@ -165,104 +203,107 @@ export default function ExerciseTracker({
         overflow="hidden"
         opacity={isActive ? 1 : 0.6}
       >
-        <Stack paddingHorizontal="$3" paddingVertical="$1.5">
-          {isEditing ? (
+        <Stack paddingHorizontal="$3" paddingVertical="$2">
+          {/* Always render the header */}
+          <ExerciseTrackerHeader
+            exerciseName={exercise.name}
+            isEditing={isEditing}
+            onCancelEdit={handleCancelEdit}
+            canCancelEdit={canCancelEdit}
+            isActive={isActive}
+            onEditPress={handleEditPress}
+            exerciseNotes={exercise.notes}
+            onDelete={handleDelete}
+            onShowDefinition={
+              exercise.definition_id ? handleShowDefinition : undefined
+            }
+            canDelete={canDeleteExercise}
+          />
+
+          {/* Show search input below header when editing */}
+          {isEditing && (
             <ExerciseSearchInput
               value={selectedExercise}
               onSelect={handleExerciseSelect}
               placeholder="Search exercises..."
+              isReplacing={!!exercise.name}
             />
-          ) : (
-            <ExerciseTrackerHeader
-              hasNotes={!!exercise.notes}
-              exerciseName={exercise.name}
-              isActive={isActive}
-              isEditing={false}
-              onEditPress={handleEditPress}
-              onNotesPress={handleNotesPress}
-              onDelete={handleDelete}
-              onSave={() => {}}
-            />
-          )}
-
-          {isEditing && (
-            <XStack justifyContent="flex-end" gap="$2" marginTop="$2">
-              <Stack onPress={handleDelete} cursor="pointer">
-                <X size={20} color="#ef4444" />
-              </Stack>
-            </XStack>
           )}
         </Stack>
 
-        <Separator marginHorizontal="$3" borderColor="$borderSoft" />
-        <YStack padding="$1.5" gap="$1.5">
-          <SetHeader
-            isActive={isActive}
-            exerciseDefinition={exerciseDefinition}
-            weightUnit={exercise.weight_unit}
-            distanceUnit={exercise.distance_unit}
-          />
+        {!isEditing && (
+          <>
+            <Separator marginHorizontal="$3" borderColor="$borderSoft" />
 
-          {exercise.workout_exercise_sets
-            .sort((a, b) => a.set_number - b.set_number)
-            .map((set) => (
-              <SetRow
-                key={set.id}
-                set={set}
+            <YStack padding="$1.5" gap="$1.5">
+              <SetHeader
+                isActive={isActive}
                 exerciseDefinition={exerciseDefinition}
                 weightUnit={exercise.weight_unit}
                 distanceUnit={exercise.distance_unit}
-                isActive={isActive}
-                onDelete={handleSetDelete}
-                onUpdate={handleSetUpdate}
               />
-            ))}
 
-          {/* Inline Add Set Button */}
-          {isActive && isSetLimitReached && (
-            <Text
-              color="$textMuted"
-              size="medium"
-              textAlign="center"
-              marginTop="$1"
-            >
-              Set limit reached (10/10)
-            </Text>
-          )}
+              {exercise.workout_exercise_sets
+                .sort((a, b) => a.set_number - b.set_number)
+                .map((set) => (
+                  <SetRow
+                    key={set.id}
+                    set={set}
+                    exerciseDefinition={exerciseDefinition}
+                    weightUnit={exercise.weight_unit}
+                    distanceUnit={exercise.distance_unit}
+                    isActive={isActive}
+                    onDelete={handleSetDelete}
+                    onUpdate={handleSetUpdate}
+                    canDelete={exercise.workout_exercise_sets.length > 1}
+                  />
+                ))}
 
-          {isActive && !isSetLimitReached && (
-            <Button
-              size="medium"
-              backgroundColor="$backgroundMuted"
-              borderWidth={1}
-              borderColor="$borderSoft"
-              borderStyle="dashed"
-              color="$primary"
-              alignSelf="stretch"
-              marginTop="$1"
-              pressStyle={{
-                backgroundColor: "$primaryTint",
-                borderColor: "$primary",
-                scale: 0.98,
-              }}
-              onPress={handleAddSet}
-            >
-              <XStack gap="$1.5" alignItems="center">
-                <Text size="medium" color="$primary" fontWeight="600">
-                  Add Set
+              {isActive && isSetLimitReached && (
+                <Text
+                  color="$textMuted"
+                  size="medium"
+                  textAlign="center"
+                  marginTop="$1"
+                >
+                  Set limit reached (10/10)
                 </Text>
-              </XStack>
-            </Button>
-          )}
-        </YStack>
+              )}
+
+              {isActive && !isSetLimitReached && (
+                <Button
+                  size="medium"
+                  backgroundColor="$backgroundMuted"
+                  borderWidth={1}
+                  borderColor="$borderSoft"
+                  borderStyle="dashed"
+                  color="$primary"
+                  alignSelf="center"
+                  width="40%"
+                  margin="$3"
+                  pressStyle={{
+                    backgroundColor: "$primaryTint",
+                    borderColor: "$primary",
+                    scale: 0.98,
+                  }}
+                  onPress={handleAddSet}
+                >
+                  <XStack gap="$1.5" alignItems="center">
+                    <Text size="medium" color="$primary" fontWeight="600">
+                      Add Set
+                    </Text>
+                  </XStack>
+                </Button>
+              )}
+            </YStack>
+          </>
+        )}
       </YStack>
 
-      <NotesModal
-        isVisible={notesModalVisible}
-        exerciseName={exercise.name}
-        initialNotes={exercise.notes || ""}
-        onSave={handleNotesSave}
-        onClose={() => setNotesModalVisible(false)}
+      <ExerciseDefinitionView
+        definitionId={exercise.definition_id || ""}
+        isVisible={definitionModalVisible && !!exercise.definition_id}
+        onClose={() => setDefinitionModalVisible(false)}
       />
     </>
   );

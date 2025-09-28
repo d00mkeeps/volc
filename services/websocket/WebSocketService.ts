@@ -28,6 +28,8 @@ export type EndpointConfig = {
   conversationId?: string;
 };
 
+export type WorkoutTemplateApprovedCallback = (templateData: any) => void;
+
 /**
  * Persistent WebSocket service - maintains single active connection per endpoint
  */
@@ -382,7 +384,10 @@ export class WebSocketService {
             this.events.emit("message", message.data);
           }
           break;
-
+        case "workout_template_approved":
+          console.log("[WSService] Workout template approved:", message.data);
+          this.events.emit("workoutTemplateApproved", message.data);
+          break;
         case "complete":
           this.events.emit("complete");
           break;
@@ -571,6 +576,13 @@ export class WebSocketService {
   onError(callback: ErrorCallback): () => void {
     this.events.on("error", callback);
     return () => this.events.off("error", callback);
+  }
+
+  onWorkoutTemplateApproved(
+    callback: WorkoutTemplateApprovedCallback
+  ): () => void {
+    this.events.on("workoutTemplateApproved", callback);
+    return () => this.events.off("workoutTemplateApproved", callback);
   }
 
   /**

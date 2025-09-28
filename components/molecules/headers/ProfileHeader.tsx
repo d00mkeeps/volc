@@ -5,9 +5,6 @@ import Button from "@/components/atoms/core/Button";
 import ProfileAvatar from "@/components/molecules/ProfileAvatar";
 import { UserProfile } from "@/types";
 
-const PLACEHOLDER_BIO =
-  "This is my fitness journey! I love working out and staying healthy. Always pushing myself to be better than yesterday. 💪";
-
 interface ProfileHeaderProps {
   userProfile: UserProfile | null; // ← Allow null
   editingCard: string | null;
@@ -15,6 +12,8 @@ interface ProfileHeaderProps {
   isEditMode: boolean;
   editedBio: string;
   onBioChange: (bio: string) => void;
+  refreshProfile: () => Promise<void>;
+  setIsEditMode: (editMode: boolean) => void; // ✅ Add this
 }
 
 export default function ProfileHeader({
@@ -24,6 +23,8 @@ export default function ProfileHeader({
   isEditMode,
   editedBio,
   onBioChange,
+  refreshProfile,
+  setIsEditMode,
 }: ProfileHeaderProps) {
   const handleImageUploaded = async (imageId: string) => {
     try {
@@ -43,7 +44,11 @@ export default function ProfileHeader({
     >
       {/* Left side - Avatar with name/age/instagram below */}
       <YStack alignItems="center" gap="$3" width="35%" flex={0.5}>
-        <ProfileAvatar editMode={isEditMode} />
+        <ProfileAvatar
+          editMode={isEditMode}
+          refreshProfile={refreshProfile}
+          setIsEditMode={setIsEditMode} // ✅ Pass it down
+        />
 
         <YStack alignItems="center" gap="$1">
           <Text

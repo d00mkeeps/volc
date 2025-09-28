@@ -16,6 +16,7 @@ interface SetRowProps {
   isActive?: boolean;
   onUpdate: (set: WorkoutExerciseSet) => void;
   onDelete?: (setId: string) => void;
+  canDelete?: boolean;
 }
 
 export default function SetRow({
@@ -26,6 +27,7 @@ export default function SetRow({
   isActive = true,
   onUpdate,
   onDelete,
+  canDelete = true,
 }: SetRowProps) {
   const [pendingDelete, setPendingDelete] = useState(false);
   const { userProfile } = useUserStore();
@@ -39,7 +41,7 @@ export default function SetRow({
   }, [pendingDelete]);
 
   const handleDeletePress = () => {
-    if (!isActive) return;
+    if (!isActive || !canDelete) return;
 
     if (pendingDelete) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -66,13 +68,15 @@ export default function SetRow({
 
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
-      <Stack width={30} alignItems="center" justifyContent="center" height={40}>
+      {/* Set Number */}
+      <Stack width={50} alignItems="center" justifyContent="center" height={40}>
         <Text size="medium" fontWeight="600" color="$color">
           {set.set_number}
         </Text>
       </Stack>
 
-      <XStack flex={1} gap="$1.5">
+      {/* Centered Metric Inputs */}
+      <XStack flex={1} gap="$1.5" maxWidth="75%">
         {showWeight && (
           <MetricInput
             type="weight"
@@ -111,21 +115,27 @@ export default function SetRow({
         )}
       </XStack>
 
-      <Stack
-        width={32}
-        height={32}
-        borderRadius="$2"
-        backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
-        justifyContent="center"
-        alignItems="center"
-        pressStyle={{
-          backgroundColor: pendingDelete ? "#ef444450" : "$backgroundPress",
-        }}
-        onPress={handleDeletePress}
-        cursor={isActive ? "pointer" : "default"}
-      >
-        <Trash2 size={16} color="#ef4444" />
-      </Stack>
+      {/* Delete Button - only show if deletion is allowed */}
+      {canDelete && isActive && (
+        <Stack
+          width={36}
+          height={36}
+          borderRadius="$2"
+          backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
+          justifyContent="center"
+          alignItems="center"
+          pressStyle={{
+            backgroundColor: pendingDelete ? "#ef444450" : "$backgroundPress",
+          }}
+          onPress={handleDeletePress}
+          cursor="pointer"
+        >
+          <Trash2 size={16} color="#ef4444" />
+        </Stack>
+      )}
+
+      {/* Spacer when delete button is not shown to maintain alignment */}
+      {(!canDelete || !isActive) && <Stack width={32} height={32} />}
     </XStack>
   );
 }

@@ -4,11 +4,12 @@ import Text from "@/components/atoms/core/Text";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
+import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
 
 interface MessageItemProps {
   message: Message;
   isStreaming?: boolean;
-  enableUserMarkdown?: boolean; // New prop to control user markdown
+  enableUserMarkdown?: boolean;
 }
 
 export const MessageItem = memo(
@@ -33,7 +34,55 @@ export const MessageItem = memo(
 
     const renderContent = safeContent + (isStreaming ? "..." : "");
 
-    // Use fontSize tokens for markdown
+    // CUSTOM RULES WITH FENCE SUPPORT
+    const customRules = {
+      paragraph: (node: any, children: any, parent: any, styles: any) => {
+        return (
+          <YStack key={node.key} style={styles.paragraph}>
+            {children}
+          </YStack>
+        );
+      },
+
+      fence: (node: any, children: any, parent: any, styles: any) => {
+        // Don't process custom components while streaming
+        if (isStreaming) {
+          return (
+            <YStack key={node.key} style={styles.fence}>
+              <Text style={styles.fence}>{node.content}</Text>
+            </YStack>
+          );
+        }
+
+        // Streaming complete - try to parse as custom components
+        try {
+          const parsed = JSON.parse(node.content);
+
+          if (parsed.type === "workout_template") {
+            return <WorkoutTemplateView key={node.key} data={parsed.data} />;
+          }
+        } catch (e) {
+          // Silent fail, fall back to default rendering
+        }
+
+        // Default fence rendering
+        return (
+          <YStack key={node.key} style={styles.fence}>
+            <Text style={styles.fence}>{node.content}</Text>
+          </YStack>
+        );
+      },
+
+      code_block: (node: any, children: any, parent: any, styles: any) => {
+        return (
+          <YStack key={node.key} style={styles.code_block}>
+            <Text style={styles.code_block}>{node.content}</Text>
+          </YStack>
+        );
+      },
+    };
+
+    // Markdown styles
     const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
     const h2Size = isTablet ? tokens.fontSize.$6.val : tokens.fontSize.$4.val;
     const h1Size = isTablet ? tokens.fontSize.$8.val : tokens.fontSize.$6.val;
@@ -43,7 +92,7 @@ export const MessageItem = memo(
         fontSize: bodySize,
         fontWeight: "400",
         lineHeight: bodySize * 1.4,
-        color: isUser ? "#ffffff" : theme.color.get(), // White for user, theme-responsive for assistant
+        color: isUser ? "#ffffff" : theme.color.get(),
         margin: 0,
         padding: 0,
       },
@@ -93,6 +142,29 @@ export const MessageItem = memo(
         marginVertical: 4,
         fontSize: bodySize,
       },
+      fence: {
+        fontFamily: "monospace",
+        backgroundColor: isUser
+          ? "rgba(255,255,255,0.2)"
+          : theme.backgroundStrong.get(),
+        color: isUser ? "#ffffff" : theme.color.get(),
+        padding: 8,
+        borderRadius: 6,
+        marginVertical: 4,
+        fontSize: bodySize,
+      },
+      code_container: {
+        backgroundColor: "transparent",
+        borderRadius: 0,
+        margin: 0,
+        padding: 0,
+      },
+      pre: {
+        backgroundColor: "transparent",
+        borderRadius: 0,
+        margin: 0,
+        padding: 0,
+      },
     });
 
     return (
@@ -111,17 +183,13 @@ export const MessageItem = memo(
           opacity={isStreaming ? 0.7 : 1}
         >
           {isUser && !enableUserMarkdown ? (
-            // User messages: Use your Text component with proper sizing
-            <Text
-              size="medium" // Better size than small
-              color="white"
-              fontWeight="500"
-            >
+            <Text size="medium" color="white" fontWeight="500">
               {renderContent}
             </Text>
           ) : (
-            // Assistant messages OR user messages with markdown enabled
-            <Markdown style={markdownStyles}>{renderContent}</Markdown>
+            <Markdown style={markdownStyles} rules={customRules}>
+              {renderContent}
+            </Markdown>
           )}
         </YStack>
       </XStack>

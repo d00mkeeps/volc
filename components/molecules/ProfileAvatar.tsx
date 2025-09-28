@@ -5,13 +5,18 @@ import { Image } from "expo-image";
 import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";
 import ImagePickerButton from "../atoms/ImagePickerButton";
+import { clearImageUrlCache } from "./workout/WorkoutImage";
 
 interface ProfileAvatarProps {
   editMode?: boolean;
+  refreshProfile?: () => Promise<void>;
+  setIsEditMode?: (editMode: boolean) => void; // ✅ Add this
 }
 
 export default function ProfileAvatar({
   editMode = false,
+  refreshProfile,
+  setIsEditMode,
 }: ProfileAvatarProps) {
   const { userProfile, updateProfile } = useUserStore();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -65,7 +70,17 @@ export default function ProfileAvatar({
   const handleImageUploaded = async (imageId: string) => {
     try {
       await updateProfile({ avatar_image_id: imageId });
-      console.log("[ProfileAvatar] Avatar updated successfully");
+
+      // Clear cache for the new image to ensure fresh load
+      clearImageUrlCache(imageId);
+
+      if (refreshProfile) {
+        await refreshProfile();
+      }
+
+      if (setIsEditMode) {
+        setIsEditMode(false);
+      }
     } catch (error) {
       console.error("[ProfileAvatar] Failed to update avatar:", error);
     }

@@ -170,7 +170,19 @@ export default function HomeScreen() {
         setShowCompletionModal(false);
       }
     } else {
+      // User wants to start a workout
+
+      // First check if we have a user profile (the real requirement)
+      if (!userProfile) {
+        console.error("No user profile available");
+        return;
+      }
+
+      // If no current workout or template selected, open template selector
       if (!currentWorkout && !selectedTemplate) {
+        console.log(
+          "No workout selected after cancel, opening template selector"
+        );
         setIntendedToStart(true);
         sessionActions.openTemplateSelector();
         return;
@@ -179,11 +191,14 @@ export default function HomeScreen() {
       const workoutToStart = currentWorkout;
 
       if (!workoutToStart) {
-        // Handle no user profile case
-        console.error("No user profile available");
+        // This case shouldn't happen given the checks above, but just in case
+        console.log("No current workout, opening template selector");
+        setIntendedToStart(true);
+        sessionActions.openTemplateSelector();
         return;
       }
 
+      // Start the workout
       sessionActions.startWorkout(workoutToStart);
       workoutTrackerRef.current?.expandToFull();
     }
@@ -193,6 +208,7 @@ export default function HomeScreen() {
     currentWorkout,
     selectedTemplate,
     sessionActions,
+    userProfile,
   ]);
 
   useEffect(() => {

@@ -4,6 +4,7 @@ import { getWebSocketService } from "@/services/websocket/WebSocketService";
 import { authService } from "@/services/db/auth";
 import { Message } from "@/types";
 import Toast from "react-native-toast-message";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 const EMPTY_MESSAGES: Message[] = [];
 
@@ -11,6 +12,9 @@ export function useWorkoutPlanning() {
   const messageStore = useMessageStore();
   const webSocketService = getWebSocketService();
   const unsubscribeRefs = useRef<(() => void)[]>([]);
+  const templateApprovalCallbackRef = useRef<
+    ((templateData: any) => void) | null
+  >(null);
 
   // Use user_id as the key since no conversationId for planning
   const getUserId = async () => {
@@ -34,11 +38,27 @@ export function useWorkoutPlanning() {
   const isLoading = useMessageStore((state) => state.isLoading);
   const error = useMessageStore((state) => state.error);
 
+  const setTemplateApprovalHandler = useCallback(
+    (handler: (templateData: any) => void) => {
+      templateApprovalCallbackRef.current = handler;
+    },
+    []
+  );
   // Register websocket handlers for receiving messages
   const registerHandlers = useCallback((messageKey: string) => {
     // Clear any existing handlers
     unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
     unsubscribeRefs.current = [];
+    const unsubscribeTemplateApproved =
+      webSocketService.onWorkoutTemplateApproved((templateData) => {
+        console.log(
+          "[useWorkoutPlanning] Workout template approved:",
+          templateData
+        );
+        if (templateApprovalCallbackRef.current) {
+          templateApprovalCallbackRef.current(templateData);
+        }
+      });
 
     // Register handlers for incoming messages
     const unsubscribeContent = webSocketService.onMessage((chunk) => {
@@ -81,6 +101,7 @@ export function useWorkoutPlanning() {
       unsubscribeComplete,
       unsubscribeTerminated,
       unsubscribeError,
+      unsubscribeTemplateApproved,
     ];
 
     console.log(
@@ -178,5 +199,6 @@ export function useWorkoutPlanning() {
     sendMessage,
     hasMessages: messages.length > 0,
     messageCount: messages.length,
+    setTemplateApprovalHandler,
   };
 }

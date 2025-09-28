@@ -102,31 +102,66 @@ class ImageService(BaseDBService):
         except Exception as e:
             return await self.handle_error("commit_image", e)
     
-    async def get_image_url(self, image_id: str, jwt_token: str) -> Dict[str, Any]:
-        """Get public URL by image ID"""
+    async def get_image_url(self, image_id: str, user_id: str, jwt_token: str) -> Dict[str, Any]:
+        """Get public URL by image ID - all workouts are public"""
         try:
-            logger.info(f"Getting image URL for ID: {image_id}")
+            logger.info(f"🔥 NEW VERSION - Getting image URL for ID: {image_id}")
+            logger.info(f"🔥 NEW VERSION - Requesting user ID: {user_id}")
             
-            user_client = self.get_user_client(jwt_token)
+            # ✅ Use admin client to bypass RLS and check permissions manually
+            admin_client = self.get_admin_client()
             
-            # Get file path from DB
-            result = user_client.table("images").select("file_path").eq("id", image_id).execute()
+            # Check if image exists and get details
+            image_result = admin_client.table("images") \
+                .select("id, file_path, user_id") \
+                .eq("id", image_id) \
+                .eq("status", "permanent") \
+                .execute()
             
-            if not hasattr(result, "data") or not result.data:
+            logger.info(f"Image query result: {image_result.data}")
+            
+            if not image_result.data:
+                logger.error("Image not found or not permanent")
                 raise Exception("Image not found")
             
-            file_path = result.data[0]["file_path"]
+            image = image_result.data[0]
+            image_owner_id = image["user_id"]
+            file_path = image["file_path"]
+            
+            logger.info(f"Image owner ID: {image_owner_id}")
+            logger.info(f"Requesting user ID: {user_id}")
+            logger.info(f"User owns image: {image_owner_id == user_id}")
+            
+            # ✅ Simplified permission check: user owns image OR image belongs to any workout
+            if image_owner_id == user_id:
+                logger.info("User owns image - allowing access")
+            else:
+                logger.info("User doesn't own image - checking if image belongs to any workout")
+                
+                # ✅ Check if image belongs to ANY workout (all workouts are public)
+                workout_result = admin_client.table("workouts") \
+                    .select("id, user_id, image_id") \
+                    .eq("image_id", image_id) \
+                    .execute()
+                
+                logger.info(f"Workout query result: {workout_result.data}")
+                
+                if not workout_result.data:
+                    logger.error("Image belongs to another user and no workout found")
+                    raise Exception("Image not found")
+                
+                logger.info("Image belongs to a workout - allowing access (all workouts are public)")
+            
             logger.info(f"Found file path: {file_path}")
             
-            # Get public URL from storage
+            # ✅ Use user client for storage operations
+            user_client = self.get_user_client(jwt_token)
             url_result = user_client.storage.from_(self.bucket_name).get_public_url(file_path)
             
-            # ✅ DEBUG: Log the actual response structure
+            # Handle the URL response (keep your existing parsing logic)
             logger.info(f"Public URL response type: {type(url_result)}")
             logger.info(f"Public URL response: {url_result}")
-            logger.info(f"Public URL keys: {list(url_result.keys()) if isinstance(url_result, dict) else 'Not a dict'}")
             
-            # Try multiple possible structures
             if isinstance(url_result, str):
                 public_url = url_result
                 logger.info("Used direct string")
@@ -134,9 +169,6 @@ class ImageService(BaseDBService):
                 if 'publicUrl' in url_result:
                     public_url = url_result['publicUrl']
                     logger.info("Used publicUrl key")
-                elif 'data' in url_result and isinstance(url_result['data'], dict) and 'publicUrl' in url_result['data']:
-                    public_url = url_result['data']['publicUrl']
-                    logger.info("Used data.publicUrl key")
                 elif 'url' in url_result:
                     public_url = url_result['url']
                     logger.info("Used url key")
@@ -151,5 +183,6 @@ class ImageService(BaseDBService):
             
         except Exception as e:
             return await self.handle_error("get_image_url", e)
-# Create service instance
+
+
 image_service = ImageService()

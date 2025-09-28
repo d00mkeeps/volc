@@ -4,6 +4,7 @@ import google.api_core.exceptions
 from langchain_google_vertexai import ChatVertexAI
 from ..chains.workout_planning_chain import WorkoutPlanningChain
 from ..db.message_service import MessageService
+from ..sentiment_analysis.workout_planning import WorkoutPlanningSentimentAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class WorkoutPlanningLLMService:
         if user_id not in self._conversation_chains:
             # Initialize new LLM
             llm = ChatVertexAI(
-                model="gemini-2.5-flash",
+                model="gemini-2.5-pro",
                 streaming=True,
                 max_retries=0,
                 temperature=0,
@@ -29,11 +30,21 @@ class WorkoutPlanningLLMService:
                 project=self.project_id
             )
                     
-            # Create new planning chain
-            self._conversation_chains[user_id] = WorkoutPlanningChain(
-                llm=llm,
-                user_id=user_id
+            # Create new planning chain with sentiment analyzer
+            chain = WorkoutPlanningChain(llm=llm, user_id=user_id)
+            
+            # Initialize sentiment analyzer for approval detection
+            sentiment_llm = ChatVertexAI(
+                model="gemini-2.5-pro",
+                streaming=False,  # Non-streaming for sentiment analysis
+                max_retries=2,
+                temperature=0,
+                credentials=self.credentials,
+                project=self.project_id
             )
+            chain.sentiment_analyzer = WorkoutPlanningSentimentAnalyzer(sentiment_llm)
+            
+            self._conversation_chains[user_id] = chain
             
         return self._conversation_chains[user_id]
 
@@ -121,7 +132,7 @@ class WorkoutPlanningLLMService:
             }
 
     async def process_websocket(self, websocket: WebSocket, user_id: str):
-        """Process WebSocket connection for workout planning"""
+        """Process WebSocket connection for workout planning with template detection and approval workflow"""
         try:
             await websocket.accept()
             logger.info(f"Workout planning WebSocket connection accepted for user: {user_id}")
@@ -136,7 +147,7 @@ class WorkoutPlanningLLMService:
             logger.info(f"Loading planning context for user: {user_id}")
             planning_context = await self.load_planning_context(user_id)
             
-            # Get or create planning chain
+            # Get or create planning chain (includes sentiment analyzer)
             chain = self.get_chain(user_id)
 
             # Load user profile into chain (existing pattern)
@@ -147,7 +158,7 @@ class WorkoutPlanningLLMService:
             else:
                 logger.info(f"No user profile available for planning: {user_id} - continuing with generic prompts")
 
-            # Load planning context into chain (NEW)
+            # Load planning context into chain
             logger.info(f"Loading planning context into chain: {user_id}")
             await chain.load_planning_context(planning_context)
 
@@ -156,13 +167,19 @@ class WorkoutPlanningLLMService:
             
             full_response_content = ""
             async for response in chain.process_message("Start workout planning conversation"):
+                # Handle special signals from enhanced process_message
+                if response.get("type") == "workout_template_approved":
+                    logger.info(f"🎉 Initial template approved by user {user_id} (should not happen in greeting)")
+                    await websocket.send_json(response)
+                    continue
+                    
                 await websocket.send_json(response)
                 if response.get("type") == "content":
                     full_response_content += response.get("data", "")
             
             logger.info(f"Sent contextual planning greeting for user {user_id}")
 
-            # Process messages (no saving for now since we don't have conversation_id)
+            # Process ongoing conversation messages
             while True:
                 data = await websocket.receive_json()
                 
@@ -205,28 +222,54 @@ class WorkoutPlanningLLMService:
                             })
                             continue
                     
-                    # Process message through chain (no database saves for now)
+                    # Process message through enhanced chain with template detection and approval
                     full_ai_response = ""
+                    template_approved = False
+                    
                     async for response in chain.process_message(message):
+                        # Handle special workout template approval signals
+                        if response.get("type") == "workout_template_approved":
+                            logger.info(f"🎉 Workout template approved by user {user_id}")
+                            logger.info(f"Template data: {response.get('data', {}).get('name', 'Unknown')}")
+                            
+                            # Send approval signal to frontend with structured template data
+                            await websocket.send_json({
+                                "type": "workout_template_approved",
+                                "data": response.get("data")
+                            })
+                            
+                            template_approved = True
+                            continue
+                            
+                        # Handle regular content and other response types
                         await websocket.send_json(response)
                         if response.get("type") == "content":
                             full_ai_response += response.get("data", "")
                     
-                    logger.info(f"Processed planning message for user {user_id}")
+                    # Log message processing completion
+                    if template_approved:
+                        logger.info(f"✅ Message processed with template approval for user {user_id}")
+                    else:
+                        logger.info(f"✅ Message processed normally for user {user_id}")
+                        
+                        # Log template state for debugging
+                        if chain.current_template:
+                            logger.info(f"📋 Current template: {chain.current_template.get('name', 'Unknown')}")
+                            logger.info(f"🎯 Template presented: {chain.template_presented}")
                     
         except google.api_core.exceptions.ResourceExhausted as e:
-            logger.error(f"Rate limit exceeded: {str(e)}")
+            logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
             try:
                 await websocket.send_json({
                     "type": "error",
                     "data": {
                         "code": "rate_limit",
-                        "message": f"Rate limit exceeded. Please try again later.",
+                        "message": f"AI service rate limit exceeded. Please try again later.",
                         "retry_after": 60
                     }
                 })
-            except:
-                pass
+            except Exception:
+                logger.error("Failed to send rate limit error response")
                 
         except Exception as e:
             logger.error(f"Error in planning websocket: {str(e)}", exc_info=True)
@@ -238,5 +281,69 @@ class WorkoutPlanningLLMService:
                     }
                 })
                 await websocket.close(code=1011)
-            except:
-                pass
+            except Exception:
+                logger.error("Failed to send error response or close websocket")
+
+    def get_chain_state(self, user_id: str) -> dict:
+        """Get current state of planning chain for debugging/monitoring"""
+        if user_id in self._conversation_chains:
+            chain = self._conversation_chains[user_id]
+            return {
+                "user_id": user_id,
+                "messages_count": len(chain.messages),
+                "has_template": chain.current_template is not None,
+                "template_presented": chain.template_presented,
+                "template_name": chain.current_template.get('name') if chain.current_template else None,
+                "has_sentiment_analyzer": chain.sentiment_analyzer is not None,
+                "has_user_profile": chain._user_profile is not None,
+                "exercise_definitions_count": len(chain._exercise_definitions),
+                "recent_workouts_count": chain._recent_workouts['patterns'].get('total_workouts', 0)
+            }
+        return {"error": "No chain found for user"}
+
+    def reset_chain(self, user_id: str) -> bool:
+        """Reset planning chain for user (useful for testing or fresh starts)"""
+        try:
+            if user_id in self._conversation_chains:
+                del self._conversation_chains[user_id]
+                logger.info(f"Reset planning chain for user: {user_id}")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Error resetting chain for user {user_id}: {str(e)}")
+            return False
+
+    async def test_approval_detection(self, user_id: str, test_message: str) -> dict:
+        """Test method for approval detection (development/debugging use)"""
+        try:
+            chain = self.get_chain(user_id)
+            
+            if not chain.current_template or not chain.template_presented:
+                return {
+                    "error": "No template presented for testing",
+                    "current_template": chain.current_template is not None,
+                    "template_presented": chain.template_presented
+                }
+            
+            # Test both sentiment analyzer and fallback
+            sentiment_result = None
+            if chain.sentiment_analyzer:
+                sentiment_result = await chain.sentiment_analyzer.analyze_approval(
+                    message=test_message,
+                    messages=chain.messages,
+                    template_data=chain.current_template
+                )
+            
+            fallback_result = await chain._check_for_approval(test_message)
+            
+            return {
+                "test_message": test_message,
+                "sentiment_analyzer_result": sentiment_result,
+                "fallback_result": fallback_result,
+                "template_name": chain.current_template.get('name') if chain.current_template else None,
+                "message_history_count": len(chain.messages)
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in approval detection test: {str(e)}")
+            return {"error": str(e)}

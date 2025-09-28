@@ -103,9 +103,9 @@ export default function MuscleGroupSpider() {
     muscleData.length > 0
       ? Math.max(...muscleData.map((d: MuscleData) => d.sets))
       : 1;
-  const size = 220;
+  const size = 260;
   const center = size / 2;
-  const maxRadius = size / 2 - 40;
+  const maxRadius = 80;
 
   const points = muscleData.map((item: MuscleData, index: number) => {
     const angle = (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
@@ -152,7 +152,7 @@ export default function MuscleGroupSpider() {
       </Stack>
 
       {/* Right Stack - Spider Chart */}
-      <Stack flex={1} justifyContent="center" alignItems="flex-end">
+      <Stack flex={1} justifyContent="center">
         <Stack justifyContent="center" alignItems="center">
           <Svg width={size} height={size}>
             {/* Background grid circles */}
@@ -205,7 +205,7 @@ export default function MuscleGroupSpider() {
                     key={index}
                     cx={point.x}
                     cy={point.y}
-                    r={4}
+                    r={3}
                     fill="#f84f3e"
                   />
                 ))}
@@ -213,7 +213,7 @@ export default function MuscleGroupSpider() {
                 {points.map((point: any, index: number) => {
                   const angle =
                     (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-                  const labelRadius = maxRadius + 24;
+                  const labelRadius = maxRadius + 16;
                   const labelX = center + labelRadius * Math.cos(angle);
                   const labelY = center + labelRadius * Math.sin(angle);
 

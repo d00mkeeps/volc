@@ -31,7 +31,7 @@ export interface WorkoutExerciseSet {
   distance?: number | null;
   duration?: any | null;
   rpe?: number | null;
-  is_completed?: boolean; // Add this
+  is_completed?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -59,7 +59,7 @@ interface ActualMetrics {
 
 export type WorkoutExercise = {
   id: string;
-  definition_id?: string; // New field to link to exercise definitions
+  definition_id?: string;
   workout_id: string;
   name: string;
   order_index: number;

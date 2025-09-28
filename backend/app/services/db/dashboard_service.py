@@ -183,6 +183,7 @@ class DashboardService(BaseDBService):
             logger.warning(f"Could not batch fetch definitions: {str(e)}")
             return {}
 
+
     def _calculate_muscle_balance(self, workouts: List[Dict]) -> List[Dict[str, Any]]:
         """Calculate muscle group balance from workouts"""
         muscle_sets = {}
@@ -217,11 +218,19 @@ class DashboardService(BaseDBService):
                         else:
                             muscle_sets[muscle_group] += set_count  # ✅ Full count
 
+        # ✅ Ensure all muscle groups have at least 1 set
+        all_muscle_groups = set(self.MUSCLE_MAPPING.values())
+        for group in all_muscle_groups:
+            if group not in muscle_sets:
+                muscle_sets[group] = 1
+            elif muscle_sets[group] == 0:
+                muscle_sets[group] = 1
+
         # Convert to list format
         return [
             {"muscle": group, "sets": round(sets)}
             for group, sets in sorted(muscle_sets.items(), key=lambda x: x[1], reverse=True)
-            if sets > 0
+            if sets > 0  # This condition is now always true since min is 1
         ]
 
     def _calculate_consistency(self, workouts: List[Dict], days: int) -> Dict[str, Any]:
