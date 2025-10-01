@@ -38,7 +38,7 @@ export const ChatInterface = ({
   const getPlaceholder = () => {
     switch (connectionState) {
       case "disconnected":
-        return "Disconnected - restart to continue";
+        return "Chat disconnected..";
       case "expecting_ai_message":
         return "Loading...";
       default:
@@ -47,9 +47,6 @@ export const ChatInterface = ({
   };
 
   const getStatusText = () => {
-    if (connectionState === "disconnected") {
-      return "Chat disconnected";
-    }
     if (queuedMessageCount > 0) {
       return `${queuedMessageCount} message${
         queuedMessageCount > 1 ? "s" : ""
@@ -87,6 +84,7 @@ export const ChatInterface = ({
           messages={messages}
           streamingMessage={streamingMessage}
           showLoadingIndicator={shouldShowLoadingIndicator}
+          connectionState={connectionState}
         />
 
         {getStatusText() && (
@@ -100,16 +98,16 @@ export const ChatInterface = ({
           </Text>
         )}
 
-        {/* Floating Restart Button - shown when disconnected */}
         {shouldShowRestartButton && (
           <YStack
             position="absolute"
-            bottom="$12"
+            top="50%" // Center vertically
             left={0}
             right={0}
             alignItems="center"
             paddingHorizontal="$4"
             zIndex={10}
+            transform={[{ translateY: -30 }]} // Offset by half button height for perfect centering
           >
             <FloatingActionButton
               icon="play"

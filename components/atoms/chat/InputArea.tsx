@@ -47,7 +47,7 @@ export const InputArea = ({
           setInput(text);
           if (error && text.length <= 240) setError(undefined);
         }}
-        placeholder={disabled ? "Please wait..." : placeholder}
+        placeholder={placeholder}
         disabled={disabled}
         backgroundColor={disabled ? "$backgroundMuted" : "$backgroundSoft"}
         borderColor={error ? "$error" : "$borderSoft"}
