@@ -76,13 +76,24 @@ class WorkoutAnalysisChain(BaseConversationChain):
         is_imperial = profile.get('is_imperial', False)
         units = "imperial (lb/mi)" if is_imperial else "metric (kg/km)"
         
-        # Extract goals
+
         goals = profile.get('goals', {})
-        primary_goal = goals.get('primary', 'Not specified') if isinstance(goals, dict) else 'Not specified'
-        
-        # Extract stats/experience
-        current_stats = profile.get('current_stats', {})
-        experience = current_stats.get('notes', 'Not specified') if isinstance(current_stats, dict) else 'Not specified'
+        if isinstance(goals, dict) and 'content' in goals:
+            primary_goal = goals['content']
+        elif isinstance(goals, str):
+            primary_goal = goals
+        else:
+            primary_goal = 'Not specified'
+
+        # Handle current_stats - database format: "intermediate" (string)
+        current_stats = profile.get('current_stats')
+        if isinstance(current_stats, str):
+            experience = current_stats
+        elif isinstance(current_stats, dict) and 'notes' in current_stats:
+            experience = current_stats['notes']
+        else:
+            experience = 'Not specified'
+
         
         context = f"""
 USER PROFILE:
