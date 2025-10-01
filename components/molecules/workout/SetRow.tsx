@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
@@ -7,6 +7,8 @@ import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/workout/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
 import DurationInput from "@/components/atoms/workout/DurationInput";
+import { isSetComplete } from "@/utils/setValidation";
+import { Check } from "@/assets/icons/IconMap";
 
 interface SetRowProps {
   set: WorkoutExerciseSet;
@@ -32,6 +34,19 @@ export default function SetRow({
   const [pendingDelete, setPendingDelete] = useState(false);
   const { userProfile } = useUserStore();
   const isImperial = userProfile?.is_imperial ?? false;
+
+  const isComplete = useMemo(() => {
+    const complete = isSetComplete(set, exerciseDefinition);
+    console.log("[SetRow] Completion check:", {
+      setNumber: set.set_number,
+      weight: set.weight,
+      reps: set.reps,
+      distance: set.distance,
+      duration: set.duration,
+      isComplete: complete,
+    });
+    return complete;
+  }, [set.weight, set.reps, set.distance, set.duration, exerciseDefinition]);
 
   useEffect(() => {
     if (pendingDelete) {
@@ -69,10 +84,24 @@ export default function SetRow({
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
       {/* Set Number */}
-      <Stack width={50} alignItems="center" justifyContent="center" height={40}>
-        <Text size="medium" fontWeight="600" color="$color">
-          {set.set_number}
-        </Text>
+      <Stack
+        width={50}
+        alignItems="center"
+        justifyContent="center"
+        height={40}
+        backgroundColor="$transparent"
+        borderRadius="$2"
+      >
+        <XStack gap="$1" alignItems="center">
+          {isComplete && <Check size={14} color="#16a34a" />}
+          <Text
+            size="medium"
+            fontWeight="600"
+            color={isComplete ? "$green8" : "$color"}
+          >
+            {set.set_number}
+          </Text>
+        </XStack>
       </Stack>
 
       {/* Centered Metric Inputs */}

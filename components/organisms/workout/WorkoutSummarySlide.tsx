@@ -123,11 +123,13 @@ export function WorkoutSummarySlide({
 
   return (
     <YStack gap="$4" paddingBottom="$4">
-      <Text size="medium" fontWeight="bold">
+      <Text size="large" fontWeight="bold">
         Workout Complete!
       </Text>
-
       <YStack gap="$2">
+        <Text size="medium" fontWeight="600">
+          Name
+        </Text>
         <Input
           value={workoutName}
           onChangeText={handleNameChange}
@@ -139,12 +141,11 @@ export function WorkoutSummarySlide({
           backgroundColor="$backgroundMuted"
         />
         {showNameError && (
-          <Text color="$red9" size="medium">
-            Please enter a workout name to continue
+          <Text color="$red9" size="small">
+            please add name
           </Text>
         )}
       </YStack>
-
       <YStack gap="$2">
         <Text size="medium" fontWeight="600">
           Photo
@@ -172,7 +173,6 @@ export function WorkoutSummarySlide({
           </XStack>
         )}
       </YStack>
-
       <YStack gap="$2">
         <Text size="medium" fontWeight="600">
           Notes
@@ -185,7 +185,6 @@ export function WorkoutSummarySlide({
           backgroundColor="$backgroundMuted"
         />
       </YStack>
-
       <XStack gap="$3" paddingTop="$2">
         {loadingState !== "continue" && (
           <Button
@@ -193,8 +192,8 @@ export function WorkoutSummarySlide({
             backgroundColor="$background" // Changed from variant="outlined" to grey background
             color="$text" // Add text color for grey button
             onPress={handleSkipChat}
-            disabled={!isNameValid || loadingState === "skip"}
-            opacity={isNameValid && loadingState !== "skip" ? 1 : 0.6}
+            disabled={loadingState === "skip"}
+            opacity={loadingState !== "skip" ? 1 : 0.6}
             borderColor="$primary"
             borderWidth={1}
             flex={0.4} // Reduced from flex={1} to take less space
@@ -206,9 +205,7 @@ export function WorkoutSummarySlide({
         {loadingState !== "skip" && (
           <Button
             size="$4"
-            backgroundColor={
-              isNameValid && loadingState !== "continue" ? "$primary" : "$gray6"
-            }
+            backgroundColor="$primary"
             onPress={handleContinue}
             disabled={!isNameValid || loadingState === "continue"}
             opacity={isNameValid && loadingState !== "continue" ? 1 : 0.6}

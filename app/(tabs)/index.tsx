@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl, ScrollView, Alert } from "react-native";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
@@ -25,20 +25,21 @@ import { SettingsModal } from "@/components/molecules/SettingsModal";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { SystemMessage } from "@/components/atoms/SystemMessage";
-import { useWorkoutSession } from "@/hooks/useWorkoutSession";
+import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
+import { useExerciseStore } from "@/stores/workout/exerciseStore";
 
 let count = 0;
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   id: "empty-workout-template",
   user_id: "",
-  name: "Start Empty Workout",
+  name: "Name your workout..",
   notes: "",
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   is_template: true,
   workout_exercises: [],
-  description: "A blank template for creating custom workouts",
+  description: "",
 };
 
 export default function HomeScreen() {
@@ -62,13 +63,14 @@ export default function HomeScreen() {
     refreshDashboard,
   } = useDashboardStore();
 
-  const {
-    isActive,
-    currentWorkout,
-    showTemplateSelector,
-    selectedTemplate,
-    progress,
-  } = useWorkoutSession();
+  // Granular selectors - only subscribe to what we need
+  const isActive = useUserSessionStore((state) => state.isActive);
+  const showTemplateSelector = useUserSessionStore(
+    (state) => state.showTemplateSelector
+  );
+  const selectedTemplate = useUserSessionStore(
+    (state) => state.selectedTemplate
+  );
 
   // Stable reference to session actions
   const sessionActions = useMemo(
@@ -80,6 +82,8 @@ export default function HomeScreen() {
       openTemplateSelector: useUserSessionStore.getState().openTemplateSelector,
       selectTemplate: useUserSessionStore.getState().selectTemplate,
       resetSession: useUserSessionStore.getState().resetSession,
+      hasAtLeastOneCompleteSet:
+        useUserSessionStore.getState().hasAtLeastOneCompleteSet,
     }),
     []
   );
@@ -100,9 +104,9 @@ export default function HomeScreen() {
   // Auto-load dashboard data on mount
   useEffect(() => {
     refreshDashboard();
-  }, []); // Only on mount
+  }, []);
 
-  // Pull-to-refresh handler - refreshes dashboard data, savvy!
+  // Pull-to-refresh handler - refreshes dashboard data
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -141,33 +145,60 @@ export default function HomeScreen() {
   );
 
   const handleTemplateClose = useCallback(() => {
-    setIntendedToStart(false); // RESET INTENT
+    setIntendedToStart(false);
     sessionActions.closeTemplateSelector();
   }, [sessionActions]);
 
   const handleToggleWorkout = useCallback(async () => {
     if (isActive) {
-      // Check if any sets are completed before allowing finish
-      if (progress.completed === 0) {
-        setShowFinishMessage(true);
-        // Hide message after 3 seconds
-        setTimeout(() => setShowFinishMessage(false), 3000);
-        return;
-      }
-
       // Force dismiss keyboard to save any active input values
       Keyboard.dismiss();
 
       // Small delay to let onBlur events process
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      setShowCompletionModal(true);
-      try {
-        await sessionActions.finishWorkout();
-        workoutTrackerRef.current?.finishWorkout();
-      } catch (error) {
-        console.error("Failed to finish workout:", error);
-        setShowCompletionModal(false);
+      // Get current workout for validation
+      const currentWorkout = useUserSessionStore.getState().currentWorkout;
+      if (!currentWorkout) return;
+
+      // Check for incomplete sets
+      const { exercises } = useExerciseStore.getState();
+      const incompleteCount = countIncompleteSets(currentWorkout, exercises);
+
+      if (incompleteCount > 0) {
+        // Show confirmation alert
+        Alert.alert(
+          "Incomplete Sets",
+          `${incompleteCount} set${
+            incompleteCount > 1 ? "s are" : " is"
+          } missing data and won't be tracked. Continue anyway?`,
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Continue",
+              onPress: async () => {
+                setShowCompletionModal(true);
+                try {
+                  await sessionActions.finishWorkout();
+                  workoutTrackerRef.current?.finishWorkout();
+                } catch (error) {
+                  console.error("Failed to finish workout:", error);
+                  setShowCompletionModal(false);
+                }
+              },
+            },
+          ]
+        );
+      } else {
+        // All sets complete, proceed normally
+        setShowCompletionModal(true);
+        try {
+          await sessionActions.finishWorkout();
+          workoutTrackerRef.current?.finishWorkout();
+        } catch (error) {
+          console.error("Failed to finish workout:", error);
+          setShowCompletionModal(false);
+        }
       }
     } else {
       // User wants to start a workout
@@ -177,6 +208,9 @@ export default function HomeScreen() {
         console.error("No user profile available");
         return;
       }
+
+      // Get current state
+      const currentWorkout = useUserSessionStore.getState().currentWorkout;
 
       // If no current workout or template selected, open template selector
       if (!currentWorkout && !selectedTemplate) {
@@ -202,14 +236,7 @@ export default function HomeScreen() {
       sessionActions.startWorkout(workoutToStart);
       workoutTrackerRef.current?.expandToFull();
     }
-  }, [
-    isActive,
-    progress.completed,
-    currentWorkout,
-    selectedTemplate,
-    sessionActions,
-    userProfile,
-  ]);
+  }, [isActive, selectedTemplate, sessionActions, userProfile]);
 
   useEffect(() => {
     if (userProfile !== null) {
@@ -240,6 +267,19 @@ export default function HomeScreen() {
     useDashboardStore.getState().invalidateAfterWorkout();
   }, [sessionActions]);
 
+  const hasAtLeastOneCompleteSet = useUserSessionStore((state) => {
+    if (!state.currentWorkout) return false;
+    const { exercises } = useExerciseStore.getState();
+
+    return state.currentWorkout.workout_exercises.some((exercise) => {
+      const definition = exercises.find(
+        (ex) => ex.id === exercise.definition_id
+      );
+      return exercise.workout_exercise_sets.some((set) =>
+        isSetComplete(set, definition)
+      );
+    });
+  });
   return (
     <>
       {/* Main Content */}
@@ -315,7 +355,7 @@ export default function HomeScreen() {
         <FloatingActionButton
           label={isActive ? "FINISH" : "START"}
           onPress={handleToggleWorkout}
-          disabled={isActive && progress.completed === 0}
+          disabled={isActive && !hasAtLeastOneCompleteSet}
         />
       </Stack>
     </>

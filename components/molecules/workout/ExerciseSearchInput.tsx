@@ -143,7 +143,13 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
 
   return (
     <>
-      <XStack flex={1} gap="$2" justifyContent="center" alignContent="center">
+      <XStack
+        flex={1}
+        gap="$2"
+        justifyContent="center"
+        alignContent="center"
+        paddingVertical="$4"
+      >
         <Input
           value={searchText}
           onChangeText={handleTextChange}
@@ -158,7 +164,6 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
           fontWeight="600"
           borderRadius="$3"
           paddingHorizontal="$3"
-          paddingVertical="$2"
           onFocus={handleFocus}
           autoCorrect={false}
           autoCapitalize="words"

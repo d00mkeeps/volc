@@ -59,15 +59,13 @@ export default function MetricInput({
           const validated = validateAndUpdate(localValue);
           onChange(validated);
         }}
-        selectTextOnFocus
+        // selectTextOnFocus
         placeholder="0"
         keyboardType="numeric"
         textAlign="center"
-        backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={
-          error ? "$error" : isActive ? "$borderSoft" : "$borderMuted"
-        }
-        color={isActive ? "$color" : "$textMuted"}
+        backgroundColor="$background"
+        borderColor={error ? "$error" : "$borderMuted"}
+        color="$color"
         editable={isActive}
         focusStyle={{ borderColor: "$primary" }}
       />

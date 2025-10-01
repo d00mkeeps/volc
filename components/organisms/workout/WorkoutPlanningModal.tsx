@@ -56,6 +56,7 @@ export const WorkoutPlanningModal = ({
             definition_id: exercise.definition_id || undefined,
             workout_id: `ai-template-${Date.now()}`,
             name: exercise.name || `Exercise ${index + 1}`,
+            notes: exercise.notes || undefined,
             order_index: exercise.order_index ?? index,
             weight_unit: "kg",
             distance_unit: "km",
@@ -161,11 +162,21 @@ export const WorkoutPlanningModal = ({
   };
 
   // Determine connection state for placeholder
-  const getConnectionState = () => {
+  const getConnectionState = ():
+    | "ready"
+    | "expecting_ai_message"
+    | "disconnected" => {
+    if (planning.connectionState === "disconnected") {
+      return "disconnected";
+    }
     if (planning.messages.length === 0 && !planning.streamingMessage) {
       return "expecting_ai_message";
     }
     return "ready";
+  };
+
+  const handleRestart = async () => {
+    await planning.restartChat();
   };
 
   return (
@@ -208,6 +219,7 @@ export const WorkoutPlanningModal = ({
             messages={planning.messages}
             streamingMessage={planning.streamingMessage}
             onSend={handleSend}
+            onRestart={handleRestart}
             placeholder="Tell me about your workout goals..."
             connectionState={getConnectionState()}
             keyboardVerticalOffset={150}

@@ -4,6 +4,7 @@ import { YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { MessageList } from "../molecules/chat/MessageList";
 import { InputArea } from "../atoms/chat/InputArea";
+import FloatingActionButton from "../atoms/core/FloatingActionButton";
 import { Message } from "@/types";
 
 interface StreamingMessageState {
@@ -17,8 +18,9 @@ interface ChatInterfaceProps {
   messages?: Message[];
   streamingMessage?: StreamingMessageState | null;
   onSend: (content: string) => void;
+  onRestart?: () => void; // Optional restart handler
   placeholder?: string;
-  connectionState?: "ready" | "expecting_ai_message";
+  connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   queuedMessageCount?: number;
   keyboardVerticalOffset?: number;
 }
@@ -27,6 +29,7 @@ export const ChatInterface = ({
   messages = [],
   streamingMessage,
   onSend,
+  onRestart,
   placeholder = "Type a message...",
   connectionState = "ready",
   queuedMessageCount = 0,
@@ -34,6 +37,8 @@ export const ChatInterface = ({
 }: ChatInterfaceProps) => {
   const getPlaceholder = () => {
     switch (connectionState) {
+      case "disconnected":
+        return "Disconnected - restart to continue";
       case "expecting_ai_message":
         return "Loading...";
       default:
@@ -42,6 +47,9 @@ export const ChatInterface = ({
   };
 
   const getStatusText = () => {
+    if (connectionState === "disconnected") {
+      return "Chat disconnected";
+    }
     if (queuedMessageCount > 0) {
       return `${queuedMessageCount} message${
         queuedMessageCount > 1 ? "s" : ""
@@ -52,13 +60,19 @@ export const ChatInterface = ({
 
   // Show loading indicator when expecting AI message
   const shouldShowLoadingIndicator = connectionState === "expecting_ai_message";
+
   const lastMessage = messages[messages.length - 1];
 
-  // Disable input when expecting AI message
+  // Disable input when expecting AI message or disconnected
   const isInputDisabled =
+    connectionState === "disconnected" ||
     connectionState === "expecting_ai_message" ||
     (streamingMessage && !streamingMessage.isComplete) ||
     (lastMessage?.sender === "user" && !streamingMessage);
+
+  // Show restart button when disconnected
+  const shouldShowRestartButton =
+    connectionState === "disconnected" && onRestart;
 
   return (
     <KeyboardAvoidingView
@@ -68,7 +82,7 @@ export const ChatInterface = ({
       }
       style={{ flex: 1 }}
     >
-      <YStack flex={1}>
+      <YStack flex={1} position="relative">
         <MessageList
           messages={messages}
           streamingMessage={streamingMessage}
@@ -84,6 +98,25 @@ export const ChatInterface = ({
           >
             {getStatusText()}
           </Text>
+        )}
+
+        {/* Floating Restart Button - shown when disconnected */}
+        {shouldShowRestartButton && (
+          <YStack
+            position="absolute"
+            bottom="$12"
+            left={0}
+            right={0}
+            alignItems="center"
+            paddingHorizontal="$4"
+            zIndex={10}
+          >
+            <FloatingActionButton
+              icon="play"
+              label="Restart Chat"
+              onPress={onRestart}
+            />
+          </YStack>
         )}
 
         <InputArea

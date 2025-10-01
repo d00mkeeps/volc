@@ -346,7 +346,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                     textAlign="center"
                     lineHeight={18}
                   >
-                    Press start below to begin a workout
+                    Press start below or add an exercise
                   </Text>
                 </YStack>
               </YStack>

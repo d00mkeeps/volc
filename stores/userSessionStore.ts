@@ -7,6 +7,8 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
 import { imageService } from "@/services/api/imageService";
 import { useWorkoutStore } from "./workout/WorkoutStore";
+import { filterIncompleteSets, isSetComplete } from "@/utils/setValidation";
+import { useExerciseStore } from "./workout/exerciseStore";
 
 function getUserPreferredUnits() {
   const { userProfile } = useUserStore.getState();
@@ -44,6 +46,7 @@ interface UserSessionState {
   resumeWorkout: () => void;
   togglePause: () => void;
   cancelWorkout: () => void;
+  hasAtLeastOneCompleteSet: () => boolean;
   finishWorkout: () => void; // ← Now synchronous
   saveCompletedWorkout: (metadata: {
     name: string;
@@ -193,6 +196,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     return analysisResult;
   },
+
   saveCompletedWorkout: async (metadata: {
     name: string;
     notes: string;
@@ -208,6 +212,12 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       throw new Error("No user profile found");
     }
 
+    // Get exercise definitions for validation
+    const { exercises } = useExerciseStore.getState();
+
+    // Filter out incomplete sets
+    const filteredWorkout = filterIncompleteSets(currentWorkout, exercises);
+
     // Get user's preferred units
     const isImperial = userProfile.is_imperial ?? false;
     const preferredUnits = {
@@ -217,11 +227,11 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Create complete workout with metadata and normalized units
     const workoutToSave: CompleteWorkout = {
-      ...currentWorkout,
+      ...filteredWorkout,
       name: metadata.name,
       notes: metadata.notes,
       image_id: metadata.imageId || pendingImageId || null,
-      workout_exercises: currentWorkout.workout_exercises.map((exercise) => ({
+      workout_exercises: filteredWorkout.workout_exercises.map((exercise) => ({
         ...exercise,
         weight_unit: preferredUnits.weight,
         distance_unit: preferredUnits.distance,
@@ -255,6 +265,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     return savedWorkout;
   },
+
   finishWorkout: () => {
     const { currentWorkout } = get();
     if (!currentWorkout) {
@@ -272,6 +283,22 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
   setPendingImage: (imageId) => {
     set({ pendingImageId: imageId });
+  },
+
+  hasAtLeastOneCompleteSet: () => {
+    const { currentWorkout } = get();
+    if (!currentWorkout) return false;
+
+    const { exercises } = useExerciseStore.getState();
+
+    return currentWorkout.workout_exercises.some((exercise) => {
+      const definition = exercises.find(
+        (ex) => ex.id === exercise.definition_id
+      );
+      return exercise.workout_exercise_sets.some((set) =>
+        isSetComplete(set, definition)
+      );
+    });
   },
 
   resetSession: () => {

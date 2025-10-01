@@ -25,6 +25,7 @@
     "@tamagui/core": "^1.126.13",
     "eventemitter3": "^5.0.1",
     "expo": "^54.0.7",
+    "expo-application": "~7.0.7",
     "expo-blur": "~15.0.7",
     "expo-constants": "~18.0.8",
     "expo-dev-client": "~6.0.12",

@@ -1,0 +1,58 @@
+import * as Application from "expo-application";
+import { Platform } from "react-native";
+
+export const MINIMUM_APP_VERSION = "1.0.9";
+
+/**
+ * Compares two semantic version strings (e.g., "1.0.0", "1.1.0")
+ * Returns: -1 if v1 < v2, 0 if v1 === v2, 1 if v1 > v2
+ */
+export function compareVersions(v1: string, v2: string): number {
+  const parts1 = v1.split(".").map(Number);
+  const parts2 = v2.split(".").map(Number);
+
+  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+    const part1 = parts1[i] || 0;
+    const part2 = parts2[i] || 0;
+
+    if (part1 < part2) return -1;
+    if (part1 > part2) return 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Gets the current native app version
+ */
+export function getCurrentAppVersion(): string | null {
+  return Application.nativeApplicationVersion;
+}
+
+/**
+ * Checks if current app version meets minimum requirement
+ */
+export function isVersionSupported(): boolean {
+  const currentVersion = getCurrentAppVersion();
+
+  if (!currentVersion) {
+    console.warn("Could not determine app version");
+    return true; // Allow access if version can't be determined
+  }
+
+  const comparison = compareVersions(currentVersion, MINIMUM_APP_VERSION);
+  return comparison >= 0; // Current version must be >= minimum version
+}
+
+/**
+ * Gets the app store URL for the current platform
+ */
+export function getAppStoreUrl(): string {
+  if (Platform.OS === "ios") {
+    // You'll need to replace this with your actual App Store ID once published
+    return "https://apps.apple.com/app/id YOUR_APP_ID";
+  } else {
+    // Android Play Store
+    return "https://play.google.com/store/apps/details?id=com.d00mkeeps.Volc";
+  }
+}
