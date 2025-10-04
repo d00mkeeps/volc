@@ -10,14 +10,16 @@ interface MessageListProps {
   messages: Message[];
   streamingMessage?: { content: string; isComplete: boolean } | null;
   showLoadingIndicator?: boolean;
-  connectionState?: "ready" | "expecting_ai_message" | "disconnected"; // NEW
+  connectionState?: "ready" | "expecting_ai_message" | "disconnected";
+  onTemplateApprove?: (templateData: any) => void;
 }
 
 export const MessageList = ({
   messages,
   streamingMessage,
   showLoadingIndicator = false,
-  connectionState = "ready", // NEW
+  connectionState = "ready",
+  onTemplateApprove,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
 
@@ -68,7 +70,13 @@ export const MessageList = ({
       return <LoadingMessage />;
     }
 
-    return <MessageItem message={item} isStreaming={item.id === "streaming"} />;
+    return (
+      <MessageItem
+        message={item}
+        isStreaming={item.id === "streaming"}
+        onTemplateApprove={onTemplateApprove}
+      />
+    );
   }, []);
 
   const keyExtractor = useCallback((item: Message) => item.id, []);

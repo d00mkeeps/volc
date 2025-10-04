@@ -10,6 +10,7 @@ interface MessageItemProps {
   message: Message;
   isStreaming?: boolean;
   enableUserMarkdown?: boolean;
+  onTemplateApprove?: (templateData: any) => void; // Add this
 }
 
 export const MessageItem = memo(
@@ -17,6 +18,7 @@ export const MessageItem = memo(
     message,
     isStreaming = false,
     enableUserMarkdown = false,
+    onTemplateApprove,
   }: MessageItemProps) => {
     if (!message) return null;
 
@@ -45,7 +47,6 @@ export const MessageItem = memo(
       },
 
       fence: (node: any, children: any, parent: any, styles: any) => {
-        // Don't process custom components while streaming
         if (isStreaming) {
           return (
             <YStack key={node.key} style={styles.fence}>
@@ -54,12 +55,17 @@ export const MessageItem = memo(
           );
         }
 
-        // Streaming complete - try to parse as custom components
         try {
           const parsed = JSON.parse(node.content);
 
           if (parsed.type === "workout_template") {
-            return <WorkoutTemplateView key={node.key} data={parsed.data} />;
+            return (
+              <WorkoutTemplateView
+                key={node.key}
+                data={parsed.data}
+                onApprove={onTemplateApprove}
+              />
+            );
           }
         } catch (e) {
           // Silent fail, fall back to default rendering

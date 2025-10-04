@@ -1,7 +1,6 @@
 import React from "react";
 import { Modal, TouchableOpacity, View } from "react-native";
 import { useTheme } from "tamagui";
-
 interface BaseModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -9,6 +8,7 @@ interface BaseModalProps {
   widthPercent?: number;
   heightPercent?: number;
   topOffset?: number;
+  dismissable?: boolean; // NEW
 }
 
 export default function BaseModal({
@@ -18,6 +18,7 @@ export default function BaseModal({
   widthPercent = 90,
   heightPercent = 55,
   topOffset = 0,
+  dismissable = true, // NEW - defaults to true for existing modals
 }: BaseModalProps) {
   const theme = useTheme();
 
@@ -26,7 +27,7 @@ export default function BaseModal({
       visible={isVisible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={dismissable ? onClose : undefined} // MODIFIED
     >
       <View
         style={{
@@ -37,7 +38,7 @@ export default function BaseModal({
           padding: 20,
         }}
       >
-        {/* Backdrop - positioned absolutely behind modal */}
+        {/* Backdrop */}
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -47,10 +48,10 @@ export default function BaseModal({
             bottom: 0,
           }}
           activeOpacity={1}
-          onPress={onClose}
+          onPress={dismissable ? onClose : undefined} // MODIFIED
         />
 
-        {/* Modal content - plain View, no TouchableOpacity */}
+        {/* Modal content */}
         <View
           style={{
             width: `${widthPercent}%`,

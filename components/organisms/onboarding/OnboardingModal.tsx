@@ -18,6 +18,7 @@ interface OnboardingModalProps {
   isVisible: boolean;
   onComplete: () => void;
 }
+// ... existing imports ...
 
 export function OnboardingModal({
   isVisible,
@@ -26,15 +27,19 @@ export function OnboardingModal({
   const [currentSlide, setCurrentSlide] = useState<1 | 2 | 3>(1);
   const [showExitWarning, setShowExitWarning] = useState(false);
 
-  // ... all your existing state variables
+  // Slide 1 state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [age, setAge] = useState("");
   const [units, setUnits] = useState<"metric" | "imperial">("imperial");
-  const [bio, setBio] = useState("");
+
+  // Slide 2 state
   const [goals, setGoals] = useState("");
   const [fitnessLevel, setFitnessLevel] = useState("");
-  const [instagramUsername, setInstagramUsername] = useState("");
+
+  // ✅ Slide 3 state (moved from slide 2)
+  const [bio, setBio] = useState("");
+  const [profilePictureId, setProfilePictureId] = useState<string | null>(null);
 
   const { updateProfile } = useUserStore();
 
@@ -51,10 +56,8 @@ export function OnboardingModal({
 
   const handleConfirmExit = () => {
     setShowExitWarning(false);
-    // Don't actually close - user must complete onboarding
   };
 
-  // ... all your existing handler functions stay the same ...
   const handleSlide1Continue = (data: {
     firstName: string;
     lastName: string;
@@ -68,23 +71,23 @@ export function OnboardingModal({
     setCurrentSlide(2);
   };
 
+  // ✅ Updated: removed bio from slide 2
   const handleSlide2Continue = (data: {
-    bio: string;
     goals: string;
     fitnessLevel: string;
   }) => {
-    setBio(data.bio);
     setGoals(data.goals);
     setFitnessLevel(data.fitnessLevel);
     setCurrentSlide(3);
   };
 
-  const handleComplete = async (data: { instagramUsername: string }) => {
-    setInstagramUsername(data.instagramUsername);
-
-    const cleanInstagramUsername = data.instagramUsername
-      .replace(/^@/, "")
-      .trim();
+  // ✅ Updated: now receives bio and profilePictureId from slide 3
+  const handleComplete = async (data: {
+    bio: string;
+    profilePictureId: string | null;
+  }) => {
+    setBio(data.bio);
+    setProfilePictureId(data.profilePictureId);
 
     Keyboard.dismiss();
 
@@ -94,10 +97,11 @@ export function OnboardingModal({
         last_name: lastName,
         age: age ? parseInt(age) : null,
         is_imperial: units === "imperial",
-        bio: bio || null,
+        bio: data.bio || null, // ✅ From slide 3
         goals: { content: goals },
         current_stats: fitnessLevel,
-        instagram_username: cleanInstagramUsername || null,
+        avatar_image_id: data.profilePictureId, // ✅ From slide 3
+        // ✅ Removed instagram_username
       });
 
       setTimeout(() => {

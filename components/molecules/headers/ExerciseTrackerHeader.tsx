@@ -58,13 +58,18 @@ export default function ExerciseTrackerHeader({
         <TouchableOpacity
           onPress={onShowDefinition}
           disabled={!exerciseName || !onShowDefinition}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flex: 1,
+          }}
         >
           <Text
             size="large"
             color="$color"
             fontWeight="600"
             numberOfLines={2}
-            flex={1}
             textDecorationLine={
               exerciseName && onShowDefinition && !isEditing
                 ? "underline"
@@ -75,6 +80,10 @@ export default function ExerciseTrackerHeader({
               ? "Select new exercise"
               : exerciseName || "Select an exercise"}
           </Text>
+
+          {exerciseName && onShowDefinition && !isEditing && (
+            <Info size={20} color="$textSoft" />
+          )}
         </TouchableOpacity>
 
         {/* Action Buttons - moved up inline */}
@@ -102,7 +111,6 @@ export default function ExerciseTrackerHeader({
             )}
 
             {isEditing ? (
-              // Cancel Button
               canCancelEdit && (
                 <Button
                   size="small"
@@ -123,7 +131,6 @@ export default function ExerciseTrackerHeader({
                 </Button>
               )
             ) : (
-              // Change Button
               <Button
                 size="small"
                 backgroundColor="$backgroundStrong"

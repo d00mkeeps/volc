@@ -106,12 +106,13 @@ export default function ProfileAvatar({
           <ImagePickerButton
             label="Change Photo"
             size="medium"
+            fillContainer={true}
             onImageUploaded={handleImageUploaded}
             onError={handleImageError}
           />
         ) : loadingImage ? (
-          <Text color="white" fontSize="$3">
-            ...
+          <Text color="$text" fontSize="$3">
+            Loading
           </Text>
         ) : avatarUrl ? (
           <Image
@@ -120,7 +121,7 @@ export default function ProfileAvatar({
             contentFit="cover"
           />
         ) : (
-          <Text color="white" fontSize="$4" fontWeight="600">
+          <Text color="$text" fontSize="$4" fontWeight="600">
             {displayName.charAt(0).toUpperCase()}
           </Text>
         )}

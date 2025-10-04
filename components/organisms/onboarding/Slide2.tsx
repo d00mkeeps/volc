@@ -14,7 +14,7 @@ const fitnessLevelOptions = [
 ];
 
 interface Step2Props {
-  onNext: (data: { bio: string; goals: string; fitnessLevel: string }) => void;
+  onNext: (data: { goals: string; fitnessLevel: string }) => void; // ✅ Removed bio
 }
 
 interface ValidationState {
@@ -23,7 +23,7 @@ interface ValidationState {
 }
 
 export default function OnboardingStep2({ onNext }: Step2Props) {
-  const [bio, setBio] = useState("");
+  // ✅ Removed bio state
   const [goals, setGoals] = useState("");
   const [fitnessLevel, setFitnessLevel] = useState("");
   const [showSystemMessage, setShowSystemMessage] = useState(false);
@@ -102,7 +102,7 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
     // Check if form is valid
     if (goalsValidation.isValid && fitnessLevelValid) {
       onNext({
-        bio: bio.trim(),
+        // ✅ Removed bio from data
         goals: goals.trim(),
         fitnessLevel,
       });
@@ -172,25 +172,7 @@ export default function OnboardingStep2({ onNext }: Step2Props) {
             )}
           </YStack>
 
-          {/* Bio Section */}
-          <YStack gap="$3">
-            <Text size="medium" fontWeight="600" color="$color">
-              Short intro/bio about yourself
-            </Text>
-            <YStack gap="$2">
-              <TextArea
-                value={bio}
-                onChangeText={setBio}
-                placeholder="I like sunshine ☀️ and puppies 🐶"
-                minHeight={80}
-                maxLength={250}
-                borderColor="$borderColor"
-              />
-              <Text size="small" color="$textSoft" alignSelf="flex-end">
-                {bio.length}/250
-              </Text>
-            </YStack>
-          </YStack>
+          {/* ✅ REMOVED Bio Section */}
 
           <YStack gap="$3">
             <Text size="medium" fontWeight="600" color="$color">

@@ -222,6 +222,7 @@ export const WorkoutPlanningModal = ({
             onRestart={handleRestart}
             placeholder="Tell me about your workout goals..."
             connectionState={getConnectionState()}
+            onTemplateApprove={handleTemplateApproved} // Add this line
             keyboardVerticalOffset={150}
           />
         </YStack>

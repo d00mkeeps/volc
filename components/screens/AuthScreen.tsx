@@ -21,16 +21,20 @@ export function AuthScreen() {
       return () => clearTimeout(timer);
     }
   }, [error, clearError]);
-
+  const handleSignUpSuccess = () => {
+    setMode("signIn");
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Stack flex={1} backgroundColor="$background" padding="$4">
         {error && <SystemMessage message={error.message} type="error" />}
-
         <Stack flex={1} paddingTop="30%">
-          {mode === "signIn" ? <SignInForm /> : <SignUpForm />}
+          {mode === "signIn" ? (
+            <SignInForm />
+          ) : (
+            <SignUpForm onSwitchToSignIn={handleSignUpSuccess} />
+          )}
         </Stack>
-
         <Stack padding="$4" marginBottom="$4">
           <AuthToggle
             mode={mode}

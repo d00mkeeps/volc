@@ -43,8 +43,8 @@ export const LoadingMessage = () => {
           {[0, 1, 2].map((index) => (
             <Text
               key={index}
+              color="$textMuted" // ✅ Theme token
               style={{
-                color: "#ffffff",
                 fontSize: dotIndex === index ? 12 * scale : 12,
                 lineHeight: 24,
                 fontWeight: "400",

@@ -16,6 +16,7 @@ interface StreamingMessageState {
 
 interface ChatInterfaceProps {
   messages?: Message[];
+  onTemplateApprove?: (templateData: any) => void; // Add this
   streamingMessage?: StreamingMessageState | null;
   onSend: (content: string) => void;
   onRestart?: () => void; // Optional restart handler
@@ -30,6 +31,7 @@ export const ChatInterface = ({
   streamingMessage,
   onSend,
   onRestart,
+  onTemplateApprove,
   placeholder = "Type a message...",
   connectionState = "ready",
   queuedMessageCount = 0,
@@ -85,6 +87,7 @@ export const ChatInterface = ({
           streamingMessage={streamingMessage}
           showLoadingIndicator={shouldShowLoadingIndicator}
           connectionState={connectionState}
+          onTemplateApprove={onTemplateApprove} // Add this
         />
 
         {getStatusText() && (

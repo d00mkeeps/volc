@@ -103,6 +103,9 @@ const tamaguiConfig = createTamagui({
       borderSoft: "rgba(248, 79, 62, 0.1)",
       borderMuted: "rgba(255, 255, 255, 0.05)",
       borderColor: "rgba(255, 255, 255, 0.1)",
+      borderColorHover: "rgba(255, 255, 255, 0.15)", // Add this
+      borderColorFocus: "rgba(248, 79, 62, 0.3)", // Add this
+      borderColorPress: "rgba(248, 79, 62, 0.4)", // Add this
       accentColor: "#dbab00",
     },
     light: {
@@ -128,6 +131,9 @@ const tamaguiConfig = createTamagui({
       borderSoft: "#f0f0f0",
       borderMuted: "#f8f8f8",
       borderColor: "#e5e5e5",
+      borderColorHover: "#d4d4d4", // Add this
+      borderColorFocus: "rgba(248, 79, 62, 0.3)", // Add this
+      borderColorPress: "rgba(248, 79, 62, 0.5)", // Add this
       accentColor: "#967601",
     },
   },

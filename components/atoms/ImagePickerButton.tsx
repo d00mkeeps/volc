@@ -10,12 +10,12 @@ import { imageService } from "@/services/api/imageService";
 interface ImagePickerButtonProps {
   label?: string;
   icon?: string;
-  size?: "small" | "medium" | "large"; // Use Button's size system
+  size?: "small" | "medium" | "large";
+  fillContainer?: boolean; // ✅ NEW: If true, button fills parent container
   onImageUploaded?: (imageId: string) => void;
   onError?: (error: string) => void;
 }
 
-// Icon sizes that work well with Button's semantic sizes
 const getIconSize = (size: "small" | "medium" | "large") => {
   switch (size) {
     case "small":
@@ -30,7 +30,8 @@ const getIconSize = (size: "small" | "medium" | "large") => {
 export default function ImagePickerButton({
   label,
   icon = "add",
-  size = "medium", // Better default
+  size = "medium",
+  fillContainer = false, // ✅ NEW: Default to false for backward compatibility
   onImageUploaded,
   onError,
 }: ImagePickerButtonProps) {
@@ -83,7 +84,6 @@ export default function ImagePickerButton({
         throw new Error("Upload failed");
       }
 
-      // ✅ ADD THIS: Commit image to permanent status
       console.log(
         `[ImagePickerButton] Committing image to permanent: ${tempResponse.image_id}`
       );
@@ -109,28 +109,29 @@ export default function ImagePickerButton({
 
   return (
     <Button
-      size={size} // Use Button's built-in sizing
-      alignSelf="center"
+      size={fillContainer ? undefined : size} // ✅ Only use size prop if not filling container
+      width={fillContainer ? "100%" : undefined} // ✅ Fill width if fillContainer
+      height={fillContainer ? "100%" : undefined} // ✅ Fill height if fillContainer
+      alignSelf={fillContainer ? undefined : "center"}
       backgroundColor="$backgroundMuted"
-      borderRadius="$3"
+      borderRadius={fillContainer ? "$0" : "$3"} // ✅ Let parent control border radius if filling
       pressStyle={{ backgroundColor: "#4B5563" }}
       onPress={handleImagePick}
       disabled={uploading}
       opacity={uploading ? 0.7 : 1}
-      // Remove hardcoded width/height and padding overrides
     >
       <Stack
         alignItems="center"
         justifyContent="center"
         gap={label ? "$1" : 0}
-        flexDirection={label ? "column" : "row"} // Stack vertically if there's a label
+        flexDirection={label ? "column" : "row"}
       >
         {React.createElement(getIconComponent(icon, uploading), {
           size: getIconSize(size),
-          color: "white",
+          color: "$text",
         })}
         {label && (
-          <Text color="white" size="medium" fontWeight="500" textAlign="center">
+          <Text color="$text" size="medium" fontWeight="500" textAlign="center">
             {uploading ? "..." : label}
           </Text>
         )}

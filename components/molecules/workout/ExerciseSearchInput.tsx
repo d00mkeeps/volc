@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { YStack, Stack, XStack } from "tamagui";
+import { Stack, XStack, YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
-import { View, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
 import { Check, X, Info } from "@/assets/icons/IconMap";
@@ -91,16 +91,13 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
   };
 
   const renderExerciseItem = (exercise: ExerciseDefinition, index: number) => (
-    <View
+    <XStack
       key={exercise.id}
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 12,
-        borderBottomWidth: index < filteredExercises.length - 1 ? 1 : 0,
-        borderBottomColor: "#333",
-        backgroundColor: "#222",
-      }}
+      alignItems="center"
+      padding="$3"
+      borderBottomWidth={index < filteredExercises.length - 1 ? 1 : 0}
+      borderBottomColor="$borderColor"
+      backgroundColor="$backgroundStrong"
     >
       <TouchableOpacity
         onPress={() => handleSelectExercise(exercise)}
@@ -124,21 +121,23 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={(e) => {
-          e.stopPropagation();
-          handleShowDefinition(exercise);
-        }}
-        style={{
-          padding: 8,
-          marginLeft: 8,
-          borderRadius: 6,
-          backgroundColor: "#333",
-        }}
+      <Stack
+        padding="$2"
+        marginLeft="$2"
+        borderRadius="$2"
+        backgroundColor="$backgroundMuted"
+        pressStyle={{ opacity: 0.7 }}
       >
-        <Info size={16} color="#666" />
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          onPress={(e) => {
+            e.stopPropagation();
+            handleShowDefinition(exercise);
+          }}
+        >
+          <Info size={16} color="$textMuted" />
+        </TouchableOpacity>
+      </Stack>
+    </XStack>
   );
 
   return (
@@ -181,19 +180,17 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
 
       {/* Search Results */}
       {showDropdown && !loading && filteredExercises.length > 0 && (
-        <View
-          style={{
-            backgroundColor: "#222",
-            borderColor: "#333",
-            borderWidth: 1,
-            borderRadius: 12,
-            maxHeight: 300,
-          }}
+        <YStack
+          backgroundColor="$backgroundStrong" // ✅
+          borderColor="$borderColor" // ✅
+          borderWidth={1}
+          borderRadius="$3"
+          maxHeight={300}
         >
           {filteredExercises.map((exercise, index) =>
             renderExerciseItem(exercise, index)
           )}
-        </View>
+        </YStack>
       )}
 
       {/* No Results */}
@@ -201,20 +198,18 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
         !loading &&
         searchText.length > 0 &&
         filteredExercises.length === 0 && (
-          <View
-            style={{
-              backgroundColor: "#222",
-              borderColor: "#333",
-              borderWidth: 1,
-              borderRadius: 12,
-              padding: 16,
-              alignItems: "center",
-            }}
+          <YStack
+            backgroundColor="$backgroundStrong" // ✅
+            borderColor="$borderColor" // ✅
+            borderWidth={1}
+            borderRadius="$3"
+            padding="$4"
+            alignItems="center"
           >
             <Text color="$textMuted" size="medium" textAlign="center">
               No exercises found for "{searchText}"
             </Text>
-          </View>
+          </YStack>
         )}
 
       {/* Search Instructions */}

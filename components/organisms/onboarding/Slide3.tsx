@@ -1,58 +1,156 @@
-// /components/organisms/onboarding/Slide3.tsx
-import React, { useState } from "react";
-import { YStack } from "tamagui";
+import React, { useState, useEffect } from "react";
+import { YStack, TextArea, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import Input from "@/components/atoms/core/Input";
+import ImagePickerButton from "@/components/atoms/ImagePickerButton";
+import { Image } from "expo-image";
+import { imageService } from "@/services/api/imageService";
 
 interface OnboardingSlide3Props {
   firstName: string;
-  onComplete: (data: { instagramUsername: string }) => void;
+  onComplete: (data: { bio: string; profilePictureId: string | null }) => void;
 }
 
 export function OnboardingSlide3({
   firstName,
   onComplete,
 }: OnboardingSlide3Props) {
-  const [instagramUsername, setInstagramUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [profilePictureId, setProfilePictureId] = useState<string | null>(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(
+    null
+  );
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
-  const handleInstagramChange = (value: string) => {
-    // Remove any existing @ and add it back, limit length
-    const cleanValue = value.replace(/^@/, "").toLowerCase();
-    if (cleanValue.length <= 30) {
-      // Instagram username limit
-      setInstagramUsername(cleanValue ? "@" + cleanValue : "");
-    }
+  // Fetch image URL for preview when profilePictureId changes
+  useEffect(() => {
+    const loadImagePreview = async () => {
+      if (profilePictureId) {
+        try {
+          setLoadingPreview(true);
+          console.log(
+            `[OnboardingSlide3] Loading preview for image: ${profilePictureId}`
+          );
+          const urlResponse = await imageService.getImageUrl(profilePictureId);
+          if (urlResponse.success && urlResponse.data.url) {
+            console.log(
+              `[OnboardingSlide3] Got preview URL: ${urlResponse.data.url}`
+            );
+            setProfilePictureUrl(urlResponse.data.url);
+          }
+        } catch (error) {
+          console.error("[OnboardingSlide3] Error loading preview:", error);
+          setProfilePictureUrl(null);
+        } finally {
+          setLoadingPreview(false);
+        }
+      } else {
+        setProfilePictureUrl(null);
+      }
+    };
+
+    loadImagePreview();
+  }, [profilePictureId]);
+
+  const handleImageUploaded = (imageId: string) => {
+    console.log(`[OnboardingSlide3] Image uploaded: ${imageId}`);
+    setProfilePictureId(imageId);
+  };
+
+  const handleImageError = (error: string) => {
+    console.error(`[OnboardingSlide3] Image upload error: ${error}`);
   };
 
   const handleComplete = () => {
-    onComplete({ instagramUsername });
+    onComplete({
+      bio: bio.trim(),
+      profilePictureId,
+    });
   };
 
   return (
-    <YStack gap="$4" paddingBottom="$4" alignItems="center">
+    <YStack gap="$6" paddingBottom="$4" alignItems="center">
       <Text size="medium" fontWeight="bold" textAlign="center">
-        One last thing..
-      </Text>
-      <Text size="medium" color="$textMuted" textAlign="center">
-        Add your Instagram to connect with other Volc users
+        One last thing, {firstName}..
       </Text>
 
-      <YStack gap="$2" width="100%" maxWidth={300}>
-        <Input
-          value={instagramUsername}
-          onChangeText={handleInstagramChange}
-          placeholder="Username"
-          placeholderTextColor="$textMuted"
-          size="$4"
-          width="60%"
-          autoCapitalize="none"
-          autoCorrect={false}
-          textAlign="center"
-        />
+      {/* Profile Picture Section */}
+      <YStack gap="$3" alignItems="center" width="100%">
+        <Text size="medium" fontWeight="600" color="$color" textAlign="center">
+          Add a profile picture
+        </Text>
+
+        <XStack gap="$3" alignItems="center">
+          {/* Avatar Circle */}
+          <Stack
+            width={120}
+            height={120}
+            borderRadius={60}
+            backgroundColor="$backgroundMuted"
+            justifyContent="center"
+            alignItems="center"
+            overflow="hidden"
+          >
+            {loadingPreview ? (
+              <Text color="white" size="medium">
+                ...
+              </Text>
+            ) : profilePictureUrl ? (
+              <Image
+                source={{ uri: profilePictureUrl }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+            ) : (
+              <ImagePickerButton
+                label="Upload Photo"
+                size="medium"
+                fillContainer={true}
+                onImageUploaded={handleImageUploaded}
+                onError={handleImageError}
+              />
+            )}
+          </Stack>
+
+          {/* Change Button - only show when image is uploaded */}
+          {profilePictureId && (
+            <ImagePickerButton
+              label="Change"
+              size="small"
+              onImageUploaded={handleImageUploaded}
+              onError={handleImageError}
+            />
+          )}
+        </XStack>
       </YStack>
 
-      <Button size="$4" backgroundColor="$primary" onPress={handleComplete}>
+      {/* Bio Section */}
+      <YStack gap="$3" width="100%" maxWidth={400}>
+        <Text size="medium" fontWeight="600" color="$color" textAlign="center">
+          Tell us about yourself
+        </Text>
+        <YStack gap="$2">
+          <TextArea
+            value={bio}
+            onChangeText={setBio}
+            placeholder="Fitness background, favorite animal, etc.."
+            minHeight={100}
+            maxLength={250}
+            borderColor="$borderColor"
+          />
+          <Text size="small" color="$textSoft" alignSelf="flex-end">
+            {bio.length}/250
+          </Text>
+        </YStack>
+      </YStack>
+
+      <Button
+        size="large"
+        backgroundColor="$primary"
+        onPress={handleComplete}
+        width="80%"
+        maxWidth={300}
+      >
         Get Started
       </Button>
     </YStack>

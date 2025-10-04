@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import ExerciseDefinitionView from "@/components/molecules/workout/ExerciseDefinitionView";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
+import { ArrowLeft, Check, Info, X } from "@/assets/icons/IconMap";
 
 interface WorkoutTemplateViewProps {
   data: {
@@ -11,12 +12,15 @@ interface WorkoutTemplateViewProps {
     notes?: string;
     workout_exercises: WorkoutExercise[];
   };
+  onApprove?: (templateData: any) => void; // Add this
 }
 
 export default function WorkoutTemplateView({
   data,
+  onApprove,
 }: WorkoutTemplateViewProps) {
   const [expanded, setExpanded] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
     null
   );
@@ -25,7 +29,6 @@ export default function WorkoutTemplateView({
     const sets = exercise.workout_exercise_sets || [];
     const setCount = sets.length;
 
-    // Get rep ranges for preview - filter out undefined values properly
     const reps = sets
       .map((set: WorkoutExerciseSet) => set.reps)
       .filter((rep): rep is number => rep !== undefined && rep !== null);
@@ -35,7 +38,7 @@ export default function WorkoutTemplateView({
         ? reps.length === 1
           ? `${reps[0]} reps`
           : Math.min(...reps) === Math.max(...reps)
-          ? `${Math.min(...reps)} reps` // Same min/max, show single number
+          ? `${Math.min(...reps)} reps`
           : `${Math.min(...reps)}-${Math.max(...reps)} reps`
         : "No reps";
 
@@ -47,7 +50,7 @@ export default function WorkoutTemplateView({
       >
         <TouchableOpacity
           onPress={() => setSelectedExerciseId(exercise.definition_id || null)}
-          style={{ flex: 1 }}
+          style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
         >
           <Text
             size="medium"
@@ -57,6 +60,7 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
+          <Info size={16} color="$textSoft" />
         </TouchableOpacity>
         <Text size="small" color="$textSoft">
           {setCount} {setCount === 1 ? "set" : "sets"} • {repRange}
@@ -75,6 +79,7 @@ export default function WorkoutTemplateView({
             onPress={() =>
               setSelectedExerciseId(exercise.definition_id || null)
             }
+            style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
           >
             <Text
               size="medium"
@@ -85,8 +90,9 @@ export default function WorkoutTemplateView({
             >
               {exercise.name}
             </Text>
+            <Info size={16} color="$textSoft" />
           </TouchableOpacity>
-          {exercise.notes && ( // ADD THIS BLOCK
+          {exercise.notes && (
             <Text size="medium" color="$textSoft" fontStyle="italic">
               {exercise.notes}
             </Text>
@@ -102,6 +108,7 @@ export default function WorkoutTemplateView({
       <YStack key={exercise.definition_id} gap="$2">
         <TouchableOpacity
           onPress={() => setSelectedExerciseId(exercise.definition_id || null)}
+          style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
         >
           <Text
             size="medium"
@@ -112,13 +119,13 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
+          <Info size={16} color="$textSoft" />
         </TouchableOpacity>
-        {exercise.notes && ( // ADD THIS BLOCK
+        {exercise.notes && (
           <Text size="small" color="$textSoft">
             {exercise.notes}
           </Text>
         )}
-        {/* KEEP ALL THE EXISTING SETS DISPLAY: */}
         <YStack
           gap="$1"
           backgroundColor="$backgroundSoft"
@@ -160,69 +167,163 @@ export default function WorkoutTemplateView({
 
   return (
     <>
-      <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-        <YStack
-          backgroundColor="$backgroundSoft"
-          borderRadius="$3"
-          padding="$3"
-          gap="$3"
-          marginVertical="$2"
-          borderWidth={1}
-          borderColor="$borderSoft"
-        >
-          {/* Header */}
-          <XStack justifyContent="space-between" alignItems="center">
-            <YStack flex={1}>
-              <Text size="medium" fontWeight="600" color="$color">
-                {data.name}
-              </Text>
-              <Text size="small" color="$textSoft">
-                {data.workout_exercises.length} exercises
-              </Text>
-            </YStack>
-            <Text size="small" color="$primary">
-              {expanded ? "Collapse" : "Expand"}
+      {rejected ? (
+        // Rejected state - simple display with undo
+        <YStack gap="$2">
+          <YStack
+            backgroundColor="$backgroundSoft"
+            borderRadius="$3"
+            padding="$3"
+            marginVertical="$2"
+            borderWidth={1}
+            borderColor="$borderSoft"
+            gap="$2"
+          >
+            <Text size="medium" fontWeight="600" color="$color">
+              {data.name} (Rejected)
             </Text>
-          </XStack>
-
-          {/* Notes */}
-          {data.notes && (
-            <Text size="small" color="$textSoft" fontStyle="italic">
-              {expanded
-                ? data.notes
-                : data.notes.length > 50
-                ? `${data.notes.substring(0, 50)}...`
-                : data.notes}
-            </Text>
-          )}
-
-          {/* Exercises */}
-          <YStack gap="$2">
-            {expanded
-              ? data.workout_exercises
-                  .sort(
-                    (a: WorkoutExercise, b: WorkoutExercise) =>
-                      a.order_index - b.order_index
-                  )
-                  .map(renderExerciseDetailed)
-              : data.workout_exercises
-                  .sort(
-                    (a: WorkoutExercise, b: WorkoutExercise) =>
-                      a.order_index - b.order_index
-                  )
-                  .slice(0, 3) // Show first 3 in collapsed view
-                  .map(renderExercisePreview)}
-
-            {!expanded && data.workout_exercises.length > 3 && (
-              <Text size="small" color="$textSoft" textAlign="center">
-                +{data.workout_exercises.length - 3} more exercises
-              </Text>
-            )}
           </YStack>
-        </YStack>
-      </TouchableOpacity>
 
-      {/* Exercise Definition Modal */}
+          {/* Undo Button */}
+          <XStack justifyContent="center" paddingBottom="$2">
+            <Stack
+              paddingHorizontal="$4"
+              paddingVertical="$2.5"
+              borderRadius="$3"
+              backgroundColor="$backgroundStrong"
+              borderWidth={1}
+              borderColor="$borderColor"
+              pressStyle={{
+                backgroundColor: "$backgroundPress",
+                scale: 0.95,
+              }}
+              onPress={() => {
+                console.log("Template rejection undone!");
+                setRejected(false);
+              }}
+              cursor="pointer"
+            >
+              <XStack gap="$2" alignItems="center">
+                <ArrowLeft size={18} color="$textSoft" />
+                <Text size="medium" color="$color" fontWeight="500">
+                  Undo
+                </Text>
+              </XStack>
+            </Stack>
+          </XStack>
+        </YStack>
+      ) : (
+        <YStack gap="$2">
+          <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+            <YStack
+              backgroundColor="$backgroundSoft"
+              borderRadius="$3"
+              padding="$3"
+              gap="$3"
+              marginVertical="$2"
+              borderWidth={1}
+              borderColor="$borderSoft"
+            >
+              {/* Header */}
+              <XStack justifyContent="space-between" alignItems="center">
+                <YStack flex={1}>
+                  <Text size="medium" fontWeight="600" color="$color">
+                    {data.name}
+                  </Text>
+                  <Text size="small" color="$textSoft">
+                    {data.workout_exercises.length} exercises
+                  </Text>
+                </YStack>
+                <Text size="small" color="$primary">
+                  {expanded ? "Collapse" : "Expand"}
+                </Text>
+              </XStack>
+
+              {/* Notes */}
+              {data.notes && (
+                <Text size="small" color="$textSoft" fontStyle="italic">
+                  {expanded
+                    ? data.notes
+                    : data.notes.length > 50
+                    ? `${data.notes.substring(0, 50)}...`
+                    : data.notes}
+                </Text>
+              )}
+
+              {/* Exercises */}
+              <YStack gap="$2">
+                {expanded
+                  ? data.workout_exercises
+                      .sort(
+                        (a: WorkoutExercise, b: WorkoutExercise) =>
+                          a.order_index - b.order_index
+                      )
+                      .map(renderExerciseDetailed)
+                  : data.workout_exercises
+                      .sort(
+                        (a: WorkoutExercise, b: WorkoutExercise) =>
+                          a.order_index - b.order_index
+                      )
+                      .slice(0, 3)
+                      .map(renderExercisePreview)}
+
+                {!expanded && data.workout_exercises.length > 3 && (
+                  <Text size="small" color="$textSoft" textAlign="center">
+                    +{data.workout_exercises.length - 3} more exercises
+                  </Text>
+                )}
+              </YStack>
+            </YStack>
+          </TouchableOpacity>
+
+          {/* Action Buttons */}
+          <XStack gap="$3" justifyContent="center" paddingBottom="$2">
+            <Stack
+              width={48}
+              height={48}
+              borderRadius="$3"
+              backgroundColor="$red9"
+              borderWidth={1}
+              borderColor="$borderColor"
+              justifyContent="center"
+              alignItems="center"
+              pressStyle={{
+                backgroundColor: "$backgroundPress",
+                scale: 0.95,
+              }}
+              onPress={() => {
+                console.log("Template rejected!");
+                setRejected(true);
+              }}
+              cursor="pointer"
+            >
+              <X size={24} />
+            </Stack>
+
+            <Stack
+              width={48}
+              height={48}
+              borderRadius="$3"
+              backgroundColor="$green8"
+              borderWidth={1}
+              borderColor="$borderColor"
+              justifyContent="center"
+              alignItems="center"
+              pressStyle={{
+                backgroundColor: "$backgroundPress",
+                scale: 0.95,
+              }}
+              onPress={() => {
+                console.log("Template approved!");
+                onApprove?.(data); // Call the callback with the template data
+              }}
+              cursor="pointer"
+            >
+              <Check size={24} color="$green8" />
+            </Stack>
+          </XStack>
+        </YStack>
+      )}
       {selectedExerciseId && (
         <ExerciseDefinitionView
           definitionId={selectedExerciseId}

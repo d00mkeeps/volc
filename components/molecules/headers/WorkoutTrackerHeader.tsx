@@ -112,7 +112,7 @@ export default function WorkoutTrackerHeader({
           paddingHorizontal="$3"
           paddingVertical="$1.5"
           pressStyle={{
-            backgroundColor: "$red3",
+            backgroundColor: "",
             borderColor: "$red9",
             scale: 0.95,
           }}

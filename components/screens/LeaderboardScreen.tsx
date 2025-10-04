@@ -6,8 +6,11 @@ import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
 import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
+import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native"; // NEW
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import UnderConstructionModal from "../molecules/UnderConstructionModal";
 
 const EmptyState = () => (
   <YStack flex={1} justifyContent="center" alignItems="center" padding="$8">
@@ -39,6 +42,7 @@ const ErrorState = ({
 );
 
 export const LeaderboardScreen = () => {
+  const router = useRouter();
   const { entries, loading, error, refresh, clearError, hasEntries } =
     useLeaderboard();
   const { getPublicWorkout } = useWorkoutStore();
@@ -47,6 +51,13 @@ export const LeaderboardScreen = () => {
   const [selectedWorkout, setSelectedWorkout] =
     useState<LeaderboardEntry | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showUnderConstruction, setShowUnderConstruction] = useState(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setShowUnderConstruction(true);
+    }, [])
+  );
 
   const handleEntryTap = (entry: LeaderboardEntry) => {
     setSelectedWorkout(entry);
@@ -56,6 +67,11 @@ export const LeaderboardScreen = () => {
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedWorkout(null);
+  };
+
+  const handleUnderConstructionConfirm = () => {
+    setShowUnderConstruction(false);
+    router.push("/"); // Or whatever your home route is
   };
 
   const handleRefresh = async () => {
@@ -108,6 +124,10 @@ export const LeaderboardScreen = () => {
         onClose={handleCloseModal}
         workoutId={selectedWorkout?.workout_id || ""}
         userId={selectedWorkout?.user_id || ""}
+      />
+      <UnderConstructionModal
+        isVisible={showUnderConstruction}
+        onConfirm={handleUnderConstructionConfirm}
       />
     </YStack>
   );
