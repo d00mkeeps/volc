@@ -1,64 +1,50 @@
-import { Tabs } from "expo-router";
-import { Home, User, MessageCircle, Trophy } from "@/assets/icons/IconMap";
-import { useColorScheme } from "react-native";
+import React, { useRef, useState } from "react";
+import { View } from "react-native";
+import { YStack } from "tamagui";
+import PagerView from "react-native-pager-view";
+import CustomTabBar from "@/components/organisms/CustomTabBar";
+
+// Import your screen components
+import HomeScreen from "./index";
+import ProfileScreen from "./profile";
+import ChatScreen from "./chats";
+import WorkoutScreen from "./workouts";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const pagerRef = useRef<PagerView>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const handleTabPress = (index: number) => {
+    pagerRef.current?.setPage(index);
+  };
+
+  const handlePageSelected = (e: { nativeEvent: { position: number } }) => {
+    setCurrentPage(e.nativeEvent.position);
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colorScheme === "dark" ? "#231f20" : "#ffffff",
-          borderTopColor: "#f84f3e",
-          borderTopWidth: 2,
-          paddingBottom: 0,
-          height: 60,
-        },
-        tabBarActiveTintColor: "#f84f3e",
-        tabBarInactiveTintColor: colorScheme === "dark" ? "#6b6466" : "#999999",
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
-          marginBottom: 4,
-        },
-        tabBarIconStyle: {
-          marginTop: 4,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
-        }}
-      />
+    <YStack flex={1}>
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageSelected={handlePageSelected}
+      >
+        <View key="home" style={{ flex: 1 }}>
+          <HomeScreen />
+        </View>
+        <View key="profile" style={{ flex: 1 }}>
+          <ProfileScreen />
+        </View>
+        <View key="chats" style={{ flex: 1 }}>
+          <ChatScreen />
+        </View>
+        <View key="leaderboard" style={{ flex: 1 }}>
+          <WorkoutScreen isActive={currentPage === 3} />
+        </View>
+      </PagerView>
 
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="chats"
-        options={{
-          title: "Chats",
-          tabBarIcon: ({ color, size }) => (
-            <MessageCircle size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="workouts"
-        options={{
-          title: "Leaderboard",
-          tabBarIcon: ({ color, size }) => <Trophy size={size} color={color} />,
-        }}
-      />
-    </Tabs>
+      <CustomTabBar activeIndex={currentPage} onTabPress={handleTabPress} />
+    </YStack>
   );
 }

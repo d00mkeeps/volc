@@ -10,7 +10,6 @@ const EMPTY_MESSAGES: Message[] = [];
 const PLANNING_KEY = "workout-planning";
 
 export function useWorkoutPlanning() {
-  const messageStore = useMessageStore();
   const webSocketService = getWebSocketService();
   const unsubscribeRefs = useRef<(() => void)[]>([]);
   const templateApprovalCallbackRef = useRef<
@@ -51,6 +50,7 @@ export function useWorkoutPlanning() {
     []
   );
 
+  // Method: /hooks/chat/useWorkoutPlanning.registerHandlers
   // Register websocket handlers for receiving messages
   const registerHandlers = useCallback(
     (messageKey: string) => {
@@ -75,17 +75,17 @@ export function useWorkoutPlanning() {
           "[useWorkoutPlanning] Received content chunk:",
           chunk.substring(0, 50) + "..."
         );
-        messageStore.updateStreamingMessage(messageKey, chunk);
+        useMessageStore.getState().updateStreamingMessage(messageKey, chunk);
       });
 
       const unsubscribeComplete = webSocketService.onComplete(() => {
         console.log("[useWorkoutPlanning] Message complete");
-        messageStore.completeStreamingMessage(messageKey);
+        useMessageStore.getState().completeStreamingMessage(messageKey);
       });
 
       const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
         console.log("[useWorkoutPlanning] Message terminated:", reason);
-        messageStore.clearStreamingMessage(messageKey);
+        useMessageStore.getState().clearStreamingMessage(messageKey);
         Toast.show({
           type: "warning",
           text1: "Message Cut Off",
@@ -95,8 +95,8 @@ export function useWorkoutPlanning() {
 
       const unsubscribeError = webSocketService.onError((error) => {
         console.error("[useWorkoutPlanning] WebSocket error:", error);
-        messageStore.clearStreamingMessage(messageKey);
-        messageStore.setError(error);
+        useMessageStore.getState().clearStreamingMessage(messageKey);
+        useMessageStore.getState().setError(error);
         Toast.show({
           type: "error",
           text1: "Connection Error",
@@ -117,31 +117,21 @@ export function useWorkoutPlanning() {
         "[useWorkoutPlanning] Registered websocket handlers for planning"
       );
     },
-    [messageStore, webSocketService]
+    [webSocketService]
   );
 
-  // Monitor connection state changes and clear messages on disconnect
+  // Method: /hooks/chat/useWorkoutPlanning.checkConnectionState
+  // Monitor connection state changes
   useEffect(() => {
     const checkConnectionState = () => {
       const newState = webSocketService.getConnectionState();
 
-      // Method: /hooks/chat/useWorkoutPlanning.checkConnectionState
       // Only update state if it actually changed (prevents infinite loop)
       setConnectionState((prevState) => {
         if (prevState !== newState) {
           console.log(
             `[useWorkoutPlanning] Connection state changed: ${prevState} → ${newState}`
           );
-
-          // Clear messages when transitioning to disconnected
-          if (newState === "disconnected") {
-            console.log(
-              "[useWorkoutPlanning] Disconnected - clearing messages"
-            );
-            messageStore.clearMessages(PLANNING_KEY);
-            messageStore.clearStreamingMessage(PLANNING_KEY);
-          }
-
           return newState;
         }
         return prevState;
@@ -153,7 +143,18 @@ export function useWorkoutPlanning() {
     const interval = setInterval(checkConnectionState, 500);
 
     return () => clearInterval(interval);
-  }, [messageStore, webSocketService]);
+  }, [webSocketService]);
+
+  // Method: /hooks/chat/useWorkoutPlanning.handleDisconnection
+  // Separate effect to handle disconnection side effects
+  useEffect(() => {
+    if (connectionState === "disconnected") {
+      console.log("[useWorkoutPlanning] Disconnected - clearing messages");
+      // Use getState() to avoid dependency on the store
+      useMessageStore.getState().clearMessages(PLANNING_KEY);
+      useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
+    }
+  }, [connectionState]); // Only depend on connectionState, not messageStore
 
   // Method: /hooks/chat/useWorkoutPlanning.connectToPlanning
   // Single-use initial connection - only runs ONCE on mount
@@ -183,9 +184,9 @@ export function useWorkoutPlanning() {
       } catch (error) {
         console.error("[useWorkoutPlanning] Failed to connect:", error);
         hasInitializedRef.current = false; // Reset on error so retry is possible
-        messageStore.setError(
-          error instanceof Error ? error : new Error(String(error))
-        );
+        useMessageStore
+          .getState()
+          .setError(error instanceof Error ? error : new Error(String(error)));
       }
     };
 
@@ -196,8 +197,9 @@ export function useWorkoutPlanning() {
       unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
       unsubscribeRefs.current = [];
     };
-  }, []); // Empty deps - only run once on mount
+  }, [registerHandlers, webSocketService]);
 
+  // Method: /hooks/chat/useWorkoutPlanning.sendMessage
   const sendMessage = useCallback(
     async (content: string) => {
       try {
@@ -214,7 +216,7 @@ export function useWorkoutPlanning() {
           conversation_sequence: currentMessages.length + 1,
           timestamp: new Date(),
         };
-        messageStore.addMessage(PLANNING_KEY, userMessage);
+        useMessageStore.getState().addMessage(PLANNING_KEY, userMessage);
 
         // Build simple payload for planning
         const updatedMessages =
@@ -239,11 +241,11 @@ export function useWorkoutPlanning() {
           text2: errorMessage.message,
         });
 
-        messageStore.setError(errorMessage);
+        useMessageStore.getState().setError(errorMessage);
         throw errorMessage;
       }
     },
-    [registerHandlers, messageStore, webSocketService]
+    [registerHandlers, webSocketService]
   );
 
   // Method: /hooks/chat/useWorkoutPlanning.restartChat
@@ -254,9 +256,9 @@ export function useWorkoutPlanning() {
       );
 
       // Clear messages and streaming state
-      messageStore.clearMessages(PLANNING_KEY);
-      messageStore.clearStreamingMessage(PLANNING_KEY);
-      messageStore.setError(null);
+      useMessageStore.getState().clearMessages(PLANNING_KEY);
+      useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
+      useMessageStore.getState().setError(null);
 
       // Reconnect
       await webSocketService.ensureConnection({ type: "workout-planning" });
@@ -275,7 +277,7 @@ export function useWorkoutPlanning() {
         text2: "Could not reconnect to chat",
       });
     }
-  }, [messageStore, webSocketService, registerHandlers]);
+  }, [webSocketService, registerHandlers]);
 
   return {
     messages,

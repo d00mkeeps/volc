@@ -297,7 +297,7 @@ export default function WorkoutTemplateView({
               }}
               cursor="pointer"
             >
-              <X size={24} />
+              <X size={24} color="white" />
             </Stack>
 
             <Stack
@@ -319,7 +319,7 @@ export default function WorkoutTemplateView({
               }}
               cursor="pointer"
             >
-              <Check size={24} color="$green8" />
+              <Check size={24} color="white" />
             </Stack>
           </XStack>
         </YStack>

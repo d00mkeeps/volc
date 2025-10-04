@@ -208,7 +208,7 @@ export const WorkoutPlanningModal = ({
             onPress={handleChooseOwnWorkout}
             pressStyle={{ backgroundColor: "$primaryPress" }}
           >
-            <Text size="small" color="$text" fontWeight="600">
+            <Text size="small" color="white" fontWeight="600">
               Skip AI Chat
             </Text>
           </Button>

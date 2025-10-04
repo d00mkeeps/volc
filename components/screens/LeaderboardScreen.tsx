@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
 import { YStack, XStack, ScrollView } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -11,6 +11,10 @@ import { useFocusEffect } from "@react-navigation/native"; // NEW
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import UnderConstructionModal from "../molecules/UnderConstructionModal";
+
+interface LeaderboardScreenProps {
+  isActive?: boolean;
+}
 
 const EmptyState = () => (
   <YStack flex={1} justifyContent="center" alignItems="center" padding="$8">
@@ -41,7 +45,9 @@ const ErrorState = ({
   </YStack>
 );
 
-export const LeaderboardScreen = () => {
+export const LeaderboardScreen = ({
+  isActive = true,
+}: LeaderboardScreenProps) => {
   const router = useRouter();
   const { entries, loading, error, refresh, clearError, hasEntries } =
     useLeaderboard();
@@ -51,13 +57,12 @@ export const LeaderboardScreen = () => {
   const [selectedWorkout, setSelectedWorkout] =
     useState<LeaderboardEntry | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [showUnderConstruction, setShowUnderConstruction] = useState(true);
-
-  useFocusEffect(
-    React.useCallback(() => {
+  const [showUnderConstruction, setShowUnderConstruction] = useState(false);
+  useEffect(() => {
+    if (isActive) {
       setShowUnderConstruction(true);
-    }, [])
-  );
+    }
+  }, [isActive]);
 
   const handleEntryTap = (entry: LeaderboardEntry) => {
     setSelectedWorkout(entry);
@@ -70,8 +75,8 @@ export const LeaderboardScreen = () => {
   };
 
   const handleUnderConstructionConfirm = () => {
+    router.push("/");
     setShowUnderConstruction(false);
-    router.push("/"); // Or whatever your home route is
   };
 
   const handleRefresh = async () => {

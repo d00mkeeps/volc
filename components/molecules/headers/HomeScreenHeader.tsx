@@ -19,7 +19,7 @@ export default function Header({
       alignItems="center"
       marginBottom="$3" // This stays $3 as it's the gap from header to dashboard content
     >
-      <Text size="medium" fontWeight="700" color="$text">
+      <Text size="large" fontWeight="700" color="$text">
         {greeting}
       </Text>
       <Button size="$3" circular onPress={onSettingsPress}>

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Stack } from "tamagui";
+import { Stack, XStack } from "tamagui";
 import { RefreshControl, ScrollView, Alert } from "react-native";
 import Dashboard from "@/components/organisms/Dashboard";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
@@ -27,6 +27,9 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { SystemMessage } from "@/components/atoms/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
+import { InputArea } from "@/components/atoms/chat/InputArea";
 
 let count = 0;
 
@@ -200,43 +203,8 @@ export default function HomeScreen() {
           setShowCompletionModal(false);
         }
       }
-    } else {
-      // User wants to start a workout
-
-      // First check if we have a user profile (the real requirement)
-      if (!userProfile) {
-        console.error("No user profile available");
-        return;
-      }
-
-      // Get current state
-      const currentWorkout = useUserSessionStore.getState().currentWorkout;
-
-      // If no current workout or template selected, open template selector
-      if (!currentWorkout && !selectedTemplate) {
-        console.log(
-          "No workout selected after cancel, opening template selector"
-        );
-        setIntendedToStart(true);
-        sessionActions.openTemplateSelector();
-        return;
-      }
-
-      const workoutToStart = currentWorkout;
-
-      if (!workoutToStart) {
-        // This case shouldn't happen given the checks above, but just in case
-        console.log("No current workout, opening template selector");
-        setIntendedToStart(true);
-        sessionActions.openTemplateSelector();
-        return;
-      }
-
-      // Start the workout
-      sessionActions.startWorkout(workoutToStart);
-      workoutTrackerRef.current?.expandToFull();
     }
-  }, [isActive, selectedTemplate, sessionActions, userProfile]);
+  }, [isActive, sessionActions]);
 
   useEffect(() => {
     if (userProfile !== null) {
@@ -280,6 +248,18 @@ export default function HomeScreen() {
       );
     });
   });
+
+  const handleStartWorkout = useCallback(() => {
+    setIntendedToStart(true);
+    sessionActions.openTemplateSelector();
+  }, [sessionActions]);
+
+  // Handle chat message send
+  const handleChatSend = useCallback((message: string) => {
+    console.log("Chat message sent:", message);
+    // TODO: Navigate to chat screen or open chat modal with this message
+  }, []);
+
   return (
     <>
       {/* Main Content */}
@@ -290,18 +270,27 @@ export default function HomeScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <Stack flex={1} padding="$4">
+          <Stack flex={1} padding="$4" paddingBottom="$20">
             <Header
               greeting="Welcome to Volc!"
               onSettingsPress={() => setShowSettingsModal(true)}
             />
-            <Stack marginBottom="$5">
+            <Stack marginBottom="$5" paddingBlock="$6">
               <Dashboard
                 allData={dashboardAllData}
                 isLoading={dashboardLoading}
                 error={dashboardError}
               />
             </Stack>
+
+            {/* Start Workout Button Card */}
+            {!isActive && (
+              <Button onPress={handleStartWorkout} width="60%" height="$6">
+                <Text color="white" size="large" fontWeight="600">
+                  Start Workout
+                </Text>
+              </Button>
+            )}
           </Stack>
         </ScrollView>
 
@@ -322,42 +311,57 @@ export default function HomeScreen() {
         />
       </Stack>
 
-      {/* WorkoutTracker */}
-      <WorkoutTracker
-        ref={workoutTrackerRef}
-        currentTemplateName={selectedTemplate?.name}
-      />
+      {/* WorkoutTracker - only show when active */}
+      {isActive && (
+        <WorkoutTracker
+          ref={workoutTrackerRef}
+          currentTemplateName={selectedTemplate?.name}
+        />
+      )}
+
       <OnboardingModal
         isVisible={showOnboardingModal}
         onComplete={handleOnboardingComplete}
       />
 
-      {/* Floating Action Button with System Message */}
-      <Stack
-        position="absolute"
-        bottom={0}
-        left={0}
-        right={0}
-        paddingBottom="$5"
-        pointerEvents="box-none"
-      >
-        {/* System Message */}
-        {showFinishMessage && (
-          <Stack paddingHorizontal="$4" paddingBottom="$2">
-            <SystemMessage
-              message="Complete at least one set to finish your workout"
-              type="info"
-            />
-          </Stack>
-        )}
+      {/* Chat Input - only show when not active, fixed above tab bar */}
+      {!isActive && (
+        <Stack position="absolute" bottom={0} left={0} right={0}>
+          <InputArea
+            placeholder="Ask a fitness question..."
+            onSendMessage={handleChatSend}
+          />
+        </Stack>
+      )}
 
-        {/* Floating Action Button */}
-        <FloatingActionButton
-          label={isActive ? "FINISH" : "START"}
-          onPress={handleToggleWorkout}
-          disabled={isActive && !hasAtLeastOneCompleteSet}
-        />
-      </Stack>
+      {/* Floating Action Button - only show when active */}
+      {isActive && (
+        <Stack
+          position="absolute"
+          bottom={0}
+          left={0}
+          right={0}
+          paddingBottom="$5"
+          pointerEvents="box-none"
+        >
+          {/* System Message */}
+          {showFinishMessage && (
+            <Stack paddingHorizontal="$4" paddingBottom="$2">
+              <SystemMessage
+                message="Complete at least one set to finish your workout"
+                type="info"
+              />
+            </Stack>
+          )}
+
+          {/* Floating Action Button */}
+          <FloatingActionButton
+            label="FINISH"
+            onPress={handleToggleWorkout}
+            disabled={!hasAtLeastOneCompleteSet}
+          />
+        </Stack>
+      )}
     </>
   );
 }
