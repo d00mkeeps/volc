@@ -6,30 +6,23 @@ import Button from "@/components/atoms/core/Button";
 import Text from "@/components/atoms/core/Text";
 import React from "react";
 
-interface SignUpFormProps {
+interface ResetPasswordFormProps {
   onSwitchToSignIn: () => void;
 }
 
-export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
-  const { signUp } = useAuth();
+export function ResetPasswordForm({
+  onSwitchToSignIn,
+}: ResetPasswordFormProps) {
+  const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const clearForm = () => {
     setEmail("");
-    setPassword("");
-    setConfirmPassword("");
   };
 
-  const clearPasswords = () => {
-    setPassword("");
-    setConfirmPassword("");
-  };
-
-  // NEW: Switch to sign in after 5 seconds
+  // Switch to sign in after 5 seconds
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
@@ -43,25 +36,22 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
   const handleSubmit = async () => {
     const cleanEmail = email.trim().toLowerCase().replace(/\s+/g, "");
 
-    if (password !== confirmPassword) {
-      console.warn("⚠️ [SignUpForm] Password mismatch");
-      // Handle password mismatch - you might want to show an error here too
+    if (!cleanEmail) {
+      console.warn("⚠️ [ResetPasswordForm] Email is required");
       return;
     }
 
     try {
-      console.log("🚀 [SignUpForm] Starting signup...");
+      console.log("🚀 [ResetPasswordForm] Requesting password reset...");
       setLoading(true);
       setSuccess(false);
-      await signUp({ email: cleanEmail, password });
-      console.log("✅ [SignUpForm] Signup completed successfully");
+      await resetPassword(cleanEmail);
+      console.log("✅ [ResetPasswordForm] Reset email sent successfully");
       clearForm();
       setSuccess(true);
     } catch (error: any) {
-      console.error("❌ [SignUpForm] Signup failed:", error);
+      console.error("❌ [ResetPasswordForm] Reset failed:", error);
       setSuccess(false);
-      clearPasswords();
-      // Error will be displayed by AuthScreen's SystemMessage via AuthContext
     } finally {
       setLoading(false);
     }
@@ -69,7 +59,7 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
 
   return (
     <Stack flex={1} position="relative" paddingHorizontal="$4">
-      {/* NEW: Success state fully replaces the form */}
+      {/* Success state */}
       {success ? (
         <Stack
           position="absolute"
@@ -95,14 +85,30 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
               fontWeight="600"
               textAlign="center"
             >
-              Account created!{"\n\n"}Please check your email to verify your
-              account before signing in.
+              Password reset email sent!{"\n\n"}Please check your email for
+              instructions to reset your password. {"\n\n"}
+              (Don't forget to check spam)
             </Text>
           </Stack>
         </Stack>
       ) : (
         <>
-          {/* Original form inputs */}
+          {/* Form header */}
+          <Stack marginBottom="$4">
+            <Text size="large" fontWeight="600" textAlign="center">
+              Reset Password
+            </Text>
+            <Text
+              size="small"
+              color="$textMuted"
+              textAlign="center"
+              marginTop="$2"
+            >
+              Enter your email and we'll send you a reset link
+            </Text>
+          </Stack>
+
+          {/* Email input */}
           <Stack gap="$2" width="100%">
             <Input
               width="70%"
@@ -121,41 +127,9 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
               color="$color"
               placeholderTextColor="$textMuted"
             />
-            <Input
-              width="70%"
-              height="$6"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              secureTextEntry
-              backgroundColor="$backgroundStrong"
-              borderRadius="$4"
-              padding="$3"
-              size="medium"
-              borderWidth={1}
-              borderColor="$borderSoft"
-              color="$color"
-              placeholderTextColor="$textMuted"
-            />
-            <Input
-              width="70%"
-              height="$6"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Confirm Password"
-              secureTextEntry
-              backgroundColor="$backgroundStrong"
-              borderRadius="$4"
-              padding="$3"
-              size="medium"
-              borderWidth={1}
-              borderColor="$borderSoft"
-              color="$color"
-              placeholderTextColor="$textMuted"
-            />
           </Stack>
 
-          {/* Submit button - only shown when not in success state */}
+          {/* Submit button */}
           <Stack
             position="absolute"
             left={0}
@@ -163,12 +137,17 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             bottom="50%"
             paddingHorizontal="$4"
           >
-            <Button onPress={handleSubmit} disabled={loading} width="30%">
+            <Button
+              onPress={handleSubmit}
+              disabled={loading}
+              width="35%"
+              height="$4"
+            >
               {loading ? (
                 <Spinner color="white" />
               ) : (
                 <Text color="white" size="medium" fontWeight="600">
-                  Sign Up
+                  Send Reset Link
                 </Text>
               )}
             </Button>

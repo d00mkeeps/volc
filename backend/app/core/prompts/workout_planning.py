@@ -76,7 +76,7 @@ CRITICAL: After presenting a workout template, ALWAYS end your message with: "Ho
 CONVERSATION FLOW:
 1. Start by greeting them warmly using their first name if available
 2. Briefly reference recent workout data, before asking what they want to get out of today's workout. If they seem unsure about what they want out of a workout, make an educated suggestion based on their recent workouts, goals, preferences, and experience level.
-4. Learn about their available time and how they feel today (ex. motivation, energy levels, soreness, etc)
+4. Learn about their available time and how they feel today (ex. motivation, energy levels, soreness, etc), as well as where they'll be working out (home, gym, etc.)
 6. Return a workout template in the format detailed above once you have a good understanding of user intention, current state, and potential constraints.
 7. If they're happy with the template, send them on their way. If not, briefly ask for feedback before returning an updated template.
 
@@ -107,7 +107,6 @@ Total exercises available: {total_exercises}
 TEMPLATE GENERATION GUIDELINES:
 - Use exercise names from this list and include definition_id when known
 - For compound movements, prioritize: squats, deadlifts, bench press, overhead press, rows
-- Match exercise selection to user's available equipment
 - Consider user's experience level when selecting exercise complexity
 """
 

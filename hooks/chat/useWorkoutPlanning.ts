@@ -16,21 +16,14 @@ export function useWorkoutPlanning() {
     ((templateData: any) => void) | null
   >(null);
 
-  // Track if we've done initial connection (prevents reconnection loop)
-  const hasInitializedRef = useRef(false);
+  const isConnectedRef = useRef(false);
 
   // Track connection state
   const [connectionState, setConnectionState] = useState<ConnectionState>(
     webSocketService.getConnectionState()
   );
 
-  // Use user_id as the key since no conversationId for planning
-  const getUserId = async () => {
-    const session = await authService.getSession();
-    return session?.user?.id || null;
-  };
-
-  // State selectors - use 'workout-planning' as key
+  // State selectors
   const messages = useMessageStore((state) => {
     return state.messages?.get(PLANNING_KEY) || EMPTY_MESSAGES;
   });
@@ -50,7 +43,6 @@ export function useWorkoutPlanning() {
     []
   );
 
-  // Method: /hooks/chat/useWorkoutPlanning.registerHandlers
   // Register websocket handlers for receiving messages
   const registerHandlers = useCallback(
     (messageKey: string) => {
@@ -69,7 +61,6 @@ export function useWorkoutPlanning() {
           }
         });
 
-      // Register handlers for incoming messages
       const unsubscribeContent = webSocketService.onMessage((chunk) => {
         console.log(
           "[useWorkoutPlanning] Received content chunk:",
@@ -104,7 +95,6 @@ export function useWorkoutPlanning() {
         });
       });
 
-      // Store unsubscribe functions
       unsubscribeRefs.current = [
         unsubscribeContent,
         unsubscribeComplete,
@@ -120,13 +110,10 @@ export function useWorkoutPlanning() {
     [webSocketService]
   );
 
-  // Method: /hooks/chat/useWorkoutPlanning.checkConnectionState
   // Monitor connection state changes
   useEffect(() => {
     const checkConnectionState = () => {
       const newState = webSocketService.getConnectionState();
-
-      // Only update state if it actually changed (prevents infinite loop)
       setConnectionState((prevState) => {
         if (prevState !== newState) {
           console.log(
@@ -138,76 +125,72 @@ export function useWorkoutPlanning() {
       });
     };
 
-    // Check immediately and set up polling
     checkConnectionState();
     const interval = setInterval(checkConnectionState, 500);
 
     return () => clearInterval(interval);
   }, [webSocketService]);
 
-  // Method: /hooks/chat/useWorkoutPlanning.handleDisconnection
-  // Separate effect to handle disconnection side effects
+  // Handle disconnection side effects
   useEffect(() => {
     if (connectionState === "disconnected") {
       console.log("[useWorkoutPlanning] Disconnected - clearing messages");
-      // Use getState() to avoid dependency on the store
       useMessageStore.getState().clearMessages(PLANNING_KEY);
       useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
+      isConnectedRef.current = false;
     }
-  }, [connectionState]); // Only depend on connectionState, not messageStore
+  }, [connectionState]);
 
-  // Method: /hooks/chat/useWorkoutPlanning.connectToPlanning
-  // Single-use initial connection - only runs ONCE on mount
-  useEffect(() => {
-    // Skip if already initialized
-    if (hasInitializedRef.current) {
-      console.log(
-        "[useWorkoutPlanning] Already initialized, skipping auto-connect"
-      );
+  // MANUAL connect method - call this when modal opens
+  const connect = useCallback(async () => {
+    if (isConnectedRef.current) {
+      console.log("[useWorkoutPlanning] Already connected, skipping");
       return;
     }
 
-    const connectToPlanning = async () => {
-      try {
-        console.log(
-          "[useWorkoutPlanning] Initial connection to workout planning"
-        );
-        hasInitializedRef.current = true;
+    try {
+      console.log("[useWorkoutPlanning] Connecting to workout planning");
+      isConnectedRef.current = true;
 
-        // Connect to workout-planning endpoint
-        await webSocketService.ensureConnection({
-          type: "workout-planning",
-        });
+      await webSocketService.ensureConnection({
+        type: "workout-planning",
+      });
 
-        // Register handlers
-        registerHandlers(PLANNING_KEY);
-      } catch (error) {
-        console.error("[useWorkoutPlanning] Failed to connect:", error);
-        hasInitializedRef.current = false; // Reset on error so retry is possible
-        useMessageStore
-          .getState()
-          .setError(error instanceof Error ? error : new Error(String(error)));
-      }
-    };
-
-    connectToPlanning();
-
-    // Cleanup on unmount
-    return () => {
-      unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
-      unsubscribeRefs.current = [];
-    };
+      registerHandlers(PLANNING_KEY);
+    } catch (error) {
+      console.error("[useWorkoutPlanning] Failed to connect:", error);
+      isConnectedRef.current = false;
+      useMessageStore
+        .getState()
+        .setError(error instanceof Error ? error : new Error(String(error)));
+    }
   }, [registerHandlers, webSocketService]);
 
-  // Method: /hooks/chat/useWorkoutPlanning.sendMessage
+  // MANUAL disconnect method - call this when modal closes
+  const disconnect = useCallback(() => {
+    console.log("[useWorkoutPlanning] Disconnecting from workout planning");
+    unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+    unsubscribeRefs.current = [];
+    isConnectedRef.current = false;
+
+    // Clear messages when disconnecting
+    useMessageStore.getState().clearMessages(PLANNING_KEY);
+    useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [disconnect]);
+
   const sendMessage = useCallback(
     async (content: string) => {
       try {
-        // Get current messages for this planning session
         const currentState = useMessageStore.getState();
         const currentMessages = currentState.messages.get(PLANNING_KEY) || [];
 
-        // Add user message to local state
         const userMessage: Message = {
           id: `temp-user-${Date.now()}`,
           conversation_id: PLANNING_KEY,
@@ -218,7 +201,6 @@ export function useWorkoutPlanning() {
         };
         useMessageStore.getState().addMessage(PLANNING_KEY, userMessage);
 
-        // Build simple payload for planning
         const updatedMessages =
           useMessageStore.getState().messages.get(PLANNING_KEY) || [];
         const payload = {
@@ -226,7 +208,6 @@ export function useWorkoutPlanning() {
           conversation_history: updatedMessages,
         };
 
-        // Re-register handlers and send
         registerHandlers(PLANNING_KEY);
         await webSocketService.ensureConnection({ type: "workout-planning" });
         webSocketService.sendMessage(payload);
@@ -248,19 +229,16 @@ export function useWorkoutPlanning() {
     [registerHandlers, webSocketService]
   );
 
-  // Method: /hooks/chat/useWorkoutPlanning.restartChat
   const restartChat = useCallback(async () => {
     try {
       console.log(
         "[useWorkoutPlanning] Restarting chat - clearing and reconnecting"
       );
 
-      // Clear messages and streaming state
       useMessageStore.getState().clearMessages(PLANNING_KEY);
       useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
       useMessageStore.getState().setError(null);
 
-      // Reconnect
       await webSocketService.ensureConnection({ type: "workout-planning" });
       registerHandlers(PLANNING_KEY);
 
@@ -286,6 +264,8 @@ export function useWorkoutPlanning() {
     isLoading,
     error,
     connectionState,
+    connect, // NEW - manual connect
+    disconnect, // NEW - manual disconnect
     sendMessage,
     restartChat,
     hasMessages: messages.length > 0,

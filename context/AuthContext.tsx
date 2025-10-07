@@ -82,9 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     signUp: async (credentials: SignUpCredentials) => {
       try {
+        console.log("🚀 [AuthContext] SignUp called");
         const result = await authService.signUp(credentials);
+        console.log("✅ [AuthContext] SignUp successful");
         return result;
       } catch (err) {
+        console.error("❌ [AuthContext] SignUp error:", err);
         setError(err as AuthError);
         throw err;
       }

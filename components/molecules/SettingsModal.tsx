@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Add useEffect
 import { YStack, XStack, ScrollView } from "tamagui";
 import { Alert } from "react-native";
 import BaseModal from "@/components/atoms/core/BaseModal";
@@ -6,6 +6,7 @@ import Button from "@/components/atoms/core/Button";
 import Input from "@/components/atoms/core/Input";
 import Text from "@/components/atoms/core/Text";
 import { userService } from "@/services/api/userService";
+import { useUserStore } from "@/stores/userProfileStore";
 
 interface SettingsModalProps {
   visible: boolean;
@@ -24,6 +25,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   });
   const [typedConfirmation, setTypedConfirmation] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { userProfile, updateProfile } = useUserStore();
+
+  // Track local unit preference
+  const [isImperial, setIsImperial] = useState<boolean>(false);
+  const [hasUnitChanged, setHasUnitChanged] = useState(false);
+
+  // Initialize unit preference when modal opens
+  useEffect(() => {
+    if (visible && userProfile) {
+      setIsImperial(userProfile.is_imperial);
+      setHasUnitChanged(false);
+    }
+  }, [visible, userProfile]);
 
   const resetDeleteState = () => {
     console.log("🔴 resetDeleteState called");
@@ -66,6 +81,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUnitToggle = (imperial: boolean) => {
+    setIsImperial(imperial);
+    setHasUnitChanged(userProfile?.is_imperial !== imperial);
+  };
+
+  const handleClose = async () => {
+    // Save unit preference if changed
+    if (hasUnitChanged) {
+      setLoading(true);
+      try {
+        await updateProfile({ is_imperial: isImperial });
+      } catch (error) {
+        console.error("Failed to update units:", error);
+        Alert.alert(
+          "Error",
+          "Failed to save unit preference. Please try again."
+        );
+        setLoading(false);
+        return; // Don't close modal if save failed
+      }
+      setLoading(false);
+    }
+
+    resetDeleteState();
+    onClose();
   };
 
   const ConfirmationCheckbox = ({
@@ -113,10 +155,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <BaseModal
       isVisible={visible}
-      onClose={() => {
-        resetDeleteState();
-        onClose();
-      }}
+      onClose={handleClose}
       widthPercent={90}
       heightPercent={70}
     >
@@ -136,17 +175,54 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 size="medium"
                 backgroundColor="transparent"
                 color="$primary"
-                onPress={onClose}
+                onPress={handleClose}
+                disabled={loading}
               >
-                Done
+                {loading ? "Saving..." : "Done"}
               </Button>
             </XStack>
 
-            {/* Other settings options here */}
+            {/* Unit Preference Section */}
+            <ScrollView flex={1}>
+              <YStack gap="$4">
+                <YStack gap="$3">
+                  <Text size="large" fontWeight="600">
+                    Unit Preference
+                  </Text>
+                  <XStack gap="$2">
+                    <Button
+                      flex={1}
+                      backgroundColor={
+                        !isImperial ? "$primary" : "$backgroundSoft"
+                      }
+                      color={!isImperial ? "$white" : "$text"}
+                      onPress={() => handleUnitToggle(false)}
+                    >
+                      Metric (kg)
+                    </Button>
+                    <Button
+                      flex={1}
+                      backgroundColor={
+                        isImperial ? "$primary" : "$backgroundSoft"
+                      }
+                      color={isImperial ? "$white" : "$text"}
+                      onPress={() => handleUnitToggle(true)}
+                    >
+                      Imperial (lbs)
+                    </Button>
+                  </XStack>
+                  {hasUnitChanged && (
+                    <Text size="small" color="$textSoft" fontStyle="italic">
+                      Changes will be saved when you close settings
+                    </Text>
+                  )}
+                </YStack>
+              </YStack>
+            </ScrollView>
 
             {/* Danger Zone */}
             <YStack
-              marginTop="auto"
+              marginTop="$4"
               paddingTop="$4"
               borderTopWidth={1}
               borderTopColor="$borderSoft"
@@ -177,7 +253,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* Delete Account Confirmation Content */}
             <ScrollView flex={1}>
               <YStack gap="$4">
-                {/* Header */}
                 <XStack justifyContent="space-between" alignItems="center">
                   <Text size="xl" fontWeight="600" color="$red9">
                     Delete Account
@@ -195,7 +270,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </Button>
                 </XStack>
 
-                {/* Warning Text */}
                 <Text size="medium" lineHeight={24}>
                   This action will permanently delete your account and all
                   associated data. This cannot be undone.
@@ -205,7 +279,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   Please confirm you understand:
                 </Text>
 
-                {/* Checkboxes */}
                 <YStack gap="$2">
                   <ConfirmationCheckbox
                     checked={confirmations.understand_permanent}
@@ -242,7 +315,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   />
                 </YStack>
 
-                {/* Confirmation Input */}
                 <YStack gap="$2">
                   <Text size="medium">
                     Type{" "}
@@ -264,7 +336,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   />
                 </YStack>
 
-                {/* Delete Button */}
                 <Button
                   backgroundColor={
                     isReadyToDelete() ? "$red9" : "$backgroundMuted"

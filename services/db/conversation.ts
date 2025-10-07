@@ -52,6 +52,51 @@ export class ConversationService extends BaseDBService {
   }
 
   /**
+   * Create a conversation with first message
+   */
+  async createConversationFromMessage(params: {
+    userId: string;
+    title: string;
+    firstMessage: string;
+    configName: string;
+  }): Promise<{ conversation: Conversation; messageId: string }> {
+    try {
+      console.log("📤 Creating conversation from message:", params);
+
+      const response = await apiPost<{
+        conversation: {
+          success: boolean;
+          data: Conversation;
+          error: any;
+        };
+        first_message: {
+          id: string;
+          conversation_id: string;
+          content: string;
+          sender: string;
+        };
+      }>("/db/conversations/with-message", {
+        title: params.title,
+        firstMessage: params.firstMessage,
+        configName: params.configName,
+      });
+
+      // Unwrap the conversation from the {success, data, error} wrapper
+      const conversation = response.conversation.data;
+
+      console.log("📥 Conversation created:", conversation.id);
+
+      return {
+        conversation,
+        messageId: response.first_message.id,
+      };
+    } catch (error) {
+      console.error("❌ Error creating conversation from message:", error);
+      return this.handleError(error);
+    }
+  }
+
+  /**
    * Get a conversation by ID
    */
   async getConversation(conversationId: string): Promise<Conversation> {

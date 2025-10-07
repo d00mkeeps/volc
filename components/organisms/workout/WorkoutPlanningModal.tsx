@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
@@ -22,12 +22,26 @@ export const WorkoutPlanningModal = ({
 }: WorkoutPlanningModalProps) => {
   const planning = useWorkoutPlanning();
   const { userProfile } = useUserStore();
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
 
-  // Convert backend template data to CompleteWorkout format
-  // Convert backend template data to CompleteWorkout format
+  // Connect when modal opens, disconnect when it closes
+  useEffect(() => {
+    if (isVisible) {
+      console.log(
+        "[WorkoutPlanningModal] Modal opened - connecting to websocket"
+      );
+      planning.connect();
+      setShowCloseConfirmation(false);
+    } else {
+      console.log(
+        "[WorkoutPlanningModal] Modal closed - disconnecting from websocket"
+      );
+      planning.disconnect();
+    }
+  }, [isVisible, planning.connect, planning.disconnect]);
+
   const convertTemplateToWorkout = useCallback(
     (templateData: any): CompleteWorkout | null => {
-      // The template data comes directly, not wrapped in workout_template
       if (!templateData || !userProfile?.user_id) {
         console.error(
           "[WorkoutPlanningModal] Missing template data or user profile:",
@@ -40,7 +54,6 @@ export const WorkoutPlanningModal = ({
         return null;
       }
 
-      // Use templateData directly since it's the template, not wrapped
       const template = templateData;
       const now = new Date().toISOString();
 
@@ -94,7 +107,6 @@ export const WorkoutPlanningModal = ({
     [userProfile?.user_id]
   );
 
-  // Handle approved template from AI
   const handleTemplateApproved = useCallback(
     (templateData: any) => {
       console.log(
@@ -132,7 +144,6 @@ export const WorkoutPlanningModal = ({
       planning.setTemplateApprovalHandler(() => {});
     }
 
-    // Cleanup on unmount
     return () => {
       if (planning.setTemplateApprovalHandler) {
         planning.setTemplateApprovalHandler(() => {});
@@ -140,7 +151,6 @@ export const WorkoutPlanningModal = ({
     };
   }, [isVisible, planning.setTemplateApprovalHandler, handleTemplateApproved]);
 
-  // Handle sending messages
   const handleSend = async (content: string) => {
     try {
       await planning.sendMessage(content);
@@ -149,7 +159,6 @@ export const WorkoutPlanningModal = ({
     }
   };
 
-  // Handle "Choose my own workout" button
   const handleChooseOwnWorkout = () => {
     if (onSelectTemplate && userProfile?.user_id) {
       const emptyTemplate = {
@@ -161,7 +170,24 @@ export const WorkoutPlanningModal = ({
     }
   };
 
-  // Determine connection state for placeholder
+  const handleCloseAttempt = () => {
+    // Only show confirmation if there are messages
+    if (planning.messages.length > 0) {
+      setShowCloseConfirmation(true);
+    } else {
+      onClose();
+    }
+  };
+
+  const handleConfirmClose = () => {
+    setShowCloseConfirmation(false);
+    onClose();
+  };
+
+  const handleCancelClose = () => {
+    setShowCloseConfirmation(false);
+  };
+
   const getConnectionState = ():
     | "ready"
     | "expecting_ai_message"
@@ -182,12 +208,11 @@ export const WorkoutPlanningModal = ({
   return (
     <BaseModal
       isVisible={isVisible}
-      onClose={onClose}
+      onClose={handleCloseAttempt}
       widthPercent={95}
       heightPercent={85}
     >
       <YStack flex={1}>
-        {/* Header with Close and Choose Own Workout buttons */}
         <XStack
           justifyContent="space-between"
           alignItems="center"
@@ -222,10 +247,60 @@ export const WorkoutPlanningModal = ({
             onRestart={handleRestart}
             placeholder="Tell me about your workout goals..."
             connectionState={getConnectionState()}
-            onTemplateApprove={handleTemplateApproved} // Add this line
+            onTemplateApprove={handleTemplateApproved}
             keyboardVerticalOffset={150}
           />
         </YStack>
+
+        {/* Close Confirmation Dialog */}
+        {showCloseConfirmation && (
+          <YStack
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            backgroundColor="rgba(0,0,0,0.8)"
+            justifyContent="center"
+            alignItems="center"
+            zIndex={1000}
+          >
+            <YStack
+              backgroundColor="$background"
+              padding="$4"
+              borderRadius="$4"
+              maxWidth={300}
+              gap="$3"
+            >
+              <Text size="medium" fontWeight="bold" textAlign="center">
+                Exit Workout Planning?
+              </Text>
+              <Text size="small" color="$textMuted" textAlign="center">
+                (Your messages won't be saved)
+              </Text>
+              <XStack gap="$3" justifyContent="center">
+                <Button
+                  onPress={handleCancelClose}
+                  backgroundColor="$background"
+                  color="$text"
+                  borderColor="$primary"
+                  borderWidth={1}
+                  flex={1}
+                >
+                  Stay
+                </Button>
+                <Button
+                  onPress={handleConfirmClose}
+                  backgroundColor="$red9"
+                  color="white"
+                  flex={1}
+                >
+                  Exit
+                </Button>
+              </XStack>
+            </YStack>
+          </YStack>
+        )}
       </YStack>
     </BaseModal>
   );

@@ -43,11 +43,7 @@ export default function WorkoutTemplateView({
         : "No reps";
 
     return (
-      <XStack
-        key={exercise.definition_id}
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <YStack key={exercise.definition_id} gap="$1">
         <TouchableOpacity
           onPress={() => setSelectedExerciseId(exercise.definition_id || null)}
           style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
@@ -65,7 +61,7 @@ export default function WorkoutTemplateView({
         <Text size="small" color="$textSoft">
           {setCount} {setCount === 1 ? "set" : "sets"} • {repRange}
         </Text>
-      </XStack>
+      </YStack>
     );
   };
 
@@ -239,18 +235,22 @@ export default function WorkoutTemplateView({
                 </Text>
               </XStack>
 
-              {/* Notes */}
               {data.notes && (
                 <Text size="small" color="$textSoft" fontStyle="italic">
                   {expanded
                     ? data.notes
                     : data.notes.length > 50
-                    ? `${data.notes.substring(0, 50)}...`
+                    ? (() => {
+                        const truncated = data.notes.substring(0, 50);
+                        const lastSpace = truncated.lastIndexOf(" ");
+                        return lastSpace > 0
+                          ? `${truncated.substring(0, lastSpace)}...`
+                          : `${truncated}...`;
+                      })()
                     : data.notes}
                 </Text>
               )}
 
-              {/* Exercises */}
               <YStack gap="$2">
                 {expanded
                   ? data.workout_exercises
@@ -269,7 +269,8 @@ export default function WorkoutTemplateView({
 
                 {!expanded && data.workout_exercises.length > 3 && (
                   <Text size="small" color="$textSoft" textAlign="center">
-                    +{data.workout_exercises.length - 3} more exercises
+                    +{data.workout_exercises.length - 3} more exercise
+                    {data.workout_exercises.length - 3 === 1 ? "" : "s"}
                   </Text>
                 )}
               </YStack>

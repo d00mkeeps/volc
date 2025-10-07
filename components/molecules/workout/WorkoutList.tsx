@@ -53,6 +53,26 @@ export default function WorkoutList({ limit = 3 }: WorkoutListProps) {
     );
   }
 
+  // Add this new empty state check
+  if (workouts.length === 0) {
+    return (
+      <Stack flex={1}>
+        <ScrollView flex={1} showsVerticalScrollIndicator={false}>
+          <Stack padding="$4" alignItems="center">
+            <Text size="medium" color="$textSoft" textAlign="center">
+              No workouts yet. Create your first workout to get started!
+            </Text>
+          </Stack>
+        </ScrollView>
+        <WorkoutViewModal
+          isVisible={selectedWorkoutId !== null}
+          onClose={() => setSelectedWorkoutId(null)}
+          workoutId={selectedWorkoutId || ""}
+        />
+      </Stack>
+    );
+  }
+
   return (
     <Stack flex={1}>
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>

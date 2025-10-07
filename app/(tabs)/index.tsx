@@ -5,9 +5,11 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Stack, XStack } from "tamagui";
+import { Stack } from "tamagui";
 import { RefreshControl, ScrollView, Alert } from "react-native";
 import Dashboard from "@/components/organisms/Dashboard";
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
@@ -30,6 +32,7 @@ import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import Button from "@/components/atoms/core/Button";
 import Text from "@/components/atoms/core/Text";
 import { InputArea } from "@/components/atoms/chat/InputArea";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 let count = 0;
 
@@ -51,6 +54,7 @@ export default function HomeScreen() {
 
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -254,12 +258,32 @@ export default function HomeScreen() {
     sessionActions.openTemplateSelector();
   }, [sessionActions]);
 
-  // Handle chat message send
-  const handleChatSend = useCallback((message: string) => {
+  const handleChatSend = useCallback(async (message: string) => {
     console.log("Chat message sent:", message);
-    // TODO: Navigate to chat screen or open chat modal with this message
-  }, []);
 
+    try {
+      setIsSendingMessage(true);
+
+      const conversationId = await useConversationStore
+        .getState()
+        .createConversationFromMessage(message);
+
+      console.log("✅ Navigating to conversation:", conversationId);
+
+      router.push({
+        pathname: "/chats",
+        params: { conversationId },
+      });
+    } catch (error) {
+      console.error("Failed to create conversation:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to start conversation",
+      });
+    } finally {
+      setIsSendingMessage(false);
+    }
+  }, []);
   return (
     <>
       {/* Main Content */}
@@ -330,6 +354,7 @@ export default function HomeScreen() {
           <InputArea
             placeholder="Ask a fitness question..."
             onSendMessage={handleChatSend}
+            isLoading={isSendingMessage}
           />
         </Stack>
       )}

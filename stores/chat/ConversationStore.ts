@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { conversationService } from "../../services/db/conversation";
-import { Conversation, ChatConfigName } from "@/types";
+import { Conversation, ChatConfigName, Message } from "@/types";
 import { authService } from "@/services/db/auth";
 import { useMessageStore } from "./MessageStore";
 import { useUserStore } from "../userProfileStore";
@@ -13,6 +13,7 @@ interface ConversationStoreState {
   isLoading: boolean;
   error: Error | null;
   initialized: boolean;
+  createConversationFromMessage: (message: string) => Promise<string>;
 
   // Auth-triggered methods (called by authStore)
   initializeIfAuthenticated: () => Promise<void>;
@@ -153,6 +154,79 @@ export const useConversationStore = create<ConversationStoreState>(
         });
       },
 
+      createConversationFromMessage: async (message: string) => {
+        try {
+          set({ isLoading: true, error: null });
+
+          const session = await authService.getSession();
+          if (!session?.user?.id) {
+            throw new Error("No authenticated user found");
+          }
+
+          const result =
+            await conversationService.createConversationFromMessage({
+              userId: session.user.id,
+              title: `New Conversation - ${new Date().toLocaleDateString()}`,
+              firstMessage: message,
+              configName: "workout-analysis",
+            });
+
+          // Add the first message to MessageStore
+          const firstMessage: Message = {
+            id: result.messageId,
+            conversation_id: result.conversation.id,
+            content: message,
+            sender: "user",
+            conversation_sequence: 1,
+            timestamp: new Date(),
+          };
+
+          useMessageStore
+            .getState()
+            .addMessage(result.conversation.id, firstMessage);
+
+          set((state) => {
+            const newConversations = new Map(state.conversations);
+
+            // Ensure message_count is at least 1
+            const conversationWithCount = {
+              ...result.conversation,
+              message_count: result.conversation.message_count || 1,
+            };
+
+            newConversations.set(
+              conversationWithCount.id,
+              conversationWithCount
+            );
+
+            const newConfigs = new Map(state.conversationConfigs);
+            newConfigs.set(conversationWithCount.id, "workout-analysis");
+
+            return {
+              conversations: newConversations,
+              conversationConfigs: newConfigs,
+              activeConversationId: conversationWithCount.id,
+              isLoading: false,
+            };
+          });
+
+          console.log(
+            "✅ Conversation created from message:",
+            result.conversation.id
+          );
+          return result.conversation.id;
+        } catch (error) {
+          console.error(
+            "[ConversationStore] Error creating conversation from message:",
+            error
+          );
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error : new Error(String(error)),
+          });
+          throw error;
+        }
+      },
       // Create a new conversation
       createConversation: async (params) => {
         try {

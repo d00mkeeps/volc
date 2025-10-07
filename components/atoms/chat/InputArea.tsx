@@ -8,11 +8,13 @@ interface InputAreaProps {
   disabled?: boolean;
   placeholder?: string;
   onSendMessage: (message: string) => void;
+  isLoading?: boolean; // NEW
 }
 export const InputArea = ({
   disabled = false,
   placeholder = "Type a message...",
   onSendMessage,
+  isLoading = false,
 }: InputAreaProps) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | undefined>();
@@ -30,7 +32,7 @@ export const InputArea = ({
       setInput("");
       setError(undefined);
     }
-  }, [disabled, input, onSendMessage]);
+  }, [disabled, isLoading, input, onSendMessage]);
 
   return (
     <XStack
@@ -48,10 +50,10 @@ export const InputArea = ({
           if (error && text.length <= 240) setError(undefined);
         }}
         placeholder={placeholder}
-        disabled={disabled}
-        backgroundColor={disabled ? "$backgroundMuted" : "$backgroundSoft"}
+        disabled={disabled || isLoading}
         borderColor={error ? "$error" : "$borderSoft"}
         color="$color"
+        opacity={isLoading ? 0.6 : 1} // Visual feedback for loading
         placeholderTextColor="$textMuted"
         onSubmitEditing={handleSend}
         returnKeyType="send"

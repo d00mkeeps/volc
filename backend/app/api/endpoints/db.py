@@ -338,6 +338,33 @@ async def create_conversation(
             detail=str(e)
         )
 
+@router.post("/conversations/with-message")
+async def create_conversation_with_message(
+    data: Dict[str, Any] = Body(...),
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Create a new conversation with the first message"""
+    try:
+        logger.info(f"API: Creating conversation with message - {data.get('title')}")
+        
+        result = await conversation_service.create_conversation_with_message(
+            title=data.get("title"),
+            config_name=data.get("configName"),
+            first_message=data.get("firstMessage"),
+            user=user,
+            jwt_token=jwt_token
+        )
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"API error creating conversation with message: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+    
 @router.get("/conversations")
 async def get_user_conversations(
     user = Depends(get_current_user),

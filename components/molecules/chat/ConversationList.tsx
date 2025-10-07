@@ -45,6 +45,22 @@ export default function ConversationList({
     );
   }
 
+  // Add this new empty state check
+  if (allConversations.length === 0) {
+    return (
+      <Stack flex={1}>
+        <Text size="medium" fontWeight="500" color="$text" marginBottom="$2">
+          Recent Conversations
+        </Text>
+        <Stack padding="$4" alignItems="center">
+          <Text size="medium" color="$textSoft" textAlign="center">
+            No conversations yet. Start chatting to see your history here!
+          </Text>
+        </Stack>
+      </Stack>
+    );
+  }
+
   return (
     <Stack flex={1}>
       <Text size="medium" fontWeight="500" color="$text" marginBottom="$2">
