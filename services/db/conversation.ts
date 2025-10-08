@@ -1,4 +1,4 @@
-// services/supabase/conversation.ts
+// services/db/conversation.ts
 import { BaseDBService } from "./base";
 import { Message, Conversation } from "@/types";
 import { apiGet, apiPost, apiDelete } from "../api/core/apiClient";
@@ -52,14 +52,14 @@ export class ConversationService extends BaseDBService {
   }
 
   /**
-   * Create a conversation with first message
+   * Create a conversation with first message (message sent via websocket)
    */
   async createConversationFromMessage(params: {
     userId: string;
     title: string;
     firstMessage: string;
     configName: string;
-  }): Promise<{ conversation: Conversation; messageId: string }> {
+  }): Promise<{ conversation: Conversation; firstMessage: string }> {
     try {
       console.log("📤 Creating conversation from message:", params);
 
@@ -69,12 +69,7 @@ export class ConversationService extends BaseDBService {
           data: Conversation;
           error: any;
         };
-        first_message: {
-          id: string;
-          conversation_id: string;
-          content: string;
-          sender: string;
-        };
+        first_message: string;
       }>("/db/conversations/with-message", {
         title: params.title,
         firstMessage: params.firstMessage,
@@ -88,7 +83,7 @@ export class ConversationService extends BaseDBService {
 
       return {
         conversation,
-        messageId: response.first_message.id,
+        firstMessage: response.first_message,
       };
     } catch (error) {
       console.error("❌ Error creating conversation from message:", error);

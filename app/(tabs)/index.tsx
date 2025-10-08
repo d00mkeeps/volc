@@ -264,15 +264,18 @@ export default function HomeScreen() {
     try {
       setIsSendingMessage(true);
 
-      const conversationId = await useConversationStore
+      const result = await useConversationStore
         .getState()
         .createConversationFromMessage(message);
 
-      console.log("✅ Navigating to conversation:", conversationId);
+      console.log("✅ Navigating to conversation:", result.conversationId);
 
+      // Just pass conversationId - message is in store
       router.push({
         pathname: "/chats",
-        params: { conversationId },
+        params: {
+          conversationId: result.conversationId,
+        },
       });
     } catch (error) {
       console.error("Failed to create conversation:", error);

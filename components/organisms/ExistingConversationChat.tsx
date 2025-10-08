@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
@@ -10,16 +10,31 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 interface ExistingConversationChatProps {
   conversationId: string;
   onBack: () => void;
+  initialMessage?: string | null;
+  onMessageSent?: () => void;
 }
 
 export const ExistingConversationChat = ({
   conversationId,
   onBack,
+  initialMessage,
+  onMessageSent,
 }: ExistingConversationChatProps) => {
   const messaging = useMessaging();
   const setActiveConversation = useUserSessionStore(
     (state) => state.setActiveConversation
   );
+  const [hasAutoSent, setHasAutoSent] = useState(false);
+
+  // Debug: Log when component mounts with initialMessage
+  useEffect(() => {
+    if (initialMessage) {
+      console.log(
+        "🔵 ExistingConversationChat mounted with initialMessage:",
+        initialMessage
+      );
+    }
+  }, []);
 
   useEffect(() => {
     setActiveConversation(conversationId);
@@ -29,12 +44,60 @@ export const ExistingConversationChat = ({
   }, [conversationId, setActiveConversation]);
 
   // Load messages when conversation becomes active
-  // (useMessaging will auto-connect websocket)
   useEffect(() => {
     if (messaging.conversationId === conversationId) {
       messaging.loadMessages().catch(console.error);
     }
   }, [messaging.conversationId, conversationId]);
+
+  // Auto-send initial message once ready
+  useEffect(() => {
+    console.log("🔍 Auto-send effect check:", {
+      hasInitialMessage: !!initialMessage,
+      hasAutoSent,
+      messagingConversationId: messaging.conversationId,
+      conversationId,
+      isLoading: messaging.isLoading,
+      isStreaming: messaging.isStreaming,
+      messageCount: messaging.messageCount,
+    });
+
+    if (
+      initialMessage &&
+      !hasAutoSent &&
+      messaging.conversationId === conversationId &&
+      !messaging.isLoading &&
+      !messaging.isStreaming
+    ) {
+      console.log(
+        "🚀 Attempting to auto-send initial message:",
+        initialMessage
+      );
+
+      // Add a small delay to ensure websocket is fully ready
+      const timer = setTimeout(() => {
+        handleSend(initialMessage)
+          .then(() => {
+            console.log("✅ Initial message sent successfully");
+            setHasAutoSent(true);
+            onMessageSent?.();
+          })
+          .catch((error) => {
+            console.error("❌ Failed to auto-send initial message:", error);
+          });
+      }, 500); // 500ms delay
+
+      return () => clearTimeout(timer);
+    }
+  }, [
+    initialMessage,
+    hasAutoSent,
+    messaging.conversationId,
+    conversationId,
+    messaging.isLoading,
+    messaging.isStreaming,
+    messaging.messageCount,
+  ]);
 
   const handleSend = useCallback(
     async (content: string) => {
@@ -42,6 +105,7 @@ export const ExistingConversationChat = ({
         await messaging.sendMessage(content);
       } catch (error) {
         console.error("Send failed:", error);
+        throw error;
       }
     },
     [messaging.sendMessage]

@@ -4,17 +4,27 @@ import { RefreshControl, ScrollView } from "react-native";
 import ConversationList from "@/components/molecules/chat/ConversationList";
 import { ExistingConversationChat } from "@/components/organisms/ExistingConversationChat";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
-import { useLocalSearchParams } from "expo-router"; // Add this import
+import { useLocalSearchParams } from "expo-router";
 
 export default function ChatScreen() {
   const { conversationId: paramConversationId } = useLocalSearchParams<{
     conversationId?: string;
   }>();
+
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | null
   >(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { getConversations } = useConversationStore();
+
+  // Get pending message from store
+  const pendingMessage = useConversationStore(
+    (state) => state.pendingInitialMessage
+  );
+  const clearPendingMessage = useConversationStore(
+    (state) => state.setPendingInitialMessage
+  );
+
   useEffect(() => {
     if (paramConversationId && paramConversationId !== selectedConversationId) {
       console.log(
@@ -22,8 +32,13 @@ export default function ChatScreen() {
         paramConversationId
       );
       setSelectedConversationId(paramConversationId);
+
+      if (pendingMessage) {
+        console.log("💬 Found pending message in store:", pendingMessage);
+      }
     }
-  }, [paramConversationId]);
+  }, [paramConversationId, pendingMessage]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -40,6 +55,8 @@ export default function ChatScreen() {
       <ExistingConversationChat
         conversationId={selectedConversationId}
         onBack={() => setSelectedConversationId(null)}
+        initialMessage={pendingMessage}
+        onMessageSent={() => clearPendingMessage(null)}
       />
     );
   }

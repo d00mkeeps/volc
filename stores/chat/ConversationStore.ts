@@ -13,11 +13,18 @@ interface ConversationStoreState {
   isLoading: boolean;
   error: Error | null;
   initialized: boolean;
-  createConversationFromMessage: (message: string) => Promise<string>;
+
+  // Updated return type
+  createConversationFromMessage: (message: string) => Promise<{
+    conversationId: string;
+    messageToSend: string;
+  }>;
 
   // Auth-triggered methods (called by authStore)
   initializeIfAuthenticated: () => Promise<void>;
   clearData: () => void;
+  pendingInitialMessage: string | null;
+  setPendingInitialMessage: (message: string | null) => void;
 
   // Core CRUD operations
   createConversation: (params: {
@@ -88,17 +95,19 @@ export const useConversationStore = create<ConversationStoreState>(
       isLoading: false,
       error: null,
       initialized: false,
+      pendingInitialMessage: null,
 
       async initializeIfAuthenticated() {
         let attempts = 0;
-        const maxAttempts = 50; // 5 seconds max wait
+        const maxAttempts = 50;
         let userProfile = useUserStore.getState().userProfile;
-        let userStoreInitialized = useUserStore.getState().initialized; //are we doing this in authstore as well??
+        let userStoreInitialized = useUserStore.getState().initialized;
+
         while (
           (!userProfile?.auth_user_uuid || !userStoreInitialized) &&
           attempts < maxAttempts
         ) {
-          await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms
+          await new Promise((resolve) => setTimeout(resolve, 100));
           userProfile = useUserStore.getState().userProfile;
           userStoreInitialized = useUserStore.getState().initialized;
           attempts++;
@@ -107,7 +116,7 @@ export const useConversationStore = create<ConversationStoreState>(
             console.log(
               `🗣️ ConversationStore: Still waiting... attempt ${attempts}/50, userProfile exists: ${!!userProfile}, initialized: ${userStoreInitialized}`
             );
-          } //are we sure we need to attempt 50 times?
+          }
         }
 
         if (!userProfile?.auth_user_uuid) {
@@ -156,7 +165,7 @@ export const useConversationStore = create<ConversationStoreState>(
 
       createConversationFromMessage: async (message: string) => {
         try {
-          set({ isLoading: true, error: null });
+          set({ isLoading: true, error: null, pendingInitialMessage: message }); // Add pendingInitialMessage here
 
           const session = await authService.getSession();
           if (!session?.user?.id) {
@@ -171,42 +180,19 @@ export const useConversationStore = create<ConversationStoreState>(
               configName: "workout-analysis",
             });
 
-          // Add the first message to MessageStore
-          const firstMessage: Message = {
-            id: result.messageId,
-            conversation_id: result.conversation.id,
-            content: message,
-            sender: "user",
-            conversation_sequence: 1,
-            timestamp: new Date(),
-          };
-
-          useMessageStore
-            .getState()
-            .addMessage(result.conversation.id, firstMessage);
-
           set((state) => {
             const newConversations = new Map(state.conversations);
-
-            // Ensure message_count is at least 1
-            const conversationWithCount = {
-              ...result.conversation,
-              message_count: result.conversation.message_count || 1,
-            };
-
-            newConversations.set(
-              conversationWithCount.id,
-              conversationWithCount
-            );
+            newConversations.set(result.conversation.id, result.conversation);
 
             const newConfigs = new Map(state.conversationConfigs);
-            newConfigs.set(conversationWithCount.id, "workout-analysis");
+            newConfigs.set(result.conversation.id, "workout-analysis");
 
             return {
               conversations: newConversations,
               conversationConfigs: newConfigs,
-              activeConversationId: conversationWithCount.id,
+              activeConversationId: result.conversation.id,
               isLoading: false,
+              // Keep pendingInitialMessage set
             };
           });
 
@@ -214,7 +200,11 @@ export const useConversationStore = create<ConversationStoreState>(
             "✅ Conversation created from message:",
             result.conversation.id
           );
-          return result.conversation.id;
+
+          return {
+            conversationId: result.conversation.id,
+            messageToSend: result.firstMessage,
+          };
         } catch (error) {
           console.error(
             "[ConversationStore] Error creating conversation from message:",
@@ -222,11 +212,13 @@ export const useConversationStore = create<ConversationStoreState>(
           );
           set({
             isLoading: false,
+            pendingInitialMessage: null, // Clear on error
             error: error instanceof Error ? error : new Error(String(error)),
           });
           throw error;
         }
       },
+
       // Create a new conversation
       createConversation: async (params) => {
         try {
@@ -271,6 +263,10 @@ export const useConversationStore = create<ConversationStoreState>(
           });
           throw error;
         }
+      },
+
+      setPendingInitialMessage: (message) => {
+        set({ pendingInitialMessage: message });
       },
 
       // Get a specific conversation

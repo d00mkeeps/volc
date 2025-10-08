@@ -30,14 +30,6 @@ class ConversationService(BaseDBService):
             
             if not result.data:
                 raise Exception("Failed to create conversation")
-            
-            # # Optional: Log to admin table
-            # admin_client = self.get_admin_client()
-            # admin_client.table("operation_logs").insert({
-            #     "operation": "create_conversation",
-            #     "user_id": user.id,
-            #     "conversation_id": result.data[0]["id"]
-            # }).execute()
              
             return await self.format_response(result.data[0])
             
@@ -100,12 +92,12 @@ class ConversationService(BaseDBService):
         user,
         jwt_token: str
     ) -> Dict[str, Any]:
-        """Create conversation and insert first user message"""
+        """Create conversation (message will be sent via websocket)"""
         try:
-            logger.info(f"Creating conversation with message for user: {user.id}")
+            logger.info(f"Creating conversation for user: {user.id}")
             user_client = self.get_user_client(jwt_token)
             
-            # Create conversation
+            # Create conversation only - no message insertion
             conv_result = user_client.table("conversations").insert({
                 "user_id": user.id,
                 "title": title,
@@ -117,25 +109,12 @@ class ConversationService(BaseDBService):
                 raise Exception("Failed to create conversation")
             
             conversation = conv_result.data[0]
-            logger.info(f"Conversation created: {conversation['id']}")
+            logger.info(f"Conversation created: {conversation['id']} - message will be sent via websocket")
             
-            # Insert first message
-            msg_result = user_client.table("messages").insert({
-                "conversation_id": conversation["id"],
-                "content": first_message,
-                "sender": "user",
-                "conversation_sequence": 1
-            }).execute()
-            
-            if not msg_result.data:
-                raise Exception("Failed to insert first message")
-            
-            message = msg_result.data[0]
-            logger.info(f"First message created: {message['id']}")
-            
+            # Return conversation and message text (not saved yet)
             return {
                 "conversation": await self.format_response(conversation),
-                "first_message": message
+                "first_message": first_message
             }
             
         except Exception as e:

@@ -49,7 +49,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const animatedPosition = useSharedValue(0);
 
     // Define snap points - using index 1 and 2 to avoid auto-generated index 0
-    const snapPoints = useMemo(() => ["40%", "91%"], []);
+    const snapPoints = useMemo(() => ["40%", "100%"], []);
 
     const handleSheetChanges = useCallback(
       (index: number) => {
@@ -230,15 +230,17 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         />
 
         {/* Blur overlay covering everything below header */}
+        {/* Blur overlay - only covers bottom 10% when collapsed */}
         <Animated.View
           style={[
             {
               position: "absolute",
-              top: 90, // Covers from top of content area (below header)
+              top: 100,
               left: 0,
               right: 0,
               bottom: 0,
-              zIndex: 1, // Above content but below any modals
+              height: "50%", // Only cover bottom 10% of the sheet
+              zIndex: 10,
             },
             blurAnimatedStyle,
           ]}
@@ -246,7 +248,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         >
           <GradientBlur />
         </Animated.View>
-
         {/* Scrollable content - gets blurred when inactive */}
         <BottomSheetScrollView
           contentContainerStyle={{

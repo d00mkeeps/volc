@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { getWebSocketService } from "@/services/websocket/WebSocketService";
-import { authService } from "@/services/db/auth";
 import { Message } from "@/types";
 import Toast from "react-native-toast-message";
 import type { ConnectionState } from "@/services/websocket/WebSocketService";
@@ -208,7 +207,7 @@ export function useWorkoutPlanning() {
           conversation_history: updatedMessages,
         };
 
-        registerHandlers(PLANNING_KEY);
+        // Just ensure connection and send - handlers already registered from connect()
         await webSocketService.ensureConnection({ type: "workout-planning" });
         webSocketService.sendMessage(payload);
       } catch (error) {
@@ -226,7 +225,7 @@ export function useWorkoutPlanning() {
         throw errorMessage;
       }
     },
-    [registerHandlers, webSocketService]
+    [webSocketService] // Remove registerHandlers from deps
   );
 
   const restartChat = useCallback(async () => {
