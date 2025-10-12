@@ -10,6 +10,7 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 interface ExistingConversationChatProps {
   conversationId: string;
   onBack: () => void;
+  conversationTitle?: string; // ADD THIS
   initialMessage?: string | null;
   onMessageSent?: () => void;
 }
@@ -17,6 +18,7 @@ interface ExistingConversationChatProps {
 export const ExistingConversationChat = ({
   conversationId,
   onBack,
+  conversationTitle,
   initialMessage,
   onMessageSent,
 }: ExistingConversationChatProps) => {
@@ -149,23 +151,25 @@ export const ExistingConversationChat = ({
         padding="$3"
         alignItems="center"
         gap="$2"
-        borderBottomWidth={1}
-        borderBottomColor="$borderSoft"
+        backgroundColor="$background" // ADD THIS
       >
-        <Button size="$3" chromeless onPress={handleBack}>
-          <ArrowLeft size={18} />
+        <Button
+          size="$3"
+          chromeless
+          backgroundColor="transparent" // ADD THIS
+          onPress={handleBack}
+        >
+          <ArrowLeft size={18} color="#f84f3e" /> {/* ADD color prop */}
         </Button>
-        <Text size="medium" fontWeight="600">
-          Workout Analysis
+        <Text size="large" fontWeight="600">
+          {conversationTitle || "Workout Analysis"}
         </Text>
       </XStack>
-
       <YStack flex={1} backgroundColor="$background">
         <ChatInterface
           messages={messaging.messages}
           streamingMessage={messaging.streamingMessage}
           onSend={handleSend}
-          placeholder="Continue the conversation..."
         />
       </YStack>
     </YStack>

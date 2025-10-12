@@ -1,3 +1,4 @@
+// MessageList.tsx
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
 import { YStack } from "tamagui";
@@ -12,6 +13,7 @@ interface MessageListProps {
   showLoadingIndicator?: boolean;
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   onTemplateApprove?: (templateData: any) => void;
+  statusMessage?: string | null;
 }
 
 export const MessageList = ({
@@ -19,9 +21,11 @@ export const MessageList = ({
   streamingMessage,
   showLoadingIndicator = false,
   connectionState = "ready",
+  statusMessage,
   onTemplateApprove,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
 
   const allMessages = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
@@ -57,27 +61,58 @@ export const MessageList = ({
     return safeMessages;
   }, [messages, streamingMessage, showLoadingIndicator]);
 
+  // Smooth scroll helper with debouncing
+  const scrollToBottom = useCallback((animated = true) => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      listRef.current?.scrollToEnd({ animated });
+    }, 20); // Small delay to batch rapid updates
+  }, []);
+
+  // Scroll when new messages arrive
   useEffect(() => {
     if (allMessages.length > 0) {
-      listRef.current?.scrollToEnd({ animated: true });
+      scrollToBottom();
     }
-  }, [allMessages.length]);
+  }, [allMessages.length, scrollToBottom]);
 
-  const renderMessage = useCallback(({ item }: { item: Message }) => {
-    if (!item) return null;
-
-    if (item.id === "loading") {
-      return <LoadingMessage />;
+  // Scroll when streaming content updates
+  useEffect(() => {
+    if (streamingMessage?.content) {
+      scrollToBottom();
     }
+  }, [streamingMessage?.content, scrollToBottom]);
 
-    return (
-      <MessageItem
-        message={item}
-        isStreaming={item.id === "streaming"}
-        onTemplateApprove={onTemplateApprove}
-      />
-    );
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
+
+  const renderMessage = useCallback(
+    ({ item }: { item: Message }) => {
+      if (!item) return null;
+
+      if (item.id === "loading") {
+        return <LoadingMessage statusMessage={statusMessage} />;
+      }
+
+      return (
+        <MessageItem
+          message={item}
+          isStreaming={item.id === "streaming"}
+          onTemplateApprove={onTemplateApprove}
+        />
+      );
+    },
+    [statusMessage, onTemplateApprove]
+  );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
@@ -100,12 +135,11 @@ export const MessageList = ({
         data={allMessages}
         renderItem={renderMessage}
         keyExtractor={keyExtractor}
-        scrollEventThrottle={400}
+        scrollEventThrottle={100}
         removeClippedSubviews={true}
-        contentContainerStyle={{
-          paddingVertical: 16,
-        }}
         showsVerticalScrollIndicator={true}
+        onContentSizeChange={() => scrollToBottom()}
+        onLayout={() => scrollToBottom(false)}
       />
     </YStack>
   );

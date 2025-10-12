@@ -139,7 +139,7 @@ export default function MuscleGroupSpider() {
     >
       {/* Left Stack - Data Display Area */}
       <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
-        <Stack zIndex={1000}>
+        <Stack zIndex={1}>
           <Select
             options={timeframeOptions}
             value={timeframe}
@@ -162,7 +162,7 @@ export default function MuscleGroupSpider() {
                 cx={center}
                 cy={center}
                 r={maxRadius * ratio}
-                stroke="#e0e0e0"
+                stroke="#ef4444"
                 strokeWidth={1}
                 fill="transparent"
                 opacity={0.3}
@@ -182,7 +182,7 @@ export default function MuscleGroupSpider() {
                   y1={center}
                   x2={endX}
                   y2={endY}
-                  stroke="#e0e0e0"
+                  stroke="#ef4444"
                   strokeWidth={1}
                   opacity={0.3}
                 />

@@ -68,16 +68,13 @@ export default function WorkoutTrackerHeader({
       >
         {/* Pause/Play button - moved to left */}
         <Circle
-          size={32}
-          backgroundColor={isActive ? "$background" : "transparent"}
-          borderColor="$primary"
-          borderWidth={1}
+          size={40}
           justifyContent="center"
           alignItems="center"
           pressStyle={
             isActive
               ? {
-                  backgroundColor: "$primaryMuted",
+                  backgroundColor: "$text",
                   scale: 0.9,
                 }
               : {}
@@ -86,9 +83,9 @@ export default function WorkoutTrackerHeader({
           opacity={isActive ? 1 : 0.4}
         >
           {isPaused ? (
-            <Play size={18} color={isActive ? "white" : "$textMuted"} />
+            <Play size={22} color="#f84f3e" />
           ) : (
-            <Pause size={18} color={isActive ? "white" : "$textMuted"} />
+            <Pause size={22} color="#f84f3e" />
           )}
         </Circle>
 

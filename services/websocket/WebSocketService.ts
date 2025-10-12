@@ -9,6 +9,7 @@ export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
 export type TerminationCallback = (reason: string) => void;
 export type ErrorCallback = (error: Error) => void;
+export type StatusCallback = (statusText: string) => void;
 
 export type ConnectionState =
   | "disconnected"
@@ -399,6 +400,12 @@ export class WebSocketService {
           );
           break;
 
+        case "status": // ← ADD THIS CASE
+          if (message.data) {
+            this.events.emit("status", message.data);
+          }
+          break;
+
         case "error":
           console.error("[WSService] Server error:", message);
 
@@ -583,6 +590,14 @@ export class WebSocketService {
   ): () => void {
     this.events.on("workoutTemplateApproved", callback);
     return () => this.events.off("workoutTemplateApproved", callback);
+  }
+
+  /**
+   * Register status update handler
+   */
+  onStatus(callback: StatusCallback): () => void {
+    this.events.on("status", callback);
+    return () => this.events.off("status", callback);
   }
 
   /**

@@ -24,6 +24,7 @@ interface ChatInterfaceProps {
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   queuedMessageCount?: number;
   keyboardVerticalOffset?: number;
+  statusMessage?: string | null;
 }
 
 export const ChatInterface = ({
@@ -34,6 +35,7 @@ export const ChatInterface = ({
   onTemplateApprove,
   placeholder = "Type a message...",
   connectionState = "ready",
+  statusMessage,
   queuedMessageCount = 0,
   keyboardVerticalOffset = 120,
 }: ChatInterfaceProps) => {
@@ -42,7 +44,7 @@ export const ChatInterface = ({
       case "disconnected":
         return "Chat disconnected..";
       case "expecting_ai_message":
-        return "Loading...";
+        return "loading...";
       default:
         return placeholder;
     }
@@ -87,7 +89,8 @@ export const ChatInterface = ({
           streamingMessage={streamingMessage}
           showLoadingIndicator={shouldShowLoadingIndicator}
           connectionState={connectionState}
-          onTemplateApprove={onTemplateApprove} // Add this
+          onTemplateApprove={onTemplateApprove}
+          statusMessage={statusMessage}
         />
 
         {getStatusText() && (

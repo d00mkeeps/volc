@@ -355,7 +355,7 @@ export default function HomeScreen() {
       {!isActive && (
         <Stack position="absolute" bottom={0} left={0} right={0}>
           <InputArea
-            placeholder="Ask a fitness question..."
+            placeholder="start new chat.."
             onSendMessage={handleChatSend}
             isLoading={isSendingMessage}
           />

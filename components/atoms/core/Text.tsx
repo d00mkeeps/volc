@@ -54,13 +54,13 @@ export const Text: React.FC<TextProps> = ({
 
   const semanticSize = mapTokenToSemantic(size);
 
-  // Map semantic sizes to Tamagui fontSize tokens
+  //TODO: Update small text mapping
   const getSizeToken = (size: "small" | "medium" | "large" | "xl") => {
     switch (size) {
       case "small":
-        return "$3"; // 14px mobile
+        return "$3";
       case "medium":
-        return "$4";
+        return "$3";
       case "large":
         return "$5"; // 20px mobile
       case "xl":
@@ -71,9 +71,9 @@ export const Text: React.FC<TextProps> = ({
   const getTabletSizeToken = (size: "small" | "medium" | "large" | "xl") => {
     switch (size) {
       case "small":
-        return "$3"; // 16px tablet
+        return "$3";
       case "medium":
-        return "$5"; // 20px tablet
+        return "$4"; // 20px tablet
       case "large":
         return "$6"; // 24px tablet
       case "xl":

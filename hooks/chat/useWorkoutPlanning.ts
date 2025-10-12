@@ -21,6 +21,7 @@ export function useWorkoutPlanning() {
   const [connectionState, setConnectionState] = useState<ConnectionState>(
     webSocketService.getConnectionState()
   );
+  const [statusMessage, setStatusMessage] = useState<string | null>(null); // ← ADD THIS
 
   // State selectors
   const messages = useMessageStore((state) => {
@@ -60,6 +61,12 @@ export function useWorkoutPlanning() {
           }
         });
 
+      const unsubscribeStatus = webSocketService.onStatus((statusText) => {
+        // ← ADD THIS
+        console.log("[useWorkoutPlanning] Status update:", statusText);
+        setStatusMessage(statusText);
+      });
+
       const unsubscribeContent = webSocketService.onMessage((chunk) => {
         console.log(
           "[useWorkoutPlanning] Received content chunk:",
@@ -70,11 +77,13 @@ export function useWorkoutPlanning() {
 
       const unsubscribeComplete = webSocketService.onComplete(() => {
         console.log("[useWorkoutPlanning] Message complete");
+        setStatusMessage(null); // ← ADD THIS - clear status on complete
         useMessageStore.getState().completeStreamingMessage(messageKey);
       });
 
       const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
         console.log("[useWorkoutPlanning] Message terminated:", reason);
+        setStatusMessage(null); // ← ADD THIS - clear status on terminated
         useMessageStore.getState().clearStreamingMessage(messageKey);
         Toast.show({
           type: "warning",
@@ -85,6 +94,7 @@ export function useWorkoutPlanning() {
 
       const unsubscribeError = webSocketService.onError((error) => {
         console.error("[useWorkoutPlanning] WebSocket error:", error);
+        setStatusMessage(null); // ← ADD THIS - clear status on error
         useMessageStore.getState().clearStreamingMessage(messageKey);
         useMessageStore.getState().setError(error);
         Toast.show({
@@ -100,6 +110,7 @@ export function useWorkoutPlanning() {
         unsubscribeTerminated,
         unsubscribeError,
         unsubscribeTemplateApproved,
+        unsubscribeStatus, // ← ADD THIS
       ];
 
       console.log(
@@ -238,8 +249,8 @@ export function useWorkoutPlanning() {
       useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
       useMessageStore.getState().setError(null);
 
+      // Just ensure connection - handlers already registered from connect()
       await webSocketService.ensureConnection({ type: "workout-planning" });
-      registerHandlers(PLANNING_KEY);
 
       Toast.show({
         type: "success",
@@ -254,12 +265,13 @@ export function useWorkoutPlanning() {
         text2: "Could not reconnect to chat",
       });
     }
-  }, [webSocketService, registerHandlers]);
+  }, [webSocketService]); // Remove registerHandlers from deps
 
   return {
     messages,
     streamingMessage,
     isStreaming,
+    statusMessage,
     isLoading,
     error,
     connectionState,

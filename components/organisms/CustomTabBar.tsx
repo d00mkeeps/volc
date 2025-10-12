@@ -33,13 +33,7 @@ export default function CustomTabBar({
   const inactiveColor = colorScheme === "dark" ? "#6b6466" : "#999999";
 
   return (
-    <XStack
-      height={60}
-      backgroundColor={backgroundColor}
-      borderTopWidth={2}
-      borderTopColor={activeColor}
-      paddingBottom={0}
-    >
+    <XStack height={60} backgroundColor={backgroundColor} paddingBottom={0}>
       {tabs.map((tab, index) => {
         const isActive = activeIndex === index;
         const Icon = tab.icon;

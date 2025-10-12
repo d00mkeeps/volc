@@ -8,6 +8,7 @@ from app.api.endpoints.workout_analysis import router as workout_analysis_router
 from app.api.endpoints.images import router as images_router
 from app.api.endpoints.leaderboard import router as leaderboard_router
 from app.api.endpoints.dashboard import router as dashboard_router
+from app.services.cache.exercise_definitions import exercise_cache
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import setup_logging
 import logging
@@ -29,6 +30,24 @@ logger.info(f"SUPABASE_URL present: {os.environ.get('SUPABASE_URL') is not None}
 logger.info(f"SUPABASE_KEY present: {os.environ.get('SUPABASE_KEY') is not None}")
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize caches and services on app startup"""
+    logger.info("🚀 Initializing application services...")
+    
+    # Warm up exercise definition cache
+    logger.info("Loading exercise definition cache...")
+    success = await exercise_cache.refresh()
+    
+    if success:
+        stats = exercise_cache.get_cache_stats()
+        logger.info(f"✅ Exercise cache initialized: {stats['cached_count']} exercises loaded")
+    else:
+        logger.warning("⚠️ Exercise cache failed to initialize - will retry on first request")
+    
+    logger.info("🎉 Application startup complete")
+
 
 # Add CORS middleware
 app.add_middleware(

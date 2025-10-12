@@ -9,16 +9,32 @@ interface ActualMetrics {
 }
 
 interface MetricsDisplayProps {
-  actualMetrics?: ActualMetrics; // Make it optional for safety
+  actualMetrics?: ActualMetrics;
 }
 
 export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
   console.log("📊 [MetricsDisplay] Received actualMetrics:", actualMetrics);
+
+  // Helper to pluralize labels
+  const pluralize = (count: number, singular: string, plural: string) => {
+    return count === 1 ? singular : plural;
+  };
+
   const metrics = [
-    { label: "Workouts", value: actualMetrics?.workouts || 0 },
-    { label: "Exercises", value: actualMetrics?.exercises || 0 },
-    { label: "Sets", value: actualMetrics?.sets || 0 },
+    {
+      label: pluralize(actualMetrics?.workouts || 0, "Workout", "Workouts"),
+      value: actualMetrics?.workouts || 0,
+    },
+    {
+      label: pluralize(actualMetrics?.exercises || 0, "Exercise", "Exercises"),
+      value: actualMetrics?.exercises || 0,
+    },
+    {
+      label: pluralize(actualMetrics?.sets || 0, "Set", "Sets"),
+      value: actualMetrics?.sets || 0,
+    },
   ];
+
   console.log("📋 [MetricsDisplay] Computed metrics:", metrics);
 
   return (

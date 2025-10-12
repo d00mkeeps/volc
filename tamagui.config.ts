@@ -18,6 +18,7 @@ const tamaguiConfig = createTamagui({
       black: "#231f20",
 
       red: "#ef4444",
+      transparent: "transparent", // Add this line
       red8: "#dc2626",
       red9: "#b91c1c",
       red10: "#991b1b",

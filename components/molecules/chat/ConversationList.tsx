@@ -63,8 +63,8 @@ export default function ConversationList({
 
   return (
     <Stack flex={1}>
-      <Text size="medium" fontWeight="500" color="$text" marginBottom="$2">
-        Recent Conversations
+      <Text size="large" fontWeight="600" color="$text" marginBottom="$2">
+        Recent Chats
       </Text>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Stack gap="$2">

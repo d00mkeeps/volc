@@ -1,14 +1,38 @@
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, AsyncGenerator
 import logging
 import json
+import asyncio
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_google_vertexai import ChatVertexAI
 from app.services.workout_analysis.schemas import WorkoutDataBundle
 from .base_conversation_chain import BaseConversationChain
 from app.services.db.user_profile_service import UserProfileService
 
 logger = logging.getLogger(__name__)
+
+
+async def stream_text_gradually(text: str, chunk_size: int = 5) -> AsyncGenerator[str, None]:
+    """
+    Split text into smaller chunks for gradual streaming effect.
+    
+    Args:
+        text: The text to stream
+        chunk_size: Number of words per chunk (default 5)
+    """
+    words = text.split(' ')
+    
+    for i in range(0, len(words), chunk_size):
+        chunk = ' '.join(words[i:i + chunk_size])
+        
+        # Add space after chunk if not last chunk
+        if i + chunk_size < len(words):
+            chunk += ' '
+        
+        yield chunk
+        await asyncio.sleep(0.015)  # 15ms delay between chunks
+
 
 class WorkoutAnalysisChain(BaseConversationChain):
     """
@@ -43,6 +67,47 @@ class WorkoutAnalysisChain(BaseConversationChain):
     @property
     def data_bundles(self) -> List[WorkoutDataBundle]:
         return self._data_bundles
+
+    async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Override base process_message to add stream buffering for smoother responses.
+        """
+        try:
+            # Get formatted prompt from subclass implementation
+            formatted_prompt = await self.get_formatted_prompt(message)
+            
+            # Stream the response with buffering
+            full_response = ""
+            async for chunk in self.chat_model.astream(input=formatted_prompt):
+                chunk_content = chunk.content
+                if chunk_content:
+                    full_response += chunk_content
+                    
+                    # Stream gradually for smooth typing effect
+                    async for mini_chunk in stream_text_gradually(chunk_content, chunk_size=5):
+                        yield {
+                            "type": "content",
+                            "data": mini_chunk
+                        }
+
+            # Send completion signal
+            yield {
+                "type": "complete",
+                "data": {"length": len(full_response)}
+            }
+
+            # Add both messages to history
+            self.messages.append(HumanMessage(content=message))
+            self.messages.append(AIMessage(content=full_response))
+            
+            logger.debug(f"✅ Message processed. Total messages: {len(self.messages)}")
+                
+        except Exception as e:
+            logger.error(f"❌ Error processing message: {str(e)}", exc_info=True)
+            yield {
+                "type": "error",
+                "data": "An error occurred while processing your message"
+            }
 
     async def load_user_profile(self) -> bool:
         """Load user profile data for context."""
@@ -112,7 +177,7 @@ When providing advice, consider their age, goals, and experience level."""
         """Sets up the workout-specific prompt template with consolidated context."""
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", "{system_prompt}\n\n"
-                      "Current workout data context:\n{context}\n\n"
+                    #   "Current workout data context:\n{context}\n\n"
                       "Analysis insights:\n{insights_context}"),
             MessagesPlaceholder(variable_name="messages"),
             ("human", "{current_message}")
@@ -338,7 +403,7 @@ WORKOUT SUMMARY:
 
         return {
             "system_prompt": enhanced_system_prompt,  # Use enhanced prompt with user context
-            "context": f"Available workout data:\n{self._serialize_workout_context(workout_context)}",
+            # "context": f"Available workout data:\n{self._serialize_workout_context(workout_context)}",
             "insights_context": self._format_insights_context(),
             "messages": self.messages,
             "current_message": ""

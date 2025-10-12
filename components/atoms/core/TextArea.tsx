@@ -1,14 +1,14 @@
 import React, { forwardRef } from "react";
 import {
-  Input as TamaguiInput,
-  InputProps as TamaguiInputProps,
+  TextArea as TamaguiTextArea,
+  TextAreaProps as TamaguiTextAreaProps,
 } from "tamagui";
 
-interface InputProps extends Omit<TamaguiInputProps, "size"> {
+interface TextAreaProps extends Omit<TamaguiTextAreaProps, "size"> {
   size?: "small" | "medium" | "large" | "$2" | "$3" | "$4" | "$5" | "$6";
 }
 
-export const Input = forwardRef<any, InputProps>(
+export const TextArea = forwardRef<any, TextAreaProps>(
   (
     {
       size = "medium",
@@ -68,7 +68,7 @@ export const Input = forwardRef<any, InputProps>(
     };
 
     return (
-      <TamaguiInput
+      <TamaguiTextArea
         size={getSizeToken(semanticSize)}
         $sm={{ size: getTabletSizeToken(semanticSize) }}
         backgroundColor={backgroundColor}
@@ -85,4 +85,4 @@ export const Input = forwardRef<any, InputProps>(
   }
 );
 
-export default Input;
+export default TextArea;

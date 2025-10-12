@@ -217,9 +217,7 @@ export const WorkoutPlanningModal = ({
           justifyContent="space-between"
           alignItems="center"
           paddingHorizontal="$5"
-          paddingVertical="$3"
-          borderBottomWidth={1}
-          borderBottomColor="$borderSoft"
+          paddingTop="$3"
         >
           <Text size="medium" fontWeight="600" color="$color" flex={1.5}>
             Plan Your Workout
@@ -243,9 +241,10 @@ export const WorkoutPlanningModal = ({
           <ChatInterface
             messages={planning.messages}
             streamingMessage={planning.streamingMessage}
+            statusMessage={planning.statusMessage}
             onSend={handleSend}
             onRestart={handleRestart}
-            placeholder="Tell me about your workout goals..."
+            placeholder="enter message"
             connectionState={getConnectionState()}
             onTemplateApprove={handleTemplateApproved}
             keyboardVerticalOffset={150}

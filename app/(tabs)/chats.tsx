@@ -17,7 +17,13 @@ export default function ChatScreen() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { getConversations } = useConversationStore();
 
-  // Get pending message from store
+  // FIX: Move the conditional logic INSIDE the selector
+  const selectedConversation = useConversationStore((state) =>
+    selectedConversationId
+      ? state.conversations.get(selectedConversationId)
+      : null
+  );
+
   const pendingMessage = useConversationStore(
     (state) => state.pendingInitialMessage
   );
@@ -56,6 +62,7 @@ export default function ChatScreen() {
         conversationId={selectedConversationId}
         onBack={() => setSelectedConversationId(null)}
         initialMessage={pendingMessage}
+        conversationTitle={selectedConversation?.title} // ADD THIS
         onMessageSent={() => clearPendingMessage(null)}
       />
     );

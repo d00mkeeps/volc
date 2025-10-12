@@ -178,18 +178,23 @@ export const MessageItem = memo(
         width="100%"
         justifyContent={isUser ? "flex-end" : "flex-start"}
         paddingHorizontal="$4"
-        paddingVertical="$2"
+        paddingVertical="$1"
       >
         <YStack
           maxWidth={"90%"}
           backgroundColor={isUser ? "$primary" : "transparent"}
           paddingHorizontal={isUser ? "$3" : "$0"}
-          paddingVertical="$2"
+          paddingVertical="$1"
           borderRadius={isUser ? "$4" : "$0"}
           opacity={isStreaming ? 0.7 : 1}
         >
           {isUser && !enableUserMarkdown ? (
-            <Text size="medium" color="white" fontWeight="500">
+            <Text
+              color="white"
+              fontSize={bodySize} // Use the same bodySize variable
+              fontWeight="400" // Match markdown weight
+              lineHeight={bodySize * 1.4} // Match markdown lineHeight
+            >
               {renderContent}
             </Text>
           ) : (

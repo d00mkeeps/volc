@@ -1,60 +1,60 @@
+# /app/services/llm/workout_planning.py
+
 import logging
 from fastapi import WebSocket
 import google.api_core.exceptions
 from langchain_google_vertexai import ChatVertexAI
 from ..chains.workout_planning_chain import WorkoutPlanningChain
 from ..db.message_service import MessageService
-from ..sentiment_analysis.workout_planning import WorkoutPlanningSentimentAnalyzer
+from .performance_profiler import PerformanceProfiler 
+from app.tools.exercise_tool import get_exercises_by_muscle_groups
 
 logger = logging.getLogger(__name__)
 
 class WorkoutPlanningLLMService:
     """Service for LLM-based workout planning conversations"""
     
-    def __init__(self, credentials=None, project_id=None):
-        self._conversation_chains = {}  # Store chains by user_id for planning
+    def __init__(self, credentials=None, project_id=None, enable_profiling: bool = True):
+        self._conversation_chains = {}
         self.message_service = MessageService()
         self.credentials = credentials  
-        self.project_id = project_id 
+        self.project_id = project_id
+        self.enable_profiling = enable_profiling
         
     def get_chain(self, user_id: str) -> WorkoutPlanningChain:
         """Get or create a planning conversation chain"""
         if user_id not in self._conversation_chains:
             # Initialize new LLM
             llm = ChatVertexAI(
-                model="gemini-2.5-pro",
+                model="gemini-2.5-flash",
                 streaming=True,
                 max_retries=0,
                 temperature=0,
                 credentials=self.credentials,
                 project=self.project_id
             )
-                    
-            # Create new planning chain with sentiment analyzer
-            chain = WorkoutPlanningChain(llm=llm, user_id=user_id)
             
-            # Initialize sentiment analyzer for approval detection
-            sentiment_llm = ChatVertexAI(
-                model="gemini-2.5-pro",
-                streaming=False,  # Non-streaming for sentiment analysis
-                max_retries=2,
-                temperature=0,
-                credentials=self.credentials,
-                project=self.project_id
+            # Create chain with tools
+            chain = WorkoutPlanningChain(
+                llm=llm, 
+                user_id=user_id,
+                tools=[get_exercises_by_muscle_groups]
             )
-            chain.sentiment_analyzer = WorkoutPlanningSentimentAnalyzer(sentiment_llm)
+            
+            # NOTE: Sentiment analyzer removed - approval handled by UI buttons
             
             self._conversation_chains[user_id] = chain
             
         return self._conversation_chains[user_id]
 
-    async def load_planning_context(self, user_id: str) -> dict:
-        """Load planning context including exercise definitions, user profile, and recent workout patterns."""
+
+    async def load_planning_context(self, user_id: str, profiler: PerformanceProfiler = None) -> dict:
+        """Load planning context (user profile and recent workouts only)."""
         try:
             logger.info(f"Loading planning context for user: {user_id}")
             
             context = {
-                "exercise_definitions": [],
+                # NOTE: No longer loading exercise_definitions!
                 "user_profile": None,
                 "recent_workouts": {
                     "workouts": [],
@@ -62,18 +62,9 @@ class WorkoutPlanningLLMService:
                 }
             }
             
-            # Load exercise definitions using service class admin method
-            from app.services.db.exercise_definition_service import ExerciseDefinitionService
-            exercise_service = ExerciseDefinitionService()
-            definitions_result = await exercise_service.get_all_exercise_definitions_admin()
-            
-            if definitions_result.get('success') and definitions_result.get('data'):
-                context["exercise_definitions"] = definitions_result['data']
-                logger.info(f"✅ Loaded {len(definitions_result['data'])} exercise definitions")
-            else:
-                logger.warning(f"❌ No exercise definitions loaded: {definitions_result.get('error', 'Unknown error')}")
-            
-            # Load user profile using existing service method
+            # Load user profile
+            if profiler:
+                profiler.start_phase("load_user_profile_for_planning")
             from app.services.db.user_profile_service import UserProfileService
             profile_service = UserProfileService()
             profile_result = await profile_service.get_user_profile_admin(user_id)
@@ -81,10 +72,16 @@ class WorkoutPlanningLLMService:
             if profile_result.get('success') and profile_result.get('data'):
                 context["user_profile"] = profile_result['data']
                 logger.info(f"✅ Loaded user profile for planning")
+                if profiler:
+                    profiler.end_phase(loaded=True)
             else:
                 logger.warning(f"❌ No user profile loaded: {profile_result.get('error', 'Unknown error')}")
+                if profiler:
+                    profiler.end_phase(loaded=False)
             
-            # Load recent workouts using service class admin method
+            # Load recent workouts
+            if profiler:
+                profiler.start_phase("load_recent_workouts")
             from app.services.db.workout_service import WorkoutService
             workout_service = WorkoutService()
             workouts_result = await workout_service.get_user_workouts_admin(user_id, days_back=14)
@@ -105,19 +102,25 @@ class WorkoutPlanningLLMService:
                 
                 context["recent_workouts"]["patterns"] = {
                     "total_workouts": total_workouts,
-                    "workout_frequency_per_week": round(total_workouts / 2, 1),  # Last 2 weeks
+                    "workout_frequency_per_week": round(total_workouts / 2, 1),
                     "most_frequent_exercises": sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:5],
                     "exercise_variety": len(exercise_frequency)
                 }
                 
                 logger.info(f"✅ Loaded {total_workouts} recent workouts with {len(exercise_frequency)} unique exercises")
-                logger.info(f"📊 Recent workout patterns: {context['recent_workouts']['patterns']}")
+                if profiler:
+                    profiler.end_phase(
+                        workout_count=total_workouts,
+                        exercise_variety=len(exercise_frequency)
+                    )
             else:
                 logger.warning(f"❌ No recent workouts loaded: {workouts_result.get('error', 'Unknown error')}")
+                if profiler:
+                    profiler.end_phase(workout_count=0)
             
             # LOG FINAL CONTEXT SUMMARY
             logger.info(f"🎯 FINAL CONTEXT SUMMARY:")
-            logger.info(f"   - Exercise definitions: {len(context['exercise_definitions'])}")
+            logger.info(f"   - Exercise definitions: SKIPPED (loaded via tool on-demand)")
             logger.info(f"   - User profile: {'✅' if context['user_profile'] else '❌'}")
             logger.info(f"   - Recent workouts: {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
             
@@ -126,48 +129,86 @@ class WorkoutPlanningLLMService:
         except Exception as e:
             logger.error(f"❌ Error loading planning context: {str(e)}", exc_info=True)
             return {
-                "exercise_definitions": [],
                 "user_profile": None,
                 "recent_workouts": {"workouts": [], "patterns": {}}
             }
+        
 
     async def process_websocket(self, websocket: WebSocket, user_id: str):
         """Process WebSocket connection for workout planning with template detection and approval workflow"""
+        
+        # Initialize profiler for connection setup
+        profiler = PerformanceProfiler(f"planning-{user_id}", enabled=self.enable_profiling)
+        
         try:
+            profiler.start_phase("websocket_accept")
             await websocket.accept()
             logger.info(f"Workout planning WebSocket connection accepted for user: {user_id}")
+            profiler.end_phase()
             
-            # Send connection confirmation
+            profiler.start_phase("connection_confirmation")
             await websocket.send_json({
                 "type": "connection_status",
                 "data": "connected"
             })
+            profiler.end_phase()
             
-            # Load planning context BEFORE creating chain
+            # Load planning context
+            profiler.start_phase("context_loading")
             logger.info(f"Loading planning context for user: {user_id}")
-            planning_context = await self.load_planning_context(user_id)
+            planning_context = await self.load_planning_context(user_id, profiler)
+            profiler.end_phase(
+                has_profile=planning_context["user_profile"] is not None,
+                recent_workouts=planning_context["recent_workouts"]["patterns"].get("total_workouts", 0)
+            )
             
-            # Get or create planning chain (includes sentiment analyzer)
+            # Get or create planning chain
+            profiler.start_phase("chain_initialization")
             chain = self.get_chain(user_id)
+            profiler.end_phase()
 
-            # Load user profile into chain (existing pattern)
+            # Load user profile into chain
+            profiler.start_phase("user_profile_loading")
             logger.info(f"Loading user profile for planning session: {user_id}")
             profile_loaded = await chain.load_user_profile()
+            profiler.end_phase(profile_loaded=profile_loaded)
+            
             if profile_loaded:
                 logger.info(f"User profile loaded successfully for planning: {user_id}")
             else:
                 logger.info(f"No user profile available for planning: {user_id} - continuing with generic prompts")
 
             # Load planning context into chain
+            profiler.start_phase("context_injection")
             logger.info(f"Loading planning context into chain: {user_id}")
             await chain.load_planning_context(planning_context)
+            profiler.end_phase()
 
-            # Send proactive greeting message with context
+            # Send proactive greeting
+            profiler.start_phase("proactive_greeting_generation")
             logger.info("New planning session - sending proactive greeting with context")
             
+            # Create a greeting-specific profiler for agent details
+            greeting_profiler = PerformanceProfiler(
+                f"planning-{user_id}-greeting",
+                enabled=self.enable_profiling
+            )
+            greeting_profiler.start_phase("llm_processing")
+            
             full_response_content = ""
-            async for response in chain.process_message("Start workout planning conversation"):
-                # Handle special signals from enhanced process_message
+            first_token = True
+            
+            async for response in chain.process_message(
+                "Start workout planning conversation", 
+                profiler=greeting_profiler
+            ):
+                if first_token and response.get("type") == "content":
+                    profiler.end_phase()
+                    profiler.start_phase("proactive_greeting_streaming")
+                    greeting_profiler.end_phase()
+                    greeting_profiler.start_phase("llm_streaming")
+                    first_token = False
+                
                 if response.get("type") == "workout_template_approved":
                     logger.info(f"🎉 Initial template approved by user {user_id} (should not happen in greeting)")
                     await websocket.send_json(response)
@@ -177,11 +218,28 @@ class WorkoutPlanningLLMService:
                 if response.get("type") == "content":
                     full_response_content += response.get("data", "")
             
+            if not first_token:
+                profiler.end_phase(response_length=len(full_response_content))
+                greeting_profiler.end_phase(
+                    token_count=len(full_response_content.split()),
+                    response_length=len(full_response_content)
+                )
+            
             logger.info(f"Sent contextual planning greeting for user {user_id}")
+            
+            # Log initial setup summary
+            profiler.log_summary()
+            greeting_profiler.log_summary()
 
             # Process ongoing conversation messages
             while True:
                 data = await websocket.receive_json()
+                
+                # Create new profiler for each message
+                message_profiler = PerformanceProfiler(
+                    f"planning-{user_id}-msg",
+                    enabled=self.enable_profiling
+                )
                 
                 # Handle heartbeat
                 if data.get('type') == 'heartbeat':
@@ -195,7 +253,8 @@ class WorkoutPlanningLLMService:
                 if data.get('type') == 'message' or 'message' in data:
                     message = data.get('message', '')
                     
-                    # RATE LIMIT CHECK FIRST
+                    # Rate limit check
+                    message_profiler.start_phase("rate_limit_check")
                     if user_id:
                         from app.services.rate_limiter import rate_limiter
                         rate_check = await rate_limiter.check_rate_limit(user_id, "message_send", "")
@@ -221,18 +280,26 @@ class WorkoutPlanningLLMService:
                                 }
                             })
                             continue
+                    message_profiler.end_phase()
                     
-                    # Process message through enhanced chain with template detection and approval
+                    # Process message through chain with profiler
+                    message_profiler.start_phase("llm_processing")
                     full_ai_response = ""
                     template_approved = False
+                    first_token = True
+                    token_count = 0
                     
-                    async for response in chain.process_message(message):
-                        # Handle special workout template approval signals
+                    async for response in chain.process_message(message, profiler=message_profiler):
+                        if first_token and response.get("type") == "content":
+                            message_profiler.end_phase()  # End llm_processing, agent callbacks logged details
+                            message_profiler.start_phase("llm_streaming")
+                            first_token = False
+                        
+                        # Handle template approval
                         if response.get("type") == "workout_template_approved":
                             logger.info(f"🎉 Workout template approved by user {user_id}")
                             logger.info(f"Template data: {response.get('data', {}).get('name', 'Unknown')}")
                             
-                            # Send approval signal to frontend with structured template data
                             await websocket.send_json({
                                 "type": "workout_template_approved",
                                 "data": response.get("data")
@@ -241,22 +308,33 @@ class WorkoutPlanningLLMService:
                             template_approved = True
                             continue
                             
-                        # Handle regular content and other response types
+                        # Handle regular content
                         await websocket.send_json(response)
                         if response.get("type") == "content":
-                            full_ai_response += response.get("data", "")
+                            content = response.get("data", "")
+                            full_ai_response += content
+                            token_count += len(content.split())
                     
-                    # Log message processing completion
+                    if not first_token:
+                        message_profiler.end_phase(
+                            token_count=token_count,
+                            response_length=len(full_ai_response),
+                            template_approved=template_approved
+                        )
+                    
+                    # Log message completion
                     if template_approved:
                         logger.info(f"✅ Message processed with template approval for user {user_id}")
                     else:
                         logger.info(f"✅ Message processed normally for user {user_id}")
                         
-                        # Log template state for debugging
                         if chain.current_template:
                             logger.info(f"📋 Current template: {chain.current_template.get('name', 'Unknown')}")
                             logger.info(f"🎯 Template presented: {chain.template_presented}")
                     
+                    # Log message processing summary
+                    message_profiler.log_summary()
+                        
         except google.api_core.exceptions.ResourceExhausted as e:
             logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
             try:
@@ -296,7 +374,6 @@ class WorkoutPlanningLLMService:
                 "template_name": chain.current_template.get('name') if chain.current_template else None,
                 "has_sentiment_analyzer": chain.sentiment_analyzer is not None,
                 "has_user_profile": chain._user_profile is not None,
-                "exercise_definitions_count": len(chain._exercise_definitions),
                 "recent_workouts_count": chain._recent_workouts['patterns'].get('total_workouts', 0)
             }
         return {"error": "No chain found for user"}

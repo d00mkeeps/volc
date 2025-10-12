@@ -175,7 +175,7 @@ export const useConversationStore = create<ConversationStoreState>(
           const result =
             await conversationService.createConversationFromMessage({
               userId: session.user.id,
-              title: `New Conversation - ${new Date().toLocaleDateString()}`,
+              title: `New Chat - ${new Date().toLocaleDateString()}`,
               firstMessage: message,
               configName: "workout-analysis",
             });

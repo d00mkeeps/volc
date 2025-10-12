@@ -229,26 +229,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           currentTemplateName={currentTemplateName || currentWorkout?.name}
         />
 
-        {/* Blur overlay covering everything below header */}
-        {/* Blur overlay - only covers bottom 10% when collapsed */}
-        <Animated.View
-          style={[
-            {
-              position: "absolute",
-              top: 100,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: "50%", // Only cover bottom 10% of the sheet
-              zIndex: 10,
-            },
-            blurAnimatedStyle,
-          ]}
-          pointerEvents="none"
-        >
-          <GradientBlur />
-        </Animated.View>
-        {/* Scrollable content - gets blurred when inactive */}
         <BottomSheetScrollView
           contentContainerStyle={{
             padding: 12,

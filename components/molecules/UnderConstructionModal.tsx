@@ -19,21 +19,19 @@ export default function UnderConstructionModal({
       onClose={() => {}} // No-op since it's not dismissable
       dismissable={false}
       widthPercent={85}
-      heightPercent={35}
+      heightPercent={25}
     >
-      <YStack flex={1} padding="$6" justifyContent="space-between">
-        <YStack gap="$4" flex={1} justifyContent="center">
+      <YStack flex={1} paddingHorizontal="$6" justifyContent="center" gap="$6">
+        <YStack gap="$4">
           <Text size="large" fontWeight="700" textAlign="center">
-            Under Construction
+            Under Construction!
           </Text>
-
           <Text size="medium" color="$textMuted" textAlign="center">
-            This feature is currently under construction, and we'll let you know
-            when it's ready. Check back soon!
+            We're making the leaderboard even better, and you'll be among the
+            first to know when it's ready.
           </Text>
         </YStack>
-
-        <Button onPress={onConfirm} size="large">
+        <Button onPress={onConfirm} size="large" alignSelf="center">
           Ok
         </Button>
       </YStack>
