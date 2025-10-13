@@ -21,7 +21,7 @@ export function useWorkoutPlanning() {
   const [connectionState, setConnectionState] = useState<ConnectionState>(
     webSocketService.getConnectionState()
   );
-  const [statusMessage, setStatusMessage] = useState<string | null>(null); // ← ADD THIS
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   // State selectors
   const messages = useMessageStore((state) => {
@@ -46,9 +46,14 @@ export function useWorkoutPlanning() {
   // Register websocket handlers for receiving messages
   const registerHandlers = useCallback(
     (messageKey: string) => {
-      // Clear any existing handlers
-      unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
-      unsubscribeRefs.current = [];
+      // ✅ Add guard to prevent duplicate registration
+      if (unsubscribeRefs.current.length > 0) {
+        console.log(
+          "[useWorkoutPlanning] Handlers already registered, clearing first"
+        );
+        unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+        unsubscribeRefs.current = [];
+      }
 
       const unsubscribeTemplateApproved =
         webSocketService.onWorkoutTemplateApproved((templateData) => {
@@ -62,7 +67,6 @@ export function useWorkoutPlanning() {
         });
 
       const unsubscribeStatus = webSocketService.onStatus((statusText) => {
-        // ← ADD THIS
         console.log("[useWorkoutPlanning] Status update:", statusText);
         setStatusMessage(statusText);
       });
@@ -77,13 +81,13 @@ export function useWorkoutPlanning() {
 
       const unsubscribeComplete = webSocketService.onComplete(() => {
         console.log("[useWorkoutPlanning] Message complete");
-        setStatusMessage(null); // ← ADD THIS - clear status on complete
+        setStatusMessage(null);
         useMessageStore.getState().completeStreamingMessage(messageKey);
       });
 
       const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
         console.log("[useWorkoutPlanning] Message terminated:", reason);
-        setStatusMessage(null); // ← ADD THIS - clear status on terminated
+        setStatusMessage(null);
         useMessageStore.getState().clearStreamingMessage(messageKey);
         Toast.show({
           type: "warning",
@@ -94,7 +98,7 @@ export function useWorkoutPlanning() {
 
       const unsubscribeError = webSocketService.onError((error) => {
         console.error("[useWorkoutPlanning] WebSocket error:", error);
-        setStatusMessage(null); // ← ADD THIS - clear status on error
+        setStatusMessage(null);
         useMessageStore.getState().clearStreamingMessage(messageKey);
         useMessageStore.getState().setError(error);
         Toast.show({
@@ -110,11 +114,11 @@ export function useWorkoutPlanning() {
         unsubscribeTerminated,
         unsubscribeError,
         unsubscribeTemplateApproved,
-        unsubscribeStatus, // ← ADD THIS
+        unsubscribeStatus,
       ];
 
       console.log(
-        "[useWorkoutPlanning] Registered websocket handlers for planning"
+        `[useWorkoutPlanning] Registered ${unsubscribeRefs.current.length} websocket handlers for planning`
       );
     },
     [webSocketService]
@@ -144,9 +148,7 @@ export function useWorkoutPlanning() {
   // Handle disconnection side effects
   useEffect(() => {
     if (connectionState === "disconnected") {
-      console.log("[useWorkoutPlanning] Disconnected - clearing messages");
-      useMessageStore.getState().clearMessages(PLANNING_KEY);
-      useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
+      console.log("[useWorkoutPlanning] Disconnected state detected");
       isConnectedRef.current = false;
     }
   }, [connectionState]);
@@ -162,14 +164,32 @@ export function useWorkoutPlanning() {
       console.log("[useWorkoutPlanning] Connecting to workout planning");
       isConnectedRef.current = true;
 
+      registerHandlers(PLANNING_KEY);
+
       await webSocketService.ensureConnection({
         type: "workout-planning",
       });
 
-      registerHandlers(PLANNING_KEY);
+      // ✅ Automatically send greeting trigger to let backend check for history
+      const currentMessages =
+        useMessageStore.getState().messages.get(PLANNING_KEY) || [];
+
+      console.log(
+        `[useWorkoutPlanning] Sending greeting trigger with ${currentMessages.length} messages in history`
+      );
+
+      webSocketService.sendMessage({
+        type: "message",
+        message: "__GREETING_TRIGGER__",
+        conversation_history: currentMessages,
+      });
     } catch (error) {
       console.error("[useWorkoutPlanning] Failed to connect:", error);
       isConnectedRef.current = false;
+
+      unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+      unsubscribeRefs.current = [];
+
       useMessageStore
         .getState()
         .setError(error instanceof Error ? error : new Error(String(error)));
@@ -179,14 +199,22 @@ export function useWorkoutPlanning() {
   // MANUAL disconnect method - call this when modal closes
   const disconnect = useCallback(() => {
     console.log("[useWorkoutPlanning] Disconnecting from workout planning");
+
+    console.log(
+      `[useWorkoutPlanning] Unsubscribing ${unsubscribeRefs.current.length} handlers`
+    );
     unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
     unsubscribeRefs.current = [];
     isConnectedRef.current = false;
 
-    // Clear messages when disconnecting
+    // ✅ Clear messages when explicitly disconnecting (modal close)
     useMessageStore.getState().clearMessages(PLANNING_KEY);
     useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
-  }, []);
+    setStatusMessage(null);
+
+    webSocketService.setDisconnectReason("user_initiated");
+    webSocketService.disconnect();
+  }, [webSocketService]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -211,14 +239,32 @@ export function useWorkoutPlanning() {
         };
         useMessageStore.getState().addMessage(PLANNING_KEY, userMessage);
 
+        // ✅ Auto-reconnect if disconnected (handles inactivity timeout)
+        if (!webSocketService.isConnected()) {
+          console.log(
+            "[useWorkoutPlanning] Disconnected - reconnecting before sending message"
+          );
+          await webSocketService.ensureConnection({ type: "workout-planning" });
+          registerHandlers(PLANNING_KEY);
+
+          // Send greeting trigger on reconnection
+          const messagesForReconnect =
+            useMessageStore.getState().messages.get(PLANNING_KEY) || [];
+          webSocketService.sendMessage({
+            type: "message",
+            message: "__GREETING_TRIGGER__",
+            conversation_history: messagesForReconnect,
+          });
+        }
+
         const updatedMessages =
           useMessageStore.getState().messages.get(PLANNING_KEY) || [];
         const payload = {
+          type: "message",
           message: content,
           conversation_history: updatedMessages,
         };
 
-        // Just ensure connection and send - handlers already registered from connect()
         await webSocketService.ensureConnection({ type: "workout-planning" });
         webSocketService.sendMessage(payload);
       } catch (error) {
@@ -236,7 +282,7 @@ export function useWorkoutPlanning() {
         throw errorMessage;
       }
     },
-    [webSocketService] // Remove registerHandlers from deps
+    [webSocketService, registerHandlers]
   );
 
   const restartChat = useCallback(async () => {
@@ -249,8 +295,14 @@ export function useWorkoutPlanning() {
       useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
       useMessageStore.getState().setError(null);
 
-      // Just ensure connection - handlers already registered from connect()
       await webSocketService.ensureConnection({ type: "workout-planning" });
+
+      // Send greeting trigger for fresh start
+      webSocketService.sendMessage({
+        type: "message",
+        message: "__GREETING_TRIGGER__",
+        conversation_history: [],
+      });
 
       Toast.show({
         type: "success",
@@ -265,7 +317,7 @@ export function useWorkoutPlanning() {
         text2: "Could not reconnect to chat",
       });
     }
-  }, [webSocketService]); // Remove registerHandlers from deps
+  }, [webSocketService]);
 
   return {
     messages,
@@ -275,8 +327,8 @@ export function useWorkoutPlanning() {
     isLoading,
     error,
     connectionState,
-    connect, // NEW - manual connect
-    disconnect, // NEW - manual disconnect
+    connect,
+    disconnect,
     sendMessage,
     restartChat,
     hasMessages: messages.length > 0,

@@ -3,6 +3,7 @@
 import logging
 from fastapi import WebSocket
 import google.api_core.exceptions
+from starlette.websockets import WebSocketDisconnect
 from langchain_google_vertexai import ChatVertexAI
 from ..chains.workout_planning_chain import WorkoutPlanningChain
 from ..db.message_service import MessageService
@@ -135,9 +136,8 @@ class WorkoutPlanningLLMService:
         
 
     async def process_websocket(self, websocket: WebSocket, user_id: str):
-        """Process WebSocket connection for workout planning with template detection and approval workflow"""
+        """Process WebSocket connection for workout planning with seamless reconnection support"""
         
-        # Initialize profiler for connection setup
         profiler = PerformanceProfiler(f"planning-{user_id}", enabled=self.enable_profiling)
         
         try:
@@ -184,62 +184,14 @@ class WorkoutPlanningLLMService:
             await chain.load_planning_context(planning_context)
             profiler.end_phase()
 
-            # Send proactive greeting
-            profiler.start_phase("proactive_greeting_generation")
-            logger.info("New planning session - sending proactive greeting with context")
-            
-            # Create a greeting-specific profiler for agent details
-            greeting_profiler = PerformanceProfiler(
-                f"planning-{user_id}-greeting",
-                enabled=self.enable_profiling
-            )
-            greeting_profiler.start_phase("llm_processing")
-            
-            full_response_content = ""
-            first_token = True
-            
-            async for response in chain.process_message(
-                "Start workout planning conversation", 
-                profiler=greeting_profiler
-            ):
-                if first_token and response.get("type") == "content":
-                    profiler.end_phase()
-                    profiler.start_phase("proactive_greeting_streaming")
-                    greeting_profiler.end_phase()
-                    greeting_profiler.start_phase("llm_streaming")
-                    first_token = False
-                
-                if response.get("type") == "workout_template_approved":
-                    logger.info(f"🎉 Initial template approved by user {user_id} (should not happen in greeting)")
-                    await websocket.send_json(response)
-                    continue
-                    
-                await websocket.send_json(response)
-                if response.get("type") == "content":
-                    full_response_content += response.get("data", "")
-            
-            if not first_token:
-                profiler.end_phase(response_length=len(full_response_content))
-                greeting_profiler.end_phase(
-                    token_count=len(full_response_content.split()),
-                    response_length=len(full_response_content)
-                )
-            
-            logger.info(f"Sent contextual planning greeting for user {user_id}")
-            
-            # Log initial setup summary
             profiler.log_summary()
-            greeting_profiler.log_summary()
+
+            # ✅ Track if we need to check for greeting on first message
+            first_message = True
 
             # Process ongoing conversation messages
             while True:
                 data = await websocket.receive_json()
-                
-                # Create new profiler for each message
-                message_profiler = PerformanceProfiler(
-                    f"planning-{user_id}-msg",
-                    enabled=self.enable_profiling
-                )
                 
                 # Handle heartbeat
                 if data.get('type') == 'heartbeat':
@@ -252,6 +204,80 @@ class WorkoutPlanningLLMService:
                 # Handle regular messages
                 if data.get('type') == 'message' or 'message' in data:
                     message = data.get('message', '')
+                    conversation_history = data.get('conversation_history', [])
+                    
+                    # ✅ On first message, check if we should send greeting
+                    if first_message:
+                        first_message = False
+                        
+                        if len(conversation_history) == 0:
+                            # New conversation - send greeting FIRST
+                            logger.info("📝 New conversation (no history) - sending greeting before processing message")
+                            
+                            greeting_profiler = PerformanceProfiler(
+                                f"planning-{user_id}-greeting",
+                                enabled=self.enable_profiling
+                            )
+                            greeting_profiler.start_phase("llm_processing")
+                            
+                            full_response_content = ""
+                            first_token = True
+                            
+                            async for response in chain.process_message(
+                                "Start workout planning conversation", 
+                                profiler=greeting_profiler
+                            ):
+                                if first_token and response.get("type") == "content":
+                                    greeting_profiler.end_phase()
+                                    greeting_profiler.start_phase("llm_streaming")
+                                    first_token = False
+                                
+                                if response.get("type") == "workout_template_approved":
+                                    await websocket.send_json(response)
+                                    continue
+                                    
+                                await websocket.send_json(response)
+                                if response.get("type") == "content":
+                                    full_response_content += response.get("data", "")
+                            
+                            if not first_token:
+                                greeting_profiler.end_phase(
+                                    token_count=len(full_response_content.split()),
+                                    response_length=len(full_response_content)
+                                )
+                            
+                            logger.info(f"Sent contextual planning greeting for user {user_id}")
+                            greeting_profiler.log_summary()
+                        else:
+                            # Reconnection
+                            logger.info(f"🔄 Reconnection detected ({len(conversation_history)} messages) - skipping greeting")
+                    
+
+                            from langchain_core.messages import HumanMessage, AIMessage
+                            
+                            for hist_msg in conversation_history:
+                                sender = hist_msg.get('sender')
+                                content = hist_msg.get('content', '')
+                                
+                                if sender == 'user':
+                                    chain.messages.append(HumanMessage(content=content))
+                                elif sender == 'assistant':
+                                    chain.messages.append(AIMessage(content=content))
+                            
+                            logger.info(f"✅ Restored {len(chain.messages)} messages to chain")
+
+
+
+                    # ✅ Skip processing if this was just the greeting trigger
+                    if message == "__GREETING_TRIGGER__":
+                        logger.info("Skipping greeting trigger message")
+                        continue
+                    
+                    # Now process the actual user message
+                    message_profiler = PerformanceProfiler(
+                        f"planning-{user_id}-msg",
+                        enabled=self.enable_profiling
+                    )
                     
                     # Rate limit check
                     message_profiler.start_phase("rate_limit_check")
@@ -291,7 +317,7 @@ class WorkoutPlanningLLMService:
                     
                     async for response in chain.process_message(message, profiler=message_profiler):
                         if first_token and response.get("type") == "content":
-                            message_profiler.end_phase()  # End llm_processing, agent callbacks logged details
+                            message_profiler.end_phase()  # End llm_processing
                             message_profiler.start_phase("llm_streaming")
                             first_token = False
                         
@@ -334,7 +360,7 @@ class WorkoutPlanningLLMService:
                     
                     # Log message processing summary
                     message_profiler.log_summary()
-                        
+                            
         except google.api_core.exceptions.ResourceExhausted as e:
             logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
             try:
@@ -348,6 +374,13 @@ class WorkoutPlanningLLMService:
                 })
             except Exception:
                 logger.error("Failed to send rate limit error response")
+        
+        except WebSocketDisconnect as e:
+            # Normal closure (1000) or client-initiated close (1001) are expected
+            if e.code in [1000, 1001]:
+                logger.info(f"WebSocket closed normally: code={e.code}, reason={e.reason}")
+            else:
+                logger.warning(f"WebSocket disconnected unexpectedly: code={e.code}, reason={e.reason}")
                 
         except Exception as e:
             logger.error(f"Error in planning websocket: {str(e)}", exc_info=True)

@@ -47,6 +47,7 @@ export const InputArea = ({
       <TextArea
         flex={1}
         size="small"
+        borderRadius={12}
         numberOfLines={8}
         value={input}
         onChangeText={(text) => {

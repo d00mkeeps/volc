@@ -38,7 +38,7 @@ export const WorkoutPlanningModal = ({
       );
       planning.disconnect();
     }
-  }, [isVisible, planning.connect, planning.disconnect]);
+  }, [isVisible]);
 
   const convertTemplateToWorkout = useCallback(
     (templateData: any): CompleteWorkout | null => {
@@ -130,7 +130,6 @@ export const WorkoutPlanningModal = ({
     [convertTemplateToWorkout, onSelectTemplate, onClose]
   );
 
-  // Register/unregister template approval handler based on modal visibility
   useEffect(() => {
     if (isVisible && planning.setTemplateApprovalHandler) {
       console.log(
@@ -149,7 +148,7 @@ export const WorkoutPlanningModal = ({
         planning.setTemplateApprovalHandler(() => {});
       }
     };
-  }, [isVisible, planning.setTemplateApprovalHandler, handleTemplateApproved]);
+  }, [isVisible, handleTemplateApproved]);
 
   const handleSend = async (content: string) => {
     try {

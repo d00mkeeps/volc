@@ -7,7 +7,6 @@ import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
 import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import { useRouter } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native"; // NEW
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import UnderConstructionModal from "../molecules/UnderConstructionModal";
@@ -75,7 +74,7 @@ export const LeaderboardScreen = ({
   };
 
   const handleUnderConstructionConfirm = () => {
-    router.push("/");
+    router.replace("/");
     setShowUnderConstruction(false);
   };
 

@@ -461,21 +461,32 @@ export class WebSocketService {
   }
 
   /**
+   * Set disconnect reason (call before disconnect() for intentional disconnects)
+   */
+  setDisconnectReason(reason: string): void {
+    this.disconnectReason = reason;
+  }
+
+  /**
    * Handle connection disconnect
    */
   private handleDisconnect(): void {
     this.setConnectionState("disconnected");
 
-    // IMPROVED LOGIC: Don't reconnect if this was from switching endpoints
+    // Check disconnect reasons
     const wasEndpointSwitch =
       this.disconnectReason === "endpoint_switch" &&
       this.previousConnectionKey !== null;
 
     const wasInactivityDisconnect = this.disconnectReason === "inactivity";
 
+    // ✅ ADD: Check for user-initiated disconnect
+    const wasUserInitiated = this.disconnectReason === "user_initiated";
+
     const shouldReconnect =
-      !wasEndpointSwitch && // Don't reconnect if switching endpoints
-      !wasInactivityDisconnect && // Don't reconnect if inactivity timeout
+      !wasEndpointSwitch &&
+      !wasInactivityDisconnect &&
+      !wasUserInitiated && // ✅ Don't reconnect on user-initiated disconnect
       this.currentConnectionKey &&
       this.retryAttempts < this.maxRetries;
 
@@ -484,6 +495,7 @@ export class WebSocketService {
       disconnectReason: this.disconnectReason,
       wasEndpointSwitch,
       wasInactivityDisconnect,
+      wasUserInitiated, // ✅ ADD to logs
       currentConnectionKey: this.currentConnectionKey,
       previousConnectionKey: this.previousConnectionKey,
       retryAttempts: this.retryAttempts,
@@ -502,12 +514,14 @@ export class WebSocketService {
             ? "Intentional"
             : wasInactivityDisconnect
             ? "Inactivity"
+            : wasUserInitiated
+            ? "User-initiated" // ✅ ADD to log message
             : "Normal"
         } disconnect - not reconnecting`
       );
 
       // Clear connection key on intentional disconnects
-      if (wasEndpointSwitch || wasInactivityDisconnect) {
+      if (wasEndpointSwitch || wasInactivityDisconnect || wasUserInitiated) {
         this.currentConnectionKey = null;
       }
     }
