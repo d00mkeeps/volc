@@ -1,5 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ComponentProps } from "react";
+import { useTheme } from "tamagui";
+import { OpaqueColorValue } from "react-native";
 
 export type AppIconName =
   | "Settings"
@@ -21,12 +23,11 @@ export type AppIconName =
   | "MessageCircle"
   | "Trophy"
   | "Pencil"
-  | "Edit" // Add this
-  | "Info" // Add this
-  | "AlertTriangle" // Add this
+  | "Edit"
+  | "Info"
+  | "AlertTriangle"
   | "AlertCircle";
 
-// Map your app's icon names to @expo/vector-icons
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Settings: "settings-outline",
   FileText: "document-text-outline",
@@ -53,22 +54,49 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   AlertCircle: "alert-circle-outline",
 };
 
-// Icon component with your app's API
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
   name: AppIconName;
 }
 
+// Helper function to resolve Tamagui color tokens
+// /assets/icons/IconMap.resolveColor
+const resolveColor = (
+  color: string | OpaqueColorValue | undefined,
+  theme: any
+): string | OpaqueColorValue => {
+  if (!color) return "currentColor";
+
+  // If it's an OpaqueColorValue (platform color), return as-is
+  if (typeof color !== "string") return color;
+
+  // If it's a Tamagui token (starts with $), resolve it from theme
+  if (color.startsWith("$")) {
+    const tokenName = color.slice(1); // Remove the $
+    const resolvedColor = theme[tokenName];
+    return resolvedColor?.val || resolvedColor || color;
+  }
+
+  // Otherwise return the color as-is (hex, rgb, etc.)
+  return color;
+};
+
+// /assets/icons/IconMap.AppIcon
 export const AppIcon = ({
   name,
   size = 24,
   color = "currentColor",
   ...props
 }: AppIconProps) => {
+  const theme = useTheme();
   const ionIconName = iconMapping[name];
-  return <Ionicons name={ionIconName} size={size} color={color} {...props} />;
+  const resolvedColor = resolveColor(color, theme);
+
+  return (
+    <Ionicons name={ionIconName} size={size} color={resolvedColor} {...props} />
+  );
 };
 
-// Export individual icon components (matches your current API)
+// Export individual icon components
 export const Settings = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Settings" {...props} />
 );
@@ -145,7 +173,6 @@ export const Pencil = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Pencil" {...props} />
 );
 
-// Add the new icon exports
 export const Edit = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Edit" {...props} />
 );

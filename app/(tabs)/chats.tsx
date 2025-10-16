@@ -6,7 +6,11 @@ import { ExistingConversationChat } from "@/components/organisms/ExistingConvers
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLocalSearchParams } from "expo-router";
 
-export default function ChatScreen() {
+interface ChatScreenProps {
+  isActive?: boolean; // ADD THIS
+}
+
+export default function ChatScreen({ isActive = true }: ChatScreenProps) {
   const { conversationId: paramConversationId } = useLocalSearchParams<{
     conversationId?: string;
   }>();
@@ -63,6 +67,7 @@ export default function ChatScreen() {
         onBack={() => setSelectedConversationId(null)}
         initialMessage={pendingMessage}
         conversationTitle={selectedConversation?.title} // ADD THIS
+        isActive={isActive} // ADD THIS
         onMessageSent={() => clearPendingMessage(null)}
       />
     );

@@ -66,7 +66,7 @@ export default function ExerciseTrackerHeader({
           }}
         >
           <Text
-            size="large"
+            size="medium"
             color="$color"
             fontWeight="600"
             numberOfLines={2}
@@ -82,7 +82,7 @@ export default function ExerciseTrackerHeader({
           </Text>
 
           {exerciseName && onShowDefinition && !isEditing && (
-            <Info size={20} color="$textSoft" />
+            <Info size={16} color="$textSoft" />
           )}
         </TouchableOpacity>
 

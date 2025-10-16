@@ -6,7 +6,13 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import { RefreshControl, ScrollView, Alert } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import Dashboard from "@/components/organisms/Dashboard";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -277,6 +283,7 @@ export default function HomeScreen() {
           conversationId: result.conversationId,
         },
       });
+      useConversationStore.getState().getConversations();
     } catch (error) {
       console.error("Failed to create conversation:", error);
       Toast.show({
@@ -351,17 +358,19 @@ export default function HomeScreen() {
         onComplete={handleOnboardingComplete}
       />
 
-      {/* Chat Input - only show when not active, fixed above tab bar */}
       {!isActive && (
-        <Stack position="absolute" bottom={0} left={0} right={0}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
+          keyboardVerticalOffset={50} // Adjust for tab bar height
+        >
           <InputArea
             placeholder="start new chat.."
             onSendMessage={handleChatSend}
             isLoading={isSendingMessage}
           />
-        </Stack>
+        </KeyboardAvoidingView>
       )}
-
       {/* Floating Action Button - only show when active */}
       {isActive && (
         <Stack

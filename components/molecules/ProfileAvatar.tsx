@@ -9,17 +9,18 @@ import { clearImageUrlCache } from "./workout/WorkoutImage";
 
 interface ProfileAvatarProps {
   editMode?: boolean;
-  refreshProfile?: () => Promise<void>;
-  setIsEditMode?: (editMode: boolean) => void; // ✅ Add this
+  pendingAvatarId?: string | null;
+  onAvatarSelected?: (imageId: string) => void;
 }
 
 export default function ProfileAvatar({
   editMode = false,
-  refreshProfile,
-  setIsEditMode,
+  pendingAvatarId = null,
+  onAvatarSelected,
 }: ProfileAvatarProps) {
-  const { userProfile, updateProfile } = useUserStore();
+  const { userProfile } = useUserStore();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function ProfileAvatar({
     `${userProfile?.first_name || ""} ${userProfile?.last_name || ""}`.trim() ||
     "User";
 
+  // Load current saved avatar
   useEffect(() => {
     const loadAvatarUrl = async () => {
       if (userProfile?.avatar_image_id) {
@@ -63,32 +65,55 @@ export default function ProfileAvatar({
         setLoadingImage(false);
       }
     };
-
     loadAvatarUrl();
   }, [userProfile?.avatar_image_id]);
 
+  // Load pending avatar preview in edit mode
+  useEffect(() => {
+    const loadPendingAvatarUrl = async () => {
+      if (pendingAvatarId) {
+        try {
+          console.log(
+            `[ProfileAvatar] Loading pending image id ${pendingAvatarId.slice(
+              0,
+              5
+            )}`
+          );
+          const urlResponse = await imageService.getImageUrl(pendingAvatarId);
+          if (urlResponse.success && urlResponse.data.url) {
+            console.log(
+              `[ProfileAvatar] Got pending URL: ${urlResponse.data.url}`
+            );
+            setPendingAvatarUrl(urlResponse.data.url);
+          }
+        } catch (error) {
+          console.error(
+            "[ProfileAvatar] Error loading pending avatar URL:",
+            error
+          );
+          setPendingAvatarUrl(null);
+        }
+      } else {
+        setPendingAvatarUrl(null);
+      }
+    };
+    loadPendingAvatarUrl();
+  }, [pendingAvatarId]);
+
   const handleImageUploaded = async (imageId: string) => {
-    try {
-      await updateProfile({ avatar_image_id: imageId });
-
-      // Clear cache for the new image to ensure fresh load
-      clearImageUrlCache(imageId);
-
-      if (refreshProfile) {
-        await refreshProfile();
-      }
-
-      if (setIsEditMode) {
-        setIsEditMode(false);
-      }
-    } catch (error) {
-      console.error("[ProfileAvatar] Failed to update avatar:", error);
+    console.log(`[ProfileAvatar] Image uploaded with ID: ${imageId}`);
+    if (onAvatarSelected) {
+      onAvatarSelected(imageId);
     }
   };
 
   const handleImageError = (error: string) => {
     console.error(`[ProfileAvatar] Avatar upload error: ${error}`);
   };
+
+  // In edit mode, show pending avatar if exists, otherwise show current
+  const displayUrl =
+    editMode && pendingAvatarUrl ? pendingAvatarUrl : avatarUrl;
 
   return (
     <YStack alignItems="center" gap="$2">
@@ -97,26 +122,20 @@ export default function ProfileAvatar({
         aspectRatio={1}
         minWidth={70}
         borderRadius={32}
-        backgroundColor={editMode ? "$backgroundMuted" : "$transparent"}
+        backgroundColor="$backgroundMuted"
         justifyContent="center"
         alignItems="center"
         overflow="hidden"
+        position="relative"
       >
-        {editMode ? (
-          <ImagePickerButton
-            label="Change Photo"
-            size="medium"
-            fillContainer={true}
-            onImageUploaded={handleImageUploaded}
-            onError={handleImageError}
-          />
-        ) : loadingImage ? (
+        {/* Avatar Image */}
+        {loadingImage ? (
           <Text color="$text" fontSize="$3">
             Loading
           </Text>
-        ) : avatarUrl ? (
+        ) : displayUrl ? (
           <Image
-            source={{ uri: avatarUrl }}
+            source={{ uri: displayUrl }}
             style={{ width: "100%", height: "100%" }}
             contentFit="cover"
           />
@@ -124,6 +143,27 @@ export default function ProfileAvatar({
           <Text color="$text" fontSize="$4" fontWeight="600">
             {displayName.charAt(0).toUpperCase()}
           </Text>
+        )}
+
+        {/* Edit Mode Overlay */}
+        {editMode && (
+          <Stack
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            backgroundColor="rgba(0, 0, 0, 0.5)"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <ImagePickerButton
+              label="Change"
+              size="small"
+              onImageUploaded={handleImageUploaded}
+              onError={handleImageError}
+            />
+          </Stack>
         )}
       </Stack>
     </YStack>

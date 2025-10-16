@@ -39,17 +39,12 @@ export function WorkoutSummarySlide({
     "none" | "skip" | "continue"
   >("none");
   const [workoutNotes, setWorkoutNotes] = useState(() => {
-    console.log("=== WORKOUT SUMMARY DEBUG ===");
-    console.log("currentWorkout:", currentWorkout);
-    console.log("workout_exercises:", currentWorkout?.workout_exercises);
-
     if (currentWorkout?.notes) {
       return currentWorkout.notes;
     }
 
     return originalSkeleton || "";
   });
-
   const isSkeletonUnchanged = (notes: string, skeleton: string): boolean => {
     const normalizeNotes = (text: string) => text.trim().replace(/\n+/g, "\n");
     return normalizeNotes(notes) === normalizeNotes(skeleton);
@@ -57,6 +52,10 @@ export function WorkoutSummarySlide({
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
+    // Auto-dismiss error when user starts typing
+    if (showNameError && name.trim().length > 0) {
+      setShowNameError(false);
+    }
   };
 
   const isNameValid = workoutName.trim().length > 0;
@@ -71,6 +70,7 @@ export function WorkoutSummarySlide({
   };
 
   const handleContinue = async () => {
+    // Require manual name entry
     if (!workoutName.trim()) {
       setShowNameError(true);
       return;
@@ -78,11 +78,11 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE CONTINUE ===");
-    setLoadingState("continue"); // ← Start loading
+    setLoadingState("continue");
 
     try {
       await saveCompletedWorkout({
-        name: workoutName,
+        name: workoutName.trim(),
         notes: isSkeletonUnchanged(workoutNotes, originalSkeleton)
           ? ""
           : workoutNotes,
@@ -92,11 +92,12 @@ export function WorkoutSummarySlide({
       onContinue();
     } catch (error) {
       console.error("Failed to continue to chat:", error);
-      setLoadingState("none"); // ← Reset on error
+      setLoadingState("none");
     }
   };
 
   const handleSkipChat = async () => {
+    // Require manual name entry
     if (!workoutName.trim()) {
       setShowNameError(true);
       return;
@@ -104,11 +105,11 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE SKIP ===");
-    setLoadingState("skip"); // ← Start loading
+    setLoadingState("skip");
 
     try {
       await saveCompletedWorkout({
-        name: workoutName,
+        name: workoutName.trim(),
         notes: isSkeletonUnchanged(workoutNotes, originalSkeleton)
           ? ""
           : workoutNotes,
@@ -117,7 +118,7 @@ export function WorkoutSummarySlide({
       onSkip();
     } catch (error) {
       console.error("Failed to save workout:", error);
-      setLoadingState("none"); // ← Reset on error
+      setLoadingState("none");
     }
   };
 
@@ -198,7 +199,7 @@ export function WorkoutSummarySlide({
             borderWidth={1}
             flex={0.4} // Reduced from flex={1} to take less space
           >
-            {loadingState === "skip" ? "Loading..." : "Save & Exit"}
+            {loadingState === "skip" ? "saving.." : "Save & Exit"}
           </Button>
         )}
 

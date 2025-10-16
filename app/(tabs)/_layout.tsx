@@ -59,7 +59,7 @@ export default function TabLayout() {
           <ProfileScreen />
         </View>
         <View key="chats" style={{ flex: 1 }}>
-          <ChatScreen />
+          <ChatScreen isActive={currentPage === 2} />
         </View>
         <View key="leaderboard" style={{ flex: 1 }}>
           <WorkoutScreen isActive={currentPage === 3} />

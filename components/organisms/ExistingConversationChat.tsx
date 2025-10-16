@@ -13,6 +13,7 @@ interface ExistingConversationChatProps {
   conversationTitle?: string; // ADD THIS
   initialMessage?: string | null;
   onMessageSent?: () => void;
+  isActive?: boolean; // ADD THIS
 }
 
 export const ExistingConversationChat = ({
@@ -21,8 +22,9 @@ export const ExistingConversationChat = ({
   conversationTitle,
   initialMessage,
   onMessageSent,
+  isActive,
 }: ExistingConversationChatProps) => {
-  const messaging = useMessaging();
+  const messaging = useMessaging(isActive);
   const setActiveConversation = useUserSessionStore(
     (state) => state.setActiveConversation
   );

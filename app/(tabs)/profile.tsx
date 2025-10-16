@@ -24,6 +24,8 @@ export default function ProfileScreen() {
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [pendingAvatarId, setPendingAvatarId] = useState<string | null>(null);
 
   // Edit state for bio and goals
   const [editedBio, setEditedBio] = useState(PLACEHOLDER_BIO);
@@ -44,24 +46,42 @@ export default function ProfileScreen() {
         Object.values(userProfile?.goals || {}).join("\n\n") ||
         "";
       setEditedGoals(currentGoals);
+      // Initialize pending avatar (start with current avatar)
+      setPendingAvatarId(userProfile?.avatar_image_id || null);
+    } else {
+      // Clear pending avatar when exiting edit mode
+      setPendingAvatarId(null);
     }
-  }, [isEditMode, userProfile?.goals, userProfile?.bio]);
+  }, [
+    isEditMode,
+    userProfile?.goals,
+    userProfile?.bio,
+    userProfile?.avatar_image_id,
+  ]);
 
   const handleToggleEdit = () => {
     setIsEditMode(!isEditMode);
   };
+  const handleAvatarSelected = (imageId: string) => {
+    console.log(`[ProfileScreen] Avatar selected: ${imageId}`);
+    setPendingAvatarId(imageId);
+  };
 
   const handleSaveAll = async () => {
     try {
+      setIsSaving(true);
       setIsEditMode(false);
 
-      // Save both bio and goals
+      // Save bio, goals, and avatar together
       await updateProfile({
         bio: editedBio.trim(),
         goals: editedGoals.trim() ? { content: editedGoals.trim() } : {},
+        ...(pendingAvatarId && { avatar_image_id: pendingAvatarId }),
       });
     } catch (error) {
       console.error("Failed to save changes:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -123,8 +143,9 @@ export default function ProfileScreen() {
           size="medium"
           fontWeight="400"
           paddingHorizontal="$0"
+          disabled={isSaving}
         >
-          {isEditMode ? "Done" : "Edit"}
+          {isSaving ? "Saving..." : isEditMode ? "Done" : "Edit"}
         </Button>
       </XStack>
 
@@ -146,6 +167,8 @@ export default function ProfileScreen() {
             onBioChange={setEditedBio}
             refreshProfile={refreshProfile}
             setIsEditMode={setIsEditMode}
+            pendingAvatarId={pendingAvatarId}
+            onAvatarSelected={handleAvatarSelected}
           />
 
           {isUpdatingAvatar && (
@@ -154,41 +177,7 @@ export default function ProfileScreen() {
             </Text>
           )}
 
-          {/* Recent Workouts Section */}
-          <YStack
-            backgroundColor="$background"
-            borderRadius="$3"
-            paddingHorizontal="$3"
-            gap="$3"
-          >
-            <Text size="medium" fontWeight="600" color="$color">
-              Recent Workouts
-            </Text>
-
-            <WorkoutList limit={3} />
-
-            {/* View All button - now positioned below the workout items */}
-            {workouts.length > 3 && (
-              <XStack justifyContent="flex-end" paddingBottom="$3">
-                <Stack
-                  backgroundColor="$backgroundSoft"
-                  borderRadius="$2"
-                  paddingHorizontal="$4"
-                  paddingVertical="$2"
-                  pressStyle={{ scale: 0.95 }}
-                  onPress={() => setShowWorkoutModal(true)}
-                  borderWidth={1}
-                  borderColor="$borderSoft"
-                >
-                  <Text size="medium" fontWeight="600" color="$text">
-                    View All
-                  </Text>
-                </Stack>
-              </XStack>
-            )}
-          </YStack>
-
-          {/* Goals Section */}
+          {/* Goals Section - MOVED UP */}
           <YStack
             backgroundColor="$background"
             borderRadius="$3"
@@ -225,6 +214,40 @@ export default function ProfileScreen() {
                       "No goals set"}
                 </Text>
               </YStack>
+            )}
+          </YStack>
+
+          {/* Recent Workouts Section - MOVED DOWN */}
+          <YStack
+            backgroundColor="$background"
+            borderRadius="$3"
+            paddingHorizontal="$3"
+            gap="$3"
+          >
+            <Text size="medium" fontWeight="600" color="$color">
+              Recent Workouts
+            </Text>
+
+            <WorkoutList limit={3} />
+
+            {/* View All button - now positioned below the workout items */}
+            {workouts.length > 3 && (
+              <XStack justifyContent="flex-end" paddingBottom="$3">
+                <Stack
+                  backgroundColor="$backgroundSoft"
+                  borderRadius="$2"
+                  paddingHorizontal="$4"
+                  paddingVertical="$2"
+                  pressStyle={{ scale: 0.95 }}
+                  onPress={() => setShowWorkoutModal(true)}
+                  borderWidth={1}
+                  borderColor="$borderSoft"
+                >
+                  <Text size="medium" fontWeight="600" color="$text">
+                    View All
+                  </Text>
+                </Stack>
+              </XStack>
             )}
           </YStack>
 

@@ -175,7 +175,8 @@ export const useConversationStore = create<ConversationStoreState>(
           const result =
             await conversationService.createConversationFromMessage({
               userId: session.user.id,
-              title: `New Chat - ${new Date().toLocaleDateString()}`,
+              title:
+                message.length > 30 ? `${message.slice(0, 30)}..` : message,
               firstMessage: message,
               configName: "workout-analysis",
             });

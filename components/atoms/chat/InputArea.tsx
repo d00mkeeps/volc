@@ -1,6 +1,6 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback } from "react";
-import { XStack } from "tamagui";
+import { XStack, Spinner } from "tamagui";
 import TextArea from "@/components/atoms/core/TextArea";
 import Button from "@/components/atoms/core/Button";
 import { Send } from "@/assets/icons/IconMap";
@@ -41,7 +41,7 @@ export const InputArea = ({
     <XStack
       padding="$2"
       gap="$2"
-      backgroundColor="$background"
+      backgroundColor="$transparent"
       alignItems="flex-end"
     >
       <TextArea
@@ -54,7 +54,7 @@ export const InputArea = ({
           setInput(text);
           if (error && text.length <= 500) setError(undefined);
         }}
-        placeholder={placeholder}
+        placeholder={isLoading ? "please wait" : placeholder}
         disabled={disabled || isLoading}
         borderColor={error ? "$error" : "$borderSoft"}
         color="$color"
@@ -71,15 +71,21 @@ export const InputArea = ({
         size="$3"
         alignSelf="auto"
         backgroundColor={isPressed ? "$primary" : "$background"}
-        disabled={disabled || !input.trim()}
+        disabled={disabled || !input.trim() || isLoading}
         onPress={handleSend}
         onPressIn={() => setIsPressed(true)}
         onPressOut={() => setIsPressed(false)}
         circular
-        icon={<Send color="#f84f3e" size={22} />}
+        icon={
+          isLoading ? (
+            <Spinner size="small" color="$primary" />
+          ) : (
+            <Send color="#f84f3e" size={22} />
+          )
+        }
         disabledStyle={{
           backgroundColor: "$background",
-          opacity: 0.5,
+          opacity: 0.7,
         }}
       />
     </XStack>

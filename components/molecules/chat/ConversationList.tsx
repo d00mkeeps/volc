@@ -15,6 +15,10 @@ export default function ConversationList({
 }: ConversationListProps) {
   const { conversations, isLoading, getConversations, deleteConversation } =
     useConversationStore();
+  useEffect(() => {
+    // Refresh conversations when component mounts to ensure we have latest data
+    getConversations();
+  }, [getConversations]);
 
   const allConversations = Array.from(conversations.values())
     .filter((conversation) => conversation.message_count > 0) // Add this line

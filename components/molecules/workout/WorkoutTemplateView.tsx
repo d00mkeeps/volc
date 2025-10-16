@@ -223,7 +223,7 @@ export default function WorkoutTemplateView({
               {/* Header */}
               <XStack justifyContent="space-between" alignItems="center">
                 <YStack flex={1}>
-                  <Text size="medium" fontWeight="600" color="$color">
+                  <Text size="large" fontWeight="600" color="$color">
                     {data.name}
                   </Text>
                   <Text size="small" color="$textSoft">

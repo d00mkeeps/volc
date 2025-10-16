@@ -31,23 +31,11 @@ export const ChatInterface = ({
   streamingMessage,
   onSend,
   onTemplateApprove,
-  placeholder = "send a message",
   connectionState = "ready",
   statusMessage,
   queuedMessageCount = 0,
   keyboardVerticalOffset = 120,
 }: ChatInterfaceProps) => {
-  const getPlaceholder = () => {
-    switch (connectionState) {
-      case "disconnected":
-        return "send a message";
-      case "expecting_ai_message":
-        return "loading..";
-      default:
-        return placeholder;
-    }
-  };
-
   const getStatusText = () => {
     if (queuedMessageCount > 0) {
       return `${queuedMessageCount} message${
@@ -96,7 +84,7 @@ export const ChatInterface = ({
         )}
 
         <InputArea
-          placeholder={getPlaceholder()}
+          isLoading={isInputDisabled}
           onSendMessage={onSend}
           disabled={isInputDisabled}
         />

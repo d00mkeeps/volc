@@ -218,7 +218,7 @@ export const WorkoutPlanningModal = ({
           paddingHorizontal="$5"
           paddingTop="$3"
         >
-          <Text size="medium" fontWeight="600" color="$color" flex={1.5}>
+          <Text size="large" fontWeight="600" color="$color" flex={1.5}>
             Plan Your Workout
           </Text>
 
@@ -246,7 +246,7 @@ export const WorkoutPlanningModal = ({
             placeholder="enter message"
             connectionState={getConnectionState()}
             onTemplateApprove={handleTemplateApproved}
-            keyboardVerticalOffset={150}
+            keyboardVerticalOffset={130}
           />
         </YStack>
 

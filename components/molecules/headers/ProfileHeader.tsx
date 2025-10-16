@@ -6,14 +6,16 @@ import ProfileAvatar from "@/components/molecules/ProfileAvatar";
 import { UserProfile } from "@/types";
 
 interface ProfileHeaderProps {
-  userProfile: UserProfile | null; // ← Allow null
+  userProfile: UserProfile | null;
   editingCard: string | null;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
   isEditMode: boolean;
   editedBio: string;
   onBioChange: (bio: string) => void;
   refreshProfile: () => Promise<void>;
-  setIsEditMode: (editMode: boolean) => void; // ✅ Add this
+  setIsEditMode: (editMode: boolean) => void;
+  pendingAvatarId: string | null;
+  onAvatarSelected: (imageId: string) => void;
 }
 
 export default function ProfileHeader({
@@ -25,15 +27,9 @@ export default function ProfileHeader({
   onBioChange,
   refreshProfile,
   setIsEditMode,
+  pendingAvatarId,
+  onAvatarSelected,
 }: ProfileHeaderProps) {
-  const handleImageUploaded = async (imageId: string) => {
-    try {
-      await updateProfile({ avatar_image_id: imageId });
-    } catch (error) {
-      console.error("Failed to update avatar:", error);
-    }
-  };
-
   return (
     <XStack
       backgroundColor="$backgroundSoft"
@@ -46,10 +42,9 @@ export default function ProfileHeader({
       <YStack alignItems="center" gap="$3" width="35%" flex={0.5}>
         <ProfileAvatar
           editMode={isEditMode}
-          refreshProfile={refreshProfile}
-          setIsEditMode={setIsEditMode} // ✅ Pass it down
+          pendingAvatarId={pendingAvatarId}
+          onAvatarSelected={onAvatarSelected}
         />
-
         <YStack alignItems="center" gap="$1">
           <Text
             size="medium"

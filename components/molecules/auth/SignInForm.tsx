@@ -32,7 +32,6 @@ export function SignInForm() {
       <Stack gap="$2" width="100%" paddingHorizontal="$4">
         <Input
           width="70%"
-          height="$6"
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
@@ -50,7 +49,6 @@ export function SignInForm() {
 
         <Input
           width="70%"
-          height="$6"
           value={password}
           onChangeText={setPassword}
           placeholder="Password"

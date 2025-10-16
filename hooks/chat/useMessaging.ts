@@ -1,3 +1,4 @@
+// hooks/chat/useMessaging.ts
 import { useCallback, useEffect, useRef } from "react";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
@@ -10,7 +11,7 @@ import Toast from "react-native-toast-message";
 
 const EMPTY_MESSAGES: Message[] = [];
 
-export function useMessaging() {
+export function useMessaging(isActive: boolean = true) {
   const messageStore = useMessageStore();
   const webSocketService = getWebSocketService();
   const unsubscribeRefs = useRef<(() => void)[]>([]);
@@ -40,85 +41,119 @@ export function useMessaging() {
   const error = useMessageStore((state) => state.error);
 
   // Register websocket handlers for receiving messages
-  const registerHandlers = useCallback((conversationId: string) => {
-    // Clear any existing handlers
-    unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
-    unsubscribeRefs.current = [];
+  const registerHandlers = useCallback(
+    (conversationId: string) => {
+      // Clear any existing handlers
+      unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+      unsubscribeRefs.current = [];
 
-    // Register handlers for incoming messages
-    const unsubscribeContent = webSocketService.onMessage((chunk) => {
+      // Register handlers with conversationId check for defense
+      const unsubscribeContent = webSocketService.onMessage((chunk) => {
+        // Only process if this is the active conversation
+        const activeConvId =
+          useUserSessionStore.getState().activeConversationId;
+        if (activeConvId === conversationId) {
+          console.log(
+            "[useMessaging] Received content chunk:",
+            chunk.substring(0, 50) + "..."
+          );
+          messageStore.updateStreamingMessage(conversationId, chunk);
+        }
+      });
+
+      const unsubscribeComplete = webSocketService.onComplete(() => {
+        const activeConvId =
+          useUserSessionStore.getState().activeConversationId;
+        if (activeConvId === conversationId) {
+          console.log("[useMessaging] Message complete");
+          messageStore.completeStreamingMessage(conversationId);
+        }
+      });
+
+      const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
+        const activeConvId =
+          useUserSessionStore.getState().activeConversationId;
+        if (activeConvId !== conversationId) {
+          return; // Not for us
+        }
+
+        console.log("[useMessaging] Message terminated:", reason);
+
+        // Get current state directly from the store
+        const currentState = useMessageStore.getState();
+        const streamingState =
+          currentState.streamingMessages.get(conversationId);
+        const currentMessages = currentState.messages.get(conversationId) || [];
+
+        if (streamingState?.content.trim()) {
+          // Add partial message with indicator
+          const partialMessage: Message = {
+            id: `temp-ai-partial-${Date.now()}`,
+            conversation_id: conversationId,
+            content: streamingState.content + "\n\n*[Response was cut off]*",
+            sender: "assistant",
+            conversation_sequence: currentMessages.length + 1,
+            timestamp: new Date(),
+          };
+          messageStore.addMessage(conversationId, partialMessage);
+        }
+
+        messageStore.clearStreamingMessage(conversationId);
+
+        Toast.show({
+          type: "warning",
+          text1: "Message Cut Off",
+          text2: "Response was interrupted",
+        });
+      });
+
+      const unsubscribeError = webSocketService.onError((error) => {
+        console.error("[useMessaging] WebSocket error:", error);
+        messageStore.clearStreamingMessage(conversationId);
+        messageStore.setError(error);
+
+        Toast.show({
+          type: "error",
+          text1: "Connection Error",
+          text2: error.message || "WebSocket connection failed",
+        });
+      });
+
+      // Store unsubscribe functions
+      unsubscribeRefs.current = [
+        unsubscribeContent,
+        unsubscribeComplete,
+        unsubscribeTerminated,
+        unsubscribeError,
+      ];
+
       console.log(
-        "[useMessaging] Received content chunk:",
-        chunk.substring(0, 50) + "..."
+        "[useMessaging] Registered websocket handlers for conversation:",
+        conversationId
       );
-      messageStore.updateStreamingMessage(conversationId, chunk);
-    });
+    },
+    [webSocketService, messageStore]
+  );
 
-    const unsubscribeComplete = webSocketService.onComplete(() => {
-      console.log("[useMessaging] Message complete");
-      messageStore.completeStreamingMessage(conversationId);
-    });
-
-    const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
-      console.log("[useMessaging] Message terminated:", reason);
-
-      // Get current state directly from the store
-      const currentState = useMessageStore.getState();
-      const streamingState = currentState.streamingMessages.get(conversationId);
-      const currentMessages = currentState.messages.get(conversationId) || [];
-
-      if (streamingState?.content.trim()) {
-        // Add partial message with indicator
-        const partialMessage: Message = {
-          id: `temp-ai-partial-${Date.now()}`,
-          conversation_id: conversationId,
-          content: streamingState.content + "\n\n*[Response was cut off]*",
-          sender: "assistant",
-          conversation_sequence: currentMessages.length + 1,
-          timestamp: new Date(),
-        };
-        messageStore.addMessage(conversationId, partialMessage);
-      }
-
-      messageStore.clearStreamingMessage(conversationId);
-
-      Toast.show({
-        type: "warning",
-        text1: "Message Cut Off",
-        text2: "Response was interrupted",
-      });
-    });
-
-    const unsubscribeError = webSocketService.onError((error) => {
-      console.error("[useMessaging] WebSocket error:", error);
-      messageStore.clearStreamingMessage(conversationId);
-      messageStore.setError(error);
-
-      Toast.show({
-        type: "error",
-        text1: "Connection Error",
-        text2: error.message || "WebSocket connection failed",
-      });
-    });
-
-    // Store unsubscribe functions
-    unsubscribeRefs.current = [
-      unsubscribeContent,
-      unsubscribeComplete,
-      unsubscribeTerminated,
-      unsubscribeError,
-    ];
-
-    console.log(
-      "[useMessaging] Registered websocket handlers for conversation:",
-      conversationId
-    );
-  }, []); // No dependencies - handlers get fresh state when they execute
-
-  // Auto-connect websocket and register handlers when conversationId changes
+  // Auto-connect websocket and register handlers ONLY when active
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId) {
+      return;
+    }
 
+    // If inactive, clean up handlers
+    if (!isActive) {
+      if (unsubscribeRefs.current.length > 0) {
+        console.log(
+          `[useMessaging] Component inactive - unregistering handlers for ${conversationId}`
+        );
+        unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+        unsubscribeRefs.current = [];
+      }
+      return;
+    }
+
+    // Active - connect and register
     const connectAndRegister = async () => {
       try {
         console.log(
@@ -139,12 +174,21 @@ export function useMessaging() {
 
     connectAndRegister();
 
-    // Cleanup on unmount or conversation change
+    // Cleanup on unmount, conversation change, or becoming inactive
     return () => {
+      console.log(
+        `[useMessaging] Cleanup for conversation: ${conversationId}, isActive: ${isActive}`
+      );
       unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
       unsubscribeRefs.current = [];
     };
-  }, [conversationId, registerHandlers]);
+  }, [
+    conversationId,
+    isActive,
+    registerHandlers,
+    webSocketService,
+    messageStore,
+  ]);
 
   const loadMessages = useCallback(async () => {
     const currentConversationId =
@@ -184,7 +228,7 @@ export function useMessaging() {
       messageStore.setLoading(false);
       throw error;
     }
-  }, []);
+  }, [messageStore]);
 
   const sendMessage = useCallback(
     async (content: string, options?: { detailedAnalysis?: boolean }) => {
@@ -227,10 +271,7 @@ export function useMessaging() {
           generate_graph: options?.detailedAnalysis || false,
         };
 
-        // Re-register handlers (in case they were cleared)
-        registerHandlers(currentConversationId);
-
-        // Connect and send
+        // Connect and send (handlers already registered in useEffect)
         await webSocketService.ensureConnection();
         webSocketService.sendMessage(payload);
       } catch (error) {
@@ -248,7 +289,7 @@ export function useMessaging() {
         throw errorMessage;
       }
     },
-    [registerHandlers]
+    [messageStore, webSocketService]
   );
 
   return {

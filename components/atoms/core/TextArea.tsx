@@ -48,11 +48,11 @@ export const TextArea = forwardRef<any, TextAreaProps>(
     const getSizeToken = (size: "small" | "medium" | "large") => {
       switch (size) {
         case "small":
-          return "$2";
-        case "medium":
           return "$3";
-        case "large":
+        case "medium":
           return "$4";
+        case "large":
+          return "$5";
       }
     };
 

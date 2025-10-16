@@ -125,7 +125,6 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
         padding="$2"
         marginLeft="$2"
         borderRadius="$2"
-        backgroundColor="$backgroundMuted"
         pressStyle={{ opacity: 0.7 }}
       >
         <TouchableOpacity
@@ -134,7 +133,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
             handleShowDefinition(exercise);
           }}
         >
-          <Info size={16} color="$textMuted" />
+          <Info size={16} color="$text" />
         </TouchableOpacity>
       </Stack>
     </XStack>
