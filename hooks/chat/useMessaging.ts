@@ -1,4 +1,3 @@
-// hooks/chat/useMessaging.ts
 import { useCallback, useEffect, useRef } from "react";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
@@ -43,21 +42,48 @@ export function useMessaging(isActive: boolean = true) {
   // Register websocket handlers for receiving messages
   const registerHandlers = useCallback(
     (conversationId: string) => {
-      // Clear any existing handlers
+      // ✅ Check for active streams
+      const messageStore = useMessageStore.getState();
+      const activeStreams = Array.from(
+        messageStore.streamingMessages.entries()
+      ).filter(([_, msg]) => msg && !msg.isComplete);
+
+      if (activeStreams.length > 0) {
+        console.warn(
+          "[useMessaging] ⚠️ Active streams detected:",
+          activeStreams.map(([key]) => key)
+        );
+        // For useMessaging, we're stricter - don't clear if actively streaming
+        // Just log and proceed with registration (defensive handlers will protect)
+      } else {
+        // ✅ Only do nuclear cleanup if nothing is streaming
+        console.log(
+          "[useMessaging] 🧹 Removing ALL websocket listeners (no active streams)"
+        );
+        webSocketService.removeAllListeners();
+      }
+
+      // ✅ Clear our own refs
       unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
       unsubscribeRefs.current = [];
 
-      // Register handlers with conversationId check for defense
+      // ✅ Register handlers with defensive conversation ID check
       const unsubscribeContent = webSocketService.onMessage((chunk) => {
-        // Only process if this is the active conversation
         const activeConvId =
           useUserSessionStore.getState().activeConversationId;
         if (activeConvId === conversationId) {
           console.log(
-            "[useMessaging] Received content chunk:",
-            chunk.substring(0, 50) + "..."
+            "[useMessaging] ✅ Received content chunk for active conversation:",
+            conversationId
           );
           messageStore.updateStreamingMessage(conversationId, chunk);
+        } else {
+          console.log(
+            "[useMessaging] ⏭️ Ignoring chunk for inactive conversation. Active:",
+            activeConvId,
+            "Received for:",
+            conversationId
+          );
         }
       });
 
@@ -65,7 +91,10 @@ export function useMessaging(isActive: boolean = true) {
         const activeConvId =
           useUserSessionStore.getState().activeConversationId;
         if (activeConvId === conversationId) {
-          console.log("[useMessaging] Message complete");
+          console.log(
+            "[useMessaging] ✅ Message complete for:",
+            conversationId
+          );
           messageStore.completeStreamingMessage(conversationId);
         }
       });
@@ -74,7 +103,7 @@ export function useMessaging(isActive: boolean = true) {
         const activeConvId =
           useUserSessionStore.getState().activeConversationId;
         if (activeConvId !== conversationId) {
-          return; // Not for us
+          return;
         }
 
         console.log("[useMessaging] Message terminated:", reason);
@@ -128,7 +157,7 @@ export function useMessaging(isActive: boolean = true) {
       ];
 
       console.log(
-        "[useMessaging] Registered websocket handlers for conversation:",
+        "[useMessaging] ✅ Registered websocket handlers for conversation:",
         conversationId
       );
     },

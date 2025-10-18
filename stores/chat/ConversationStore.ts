@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { conversationService } from "../../services/db/conversation";
-import { Conversation, ChatConfigName, Message } from "@/types";
+import { Conversation, ChatConfigName } from "@/types";
 import { authService } from "@/services/db/auth";
 import { useMessageStore } from "./MessageStore";
 import { useUserStore } from "../userProfileStore";

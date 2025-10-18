@@ -43,18 +43,18 @@ export function useWorkoutPlanning() {
     []
   );
 
-  // Register websocket handlers for receiving messages
-  const registerHandlers = useCallback(
+  // Extract actual registration logic
+  const doRegisterHandlers = useCallback(
     (messageKey: string) => {
-      // ✅ Add guard to prevent duplicate registration
-      if (unsubscribeRefs.current.length > 0) {
-        console.log(
-          "[useWorkoutPlanning] Handlers already registered, clearing first"
-        );
-        unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
-        unsubscribeRefs.current = [];
-      }
+      // ✅ Nuclear cleanup - remove ALL handlers
+      console.log("[useWorkoutPlanning] 🧹 Removing ALL websocket listeners");
+      webSocketService.removeAllListeners();
 
+      // ✅ Clear our own refs
+      unsubscribeRefs.current.forEach((unsubscribe) => unsubscribe());
+      unsubscribeRefs.current = [];
+
+      // ✅ Register fresh handlers
       const unsubscribeTemplateApproved =
         webSocketService.onWorkoutTemplateApproved((templateData) => {
           console.log(
@@ -118,10 +118,57 @@ export function useWorkoutPlanning() {
       ];
 
       console.log(
-        `[useWorkoutPlanning] Registered ${unsubscribeRefs.current.length} websocket handlers for planning`
+        `[useWorkoutPlanning] ✅ Registered ${unsubscribeRefs.current.length} fresh websocket handlers`
       );
     },
     [webSocketService]
+  );
+
+  // Register websocket handlers for receiving messages
+  const registerHandlers = useCallback(
+    async (messageKey: string) => {
+      // ✅ Check for any active streams BEFORE clearing
+      const messageStore = useMessageStore.getState();
+      const activeStreams = Array.from(
+        messageStore.streamingMessages.entries()
+      ).filter(([_, msg]) => msg && !msg.isComplete);
+
+      if (activeStreams.length > 0) {
+        console.warn(
+          "[useWorkoutPlanning] ⚠️ Active streams detected, waiting for completion before clearing handlers:",
+          activeStreams.map(([key]) => key)
+        );
+
+        // Wait for streams to complete
+        await new Promise<void>((resolve) => {
+          const checkInterval = setInterval(() => {
+            const stillStreaming = Array.from(
+              useMessageStore.getState().streamingMessages.entries()
+            ).filter(([_, msg]) => msg && !msg.isComplete);
+
+            if (stillStreaming.length === 0) {
+              clearInterval(checkInterval);
+              console.log(
+                "[useWorkoutPlanning] ✅ Streams completed, proceeding with handler registration"
+              );
+              resolve();
+            }
+          }, 100);
+
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            console.warn(
+              "[useWorkoutPlanning] ⏱️ Timeout waiting for streams, proceeding anyway"
+            );
+            resolve();
+          }, 5000);
+        });
+      }
+
+      doRegisterHandlers(messageKey);
+    },
+    [doRegisterHandlers]
   );
 
   // Monitor connection state changes
@@ -164,7 +211,7 @@ export function useWorkoutPlanning() {
       console.log("[useWorkoutPlanning] Connecting to workout planning");
       isConnectedRef.current = true;
 
-      registerHandlers(PLANNING_KEY);
+      await registerHandlers(PLANNING_KEY);
 
       await webSocketService.ensureConnection({
         type: "workout-planning",
@@ -245,7 +292,7 @@ export function useWorkoutPlanning() {
             "[useWorkoutPlanning] Disconnected - reconnecting before sending message"
           );
           await webSocketService.ensureConnection({ type: "workout-planning" });
-          registerHandlers(PLANNING_KEY);
+          await registerHandlers(PLANNING_KEY);
 
           // Send greeting trigger on reconnection
           const messagesForReconnect =
