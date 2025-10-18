@@ -15,6 +15,7 @@ import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import SetHeader from "../headers/SetHeader";
 import ExerciseDefinitionView from "./ExerciseDefinitionView";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import TextEditModal from "../core/TextEditModal";
 
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
@@ -42,6 +43,8 @@ export default function ExerciseTracker({
   const { exercises } = useExerciseStore();
   const { currentWorkout } = useUserSessionStore();
 
+  const [notesModalVisible, setNotesModalVisible] = useState(false);
+
   const exerciseDefinition = exercises.find(
     (ex: ExerciseDefinition) => ex.id === exercise.definition_id
   );
@@ -59,6 +62,22 @@ export default function ExerciseTracker({
         onEditingChange?.(false); // Notify parent
       }
     }
+  };
+
+  const handleNotesLongPress = () => {
+    if (!isActive) return;
+    setNotesModalVisible(true);
+  };
+
+  const handleNotesSave = (notes: string) => {
+    if (!onExerciseUpdate) return;
+
+    const updatedExercise = {
+      ...exercise,
+      notes: notes || undefined, // Set to undefined if empty
+    };
+
+    onExerciseUpdate(updatedExercise);
   };
 
   const handleEditPress = () => {
@@ -92,6 +111,7 @@ export default function ExerciseTracker({
       ...exercise,
       name: exerciseName,
       definition_id: selectedDefinition?.id,
+      notes: undefined, // CLEAR NOTES when exercise changes
     };
 
     onExerciseUpdate(updatedExercise);
@@ -211,6 +231,7 @@ export default function ExerciseTracker({
             onCancelEdit={handleCancelEdit}
             canCancelEdit={canCancelEdit}
             isActive={isActive}
+            onNotesLongPress={handleNotesLongPress} // ADD THIS
             onEditPress={handleEditPress}
             exerciseNotes={exercise.notes}
             onDelete={handleDelete}
@@ -304,6 +325,14 @@ export default function ExerciseTracker({
         definitionId={exercise.definition_id || ""}
         isVisible={definitionModalVisible && !!exercise.definition_id}
         onClose={() => setDefinitionModalVisible(false)}
+      />
+
+      <TextEditModal
+        isVisible={notesModalVisible}
+        onClose={() => setNotesModalVisible(false)}
+        currentNotes={exercise.notes}
+        onSave={handleNotesSave}
+        title={`Notes: ${exercise.name || "Exercise"}`}
       />
     </>
   );

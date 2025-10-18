@@ -20,7 +20,6 @@ interface SetRowProps {
   onDelete?: (setId: string) => void;
   canDelete?: boolean;
 }
-
 export default function SetRow({
   set,
   exerciseDefinition,
@@ -32,28 +31,48 @@ export default function SetRow({
   canDelete = true,
 }: SetRowProps) {
   const [pendingDelete, setPendingDelete] = useState(false);
+  const [showValidationErrors, setShowValidationErrors] = useState(false); // ADD THIS
   const { userProfile } = useUserStore();
   const isImperial = userProfile?.is_imperial ?? false;
 
-  const isComplete = useMemo(() => {
-    const complete = isSetComplete(set, exerciseDefinition);
-    console.log("[SetRow] Completion check:", {
-      setNumber: set.set_number,
-      weight: set.weight,
-      reps: set.reps,
-      distance: set.distance,
-      duration: set.duration,
-      isComplete: complete,
-    });
-    return complete;
+  const canBeCompleted = useMemo(() => {
+    return isSetComplete(set, exerciseDefinition);
   }, [set.weight, set.reps, set.distance, set.duration, exerciseDefinition]);
 
+  // Clear validation errors when set becomes complete
   useEffect(() => {
-    if (pendingDelete) {
-      const timer = setTimeout(() => setPendingDelete(false), 1000);
-      return () => clearTimeout(timer);
+    if (canBeCompleted) {
+      setShowValidationErrors(false);
     }
-  }, [pendingDelete]);
+  }, [canBeCompleted]);
+
+  // ... existing useEffect for pendingDelete ...
+
+  const handleCompletionToggle = async () => {
+    if (!isActive) return;
+
+    const newCompletionState = !set.is_completed;
+
+    // If trying to mark complete, validate first
+    if (newCompletionState && !canBeCompleted) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setShowValidationErrors(true); // SHOW WHICH FIELDS ARE MISSING
+      return;
+    }
+
+    // Haptic feedback
+    if (newCompletionState) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+
+    onUpdate({
+      ...set,
+      is_completed: newCompletionState,
+      updated_at: new Date().toISOString(),
+    });
+  };
 
   const handleDeletePress = () => {
     if (!isActive || !canDelete) return;
@@ -69,6 +88,12 @@ export default function SetRow({
 
   const handleUpdate = (field: string, value: any) => {
     if (!isActive) return;
+
+    // Clear validation errors when user starts editing
+    if (showValidationErrors) {
+      setShowValidationErrors(false);
+    }
+
     onUpdate({
       ...set,
       [field]: value,
@@ -81,27 +106,48 @@ export default function SetRow({
   const showDistance = exerciseDefinition?.uses_distance ?? false;
   const showDuration = exerciseDefinition?.uses_duration ?? false;
 
+  // Helper to determine if a field should show error
+  const shouldShowError = (fieldValue: any) => {
+    return (
+      showValidationErrors && (fieldValue === undefined || fieldValue === null)
+    );
+  };
+
   return (
     <XStack gap="$3" alignItems="center" opacity={isActive ? 1 : 0.6}>
-      {/* Set Number */}
+      {/* Set Number - completion button */}
       <Stack
         width={50}
-        alignItems="center"
-        justifyContent="center"
         height={40}
+        marginVertical="$1"
+        alignItems="center"
+        marginLeft="$1"
+        justifyContent="center"
         backgroundColor="$transparent"
-        borderRadius="$2"
+        borderRadius="$4"
+        borderWidth={2}
+        borderColor={set.is_completed ? "$green8" : "$borderSoft"}
+        pressStyle={{
+          backgroundColor: set.is_completed ? "$green8" : "$backgroundPress",
+          scale: 0.95,
+        }}
+        onPress={handleCompletionToggle}
+        cursor="pointer"
+        opacity={isActive ? 1 : 0.6}
       >
-        <XStack gap="$1" alignItems="center">
-          {isComplete && <Check size={14} color="#16a34a" />}
-          <Text
-            size="medium"
-            fontWeight="600"
-            color={isComplete ? "$green8" : "$color"}
-          >
+        {/* Conditional rendering for proper centering */}
+        {set.is_completed ? (
+          <XStack gap="$1" alignItems="center">
+            <Check size={14} color="#16a34a" />
+            <Text size="medium" fontWeight="600" color="$green8">
+              {set.set_number}
+            </Text>
+          </XStack>
+        ) : (
+          <Text size="medium" fontWeight="600" color="$color">
             {set.set_number}
           </Text>
-        </XStack>
+        )}
       </Stack>
 
       {/* Centered Metric Inputs */}
@@ -114,6 +160,7 @@ export default function SetRow({
             isMetric={!isImperial}
             onChange={(value) => handleUpdate("weight", value)}
             isActive={isActive}
+            showError={shouldShowError(set.weight)} // ADD THIS
           />
         )}
         {showReps && (
@@ -123,6 +170,7 @@ export default function SetRow({
             isMetric={!isImperial}
             onChange={(value) => handleUpdate("reps", value)}
             isActive={isActive}
+            showError={shouldShowError(set.reps)} // ADD THIS
           />
         )}
         {showDistance && (
@@ -133,6 +181,7 @@ export default function SetRow({
             isMetric={!isImperial}
             onChange={(value) => handleUpdate("distance", value)}
             isActive={isActive}
+            showError={shouldShowError(set.distance)} // ADD THIS
           />
         )}
         {showDuration && (
@@ -140,11 +189,12 @@ export default function SetRow({
             value={set.duration}
             onChange={(value) => handleUpdate("duration", value)}
             isActive={isActive}
+            showError={shouldShowError(set.duration)} // ADD THIS
           />
         )}
       </XStack>
 
-      {/* Delete Button - only show if deletion is allowed */}
+      {/* Delete Button */}
       {canDelete && isActive && (
         <Stack
           width={36}
@@ -163,7 +213,7 @@ export default function SetRow({
         </Stack>
       )}
 
-      {/* Spacer when delete button is not shown to maintain alignment */}
+      {/* Spacer when delete button is not shown */}
       {(!canDelete || !isActive) && <Stack width={32} height={32} />}
     </XStack>
   );

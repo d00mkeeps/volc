@@ -8,12 +8,14 @@ interface DurationInputProps {
   value: number | string | null | undefined;
   onChange: (seconds: number | undefined) => void;
   isActive: boolean;
+  showError?: boolean;
 }
 
 export default function DurationInput({
   value,
   onChange,
   isActive,
+  showError = false, // ADD THIS
 }: DurationInputProps) {
   const [hours, setHours] = useState("0");
   const [minutes, setMinutes] = useState("00");
@@ -32,8 +34,6 @@ export default function DurationInput({
       setSeconds(s.toString().padStart(2, "0"));
     }
   }, [value]);
-
-  // /components/atoms/DurationInput.tsx (update handleChange method)
 
   const handleChange = (type: "hours" | "minutes" | "seconds", val: string) => {
     const sanitized = val.replace(/[^0-9]/g, "");
@@ -76,6 +76,14 @@ export default function DurationInput({
     }
   };
 
+  const isEmpty = hours === "0" && minutes === "00" && seconds === "00";
+  const shouldShowError = showError && isEmpty;
+  const errorBorderColor = shouldShowError
+    ? "$red8"
+    : isActive
+    ? "$borderSoft"
+    : "$borderMuted";
+
   return (
     <XStack flex={1} gap="$0.5" alignItems="center">
       <Input
@@ -88,7 +96,7 @@ export default function DurationInput({
         keyboardType="number-pad"
         textAlign="center"
         backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+        borderColor={errorBorderColor}
         color={isActive ? "$color" : "$textMuted"}
         editable={isActive}
         width={45}
@@ -108,7 +116,7 @@ export default function DurationInput({
         keyboardType="number-pad"
         textAlign="center"
         backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+        borderColor={errorBorderColor}
         color={isActive ? "$color" : "$textMuted"}
         editable={isActive}
         width={45}
@@ -128,7 +136,7 @@ export default function DurationInput({
         keyboardType="number-pad"
         textAlign="center"
         backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={isActive ? "$borderSoft" : "$borderMuted"}
+        borderColor={errorBorderColor}
         color={isActive ? "$color" : "$textMuted"}
         editable={isActive}
         width={45}

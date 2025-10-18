@@ -5,6 +5,7 @@ import Button from "@/components/atoms/core/Button";
 import { Info, Trash2 } from "@/assets/icons/IconMap";
 import { TouchableOpacity } from "react-native";
 import * as Haptics from "expo-haptics";
+import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
 
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
@@ -17,6 +18,7 @@ interface ExerciseTrackerHeaderProps {
   onShowDefinition?: () => void;
   canDelete: boolean;
   canCancelEdit?: boolean; // Add this
+  onNotesLongPress?: () => void; // ADD THIS
 }
 
 export default function ExerciseTrackerHeader({
@@ -25,6 +27,7 @@ export default function ExerciseTrackerHeader({
   isActive,
   onEditPress,
   onDelete,
+  onNotesLongPress,
   onShowDefinition,
   isEditing = false,
   onCancelEdit,
@@ -153,15 +156,19 @@ export default function ExerciseTrackerHeader({
         )}
       </XStack>
 
-      {exerciseNotes && !isEditing && (
-        <Text
-          size="medium"
-          color="$textSoft"
-          fontStyle="italic"
-          lineHeight={18}
+      {!isEditing && (
+        <LongPressToEdit
+          onLongPress={() => onNotesLongPress?.()}
+          disabled={!isActive}
         >
-          {exerciseNotes}
-        </Text>
+          <Text
+            size="medium"
+            color={exerciseNotes ? "$textSoft" : "$textMuted"}
+            lineHeight={18}
+          >
+            {exerciseNotes || "tap and hold to add notes"}
+          </Text>
+        </LongPressToEdit>
       )}
     </YStack>
   );

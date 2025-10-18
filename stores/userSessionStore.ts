@@ -21,38 +21,34 @@ function getUserPreferredUnits() {
 }
 
 interface UserSessionState {
-  // Session state
   currentWorkout: CompleteWorkout | null;
   isActive: boolean;
   isPaused: boolean;
-  // Timer state
+  pausedAt: Date | null;
   startTime: Date | null;
   elapsedSeconds: number;
   scheduledTime?: string;
+  totalPausedMs: number;
 
-  // Template selection state
   selectedTemplate: CompleteWorkout | null;
   showTemplateSelector: boolean;
 
-  // Conversation state
   activeConversationId: string | null;
 
-  // NEW: Image state
   pendingImageId: string | null;
 
-  // Actions
   startWorkout: (workout: CompleteWorkout) => void;
   pauseWorkout: () => void;
   resumeWorkout: () => void;
   togglePause: () => void;
   cancelWorkout: () => void;
   hasAtLeastOneCompleteSet: () => boolean;
-  finishWorkout: () => void; // ← Now synchronous
+  finishWorkout: () => void;
   saveCompletedWorkout: (metadata: {
     name: string;
     notes: string;
     imageId?: string;
-  }) => Promise<CompleteWorkout>; // ← New
+  }) => Promise<CompleteWorkout>;
   initializeAnalysisAndChat: () => Promise<any>;
   updateElapsedTime: () => void;
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
@@ -62,19 +58,15 @@ interface UserSessionState {
   ) => void;
   resetSession: () => void;
 
-  // Template actions
   setSelectedTemplate: (template: CompleteWorkout | null) => void;
   openTemplateSelector: () => void;
   closeTemplateSelector: () => void;
   selectTemplate: (template: CompleteWorkout) => void;
 
-  // Conversation actions
   setActiveConversation: (id: string | null) => void;
 
-  // NEW: Image actions
   setPendingImage: (imageId: string | null) => void;
 
-  // Computed values
   getTimeString: () => string;
   getProgress: () => { completed: number; total: number };
 }
@@ -96,6 +88,8 @@ export function createEmptyWorkout(userId: string): CompleteWorkout {
 export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   // Initial state
   currentWorkout: null,
+  pausedAt: null,
+  totalPausedMs: 0,
   isActive: false,
   isPaused: false,
   startTime: null,
@@ -117,19 +111,39 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
 
   pauseWorkout: () => {
-    set({ isPaused: true });
+    const { startTime, elapsedSeconds } = get();
+    const pausedAt = new Date();
+    set({
+      isPaused: true,
+      pausedAt: pausedAt,
+    });
   },
 
   resumeWorkout: () => {
-    set({ isPaused: false });
+    const { startTime, pausedAt, totalPausedMs } = get();
+
+    if (pausedAt) {
+      const now = new Date();
+      const pauseDuration = now.getTime() - pausedAt.getTime();
+      const newTotalPausedMs = totalPausedMs + pauseDuration;
+
+      set({
+        isPaused: false,
+        pausedAt: null,
+        totalPausedMs: newTotalPausedMs,
+      });
+    } else {
+      set({ isPaused: false, pausedAt: null });
+    }
   },
 
   togglePause: () => {
     const { isPaused } = get();
+
     if (isPaused) {
-      set({ isPaused: false });
+      get().resumeWorkout();
     } else {
-      set({ isPaused: true });
+      get().pauseWorkout();
     }
   },
 
@@ -147,10 +161,12 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     if (!currentWorkout) return;
 
     set({
+      pausedAt: null,
       currentWorkout: null,
       isActive: false,
       isPaused: false,
       startTime: null,
+      totalPausedMs: 0,
       elapsedSeconds: 0,
       scheduledTime: undefined,
     });
@@ -307,6 +323,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       isActive: false,
       isPaused: false,
       startTime: null,
+      pausedAt: null,
+      totalPausedMs: 0,
       elapsedSeconds: 0,
       scheduledTime: undefined,
       selectedTemplate: null,
@@ -316,14 +334,14 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   },
 
   updateElapsedTime: () => {
-    const { startTime, isPaused } = get();
+    const { startTime, isPaused, totalPausedMs } = get();
     if (startTime && !isPaused) {
       const now = new Date();
-      const elapsed = Math.floor((now.getTime() - startTime.getTime()) / 1000);
-      set({ elapsedSeconds: elapsed });
+      const rawElapsed = now.getTime() - startTime.getTime();
+      const adjustedElapsed = Math.floor((rawElapsed - totalPausedMs) / 1000);
+      set({ elapsedSeconds: adjustedElapsed });
     }
   },
-
   // Template actions
   setSelectedTemplate: (template) => {
     set({ selectedTemplate: template });

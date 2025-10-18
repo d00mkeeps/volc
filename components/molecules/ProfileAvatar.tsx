@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";
 import ImagePickerButton from "../atoms/ImagePickerButton";
-import { clearImageUrlCache } from "./workout/WorkoutImage";
+import LongPressToEdit from "../atoms/core/LongPressToEdit";
 
 interface ProfileAvatarProps {
   editMode?: boolean;
@@ -22,6 +22,7 @@ export default function ProfileAvatar({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
+  const [longPressEditMode, setLongPressEditMode] = useState(false);
 
   useEffect(() => {
     console.log(
@@ -100,72 +101,85 @@ export default function ProfileAvatar({
     loadPendingAvatarUrl();
   }, [pendingAvatarId]);
 
+  const handleLongPress = () => {
+    setLongPressEditMode(true);
+  };
+
   const handleImageUploaded = async (imageId: string) => {
     console.log(`[ProfileAvatar] Image uploaded with ID: ${imageId}`);
     if (onAvatarSelected) {
       onAvatarSelected(imageId);
     }
+    // Exit edit mode after successful upload
+    setLongPressEditMode(false);
   };
 
   const handleImageError = (error: string) => {
     console.error(`[ProfileAvatar] Avatar upload error: ${error}`);
+    // Exit edit mode on error too
+    setLongPressEditMode(false);
   };
+
+  // Show edit overlay if either external editMode or internal longPressEditMode is true
+  const isInEditMode = editMode || longPressEditMode;
 
   // In edit mode, show pending avatar if exists, otherwise show current
   const displayUrl =
-    editMode && pendingAvatarUrl ? pendingAvatarUrl : avatarUrl;
+    isInEditMode && pendingAvatarUrl ? pendingAvatarUrl : avatarUrl;
 
   return (
     <YStack alignItems="center" gap="$2">
-      <Stack
-        width="100%"
-        aspectRatio={1}
-        minWidth={70}
-        borderRadius={32}
-        backgroundColor="$backgroundMuted"
-        justifyContent="center"
-        alignItems="center"
-        overflow="hidden"
-        position="relative"
-      >
-        {/* Avatar Image */}
-        {loadingImage ? (
-          <Text color="$text" fontSize="$3">
-            Loading
-          </Text>
-        ) : displayUrl ? (
-          <Image
-            source={{ uri: displayUrl }}
-            style={{ width: "100%", height: "100%" }}
-            contentFit="cover"
-          />
-        ) : (
-          <Text color="$text" fontSize="$4" fontWeight="600">
-            {displayName.charAt(0).toUpperCase()}
-          </Text>
-        )}
-
-        {/* Edit Mode Overlay */}
-        {editMode && (
-          <Stack
-            position="absolute"
-            top={0}
-            left={0}
-            right={0}
-            bottom={0}
-            backgroundColor="rgba(0, 0, 0, 0.5)"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <ImagePickerButton
-              label="Change"
-              size="small"
-              onImageUploaded={handleImageUploaded}
-              onError={handleImageError}
+      <LongPressToEdit onLongPress={handleLongPress}>
+        <Stack
+          width="100%"
+          aspectRatio={1}
+          minWidth={70}
+          borderRadius={32}
+          backgroundColor="$backgroundMuted"
+          justifyContent="center"
+          alignItems="center"
+          overflow="hidden"
+          position="relative"
+        >
+          {/* Avatar Image */}
+          {loadingImage ? (
+            <Text color="$text" fontSize="$3">
+              Loading
+            </Text>
+          ) : displayUrl ? (
+            <Image
+              source={{ uri: displayUrl }}
+              style={{ width: "100%", height: "100%" }}
+              contentFit="cover"
             />
-          </Stack>
-        )}
-      </Stack>
+          ) : (
+            <Text color="$text" fontSize="$4" fontWeight="600">
+              {displayName.charAt(0).toUpperCase()}
+            </Text>
+          )}
+
+          {/* Edit Mode Overlay */}
+          {isInEditMode && (
+            <Stack
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <ImagePickerButton
+                label="Change"
+                size="small"
+                onImageUploaded={handleImageUploaded}
+                onError={handleImageError}
+              />
+            </Stack>
+          )}
+        </Stack>
+      </LongPressToEdit>
     </YStack>
   );
 }

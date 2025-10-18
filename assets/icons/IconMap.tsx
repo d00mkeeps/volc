@@ -10,6 +10,7 @@ export type AppIconName =
   | "Play"
   | "Pause"
   | "ChevronDown"
+  | "ChevronRight"
   | "Check"
   | "X"
   | "Trash2"
@@ -35,6 +36,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Play: "play",
   Pause: "pause",
   ChevronDown: "chevron-down",
+  ChevronRight: "chevron-forward", // ADD THIS
   Check: "checkmark",
   X: "close",
   Trash2: "trash-outline",
@@ -119,6 +121,10 @@ export const Pause = (props: Omit<AppIconProps, "name">) => (
 
 export const ChevronDown = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="ChevronDown" {...props} />
+);
+
+export const ChevronRight = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="ChevronRight" {...props} />
 );
 
 export const Check = (props: Omit<AppIconProps, "name">) => (
