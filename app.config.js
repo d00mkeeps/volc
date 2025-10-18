@@ -13,16 +13,27 @@ const config = {
       resizeMode: "contain",
       backgroundColor: "#ffffff"
     },
-    ios: {
-      supportsTablet: true,
-      bundleIdentifier: "com.d00mkeeps.Volc",
-      minimumOSVersion: "15.1",
-      infoPlist: {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
-        "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos."
+// File: /app.config.js (or wherever this config lives)
+
+ios: {
+  supportsTablet: true,
+  bundleIdentifier: "com.d00mkeeps.Volc",
+  minimumOSVersion: "15.1",
+  infoPlist: {
+    "ITSAppUsesNonExemptEncryption": false,
+    "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
+    "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos.",
+    // ADD THIS:
+    "NSAppTransportSecurity": {
+      "NSExceptionDomains": {
+        "supabase.co": {
+          "NSIncludesSubdomains": true,
+          "NSTemporaryExceptionAllowsInsecureHTTPLoads": false
+        }
       }
-    },
+    }
+  }
+},
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",

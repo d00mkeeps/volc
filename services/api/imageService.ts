@@ -137,16 +137,24 @@ export class ImageService extends BaseApiService {
    * Upload image directly to Supabase storage using signed URL
    */
   // /services/api/imageService.ts - uploadImage method
+  // /services/api/imageService.ts - uploadImage method
   async uploadImage(uploadUrl: string, imageUri: string): Promise<boolean> {
     try {
       console.log("[ImageService] Starting direct upload to Supabase");
       console.log("[ImageService] Upload URL:", uploadUrl);
+      console.log("[ImageService] Image URI:", imageUri);
 
-      // Get the file blob
-      const response = await fetch(imageUri);
-      const blob = await response.blob();
-      console.log("[ImageService] Blob type:", blob.type);
-      console.log("[ImageService] Blob size:", blob.size);
+      // ✅ FIX: Use FormData instead of fetch() for local files
+      const filename = imageUri.split("/").pop() || "image.jpg";
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+      const formData = new FormData();
+      formData.append("file", {
+        uri: imageUri,
+        name: filename,
+        type: type,
+      } as any);
 
       // Get token
       const {
@@ -154,23 +162,18 @@ export class ImageService extends BaseApiService {
       } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      // ✅ Try PUT method instead of POST
       const uploadResponse = await fetch(uploadUrl, {
-        method: "PUT", // Changed from POST
-        body: blob,
+        method: "PUT",
+        body: formData,
         headers: {
-          "Content-Type": blob.type,
-          ...(token && { Authorization: `Bearer ${token}` }), // Conditional auth header
+          "Content-Type": type,
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
 
       console.log(
         "[ImageService] Upload response status:",
         uploadResponse.status
-      );
-      console.log(
-        "[ImageService] Upload response headers:",
-        Object.fromEntries(uploadResponse.headers.entries())
       );
 
       const responseText = await uploadResponse.text();
@@ -189,6 +192,7 @@ export class ImageService extends BaseApiService {
       return false;
     }
   }
+
   /**
    * Delete an image from storage
    */

@@ -1,20 +1,50 @@
-fastapi
-uvicorn
-anthropic
-pydantic-settings
-websockets
-uvicorn[standard]
-langchain-anthropic
-python-dotenv
-pydantic
-langchain-core
-pytest
-pytest-asyncio
-supabase
-pydantic[email]
-apscheduler
-langchain-google-vertexai
-google-cloud-aiplatform
-pandas
-scipy
-langchain.tools
+# Core FastAPI & Server
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+pydantic==2.11.7
+pydantic-settings==2.10.1
+pydantic[email]==2.11.7
+starlette==0.47.2
+
+# WebSockets
+websockets==15.0.1
+
+# Supabase (PINNED to avoid breaking changes)
+supabase==2.17.0
+gotrue==2.12.3
+postgrest==1.1.1
+storage3==0.12.0
+realtime==2.6.6
+supafunc==0.10.1
+
+# AI/LLM
+anthropic==0.60.0
+langchain-anthropic==0.3.18
+langchain-core==0.3.78
+langchain-google-vertexai==2.0.27
+langchain-tools==0.1.34
+langchain==0.3.27
+langchain-community==0.3.31
+langchain-text-splitters==0.3.11
+
+# Google Cloud
+google-cloud-aiplatform==1.106.0
+google-cloud-storage==2.19.0
+google-api-core==2.25.1
+google-auth==2.40.3
+
+# Data Processing
+pandas==2.3.1
+scipy==1.16.1
+numpy==2.3.2
+
+# Scheduling
+apscheduler==3.11.0
+
+# Utilities
+python-dotenv==1.1.1
+pytest==8.4.1
+pytest-asyncio==1.1.0
+httpx==0.28.1
+requests==2.32.5
+PyYAML==6.0.2

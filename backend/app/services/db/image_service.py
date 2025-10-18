@@ -61,12 +61,17 @@ class ImageService(BaseDBService):
             
             if isinstance(signed_url, dict) and 'signedUrl' in signed_url:
                 upload_url = signed_url['signedUrl']
+                
+                # 🔥 FIX: Handle relative URLs (Railway compatibility)
+                if not upload_url.startswith('http'):
+                    base_url = user_client.supabase_url
+                    upload_url = f"{base_url}/storage/v1/{upload_url}"
+                    logger.info(f"🔧 Fixed relative URL to: {upload_url}")
             else:
                 logger.error(f"Unexpected signed URL structure: {signed_url}")
                 raise Exception("Cannot find signedUrl in response")
-            
-            logger.info(f"Successfully created upload URL")
-            
+
+            logger.info(f"Successfully created upload URL: {upload_url}")
             response_data = {
                 "image_id": image_id,
                 "upload_url": upload_url,
