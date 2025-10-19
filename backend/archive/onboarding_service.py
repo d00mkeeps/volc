@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 from fastapi import WebSocket, WebSocketDisconnect
 from langchain_anthropic import ChatAnthropic
-from backend.archive.onboarding_chain import OnboardingChain
+from archive.onboarding_chain import OnboardingChain
 from langchain_core.messages import HumanMessage, AIMessage
 
 logger = logging.getLogger(__name__)

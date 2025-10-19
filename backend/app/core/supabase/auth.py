@@ -1,4 +1,3 @@
-# backend/app/core/supabase/auth.py
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
