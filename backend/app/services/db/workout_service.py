@@ -346,6 +346,9 @@ class WorkoutService(BaseDBService):
 
             await self.update_bicep_leaderboard(workout_id, user_id, jwt_token)
 
+            import asyncio
+            asyncio.create_task(self._regenerate_user_bundle(user_id, jwt_token))
+
             logger.info(f"Workout creation complete for ID: {workout_id}")
             return await self.format_response(workout)
         
@@ -558,3 +561,25 @@ class WorkoutService(BaseDBService):
                 "success": False,
                 "error": str(e)
             }
+        
+
+    async def _regenerate_user_bundle(self, user_id: str, jwt_token: str):
+        """
+        Regenerate user's basic analysis bundle after workout completion.
+        Runs in background - errors are logged but don't affect workout creation.
+        """
+        try:
+            logger.info(f"🔄 Triggering basic bundle regeneration for user: {user_id}")
+            
+            from app.services.workout_analysis.basic.generator import BasicBundleGenerator
+            
+            generator = BasicBundleGenerator()
+            result = await generator.generate_basic_bundle(user_id, jwt_token)
+            
+            if result.get('success'):
+                logger.info(f"✅ Basic bundle regenerated for user {user_id}: {result.get('bundle_id')}")
+            else:
+                logger.warning(f"⚠️  Bundle regeneration failed for user {user_id}: {result.get('error')}")
+                
+        except Exception as e:
+            logger.error(f"💥 Error regenerating bundle for user {user_id}: {str(e)}", exc_info=True)

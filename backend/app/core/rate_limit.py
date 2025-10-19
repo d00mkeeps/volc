@@ -1,4 +1,3 @@
-# app/core/rate_limit.py
 from functools import wraps
 from fastapi import HTTPException, status
 from app.services.rate_limiter import rate_limiter

@@ -38,11 +38,11 @@ class WorkoutAnalysisLLMService:
             )
             
         return self._conversation_chains[conversation_id]
-        
+       
     async def process_websocket(self, websocket: WebSocket, conversation_id: str, user_id: str):
         """Process WebSocket connection for workout analysis interpretation"""
         
-        # NEW: Initialize profiler
+        # Initialize profiler
         profiler = PerformanceProfiler(conversation_id, enabled=self.enable_profiling)
         
         try:
@@ -58,7 +58,7 @@ class WorkoutAnalysisLLMService:
             })
             profiler.end_phase()
             
-            # Load conversation context
+            # Load conversation context (messages only)
             profiler.start_phase("context_loading")
             from app.services.context.conversation_context_service import conversation_context_service
             
@@ -66,7 +66,7 @@ class WorkoutAnalysisLLMService:
             context = await conversation_context_service.load_context_admin(conversation_id, user_id)
             profiler.end_phase(
                 messages_count=len(context.messages),
-                bundles_count=len(context.bundles)
+                bundles_count=0  # We don't use conversation bundles anymore
             )
             
             # Get or create conversation chain
@@ -90,13 +90,32 @@ class WorkoutAnalysisLLMService:
             # Load context into chain
             profiler.start_phase("context_injection")
             chain.load_conversation_context(context)
-            if context.bundles:
-                chain.load_bundles(context.bundles)
+            
+            # Load user's basic bundle (instead of conversation-specific bundles)
+            from app.services.workout_analysis.schemas import WorkoutDataBundle
+            
+            bundle_result = await self.analysis_bundle_service.get_latest_basic_bundle(user_id, "")
+            if bundle_result.get('success') and bundle_result.get('data'):
+                bundle_dict = bundle_result['data']
+                
+                # Parse dict back into Pydantic model
+                try:
+                    bundle = WorkoutDataBundle.model_validate(bundle_dict)
+                    chain.load_bundles([bundle])
+                    logger.info(f"✅ Loaded basic bundle {bundle.id} for user {user_id}")
+                except Exception as e:
+                    logger.error(f"❌ Failed to parse bundle: {str(e)}", exc_info=True)
+            else:
+                logger.info(f"ℹ️  No basic bundle found for user {user_id}")
+            
             profiler.end_phase()
 
             # Handle proactive message or existing conversation
             profiler.start_phase("conversation_flow_decision")
-            if not context.messages and context.bundles:
+            has_messages = len(context.messages) > 0
+            has_bundle = bundle_result.get('success') and bundle_result.get('data')
+            
+            if not has_messages and has_bundle:
                 logger.info("New conversation with workout data - sending proactive analysis")
                 profiler.end_phase(flow="proactive_message")
                 
@@ -129,11 +148,11 @@ class WorkoutAnalysisLLMService:
                     logger.info(f"Saved proactive AI message for conversation {conversation_id}")
                 profiler.end_phase()
 
-            elif not context.messages and not context.bundles:
+            elif not has_messages and not has_bundle:
                 logger.info("Empty conversation - waiting for user input")
                 profiler.end_phase(flow="empty_conversation")
             else:
-                logger.info(f"Existing conversation loaded with {len(context.messages)} messages and {len(context.bundles)} bundles")
+                logger.info(f"Existing conversation loaded with {len(context.messages)} messages")
                 profiler.end_phase(flow="existing_conversation")
 
             # Log initial setup summary
@@ -143,7 +162,7 @@ class WorkoutAnalysisLLMService:
             while True:
                 data = await websocket.receive_json()
                 
-                # NEW: Start profiling each message
+                # Start profiling each message
                 message_profiler = PerformanceProfiler(
                     f"{conversation_id}-msg", 
                     enabled=self.enable_profiling
