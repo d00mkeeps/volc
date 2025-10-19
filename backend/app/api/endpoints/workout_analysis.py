@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException, Depends, status
 from app.core.supabase.auth import get_current_user, get_jwt_token
-from backend.app.core import rate_limit
+from app.core import rate_limit
 from ...services.workout_analysis.basic.generator import BasicBundleGenerator
 from ...services.workout_analysis_service import WorkoutAnalysisService
 from ...schemas.workout_analysis import WorkoutAnalysisRequest
