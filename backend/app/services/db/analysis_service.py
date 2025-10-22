@@ -298,16 +298,19 @@ class AnalysisBundleService(BaseDBService):
             logger.error(f"Error creating basic bundle: {str(e)}")
             return await self.handle_error("create_basic_bundle", e)
 
+
     async def get_latest_basic_bundle(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Get the most recent basic bundle for a user.
         Returns the latest bundle with status='complete'.
+        Uses admin client for backend operations.
         """
         try:
             logger.info(f"Getting latest basic bundle for user: {user_id}")
             
-            user_client = self.get_user_client(jwt_token)
-            result = user_client.table("analysis_bundles") \
+            # Use admin client for backend operations (no JWT needed)
+            admin_client = self.get_admin_client()  # ← CHANGED
+            result = admin_client.table("analysis_bundles") \
                 .select("*") \
                 .eq("user_id", user_id) \
                 .eq("type", "basic") \
@@ -328,6 +331,7 @@ class AnalysisBundleService(BaseDBService):
         except Exception as e:
             logger.error(f"Error getting latest basic bundle: {str(e)}")
             return await self.handle_error("get_latest_basic_bundle", e)
+
 
     async def save_basic_bundle(self, bundle_id: str, bundle: 'WorkoutDataBundle', jwt_token: str) -> Dict[str, Any]:
         """

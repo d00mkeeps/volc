@@ -5,20 +5,20 @@ from langchain_google_vertexai import ChatVertexAI
 from ..chains.workout_analysis_chain import WorkoutAnalysisChain
 from ..db.message_service import MessageService
 from ..db.analysis_service import AnalysisBundleService
-from .performance_profiler import PerformanceProfiler  # NEW
+from .performance_profiler import PerformanceProfiler
 
 logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisLLMService:
     """Service for LLM interpretation of workout data"""
     
-    def __init__(self, credentials=None, project_id=None, enable_profiling: bool = True):  # NEW
+    def __init__(self, credentials=None, project_id=None, enable_profiling: bool = True):
         self._conversation_chains = {}
         self.message_service = MessageService()
         self.analysis_bundle_service = AnalysisBundleService()
         self.credentials = credentials  
         self.project_id = project_id
-        self.enable_profiling = enable_profiling  # NEW
+        self.enable_profiling = enable_profiling
         
     def get_chain(self, conversation_id: str, user_id: str = None) -> WorkoutAnalysisChain:
         """Get or create a conversation chain"""
@@ -38,7 +38,7 @@ class WorkoutAnalysisLLMService:
             )
             
         return self._conversation_chains[conversation_id]
-       
+        
     async def process_websocket(self, websocket: WebSocket, conversation_id: str, user_id: str):
         """Process WebSocket connection for workout analysis interpretation"""
         
@@ -110,44 +110,14 @@ class WorkoutAnalysisLLMService:
             
             profiler.end_phase()
 
-            # Handle proactive message or existing conversation
+            # Handle conversation flow (no proactive messages)
             profiler.start_phase("conversation_flow_decision")
             has_messages = len(context.messages) > 0
             has_bundle = bundle_result.get('success') and bundle_result.get('data')
             
             if not has_messages and has_bundle:
-                logger.info("New conversation with workout data - sending proactive analysis")
-                profiler.end_phase(flow="proactive_message")
-                
-                profiler.start_phase("proactive_message_generation")
-                full_response_content = ""
-                first_token = True
-                
-                async for response in chain.process_message("Analyze my workout"):
-                    if first_token and response.get("type") == "content":
-                        profiler.end_phase()  # End generation, start streaming
-                        profiler.start_phase("proactive_message_streaming")
-                        first_token = False
-                        
-                    await websocket.send_json(response)
-                    if response.get("type") == "content":
-                        full_response_content += response.get("data", "")
-                
-                if not first_token:  # If we started streaming
-                    profiler.end_phase(response_length=len(full_response_content))
-                
-                # Save message
-                profiler.start_phase("save_proactive_message")
-                if full_response_content:
-                    await self.message_service.save_server_message(
-                        conversation_id=conversation_id,
-                        content=full_response_content,
-                        sender="assistant"
-                    )
-                    await conversation_context_service.refresh_context(conversation_id, user_id)
-                    logger.info(f"Saved proactive AI message for conversation {conversation_id}")
-                profiler.end_phase()
-
+                logger.info("New conversation with workout data - bundle available for context")
+                profiler.end_phase(flow="new_conversation_with_bundle")
             elif not has_messages and not has_bundle:
                 logger.info("Empty conversation - waiting for user input")
                 profiler.end_phase(flow="empty_conversation")
