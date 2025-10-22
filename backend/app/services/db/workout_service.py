@@ -299,6 +299,7 @@ class WorkoutService(BaseDBService):
                         "order_index": order_index,
                         "weight_unit": exercise.get("weight_unit") or "kg",
                         "distance_unit": exercise.get("distance_unit") or "m",
+                        "notes": exercise.get("notes"),  # ADD THIS LINE
                     }).execute()
 
                     if not hasattr(exercise_result, "data") or not exercise_result.data:
@@ -415,6 +416,7 @@ class WorkoutService(BaseDBService):
                         "order_index": exercise.get("order_index", index),
                         "weight_unit": exercise.get("weight_unit", "kg"),
                         "distance_unit": exercise.get("distance_unit", "m"),
+                        "notes": exercise.get("notes"),
                     }).execute()
 
                     if hasattr(exercise_result, "data") and exercise_result.data:

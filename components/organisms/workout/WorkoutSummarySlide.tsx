@@ -41,6 +41,16 @@ export function WorkoutSummarySlide({
     new Set()
   );
 
+  const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>(
+    () => {
+      const initial: Record<string, string> = {};
+      currentWorkout?.workout_exercises.forEach((ex) => {
+        initial[ex.id] = ex.notes || "";
+      });
+      return initial;
+    }
+  );
+
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
     if (showNameError && name.trim().length > 0) {
@@ -58,15 +68,6 @@ export function WorkoutSummarySlide({
       }
       return newSet;
     });
-  };
-
-  const handleExerciseNotesChange = (exerciseId: string, notes: string) => {
-    const exercise = currentWorkout?.workout_exercises.find(
-      (ex) => ex.id === exerciseId
-    );
-    if (exercise) {
-      updateExercise(exerciseId, { ...exercise, notes });
-    }
   };
 
   const isNameValid = workoutName.trim().length > 0;
@@ -93,7 +94,7 @@ export function WorkoutSummarySlide({
     try {
       await saveCompletedWorkout({
         name: workoutName.trim(),
-        notes: "", // No workout-level notes anymore
+        notes: workoutNotes.trim(),
         imageId: pendingImageId || undefined,
       });
       await initializeAnalysisAndChat();
@@ -114,10 +115,27 @@ export function WorkoutSummarySlide({
     console.log("=== SUMMARY SLIDE SKIP ===");
     setLoadingState("skip");
 
+    // Sync exercise notes to store
+    console.log("📝 Exercise notes before sync:", exerciseNotes);
+    Object.entries(exerciseNotes).forEach(([exerciseId, notes]) => {
+      updateExercise(exerciseId, { notes });
+    });
+
+    // Get fresh state from store after updates
+    const freshWorkout = useUserSessionStore.getState().currentWorkout;
+    console.log(
+      "📝 Fresh store exercises after sync:",
+      freshWorkout?.workout_exercises.map((ex) => ({
+        id: ex.id,
+        name: ex.name,
+        notes: ex.notes,
+      }))
+    );
+
     try {
       await saveCompletedWorkout({
         name: workoutName.trim(),
-        notes: "", // No workout-level notes anymore
+        notes: workoutNotes.trim(),
         imageId: pendingImageId || undefined,
       });
       onSkip();
@@ -232,11 +250,16 @@ export function WorkoutSummarySlide({
                     {isExpanded && (
                       <YStack padding="$3" paddingTop="$0" gap="$2">
                         <TextArea
-                          value={exercise.notes || ""}
-                          onChangeText={(notes) =>
-                            handleExerciseNotesChange(exercise.id, notes)
+                          value={
+                            exerciseNotes[exercise.id] ?? exercise.notes ?? ""
                           }
-                          placeholder="Add notes for this exercise..."
+                          onChangeText={(notes) =>
+                            setExerciseNotes((prev) => ({
+                              ...prev,
+                              [exercise.id]: notes,
+                            }))
+                          }
+                          placeholder="add notes.."
                           minHeight={100}
                           backgroundColor="$background"
                           borderColor="$borderSoft"

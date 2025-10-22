@@ -10,16 +10,6 @@ import { useWorkoutStore } from "./workout/WorkoutStore";
 import { filterIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "./workout/exerciseStore";
 
-function getUserPreferredUnits() {
-  const { userProfile } = useUserStore.getState();
-  const isImperial = userProfile?.is_imperial ?? false;
-
-  return {
-    weight: isImperial ? ("lbs" as const) : ("kg" as const),
-    distance: isImperial ? ("mi" as const) : ("km" as const),
-  };
-}
-
 interface UserSessionState {
   currentWorkout: CompleteWorkout | null;
   isActive: boolean;
@@ -54,7 +44,7 @@ interface UserSessionState {
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
   updateExercise: (
     exerciseId: string,
-    updatedExercise: WorkoutExercise
+    updatedExercise: Partial<WorkoutExercise>
   ) => void;
   resetSession: () => void;
 
@@ -172,20 +162,26 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     });
   },
 
-  updateExercise: (exerciseId, updatedExercise) => {
-    const { currentWorkout, isActive } = get();
-    if (!isActive || !currentWorkout) return;
+  updateExercise: (
+    exerciseId: string,
+    updatedFields: Partial<WorkoutExercise>
+  ) => {
+    const { currentWorkout } = get();
+    if (!currentWorkout) return;
 
-    const updatedWorkout = {
+    const updatedWorkout: CompleteWorkout = {
       ...currentWorkout,
       workout_exercises: currentWorkout.workout_exercises.map((exercise) =>
-        exercise.id === exerciseId ? updatedExercise : exercise
+        exercise.id === exerciseId
+          ? { ...exercise, ...updatedFields }
+          : exercise
       ),
       updated_at: new Date().toISOString(),
     };
 
     set({ currentWorkout: updatedWorkout });
   },
+
   initializeAnalysisAndChat: async () => {
     const { currentWorkout } = get();
     if (!currentWorkout) {

@@ -134,6 +134,12 @@ export default function WorkoutViewModal({
           {exercise.name}
         </Text>
 
+        {exercise.notes && (
+          <Text size="medium" color="$textSoft" fontStyle="italic">
+            {exercise.notes}
+          </Text>
+        )}
+
         {/* Data table */}
         <YStack
           gap="$2"
