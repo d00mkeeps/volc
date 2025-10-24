@@ -574,9 +574,10 @@ class WorkoutService(BaseDBService):
             logger.info(f"Loading workouts for user {user_id} from {from_date}")
             
             response = self.get_admin_client().table('workouts').select(
-                '*, workout_exercises(name, definition_id, workout_exercise_sets(weight, reps, rpe))'
+                '*, workout_exercises(name, definition_id, notes, order_index, workout_exercise_sets(set_number, weight, reps, rpe, estimated_1rm, distance, duration))'
             ).eq('user_id', user_id).gte('created_at', from_date.isoformat()).order('created_at', desc=True).execute()
-            
+
+
             if response.data:
                 logger.info(f"Successfully loaded {len(response.data)} workouts for user {user_id}")
                 return {
@@ -596,24 +597,24 @@ class WorkoutService(BaseDBService):
                 "success": False,
                 "error": str(e)
             }
-        
+            
     async def _regenerate_user_bundle(self, user_id: str, jwt_token: str):
         """
-        Regenerate user's basic analysis bundle after workout completion.
+        Regenerate user's analysis bundle after workout completion.
         Runs in background - errors are logged but don't affect workout creation.
         """
         try:
-            logger.info(f"🔄 Triggering basic bundle regeneration for user: {user_id}")
+            logger.info(f"🔄 Triggering analysis bundle regeneration for user: {user_id}")
             
-            from app.services.workout_analysis.basic.generator import BasicBundleGenerator
+            from app.services.workout_analysis.generator import AnalysisBundleGenerator
             
-            generator = BasicBundleGenerator()
-            result = await generator.generate_basic_bundle(user_id, jwt_token)
+            generator = AnalysisBundleGenerator()
+            result = await generator.generate_analysis_bundle(user_id, jwt_token)
             
             if result.get('success'):
-                logger.info(f"✅ Basic bundle regenerated for user {user_id}: {result.get('bundle_id')}")
+                logger.info(f"✅ Analysis bundle regenerated for user {user_id}: {result.get('bundle_id')}")
             else:
-                logger.warning(f"⚠️  Bundle regeneration failed for user {user_id}: {result.get('error')}")
+                logger.warning(f"⚠️ Bundle regeneration failed for user {user_id}: {result.get('error')}")
                 
         except Exception as e:
             logger.error(f"💥 Error regenerating bundle for user {user_id}: {str(e)}", exc_info=True)

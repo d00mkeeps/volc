@@ -44,3 +44,11 @@ class SupabaseClientFactory:
 
 # Global instance
 supabase_factory = SupabaseClientFactory()
+
+def get_user_client(jwt_token: str) -> Client:
+    """Get client with user context for RLS operations"""
+    return supabase_factory.get_user_client(jwt_token)
+
+def get_admin_client() -> Client:
+    """Get client with service role for backend operations"""
+    return supabase_factory.get_admin_client()

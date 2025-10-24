@@ -2,7 +2,7 @@ from typing import Dict, List, Any, NamedTuple
 import logging
 
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
-from app.services.workout_analysis.schemas import WorkoutDataBundle
+from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
 from app.services.db.base_service import BaseDBService
 
 logger = logging.getLogger(__name__)
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class ConversationContext(NamedTuple):
     """Structured conversation context data"""
     messages: List[BaseMessage]
-    bundles: List[WorkoutDataBundle]
+    bundles: List[WorkoutAnalysisBundle]
 
 class ConversationAttachmentsService(BaseDBService):
     """Service for loading complete conversation context (messages + analysis bundles)"""
@@ -32,8 +32,8 @@ class ConversationAttachmentsService(BaseDBService):
         
         return langchain_messages
     
-    def _convert_bundles_to_workout_data(self, raw_bundles: List[Dict[str, Any]]) -> List[WorkoutDataBundle]:
-        """Convert database bundle format to WorkoutDataBundle objects"""
+    def _convert_bundles_to_workout_data(self, raw_bundles: List[Dict[str, Any]]) -> List[WorkoutAnalysisBundle]:
+        """Convert database bundle format to WorkoutAnalysisBundle objects"""
         workout_bundles = []
         
         for bundle_raw in raw_bundles:
@@ -55,8 +55,8 @@ class ConversationAttachmentsService(BaseDBService):
                     'chart_urls': bundle_raw.get('chart_urls', {}),
                 }
                 
-                # Create WorkoutDataBundle instance
-                workout_bundle = WorkoutDataBundle(**bundle_data)
+                # Create WorkoutAnalysisBundle instance
+                workout_bundle = WorkoutAnalysisBundle(**bundle_data)
                 workout_bundles.append(workout_bundle)
                 
             except Exception as e:

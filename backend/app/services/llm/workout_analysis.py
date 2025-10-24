@@ -92,22 +92,49 @@ class WorkoutAnalysisLLMService:
             chain.load_conversation_context(context)
             
             # Load user's basic bundle (instead of conversation-specific bundles)
-            from app.services.workout_analysis.schemas import WorkoutDataBundle
-            
-            bundle_result = await self.analysis_bundle_service.get_latest_basic_bundle(user_id, "")
+            from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
+           
+
+            bundle_result = await self.analysis_bundle_service.get_latest_analysis_bundle_admin(user_id)
             if bundle_result.get('success') and bundle_result.get('data'):
                 bundle_dict = bundle_result['data']
                 
-                # Parse dict back into Pydantic model
+                # The bundle_dict from database needs to be reconstructed to match WorkoutAnalysisBundle schema
+                # Database stores: {id, user_id, status, metadata, workouts, top_performers, consistency_metrics, correlation_data}
+                # Schema expects: {id, user_id, status, metadata, general_workout_data, recent_workouts, volume_data, strength_data, consistency_data, ...}
+                
                 try:
-                    bundle = WorkoutDataBundle.model_validate(bundle_dict)
+                    # Reconstruct bundle to match new schema
+                    reconstructed_bundle = {
+                        'id': bundle_dict['id'],
+                        'user_id': bundle_dict['user_id'],
+                        'status': bundle_dict['status'],
+                        'metadata': bundle_dict['metadata'],
+                        # Extract from 'workouts' JSON column
+                        'general_workout_data': bundle_dict['workouts'].get('general_workout_data', {}),
+                        'recent_workouts': bundle_dict['workouts'].get('recent_workouts', []),
+                        # Extract from 'top_performers' JSON column
+                        'strength_data': bundle_dict['top_performers'].get('strength_data', {}),
+                        'volume_data': bundle_dict['top_performers'].get('volume_data', {}),
+                        'muscle_group_balance': bundle_dict['top_performers'].get('muscle_group_balance'),
+                        # Renamed columns
+                        'consistency_data': bundle_dict['consistency_metrics'],
+                        'correlation_insights': bundle_dict['correlation_data']
+                    }
+                    
+                    bundle = WorkoutAnalysisBundle.model_validate(reconstructed_bundle)
                     chain.load_bundles([bundle])
                     logger.info(f"✅ Loaded basic bundle {bundle.id} for user {user_id}")
                 except Exception as e:
                     logger.error(f"❌ Failed to parse bundle: {str(e)}", exc_info=True)
+                    logger.error(f"Bundle dict keys: {bundle_dict.keys()}")
+                    logger.error(f"Workouts structure: {bundle_dict.get('workouts', {}).keys() if isinstance(bundle_dict.get('workouts'), dict) else 'not a dict'}")
             else:
                 logger.info(f"ℹ️  No basic bundle found for user {user_id}")
-            
+
+
+
+
             profiler.end_phase()
 
             # Handle conversation flow (no proactive messages)

@@ -1,37 +1,48 @@
+"""
+Workout Analysis Bundle Generator
+
+Orchestrates generation of comprehensive user-level workout analysis bundles.
+Bundles are regenerated after each workout creation/deletion to ensure data freshness.
+"""
+
 import logging
 from typing import Dict, Any
 
 from app.services.db.workout_service import WorkoutService
 from app.services.db.analysis_service import AnalysisBundleService
-from app.services.workout_analysis.basic.processor import BasicBundleProcessor
+from app.services.workout_analysis.processor import AnalysisBundleProcessor
 
 logger = logging.getLogger(__name__)
 
-class BasicBundleGenerator:
+
+class AnalysisBundleGenerator:
     """
-    Orchestrates generation of basic user-level workout analysis bundles.
+    Orchestrates generation of comprehensive workout analysis bundles.
     
-    Basic bundles analyze the last 30 days of workout data and include:
-    - Top performers (strength/volume gains)
+    Analysis bundles include:
+    - General workout data and statistics
+    - Recent workout history (last 7 days with full detail)
+    - Volume metrics and trends
+    - Strength progression (e1RM tracking)
     - Consistency metrics
-    - Short-term trends
-    - Recent workout history
+    - Muscle group balance (coming soon)
+    - Correlation insights (coming soon)
     """
     
     def __init__(self):
         self.workout_service = WorkoutService()
         self.analysis_service = AnalysisBundleService()
-        self.processor = BasicBundleProcessor()
+        self.processor = AnalysisBundleProcessor()
     
-    async def generate_basic_bundle(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
+    async def generate_analysis_bundle(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
-        Generate a complete basic analysis bundle for a user.
+        Generate a complete analysis bundle for a user.
         
         Flow:
         1. Create empty bundle (status='pending')
         2. Update to 'processing'
         3. Fetch last 30 days of workouts
-        4. Process data through calculators
+        4. Process data through AnalysisBundleProcessor
         5. Save complete bundle (status='complete')
         6. Cleanup old bundles
         
@@ -45,10 +56,10 @@ class BasicBundleGenerator:
         bundle_id = None
         
         try:
-            logger.info(f"🚀 Starting basic bundle generation for user: {user_id}")
+            logger.info(f"🚀 Starting analysis bundle generation for user: {user_id}")
             
             # 1. Create empty bundle
-            bundle_result = await self.analysis_service.create_basic_bundle(user_id, jwt_token)
+            bundle_result = await self.analysis_service.create_analysis_bundle(user_id, jwt_token)
             
             if not bundle_result.get('success'):
                 error = bundle_result.get('error', 'Unknown error')
@@ -103,11 +114,10 @@ class BasicBundleGenerator:
             
             # Transform data to match processor format
             workout_data = self._format_workout_data(workouts)
-            logger.info(f"📊 Formatted workout data: {workout_data['metadata']['total_workouts']} workouts, "
-                       f"{workout_data['metadata']['total_exercises']} exercises")
+            logger.info(f"📊 Formatted {workout_count} workouts for processing")
             
             # 4. Process data
-            logger.info(f"🔬 Processing {workout_count} workouts through BasicBundleProcessor")
+            logger.info(f"🔬 Processing {workout_count} workouts through AnalysisBundleProcessor")
             complete_bundle = self.processor.process(
                 bundle_id=bundle_id,
                 user_id=user_id,
@@ -118,7 +128,7 @@ class BasicBundleGenerator:
             
             # 5. Save complete bundle
             logger.info(f"💾 Saving complete bundle: {bundle_id}")
-            save_result = await self.analysis_service.save_basic_bundle(
+            save_result = await self.analysis_service.save_analysis_bundle(
                 bundle_id, complete_bundle, jwt_token
             )
             
@@ -135,7 +145,7 @@ class BasicBundleGenerator:
             
             # 6. Cleanup old bundles (keep only the latest)
             logger.info(f"🧹 Cleaning up old bundles for user: {user_id}")
-            cleanup_result = await self.analysis_service.delete_old_basic_bundles(
+            cleanup_result = await self.analysis_service.delete_old_analysis_bundles(
                 user_id, jwt_token, keep_latest=1
             )
             
@@ -143,7 +153,7 @@ class BasicBundleGenerator:
             logger.info(f"🧹 Deleted {deleted_count} old bundles")
             
             # Success!
-            logger.info(f"🎉 Basic bundle generation complete for user {user_id}")
+            logger.info(f"🎉 Analysis bundle generation complete for user {user_id}")
             return {
                 'success': True,
                 'bundle_id': bundle_id,
@@ -154,7 +164,7 @@ class BasicBundleGenerator:
             }
             
         except Exception as e:
-            logger.error(f"💥 Critical error generating basic bundle: {str(e)}", exc_info=True)
+            logger.error(f"💥 Critical error generating analysis bundle: {str(e)}", exc_info=True)
             
             # Mark bundle as failed if we created one
             if bundle_id:
@@ -173,48 +183,17 @@ class BasicBundleGenerator:
     
     def _format_workout_data(self, workouts: list) -> Dict[str, Any]:
         """
-        Transform workout data from get_user_workouts_admin() format
-        to the format expected by BasicBundleProcessor.
+        Prepare workout data for the processor.
+        
+        The processor expects a simple structure with 'workouts' key.
+        No need for complex metadata calculation here - the processor handles it.
         
         Args:
             workouts: List of workout objects from database
             
         Returns:
-            {
-                'workouts': [...],
-                'metadata': {
-                    'total_workouts': int,
-                    'total_exercises': int,
-                    'date_range': {...},
-                    'exercises_included': [...]
-                }
-            }
+            {'workouts': [...]}
         """
-        # Calculate metadata
-        total_workouts = len(workouts)
-        total_exercises = sum(len(w.get('workout_exercises', [])) for w in workouts)
-        
-        # Get unique exercise names
-        exercise_names = set()
-        for workout in workouts:
-            for exercise in workout.get('workout_exercises', []):
-                if exercise.get('name'):
-                    exercise_names.add(exercise['name'])
-        
-        # Get date range
-        workout_dates = [w.get('created_at') for w in workouts if w.get('created_at')]
-        earliest_date = min(workout_dates) if workout_dates else None
-        latest_date = max(workout_dates) if workout_dates else None
-        
         return {
-            'workouts': workouts,
-            'metadata': {
-                'total_workouts': total_workouts,
-                'total_exercises': total_exercises,
-                'date_range': {
-                    'earliest': earliest_date,
-                    'latest': latest_date
-                },
-                'exercises_included': sorted(list(exercise_names))
-            }
+            'workouts': workouts
         }

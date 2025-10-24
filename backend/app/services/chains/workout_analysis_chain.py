@@ -6,7 +6,7 @@ import asyncio
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_google_vertexai import ChatVertexAI
-from app.services.workout_analysis.schemas import WorkoutDataBundle
+from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
 from .base_conversation_chain import BaseConversationChain
 from app.services.db.user_profile_service import UserProfileService
 
@@ -45,7 +45,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
     def __init__(self, llm: ChatVertexAI, user_id: str):
         super().__init__(llm)
         self.user_id = user_id
-        self._data_bundles: List[WorkoutDataBundle] = []
+        self._data_bundles: List[WorkoutAnalysisBundle] = []
         self._user_profile = None  # Add user profile storage
         self.user_profile_service = UserProfileService()  # Add profile service
         self.system_prompt = """Talk like a human fitness coach! try to get an idea of how the user feels about their workout. 
@@ -65,7 +65,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
         self.logger = logging.getLogger(__name__)
 
     @property
-    def data_bundles(self) -> List[WorkoutDataBundle]:
+    def data_bundles(self) -> List[WorkoutAnalysisBundle]:
         return self._data_bundles
 
     async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
@@ -219,7 +219,7 @@ When providing advice, consider their age, goals, and experience level."""
         """Convert workout context with Pydantic objects to JSON string."""
         return json.dumps(self._serialize_for_json(workout_context), indent=2)
 
-    async def add_data_bundle(self, bundle: WorkoutDataBundle) -> bool:
+    async def add_data_bundle(self, bundle: WorkoutAnalysisBundle) -> bool:
         """Add workout data bundle to conversation context without adding system messages."""
         try:
             # Store the bundle
@@ -260,6 +260,7 @@ When providing advice, consider their age, goals, and experience level."""
         
         return str(dt)
 
+
     def _format_insights_context(self) -> str:
         """Format analysis insights for the latest bundle (replaces old chart context)."""
         if not self._data_bundles:
@@ -267,87 +268,130 @@ When providing advice, consider their age, goals, and experience level."""
         
         latest_bundle = self._data_bundles[-1]
         
-        # Format top performers
+        # Format top performers from NEW schema structure
         strength_highlights = []
         volume_highlights = []
         frequency_highlights = []
         
-        if hasattr(latest_bundle, 'top_performers') and latest_bundle.top_performers:
-            # Process strength performers
-            for performer in latest_bundle.top_performers.strength:
-                if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
+        # Extract strength highlights from strength_data.top_e1rms
+        if hasattr(latest_bundle, 'strength_data') and latest_bundle.strength_data:
+            if hasattr(latest_bundle.strength_data, 'top_e1rms'):
+                for exercise_data in latest_bundle.strength_data.top_e1rms[:5]:
+                    if hasattr(exercise_data, 'exercise'):
+                        exercise_name = exercise_data.exercise
+                        best_e1rm = exercise_data.best_e1rm
+                    elif isinstance(exercise_data, dict):
+                        exercise_name = exercise_data.get('exercise', 'Unknown')
+                        best_e1rm = exercise_data.get('best_e1rm', 0)
+                    else:
+                        continue
+                        
                     strength_highlights.append(
-                        f"{performer.get('name')}: +{performer.get('change_percent')}%"
+                        f"{exercise_name}: {best_e1rm:.1f}kg PR"
                     )
-            
-            # Process volume performers  
-            for performer in latest_bundle.top_performers.volume:
-                if isinstance(performer, dict) and performer.get('change_percent', 0) > 0:
-                    volume_highlights.append(
-                        f"{performer.get('name')}: +{performer.get('change_percent')}%"
-                    )
-            
-            # Process frequency performers (handle empty array gracefully)
-            if latest_bundle.top_performers.frequency:  # Only process if not empty
-                for performer in latest_bundle.top_performers.frequency:
-                    if isinstance(performer, dict):
-                        frequency_highlights.append(
-                            f"{performer.get('name')}: {int(performer.get('first_value', 0))} sessions"
+        
+        # Extract volume highlights from volume_data.by_exercise
+        if hasattr(latest_bundle, 'volume_data') and latest_bundle.volume_data:
+            by_exercise = None
+            if hasattr(latest_bundle.volume_data, 'by_exercise'):
+                by_exercise = latest_bundle.volume_data.by_exercise
+            elif isinstance(latest_bundle.volume_data, dict):
+                by_exercise = latest_bundle.volume_data.get('by_exercise', {})
+                
+            if by_exercise:
+                # Sort by volume and take top performers
+                if isinstance(by_exercise, dict):
+                    sorted_volumes = sorted(by_exercise.items(), key=lambda x: x[1], reverse=True)
+                    for exercise_name, total_volume in sorted_volumes[:5]:
+                        volume_highlights.append(
+                            f"{exercise_name}: {total_volume:.0f}kg total"
                         )
         
-        # Format consistency metrics
+        # Extract frequency highlights from general_workout_data.exercise_frequency
+        if hasattr(latest_bundle, 'general_workout_data') and latest_bundle.general_workout_data:
+            freq_data = None
+            if hasattr(latest_bundle.general_workout_data, 'exercise_frequency'):
+                freq_data = latest_bundle.general_workout_data.exercise_frequency
+            elif isinstance(latest_bundle.general_workout_data, dict):
+                freq_data = latest_bundle.general_workout_data.get('exercise_frequency', {})
+                
+            if freq_data:
+                by_sets = None
+                if hasattr(freq_data, 'by_sets'):
+                    by_sets = freq_data.by_sets
+                elif isinstance(freq_data, dict):
+                    by_sets = freq_data.get('by_sets', {})
+                    
+                if by_sets and isinstance(by_sets, dict):
+                    # Sort by set count and take most frequent
+                    sorted_freq = sorted(by_sets.items(), key=lambda x: x[1], reverse=True)
+                    for exercise_name, set_count in sorted_freq[:5]:
+                        frequency_highlights.append(
+                            f"{exercise_name}: {set_count} sets"
+                        )
+        
+        # Format consistency metrics (NEW schema: consistency_data)
         consistency_gap = 0
         variance = None
         
-        if hasattr(latest_bundle, 'consistency_metrics') and latest_bundle.consistency_metrics:
-            if hasattr(latest_bundle.consistency_metrics, 'avg_gap'):
+        if hasattr(latest_bundle, 'consistency_data') and latest_bundle.consistency_data:
+            if hasattr(latest_bundle.consistency_data, 'avg_days_between'):
                 # Pydantic model
-                consistency_gap = latest_bundle.consistency_metrics.avg_gap
-                variance = latest_bundle.consistency_metrics.variance
-            elif isinstance(latest_bundle.consistency_metrics, dict):
+                consistency_gap = latest_bundle.consistency_data.avg_days_between
+                variance = latest_bundle.consistency_data.variance if hasattr(latest_bundle.consistency_data, 'variance') else None
+            elif isinstance(latest_bundle.consistency_data, dict):
                 # Dict format
-                consistency_gap = latest_bundle.consistency_metrics.get('avg_gap', 0)
-                variance = latest_bundle.consistency_metrics.get('variance', None)
+                consistency_gap = latest_bundle.consistency_data.get('avg_days_between', 0)
+                variance = latest_bundle.consistency_data.get('variance', None)
         
-        # Format correlation insights
+        # Format correlation insights (NEW schema: correlation_insights)
         correlation_summary = "No correlation analysis available"
         top_correlations = []
         
-        if hasattr(latest_bundle, 'correlation_data') and latest_bundle.correlation_data:
-            correlation_data = latest_bundle.correlation_data
-            significant_count = correlation_data.significant_count if hasattr(correlation_data, 'significant_count') else 0
-            total_analyzed = correlation_data.total_pairs_analyzed if hasattr(correlation_data, 'total_pairs_analyzed') else 0
-            
-            correlation_summary = f"{significant_count} significant correlations found from {total_analyzed} exercise pairs analyzed"
-            
-            # Get top 3 correlations for highlights
-            if hasattr(correlation_data, 'significant_correlations') and correlation_data.significant_correlations:
-                for i, corr in enumerate(correlation_data.significant_correlations[:3]):
-                    if isinstance(corr, dict):
-                        summary = corr.get('summary', 'Correlation found')
+        if hasattr(latest_bundle, 'correlation_insights') and latest_bundle.correlation_insights:
+            correlation_data = latest_bundle.correlation_insights
+            if hasattr(correlation_data, 'significant_patterns') and correlation_data.significant_patterns:
+                correlation_summary = f"{len(correlation_data.significant_patterns)} significant patterns found"
+                # Get top 3 patterns for highlights
+                for pattern in correlation_data.significant_patterns[:3]:
+                    if isinstance(pattern, dict):
+                        summary = pattern.get('summary', pattern.get('description', 'Pattern found'))
                         top_correlations.append(f"• {summary}")
-                    elif hasattr(corr, 'summary'):
-                        top_correlations.append(f"• {corr.summary}")
+        
+        # Get workout summary stats
+        total_workouts = 'Unknown'
+        total_exercises = 'Unknown'
+        
+        if hasattr(latest_bundle, 'general_workout_data') and latest_bundle.general_workout_data:
+            if hasattr(latest_bundle.general_workout_data, 'total_workouts'):
+                total_workouts = latest_bundle.general_workout_data.total_workouts
+            elif isinstance(latest_bundle.general_workout_data, dict):
+                total_workouts = latest_bundle.general_workout_data.get('total_workouts', 'Unknown')
+                
+            if hasattr(latest_bundle.general_workout_data, 'total_exercises_unique'):
+                total_exercises = latest_bundle.general_workout_data.total_exercises_unique
+            elif isinstance(latest_bundle.general_workout_data, dict):
+                total_exercises = latest_bundle.general_workout_data.get('total_exercises_unique', 'Unknown')
         
         # Create the insights context
         context = f"""
-CONSISTENCY METRICS:
-- Average gap between workouts: {consistency_gap:.1f} days
-- Workout frequency variance: {variance if variance is not None else 'Not calculated'}
+    CONSISTENCY METRICS:
+    - Average gap between workouts: {consistency_gap:.1f} days
+    - Workout frequency variance: {variance if variance is not None else 'Not calculated'}
 
-TOP PERFORMERS:
-- Strength gains: {', '.join(strength_highlights[:3]) if strength_highlights else 'No significant strength gains detected'}
-- Volume increases: {', '.join(volume_highlights[:3]) if volume_highlights else 'No significant volume increases detected'}
-- Most frequent exercises: {', '.join(frequency_highlights[:3]) if frequency_highlights else 'Frequency data not available'}
+    TOP PERFORMERS:
+    - Strength PRs: {', '.join(strength_highlights[:3]) if strength_highlights else 'No strength data available'}
+    - Volume leaders: {', '.join(volume_highlights[:3]) if volume_highlights else 'No volume data available'}
+    - Most frequent exercises: {', '.join(frequency_highlights[:3]) if frequency_highlights else 'Frequency data not available'}
 
-CORRELATION INSIGHTS:
-{correlation_summary}
-{chr(10).join(top_correlations[:3]) if top_correlations else '• No correlation patterns detected'}
+    CORRELATION INSIGHTS:
+    {correlation_summary}
+    {chr(10).join(top_correlations[:3]) if top_correlations else '• No correlation patterns detected'}
 
-WORKOUT SUMMARY:
-- Total workouts analyzed: {latest_bundle.metadata.total_workouts if hasattr(latest_bundle, 'metadata') else 'Unknown'}
-- Exercise variety: {len(latest_bundle.metadata.exercises_included) if hasattr(latest_bundle, 'metadata') and latest_bundle.metadata.exercises_included else 'Unknown'} different exercises
-"""
+    WORKOUT SUMMARY:
+    - Total workouts analyzed: {total_workouts}
+    - Exercise variety: {total_exercises} different exercises
+    """
         return context
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
@@ -372,48 +416,120 @@ WORKOUT SUMMARY:
             }
 
         latest_bundle = self._data_bundles[-1]
-        date_range = latest_bundle.metadata.date_range
         
-        # Build comprehensive workout context
+        # NEW schema: date_range is in general_workout_data
+        date_range = None
+        if hasattr(latest_bundle, 'general_workout_data') and latest_bundle.general_workout_data:
+            if hasattr(latest_bundle.general_workout_data, 'date_range'):
+                date_range = latest_bundle.general_workout_data.date_range
+            elif isinstance(latest_bundle.general_workout_data, dict):
+                date_range = latest_bundle.general_workout_data.get('date_range')
+        
+        # Helper to extract values safely
+        def get_value(obj, key, default=None):
+            if hasattr(obj, key):
+                return getattr(obj, key)
+            elif isinstance(obj, dict):
+                return obj.get(key, default)
+            return default
+        
+        # Extract metadata
+        total_workouts = 0
+        total_exercises = 0
+        exercises_included = []
+        analysis_errors = []
+        
+        if hasattr(latest_bundle, 'general_workout_data') and latest_bundle.general_workout_data:
+            gwd = latest_bundle.general_workout_data
+            total_workouts = get_value(gwd, 'total_workouts', 0)
+            total_exercises = get_value(gwd, 'total_exercises_unique', 0)
+            exercises_included = get_value(gwd, 'exercises_included', [])
+        
+        if hasattr(latest_bundle, 'metadata') and latest_bundle.metadata:
+            meta = latest_bundle.metadata
+            analysis_errors = get_value(meta, 'errors', [])
+        
+        # Build date range dict
+        date_range_dict = {}
+        if date_range:
+            earliest = get_value(date_range, 'earliest')
+            latest = get_value(date_range, 'latest')
+            date_range_dict = {
+                "start": self._format_date(earliest),
+                "end": self._format_date(latest)
+            }
+        
+        # Extract strength data
+        strength_top_performers = []
+        if hasattr(latest_bundle, 'strength_data') and latest_bundle.strength_data:
+            sd = latest_bundle.strength_data
+            top_e1rms = get_value(sd, 'top_e1rms', [])
+            strength_top_performers = top_e1rms[:5] if top_e1rms else []
+        
+        # Extract volume data
+        volume_data_obj = None
+        if hasattr(latest_bundle, 'volume_data'):
+            volume_data_obj = latest_bundle.volume_data
+        
+        # Extract exercise frequency
+        exercise_frequency_obj = None
+        if hasattr(latest_bundle, 'general_workout_data') and latest_bundle.general_workout_data:
+            gwd = latest_bundle.general_workout_data
+            exercise_frequency_obj = get_value(gwd, 'exercise_frequency')
+        
+        # Extract consistency data
+        consistency_analysis_obj = None
+        if hasattr(latest_bundle, 'consistency_data'):
+            consistency_analysis_obj = latest_bundle.consistency_data
+        
+        # Extract correlation insights
+        significant_patterns = []
+        if hasattr(latest_bundle, 'correlation_insights') and latest_bundle.correlation_insights:
+            ci = latest_bundle.correlation_insights
+            patterns = get_value(ci, 'significant_patterns', [])
+            significant_patterns = patterns[:5] if patterns else []
+        
+        # Extract recent workouts
+        recent_workouts_sample = []
+        if hasattr(latest_bundle, 'recent_workouts'):
+            rw = latest_bundle.recent_workouts
+            recent_workouts_sample = rw[:5] if rw else []
+        
+        # Build comprehensive workout context with NEW schema
         workout_context = {
             "metadata": {
-                "total_workouts": latest_bundle.metadata.total_workouts,
-                "total_exercises": latest_bundle.metadata.total_exercises,
-                "date_range": {
-                    "start": self._format_date(date_range.get('earliest')),
-                    "end": self._format_date(date_range.get('latest'))
-                },
-                "exercises_included": latest_bundle.metadata.exercises_included[:10],  # Limit for context size
-                "analysis_errors": latest_bundle.metadata.errors if latest_bundle.metadata.errors else []
+                "total_workouts": total_workouts,
+                "total_exercises": total_exercises,
+                "date_range": date_range_dict,
+                "exercises_included": exercises_included[:10],  # Limit for context size
+                "analysis_errors": analysis_errors
             },
             "performance_summary": {
-                "strength_top_performers": latest_bundle.top_performers.strength[:5],  # Top 5
-                "volume_top_performers": latest_bundle.top_performers.volume[:5],      # Top 5
-                "frequency_performers": latest_bundle.top_performers.frequency[:3]     # Top 3
+                "strength_top_performers": strength_top_performers,
+                "volume_data": volume_data_obj,
+                "exercise_frequency": exercise_frequency_obj
             },
-            "consistency_analysis": latest_bundle.consistency_metrics,
+            "consistency_analysis": consistency_analysis_obj,
             "correlation_summary": {
-                "significant_count": latest_bundle.correlation_data.significant_count if latest_bundle.correlation_data else 0,
-                "total_analyzed": latest_bundle.correlation_data.total_pairs_analyzed if latest_bundle.correlation_data else 0,
-                "top_correlations": latest_bundle.correlation_data.significant_correlations[:5] if latest_bundle.correlation_data and latest_bundle.correlation_data.significant_correlations else [],
-                "data_quality": latest_bundle.correlation_data.data_quality_notes[:3] if latest_bundle.correlation_data and latest_bundle.correlation_data.data_quality_notes else []
+                "significant_patterns": significant_patterns
             },
-            "recent_workouts_sample": latest_bundle.workouts.get('workouts', [])[:5] if hasattr(latest_bundle.workouts, 'get') and latest_bundle.workouts.get('workouts') else []
+            "recent_workouts_sample": recent_workouts_sample
         }
 
         return {
-            "system_prompt": enhanced_system_prompt,  # Use enhanced prompt with user context
+            "system_prompt": enhanced_system_prompt,
             # "context": f"Available workout data:\n{self._serialize_workout_context(workout_context)}",
             "insights_context": self._format_insights_context(),
             "messages": self.messages,
             "current_message": ""
         }
-    
+
+
     def load_bundles(self, bundles: List) -> None:
         """Load workout bundles into context"""        
         valid_bundles = []
         for bundle in bundles:
-            if isinstance(bundle, WorkoutDataBundle):
+            if isinstance(bundle, WorkoutAnalysisBundle):
                 valid_bundles.append(bundle)
             else:
                 logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
