@@ -1,3 +1,4 @@
+from app.utils.one_rm_calc import OneRMCalculator
 from .base_service import BaseDBService
 from typing import Dict, List, Any
 import logging
@@ -80,101 +81,113 @@ class WorkoutService(BaseDBService):
             return await self.handle_error("get_public_workout", e)
 
 
-
     async def delete_workout(self, workout_id: str, jwt_token: str) -> Dict[str, Any]:
         """
         Delete a workout by ID (this cascades to exercises and sets)
         """
         try:
             logger.info(f"Deleting workout: {workout_id}")
-
             user_client = self.get_user_client(jwt_token)
+            
+            # IMPORTANT: Get user_id BEFORE deletion
+            workout_result = user_client.table("workouts")\
+                .select("user_id")\
+                .eq("id", workout_id)\
+                .execute()
+            
+            user_id = None
+            if hasattr(workout_result, "data") and workout_result.data:
+                user_id = workout_result.data[0]["user_id"]
             
             # Get all exercise IDs for this workout - RLS handles user access
             exercise_result = user_client.table("workout_exercises") \
                 .select("id") \
                 .eq("workout_id", workout_id) \
                 .execute()
-
+            
             if hasattr(exercise_result, "data") and exercise_result.data:
                 exercise_ids = [e["id"] for e in exercise_result.data]
-
                 # Delete all sets first
                 user_client.table("workout_exercise_sets").delete().in_(
                     "exercise_id", exercise_ids
                 ).execute()
-
                 # Delete all exercises
                 user_client.table("workout_exercises").delete().eq(
                     "workout_id", workout_id
                 ).execute()
-
+            
             # Delete the workout - RLS handles user access control
             result = user_client.table("workouts").delete().eq("id", workout_id).execute()
-
+            
+            # Regenerate bundle after deletion
+            if user_id:
+                import asyncio
+                asyncio.create_task(self._regenerate_user_bundle(user_id, jwt_token))
+                logger.info(f"Triggered bundle regeneration for user {user_id} after workout deletion")
+            
             logger.info(f"Successfully deleted workout: {workout_id}")
             return await self.format_response({"success": True})
-
+            
         except Exception as e:
             logger.error(f"Error deleting workout: {str(e)}")
             return await self.handle_error("delete_workout", e)
 
-    async def update_template_usage(self, template_id: str, jwt_token: str) -> Dict[str, Any]:
-        """
-        Update the used_as_template timestamp for a workout
-        """
-        try:
-            logger.info(f"Updating template usage for workout: {template_id}")
+    # async def update_template_usage(self, template_id: str, jwt_token: str) -> Dict[str, Any]:
+    #     """
+    #     Update the used_as_template timestamp for a workout
+    #     """
+    #     try:
+    #         logger.info(f"Updating template usage for workout: {template_id}")
 
-            # RLS handles user access control
-            user_client = self.get_user_client(jwt_token)
-            result = user_client.table("workouts") \
-                .update({"used_as_template": datetime.utcnow().isoformat()}) \
-                .eq("id", template_id) \
-                .execute()
+    #         # RLS handles user access control
+    #         user_client = self.get_user_client(jwt_token)
+    #         result = user_client.table("workouts") \
+    #             .update({"used_as_template": datetime.utcnow().isoformat()}) \
+    #             .eq("id", template_id) \
+    #             .execute()
 
-            logger.info(f"Successfully updated template usage for workout: {template_id}")
-            return await self.format_response({"success": True, "id": template_id})
+    #         logger.info(f"Successfully updated template usage for workout: {template_id}")
+    #         return await self.format_response({"success": True, "id": template_id})
 
-        except Exception as e:
-            logger.error(f"Error updating template usage: {str(e)}")
-            return await self.handle_error("update_template_usage", e)
+    #     except Exception as e:
+    #         logger.error(f"Error updating template usage: {str(e)}")
+    #         return await self.handle_error("update_template_usage", e)
 
-    async def get_templates(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
-        """
-        Get all workout templates for a user
-        """
-        try:
-            logger.info(f"Getting workout templates for user: {user_id}")
+    # async def get_templates(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
+    #     """
+    #     Get all workout templates for a user
+    #     """
+    #     try:
+    #         logger.info(f"Getting workout templates for user: {user_id}")
 
-            # RLS handles user filtering - removed manual user_id filter
-            user_client = self.get_user_client(jwt_token)
-            result = user_client.table("workouts") \
-                .select("*, workout_exercises(*, workout_exercise_sets(*))") \
-                .order("used_as_template", desc=True) \
-                .limit(50) \
-                .execute()
+    #         # RLS handles user filtering - removed manual user_id filter
+    #         user_client = self.get_user_client(jwt_token)
+    #         result = user_client.table("workouts") \
+    #             .select("*, workout_exercises(*, workout_exercise_sets(*))") \
+    #             .order("used_as_template", desc=True) \
+    #             .limit(50) \
+    #             .execute()
 
-            templates = result.data or []
+    #         templates = result.data or []
 
-            # Format each template
-            formatted_templates = []
-            for template in templates:
-                # Sort exercises by order_index
-                template["workout_exercises"].sort(key=lambda x: x["order_index"])
+    #         # Format each template
+    #         formatted_templates = []
+    #         for template in templates:
+    #             # Sort exercises by order_index
+    #             template["workout_exercises"].sort(key=lambda x: x["order_index"])
 
-                # Sort sets by set_number
-                for exercise in template["workout_exercises"]:
-                    exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
+    #             # Sort sets by set_number
+    #             for exercise in template["workout_exercises"]:
+    #                 exercise["workout_exercise_sets"].sort(key=lambda x: x["set_number"])
 
-                formatted_templates.append(template)
+    #             formatted_templates.append(template)
 
-            logger.info(f"Retrieved {len(formatted_templates)} templates for user: {user_id}")
-            return await self.format_response(formatted_templates)
+    #         logger.info(f"Retrieved {len(formatted_templates)} templates for user: {user_id}")
+    #         return await self.format_response(formatted_templates)
 
-        except Exception as e:
-            logger.error(f"Error getting templates: {str(e)}")
-            return await self.handle_error("get_templates", e)
+    #     except Exception as e:
+    #         logger.error(f"Error getting templates: {str(e)}")
+    #         return await self.handle_error("get_templates", e)
 
     async def get_user_workouts(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
@@ -308,11 +321,18 @@ class WorkoutService(BaseDBService):
                     exercise_id = exercise_result.data[0]["id"]
                     logger.info(f"Exercise created: {exercise_name} with ID: {exercise_id}")
 
-                    # Process sets if they exist
                     if exercise.get("workout_exercise_sets"):
                         sets = exercise["workout_exercise_sets"]
 
                         for set_index, set_data in enumerate(sets):
+                            # Calculate e1rm if weight and reps are present
+                            estimated_1rm = None
+                            if set_data.get("weight") and set_data.get("reps"):
+                                estimated_1rm = OneRMCalculator.calculate(
+                                    weight=float(set_data.get("weight")),
+                                    reps=int(set_data.get("reps"))
+                                )
+                            
                             set_result = user_client.table("workout_exercise_sets").insert({
                                 "exercise_id": exercise_id,
                                 "set_number": set_index + 1,
@@ -321,7 +341,9 @@ class WorkoutService(BaseDBService):
                                 "rpe": set_data.get("rpe"),
                                 "distance": set_data.get("distance"),
                                 "duration": set_data.get("duration"),
+                                "estimated_1rm": estimated_1rm,  # NEW
                             }).execute()
+
 
                             if not hasattr(set_result, "data") or not set_result.data:
                                 raise Exception(f"Failed to create set: No data returned")
@@ -422,18 +444,29 @@ class WorkoutService(BaseDBService):
                     if hasattr(exercise_result, "data") and exercise_result.data:
                         exercise_id = exercise_result.data[0]["id"]
 
-                        # Create sets if provided
-                        if exercise.get("workout_exercise_sets"):
-                            for set_index, set_data in enumerate(exercise["workout_exercise_sets"]):
-                                user_client.table("workout_exercise_sets").insert({
-                                    "exercise_id": exercise_id,
-                                    "set_number": set_index + 1,
-                                    "weight": set_data.get("weight"),
-                                    "reps": set_data.get("reps"),
-                                    "rpe": set_data.get("rpe"),
-                                    "distance": set_data.get("distance"),
-                                    "duration": set_data.get("duration"),
-                                }).execute()
+                    # Create sets if provided
+                    if exercise.get("workout_exercise_sets"):
+                        for set_index, set_data in enumerate(exercise["workout_exercise_sets"]):
+                            # Calculate e1rm if weight and reps are present
+                            estimated_1rm = None
+                            if set_data.get("weight") and set_data.get("reps"):
+                       
+                                estimated_1rm = OneRMCalculator.calculate(
+                                    weight=float(set_data.get("weight")),
+                                    reps=int(set_data.get("reps"))
+                                )
+                            
+                            user_client.table("workout_exercise_sets").insert({
+                                "exercise_id": exercise_id,
+                                "set_number": set_index + 1,
+                                "weight": set_data.get("weight"),
+                                "reps": set_data.get("reps"),
+                                "rpe": set_data.get("rpe"),
+                                "distance": set_data.get("distance"),
+                                "duration": set_data.get("duration"),
+                                "estimated_1rm": estimated_1rm,  # NEW
+                            }).execute()
+
 
             # Return complete updated workout
             complete_result = user_client.table("workouts") \
@@ -564,7 +597,6 @@ class WorkoutService(BaseDBService):
                 "error": str(e)
             }
         
-
     async def _regenerate_user_bundle(self, user_id: str, jwt_token: str):
         """
         Regenerate user's basic analysis bundle after workout completion.
