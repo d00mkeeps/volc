@@ -13,14 +13,18 @@ logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
     def __init__(self, llm: ChatAnthropic, user_id: str):
-        # Load the enhanced prompt from separate file
-        system_prompt = get_workout_analysis_prompt()
+        # Initialize base class (only takes llm)
+        super().__init__(llm=llm)
         
-        super().__init__(system_prompt=system_prompt, llm=llm)
+        # Load the enhanced prompt from separate file
+        self.system_prompt = get_workout_analysis_prompt()
         self.user_id = user_id
         self._data_bundles: List[WorkoutAnalysisBundle] = []
         self._user_profile = None
         self.logger = logging.getLogger(__name__)
+        
+        # Initialize the prompt template
+        self._initialize_prompt_template()
 
     @property
     def data_bundles(self) -> List[WorkoutAnalysisBundle]:
@@ -215,8 +219,6 @@ class WorkoutAnalysisChain(BaseConversationChain):
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
         """Get workout-specific context variables with XML formatting."""
-        base_vars = await super().get_additional_prompt_vars()
-
         try:
             # Build the complete workout context with both profile and data
             user_profile_xml = self._format_user_profile_context()
@@ -228,10 +230,12 @@ class WorkoutAnalysisChain(BaseConversationChain):
                 full_context += user_profile_xml + "\n\n"
             full_context += workout_data_xml
             
-            base_vars["system_prompt"] = self.system_prompt
-            base_vars["workout_context"] = full_context
-            
-            return base_vars
+            return {
+                "system_prompt": self.system_prompt,
+                "workout_context": full_context,
+                "messages": self.messages,
+                "current_message": ""
+            }
             
         except Exception as e:
             self.logger.error(f"Error getting prompt variables: {str(e)}", exc_info=True)
@@ -241,6 +245,23 @@ class WorkoutAnalysisChain(BaseConversationChain):
                 "messages": self.messages,
                 "current_message": ""
             }
+
+    async def get_formatted_prompt(self, message: str):
+        """
+        Format the prompt for LangChain (required by BaseConversationChain).
+        
+        Returns formatted messages ready for the LLM.
+        """
+        # Get all the context variables
+        prompt_vars = await self.get_additional_prompt_vars()
+        
+        # Set the current message
+        prompt_vars["current_message"] = message
+        
+        # Format using the template and return the messages
+        formatted_messages = self.prompt.format_messages(**prompt_vars)
+        
+        return formatted_messages
 
     async def load_user_profile(self, user_profile_service) -> bool:
         """Load user profile data for context."""
