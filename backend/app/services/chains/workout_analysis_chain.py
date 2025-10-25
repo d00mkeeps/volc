@@ -23,6 +23,10 @@ class WorkoutAnalysisChain(BaseConversationChain):
         self._user_profile = None
         self.logger = logging.getLogger(__name__)
         
+        # Initialize user profile service
+        from app.services.db.user_profile_service import UserProfileService
+        self.user_profile_service = UserProfileService()
+        
         # Initialize the prompt template
         self._initialize_prompt_template()
 
@@ -104,114 +108,118 @@ class WorkoutAnalysisChain(BaseConversationChain):
         
         latest_bundle = self._data_bundles[-1]
         
-        # Extract date range
-        date_range = latest_bundle.metadata.date_range
-        date_start = self._format_date(date_range['earliest'])
-        date_end = self._format_date(date_range['latest'])
+        # Extract date range from general_workout_data
+        date_range = latest_bundle.general_workout_data.date_range
+        date_start = self._format_date(date_range.earliest)
+        date_end = self._format_date(date_range.latest)
         
-        # Extract metrics
-        metrics = latest_bundle.workout_data.get('metrics', {})
-        
-        # Format exercise progression
-        exercise_prog = ""
-        if 'exercise_progression' in metrics:
-            top_exercises = metrics['exercise_progression'][:5]  # Top 5
-            exercise_items = []
-            for ex in top_exercises:
-                exercise_items.append(
-                    f"    <exercise>\n"
-                    f"      <name>{ex.get('name', 'Unknown')}</name>\n"
-                    f"      <weight_change_percent>{ex.get('weight_change_percent', 0):.1f}%</weight_change_percent>\n"
-                    f"      <volume_change_percent>{ex.get('volume_change_percent', 0):.1f}%</volume_change_percent>\n"
-                    f"      <total_sessions>{ex.get('total_sessions', 0)}</total_sessions>\n"
-                    f"    </exercise>"
-                )
-            exercise_prog = "\n".join(exercise_items)
-        
-        # Format strength progression
+        # Extract strength progression from strength_data.top_e1rms
         strength_prog = ""
-        if 'strength_progression' in metrics:
-            top_strength = metrics['strength_progression'][:5]
+        if latest_bundle.strength_data and latest_bundle.strength_data.top_e1rms:
+            top_strength = latest_bundle.strength_data.top_e1rms[:5]
             strength_items = []
             for ex in top_strength:
                 strength_items.append(
                     f"    <exercise>\n"
-                    f"      <name>{ex.get('name', 'Unknown')}</name>\n"
-                    f"      <e1rm_change_kg>{ex.get('e1rm_change_kg', 0):.1f}kg</e1rm_change_kg>\n"
-                    f"      <e1rm_change_percent>{ex.get('e1rm_change_percent', 0):.1f}%</e1rm_change_percent>\n"
-                    f"      <monthly_rate>{ex.get('monthly_rate', 0):.1f}kg/month</monthly_rate>\n"
+                    f"      <name>{ex.exercise}</name>\n"
+                    f"      <best_e1rm>{ex.best_e1rm:.1f}kg</best_e1rm>\n"
+                    f"      <achieved_date>{self._format_date(ex.achieved_date)}</achieved_date>\n"
                     f"      <note>e1RM = Estimated 1 Rep Max (calculated, not tested)</note>\n"
                     f"    </exercise>"
                 )
             strength_prog = "\n".join(strength_items)
         
-        # Format frequency metrics
-        frequency_data = ""
-        if 'workout_frequency' in metrics:
-            freq = metrics['workout_frequency']
-            frequency_data = f"""  <workout_frequency>
-    <consistency_score>{freq.get('consistency_score', 0):.0f}/100</consistency_score>
-    <avg_workouts_per_week>{freq.get('avg_workouts_per_week', 0):.1f}</avg_workouts_per_week>
-    <current_streak>{freq.get('current_streak', 0)} workouts</current_streak>
-    <avg_days_between_workouts>{freq.get('avg_gap', 0):.1f} days</avg_days_between_workouts>
-  </workout_frequency>"""
-        
-        # Format top performers
-        top_performers = ""
-        if 'most_improved_exercises' in metrics:
-            improved = metrics['most_improved_exercises'][:3]
-            perf_items = []
-            for ex in improved:
-                perf_items.append(
+        # Extract volume data
+        volume_info = ""
+        if latest_bundle.volume_data:
+            vol = latest_bundle.volume_data
+            # Get top 5 exercises by volume
+            top_volume = sorted(vol.by_exercise.items(), key=lambda x: x[1], reverse=True)[:5]
+            volume_items = []
+            for exercise, volume in top_volume:
+                volume_items.append(
                     f"    <exercise>\n"
-                    f"      <name>{ex.get('name', 'Unknown')}</name>\n"
-                    f"      <improvement_type>{ex.get('type', 'Unknown')}</improvement_type>\n"
-                    f"      <change_percent>{ex.get('change_percent', 0):.1f}%</change_percent>\n"
+                    f"      <name>{exercise}</name>\n"
+                    f"      <total_volume_kg>{volume:.1f}kg</total_volume_kg>\n"
                     f"    </exercise>"
                 )
-            top_performers = "\n".join(perf_items)
+            volume_exercises = "\n".join(volume_items) if volume_items else "    <status>No volume data</status>"
+            
+            volume_info = f"""  <volume_data>
+    <total_volume_kg>{vol.total_volume_kg:.1f}kg</total_volume_kg>
+    <today_volume_kg>{vol.today_volume_kg:.1f}kg</today_volume_kg>
+    <top_exercises_by_volume>
+{volume_exercises}
+    </top_exercises_by_volume>
+  </volume_data>"""
         
-        # Format correlations
+        # Extract consistency metrics
+        consistency_info = ""
+        if latest_bundle.consistency_data:
+            cons = latest_bundle.consistency_data
+            variance_str = f"{cons.variance:.2f}" if cons.variance is not None else "Not calculated"
+            consistency_info = f"""  <consistency_data>
+    <avg_days_between_workouts>{cons.avg_days_between:.1f} days</avg_days_between_workouts>
+    <variance>{variance_str}</variance>
+    <total_workouts_tracked>{len(cons.workout_dates)}</total_workouts_tracked>
+  </consistency_data>"""
+        
+        # Extract exercise frequency
+        frequency_info = ""
+        if latest_bundle.general_workout_data.exercise_frequency:
+            freq = latest_bundle.general_workout_data.exercise_frequency
+            # Get top 5 most frequent exercises
+            top_freq = sorted(freq.by_sets.items(), key=lambda x: x[1], reverse=True)[:5]
+            freq_items = []
+            for exercise, sets in top_freq:
+                freq_items.append(
+                    f"    <exercise>\n"
+                    f"      <name>{exercise}</name>\n"
+                    f"      <total_sets>{sets}</total_sets>\n"
+                    f"    </exercise>"
+                )
+            frequency_info = "\n".join(freq_items) if freq_items else "    <status>No frequency data</status>"
+        
+        # Extract correlations
         correlations_data = ""
-        if latest_bundle.correlation_data and latest_bundle.correlation_data.summary:
-            summary = latest_bundle.correlation_data.summary
-            if 'significant_patterns' in summary:
-                patterns = summary['significant_patterns'][:3]
-                pattern_items = []
-                for pattern in patterns:
-                    if isinstance(pattern, dict):
-                        pattern_items.append(
-                            f"    <pattern>\n"
-                            f"      <description>{pattern.get('summary', pattern.get('description', 'Pattern detected'))}</description>\n"
-                            f"      <strength>{pattern.get('correlation_strength', 'moderate')}</strength>\n"
-                            f"    </pattern>"
-                        )
-                correlations_data = "\n".join(pattern_items)
+        if latest_bundle.correlation_insights and latest_bundle.correlation_insights.significant_patterns:
+            patterns = latest_bundle.correlation_insights.significant_patterns[:3]
+            pattern_items = []
+            for pattern in patterns:
+                if isinstance(pattern, dict):
+                    pattern_items.append(
+                        f"    <pattern>\n"
+                        f"      <description>{pattern.get('summary', pattern.get('description', 'Pattern detected'))}</description>\n"
+                        f"      <strength>{pattern.get('correlation_strength', 'moderate')}</strength>\n"
+                        f"    </pattern>"
+                    )
+            correlations_data = "\n".join(pattern_items) if pattern_items else "    <status>No significant correlations detected</status>"
+        else:
+            correlations_data = "    <status>No significant correlations detected</status>"
         
         # Build full XML context
         context = f"""<workout_data>
   <date_range>
     <start>{date_start}</start>
     <end>{date_end}</end>
-    <total_workouts>{latest_bundle.metadata.total_workouts}</total_workouts>
+    <total_workouts>{latest_bundle.general_workout_data.total_workouts}</total_workouts>
+    <unique_exercises>{latest_bundle.general_workout_data.total_exercises_unique}</unique_exercises>
   </date_range>
-
-  <exercise_progression>
-{exercise_prog if exercise_prog else "    <status>No exercise progression data</status>"}
-  </exercise_progression>
 
   <strength_progression>
 {strength_prog if strength_prog else "    <status>No strength progression data</status>"}
   </strength_progression>
 
-{frequency_data if frequency_data else "  <workout_frequency><status>No frequency data</status></workout_frequency>"}
+{volume_info if volume_info else "  <volume_data><status>No volume data</status></volume_data>"}
 
-  <top_performers>
-{top_performers if top_performers else "    <status>No top performers data</status>"}
-  </top_performers>
+{consistency_info if consistency_info else "  <consistency_data><status>No consistency data</status></consistency_data>"}
+
+  <exercise_frequency>
+{frequency_info if frequency_info else "    <status>No frequency data</status>"}
+  </exercise_frequency>
 
   <correlation_insights>
-{correlations_data if correlations_data else "    <status>No significant correlations detected</status>"}
+{correlations_data}
   </correlation_insights>
 </workout_data>"""
         
@@ -263,14 +271,14 @@ class WorkoutAnalysisChain(BaseConversationChain):
         
         return formatted_messages
 
-    async def load_user_profile(self, user_profile_service) -> bool:
+    async def load_user_profile(self) -> bool:
         """Load user profile data for context."""
         try:
             if not self.user_id:
                 logger.warning("No user_id provided for profile loading")
                 return False
                 
-            profile_result = await user_profile_service.get_user_profile_admin(self.user_id)
+            profile_result = await self.user_profile_service.get_user_profile_admin(self.user_id)
             if profile_result.get('success') and profile_result.get('data'):
                 self._user_profile = profile_result['data']
                 logger.info(f"Loaded user profile for user {self.user_id}")
@@ -281,3 +289,15 @@ class WorkoutAnalysisChain(BaseConversationChain):
         except Exception as e:
             logger.error(f"Exception loading user profile: {str(e)}", exc_info=True)
             return False
+
+    def load_bundles(self, bundles: List) -> None:
+        """Load workout bundles into context."""
+        valid_bundles = []
+        for bundle in bundles:
+            if isinstance(bundle, WorkoutAnalysisBundle):
+                valid_bundles.append(bundle)
+            else:
+                logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
+        
+        self._data_bundles = valid_bundles.copy()
+        logger.info(f"Loaded {len(self._data_bundles)} workout bundles into conversation context")

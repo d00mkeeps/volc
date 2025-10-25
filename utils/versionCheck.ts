@@ -1,7 +1,7 @@
 import * as Application from "expo-application";
 import { Platform } from "react-native";
 
-export const MINIMUM_APP_VERSION = "1.2.9";
+export const MINIMUM_APP_VERSION = "1.0.9";
 
 /**
  * Compares two semantic version strings (e.g., "1.0.0", "1.1.0")
