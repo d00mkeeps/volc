@@ -64,9 +64,6 @@ export default function ConversationList({
 
   return (
     <Stack flex={1}>
-      <Text size="large" fontWeight="600" color="$text" marginBottom="$2">
-        Recent Chats
-      </Text>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Stack gap="$2">
           {displayedConversations.map((conversation) => (

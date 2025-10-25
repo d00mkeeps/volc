@@ -32,8 +32,6 @@ export function UpdatePromptModal({
         padding="$6"
         space="$4"
       >
-  
-
         {/* Title */}
         <Text size="xl" variant="heading" textAlign="center">
           Great news!
@@ -41,16 +39,14 @@ export function UpdatePromptModal({
 
         {/* Message */}
         <YStack space="$2" width="100%">
-     
-
           <Text
             size="medium"
             variant="caption"
             color="$gray10"
             textAlign="center"
           >
-               There's an update available, {"\n\n"}Please go to the App Store to download the
-               latest version
+            There's an update available. {"\n\n"}Please go to the App Store to
+            download the latest version
           </Text>
         </YStack>
 

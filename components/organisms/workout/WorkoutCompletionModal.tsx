@@ -6,7 +6,7 @@ import Button from "@/components/atoms/core/Button";
 import BaseModal from "../../atoms/core/BaseModal";
 import { WorkoutSummarySlide } from "./WorkoutSummarySlide";
 import { useWorkoutAnalysisStore } from "@/stores/analysis/WorkoutAnalysisStore";
-import { WorkoutAnalysisSlide } from "./WorkoutAnalysisSlide";
+
 import { useUserSessionStore } from "@/stores/userSessionStore";
 
 interface WorkoutCompletionModalProps {
@@ -78,23 +78,18 @@ export function WorkoutCompletionModal({
       heightPercent={80}
     >
       <YStack flex={1}>
-        {currentSlide === "summary" ? (
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={{ flex: 1 }}
-          >
-            <ScrollView flex={1} padding="$3">
-              <WorkoutSummarySlide
-                onSkip={handleClose}
-                onContinue={handleContinueToChat}
-                showContinueButton={true}
-              />
-            </ScrollView>
-          </KeyboardAvoidingView>
-        ) : (
-          // No more conversationId prop - gets it from session store
-          <WorkoutAnalysisSlide onError={handleChatError} />
-        )}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ flex: 1 }}
+        >
+          <ScrollView flex={1} padding="$3">
+            <WorkoutSummarySlide
+              onSkip={handleClose}
+              onContinue={handleContinueToChat}
+              showContinueButton={true}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
 
         {showCloseConfirmation && (
           <YStack
