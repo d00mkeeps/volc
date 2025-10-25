@@ -201,7 +201,12 @@ export default function WorkoutTemplateView({
             >
               <XStack gap="$2" alignItems="center">
                 <ArrowLeft size={18} color="$textSoft" />
-                <Text size="medium" color="$color" fontWeight="500">
+                <Text
+                  size="medium"
+                  color="$color"
+                  fontWeight="500"
+                  alignContent="center"
+                >
                   Undo
                 </Text>
               </XStack>
@@ -280,8 +285,8 @@ export default function WorkoutTemplateView({
           {/* Action Buttons */}
           <XStack gap="$3" justifyContent="center" paddingBottom="$2">
             <Stack
-              width={48}
-              height={48}
+              width={80}
+              height={40}
               borderRadius="$3"
               backgroundColor="$red9"
               borderWidth={1}
@@ -302,8 +307,8 @@ export default function WorkoutTemplateView({
             </Stack>
 
             <Stack
-              width={48}
-              height={48}
+              width={80}
+              height={40}
               borderRadius="$3"
               backgroundColor="$green8"
               borderWidth={1}

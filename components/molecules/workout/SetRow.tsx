@@ -118,7 +118,7 @@ export default function SetRow({
       {/* Set Number - completion button */}
       <Stack
         width={50}
-        height={40}
+        height={45}
         marginVertical="$1"
         alignItems="center"
         marginLeft="$1"
@@ -151,7 +151,7 @@ export default function SetRow({
       </Stack>
 
       {/* Centered Metric Inputs */}
-      <XStack flex={1} gap="$1.5" maxWidth="75%">
+      <XStack flex={1} gap="$1.5" maxWidth="75%" justifyContent="center">
         {showWeight && (
           <MetricInput
             type="weight"
@@ -160,7 +160,7 @@ export default function SetRow({
             isMetric={!isImperial}
             onChange={(value) => handleUpdate("weight", value)}
             isActive={isActive}
-            showError={shouldShowError(set.weight)} // ADD THIS
+            showError={shouldShowError(set.weight)}
           />
         )}
         {showReps && (

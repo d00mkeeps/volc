@@ -54,7 +54,8 @@ export default function WorkoutViewModal({
       return `${minutes}:${parts[2]}`;
     }
 
-    return duration;
+    // Remove leading zero from hours
+    return `${hours}:${parts[1]}:${parts[2]}`;
   };
 
   const renderExerciseSets = (exercise: any) => {

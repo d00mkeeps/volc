@@ -5,7 +5,7 @@ import { SignInForm } from "../molecules/auth/SignInForm";
 import { SignUpForm } from "../molecules/auth/SignUpForm";
 import { ResetPasswordForm } from "../molecules/auth/ResetPasswordForm";
 import { AuthToggle } from "../atoms/AuthToggle";
-import { SystemMessage } from "../atoms/SystemMessage";
+import { SystemMessage } from "../atoms/core/SystemMessage";
 import { useAuth } from "../../context/AuthContext";
 import { AuthMode } from "@/types/auth";
 import Text from "@/components/atoms/core/Text";
@@ -59,7 +59,7 @@ export function AuthScreen() {
           />
 
           {/* Forgot password link - only show on sign in */}
-          {mode === "signIn" && !showResetPassword && (
+          {/* {mode === "signIn" && !showResetPassword && (
             <Stack
               onPress={() => setShowResetPassword(true)}
               cursor="pointer"
@@ -69,7 +69,7 @@ export function AuthScreen() {
                 Forgot password?
               </Text>
             </Stack>
-          )}
+          )} */}
 
           {/* Back to sign in link - show when in reset mode */}
           {showResetPassword && (

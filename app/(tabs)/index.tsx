@@ -32,7 +32,7 @@ import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingMod
 import { SettingsModal } from "@/components/molecules/SettingsModal";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import { SystemMessage } from "@/components/atoms/SystemMessage";
+import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import Button from "@/components/atoms/core/Button";
@@ -84,6 +84,9 @@ export default function HomeScreen() {
   const selectedTemplate = useUserSessionStore(
     (state) => state.selectedTemplate
   );
+  const showWorkoutSavedPrompt = useUserSessionStore(
+    (state) => state.showWorkoutSavedPrompt
+  );
 
   // Stable reference to session actions
   const sessionActions = useMemo(
@@ -95,6 +98,8 @@ export default function HomeScreen() {
       openTemplateSelector: useUserSessionStore.getState().openTemplateSelector,
       selectTemplate: useUserSessionStore.getState().selectTemplate,
       resetSession: useUserSessionStore.getState().resetSession,
+      clearWorkoutSavedPrompt:
+        useUserSessionStore.getState().clearWorkoutSavedPrompt,
       hasAtLeastOneCompleteSet:
         useUserSessionStore.getState().hasAtLeastOneCompleteSet,
     }),
@@ -368,6 +373,8 @@ export default function HomeScreen() {
             placeholder="start new chat.."
             onSendMessage={handleChatSend}
             isLoading={isSendingMessage}
+            shouldPulse={showWorkoutSavedPrompt}
+            onPulseComplete={sessionActions.clearWorkoutSavedPrompt}
           />
         </KeyboardAvoidingView>
       )}

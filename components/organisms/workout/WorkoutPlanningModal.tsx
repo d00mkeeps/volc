@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import BaseModal from "../../atoms/core/BaseModal";
-import { ChatInterface } from "../ChatInterface";
+import { ChatInterface } from "../chat/ChatInterface";
 import { useWorkoutPlanning } from "@/hooks/chat/useWorkoutPlanning";
 import { CompleteWorkout } from "@/types/workout";
 import { EMPTY_WORKOUT_TEMPLATE } from "@/app/(tabs)/index";

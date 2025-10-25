@@ -295,19 +295,19 @@ export function WorkoutSummarySlide({
         {loadingState !== "continue" && (
           <Button
             size="$4"
-            backgroundColor="$background"
+            backgroundColor={isNameValid ? "$primary" : "$background"}
             color="$text"
             onPress={handleSkipChat}
             disabled={loadingState === "skip"}
             opacity={loadingState !== "skip" ? 1 : 0.6}
             borderColor="$primary"
             borderWidth={1}
-            flex={0.4}
+            flex={1}
           >
             {loadingState === "skip" ? "saving.." : "Save & Exit"}
           </Button>
         )}
-
+        {/* 
         {loadingState !== "skip" && (
           <Button
             size="$4"
@@ -319,7 +319,7 @@ export function WorkoutSummarySlide({
           >
             {loadingState === "continue" ? "Loading..." : "Chat to Coach"}
           </Button>
-        )}
+        )} */}
       </XStack>
     </YStack>
   );

@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Stack } from "tamagui";
+import { Stack, YStack } from "tamagui";
 import { RefreshControl, ScrollView } from "react-native";
 import ConversationList from "@/components/molecules/chat/ConversationList";
-import { ExistingConversationChat } from "@/components/organisms/ExistingConversationChat";
+import { ExistingConversationChat } from "@/components/organisms/chat/ExistingConversationChat";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLocalSearchParams } from "expo-router";
+import Text from "@/components/atoms/core/Text";
 
 interface ChatScreenProps {
-  isActive?: boolean; // ADD THIS
+  isActive?: boolean;
 }
 
 export default function ChatScreen({ isActive = true }: ChatScreenProps) {
   const { conversationId: paramConversationId } = useLocalSearchParams<{
     conversationId?: string;
   }>();
-
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | null
   >(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const { getConversations } = useConversationStore();
 
-  // FIX: Move the conditional logic INSIDE the selector
   const selectedConversation = useConversationStore((state) =>
     selectedConversationId
       ? state.conversations.get(selectedConversationId)
       : null
   );
-
   const pendingMessage = useConversationStore(
     (state) => state.pendingInitialMessage
   );
@@ -42,7 +40,6 @@ export default function ChatScreen({ isActive = true }: ChatScreenProps) {
         paramConversationId
       );
       setSelectedConversationId(paramConversationId);
-
       if (pendingMessage) {
         console.log("💬 Found pending message in store:", pendingMessage);
       }
@@ -66,8 +63,8 @@ export default function ChatScreen({ isActive = true }: ChatScreenProps) {
         conversationId={selectedConversationId}
         onBack={() => setSelectedConversationId(null)}
         initialMessage={pendingMessage}
-        conversationTitle={selectedConversation?.title} // ADD THIS
-        isActive={isActive} // ADD THIS
+        conversationTitle={selectedConversation?.title}
+        isActive={isActive}
         onMessageSent={() => clearPendingMessage(null)}
       />
     );
@@ -82,6 +79,16 @@ export default function ChatScreen({ isActive = true }: ChatScreenProps) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
+        {/* Header */}
+        <YStack gap="$1" marginBottom="$4">
+          <Text size="xl" variant="heading">
+            Chats
+          </Text>
+          <Text size="medium" color="$textMuted">
+            All your chats, in one place
+          </Text>
+        </YStack>
+
         <ConversationList onSelectConversation={setSelectedConversationId} />
       </ScrollView>
     </Stack>

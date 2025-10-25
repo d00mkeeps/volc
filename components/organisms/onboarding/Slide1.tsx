@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import Input from "@/components/atoms/core/Input";
-import SystemMessage from "@/components/atoms/SystemMessage";
+import SystemMessage from "@/components/atoms/core/SystemMessage";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
 interface Step1Props {

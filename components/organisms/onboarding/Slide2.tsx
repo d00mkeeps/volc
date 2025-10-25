@@ -4,7 +4,7 @@ import { KeyboardAvoidingView, Platform } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import Select from "@/components/atoms/core/Select";
-import SystemMessage from "@/components/atoms/SystemMessage";
+import SystemMessage from "@/components/atoms/core/SystemMessage";
 
 const fitnessLevelOptions = [
   { value: "beginner", label: "Beginner: under 1 year" },

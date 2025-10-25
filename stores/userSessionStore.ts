@@ -9,6 +9,7 @@ import { imageService } from "@/services/api/imageService";
 import { useWorkoutStore } from "./workout/WorkoutStore";
 import { filterIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "./workout/exerciseStore";
+import Toast from "react-native-toast-message";
 
 interface UserSessionState {
   currentWorkout: CompleteWorkout | null;
@@ -34,6 +35,8 @@ interface UserSessionState {
   cancelWorkout: () => void;
   hasAtLeastOneCompleteSet: () => boolean;
   finishWorkout: () => void;
+  showWorkoutSavedPrompt: boolean; // Add this
+  clearWorkoutSavedPrompt: () => void; // Add this
   saveCompletedWorkout: (metadata: {
     name: string;
     notes: string;
@@ -81,6 +84,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   pausedAt: null,
   totalPausedMs: 0,
   isActive: false,
+  showWorkoutSavedPrompt: false,
   isPaused: false,
   startTime: null,
   elapsedSeconds: 0,
@@ -107,6 +111,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       isPaused: true,
       pausedAt: pausedAt,
     });
+  },
+
+  clearWorkoutSavedPrompt: () => {
+    set({ showWorkoutSavedPrompt: false });
   },
 
   resumeWorkout: () => {
@@ -274,6 +282,14 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Refresh workout store to show the new workout in workout lists
     useWorkoutStore.getState().loadWorkouts();
+
+    // Show success toast
+    Toast.show({
+      type: "success",
+      text1: "workout saved!",
+    });
+
+    set({ showWorkoutSavedPrompt: true });
 
     return savedWorkout;
   },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { XStack } from "tamagui";
+import { YStack, XStack } from "tamagui";
 import Input from "@/components/atoms/core/Input";
+import Text from "@/components/atoms/core/Text";
 import { WorkoutValidation } from "@/utils/validation";
 
 interface MetricInputProps {
@@ -30,7 +31,6 @@ export default function MetricInput({
   }, [value]);
 
   const validateAndUpdate = (val: string) => {
-    // Handle empty string - just clear the value
     if (!val || val === "" || val === "0") {
       onChange(undefined);
       return;
@@ -39,7 +39,6 @@ export default function MetricInput({
     const sanitized = WorkoutValidation.sanitizeNumeric(val);
     const numValue = parseFloat(sanitized);
 
-    // Handle NaN
     if (isNaN(numValue)) {
       onChange(undefined);
       return;
@@ -63,34 +62,66 @@ export default function MetricInput({
     onChange(validation.isValid ? numValue : undefined);
   };
 
-  // Check the actual value prop, not localValue
   const isEmpty = value === undefined || value === null || value === 0;
   const shouldShowError = showError && isEmpty;
 
+  const getMetricLabel = () => {
+    switch (type) {
+      case "weight":
+        return "weight";
+      case "reps":
+        return "reps";
+      case "distance":
+        return "distance";
+      default:
+        return "value";
+    }
+  };
+
   return (
-    <XStack flex={1} gap="$1" alignItems="center">
-      <Input
-        flex={1}
-        size="$3"
-        value={localValue}
-        onChangeText={(text) => {
-          const sanitized = WorkoutValidation.sanitizeNumeric(text);
-          setLocalValue(sanitized);
-        }}
-        onBlur={() => {
-          validateAndUpdate(localValue);
-        }}
-        placeholder="0"
-        keyboardType="numeric"
-        textAlign="center"
-        backgroundColor="$background"
-        borderColor={
-          shouldShowError ? "$red8" : error ? "$error" : "$borderMuted"
-        }
-        color="$color"
-        editable={isActive}
-        focusStyle={{ borderColor: "$primary" }}
-      />
-    </XStack>
+    <YStack flex={1} position="relative">
+      <XStack flex={1} gap="$1" alignItems="center">
+        <Input
+          flex={1}
+          size="$3"
+          value={localValue}
+          onChangeText={(text) => {
+            const sanitized = WorkoutValidation.sanitizeNumeric(text);
+            setLocalValue(sanitized);
+          }}
+          onBlur={() => {
+            validateAndUpdate(localValue);
+          }}
+          placeholder="0"
+          placeholderTextColor={shouldShowError ? "$red8" : "$textMuted"}
+          keyboardType="numeric"
+          textAlign="center"
+          backgroundColor={
+            shouldShowError ? "rgba(239, 68, 68, 0.08)" : "$background"
+          }
+          borderColor={
+            shouldShowError ? "$red8" : error ? "$error" : "$borderMuted"
+          }
+          borderWidth={shouldShowError ? 1.5 : 1}
+          color="$color"
+          editable={isActive}
+          focusStyle={{ borderColor: "$primary" }}
+        />
+      </XStack>
+      {shouldShowError && (
+        <Text
+          size="small"
+          color="$red8"
+          textAlign="center"
+          position="absolute"
+          top="100%"
+          left={0}
+          right={0}
+          marginTop="$1"
+        >
+          missing {getMetricLabel()}
+        </Text>
+      )}
+    </YStack>
   );
 }

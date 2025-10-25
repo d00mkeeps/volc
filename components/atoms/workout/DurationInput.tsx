@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { XStack } from "tamagui";
+import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
 import { WorkoutValidation } from "@/utils/validation";
@@ -15,23 +15,28 @@ export default function DurationInput({
   value,
   onChange,
   isActive,
-  showError = false, // ADD THIS
+  showError = false,
 }: DurationInputProps) {
-  const [hours, setHours] = useState("0");
-  const [minutes, setMinutes] = useState("00");
-  const [seconds, setSeconds] = useState("00");
+  const [hours, setHours] = useState("");
+  const [minutes, setMinutes] = useState("");
+  const [seconds, setSeconds] = useState("");
 
   const minutesRef = useRef<any>(null);
   const secondsRef = useRef<any>(null);
 
   useEffect(() => {
-    if (typeof value === "number") {
+    if (typeof value === "number" && value > 0) {
       const h = Math.floor(value / 3600);
       const m = Math.floor((value % 3600) / 60);
       const s = value % 60;
-      setHours(h.toString());
-      setMinutes(m.toString().padStart(2, "0"));
-      setSeconds(s.toString().padStart(2, "0"));
+      setHours(h > 0 ? h.toString() : "");
+      setMinutes(m > 0 ? m.toString().padStart(2, "0") : "");
+      setSeconds(s > 0 ? s.toString().padStart(2, "0") : "");
+    } else if (!value) {
+      // Clear inputs when value is undefined/null
+      setHours("");
+      setMinutes("");
+      setSeconds("");
     }
   }, [value]);
 
@@ -70,78 +75,95 @@ export default function DurationInput({
     const s = parseInt(seconds || "0");
     const totalSeconds = h * 3600 + m * 60 + s;
 
-    const validation = WorkoutValidation.duration(totalSeconds);
-    if (validation.isValid) {
-      onChange(totalSeconds);
+    // Only set value if total is greater than 0
+    if (totalSeconds > 0) {
+      const validation = WorkoutValidation.duration(totalSeconds);
+      if (validation.isValid) {
+        onChange(totalSeconds);
+      }
+    } else {
+      onChange(undefined);
     }
   };
 
-  const isEmpty = hours === "0" && minutes === "00" && seconds === "00";
+  const isEmpty =
+    (!hours || hours === "0") &&
+    (!minutes || minutes === "0" || minutes === "00") &&
+    (!seconds || seconds === "0" || seconds === "00");
   const shouldShowError = showError && isEmpty;
   const errorBorderColor = shouldShowError
     ? "$red8"
     : isActive
     ? "$borderSoft"
     : "$borderMuted";
+  const errorBackground = shouldShowError
+    ? "rgba(239, 68, 68, 0.08)"
+    : isActive
+    ? "$background"
+    : "$backgroundMuted";
+
+  const inputProps = {
+    size: "$3" as const,
+    placeholder: "00",
+    placeholderTextColor: shouldShowError ? "$red8" : "$textMuted",
+    keyboardType: "number-pad" as const,
+    textAlign: "center" as const,
+    backgroundColor: errorBackground,
+    borderColor: errorBorderColor,
+    borderWidth: shouldShowError ? 1.5 : 1,
+    color: isActive ? "$color" : "$textMuted",
+    editable: isActive,
+    width: 55,
+    maxLength: 2,
+    focusStyle: { borderColor: "$primary" },
+  };
 
   return (
-    <XStack flex={1} gap="$0.5" alignItems="center">
-      <Input
-        size="$3"
-        value={hours}
-        onChangeText={(val) => handleChange("hours", val)}
-        onBlur={updateDuration}
-        selectTextOnFocus
-        placeholder="00"
-        keyboardType="number-pad"
-        textAlign="center"
-        backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={errorBorderColor}
-        color={isActive ? "$color" : "$textMuted"}
-        editable={isActive}
-        width={45}
-        maxLength={2}
-      />
-      <Text size="medium" color="$textMuted">
-        :
-      </Text>
-      <Input
-        ref={minutesRef}
-        size="$3"
-        value={minutes}
-        onChangeText={(val) => handleChange("minutes", val)}
-        onBlur={updateDuration}
-        selectTextOnFocus
-        placeholder="00"
-        keyboardType="number-pad"
-        textAlign="center"
-        backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={errorBorderColor}
-        color={isActive ? "$color" : "$textMuted"}
-        editable={isActive}
-        width={45}
-        maxLength={2}
-      />
-      <Text size="medium" color="$textMuted">
-        :
-      </Text>
-      <Input
-        ref={secondsRef}
-        size="$3"
-        value={seconds}
-        onChangeText={(val) => handleChange("seconds", val)}
-        onBlur={updateDuration}
-        selectTextOnFocus
-        placeholder="00"
-        keyboardType="number-pad"
-        textAlign="center"
-        backgroundColor={isActive ? "$background" : "$backgroundMuted"}
-        borderColor={errorBorderColor}
-        color={isActive ? "$color" : "$textMuted"}
-        editable={isActive}
-        width={45}
-        maxLength={2}
-      />
-    </XStack>
+    <YStack alignSelf="center" position="relative">
+      <YStack position="relative">
+        <XStack gap="$0.5" alignItems="center">
+          <Input
+            {...inputProps}
+            value={hours}
+            onChangeText={(val) => handleChange("hours", val)}
+            onBlur={updateDuration}
+          />
+          <Text size="medium" color="$textMuted">
+            :
+          </Text>
+          <Input
+            {...inputProps}
+            ref={minutesRef}
+            value={minutes}
+            onChangeText={(val) => handleChange("minutes", val)}
+            onBlur={updateDuration}
+          />
+          <Text size="medium" color="$textMuted">
+            :
+          </Text>
+          <Input
+            {...inputProps}
+            ref={secondsRef}
+            value={seconds}
+            onChangeText={(val) => handleChange("seconds", val)}
+            onBlur={updateDuration}
+          />
+        </XStack>
+        {shouldShowError && (
+          <Text
+            size="small"
+            color="$red8"
+            textAlign="center"
+            position="absolute"
+            top="100%"
+            left={0}
+            right={0}
+            marginTop="$1"
+          >
+            missing duration
+          </Text>
+        )}
+      </YStack>
+    </YStack>
   );
 }

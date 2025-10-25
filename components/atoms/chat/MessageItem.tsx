@@ -48,6 +48,43 @@ export const MessageItem = memo(
 
       fence: (node: any, children: any, parent: any, styles: any) => {
         if (isStreaming) {
+          // Try to detect if this looks like it might be a workout template
+          const content = node.content.trim();
+          const looksLikeJSON =
+            content.startsWith("{") || content.startsWith("[");
+
+          if (looksLikeJSON) {
+            try {
+              const parsed = JSON.parse(content);
+              // If it parses, it's complete enough to try rendering
+              if (parsed.type === "workout_template") {
+                return (
+                  <WorkoutTemplateView
+                    key={node.key}
+                    data={parsed.data}
+                    onApprove={onTemplateApprove}
+                  />
+                );
+              }
+            } catch (e) {
+              // JSON is incomplete - show loading indicator
+              return (
+                <YStack
+                  key={node.key}
+                  style={styles.fence}
+                  justifyContent="center"
+                  alignItems="center"
+                  padding="$4"
+                >
+                  <Text color="$textSoft" size="small">
+                    building a workout for you..
+                  </Text>
+                </YStack>
+              );
+            }
+          }
+
+          // For non-JSON code blocks, show the raw content
           return (
             <YStack key={node.key} style={styles.fence}>
               <Text style={styles.fence}>{node.content}</Text>
@@ -55,9 +92,9 @@ export const MessageItem = memo(
           );
         }
 
+        // Normal (non-streaming) rendering
         try {
           const parsed = JSON.parse(node.content);
-
           if (parsed.type === "workout_template") {
             return (
               <WorkoutTemplateView
@@ -78,7 +115,6 @@ export const MessageItem = memo(
           </YStack>
         );
       },
-
       code_block: (node: any, children: any, parent: any, styles: any) => {
         return (
           <YStack key={node.key} style={styles.code_block}>

@@ -6,6 +6,7 @@ import { ArrowLeft } from "@/assets/icons/IconMap";
 import { ChatInterface } from "./ChatInterface";
 import { useMessaging } from "@/hooks/chat/useMessaging";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { ChatInterfaceSkeleton } from "./ChatInterfaceSkeleton";
 
 interface ExistingConversationChatProps {
   conversationId: string;
@@ -139,14 +140,34 @@ export const ExistingConversationChat = ({
   }
 
   // Loading state
+  // Loading state
   if (messaging.conversationId !== conversationId || messaging.isLoading) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
-        <Text>Loading conversation...</Text>
+      <YStack flex={1}>
+        <XStack
+          padding="$3"
+          alignItems="center"
+          gap="$2"
+          backgroundColor="$background"
+        >
+          <Button
+            size="$3"
+            chromeless
+            backgroundColor="transparent"
+            onPress={handleBack}
+          >
+            <ArrowLeft size={18} color="#f84f3e" />
+          </Button>
+          <Text size="large" fontWeight="600">
+            {conversationTitle || "Workout Analysis"}
+          </Text>
+        </XStack>
+        <YStack flex={1} backgroundColor="$background">
+          <ChatInterfaceSkeleton />
+        </YStack>
       </YStack>
     );
   }
-
   return (
     <YStack flex={1}>
       <XStack
