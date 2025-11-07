@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextArea, XStack, YStack, Stack, ScrollView } from "tamagui";
+import { XStack, YStack, Stack, ScrollView } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
 import Button from "@/components/atoms/core/Button";
@@ -7,6 +7,8 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import ImagePickerButton from "../../atoms/ImagePickerButton";
 import WorkoutImage from "../../molecules/workout/WorkoutImage";
 import { ChevronDown, ChevronRight } from "@/assets/icons/IconMap";
+import { TabsSegmented } from "@/components/molecules/core/TabsSegmented";
+import TextArea from "@/components/atoms/core/TextArea";
 
 interface WorkoutSummarySlideProps {
   onContinue: () => void;
@@ -208,82 +210,98 @@ export function WorkoutSummarySlide({
             )}
           </YStack>
 
-          {/* Exercise Notes - Expandable */}
+          {/* Notes Section with Tabs */}
           <YStack gap="$2">
             <Text size="medium" fontWeight="600">
               Notes
             </Text>
-            <YStack gap="$2">
-              {currentWorkout?.workout_exercises.map((exercise) => {
-                const isExpanded = expandedExercises.has(exercise.id);
-                return (
-                  <YStack
-                    key={exercise.id}
-                    backgroundColor="$backgroundSoft"
-                    borderRadius="$3"
-                    overflow="hidden"
-                  >
-                    {/* Header - always visible */}
-                    <Stack
-                      paddingHorizontal="$3"
-                      paddingVertical="$3"
-                      pressStyle={{ backgroundColor: "$backgroundPress" }}
-                      onPress={() => toggleExercise(exercise.id)}
-                      cursor="pointer"
-                    >
-                      <XStack
-                        justifyContent="space-between"
-                        alignItems="center"
+
+            <TabsSegmented
+              tabs={[
+                { value: "workout", label: "Workout" },
+                { value: "exercise", label: "Exercise" },
+              ]}
+              defaultValue="workout"
+            >
+              {/* Workout Notes Tab */}
+              <TabsSegmented.Content value="workout">
+                <TextArea
+                  value={workoutNotes}
+                  onChangeText={setWorkoutNotes}
+                  placeholder="How did the workout feel overall?"
+                  minHeight={120}
+                  backgroundColor="$backgroundMuted"
+                />
+              </TabsSegmented.Content>
+
+              {/* Exercise Notes Tab */}
+              <TabsSegmented.Content value="exercise">
+                <YStack gap="$2">
+                  {currentWorkout?.workout_exercises.map((exercise) => {
+                    const isExpanded = expandedExercises.has(exercise.id);
+                    return (
+                      <YStack
+                        key={exercise.id}
+                        backgroundColor="$backgroundSoft"
+                        borderRadius="$3"
+                        overflow="hidden"
                       >
-                        <Text size="medium" fontWeight="600" color="$color">
-                          {exercise.name}
-                        </Text>
-                        {isExpanded ? (
-                          <ChevronDown size={20} color="$text" />
-                        ) : (
-                          <ChevronRight size={20} color="$text" />
+                        {/* Header - always visible */}
+                        <Stack
+                          paddingHorizontal="$3"
+                          paddingVertical="$3"
+                          pressStyle={{ backgroundColor: "$backgroundPress" }}
+                          onPress={() => toggleExercise(exercise.id)}
+                          cursor="pointer"
+                        >
+                          <XStack
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Text size="medium" fontWeight="600" color="$color">
+                              {exercise.name}
+                            </Text>
+                            {isExpanded ? (
+                              <ChevronDown size={20} color="$text" />
+                            ) : (
+                              <ChevronRight size={20} color="$text" />
+                            )}
+                          </XStack>
+                        </Stack>
+
+                        {/* Expandable notes area */}
+                        {isExpanded && (
+                          <YStack padding="$3" paddingTop="$0" gap="$2">
+                            <TextArea
+                              value={
+                                exerciseNotes[exercise.id] ??
+                                exercise.notes ??
+                                ""
+                              }
+                              onChangeText={(notes) =>
+                                setExerciseNotes((prev) => ({
+                                  ...prev,
+                                  [exercise.id]: notes,
+                                }))
+                              }
+                              placeholder="add notes.."
+                              minHeight={100}
+                              backgroundColor="$background"
+                              borderColor="$borderSoft"
+                            />
+                          </YStack>
                         )}
-                      </XStack>
-                    </Stack>
-
-                    {/* Expandable notes area */}
-                    {isExpanded && (
-                      <YStack padding="$3" paddingTop="$0" gap="$2">
-                        <TextArea
-                          value={
-                            exerciseNotes[exercise.id] ?? exercise.notes ?? ""
-                          }
-                          onChangeText={(notes) =>
-                            setExerciseNotes((prev) => ({
-                              ...prev,
-                              [exercise.id]: notes,
-                            }))
-                          }
-                          placeholder="add notes.."
-                          minHeight={100}
-                          backgroundColor="$background"
-                          borderColor="$borderSoft"
-                        />
                       </YStack>
-                    )}
-                  </YStack>
-                );
-              })}
-            </YStack>
-          </YStack>
-
-          <YStack gap="$2">
-            <TextArea
-              value={workoutNotes}
-              onChangeText={setWorkoutNotes}
-              placeholder="How did the workout feel overall? (optional)"
-              minHeight={100}
-              backgroundColor="$backgroundMuted"
-            />
+                    );
+                  })}
+                </YStack>
+              </TabsSegmented.Content>
+            </TabsSegmented>
           </YStack>
         </YStack>
       </ScrollView>
 
+      {/* Persistent Bottom Button */}
       <XStack
         gap="$3"
         padding="$4"

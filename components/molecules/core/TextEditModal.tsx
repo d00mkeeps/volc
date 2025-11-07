@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { YStack, XStack } from "tamagui";
-import { TextInput, Keyboard, Platform } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import BaseModal from "@/components/atoms/core/BaseModal";
+import TextArea from "@/components/atoms/core/TextArea";
 import { useTheme } from "tamagui";
 
 interface TextEditModalProps {
@@ -56,7 +57,6 @@ export default function TextEditModal({
 
   const handleSave = () => {
     Keyboard.dismiss();
-    // Small delay to let keyboard dismiss before closing modal
     setTimeout(() => {
       onSave(notes);
       onClose();
@@ -66,7 +66,7 @@ export default function TextEditModal({
   const handleCancel = () => {
     Keyboard.dismiss();
     setTimeout(() => {
-      setNotes(currentNotes); // Reset to original
+      setNotes(currentNotes);
       onClose();
     }, 100);
   };
@@ -85,23 +85,16 @@ export default function TextEditModal({
           {title}
         </Text>
 
-        {/* Text Input */}
-        <TextInput
+        {/* Text Area with Markdown Helpers */}
+        <TextArea
           value={notes}
           onChangeText={setNotes}
-          placeholder="Add notes about this exercise..."
-          placeholderTextColor={theme.textMuted.val}
-          multiline
+          placeholder="add notes.."
+          size="medium"
+          enableMarkdownHelpers={true}
           numberOfLines={6}
-          style={{
-            flex: 1,
-            backgroundColor: theme.backgroundSoft.val,
-            borderRadius: 8,
-            padding: 12,
-            fontSize: 16,
-            color: theme.color.val,
-            textAlignVertical: "top",
-          }}
+          width="90%"
+          flex={1}
           autoFocus
         />
 

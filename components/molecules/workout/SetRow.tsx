@@ -46,7 +46,15 @@ export default function SetRow({
     }
   }, [canBeCompleted]);
 
-  // ... existing useEffect for pendingDelete ...
+  useEffect(() => {
+    if (!pendingDelete) return;
+
+    const timeout = setTimeout(() => {
+      setPendingDelete(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [pendingDelete]);
 
   const handleCompletionToggle = async () => {
     if (!isActive) return;

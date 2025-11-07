@@ -40,7 +40,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const bottomSheetRef = useRef<BottomSheet>(null);
     const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
 
-    const { currentWorkout, isActive, updateCurrentWorkout, updateExercise } =
+    const { currentWorkout, isActive, updateCurrentWorkout } =
       useUserSessionStore();
     const theme = useTheme();
 

@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
+import {
+  CompleteWorkout,
+  WorkoutExercise,
+  WorkoutExerciseSet,
+} from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -305,8 +309,32 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       throw new Error("No workout to finish");
     }
 
-    // ONLY: Mark workout as completed in session (no DB save yet)
+    // Helper function to check if a set has actual data
+    const setHasData = (set: WorkoutExerciseSet) => {
+      return (
+        (set.weight !== undefined && set.weight !== null) ||
+        (set.reps !== undefined && set.reps !== null) ||
+        (set.distance !== undefined && set.distance !== null) ||
+        (set.duration !== undefined && set.duration !== null)
+      );
+    };
+
+    // Filter out exercises that have no sets with actual data
+    const exercisesWithData = currentWorkout.workout_exercises.filter(
+      (exercise) => {
+        return exercise.workout_exercise_sets.some((set) => setHasData(set));
+      }
+    );
+
+    // Update the workout with only exercises that have data
+    const cleanedWorkout = {
+      ...currentWorkout,
+      workout_exercises: exercisesWithData,
+    };
+
+    // Update the store with cleaned workout
     set({
+      currentWorkout: cleanedWorkout,
       isActive: false,
       isPaused: false,
     });
@@ -314,6 +342,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     // Refresh dashboard for immediate UI feedback
     useDashboardStore.getState().refreshDashboard();
   },
+
   setPendingImage: (imageId) => {
     set({ pendingImageId: imageId });
   },
