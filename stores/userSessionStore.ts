@@ -47,7 +47,7 @@ interface UserSessionState {
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
   updateExercise: (
     exerciseId: string,
-    updatedExercise: Partial<WorkoutExercise>
+    updatedFields: Partial<WorkoutExercise>
   ) => void;
   resetSession: () => void;
 
@@ -174,6 +174,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     exerciseId: string,
     updatedFields: Partial<WorkoutExercise>
   ) => {
+    console.log("🏪 Store.updateExercise called:", {
+      exerciseId,
+      updatedFields,
+    });
     const { currentWorkout } = get();
     if (!currentWorkout) return;
 
@@ -188,6 +192,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     };
 
     set({ currentWorkout: updatedWorkout });
+    console.log("✅ Store updated, new workout:", get().currentWorkout);
   },
 
   initializeAnalysisAndChat: async () => {

@@ -16,6 +16,7 @@ import SetHeader from "../headers/SetHeader";
 import ExerciseDefinitionView from "./ExerciseDefinitionView";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import TextEditModal from "../core/TextEditModal";
+import ExerciseSelectModal from "@/components/organisms/workout/ExerciseSelectModal";
 
 interface ExerciseTrackerProps {
   exercise: WorkoutExercise;
@@ -100,20 +101,25 @@ export default function ExerciseTracker({
     }
   };
 
-  const handleExerciseSelect = (exerciseName: string) => {
-    if (!onExerciseUpdate) return;
+  const handleExerciseSelect = (exerciseName: string, definitionId: string) => {
+    console.log("🎯 ExerciseTracker.handleExerciseSelect called:", {
+      exerciseName,
+      definitionId,
+    });
 
-    const selectedDefinition = exercises.find(
-      (ex: ExerciseDefinition) => ex.standard_name === exerciseName
-    );
+    if (!onExerciseUpdate) {
+      console.log("❌ No onExerciseUpdate callback!");
+      return;
+    }
 
     const updatedExercise = {
       ...exercise,
       name: exerciseName,
-      definition_id: selectedDefinition?.id,
-      notes: undefined, // CLEAR NOTES when exercise changes
+      definition_id: definitionId,
+      notes: undefined,
     };
 
+    console.log("📝 Calling onExerciseUpdate with:", updatedExercise);
     onExerciseUpdate(updatedExercise);
     setIsEditing(false);
     onEditingChange?.(false);
@@ -240,16 +246,6 @@ export default function ExerciseTracker({
             }
             canDelete={canDeleteExercise}
           />
-
-          {/* Show search input below header when editing */}
-          {isEditing && (
-            <ExerciseSearchInput
-              value={selectedExercise}
-              onSelect={handleExerciseSelect}
-              placeholder="Search exercises..."
-              isReplacing={!!exercise.name}
-            />
-          )}
         </Stack>
 
         {!isEditing && (
@@ -320,13 +316,16 @@ export default function ExerciseTracker({
           </>
         )}
       </YStack>
-
       <ExerciseDefinitionView
         definitionId={exercise.definition_id || ""}
         isVisible={definitionModalVisible && !!exercise.definition_id}
         onClose={() => setDefinitionModalVisible(false)}
       />
-
+      <ExerciseSelectModal
+        isVisible={isEditing}
+        onClose={handleCancelEdit}
+        onSelectExercise={handleExerciseSelect}
+      />
       <TextEditModal
         isVisible={notesModalVisible}
         onClose={() => setNotesModalVisible(false)}

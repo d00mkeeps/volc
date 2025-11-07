@@ -87,23 +87,24 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       [expandSheet, snapToPeek]
     );
 
-    // Animated style for the blur overlay - fades when expanding
-    const blurAnimatedStyle = useAnimatedStyle(() => {
-      const opacity = interpolate(animatedIndex.value, [1, 2], [1, 0], "clamp");
-      return { opacity };
-    });
-
     // Track editing state across all exercises
     const handleEditingChange = useCallback((isEditing: boolean) => {
       setIsAnyExerciseEditing(isEditing);
     }, []);
 
-    // Exercise update handlers
     const handleExerciseUpdate = useCallback(
       (updatedExercise: WorkoutExercise) => {
-        updateExercise(updatedExercise.id, updatedExercise);
+        if (!isActive || !currentWorkout) return;
+
+        const updatedWorkout = {
+          ...currentWorkout,
+          workout_exercises: currentWorkout.workout_exercises.map((exercise) =>
+            exercise.id === updatedExercise.id ? updatedExercise : exercise
+          ),
+        };
+        updateCurrentWorkout(updatedWorkout);
       },
-      [updateExercise]
+      [isActive, currentWorkout, updateCurrentWorkout]
     );
 
     const handleExerciseDelete = useCallback(

@@ -11,24 +11,25 @@ class ExerciseDefinitionService(BaseDBService):
     
     async def get_all_exercise_definitions(self, jwt_token: str) -> Dict[str, Any]:
         """
-        Get all exercise definitions ordered by standard_name
+        Get all active exercise definitions ordered by standard_name
         """
         try:
             logger.info("Fetching all exercise definitions")
-            
             user_client = self.get_user_client(jwt_token)
             result = user_client.table("exercise_definitions") \
                 .select("*") \
+                .eq("is_active", True) \
                 .order("standard_name") \
                 .execute()
-                
+            
             if hasattr(result, 'error') and result.error:
                 raise Exception(f"Failed to fetch exercise definitions: {result.error.message}")
-                
+            
             definitions = result.data or []
             logger.info(f"Fetched {len(definitions)} exercise definitions")
-            return await self.format_response(definitions)
             
+            return await self.format_response(definitions)
+        
         except Exception as e:
             logger.error(f"Error getting exercise definitions: {str(e)}")
             return await self.handle_error("get_all_exercise_definitions", e)
@@ -38,8 +39,11 @@ class ExerciseDefinitionService(BaseDBService):
         """Get all exercise definitions using admin client (no auth required)"""
         try:
             response = self.get_admin_client().table('exercise_definitions').select(
-                'id, standard_name, primary_muscles, secondary_muscles, equipment, movement_pattern, description'
-            ).order('standard_name').execute()
+                'id, base_movement, major_variation, standard_name, aliases, equipment, '
+                'movement_pattern, primary_muscles, secondary_muscles, uses_weight, '
+                'uses_reps, uses_duration, uses_distance, uses_rpe, is_bodyweight, '
+                'description, is_default, is_active, created_at, updated_at'
+            ).eq('is_active', True).order('standard_name').execute()
             
             if response.data:
                 logger.info(f"Successfully loaded {len(response.data)} exercise definitions")
@@ -53,15 +57,13 @@ class ExerciseDefinitionService(BaseDBService):
                     "success": False,
                     "error": "No exercise definitions found"
                 }
-                
+        
         except Exception as e:
             logger.error(f"Error fetching exercise definitions: {str(e)}", exc_info=True)
             return {
                 "success": False,
                 "error": str(e)
             }
-
-
     async def create_exercise_definition(self, exercise_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
         Create a new exercise definition

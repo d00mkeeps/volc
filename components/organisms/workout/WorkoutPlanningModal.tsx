@@ -231,7 +231,7 @@ export const WorkoutPlanningModal = ({
             pressStyle={{ backgroundColor: "$primaryPress" }}
           >
             <Text size="small" color="white" fontWeight="600">
-              Skip AI Chat
+              Log Manually
             </Text>
           </Button>
         </XStack>

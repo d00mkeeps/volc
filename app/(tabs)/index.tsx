@@ -23,6 +23,7 @@ import WorkoutTracker, {
 import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
 import { WorkoutPlanningModal } from "@/components/organisms/workout/WorkoutPlanningModal";
+import { WorkoutStartModal } from "@/components/organisms/workout/WorkoutStartModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -60,6 +61,7 @@ export default function HomeScreen() {
 
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
+  const [showWorkoutStartModal, setShowWorkoutStartModal] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
@@ -265,9 +267,35 @@ export default function HomeScreen() {
   });
 
   const handleStartWorkout = useCallback(() => {
+    setShowWorkoutStartModal(true);
+  }, []);
+
+  const handlePlanWithCoach = useCallback(() => {
+    setShowWorkoutStartModal(false);
     setIntendedToStart(true);
     sessionActions.openTemplateSelector();
   }, [sessionActions]);
+
+  const handleLogManually = useCallback(() => {
+    setShowWorkoutStartModal(false);
+
+    if (userProfile?.user_id) {
+      const emptyTemplate = {
+        ...EMPTY_WORKOUT_TEMPLATE,
+        user_id: userProfile.user_id.toString(),
+      };
+
+      // Select and immediately start with empty template
+      sessionActions.selectTemplate(emptyTemplate);
+      setTimeout(() => {
+        const { currentWorkout } = useUserSessionStore.getState();
+        if (currentWorkout) {
+          sessionActions.startWorkout(currentWorkout);
+          workoutTrackerRef.current?.expandToFull();
+        }
+      }, 100);
+    }
+  }, [sessionActions, userProfile?.user_id]);
 
   const handleChatSend = useCallback(async (message: string) => {
     console.log("Chat message sent:", message);
@@ -338,6 +366,14 @@ export default function HomeScreen() {
           onSelectTemplate={handleTemplateSelect}
           onClose={handleTemplateClose}
         />
+
+        <WorkoutStartModal
+          isVisible={showWorkoutStartModal}
+          onPlanWithCoach={handlePlanWithCoach}
+          onLogManually={handleLogManually}
+          onClose={() => setShowWorkoutStartModal(false)}
+        />
+
         <WorkoutCompletionModal
           isVisible={showCompletionModal}
           onClose={handleWorkoutCompletionClose}

@@ -71,7 +71,7 @@ export type WorkoutExercise = {
   notes?: string;
 };
 
-// types.ts (add this to your existing types file)
+// types/workout.ts (or wherever ExerciseDefinition is defined)
 export interface ExerciseDefinition {
   id: string;
   base_movement: string;
@@ -90,9 +90,11 @@ export interface ExerciseDefinition {
   is_bodyweight: boolean;
   description: string | null;
   is_default: boolean;
+  is_active: boolean; // ← ADD THIS
   created_at: string;
   updated_at: string;
 }
+
 // In types/workout.ts
 export interface CompleteWorkout {
   id: string;
