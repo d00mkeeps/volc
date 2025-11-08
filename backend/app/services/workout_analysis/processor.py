@@ -1,8 +1,11 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import logging
 from datetime import datetime
 from .schemas import (
-    BundleMetadata
+    BundleMetadata,
+    MuscleGroupBalance,
+    MuscleGroupEntry,
+    WorkoutConsistencyEntry,
 )
 
 logger = logging.getLogger(__name__)
@@ -81,10 +84,13 @@ class AnalysisBundleProcessor:
             # 5. Build strength data
             strength_data = self._build_strength_data(workouts, errors)
             
-            # 6. Build consistency data
+
+            # 6. Build consistency data (now includes workout IDs)
             consistency_data = self._build_consistency_data(workouts, errors)
-            
-            # 7. Skip muscle_group_balance for now (to be integrated later)
+
+            # 7. Build muscle group balance
+            muscle_group_balance = self._build_muscle_group_balance(workouts, errors)
+
             # 8. Skip correlation_insights for now (to be implemented later)
             
             # Assemble final bundle
@@ -98,7 +104,7 @@ class AnalysisBundleProcessor:
                 volume_data=volume_data,
                 strength_data=strength_data,
                 consistency_data=consistency_data,
-                muscle_group_balance=None,  # TODO: Integrate existing service
+                muscle_group_balance=muscle_group_balance,
                 correlation_insights=None,  # TODO: Implement correlations
             )
             
@@ -403,40 +409,50 @@ class AnalysisBundleProcessor:
             errors.append(f"Strength data failed: {str(e)}")
             return StrengthData(top_e1rms=[])
     
+
     def _build_consistency_data(
         self,
         workouts: List[Dict],
         errors: List[str]
     ) -> ConsistencyData:
-        """Build consistency data using workout dates."""
+        """Build consistency data using workout dates and IDs."""
         try:
             if len(workouts) < 2:
                 return ConsistencyData(
                     avg_days_between=0.0,
                     variance=None,
-                    workout_dates=[]
+                    workout_dates=[],
+                    workouts=[]
                 )
             
-            # Extract and parse workout dates
-            workout_dates = []
+            # Extract workout data (ID + date)
+            workout_entries = []
             for workout in workouts:
+                workout_id = workout.get('id')
                 date_str = workout.get('created_at')
-                if date_str:
+                if workout_id and date_str:
                     try:
                         date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                        workout_dates.append(date)
+                        workout_entries.append({
+                            'id': workout_id,
+                            'date': date
+                        })
                     except (ValueError, TypeError) as e:
                         logger.warning(f"Could not parse workout date '{date_str}': {e}")
             
-            if len(workout_dates) < 2:
+            if len(workout_entries) < 2:
                 return ConsistencyData(
                     avg_days_between=0.0,
                     variance=None,
-                    workout_dates=workout_dates
+                    workout_dates=[],
+                    workouts=[]
                 )
             
-            # Sort dates
-            workout_dates.sort()
+            # Sort by date
+            workout_entries.sort(key=lambda x: x['date'])
+            
+            # Extract sorted dates for calculations
+            workout_dates = [entry['date'] for entry in workout_entries]
             
             # Calculate gaps between consecutive workouts
             gaps = []
@@ -454,10 +470,20 @@ class AnalysisBundleProcessor:
                 variance_sum = sum((gap - mean_gap) ** 2 for gap in gaps)
                 variance = variance_sum / len(gaps)
             
+            # Build WorkoutConsistencyEntry objects
+            workout_consistency_entries = [
+                WorkoutConsistencyEntry(
+                    workout_id=entry['id'],
+                    date=entry['date']
+                )
+                for entry in workout_entries
+            ]
+            
             return ConsistencyData(
                 avg_days_between=round(avg_gap, 1),
                 variance=round(variance, 2) if variance is not None else None,
-                workout_dates=workout_dates
+                workout_dates=workout_dates,
+                workouts=workout_consistency_entries
             )
             
         except Exception as e:
@@ -466,9 +492,49 @@ class AnalysisBundleProcessor:
             return ConsistencyData(
                 avg_days_between=0.0,
                 variance=None,
-                workout_dates=[]
+                workout_dates=[],
+                workouts=[]
             )
-    
+
+    def _build_muscle_group_balance(
+        self,
+        workouts: List[Dict],
+        errors: List[str]
+    ) -> Optional[MuscleGroupBalance]:
+        """
+        Build muscle group balance from workouts.
+        
+        Uses the proven DashboardService._calculate_muscle_balance() method
+        to ensure consistent calculations across the app.
+        """
+        try:
+            # Import and instantiate dashboard service (has DB access)
+            from app.services.db.dashboard_service import DashboardService
+            dashboard_service = DashboardService()
+            
+            # Call the proven method - returns List[{"muscle": str, "sets": int}]
+            muscle_balance_list = dashboard_service._calculate_muscle_balance(workouts)
+            
+            # Convert to our schema format
+            muscle_group_entries = [
+                MuscleGroupEntry(muscle=item["muscle"], sets=item["sets"])
+                for item in muscle_balance_list
+            ]
+            
+            # Calculate total sets
+            total_sets = sum(entry.sets for entry in muscle_group_entries)
+            
+            logger.info(f"Built muscle group balance: {len(muscle_group_entries)} groups, {total_sets} total sets")
+            
+            return MuscleGroupBalance(
+                muscle_groups=muscle_group_entries,
+                total_sets=total_sets
+            )
+            
+        except Exception as e:
+            logger.error(f"Error building muscle group balance: {e}", exc_info=True)
+            errors.append(f"Muscle group balance failed: {str(e)}")
+            return None
     def _create_failed_bundle(
         self,
         bundle_id: str,

@@ -165,22 +165,33 @@ export const useConversationStore = create<ConversationStoreState>(
 
       createConversationFromMessage: async (message: string) => {
         try {
-          set({ isLoading: true, error: null, pendingInitialMessage: message }); // Add pendingInitialMessage here
+          set({ isLoading: true, error: null, pendingInitialMessage: message });
 
           const session = await authService.getSession();
           if (!session?.user?.id) {
             throw new Error("No authenticated user found");
           }
 
+          // Format the date
+          const today = new Date();
+          const dateStr = today.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }); // e.g., "Nov 7, 2025"
+
+          // Create title with message snippet and date
+          const messageSnippet =
+            message.length > 30 ? `${message.slice(0, 30)}..` : message;
+          const title = `${messageSnippet} | ${dateStr}`;
+
           const result =
             await conversationService.createConversationFromMessage({
               userId: session.user.id,
-              title:
-                message.length > 30 ? `${message.slice(0, 30)}..` : message,
+              title: title,
               firstMessage: message,
               configName: "workout-analysis",
             });
-
           set((state) => {
             const newConversations = new Map(state.conversations);
             newConversations.set(result.conversation.id, result.conversation);

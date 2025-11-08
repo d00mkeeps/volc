@@ -19,7 +19,7 @@ export const TextArea = forwardRef<any, TextAreaProps>(
       borderColor = "$primary",
       color = "$color",
       placeholderTextColor = "$textMuted",
-      alignSelf = "center",
+      alignSelf = "stretch",
       enableMarkdownHelpers = false,
       onChangeText,
       ...props

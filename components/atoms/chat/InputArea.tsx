@@ -111,7 +111,7 @@ export const InputArea = ({
           flex={1}
           size="small"
           borderRadius={12}
-          numberOfLines={8}
+          multiline
           value={input}
           onChangeText={(text) => {
             setInput(text);
@@ -129,7 +129,6 @@ export const InputArea = ({
           onFocus={handleFocus}
           returnKeyType="send"
           maxLength={500}
-          verticalAlign="top"
           paddingTop="$2"
           paddingBottom="$2"
         />

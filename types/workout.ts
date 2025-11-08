@@ -196,6 +196,7 @@ export interface MuscleData {
 export interface ConsistencyData {
   workoutDates: string[];
   totalWorkouts: number;
+  workouts: Array<{ id: string; date: string }>; // ✅ Add this field
 }
 
 export interface TimeframeData {

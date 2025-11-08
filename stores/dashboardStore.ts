@@ -57,7 +57,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       // Call API - returns all timeframes
 
       const response = await dashboardService.getAllDashboardData();
-
       set({
         allData: response,
         isLoading: false,
@@ -65,10 +64,30 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         error: null,
       });
 
+      // ✅ Log data shape
       const { allData } = get();
+      if (allData) {
+        console.log("📊 [DashboardStore] Dashboard data received:");
 
-      if (allData && allData["2weeks"]) {
-        console.log("[DashboardStore] all good!");
+        (["1week", "2weeks", "1month", "2months"] as const).forEach(
+          (timeframe) => {
+            const data = allData[timeframe];
+            const workouts = data.consistency.workouts || [];
+
+            console.log(`\n  ${timeframe}:`);
+            console.log(
+              `    ✓ ${workouts.length} workouts received with fields: ${
+                workouts.length > 0
+                  ? Object.keys(workouts[0]).join(", ")
+                  : "N/A"
+              }`
+            );
+
+            if (workouts.length > 0) {
+              console.log(`    Sample:`, workouts[0]);
+            }
+          }
+        );
       }
     } catch (error) {
       console.error("❌ [DashboardStore] Failed to refresh dashboard:", error);

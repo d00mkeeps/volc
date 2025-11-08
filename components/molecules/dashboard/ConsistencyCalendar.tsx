@@ -1,3 +1,5 @@
+// /components/molecules/dashboard/ConsistencyCalendar.tsx
+
 import React, { useState, useRef, useEffect } from "react";
 import { ScrollView, Stack, XStack, YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -7,30 +9,71 @@ interface DayData {
   hasWorkout: boolean;
   isToday: boolean;
   dayOfWeek: string;
+  workoutIds: string[]; // ✅ Add workout IDs
 }
 
 interface ConsistencyCalendarProps {
-  workoutDates?: string[]; // Changed from workoutDays to workoutDates (ISO date strings)
+  workouts?: Array<{ id: string; date: string }>;
+  onDayPress?: (workoutIds: string[]) => void; // ✅ Add callback
 }
 
 export default function ConsistencyCalendar({
-  workoutDates = [],
+  workouts = [],
+  onDayPress, // ✅ Accept callback
 }: ConsistencyCalendarProps) {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const totalWeeks = 9;
 
-  // Convert workout date strings to Date objects for easy comparison
-  const workoutDateObjects = workoutDates.map((dateStr) => new Date(dateStr));
+  // ✅ Parse workouts to get dates and map them to IDs
+  const workoutDateMap = new Map<string, string[]>();
+  workouts.forEach(({ id, date }) => {
+    const dateObj = new Date(date);
+    const dateKey = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
+
+    if (!workoutDateMap.has(dateKey)) {
+      workoutDateMap.set(dateKey, []);
+    }
+    workoutDateMap.get(dateKey)!.push(id);
+  });
+
+  const workoutDateObjects = workouts.map(({ date }) => new Date(date));
+
+  // Calculate the number of weeks to show based on oldest workout
+  // /components/molecules/dashboard/ConsistencyCalendar.calculateWeeksToShow
+  const calculateWeeksToShow = () => {
+    if (workoutDateObjects.length === 0) {
+      return 1;
+    }
+
+    const today = new Date();
+    const oldestWorkout = new Date(
+      Math.min(...workoutDateObjects.map((d) => d.getTime()))
+    );
+
+    const diffInMs = today.getTime() - oldestWorkout.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const weeksNeeded = Math.ceil(diffInDays / 7);
+
+    return Math.max(1, weeksNeeded) + 1;
+  };
+
+  const totalWeeks = calculateWeeksToShow();
+  const hasWorkouts = workoutDateObjects.length > 0;
 
   // Generate weeks of data (oldest to newest)
+  // /components/molecules/dashboard/ConsistencyCalendar.generateWeeks
   const generateWeeks = () => {
     const weeks = [];
     const today = new Date();
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-    for (let weekOffset = 8; weekOffset >= 0; weekOffset--) {
+    for (let weekOffset = totalWeeks - 1; weekOffset >= 0; weekOffset--) {
+      if (weekOffset === totalWeeks - 1 && hasWorkouts) {
+        weeks.push({ weekOffset, days: [], isPlaceholder: true });
+        continue;
+      }
+
       const days: DayData[] = [];
 
       for (let i = 6; i >= 0; i--) {
@@ -39,15 +82,11 @@ export default function ConsistencyCalendar({
         const dayNumber = date.getDate();
         const dayOfWeek = dayNames[date.getDay()];
 
-        // Fix: Compare actual dates, not just day numbers
-        const hasWorkout = workoutDateObjects.some(
-          (workoutDate) =>
-            workoutDate.getFullYear() === date.getFullYear() &&
-            workoutDate.getMonth() === date.getMonth() &&
-            workoutDate.getDate() === date.getDate()
-        );
+        // ✅ Get workout IDs for this date
+        const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        const workoutIds = workoutDateMap.get(dateKey) || [];
+        const hasWorkout = workoutIds.length > 0;
 
-        // Check if this date is actually today
         const isToday = weekOffset === 0 && i === 0;
 
         days.push({
@@ -55,10 +94,11 @@ export default function ConsistencyCalendar({
           hasWorkout,
           isToday,
           dayOfWeek,
+          workoutIds, // ✅ Include workout IDs
         });
       }
 
-      weeks.push({ weekOffset, days });
+      weeks.push({ weekOffset, days, isPlaceholder: false });
     }
 
     return weeks;
@@ -79,7 +119,40 @@ export default function ConsistencyCalendar({
         });
       }, 50);
     }
-  }, [containerWidth]);
+  }, [containerWidth, totalWeeks]);
+
+  // ✅ Handle day press - call callback with workout IDs
+  // /components/molecules/dashboard/ConsistencyCalendar.handleDayPress
+  const handleDayPress = (dayData: DayData) => {
+    console.log("👆 [ConsistencyCalendar] Day pressed:", {
+      day: dayData.day,
+      dayOfWeek: dayData.dayOfWeek,
+      hasWorkout: dayData.hasWorkout,
+      workoutIdsCount: dayData.workoutIds.length,
+      workoutIds: dayData.workoutIds,
+    });
+
+    if (dayData.workoutIds.length > 0) {
+      console.log(
+        `🗓️ [ConsistencyCalendar] Pressed day ${dayData.day} (${dayData.dayOfWeek})`,
+        `- Workout IDs: [${dayData.workoutIds.join(", ")}]`
+      );
+      // ✅ Call the callback instead of managing state
+      if (onDayPress) {
+        console.log(
+          "📞 [ConsistencyCalendar] Calling onDayPress callback with:",
+          dayData.workoutIds
+        );
+        onDayPress(dayData.workoutIds);
+      } else {
+        console.warn(
+          "⚠️ [ConsistencyCalendar] No onDayPress callback provided!"
+        );
+      }
+    } else {
+      console.log("⚠️ [ConsistencyCalendar] Day has no workout IDs");
+    }
+  };
 
   const renderDay = (dayData: DayData) => (
     <YStack
@@ -93,15 +166,24 @@ export default function ConsistencyCalendar({
         borderRadius="$3"
         backgroundColor={
           dayData.isToday
-            ? "$primary" // Red for today
+            ? "$primary"
             : dayData.hasWorkout
-            ? "white" // White for workout days
-            : "$backgroundPress" // Default for no workout
+            ? "white"
+            : "$backgroundPress"
         }
         justifyContent="center"
         alignItems="center"
         borderWidth={dayData.isToday ? 2 : dayData.hasWorkout ? 1 : 0}
         borderColor={dayData.isToday ? "$primary" : "#f84f3e"}
+        // ✅ Make pressable with visual feedback
+        {...(dayData.hasWorkout && {
+          pressStyle: {
+            opacity: 0.7,
+            scale: 0.95,
+          },
+          onPress: () => handleDayPress(dayData),
+          cursor: "pointer",
+        })}
       >
         <YStack alignItems="center" gap="$0.5">
           <Text
@@ -182,15 +264,34 @@ export default function ConsistencyCalendar({
           decelerationRate="fast"
         >
           {weeks.map((week, index) => (
-            <XStack
+            <Stack
               key={index}
-              gap="$1"
               width={containerWidth}
-              justifyContent="space-evenly"
+              justifyContent="center"
               alignItems="center"
             >
-              {week.days.map(renderDay)}
-            </XStack>
+              {week.isPlaceholder ? (
+                <Stack justifyContent="center" alignItems="center" height={40}>
+                  <Text
+                    size="medium"
+                    color="$textSoft"
+                    fontWeight="500"
+                    opacity={0.7}
+                  >
+                    nothing to see here!
+                  </Text>
+                </Stack>
+              ) : (
+                <XStack
+                  gap="$1"
+                  justifyContent="space-evenly"
+                  alignItems="center"
+                  width="100%"
+                >
+                  {week.days.map(renderDay)}
+                </XStack>
+              )}
+            </Stack>
           ))}
         </ScrollView>
       </Stack>

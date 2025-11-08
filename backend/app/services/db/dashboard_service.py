@@ -247,9 +247,14 @@ class DashboardService(BaseDBService):
         # Return actual dates as ISO strings
         workout_date_strings = [date.isoformat() for date in sorted(workout_dates)]
 
+
         return {
             "workoutDates": workout_date_strings,
-            "totalWorkouts": total_workouts  # ✅ Now shows real workout count
+            "totalWorkouts": total_workouts,
+            "workouts": [
+                {"id": w["id"], "date": w["created_at"]}
+                for w in workouts
+            ]
         }
 
     def _map_muscle_to_group(self, muscle: str) -> str:

@@ -90,7 +90,7 @@ export default function TextEditModal({
           value={notes}
           onChangeText={setNotes}
           placeholder="add notes.."
-          size="medium"
+          size="small"
           enableMarkdownHelpers={true}
           numberOfLines={6}
           width="90%"

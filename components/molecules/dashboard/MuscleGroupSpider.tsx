@@ -1,3 +1,5 @@
+// /components/molecules/dashboard/MuscleGroupSpider.tsx
+
 import React, { useState } from "react";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -16,11 +18,58 @@ export default function MuscleGroupSpider() {
   const isLoading = useDashboardStore((state) => state.isLoading);
   const error = useDashboardStore((state) => state.error);
 
+  // Calculate which timeframes should be disabled
+  // /stores/dashboardStore.calculateDisabledTimeframes
+  const calculateDisabledTimeframes = () => {
+    if (!allData) return [];
+
+    const timeframeOrder: TimeframeKey[] = [
+      "1week",
+      "2weeks",
+      "1month",
+      "2months",
+    ];
+    const disabled: TimeframeKey[] = [];
+
+    for (let i = 0; i < timeframeOrder.length - 1; i++) {
+      const currentKey = timeframeOrder[i];
+      const nextKey = timeframeOrder[i + 1];
+
+      const currentWorkouts = allData[currentKey]?.actualMetrics?.workouts || 0;
+      const nextWorkouts = allData[nextKey]?.actualMetrics?.workouts || 0;
+
+      // If the next timeframe has the same workout count, it should be disabled
+      if (nextWorkouts === currentWorkouts) {
+        disabled.push(nextKey);
+      }
+    }
+
+    return disabled;
+  };
+
+  const disabledTimeframes = calculateDisabledTimeframes();
+
   const timeframeOptions = [
-    { value: "1week", label: "1 Week" },
-    { value: "2weeks", label: "2 Weeks" },
-    { value: "1month", label: "1 Month" },
-    { value: "2months", label: "2 Months" },
+    {
+      value: "1week",
+      label: "1 Week",
+      disabled: disabledTimeframes.includes("1week"),
+    },
+    {
+      value: "2weeks",
+      label: "2 Weeks",
+      disabled: disabledTimeframes.includes("2weeks"),
+    },
+    {
+      value: "1month",
+      label: "1 Month",
+      disabled: disabledTimeframes.includes("1month"),
+    },
+    {
+      value: "2months",
+      label: "2 Months",
+      disabled: disabledTimeframes.includes("2months"),
+    },
   ];
 
   // Handle loading state

@@ -28,7 +28,8 @@ export type AppIconName =
   | "Edit"
   | "Info"
   | "AlertTriangle"
-  | "AlertCircle";
+  | "AlertCircle"
+  | "Lock"; // Add this
 
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Settings: "settings-outline",
@@ -56,6 +57,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Info: "information-circle-outline",
   AlertTriangle: "warning-outline",
   AlertCircle: "alert-circle-outline",
+  Lock: "lock-closed-outline", // Add this
 };
 
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
@@ -199,4 +201,8 @@ export const AlertTriangle = (props: Omit<AppIconProps, "name">) => (
 
 export const AlertCircle = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="AlertCircle" {...props} />
+);
+
+export const Lock = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Lock" {...props} />
 );

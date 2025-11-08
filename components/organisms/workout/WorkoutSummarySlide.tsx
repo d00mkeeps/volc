@@ -228,9 +228,11 @@ export function WorkoutSummarySlide({
                 <TextArea
                   value={workoutNotes}
                   onChangeText={setWorkoutNotes}
+                  size="small"
                   placeholder="How did the workout feel overall?"
                   minHeight={120}
                   backgroundColor="$backgroundMuted"
+                  borderColor="$borderSoft" // Add this line
                 />
               </TabsSegmented.Content>
 

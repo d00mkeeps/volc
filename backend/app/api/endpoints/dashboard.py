@@ -12,10 +12,15 @@ class MuscleBalance(BaseModel):
     muscle: str
     sets: int
 
+class WorkoutEntry(BaseModel):
+    id: str
+    date: str
+
 class Consistency(BaseModel):
     workoutDates: List[str] 
     totalWorkouts: int
-
+    workouts: List[WorkoutEntry]  # ✅ Add this field
+    
 # ✅ Add the missing ActualMetrics model
 class ActualMetrics(BaseModel):
     workouts: int
@@ -58,7 +63,6 @@ async def get_dashboard_data(
         
         # Let Pydantic handle the alias mapping automatically
         return AllTimeframeResponse(**raw_data)
-        
     except Exception as e:
         logger.error(f"Error in dashboard endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

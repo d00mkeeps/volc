@@ -54,6 +54,7 @@ class AnalysisBundleService:
                 'top_performers': {},
                 'consistency_metrics': {},
                 'correlation_data': None,
+                'muscle_group_balance': None,  # ✅ ADD THIS LINE
                 'chart_urls': {}
             }).execute()
             
@@ -188,9 +189,11 @@ class AnalysisBundleService:
             # Store all performance data together
             db_top_performers = {
                 'strength_data': bundle_dict['strength_data'],
-                'volume_data': bundle_dict['volume_data'],
-                'muscle_group_balance': bundle_dict.get('muscle_group_balance')
+                'volume_data': bundle_dict['volume_data']
             }
+
+            # Extract muscle group balance separately
+            db_muscle_group_balance = bundle_dict.get('muscle_group_balance')
             
             # Consistency metrics
             db_consistency = bundle_dict['consistency_data']
@@ -198,7 +201,6 @@ class AnalysisBundleService:
             # Correlation data (if exists)
             db_correlation = bundle_dict.get('correlation_insights')
             
-            # Update the bundle
             update_data = {
                 'status': bundle_dict['status'],
                 'metadata': db_metadata,
@@ -206,7 +208,8 @@ class AnalysisBundleService:
                 'top_performers': db_top_performers,
                 'consistency_metrics': db_consistency,
                 'correlation_data': db_correlation,
-                'chart_urls': {},  # Charts to be added later
+                'muscle_group_balance': db_muscle_group_balance,  # ✅ ADD THIS LINE
+                'chart_urls': {},
                 'updated_at': datetime.utcnow().isoformat()
             }
             

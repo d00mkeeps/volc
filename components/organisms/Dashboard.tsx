@@ -1,37 +1,28 @@
+// /components/molecules/dashboard/Dashboard.tsx
+
 import React from "react";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import MuscleGroupSpider from "@/components/molecules/dashboard/MuscleGroupSpider";
 import ConsistencyCalendar from "@/components/molecules/dashboard/ConsistencyCalendar";
+import DashboardSkeleton from "@/components/molecules/dashboard/DashboardSkeleton";
 import { AllTimeframeData } from "@/types/workout";
 
 interface DashboardProps {
   allData: AllTimeframeData | null;
   isLoading?: boolean;
   error?: string | null;
+  onWorkoutDayPress?: (workoutIds: string[]) => void; // ✅ Add callback
 }
-
-let count = 0;
 
 export default function Dashboard({
   allData,
   isLoading,
   error,
+  onWorkoutDayPress, // ✅ Accept callback
 }: DashboardProps) {
   if (isLoading) {
-    return (
-      <Stack
-        backgroundColor="$backgroundSoft"
-        borderRadius="$3"
-        padding="$5"
-        alignItems="center"
-        gap="$3"
-      >
-        <Text color="$textSoft" size="medium">
-          Loading dashboard...
-        </Text>
-      </Stack>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
@@ -68,12 +59,10 @@ export default function Dashboard({
 
   return (
     <Stack gap="$3">
-      {/* MuscleGroupSpider handles its own timeframe selection */}
       <MuscleGroupSpider />
-
-      {/* ConsistencyCalendar always shows 2 months data */}
       <ConsistencyCalendar
-        workoutDates={allData["2months"].consistency.workoutDates}
+        workouts={allData["2months"].consistency.workouts} // ✅ Pass workouts array
+        onDayPress={onWorkoutDayPress} // ✅ Pass callback
       />
     </Stack>
   );

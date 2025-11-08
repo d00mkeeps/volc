@@ -1,11 +1,14 @@
-// /components/atoms/Select.tsx
+// /components/atoms/core/Select.tsx
+
 import React, { useState } from "react";
-import { Stack } from "tamagui";
+import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
+import { Lock } from "@/assets/icons/IconMap";
 
 interface SelectOption {
   value: string;
   label: string;
+  disabled?: boolean; // Add this
 }
 
 interface SelectProps {
@@ -22,7 +25,6 @@ export default function Select({
   onValueChange,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const selectedOption = options.find((option) => option.value === value);
 
   return (
@@ -48,7 +50,6 @@ export default function Select({
         >
           {selectedOption?.label || placeholder}
         </Text>
-
         {/* Dropdown Arrow */}
         <Stack position="absolute" right="$3" top="40%">
           <Text color="$textSoft" size="medium">
@@ -75,17 +76,29 @@ export default function Select({
             <React.Fragment key={option.value}>
               <Stack
                 padding="$2"
-                pressStyle={{ backgroundColor: "$backgroundHover" }}
+                pressStyle={
+                  option.disabled
+                    ? undefined
+                    : { backgroundColor: "$backgroundHover" }
+                }
                 onPress={() => {
+                  if (option.disabled) return;
                   onValueChange?.(option.value);
                   setIsOpen(false);
                 }}
+                opacity={option.disabled ? 0.5 : 1}
               >
-                <Text color="$text" size="medium">
-                  {option.label}
-                </Text>
+                <XStack alignItems="center" gap="$2">
+                  <Text
+                    color={option.disabled ? "$textSoft" : "$text"}
+                    size="medium"
+                    flex={1}
+                  >
+                    {option.label}
+                  </Text>
+                  {option.disabled && <Lock size={16} color="$textSoft" />}
+                </XStack>
               </Stack>
-
               {/* Separator - only show between options, not after the last one */}
               {index < options.length - 1 && (
                 <Stack height={1} backgroundColor="#111" width="100%" />

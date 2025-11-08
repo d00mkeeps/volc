@@ -198,6 +198,10 @@ class StrengthData(BaseModel):
 
 
 # ==================== CONSISTENCY DATA ====================
+class WorkoutConsistencyEntry(BaseModel):
+    """Single workout entry for consistency tracking."""
+    workout_id: str = Field(..., description="Unique workout ID")
+    date: datetime = Field(..., description="Workout date")
 
 class ConsistencyData(BaseModel):
     """
@@ -206,6 +210,10 @@ class ConsistencyData(BaseModel):
     Analyzes the temporal pattern of workouts to assess training consistency,
     including average gaps between workouts and variance.
     """
+    workouts: List[WorkoutConsistencyEntry] = Field(
+    default_factory=list,
+    description="List of workouts with IDs and dates, ordered chronologically"
+)
     avg_days_between: float = Field(
         ...,
         description="Average gap between workouts in days"
@@ -222,20 +230,26 @@ class ConsistencyData(BaseModel):
 
 # ==================== MUSCLE GROUP BALANCE ====================
 
+class MuscleGroupEntry(BaseModel):
+    """Single muscle group with set count."""
+    muscle: str = Field(..., description="Muscle group name (e.g., 'Chest', 'Back', 'Legs')")
+    sets: int = Field(..., description="Total sets performed for this muscle group")
+
+
 class MuscleGroupBalance(BaseModel):
     """
     Distribution of training across muscle groups.
     
-    Uses existing muscle group calculation service to provide insights
-    about training balance and potential imbalances.
-    
-    Structure will match the output of the existing muscle group service.
+    Shows how training volume is distributed across major muscle groups,
+    helping identify potential imbalances or areas that need more attention.
     """
-    # This will be populated with actual structure once we integrate
-    # the existing muscle group calculation service
-    data: Optional[Dict] = Field(
-        None,
-        description="Muscle group distribution data from existing service"
+    muscle_groups: List[MuscleGroupEntry] = Field(
+        default_factory=list,
+        description="List of muscle groups with set counts, ordered by sets descending"
+    )
+    total_sets: int = Field(
+        ...,
+        description="Total sets across all muscle groups"
     )
 
 

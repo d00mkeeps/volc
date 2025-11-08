@@ -13,6 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
@@ -69,6 +70,8 @@ export default function HomeScreen() {
   const [showFinishMessage, setShowFinishMessage] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
+  const [isSheetVisible, setIsSheetVisible] = useState(false);
 
   // Dashboard state from store
   const {
@@ -137,6 +140,12 @@ export default function HomeScreen() {
       setRefreshing(false);
     }
   }, [refreshDashboard]);
+
+  const handleWorkoutDayPress = useCallback((workoutIds: string[]) => {
+    console.log("🏠 [HomeScreen] Workout day pressed with IDs:", workoutIds);
+    setSelectedWorkoutIds(workoutIds);
+    setIsSheetVisible(true); // Add this
+  }, []);
 
   const handleTemplateSelect = useCallback(
     (template: CompleteWorkout) => {
@@ -347,6 +356,7 @@ export default function HomeScreen() {
                 allData={dashboardAllData}
                 isLoading={dashboardLoading}
                 error={dashboardError}
+                onWorkoutDayPress={handleWorkoutDayPress} // ✅ Add this prop
               />
             </Stack>
 
@@ -366,7 +376,13 @@ export default function HomeScreen() {
           onSelectTemplate={handleTemplateSelect}
           onClose={handleTemplateClose}
         />
-
+        <WorkoutPreviewSheet
+          workoutIds={selectedWorkoutIds}
+          onClose={() => {
+            setSelectedWorkoutIds([]);
+            setIsSheetVisible(false); // Add this callback
+          }}
+        />
         <WorkoutStartModal
           isVisible={showWorkoutStartModal}
           onPlanWithCoach={handlePlanWithCoach}
@@ -402,8 +418,15 @@ export default function HomeScreen() {
       {!isActive && (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
-          keyboardVerticalOffset={50} // Adjust for tab bar height
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: isSheetVisible ? -1 : 0,
+            elevation: isSheetVisible ? -1 : 0,
+          }}
+          keyboardVerticalOffset={50}
         >
           <InputArea
             placeholder="start new chat.."
