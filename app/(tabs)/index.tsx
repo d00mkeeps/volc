@@ -24,7 +24,6 @@ import WorkoutTracker, {
 import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
 import { WorkoutPlanningModal } from "@/components/organisms/workout/WorkoutPlanningModal";
-import { WorkoutStartModal } from "@/components/organisms/workout/WorkoutStartModal";
 import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -37,10 +36,9 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
-import Button from "@/components/atoms/core/Button";
-import Text from "@/components/atoms/core/Text";
 import { InputArea } from "@/components/atoms/chat/InputArea";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
+import { WorkoutStartButton } from "@/components/molecules/workout/WorkoutStartButton";
 
 let count = 0;
 
@@ -62,7 +60,6 @@ export default function HomeScreen() {
 
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
-  const [showWorkoutStartModal, setShowWorkoutStartModal] = useState(false);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
@@ -275,19 +272,12 @@ export default function HomeScreen() {
     });
   });
 
-  const handleStartWorkout = useCallback(() => {
-    setShowWorkoutStartModal(true);
-  }, []);
-
   const handlePlanWithCoach = useCallback(() => {
-    setShowWorkoutStartModal(false);
     setIntendedToStart(true);
     sessionActions.openTemplateSelector();
   }, [sessionActions]);
 
   const handleLogManually = useCallback(() => {
-    setShowWorkoutStartModal(false);
-
     if (userProfile?.user_id) {
       const emptyTemplate = {
         ...EMPTY_WORKOUT_TEMPLATE,
@@ -360,13 +350,11 @@ export default function HomeScreen() {
               />
             </Stack>
 
-            {/* Start Workout Button Card */}
             {!isActive && (
-              <Button onPress={handleStartWorkout} width="60%" height="$6">
-                <Text color="white" size="large" fontWeight="600">
-                  Start Workout
-                </Text>
-              </Button>
+              <WorkoutStartButton
+                onPlanWithCoach={handlePlanWithCoach}
+                onLogManually={handleLogManually}
+              />
             )}
           </Stack>
         </ScrollView>
@@ -382,12 +370,6 @@ export default function HomeScreen() {
             setSelectedWorkoutIds([]);
             setIsSheetVisible(false); // Add this callback
           }}
-        />
-        <WorkoutStartModal
-          isVisible={showWorkoutStartModal}
-          onPlanWithCoach={handlePlanWithCoach}
-          onLogManually={handleLogManually}
-          onClose={() => setShowWorkoutStartModal(false)}
         />
 
         <WorkoutCompletionModal

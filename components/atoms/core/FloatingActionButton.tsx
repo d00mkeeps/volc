@@ -1,3 +1,4 @@
+// /components/atoms/FloatingActionButton
 import { PlusCircle, Settings, Play, Pause } from "@/assets/icons/IconMap";
 import React from "react";
 import { Stack } from "tamagui";
@@ -5,10 +6,12 @@ import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 
 interface ActionButtonProps {
-  icon?: string;
-  label: string;
+  icon?: React.ComponentType<{ size: number; color: string }>; // ✅ Now accepts icon component
+  iconName?: string; // ✅ Keep backward compatibility with icon name strings
+  label?: string; // ✅ Now optional
   onPress: () => void;
-  disabled?: boolean; // Add this
+  disabled?: boolean;
+  backgroundColor?: string; // ✅ NEW: Custom background color
 }
 
 const getIconComponent = (iconName: string) => {
@@ -23,22 +26,36 @@ const getIconComponent = (iconName: string) => {
 
 export default function FloatingActionButton({
   icon,
+  iconName,
   label,
   onPress,
-  disabled = false, // Add this
+  disabled = false,
+  backgroundColor, // ✅ NEW
 }: ActionButtonProps) {
+  // Use provided icon component, or fall back to iconName lookup
+  const IconComponent = icon || (iconName ? getIconComponent(iconName) : null);
+
+  // ✅ Icon size based on whether label exists
+  const iconSize = label ? 20 : 28;
+
+  // ✅ Determine background color
+  const bgColor =
+    backgroundColor || (disabled ? "$backgroundMuted" : "$primary");
+
   return (
     <Button
       width="50%"
       height={60}
       alignSelf="center"
-      backgroundColor={disabled ? "$backgroundMuted" : "$primary"}
+      backgroundColor={bgColor}
       borderRadius="$4"
       pressStyle={
         disabled
           ? {}
           : {
-              backgroundColor: "$primaryMuted",
+              backgroundColor: backgroundColor
+                ? backgroundColor
+                : "$primaryMuted",
               scale: 0.98,
             }
       }
@@ -46,7 +63,9 @@ export default function FloatingActionButton({
         disabled
           ? {}
           : {
-              backgroundColor: "$primaryLight",
+              backgroundColor: backgroundColor
+                ? backgroundColor
+                : "$primaryLight",
             }
       }
       opacity={disabled ? 0.6 : 1}
@@ -55,22 +74,24 @@ export default function FloatingActionButton({
       <Stack
         alignItems="center"
         justifyContent="center"
-        gap={icon ? "$1" : 0}
+        gap={IconComponent && label ? "$1" : 0}
         flex={1}
       >
-        {icon &&
-          React.createElement(getIconComponent(icon), {
-            size: 20,
+        {IconComponent &&
+          React.createElement(IconComponent, {
+            size: iconSize, // ✅ Dynamic icon size
             color: disabled ? "#999" : "white",
           })}
-        <Text
-          color={disabled ? "$textMuted" : "white"}
-          size="large"
-          fontWeight="700"
-          textAlign="center"
-        >
-          {label}
-        </Text>
+        {label && (
+          <Text
+            color={disabled ? "$textMuted" : "white"}
+            size="large"
+            fontWeight="700"
+            textAlign="center"
+          >
+            {label}
+          </Text>
+        )}
       </Stack>
     </Button>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { YStack, XStack } from "tamagui";
+import { YStack, XStack, Stack } from "tamagui";
 import Input from "@/components/atoms/core/Input";
 import Text from "@/components/atoms/core/Text";
 import { WorkoutValidation } from "@/utils/validation";
@@ -80,7 +80,7 @@ export default function MetricInput({
 
   return (
     <YStack flex={1} position="relative">
-      <XStack flex={1} gap="$1" alignItems="center">
+      <XStack flex={1} alignItems="center">
         <Input
           flex={1}
           size="$3"
@@ -109,18 +109,17 @@ export default function MetricInput({
         />
       </XStack>
       {shouldShowError && (
-        <Text
-          size="small"
-          color="$red8"
-          textAlign="center"
+        <Stack
           position="absolute"
-          top="100%"
+          top="75%"
           left={0}
           right={0}
-          marginTop="$1"
+          paddingHorizontal="$1"
         >
-          missing {getMetricLabel()}
-        </Text>
+          <Text size="small" color="$red8" textAlign="center" numberOfLines={1}>
+            missing {getMetricLabel()}
+          </Text>
+        </Stack>
       )}
     </YStack>
   );

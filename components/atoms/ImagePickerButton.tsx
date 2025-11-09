@@ -1,7 +1,8 @@
+// /components/atoms/ImagePickerButton
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { Plus, RotateCw } from "@/assets/icons/IconMap";
+import { Plus, RotateCw, Camera } from "@/assets/icons/IconMap";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
@@ -11,7 +12,9 @@ interface ImagePickerButtonProps {
   label?: string;
   icon?: string;
   size?: "small" | "medium" | "large";
-  fillContainer?: boolean; // ✅ NEW: If true, button fills parent container
+  fillContainer?: boolean;
+  asFAB?: boolean;
+  backgroundColor?: string; // ✅ NEW: Custom background color
   onImageUploaded?: (imageId: string) => void;
   onError?: (error: string) => void;
 }
@@ -27,11 +30,37 @@ const getIconSize = (size: "small" | "medium" | "large") => {
   }
 };
 
+// ✅ NEW: Get button height based on size
+const getButtonHeight = (size: "small" | "medium" | "large") => {
+  switch (size) {
+    case "small":
+      return 50;
+    case "medium":
+      return 60;
+    case "large":
+      return 70;
+  }
+};
+
+// ✅ NEW: Get button height based on size
+const getButtonWidth = (size: "small" | "medium" | "large") => {
+  switch (size) {
+    case "small":
+      return 80;
+    case "medium":
+      return 100;
+    case "large":
+      return 150;
+  }
+};
+
 export default function ImagePickerButton({
   label,
   icon = "add",
   size = "medium",
-  fillContainer = false, // ✅ NEW: Default to false for backward compatibility
+  fillContainer = false,
+  asFAB = false,
+  backgroundColor, // ✅ NEW
   onImageUploaded,
   onError,
 }: ImagePickerButtonProps) {
@@ -39,6 +68,7 @@ export default function ImagePickerButton({
 
   const getIconComponent = (iconName: string, uploading: boolean) => {
     if (uploading) return RotateCw;
+    if (iconName === "camera") return Camera;
     return iconName === "add" ? Plus : Plus;
   };
 
@@ -107,14 +137,79 @@ export default function ImagePickerButton({
     }
   };
 
+  // ✅ FAB Style
+  if (asFAB) {
+    // ✅ Icon size based on whether label exists
+    const iconSize = label ? 20 : 28;
+    const buttonHeight = getButtonHeight(size); // ✅ Dynamic button height based on size
+    const buttonWidth = getButtonWidth(size);
+    const bgColor =
+      backgroundColor || (uploading ? "$backgroundMuted" : "$primary"); // ✅ Use custom or default color
+
+    return (
+      <Button
+        width={buttonWidth}
+        height={buttonHeight} // ✅ Dynamic height
+        alignSelf="center"
+        backgroundColor={bgColor} // ✅ Custom background color
+        borderRadius="$4"
+        pressStyle={
+          uploading
+            ? {}
+            : {
+                backgroundColor: backgroundColor
+                  ? backgroundColor
+                  : "$primaryMuted",
+                scale: 0.98,
+              }
+        }
+        hoverStyle={
+          uploading
+            ? {}
+            : {
+                backgroundColor: backgroundColor
+                  ? backgroundColor
+                  : "$primaryLight",
+              }
+        }
+        opacity={uploading ? 0.6 : 1}
+        onPress={uploading ? () => {} : handleImagePick}
+        disabled={uploading}
+      >
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          gap={label ? "$1" : 0}
+          flex={1}
+        >
+          {React.createElement(getIconComponent(icon, uploading), {
+            size: iconSize, // ✅ Dynamic icon size
+            color: uploading ? "#999" : "white",
+          })}
+          {label && (
+            <Text
+              color={uploading ? "$textMuted" : "white"}
+              size="large"
+              fontWeight="700"
+              textAlign="center"
+            >
+              {uploading ? "loading.." : label}
+            </Text>
+          )}
+        </Stack>
+      </Button>
+    );
+  }
+
+  // ✅ Original Style
   return (
     <Button
-      size={fillContainer ? undefined : size} // ✅ Only use size prop if not filling container
-      width={fillContainer ? "100%" : undefined} // ✅ Fill width if fillContainer
-      height={fillContainer ? "100%" : undefined} // ✅ Fill height if fillContainer
+      size={fillContainer ? undefined : size}
+      width={fillContainer ? "100%" : undefined}
+      height={fillContainer ? "100%" : undefined}
       alignSelf={fillContainer ? undefined : "center"}
       backgroundColor="$backgroundMuted"
-      borderRadius={fillContainer ? "$0" : "$3"} // ✅ Let parent control border radius if filling
+      borderRadius={fillContainer ? "$0" : "$3"}
       pressStyle={{ backgroundColor: "#4B5563" }}
       onPress={handleImagePick}
       disabled={uploading}

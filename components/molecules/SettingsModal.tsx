@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Add useEffect
+import React, { useState, useEffect } from "react";
 import { YStack, XStack, ScrollView } from "tamagui";
 import { Alert } from "react-native";
 import BaseModal from "@/components/atoms/core/BaseModal";
@@ -7,6 +7,7 @@ import Input from "@/components/atoms/core/Input";
 import Text from "@/components/atoms/core/Text";
 import { userService } from "@/services/api/userService";
 import { useUserStore } from "@/stores/userProfileStore";
+import { calculate1RM } from "@/utils/1rmCalc"; // Add this import
 
 interface SettingsModalProps {
   visible: boolean;
@@ -32,6 +33,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [isImperial, setIsImperial] = useState<boolean>(false);
   const [hasUnitChanged, setHasUnitChanged] = useState(false);
 
+  // 1RM Calculator state
+  const [weight, setWeight] = useState("");
+  const [reps, setReps] = useState("");
+  const [oneRM, setOneRM] = useState<number | null>(null);
+
   // Initialize unit preference when modal opens
   useEffect(() => {
     if (visible && userProfile) {
@@ -39,6 +45,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       setHasUnitChanged(false);
     }
   }, [visible, userProfile]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const weightNum = parseFloat(weight);
+      const repsNum = parseInt(reps, 10);
+
+      if (weight && reps && !isNaN(weightNum) && !isNaN(repsNum)) {
+        const result = calculate1RM(weightNum, repsNum);
+        setOneRM(result);
+      } else {
+        setOneRM(null);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [weight, reps]);
 
   const resetDeleteState = () => {
     console.log("🔴 resetDeleteState called");
@@ -88,6 +110,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setHasUnitChanged(userProfile?.is_imperial !== imperial);
   };
 
+  const handleCalculate1RM = () => {
+    const weightNum = parseFloat(weight);
+    const repsNum = parseInt(reps, 10);
+
+    const result = calculate1RM(weightNum, repsNum);
+    setOneRM(result);
+  };
+
   const handleClose = async () => {
     // Save unit preference if changed
     if (hasUnitChanged) {
@@ -105,6 +135,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       }
       setLoading(false);
     }
+
+    // Reset 1RM calculator
+    setWeight("");
+    setReps("");
+    setOneRM(null);
 
     resetDeleteState();
     onClose();
@@ -217,9 +252,62 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </Text>
                   )}
                 </YStack>
+
+                {/* 1RM Calculator Section */}
+                <YStack
+                  gap="$3"
+                  marginTop="$4"
+                  paddingTop="$4"
+                  borderTopWidth={1}
+                  borderTopColor="$borderSoft"
+                >
+                  <Text size="large" fontWeight="600">
+                    1RM Calculator
+                  </Text>
+                  <XStack gap="$2">
+                    <YStack flex={1} gap="$2">
+                      <Text size="small" color="$textSoft">
+                        Weight ({isImperial ? "lbs" : "kg"})
+                      </Text>
+                      <Input
+                        value={weight}
+                        onChangeText={setWeight}
+                        placeholder="0"
+                        keyboardType="decimal-pad"
+                        alignSelf="stretch"
+                      />
+                    </YStack>
+                    <YStack flex={1} gap="$2">
+                      <Text size="small" color="$textSoft">
+                        Reps
+                      </Text>
+                      <Input
+                        value={reps}
+                        onChangeText={setReps}
+                        placeholder="0"
+                        keyboardType="number-pad"
+                        alignSelf="stretch"
+                      />
+                    </YStack>
+                  </XStack>
+                  {oneRM !== null && (
+                    <YStack
+                      backgroundColor="$backgroundSoft"
+                      padding="$3"
+                      borderRadius="$3"
+                      alignItems="center"
+                    >
+                      <Text size="small" color="$textSoft" marginBottom="$1">
+                        Estimated 1RM
+                      </Text>
+                      <Text size="xl" fontWeight="700" color="$primary">
+                        {oneRM} {isImperial ? "lbs" : "kg"}
+                      </Text>
+                    </YStack>
+                  )}
+                </YStack>
               </YStack>
             </ScrollView>
-
             {/* Danger Zone */}
             <YStack
               marginTop="$4"

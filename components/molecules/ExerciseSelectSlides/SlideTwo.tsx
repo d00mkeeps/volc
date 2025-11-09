@@ -22,6 +22,30 @@ const formatBaseMovement = (baseMovement: string): string => {
     .join(" ");
 };
 
+// Smart formatter for display names - handles ~300 variations automatically
+const formatDisplayName = (rawName: string): string => {
+  // Special cases that don't follow normal capitalization rules
+  const specialCases: Record<string, string> = {
+    db: "DB",
+    bb: "BB",
+    ez: "EZ",
+    ohp: "OHP",
+    t: "T",
+    rdl: "RDL",
+    // Add any other acronyms as you discover them
+  };
+
+  return rawName
+    .split("_")
+    .map((word) => {
+      const lower = word.toLowerCase();
+      return (
+        specialCases[lower] || word.charAt(0).toUpperCase() + word.slice(1)
+      );
+    })
+    .join(" ");
+};
+
 export default function SlideTwo({
   baseMovement,
   exercises,
@@ -114,7 +138,7 @@ export default function SlideTwo({
         gap="$2"
       >
         <TouchableOpacity onPress={onBack} activeOpacity={0.7}>
-          <Stack padding="$2" borderRadius="$2">
+          <Stack borderRadius="$2">
             <ChevronLeft size={24} color="$text" />
           </Stack>
         </TouchableOpacity>
@@ -126,25 +150,25 @@ export default function SlideTwo({
       {/* Scrollable content */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Variation chips */}
         {variations.length > 0 && (
-          <YStack gap="$2" marginBottom="$3">
+          <YStack gap="$2" marginBottom="$4">
             <Text
-              size="small"
-              fontWeight="700"
+              size="large"
+              fontWeight="600"
               color="$textSoft"
               paddingLeft="$2"
             >
-              VARIATION
+              Variation
             </Text>
             <XStack gap="$2" flexWrap="wrap">
               {variations.map((variation) => (
                 <Chip
                   key={variation}
-                  label={variation}
+                  label={formatDisplayName(variation)}
                   selected={selectedVariations.includes(variation)}
                   onPress={() => handleVariationToggle(variation)}
                 />
@@ -155,20 +179,20 @@ export default function SlideTwo({
 
         {/* Equipment chips */}
         {equipment.length > 0 && (
-          <YStack gap="$2" marginBottom="$3">
+          <YStack gap="$2" marginBottom="$4">
             <Text
-              size="small"
-              fontWeight="700"
+              size="large"
+              fontWeight="600"
               color="$textSoft"
               paddingLeft="$2"
             >
-              EQUIPMENT
+              Equipment
             </Text>
             <XStack gap="$2" flexWrap="wrap">
               {equipment.map((equip) => (
                 <Chip
                   key={equip}
-                  label={equip}
+                  label={formatDisplayName(equip)}
                   selected={selectedEquipment.includes(equip)}
                   onPress={() => handleEquipmentToggle(equip)}
                 />
@@ -180,14 +204,15 @@ export default function SlideTwo({
         <Separator marginVertical="$3" borderColor="$borderSoft" />
 
         {/* Exercise list */}
-        <YStack gap="$2">
+        <YStack gap="$2.5">
           <Text
-            size="small"
-            fontWeight="700"
+            size="medium"
+            fontWeight="600"
             color="$textSoft"
+            paddingBottom="$2"
             paddingLeft="$2"
           >
-            MATCHING EXERCISES ({filteredExercises.length})
+            Matching Exercises ({filteredExercises.length})
           </Text>
 
           {filteredExercises.length === 0 ? (
@@ -197,36 +222,36 @@ export default function SlideTwo({
               </Text>
             </Stack>
           ) : (
-            <YStack gap="$1.5">
+            <YStack gap="$2">
               {filteredExercises.map((exercise) => (
                 <TouchableOpacity
                   key={exercise.id}
                   onPress={() => handleExerciseSelect(exercise)}
-                  activeOpacity={0.7} // ✅ ADD THIS
+                  activeOpacity={0.7}
                 >
                   <Stack
                     minHeight={64}
                     backgroundColor={
                       flashingExerciseId === exercise.id
-                        ? "$green9"
+                        ? "$green8"
                         : "$backgroundMuted"
                     }
                     borderRadius="$3"
                     borderWidth={1}
                     borderColor={
                       flashingExerciseId === exercise.id
-                        ? "$green9"
+                        ? "$green8"
                         : "$borderSoft"
                     }
                     padding="$3"
                     justifyContent="center"
-                    // ✅ REMOVED pressStyle
                   >
-                    <Text size="medium" fontWeight="600" color="$text">
+                    <Text size="medium" fontWeight="500" color="$text">
                       {exercise.standard_name}
                     </Text>
                     <Text size="small" color="$textSoft" marginTop="$1">
-                      {exercise.major_variation} • {exercise.equipment}
+                      {formatDisplayName(exercise.major_variation || "")} •{" "}
+                      {formatDisplayName(exercise.equipment || "")}
                     </Text>
                   </Stack>
                 </TouchableOpacity>

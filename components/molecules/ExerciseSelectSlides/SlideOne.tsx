@@ -7,7 +7,7 @@ import * as Haptics from "expo-haptics";
 // Mapping of base_movement to muscle target
 const BASE_MOVEMENT_TARGETS: Record<string, string> = {
   ab_wheel: "abs",
-  back_extension: "lower_back",
+  back_extension: "lats",
   bench_press: "chest",
   bicep_curl: "biceps",
   bulgarian_split_squat: "glutes",
@@ -16,10 +16,10 @@ const BASE_MOVEMENT_TARGETS: Record<string, string> = {
   crunch: "abs",
   deadlift: "glutes",
   dip: "chest",
-  face_pull: "rear_delts",
+  face_pull: "shoulders",
   farmers_walk: "traps",
   front_raise: "shoulders",
-  good_morning: "lower_back",
+  good_morning: "hamstrings",
   hip_thrust: "glutes",
   lateral_raise: "shoulders",
   lat_pulldown: "traps",
@@ -33,8 +33,8 @@ const BASE_MOVEMENT_TARGETS: Record<string, string> = {
   plank: "core",
   pullup: "lats",
   pushup: "chest",
-  reverse_fly: "rear_delts",
-  romanian_deadlift: "lower_back",
+  reverse_fly: "shoulders",
+  romanian_deadlift: "hamstrings",
   row: "lats",
   russian_twist: "abs",
   shoulder_press: "shoulders",
@@ -53,6 +53,17 @@ const CATEGORY_MAPPING: Record<string, string[]> = {
   ARMS: ["biceps", "triceps"],
   LEGS: ["quadriceps", "glutes", "hamstrings", "calves"],
   CORE: ["abs", "core", "lower_back"],
+};
+
+// Category color mapping for visual hierarchy
+const CATEGORY_COLORS: Record<string, string> = {
+  POPULAR: "$text",
+  CHEST: "$green9",
+  BACK: "$darkBlue9",
+  SHOULDERS: "$purple9",
+  ARMS: "$primary",
+  LEGS: "$blue9",
+  CORE: "$purple9",
 };
 
 // Popular exercises (by base_movement key)
@@ -141,7 +152,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
       <Stack
         minHeight={100}
         backgroundColor="$backgroundMuted"
-        borderRadius="$3"
+        borderRadius={24}
         borderWidth={1}
         borderColor="$borderSoft"
         justifyContent="center"
@@ -150,7 +161,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
       >
         <Text
           size="medium"
-          fontWeight="600"
+          fontWeight="500"
           color="$text"
           textAlign="center"
           numberOfLines={2}
@@ -164,14 +175,46 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
   const renderCategory = (categoryName: string, movements: string[]) => {
     if (movements.length === 0) return null;
 
+    const categoryColor = CATEGORY_COLORS[categoryName] || "$gray9";
+
     return (
-      <YStack key={categoryName} gap="$2" marginBottom="$4">
-        <Text size="small" fontWeight="700" color="$textSoft" paddingLeft="$2">
-          {categoryName}
-        </Text>
-        <XStack gap="$2" flexWrap="wrap">
-          {movements.map((movement) => renderTile(movement))}
-        </XStack>
+      <YStack
+        key={categoryName}
+        marginBottom="$3"
+        position="relative"
+        borderRadius="$4"
+        padding="$2"
+        $sm={{ padding: "$4" }}
+      >
+        {/* Background with opacity */}
+        <Stack
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          backgroundColor={categoryColor}
+          opacity={0.1}
+          borderRadius="$4"
+        />
+
+        {/* Content */}
+        <YStack zIndex={1}>
+          <XStack alignItems="center" gap="$2" paddingLeft="$2">
+            <Stack
+              width={3}
+              height={20}
+              backgroundColor={categoryColor}
+              borderRadius="$4"
+            />
+            <Text size="large" fontWeight="700" color="$text">
+              {categoryName}
+            </Text>
+          </XStack>
+          <XStack gap="$1" flexWrap="wrap" marginTop="$1">
+            {movements.map((movement) => renderTile(movement))}
+          </XStack>
+        </YStack>
       </YStack>
     );
   };
@@ -179,31 +222,53 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
   return (
     <YStack flex={1}>
       {/* Header */}
-      <Stack paddingHorizontal="$4" paddingTop="$4" paddingBottom="$3">
-        <Text size="large" fontWeight="700" color="$text">
-          Select Exercise Type
-        </Text>
-      </Stack>
 
       {/* Scrollable content */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: 8,
+          paddingTop: 8,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Popular Section */}
-        <YStack gap="$2" marginBottom="$4">
-          <Text
-            size="small"
-            fontWeight="700"
-            color="$textSoft"
-            paddingLeft="$2"
-          >
-            POPULAR
-          </Text>
-          <XStack gap="$2" flexWrap="wrap">
-            {POPULAR_EXERCISES.map((movement) => renderTile(movement))}
-          </XStack>
+        <YStack
+          marginBottom="$3"
+          position="relative"
+          borderRadius="$4"
+          padding="$2"
+          $sm={{ padding: "$4" }}
+        >
+          {/* Background with opacity */}
+          <Stack
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            backgroundColor={CATEGORY_COLORS.POPULAR}
+            opacity={0.1}
+            borderRadius="$4"
+          />
+
+          {/* Content */}
+          <YStack zIndex={1}>
+            <XStack alignItems="center" gap="$1" paddingLeft="$2">
+              <Stack
+                width={3}
+                height={20}
+                backgroundColor={CATEGORY_COLORS.POPULAR}
+                borderRadius="$4"
+              />
+              <Text size="large" fontWeight="700" color="$text">
+                POPULAR
+              </Text>
+            </XStack>
+            <XStack gap="$1" flexWrap="wrap" marginTop="$1">
+              {POPULAR_EXERCISES.map((movement) => renderTile(movement))}
+            </XStack>
+          </YStack>
         </YStack>
 
         {/* Categorized Sections */}

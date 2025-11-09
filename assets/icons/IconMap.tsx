@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ComponentProps } from "react";
 import { useTheme } from "tamagui";
-import { OpaqueColorValue } from "react-native";
+import { OpaqueColorValue, useColorScheme } from "react-native";
 
 export type AppIconName =
   | "Settings"
@@ -12,9 +12,11 @@ export type AppIconName =
   | "ChevronDown"
   | "ChevronRight"
   | "Check"
+  | "CheckCircle"
   | "X"
   | "Trash2"
   | "Plus"
+  | "Camera"
   | "RotateCw"
   | "PlusCircle"
   | "Send"
@@ -29,9 +31,12 @@ export type AppIconName =
   | "Info"
   | "AlertTriangle"
   | "AlertCircle"
-  | "Lock"; // Add this
+  | "Lock"
+  | "ChevronUp";
 
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
+  Camera: "camera",
+  ChevronUp: "chevron-up",
   Settings: "settings-outline",
   FileText: "document-text-outline",
   ArrowLeftRight: "swap-horizontal-outline",
@@ -39,8 +44,9 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Pause: "pause",
   ChevronDown: "chevron-down",
   ChevronLeft: "chevron-back",
-  ChevronRight: "chevron-forward", // ADD THIS
-  Check: "checkmark",
+  ChevronRight: "chevron-forward",
+  Check: "checkmark-sharp",
+  CheckCircle: "checkmark-circle",
   X: "close",
   Trash2: "trash-outline",
   Plus: "add",
@@ -57,7 +63,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Info: "information-circle-outline",
   AlertTriangle: "warning-outline",
   AlertCircle: "alert-circle-outline",
-  Lock: "lock-closed-outline", // Add this
+  Lock: "lock-closed-outline",
 };
 
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
@@ -94,8 +100,12 @@ export const AppIcon = ({
   ...props
 }: AppIconProps) => {
   const theme = useTheme();
+  const colorScheme = useColorScheme();
   const ionIconName = iconMapping[name];
-  const resolvedColor = resolveColor(color, theme);
+
+  // Use white icons in dark mode, black icons in light mode
+  const defaultColor = colorScheme === "dark" ? "#ffffff" : "#231f20";
+  const resolvedColor = resolveColor(color || defaultColor, theme);
 
   return (
     <Ionicons name={ionIconName} size={size} color={resolvedColor} {...props} />
@@ -105,6 +115,13 @@ export const AppIcon = ({
 // Export individual icon components
 export const Settings = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Settings" {...props} />
+);
+
+export const Camera = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Camera" {...props} />
+);
+export const ChevronUp = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="ChevronUp" {...props} />
 );
 
 export const FileText = (props: Omit<AppIconProps, "name">) => (
@@ -137,6 +154,10 @@ export const ChevronLeft = (props: Omit<AppIconProps, "name">) => (
 
 export const Check = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Check" {...props} />
+);
+
+export const CheckCircle = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="CheckCircle" {...props} />
 );
 
 export const X = (props: Omit<AppIconProps, "name">) => (

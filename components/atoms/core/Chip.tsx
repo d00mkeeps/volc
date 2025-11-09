@@ -28,7 +28,7 @@ export default function Chip({
       <Stack
         paddingHorizontal="$3"
         paddingVertical="$2.5"
-        borderRadius="$3"
+        borderRadius={16}
         borderWidth={1}
         borderColor={selected ? "$primary" : "$borderSoft"}
         backgroundColor={selected ? "$primaryTint" : "$backgroundMuted"}
@@ -40,7 +40,7 @@ export default function Chip({
         <Text
           size="medium"
           color={selected ? "$primary" : "$text"}
-          fontWeight={selected ? "600" : "500"}
+          fontWeight={selected ? "700" : "500"}
         >
           {label}
         </Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { YStack, XStack } from "tamagui";
+import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
 import { WorkoutValidation } from "@/utils/validation";
@@ -33,7 +33,6 @@ export default function DurationInput({
       setMinutes(m > 0 ? m.toString().padStart(2, "0") : "");
       setSeconds(s > 0 ? s.toString().padStart(2, "0") : "");
     } else if (!value) {
-      // Clear inputs when value is undefined/null
       setHours("");
       setMinutes("");
       setSeconds("");
@@ -75,7 +74,6 @@ export default function DurationInput({
     const s = parseInt(seconds || "0");
     const totalSeconds = h * 3600 + m * 60 + s;
 
-    // Only set value if total is greater than 0
     if (totalSeconds > 0) {
       const validation = WorkoutValidation.duration(totalSeconds);
       if (validation.isValid) {
@@ -119,9 +117,9 @@ export default function DurationInput({
   };
 
   return (
-    <YStack alignSelf="center" position="relative">
+    <YStack flex={1} alignSelf="center" position="relative">
       <YStack position="relative">
-        <XStack gap="$0.5" alignItems="center">
+        <XStack gap="$0.5" alignItems="center" justifyContent="center">
           <Input
             {...inputProps}
             value={hours}
@@ -150,18 +148,26 @@ export default function DurationInput({
           />
         </XStack>
         {shouldShowError && (
-          <Text
-            size="small"
-            color="$red8"
-            textAlign="center"
+          <Stack
             position="absolute"
             top="100%"
             left={0}
             right={0}
             marginTop="$1"
+            zIndex={1000}
+            backgroundColor="$backgroundSoft"
+            paddingHorizontal="$1"
+            borderRadius="$2"
           >
-            missing duration
-          </Text>
+            <Text
+              size="small"
+              color="$red8"
+              textAlign="center"
+              numberOfLines={1}
+            >
+              missing duration
+            </Text>
+          </Stack>
         )}
       </YStack>
     </YStack>

@@ -75,20 +75,18 @@ export default function SetHeader({
   };
 
   return (
-    <XStack gap="$3" alignItems="center" paddingBottom="$1">
+    <XStack alignItems="center" paddingBottom="$1">
       <Stack width={50} alignItems="center">
         <Text
           size="medium"
           fontWeight="600"
           color={isActive ? "$color" : "$textSoft"}
         >
-          set #
+          set
         </Text>
       </Stack>
-      <XStack flex={1} gap="$1.5">
-        {renderHeaders()}
-      </XStack>
-      <Stack width={40} />
+      <XStack flex={1}>{renderHeaders()}</XStack>
+      <Stack width={55} />
     </XStack>
   );
 }

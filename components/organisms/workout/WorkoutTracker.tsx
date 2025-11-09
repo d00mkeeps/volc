@@ -111,15 +111,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       (exerciseId: string) => {
         if (!isActive || !currentWorkout) return;
 
-        if (currentWorkout.workout_exercises.length <= 1) {
-          Alert.alert(
-            "Cannot Delete Exercise",
-            "You must have at least one exercise in your workout.",
-            [{ text: "OK" }]
-          );
-          return;
-        }
-
         const updatedWorkout = {
           ...currentWorkout,
           workout_exercises: currentWorkout.workout_exercises.filter(

@@ -39,6 +39,9 @@ export default function ExerciseTracker({
     startInEditMode || exercise.name === ""
   );
   const [selectedExercise, setSelectedExercise] = useState(exercise.name);
+  const [deleteRevealedSetId, setDeleteRevealedSetId] = useState<string | null>(
+    null
+  );
   const [definitionModalVisible, setDefinitionModalVisible] = useState(false);
 
   const { exercises } = useExerciseStore();
@@ -63,6 +66,10 @@ export default function ExerciseTracker({
         onEditingChange?.(false); // Notify parent
       }
     }
+  };
+
+  const handleSetSwipe = (setId: string, isRevealed: boolean) => {
+    setDeleteRevealedSetId(isRevealed ? setId : null);
   };
 
   const handleNotesLongPress = () => {
@@ -123,6 +130,15 @@ export default function ExerciseTracker({
     onExerciseUpdate(updatedExercise);
     setIsEditing(false);
     onEditingChange?.(false);
+  };
+
+  // NEW: Separate handler for modal close
+  const handleModalClose = () => {
+    // Only trigger cancel logic if modal is being dismissed without selection
+    // If exercise was just selected, handleExerciseSelect already handled the state
+    if (isEditing) {
+      handleCancelEdit();
+    }
   };
 
   const handleDelete = () => {
@@ -273,6 +289,8 @@ export default function ExerciseTracker({
                     onDelete={handleSetDelete}
                     onUpdate={handleSetUpdate}
                     canDelete={exercise.workout_exercise_sets.length > 1}
+                    isDeleteRevealed={deleteRevealedSetId === set.id}
+                    onSwipe={handleSetSwipe}
                   />
                 ))}
 
@@ -323,7 +341,7 @@ export default function ExerciseTracker({
       />
       <ExerciseSelectModal
         isVisible={isEditing}
-        onClose={handleCancelEdit}
+        onClose={handleModalClose} // Changed from handleCancelEdit
         onSelectExercise={handleExerciseSelect}
       />
       <TextEditModal

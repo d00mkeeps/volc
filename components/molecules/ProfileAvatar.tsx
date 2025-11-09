@@ -1,3 +1,4 @@
+// /components/molecules/ProfileAvatar
 import React, { useState, useEffect } from "react";
 import { Stack, YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -6,6 +7,9 @@ import { useUserStore } from "@/stores/userProfileStore";
 import { imageService } from "@/services/api/imageService";
 import ImagePickerButton from "../atoms/ImagePickerButton";
 import LongPressToEdit from "../atoms/core/LongPressToEdit";
+import FloatingActionButton from "../atoms/core/FloatingActionButton";
+import { Modal, Pressable, StyleSheet } from "react-native";
+import { X } from "@/assets/icons/IconMap";
 
 interface ProfileAvatarProps {
   editMode?: boolean;
@@ -22,7 +26,7 @@ export default function ProfileAvatar({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
-  const [longPressEditMode, setLongPressEditMode] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     console.log(
@@ -102,7 +106,13 @@ export default function ProfileAvatar({
   }, [pendingAvatarId]);
 
   const handleLongPress = () => {
-    setLongPressEditMode(true);
+    console.log("[ProfileAvatar] Long press detected - expanding avatar");
+    setIsExpanded(true);
+  };
+
+  const handleClose = () => {
+    console.log("[ProfileAvatar] Closing expanded view");
+    setIsExpanded(false);
   };
 
   const handleImageUploaded = async (imageId: string) => {
@@ -110,76 +120,169 @@ export default function ProfileAvatar({
     if (onAvatarSelected) {
       onAvatarSelected(imageId);
     }
-    // Exit edit mode after successful upload
-    setLongPressEditMode(false);
+    // Close expanded view after successful upload
+    setIsExpanded(false);
   };
 
   const handleImageError = (error: string) => {
     console.error(`[ProfileAvatar] Avatar upload error: ${error}`);
-    // Exit edit mode on error too
-    setLongPressEditMode(false);
   };
 
-  // Show edit overlay if either external editMode or internal longPressEditMode is true
-  const isInEditMode = editMode || longPressEditMode;
-
   // In edit mode, show pending avatar if exists, otherwise show current
-  const displayUrl =
-    isInEditMode && pendingAvatarUrl ? pendingAvatarUrl : avatarUrl;
+  const displayUrl = pendingAvatarUrl || avatarUrl;
 
   return (
-    <YStack alignItems="center" gap="$2">
-      <LongPressToEdit onLongPress={handleLongPress}>
+    <>
+      <YStack alignItems="center" gap="$2">
+        <LongPressToEdit onLongPress={handleLongPress}>
+          <Stack
+            width="100%"
+            aspectRatio={1}
+            minWidth={70}
+            borderRadius={32}
+            backgroundColor="$backgroundMuted"
+            justifyContent="center"
+            alignItems="center"
+            overflow="hidden"
+            position="relative"
+          >
+            {/* Avatar Image */}
+            {loadingImage ? (
+              <Text color="$text" fontSize="$3">
+                Loading
+              </Text>
+            ) : displayUrl ? (
+              <Image
+                source={{ uri: displayUrl }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+              />
+            ) : (
+              <Text color="$text" fontSize="$4" fontWeight="600">
+                {displayName.charAt(0).toUpperCase()}
+              </Text>
+            )}
+
+            {/* Edit Mode Overlay (for external editMode prop) */}
+            {editMode && (
+              <Stack
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                bottom={0}
+                backgroundColor="rgba(0, 0, 0, 0.5)"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <ImagePickerButton
+                  label="Change"
+                  size="small"
+                  onImageUploaded={handleImageUploaded}
+                  onError={handleImageError}
+                />
+              </Stack>
+            )}
+          </Stack>
+        </LongPressToEdit>
+      </YStack>
+
+      {/* Expanded Avatar Modal */}
+      <Modal
+        visible={isExpanded}
+        transparent
+        animationType="fade"
+        onRequestClose={handleClose}
+      >
+        {/* Backdrop */}
+        <Pressable style={styles.backdrop} onPress={handleClose}>
+          <Stack style={styles.backdropOverlay} />
+        </Pressable>
+
+        {/* Expanded Avatar Container */}
         <Stack
-          width="100%"
-          aspectRatio={1}
-          minWidth={70}
-          borderRadius={32}
-          backgroundColor="$backgroundMuted"
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
           justifyContent="center"
           alignItems="center"
-          overflow="hidden"
-          position="relative"
+          pointerEvents="box-none"
         >
-          {/* Avatar Image */}
-          {loadingImage ? (
-            <Text color="$text" fontSize="$3">
-              Loading
-            </Text>
-          ) : displayUrl ? (
-            <Image
-              source={{ uri: displayUrl }}
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
-            />
-          ) : (
-            <Text color="$text" fontSize="$4" fontWeight="600">
-              {displayName.charAt(0).toUpperCase()}
-            </Text>
-          )}
-
-          {/* Edit Mode Overlay */}
-          {isInEditMode && (
+          <YStack alignItems="center" gap="$4" pointerEvents="auto">
+            {/* Expanded Avatar */}
             <Stack
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              backgroundColor="rgba(0, 0, 0, 0.5)"
-              justifyContent="center"
-              alignItems="center"
+              width={280}
+              height={280}
+              borderRadius={32}
+              backgroundColor="$backgroundMuted"
+              overflow="hidden"
             >
-              <ImagePickerButton
-                label="Change"
-                size="small"
-                onImageUploaded={handleImageUploaded}
-                onError={handleImageError}
-              />
+              {displayUrl ? (
+                <Image
+                  source={{ uri: displayUrl }}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="cover"
+                />
+              ) : (
+                <Stack
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                  backgroundColor="$backgroundMuted"
+                >
+                  <Text color="$text" fontSize="$6" fontWeight="600">
+                    {displayName.charAt(0).toUpperCase()}
+                  </Text>
+                </Stack>
+              )}
             </Stack>
-          )}
+
+            {/* FAB Actions */}
+            <Stack
+              flexDirection="row"
+              gap="$3"
+              width={320}
+              paddingHorizontal={16}
+            >
+              <Stack flex={1}>
+                <ImagePickerButton
+                  label="Change Photo"
+                  icon="camera"
+                  asFAB
+                  size="large"
+                  backgroundColor="$transparent"
+                  onImageUploaded={handleImageUploaded}
+                  onError={handleImageError}
+                />
+              </Stack>
+
+              {/* <Stack flex={1}>
+                <FloatingActionButton
+                  icon={X}
+                  onPress={handleClose}
+                  backgroundColor="$transparent"
+                />
+              </Stack> */}
+            </Stack>
+          </YStack>
         </Stack>
-      </LongPressToEdit>
-    </YStack>
+      </Modal>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  backdropOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+  },
+});
