@@ -1,5 +1,3 @@
-// /components/molecules/workout/WorkoutPreviewSheet.tsx
-
 import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -86,7 +84,6 @@ export default function WorkoutPreviewSheet({
 
     if (isOpen) {
       console.log("📤 [WorkoutPreviewSheet] Opening sheet to index 0");
-      // Use setTimeout like WorkoutTracker does
       setTimeout(() => {
         bottomSheetRef.current?.snapToIndex(0);
         console.log("✅ [WorkoutPreviewSheet] snapToIndex(0) called");

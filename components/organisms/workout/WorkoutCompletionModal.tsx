@@ -82,7 +82,7 @@ export function WorkoutCompletionModal({
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
-          <ScrollView flex={1} padding="$3">
+          <ScrollView flex={1} padding="$2">
             <WorkoutSummarySlide
               onSkip={handleClose}
               onContinue={handleContinueToChat}
@@ -101,7 +101,7 @@ export function WorkoutCompletionModal({
             backgroundColor="rgba(0,0,0,0.8)"
             justifyContent="center"
             alignItems="center"
-            zIndex={1000}
+            zIndex={1}
           >
             <YStack
               backgroundColor="$background"

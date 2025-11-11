@@ -111,8 +111,8 @@ export const InputArea = ({
           flex={1}
           size="small"
           borderRadius={12}
-          multiline
           value={input}
+          verticalAlign="top"
           onChangeText={(text) => {
             setInput(text);
             if (error && text.length <= 500) setError(undefined);
@@ -131,6 +131,7 @@ export const InputArea = ({
           maxLength={500}
           paddingTop="$2"
           paddingBottom="$2"
+          numberOfLines={8}
         />
         <Button
           size="$3"

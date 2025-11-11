@@ -14,6 +14,8 @@ import { useWorkoutStore } from "./workout/WorkoutStore";
 import { filterIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "./workout/exerciseStore";
 import Toast from "react-native-toast-message";
+import { AppState, AppStateStatus } from "react-native";
+import { workoutPersistence } from "@/utils/workoutPersistence";
 
 interface UserSessionState {
   currentWorkout: CompleteWorkout | null;
@@ -81,7 +83,20 @@ export function createEmptyWorkout(userId: string): CompleteWorkout {
     updated_at: now,
   };
 }
-
+/**
+ * Debounce helper for auto-save
+ * (/stores/userSessionStore.debounce)
+ */
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
 export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   // Initial state
   currentWorkout: null,
@@ -161,7 +176,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   cancelWorkout: () => {
     const { currentWorkout } = get();
     if (!currentWorkout) return;
-
+    workoutPersistence.clear();
     set({
       pausedAt: null,
       currentWorkout: null,
@@ -274,7 +289,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       userProfile.user_id.toString(),
       workoutToSave
     );
-
+    await workoutPersistence.clear();
     // Handle image commit if needed
     if (pendingImageId) {
       const commitResult = await imageService.commitImage(pendingImageId);
@@ -331,7 +346,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       ...currentWorkout,
       workout_exercises: exercisesWithData,
     };
-
+    workoutPersistence.clear();
     // Update the store with cleaned workout
     set({
       currentWorkout: cleanedWorkout,
@@ -494,6 +509,89 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     return { completed: completedSets, total: totalSets };
   },
 }));
+// ============================================
+// PERSISTENCE INITIALIZATION & AUTO-SAVE
+// ============================================
+
+/**
+ * Initialize persistence layer
+ * (/stores/userSessionStore.initializePersistence)
+ */
+(async () => {
+  // Load persisted workout on app start
+  const persisted = await workoutPersistence.load();
+
+  if (persisted) {
+    console.log("🔄 Restoring persisted workout session");
+    useUserSessionStore.setState({
+      currentWorkout: persisted.workout,
+      isActive: true,
+      startTime: persisted.startTime,
+      elapsedSeconds: persisted.elapsedSeconds,
+      totalPausedMs: persisted.totalPausedMs,
+      isPaused: persisted.isPaused,
+      pausedAt: persisted.pausedAt,
+    });
+  }
+})();
+
+/**
+ * Debounced save function (500ms)
+ * (/stores/userSessionStore.debouncedSave)
+ */
+const debouncedSave = debounce(() => {
+  const state = useUserSessionStore.getState();
+  if (state.currentWorkout && state.isActive && state.startTime) {
+    workoutPersistence.save({
+      workout: state.currentWorkout,
+      startTime: state.startTime,
+      elapsedSeconds: state.elapsedSeconds,
+      totalPausedMs: state.totalPausedMs,
+      isPaused: state.isPaused,
+      pausedAt: state.pausedAt,
+    });
+  }
+}, 500);
+
+/**
+ * Subscribe to currentWorkout changes for auto-save
+ * (/stores/userSessionStore.subscribe)
+ */
+let previousWorkout: CompleteWorkout | null = null;
+
+useUserSessionStore.subscribe((state) => {
+  // Only trigger save if currentWorkout actually changed
+  if (state.currentWorkout && state.currentWorkout !== previousWorkout) {
+    previousWorkout = state.currentWorkout;
+    debouncedSave();
+  } else if (!state.currentWorkout) {
+    previousWorkout = null;
+  }
+});
+
+/**
+ * AppState listener for immediate save on background
+ * (/stores/userSessionStore.appStateListener)
+ */
+const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  if (nextAppState === "background") {
+    const state = useUserSessionStore.getState();
+    if (state.currentWorkout && state.isActive && state.startTime) {
+      // Immediate save (no debounce) when backgrounding
+      workoutPersistence.save({
+        workout: state.currentWorkout,
+        startTime: state.startTime,
+        elapsedSeconds: state.elapsedSeconds,
+        totalPausedMs: state.totalPausedMs,
+        isPaused: state.isPaused,
+        pausedAt: state.pausedAt,
+      });
+    }
+  }
+};
+
+// Set up AppState listener
+AppState.addEventListener("change", handleAppStateChange);
 
 // Helper function
 function formatTime(totalSeconds: number): string {

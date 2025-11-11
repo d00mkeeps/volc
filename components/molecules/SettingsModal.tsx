@@ -191,7 +191,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     <BaseModal
       isVisible={visible}
       onClose={handleClose}
-      widthPercent={90}
+      widthPercent={100}
       heightPercent={70}
     >
       <YStack flex={1} padding="$4">
@@ -222,7 +222,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <YStack gap="$4">
                 <YStack gap="$3">
                   <Text size="large" fontWeight="600">
-                    Unit Preference
+                    Unit System
                   </Text>
                   <XStack gap="$2">
                     <Button
@@ -271,7 +271,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </Text>
                       <Input
                         value={weight}
-                        onChangeText={setWeight}
+                        onChangeText={(text) => {
+                          // Remove non-numeric characters except decimal point
+                          const cleaned = text.replace(/[^0-9.]/g, "");
+                          // Ensure only one decimal point
+                          const parts = cleaned.split(".");
+                          const formatted =
+                            parts.length > 2
+                              ? parts[0] + "." + parts.slice(1).join("")
+                              : cleaned;
+                          // Cap at 999
+                          const num = parseFloat(formatted);
+                          if (!isNaN(num) && num > 999) {
+                            setWeight("999");
+                          } else {
+                            setWeight(formatted);
+                          }
+                        }}
                         placeholder="0"
                         keyboardType="decimal-pad"
                         alignSelf="stretch"
@@ -283,7 +299,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </Text>
                       <Input
                         value={reps}
-                        onChangeText={setReps}
+                        onChangeText={(text) => {
+                          // Only allow numbers
+                          const cleaned = text.replace(/[^0-9]/g, "");
+                          // Cap at 99
+                          const num = parseInt(cleaned, 10);
+                          if (!isNaN(num) && num > 99) {
+                            setReps("99");
+                          } else {
+                            setReps(cleaned);
+                          }
+                        }}
                         placeholder="0"
                         keyboardType="number-pad"
                         alignSelf="stretch"

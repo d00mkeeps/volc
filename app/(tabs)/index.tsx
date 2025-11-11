@@ -68,7 +68,6 @@ export default function HomeScreen() {
   const [intendedToStart, setIntendedToStart] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
-  const [isSheetVisible, setIsSheetVisible] = useState(false);
 
   // Dashboard state from store
   const {
@@ -139,10 +138,9 @@ export default function HomeScreen() {
   }, [refreshDashboard]);
 
   const handleWorkoutDayPress = useCallback((workoutIds: string[]) => {
-    console.log("🏠 [HomeScreen] Workout day pressed with IDs:", workoutIds);
     setSelectedWorkoutIds(workoutIds);
-    setIsSheetVisible(true); // Add this
   }, []);
+  const isSheetVisible = selectedWorkoutIds.length > 0;
 
   const handleTemplateSelect = useCallback(
     (template: CompleteWorkout) => {
@@ -368,7 +366,6 @@ export default function HomeScreen() {
           workoutIds={selectedWorkoutIds}
           onClose={() => {
             setSelectedWorkoutIds([]);
-            setIsSheetVisible(false); // Add this callback
           }}
         />
 
@@ -405,10 +402,12 @@ export default function HomeScreen() {
             bottom: 0,
             left: 0,
             right: 0,
-            zIndex: isSheetVisible ? -1 : 0,
-            elevation: isSheetVisible ? -1 : 0,
+            zIndex: 1,
+            elevation: 1,
+            opacity: isSheetVisible ? 0 : 1, // Move opacity here
           }}
           keyboardVerticalOffset={50}
+          pointerEvents={isSheetVisible ? "none" : "auto"}
         >
           <InputArea
             placeholder="start new chat.."

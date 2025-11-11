@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, TouchableOpacity, ViewStyle } from "react-native";
 import * as Haptics from "expo-haptics";
 
 // Mapping of base_movement to muscle target
@@ -57,7 +57,7 @@ const CATEGORY_MAPPING: Record<string, string[]> = {
 
 // Category color mapping for visual hierarchy
 const CATEGORY_COLORS: Record<string, string> = {
-  POPULAR: "$text",
+  POPULAR: "$primary",
   CHEST: "$green9",
   BACK: "$darkBlue9",
   SHOULDERS: "$purple9",
@@ -108,12 +108,8 @@ const organizeByCategory = (): Record<string, string[]> => {
     CORE: [],
   };
 
-  // Filter out popular exercises from categorization
-  const nonPopularMovements = Object.keys(BASE_MOVEMENT_TARGETS).filter(
-    (movement) => !POPULAR_EXERCISES.includes(movement)
-  );
-
-  nonPopularMovements.forEach((movement) => {
+  // Include ALL movements (popular exercises will appear in both POPULAR and their category)
+  Object.keys(BASE_MOVEMENT_TARGETS).forEach((movement) => {
     const category = getCategoryForBaseMovement(movement);
     if (category && organized[category]) {
       organized[category].push(movement);
@@ -131,33 +127,49 @@ const organizeByCategory = (): Record<string, string[]> => {
 };
 
 interface SlideOneProps {
-  onSelectBaseMovement: (baseMovement: string) => void;
+  onSelectBaseMovement: (baseMovement: string, fromPopular: boolean) => void;
 }
 
 export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
   const categorizedMovements = organizeByCategory();
+  const [isFromPopular, setIsFromPopular] = useState(false);
 
-  const handleTilePress = (baseMovement: string) => {
+  const handleTilePress = (
+    baseMovement: string,
+    fromPopular: boolean = false
+  ) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onSelectBaseMovement(baseMovement);
+
+    setIsFromPopular(fromPopular);
+    onSelectBaseMovement(baseMovement, fromPopular);
   };
 
-  const renderTile = (baseMovement: string) => (
+  const renderTile = (
+    baseMovement: string,
+    categoryColor: string,
+    isPopular: boolean = false,
+    minWidth: string = "30%"
+  ) => (
     <TouchableOpacity
       key={baseMovement}
-      onPress={() => handleTilePress(baseMovement)}
-      style={{ flex: 1, minWidth: "30%" }}
+      onPress={() => handleTilePress(baseMovement, isPopular)}
+      style={{ flex: 1, minWidth } as ViewStyle}
       activeOpacity={0.7}
     >
       <Stack
         minHeight={100}
         backgroundColor="$backgroundMuted"
         borderRadius={24}
-        borderWidth={1}
-        borderColor="$borderSoft"
+        borderWidth={isPopular ? 0.5 : 0.25}
+        borderColor={categoryColor}
         justifyContent="center"
         alignItems="center"
-        padding="$3"
+        padding="$1"
+        shadowColor="$black"
+        shadowOffset={{ width: 0, height: 2 }}
+        shadowOpacity={0.1}
+        shadowRadius={8}
+        // elevation={3}
       >
         <Text
           size="medium"
@@ -176,6 +188,8 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
     if (movements.length === 0) return null;
 
     const categoryColor = CATEGORY_COLORS[categoryName] || "$gray9";
+    // Use 2x2 grid for exactly 4 exercises, otherwise allow 3 per row
+    const tileMinWidth = movements.length === 4 ? "48%" : "30%";
 
     return (
       <YStack
@@ -186,7 +200,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
         padding="$2"
         $sm={{ padding: "$4" }}
       >
-        {/* Background with opacity */}
+        {/* Background with increased opacity */}
         <Stack
           position="absolute"
           top={0}
@@ -194,7 +208,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
           right={0}
           bottom={0}
           backgroundColor={categoryColor}
-          opacity={0.1}
+          opacity={0.15}
           borderRadius="$4"
         />
 
@@ -212,7 +226,9 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
             </Text>
           </XStack>
           <XStack gap="$1" flexWrap="wrap" marginTop="$1">
-            {movements.map((movement) => renderTile(movement))}
+            {movements.map((movement) =>
+              renderTile(movement, categoryColor, false, tileMinWidth)
+            )}
           </XStack>
         </YStack>
       </YStack>
@@ -221,8 +237,6 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
 
   return (
     <YStack flex={1}>
-      {/* Header */}
-
       {/* Scrollable content */}
       <ScrollView
         style={{ flex: 1 }}
@@ -232,7 +246,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Popular Section */}
+        {/* Popular Section - with special VIP styling */}
         <YStack
           marginBottom="$3"
           position="relative"
@@ -240,7 +254,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
           padding="$2"
           $sm={{ padding: "$4" }}
         >
-          {/* Background with opacity */}
+          {/* Background with higher opacity for POPULAR */}
           <Stack
             position="absolute"
             top={0}
@@ -248,13 +262,13 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
             right={0}
             bottom={0}
             backgroundColor={CATEGORY_COLORS.POPULAR}
-            opacity={0.1}
+            opacity={0.18}
             borderRadius="$4"
           />
 
           {/* Content */}
           <YStack zIndex={1}>
-            <XStack alignItems="center" gap="$1" paddingLeft="$2">
+            <XStack alignItems="center" gap="$2" paddingLeft="$2">
               <Stack
                 width={3}
                 height={20}
@@ -266,7 +280,14 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
               </Text>
             </XStack>
             <XStack gap="$1" flexWrap="wrap" marginTop="$1">
-              {POPULAR_EXERCISES.map((movement) => renderTile(movement))}
+              {POPULAR_EXERCISES.map((movement) =>
+                renderTile(
+                  movement,
+                  CATEGORY_COLORS.POPULAR,
+                  true,
+                  POPULAR_EXERCISES.length === 4 ? "48%" : "30%"
+                )
+              )}
             </XStack>
           </YStack>
         </YStack>

@@ -8,8 +8,6 @@ import {
   WorkoutExerciseSet,
   ExerciseDefinition,
 } from "@/types/workout";
-import { Alert } from "react-native";
-import ExerciseSearchInput from "./ExerciseSearchInput";
 import ExerciseTrackerHeader from "../headers/ExerciseTrackerHeader";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import SetHeader from "../headers/SetHeader";
@@ -143,42 +141,10 @@ export default function ExerciseTracker({
 
   const handleDelete = () => {
     if (!onExerciseDelete) return;
-
-    const hasExerciseData =
-      exercise.workout_exercise_sets.length > 0 &&
-      (exercise.workout_exercise_sets[0].weight !== undefined ||
-        exercise.workout_exercise_sets[0].reps !== undefined);
-
-    if (hasExerciseData) {
-      Alert.alert(
-        "Delete Exercise",
-        `Remove ${exercise.name} and all set data from workout?`,
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Delete",
-            style: "destructive",
-            onPress: () => onExerciseDelete(exercise.id),
-          },
-        ]
-      );
-    } else {
-      onExerciseDelete(exercise.id);
-    }
+    onExerciseDelete(exercise.id);
   };
-
   const handleSetDelete = (setId: string) => {
     if (!isActive || !onExerciseUpdate) return;
-
-    // Prevent deleting the last set
-    if (exercise.workout_exercise_sets.length <= 1) {
-      Alert.alert(
-        "Cannot Delete Set",
-        "Each exercise must have at least one set. Delete the entire exercise instead if needed.",
-        [{ text: "OK" }]
-      );
-      return;
-    }
 
     const updatedSets = exercise.workout_exercise_sets
       .filter((set) => set.id !== setId)

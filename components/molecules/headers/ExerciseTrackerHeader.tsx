@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { XStack, YStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Info, Trash2 } from "@/assets/icons/IconMap";
+import { Trash2 } from "@/assets/icons/IconMap";
 import { TouchableOpacity } from "react-native";
 import * as Haptics from "expo-haptics";
 import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
@@ -34,25 +34,10 @@ export default function ExerciseTrackerHeader({
   canCancelEdit,
   canDelete,
 }: ExerciseTrackerHeaderProps) {
-  const [pendingDelete, setPendingDelete] = useState(false);
-
-  useEffect(() => {
-    if (pendingDelete) {
-      const timer = setTimeout(() => setPendingDelete(false), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [pendingDelete]);
-
   const handleDeletePress = () => {
     if (!isActive || !canDelete) return;
-
-    if (pendingDelete) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      onDelete();
-    } else {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      setPendingDelete(true);
-    }
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    onDelete();
   };
 
   return (
@@ -83,10 +68,6 @@ export default function ExerciseTrackerHeader({
               ? "Select new exercise"
               : exerciseName || "Select an exercise"}
           </Text>
-
-          {exerciseName && onShowDefinition && !isEditing && (
-            <Info size={16} color="$textSoft" />
-          )}
         </TouchableOpacity>
 
         {/* Action Buttons - moved up inline */}
@@ -98,13 +79,11 @@ export default function ExerciseTrackerHeader({
                 width={40}
                 height={40}
                 borderRadius="$2"
-                backgroundColor={pendingDelete ? "#ef444430" : "transparent"}
+                backgroundColor="transparent"
                 justifyContent="center"
                 alignItems="center"
                 pressStyle={{
-                  backgroundColor: pendingDelete
-                    ? "#ef444450"
-                    : "$backgroundPress",
+                  backgroundColor: "$backgroundPress",
                 }}
                 onPress={handleDeletePress}
                 cursor="pointer"

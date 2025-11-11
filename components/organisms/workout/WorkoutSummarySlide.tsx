@@ -152,7 +152,7 @@ export function WorkoutSummarySlide({
       {/* Scrollable Content */}
       <ScrollView
         flex={1}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ padding: 8 }}
         showsVerticalScrollIndicator={false}
       >
         <YStack gap="$4">
@@ -168,7 +168,7 @@ export function WorkoutSummarySlide({
             <Input
               value={workoutName}
               onChangeText={handleNameChange}
-              placeholder={selectedTemplate?.name || "Name your workout..."}
+              placeholder={selectedTemplate?.name || "name your workout..."}
               placeholderTextColor="$textMuted"
               size="$4"
               width="100%"
@@ -193,6 +193,7 @@ export function WorkoutSummarySlide({
                 <ImagePickerButton
                   label="Change Photo"
                   icon="camera"
+                  size="large"
                   onImageUploaded={handleImageUploaded}
                   onError={handleImageError}
                 />
@@ -202,7 +203,7 @@ export function WorkoutSummarySlide({
                 <ImagePickerButton
                   label="Add Photo"
                   icon="camera"
-                  size="medium"
+                  size="large"
                   onImageUploaded={handleImageUploaded}
                   onError={handleImageError}
                 />
@@ -226,10 +227,11 @@ export function WorkoutSummarySlide({
               {/* Workout Notes Tab */}
               <TabsSegmented.Content value="workout">
                 <TextArea
+                  alignSelf="stretch"
                   value={workoutNotes}
                   onChangeText={setWorkoutNotes}
                   size="small"
-                  placeholder="How did the workout feel overall?"
+                  placeholder="how did the workout feel overall?"
                   minHeight={120}
                   backgroundColor="$backgroundMuted"
                   borderColor="$borderSoft" // Add this line
@@ -275,6 +277,7 @@ export function WorkoutSummarySlide({
                         {isExpanded && (
                           <YStack padding="$3" paddingTop="$0" gap="$2">
                             <TextArea
+                              alignSelf="stretch"
                               value={
                                 exerciseNotes[exercise.id] ??
                                 exercise.notes ??

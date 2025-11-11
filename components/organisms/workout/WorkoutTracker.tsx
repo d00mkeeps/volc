@@ -10,19 +10,14 @@ import React, {
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-  useSharedValue,
-} from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
 import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
-import GradientBlur from "@/components/atoms/core/GradientBlur";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
-import { Alert } from "react-native";
 import { PlusCircle } from "@/assets/icons/IconMap";
 import { useTheme } from "tamagui";
+import Toast from "react-native-toast-message";
 
 interface WorkoutTrackerProps {
   currentTemplateName?: string;
@@ -111,6 +106,14 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       (exerciseId: string) => {
         if (!isActive || !currentWorkout) return;
 
+        // Find the exercise being deleted
+        const deletedExercise = currentWorkout.workout_exercises.find(
+          (exercise) => exercise.id === exerciseId
+        );
+
+        if (!deletedExercise) return;
+
+        // Remove the exercise
         const updatedWorkout = {
           ...currentWorkout,
           workout_exercises: currentWorkout.workout_exercises.filter(
@@ -118,10 +121,28 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           ),
         };
         updateCurrentWorkout(updatedWorkout);
+
+        // Only show toast for named exercises (not for canceled new exercises)
+        if (deletedExercise.name) {
+          Toast.show({
+            type: "success",
+            text1: `${deletedExercise.name} removed`,
+            text2: "Tap to undo",
+            visibilityTime: 2000,
+            onPress: () => {
+              // Undo: restore the exercise at its original position
+              const restoredWorkout = {
+                ...currentWorkout,
+                workout_exercises: [...currentWorkout.workout_exercises],
+              };
+              updateCurrentWorkout(restoredWorkout);
+              Toast.hide();
+            },
+          });
+        }
       },
       [isActive, currentWorkout, updateCurrentWorkout]
     );
-
     const handleAddExercise = useCallback(() => {
       if (!isActive || !currentWorkout || isAnyExerciseEditing) return;
 
