@@ -1,23 +1,6 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import logging
-from datetime import datetime
-from .schemas import (
-    BundleMetadata,
-    MuscleGroupBalance,
-    MuscleGroupEntry,
-    WorkoutConsistencyEntry,
-)
-
-logger = logging.getLogger(__name__)
-"""
-Workout Analysis Bundle Processor
-
-Processes raw workout data into comprehensive analysis bundles for LLM coaching.
-"""
-
-from typing import Dict, Any, List
-import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from .schemas import (
     WorkoutAnalysisBundle,
     BundleMetadata,
@@ -28,11 +11,14 @@ from .schemas import (
     WorkoutExercise,
     WorkoutSet,
     VolumeData,
-    VolumeTimeSeries,
+    ExerciseVolumeData,
+    ExerciseVolumeTimeSeries,
     StrengthData,
-    ExerciseStrengthData,
-    E1RMPerformance,
+    ExerciseStrengthProgress,
+    E1RMTimeSeries,
     ConsistencyData,
+    MuscleGroupBalance,
+    MuscleGroupDistribution,
 )
 
 logger = logging.getLogger(__name__)
@@ -46,11 +32,48 @@ class AnalysisBundleProcessor:
     structured bundle containing all metrics needed for LLM coaching.
     """
     
+    # Muscle mapping from DashboardService
+    MUSCLE_MAPPING = {
+        # Chest
+        "chest": "Chest",
+        
+        # Arms  
+        "biceps": "Arms",
+        "triceps": "Arms", 
+        "forearms": "Arms",
+        
+        # Shoulders
+        "shoulders": "Shoulders",
+        
+        # Back
+        "back": "Back",
+        "lats": "Back", 
+        "traps": "Back",
+        "lower_back": "Back",
+        "lower back": "Back",
+        
+        # Legs
+        "quadriceps": "Legs",
+        "hamstrings": "Legs",
+        "glutes": "Legs",
+        "abductors": "Legs", 
+        "adductors": "Legs",
+        
+        # Core
+        "abs": "Core",
+        "obliques": "Core",
+        "hip_flexors": "Core",
+        
+        # Cardio
+        "cardiovascular system": "Cardio"
+    }
+    
     def process(
         self,
         bundle_id: str,
         user_id: str,
-        raw_workout_data: Dict[str, Any]
+        raw_workout_data: Dict[str, Any],
+        exercise_definitions: List[Dict[str, Any]] = None
     ) -> WorkoutAnalysisBundle:
         """
         Process raw workout data into a complete analysis bundle.
@@ -59,6 +82,7 @@ class AnalysisBundleProcessor:
             bundle_id: Unique identifier for this bundle
             user_id: User this bundle belongs to
             raw_workout_data: Raw workout data from database
+            exercise_definitions: List of exercise definition dicts from cache
             
         Returns:
             WorkoutAnalysisBundle with all sections populated
@@ -75,21 +99,22 @@ class AnalysisBundleProcessor:
             # 2. Build general workout data
             general_workout_data = self._build_general_workout_data(workouts, errors)
             
-            # 3. Build recent workouts (last 7 days)
+            # 3. Build recent workouts (last 14 days)
             recent_workouts = self._build_recent_workouts(workouts, errors)
             
-            # 4. Build volume data
+            # 4. Build volume data (with exercise time series)
             volume_data = self._build_volume_data(workouts, errors)
             
-            # 5. Build strength data
+            # 5. Build strength data (with e1RM time series)
             strength_data = self._build_strength_data(workouts, errors)
             
-
-            # 6. Build consistency data (now includes workout IDs)
+            # 6. Build consistency data (simplified)
             consistency_data = self._build_consistency_data(workouts, errors)
 
-            # 7. Build muscle group balance
-            muscle_group_balance = self._build_muscle_group_balance(workouts, errors)
+            # 7. Build muscle group balance (percentage-based)
+            muscle_group_balance = self._build_muscle_group_balance(
+                workouts, errors, exercise_definitions
+            )
 
             # 8. Skip correlation_insights for now (to be implemented later)
             
@@ -119,7 +144,7 @@ class AnalysisBundleProcessor:
     def _build_metadata(
         self,
         raw_workout_data: Dict[str, Any],
-        errors: List[str]
+        errors: list
     ) -> BundleMetadata:
         """Build bundle metadata."""
         return BundleMetadata(
@@ -131,8 +156,8 @@ class AnalysisBundleProcessor:
     
     def _build_general_workout_data(
         self,
-        workouts: List[Dict],
-        errors: List[str]
+        workouts: list,
+        errors: list
     ) -> GeneralWorkoutData:
         """Build general workout data with summary statistics."""
         try:
@@ -190,16 +215,19 @@ class AnalysisBundleProcessor:
     
     def _build_recent_workouts(
         self,
-        workouts: List[Dict],
-        errors: List[str]
-    ) -> List[RecentWorkout]:
-        """Build recent workouts list (last 7 days with full detail)."""
+        workouts: list,
+        errors: list
+    ) -> list:
+        """
+        Build recent workouts list (last 14 days with full detail).
+        
+        Location: /app/services/workout_analysis/processor.py
+        Method: AnalysisBundleProcessor._build_recent_workouts()
+        """
         try:
-            from datetime import timezone
-            
             recent_workouts = []
-            # Fix: Make cutoff_date timezone-aware
-            cutoff_date = datetime.now(timezone.utc) - timedelta(days=7)
+            # CHANGE: Extended from 7 to 14 days
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=14)
             
             for workout in workouts:
                 workout_date_str = workout.get('created_at')
@@ -208,7 +236,7 @@ class AnalysisBundleProcessor:
                 
                 workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00'))
                 
-                # Only include workouts from last 7 days
+                # Only include workouts from last 14 days
                 if workout_date < cutoff_date:
                     continue
                 
@@ -261,18 +289,23 @@ class AnalysisBundleProcessor:
             errors.append(f"Recent workouts failed: {str(e)}")
             return []
 
-
     def _build_volume_data(
         self,
-        workouts: List[Dict],
-        errors: List[str]
+        workouts: list,
+        errors: list
     ) -> VolumeData:
-        """Build volume data (calculated on the fly)."""
+        """
+        Build volume data with exercise-level time series.
+        
+        Location: /app/services/workout_analysis/processor.py
+        Method: AnalysisBundleProcessor._build_volume_data()
+        """
         try:
             total_volume = 0.0
             today_volume = 0.0
-            by_exercise = {}
-            time_series = []
+            
+            # Track volume per exercise per date
+            exercise_date_volumes = {}  # {exercise_name: {date: volume}}
             
             # Get most recent workout date for "today" calculation
             if workouts:
@@ -304,32 +337,47 @@ class AnalysisBundleProcessor:
                         workout_volume += set_volume
                         total_volume += set_volume
                     
-                    # Add to by_exercise
+                    # Add to exercise-date tracking
                     if exercise_name and exercise_volume > 0:
-                        by_exercise[exercise_name] = by_exercise.get(exercise_name, 0) + exercise_volume
+                        if exercise_name not in exercise_date_volumes:
+                            exercise_date_volumes[exercise_name] = {}
+                        
+                        # Aggregate by date (combine multiple instances of same exercise on same day)
+                        date_key = workout_date.date()
+                        exercise_date_volumes[exercise_name][date_key] = \
+                            exercise_date_volumes[exercise_name].get(date_key, 0) + exercise_volume
                 
                 # Check if this is "today" (most recent workout)
                 if latest_date and workout_date == latest_date:
                     today_volume = workout_volume
+            
+            # Build exercise volume time series
+            volume_by_exercise_over_time = []
+            for exercise_name, date_volumes in exercise_date_volumes.items():
+                time_series = [
+                    ExerciseVolumeTimeSeries(
+                        date=datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone.utc),
+                        volume_kg=round(volume, 2)
+                    )
+                    for date, volume in date_volumes.items()
+                ]
+                # Sort chronologically
+                time_series.sort(key=lambda x: x.date)
                 
-                # Add to time series
-                time_series.append(VolumeTimeSeries(
-                    date=workout_date,
-                    volume_kg=round(workout_volume, 2),
-                    workout_name=workout.get('name')
-                ))
+                volume_by_exercise_over_time.append(
+                    ExerciseVolumeData(
+                        exercise=exercise_name,
+                        time_series=time_series
+                    )
+                )
             
-            # Sort time series chronologically
-            time_series.sort(key=lambda x: x.date)
-            
-            # Round by_exercise values
-            by_exercise = {k: round(v, 2) for k, v in by_exercise.items()}
+            # Sort by exercise name for consistency
+            volume_by_exercise_over_time.sort(key=lambda x: x.exercise)
             
             return VolumeData(
                 total_volume_kg=round(total_volume, 2),
                 today_volume_kg=round(today_volume, 2),
-                by_exercise=by_exercise,
-                time_series=time_series
+                volume_by_exercise_over_time=volume_by_exercise_over_time
             )
             
         except Exception as e:
@@ -338,19 +386,23 @@ class AnalysisBundleProcessor:
             return VolumeData(
                 total_volume_kg=0.0,
                 today_volume_kg=0.0,
-                by_exercise={},
-                time_series=[]
+                volume_by_exercise_over_time=[]
             )
     
     def _build_strength_data(
         self,
-        workouts: List[Dict],
-        errors: List[str]
+        workouts: list,
+        errors: list
     ) -> StrengthData:
-        """Build strength data using estimated_1rm from database."""
+        """
+        Build strength data with e1RM time series per exercise.
+        
+        Location: /app/services/workout_analysis/processor.py
+        Method: AnalysisBundleProcessor._build_strength_data()
+        """
         try:
-            # Track all e1RM performances by exercise
-            exercise_performances = {}
+            # Track e1RM performances per exercise per date
+            exercise_date_e1rms = {}  # {exercise_name: {date: best_e1rm_on_that_date}}
             
             for workout in workouts:
                 workout_date_str = workout.get('created_at')
@@ -358,101 +410,98 @@ class AnalysisBundleProcessor:
                     continue
                 
                 workout_date = datetime.fromisoformat(workout_date_str.replace('Z', '+00:00'))
+                date_key = workout_date.date()
                 
                 for exercise in workout.get('workout_exercises', []):
                     exercise_name = exercise.get('name', '')
                     if not exercise_name:
                         continue
                     
+                    # Find best e1RM for this exercise on this date
+                    best_e1rm_today = 0.0
                     for set_data in exercise.get('workout_exercise_sets', []):
                         e1rm = set_data.get('estimated_1rm')
-                        if e1rm and e1rm > 0:
-                            if exercise_name not in exercise_performances:
-                                exercise_performances[exercise_name] = []
-                            
-                            exercise_performances[exercise_name].append(
-                                E1RMPerformance(
-                                    estimated_1rm=e1rm,
-                                    date=workout_date
-                                )
-                            )
+                        if e1rm and e1rm > best_e1rm_today:
+                            best_e1rm_today = e1rm
+                    
+                    if best_e1rm_today > 0:
+                        if exercise_name not in exercise_date_e1rms:
+                            exercise_date_e1rms[exercise_name] = {}
+                        
+                        # Store best e1RM for this date (or update if better)
+                        exercise_date_e1rms[exercise_name][date_key] = max(
+                            exercise_date_e1rms[exercise_name].get(date_key, 0),
+                            best_e1rm_today
+                        )
             
-            # Build top_e1rms list
-            top_e1rms = []
-            for exercise_name, performances in exercise_performances.items():
-                if not performances:
-                    continue
+            # Build exercise strength progress list
+            exercise_strength_progress = []
+            for exercise_name, date_e1rms in exercise_date_e1rms.items():
+                time_series = [
+                    E1RMTimeSeries(
+                        date=datetime.combine(date, datetime.min.time()).replace(tzinfo=timezone.utc),
+                        estimated_1rm=round(e1rm, 2)
+                    )
+                    for date, e1rm in date_e1rms.items()
+                ]
+                # Sort chronologically
+                time_series.sort(key=lambda x: x.date)
                 
-                # Sort by e1rm descending to find best
-                performances.sort(key=lambda p: p.estimated_1rm, reverse=True)
-                best_performance = performances[0]
-                
-                # Sort all performances by date for historical view
-                all_performances_sorted = sorted(performances, key=lambda p: p.date)
-                
-                exercise_strength = ExerciseStrengthData(
-                    exercise=exercise_name,
-                    best_e1rm=best_performance.estimated_1rm,
-                    achieved_date=best_performance.date,
-                    all_performances=all_performances_sorted
+                exercise_strength_progress.append(
+                    ExerciseStrengthProgress(
+                        exercise=exercise_name,
+                        e1rm_time_series=time_series
+                    )
                 )
-                top_e1rms.append(exercise_strength)
             
-            # Sort by best e1rm descending
-            top_e1rms.sort(key=lambda x: x.best_e1rm, reverse=True)
+            # Sort by exercise name for consistency
+            exercise_strength_progress.sort(key=lambda x: x.exercise)
             
-            logger.info(f"Built strength data for {len(top_e1rms)} exercises")
-            return StrengthData(top_e1rms=top_e1rms)
+            logger.info(f"Built strength data for {len(exercise_strength_progress)} exercises")
+            return StrengthData(exercise_strength_progress=exercise_strength_progress)
             
         except Exception as e:
             logger.error(f"Error building strength data: {e}", exc_info=True)
             errors.append(f"Strength data failed: {str(e)}")
-            return StrengthData(top_e1rms=[])
+            return StrengthData(exercise_strength_progress=[])
     
-
     def _build_consistency_data(
         self,
-        workouts: List[Dict],
-        errors: List[str]
+        workouts: list,
+        errors: list
     ) -> ConsistencyData:
-        """Build consistency data using workout dates and IDs."""
+        """
+        Build consistency data (simplified - no redundant arrays).
+        
+        Location: /app/services/workout_analysis/processor.py
+        Method: AnalysisBundleProcessor._build_consistency_data()
+        """
         try:
             if len(workouts) < 2:
                 return ConsistencyData(
                     avg_days_between=0.0,
-                    variance=None,
-                    workout_dates=[],
-                    workouts=[]
+                    variance=None
                 )
             
-            # Extract workout data (ID + date)
-            workout_entries = []
+            # Extract workout dates
+            workout_dates = []
             for workout in workouts:
-                workout_id = workout.get('id')
                 date_str = workout.get('created_at')
-                if workout_id and date_str:
+                if date_str:
                     try:
                         date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                        workout_entries.append({
-                            'id': workout_id,
-                            'date': date
-                        })
+                        workout_dates.append(date)
                     except (ValueError, TypeError) as e:
                         logger.warning(f"Could not parse workout date '{date_str}': {e}")
             
-            if len(workout_entries) < 2:
+            if len(workout_dates) < 2:
                 return ConsistencyData(
                     avg_days_between=0.0,
-                    variance=None,
-                    workout_dates=[],
-                    workouts=[]
+                    variance=None
                 )
             
             # Sort by date
-            workout_entries.sort(key=lambda x: x['date'])
-            
-            # Extract sorted dates for calculations
-            workout_dates = [entry['date'] for entry in workout_entries]
+            workout_dates.sort()
             
             # Calculate gaps between consecutive workouts
             gaps = []
@@ -470,20 +519,9 @@ class AnalysisBundleProcessor:
                 variance_sum = sum((gap - mean_gap) ** 2 for gap in gaps)
                 variance = variance_sum / len(gaps)
             
-            # Build WorkoutConsistencyEntry objects
-            workout_consistency_entries = [
-                WorkoutConsistencyEntry(
-                    workout_id=entry['id'],
-                    date=entry['date']
-                )
-                for entry in workout_entries
-            ]
-            
             return ConsistencyData(
                 avg_days_between=round(avg_gap, 1),
-                variance=round(variance, 2) if variance is not None else None,
-                workout_dates=workout_dates,
-                workouts=workout_consistency_entries
+                variance=round(variance, 2) if variance is not None else None
             )
             
         except Exception as e:
@@ -491,56 +529,110 @@ class AnalysisBundleProcessor:
             errors.append(f"Consistency data failed: {str(e)}")
             return ConsistencyData(
                 avg_days_between=0.0,
-                variance=None,
-                workout_dates=[],
-                workouts=[]
+                variance=None
             )
 
     def _build_muscle_group_balance(
         self,
-        workouts: List[Dict],
-        errors: List[str]
+        workouts: list,
+        errors: list,
+        exercise_definitions: List[Dict[str, Any]] = None
     ) -> Optional[MuscleGroupBalance]:
         """
-        Build muscle group balance from workouts.
+        Build muscle group balance with percentage distribution.
         
-        Uses the proven DashboardService._calculate_muscle_balance() method
-        to ensure consistent calculations across the app.
+        Uses exercise definitions (from cache) to get primary muscles for each exercise.
+        Counts all primary muscles (muscle-set instances) for percentage calculation.
+        
+        Location: /app/services/workout_analysis/processor.py
+        Method: AnalysisBundleProcessor._build_muscle_group_balance()
         """
         try:
-            # Import and instantiate dashboard service (has DB access)
-            from app.services.db.dashboard_service import DashboardService
-            dashboard_service = DashboardService()
+            # Build lookup map: definition_id -> primary_muscles
+            definition_map = {}
+            if exercise_definitions:
+                for definition in exercise_definitions:
+                    def_id = definition.get('id')
+                    primary_muscles = definition.get('primary_muscles', [])
+                    if def_id:
+                        definition_map[def_id] = primary_muscles if isinstance(primary_muscles, list) else []
             
-            # Call the proven method - returns List[{"muscle": str, "sets": int}]
-            muscle_balance_list = dashboard_service._calculate_muscle_balance(workouts)
+            if not definition_map:
+                logger.warning("No exercise definitions available")
+                return None
             
-            # Convert to our schema format
-            muscle_group_entries = [
-                MuscleGroupEntry(muscle=item["muscle"], sets=item["sets"])
-                for item in muscle_balance_list
+            logger.info(f"Using {len(definition_map)} exercise definitions from cache")
+            
+            # Calculate true total sets (raw count)
+            true_total_sets = sum(
+                len(ex.get('workout_exercise_sets', []))
+                for w in workouts
+                for ex in w.get('workout_exercises', [])
+            )
+            
+            # Count muscle-set instances (all primary muscles)
+            muscle_set_instances = {}
+            
+            for workout in workouts:
+                for exercise in workout.get('workout_exercises', []):
+                    definition_id = exercise.get('definition_id')
+                    if not definition_id:
+                        continue
+                    
+                    primary_muscles = definition_map.get(definition_id, [])
+                    set_count = len(exercise.get('workout_exercise_sets', []))
+                    
+                    # Count each primary muscle
+                    for muscle in primary_muscles:
+                        muscle_group = self._map_muscle_to_group(muscle)
+                        if muscle_group != "Other":
+                            muscle_set_instances[muscle_group] = \
+                                muscle_set_instances.get(muscle_group, 0) + set_count
+            
+            # Calculate total instances
+            total_instances = sum(muscle_set_instances.values())
+            
+            if total_instances == 0:
+                logger.warning("No muscle group data found")
+                return None
+            
+            # Build distribution with percentages
+            distribution = [
+                MuscleGroupDistribution(
+                    muscle_group=muscle_group,
+                    percentage=round((instances / total_instances * 100), 1)
+                )
+                for muscle_group, instances in muscle_set_instances.items()
             ]
             
-            # Calculate total sets
-            total_sets = sum(entry.sets for entry in muscle_group_entries)
+            # Sort by percentage descending
+            distribution.sort(key=lambda x: x.percentage, reverse=True)
             
-            logger.info(f"Built muscle group balance: {len(muscle_group_entries)} groups, {total_sets} total sets")
+            logger.info(
+                f"Built muscle group balance: {true_total_sets} total sets, "
+                f"{total_instances} muscle-set instances, {len(distribution)} groups"
+            )
             
             return MuscleGroupBalance(
-                muscle_groups=muscle_group_entries,
-                total_sets=total_sets
+                total_sets=true_total_sets,
+                distribution=distribution
             )
             
         except Exception as e:
             logger.error(f"Error building muscle group balance: {e}", exc_info=True)
             errors.append(f"Muscle group balance failed: {str(e)}")
             return None
+    
+    def _map_muscle_to_group(self, muscle: str) -> str:
+        """Map individual muscle to muscle group using static mapping."""
+        return self.MUSCLE_MAPPING.get(muscle.lower(), "Other")
+    
     def _create_failed_bundle(
         self,
         bundle_id: str,
         user_id: str,
         raw_workout_data: Dict,
-        errors: List[str]
+        errors: list
     ) -> WorkoutAnalysisBundle:
         """Create minimal bundle when processing fails."""
         return WorkoutAnalysisBundle(
@@ -564,14 +656,12 @@ class AnalysisBundleProcessor:
             volume_data=VolumeData(
                 total_volume_kg=0.0,
                 today_volume_kg=0.0,
-                by_exercise={},
-                time_series=[]
+                volume_by_exercise_over_time=[]
             ),
-            strength_data=StrengthData(top_e1rms=[]),
+            strength_data=StrengthData(exercise_strength_progress=[]),
             consistency_data=ConsistencyData(
                 avg_days_between=0.0,
-                variance=None,
-                workout_dates=[]
+                variance=None
             ),
             muscle_group_balance=None,
             correlation_insights=None

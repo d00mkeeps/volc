@@ -1,8 +1,6 @@
 from datetime import datetime
-from typing import Dict, Any, List, Optional, AsyncGenerator
+from typing import Dict, Any, List
 import logging
-import json
-from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_anthropic import ChatAnthropic
 from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
@@ -12,6 +10,12 @@ from app.core.prompts.workout_analysis import get_workout_analysis_prompt
 logger = logging.getLogger(__name__)
 
 class WorkoutAnalysisChain(BaseConversationChain):
+    """
+    Workout analysis conversation chain with time series support.
+    
+    Location: /app/services/chains/workout_analysis_chain.py
+    """
+    
     def __init__(self, llm: ChatAnthropic, user_id: str):
         # Initialize base class (only takes llm)
         super().__init__(llm=llm)
@@ -35,7 +39,12 @@ class WorkoutAnalysisChain(BaseConversationChain):
         return self._data_bundles
 
     def _initialize_prompt_template(self) -> None:
-        """Sets up the workout-specific prompt template with XML-structured context."""
+        """
+        Sets up the workout-specific prompt template with XML-structured context.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._initialize_prompt_template()
+        """
         self.prompt = ChatPromptTemplate.from_messages([
             ("system", "{system_prompt}\n\n{workout_context}"),
             MessagesPlaceholder(variable_name="messages"),
@@ -43,7 +52,12 @@ class WorkoutAnalysisChain(BaseConversationChain):
         ])
 
     async def add_data_bundle(self, bundle: WorkoutAnalysisBundle) -> bool:
-        """Add workout data bundle to conversation context."""
+        """
+        Add workout data bundle to conversation context.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain.add_data_bundle()
+        """
         try:
             self._data_bundles.append(bundle)
             logger.info(f"Added workout data bundle to conversation context")
@@ -60,11 +74,21 @@ class WorkoutAnalysisChain(BaseConversationChain):
             return False
 
     def _format_date(self, dt: datetime) -> str:
-        """Format datetime to string."""
+        """
+        Format datetime to string.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._format_date()
+        """
         return dt.isoformat() if dt else None
 
     def _format_user_profile_context(self) -> str:
-        """Format user profile with XML structure."""
+        """
+        Format user profile with XML structure.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._format_user_profile_context()
+        """
         if not self._user_profile:
             return ""
         
@@ -101,8 +125,188 @@ class WorkoutAnalysisChain(BaseConversationChain):
   <important>Always use {units} when discussing weights and distances</important>
 </user_profile>"""
 
+    def _format_strength_progression_time_series(self, strength_data) -> str:
+        """
+        Format strength progression with time series data.
+        
+        Shows complete e1RM progression over time for top exercises, enabling
+        the coach to discuss trends, gains, plateaus, and velocity of improvement.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._format_strength_progression_time_series()
+        
+        Args:
+            strength_data: StrengthData object with exercise_strength_progress
+            
+        Returns:
+            XML-formatted string with time series data
+        """
+        if not strength_data or not hasattr(strength_data, 'exercise_strength_progress'):
+            return "    <status>No strength progression data</status>"
+        
+        exercise_progress_list = strength_data.exercise_strength_progress
+        if not exercise_progress_list:
+            return "    <status>No strength progression data</status>"
+        
+        # Get top 5 exercises by best e1RM
+        exercises_with_best = []
+        for ex_prog in exercise_progress_list:
+            if ex_prog.e1rm_time_series:
+                best_point = max(ex_prog.e1rm_time_series, key=lambda x: x.estimated_1rm)
+                exercises_with_best.append({
+                    'exercise': ex_prog.exercise,
+                    'best_e1rm': best_point.estimated_1rm,
+                    'time_series': ex_prog.e1rm_time_series
+                })
+        
+        if not exercises_with_best:
+            return "    <status>No strength progression data</status>"
+        
+        top_exercises = sorted(exercises_with_best, key=lambda x: x['best_e1rm'], reverse=True)[:5]
+        
+        strength_items = []
+        for ex_data in top_exercises:
+            # Build time series points
+            time_series_points = []
+            for point in ex_data['time_series']:
+                time_series_points.append(
+                    f"            <data_point>\n"
+                    f"                <date>{self._format_date(point.date)}</date>\n"
+                    f"                <e1rm>{point.estimated_1rm:.1f}kg</e1rm>\n"
+                    f"            </data_point>"
+                )
+            time_series_xml = "\n".join(time_series_points)
+            
+            # Calculate total change and change rate
+            if len(ex_data['time_series']) > 1:
+                first_point = ex_data['time_series'][0]
+                last_point = ex_data['time_series'][-1]
+                
+                first_e1rm = first_point.estimated_1rm
+                last_e1rm = last_point.estimated_1rm
+                
+                change_kg = last_e1rm - first_e1rm
+                change_pct = (change_kg / first_e1rm) * 100 if first_e1rm > 0 else 0
+                
+                # Calculate days between first and last measurement
+                days_diff = (last_point.date - first_point.date).days
+                change_per_week = (change_kg / days_diff * 7) if days_diff > 0 else 0
+                
+                change_str = f"+{change_kg:.1f}kg (+{change_pct:.1f}%)" if change_kg >= 0 else f"{change_kg:.1f}kg ({change_pct:.1f}%)"
+                rate_str = f"{abs(change_per_week):.1f}kg/week"
+            else:
+                change_str = "Insufficient data"
+                rate_str = "N/A"
+            
+            best_date = max(ex_data['time_series'], key=lambda x: x.estimated_1rm).date
+            
+            strength_items.append(
+                f"    <exercise>\n"
+                f"        <name>{ex_data['exercise']}</name>\n"
+                f"        <time_series>\n"
+                f"{time_series_xml}\n"
+                f"        </time_series>\n"
+                f"        <summary>\n"
+                f"            <best_e1rm>{ex_data['best_e1rm']:.1f}kg</best_e1rm>\n"
+                f"            <total_change>{change_str}</total_change>\n"
+                f"            <rate_of_change>{rate_str}</rate_of_change>\n"
+                f"            <achieved_date>{self._format_date(best_date)}</achieved_date>\n"
+                f"        </summary>\n"
+                f"    </exercise>"
+            )
+        
+        strength_prog = "\n".join(strength_items)
+        strength_prog += "\n    <note>e1RM = Estimated 1 Rep Max (calculated from sets/reps/weight, not actual tested 1RM)</note>"
+        
+        return strength_prog
+
+    def _format_volume_time_series(self, volume_data) -> str:
+        """
+        Format volume progression with time series data.
+        
+        Shows volume trends over time for top exercises, enabling the coach
+        to discuss work capacity, volume periodization, and fatigue management.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._format_volume_time_series()
+        
+        Args:
+            volume_data: VolumeData object with volume_by_exercise_over_time
+            
+        Returns:
+            XML-formatted string with volume time series
+        """
+        if not volume_data:
+            return "    <status>No volume data</status>"
+        
+        # Calculate total volume per exercise
+        exercise_volumes = {}
+        if hasattr(volume_data, 'volume_by_exercise_over_time') and volume_data.volume_by_exercise_over_time:
+            for exercise_data in volume_data.volume_by_exercise_over_time:
+                total_volume = sum(point.volume_kg for point in exercise_data.time_series)
+                exercise_volumes[exercise_data.exercise] = {
+                    'total': total_volume,
+                    'time_series': exercise_data.time_series
+                }
+        
+        if not exercise_volumes:
+            return "    <status>No volume data</status>"
+        
+        # Get top 5 exercises by total volume
+        top_volume_exercises = sorted(
+            exercise_volumes.items(),
+            key=lambda x: x[1]['total'],
+            reverse=True
+        )[:5]
+        
+        volume_items = []
+        for exercise, data in top_volume_exercises:
+            # Build time series points
+            time_series_points = []
+            for point in data['time_series']:
+                time_series_points.append(
+                    f"            <data_point>\n"
+                    f"                <date>{self._format_date(point.date)}</date>\n"
+                    f"                <volume_kg>{point.volume_kg:.1f}kg</volume_kg>\n"
+                    f"            </data_point>"
+                )
+            time_series_xml = "\n".join(time_series_points)
+            
+            # Calculate volume change
+            if len(data['time_series']) > 1:
+                first_vol = data['time_series'][0].volume_kg
+                last_vol = data['time_series'][-1].volume_kg
+                change_kg = last_vol - first_vol
+                change_pct = (change_kg / first_vol) * 100 if first_vol > 0 else 0
+                change_str = f"+{change_kg:.1f}kg (+{change_pct:.1f}%)" if change_kg >= 0 else f"{change_kg:.1f}kg ({change_pct:.1f}%)"
+            else:
+                change_str = "Single session"
+            
+            volume_items.append(
+                f"    <exercise>\n"
+                f"        <name>{exercise}</name>\n"
+                f"        <time_series>\n"
+                f"{time_series_xml}\n"
+                f"        </time_series>\n"
+                f"        <summary>\n"
+                f"            <total_volume_kg>{data['total']:.1f}kg</total_volume_kg>\n"
+                f"            <change>{change_str}</change>\n"
+                f"        </summary>\n"
+                f"    </exercise>"
+            )
+        
+        return "\n".join(volume_items)
+
     def _format_workout_data_context(self) -> str:
-        """Format workout data with XML structure for better LLM attention."""
+        """
+        Format workout data with XML structure for better LLM attention.
+        
+        Includes time series data for strength and volume progression to enable
+        sophisticated coaching insights about trends, plateaus, and progress velocity.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain._format_workout_data_context()
+        """
         if not self._data_bundles:
             return "<workout_data><status>No workout data available</status></workout_data>"
         
@@ -113,45 +317,59 @@ class WorkoutAnalysisChain(BaseConversationChain):
         date_start = self._format_date(date_range.earliest)
         date_end = self._format_date(date_range.latest)
         
-        # Extract strength progression from strength_data.top_e1rms
-        strength_prog = ""
-        if latest_bundle.strength_data and latest_bundle.strength_data.top_e1rms:
-            top_strength = latest_bundle.strength_data.top_e1rms[:5]
-            strength_items = []
-            for ex in top_strength:
-                strength_items.append(
-                    f"    <exercise>\n"
-                    f"      <name>{ex.exercise}</name>\n"
-                    f"      <best_e1rm>{ex.best_e1rm:.1f}kg</best_e1rm>\n"
-                    f"      <achieved_date>{self._format_date(ex.achieved_date)}</achieved_date>\n"
-                    f"      <note>e1RM = Estimated 1 Rep Max (calculated, not tested)</note>\n"
-                    f"    </exercise>"
+        # Extract recent workouts with notes (last 5 workouts)
+        recent_workouts_info = ""
+        if latest_bundle.recent_workouts:
+            workout_items = []
+            for workout in latest_bundle.recent_workouts[:5]:  # Show up to 5 most recent
+                workout_date = self._format_date(workout.date)
+                workout_name = workout.name or "Workout"
+                
+                # Build exercise list with notes
+                exercise_items = []
+                for exercise in workout.exercises:
+                    exercise_notes = f"\n        <notes>{exercise.notes}</notes>" if exercise.notes else ""
+                    exercise_items.append(
+                        f"      <exercise>\n"
+                        f"        <name>{exercise.name}</name>"
+                        f"{exercise_notes}\n"
+                        f"        <sets_count>{len(exercise.sets)}</sets_count>\n"
+                        f"      </exercise>"
+                    )
+                exercises_xml = "\n".join(exercise_items) if exercise_items else "      <status>No exercises</status>"
+                
+                workout_notes = f"\n    <workout_notes>{workout.notes}</workout_notes>" if workout.notes else ""
+                workout_items.append(
+                    f"  <workout>\n"
+                    f"    <date>{workout_date}</date>\n"
+                    f"    <name>{workout_name}</name>"
+                    f"{workout_notes}\n"
+                    f"    <exercises>\n"
+                    f"{exercises_xml}\n"
+                    f"    </exercises>\n"
+                    f"  </workout>"
                 )
-            strength_prog = "\n".join(strength_items)
+            recent_workouts_info = "\n".join(workout_items)
         
-        # Extract volume data
-        volume_info = ""
+        # Format strength progression with TIME SERIES
+        strength_prog = self._format_strength_progression_time_series(latest_bundle.strength_data)
+        
+        # Format volume with TIME SERIES
+        volume_time_series = self._format_volume_time_series(latest_bundle.volume_data)
+        
+        # Overall volume summary
+        volume_summary = ""
         if latest_bundle.volume_data:
             vol = latest_bundle.volume_data
-            # Get top 5 exercises by volume
-            top_volume = sorted(vol.by_exercise.items(), key=lambda x: x[1], reverse=True)[:5]
-            volume_items = []
-            for exercise, volume in top_volume:
-                volume_items.append(
-                    f"    <exercise>\n"
-                    f"      <name>{exercise}</name>\n"
-                    f"      <total_volume_kg>{volume:.1f}kg</total_volume_kg>\n"
-                    f"    </exercise>"
-                )
-            volume_exercises = "\n".join(volume_items) if volume_items else "    <status>No volume data</status>"
-            
-            volume_info = f"""  <volume_data>
-    <total_volume_kg>{vol.total_volume_kg:.1f}kg</total_volume_kg>
-    <today_volume_kg>{vol.today_volume_kg:.1f}kg</today_volume_kg>
-    <top_exercises_by_volume>
-{volume_exercises}
-    </top_exercises_by_volume>
-  </volume_data>"""
+            volume_summary = f"""  <volume_summary>
+        <total_volume_kg>{vol.total_volume_kg:.1f}kg</total_volume_kg>
+        <today_volume_kg>{vol.today_volume_kg:.1f}kg</today_volume_kg>
+    </volume_summary>
+    
+    <volume_by_exercise_over_time>
+        <description>Volume trends over time for top exercises. Use this to discuss work capacity and fatigue management.</description>
+{volume_time_series}
+    </volume_by_exercise_over_time>"""
         
         # Extract consistency metrics
         consistency_info = ""
@@ -159,10 +377,9 @@ class WorkoutAnalysisChain(BaseConversationChain):
             cons = latest_bundle.consistency_data
             variance_str = f"{cons.variance:.2f}" if cons.variance is not None else "Not calculated"
             consistency_info = f"""  <consistency_data>
-    <avg_days_between_workouts>{cons.avg_days_between:.1f} days</avg_days_between_workouts>
-    <variance>{variance_str}</variance>
-    <total_workouts_tracked>{len(cons.workout_dates)}</total_workouts_tracked>
-  </consistency_data>"""
+        <avg_days_between_workouts>{cons.avg_days_between:.1f} days</avg_days_between_workouts>
+        <variance>{variance_str}</variance>
+    </consistency_data>"""
         
         # Extract exercise frequency
         frequency_info = ""
@@ -179,6 +396,20 @@ class WorkoutAnalysisChain(BaseConversationChain):
                     f"    </exercise>"
                 )
             frequency_info = "\n".join(freq_items) if freq_items else "    <status>No frequency data</status>"
+        
+        # Extract muscle group balance
+        muscle_balance_info = ""
+        if latest_bundle.muscle_group_balance:
+            mgb = latest_bundle.muscle_group_balance
+            balance_items = []
+            for dist in mgb.distribution:
+                balance_items.append(
+                    f"    <muscle_group>\n"
+                    f"      <name>{dist.muscle_group}</name>\n"
+                    f"      <percentage>{dist.percentage:.1f}%</percentage>\n"
+                    f"    </muscle_group>"
+                )
+            muscle_balance_info = "\n".join(balance_items) if balance_items else "    <status>No muscle balance data</status>"
         
         # Extract correlations
         correlations_data = ""
@@ -199,34 +430,49 @@ class WorkoutAnalysisChain(BaseConversationChain):
         
         # Build full XML context
         context = f"""<workout_data>
-  <date_range>
-    <start>{date_start}</start>
-    <end>{date_end}</end>
-    <total_workouts>{latest_bundle.general_workout_data.total_workouts}</total_workouts>
-    <unique_exercises>{latest_bundle.general_workout_data.total_exercises_unique}</unique_exercises>
-  </date_range>
+    <date_range>
+        <start>{date_start}</start>
+        <end>{date_end}</end>
+        <total_workouts>{latest_bundle.general_workout_data.total_workouts}</total_workouts>
+        <unique_exercises>{latest_bundle.general_workout_data.total_exercises_unique}</unique_exercises>
+    </date_range>
 
-  <strength_progression>
-{strength_prog if strength_prog else "    <status>No strength progression data</status>"}
-  </strength_progression>
+    <recent_workouts>
+        <description>Last 5 workouts with full detail including notes</description>
+    {recent_workouts_info if recent_workouts_info else "    <status>No recent workouts</status>"}
+    </recent_workouts>
 
-{volume_info if volume_info else "  <volume_data><status>No volume data</status></volume_data>"}
+    <strength_progression>
+        <description>e1RM progression over time for top exercises. Use this to discuss strength gains, plateaus, trends, and velocity of improvement.</description>
+    {strength_prog}
+    </strength_progression>
+
+{volume_summary if volume_summary else "  <volume_data><status>No volume data</status></volume_data>"}
 
 {consistency_info if consistency_info else "  <consistency_data><status>No consistency data</status></consistency_data>"}
 
-  <exercise_frequency>
-{frequency_info if frequency_info else "    <status>No frequency data</status>"}
-  </exercise_frequency>
+    <exercise_frequency>
+    {frequency_info if frequency_info else "    <status>No frequency data</status>"}
+    </exercise_frequency>
 
-  <correlation_insights>
-{correlations_data}
-  </correlation_insights>
-</workout_data>"""
+    <muscle_group_balance>
+    {muscle_balance_info if muscle_balance_info else "    <status>No muscle balance data</status>"}
+    </muscle_group_balance>
+
+    <correlation_insights>
+    {correlations_data}
+    </correlation_insights>
+    </workout_data>"""
         
         return context
 
     async def get_additional_prompt_vars(self) -> Dict[str, Any]:
-        """Get workout-specific context variables with XML formatting."""
+        """
+        Get workout-specific context variables with XML formatting.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain.get_additional_prompt_vars()
+        """
         try:
             # Build the complete workout context with both profile and data
             user_profile_xml = self._format_user_profile_context()
@@ -259,6 +505,9 @@ class WorkoutAnalysisChain(BaseConversationChain):
         Format the prompt for LangChain (required by BaseConversationChain).
         
         Returns formatted messages ready for the LLM.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain.get_formatted_prompt()
         """
         # Get all the context variables
         prompt_vars = await self.get_additional_prompt_vars()
@@ -272,7 +521,12 @@ class WorkoutAnalysisChain(BaseConversationChain):
         return formatted_messages
 
     async def load_user_profile(self) -> bool:
-        """Load user profile data for context."""
+        """
+        Load user profile data for context.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain.load_user_profile()
+        """
         try:
             if not self.user_id:
                 logger.warning("No user_id provided for profile loading")
@@ -291,7 +545,12 @@ class WorkoutAnalysisChain(BaseConversationChain):
             return False
 
     def load_bundles(self, bundles: List) -> None:
-        """Load workout bundles into context."""
+        """
+        Load workout bundles into context.
+        
+        Location: /app/services/chains/workout_analysis_chain.py
+        Method: WorkoutAnalysisChain.load_bundles()
+        """
         valid_bundles = []
         for bundle in bundles:
             if isinstance(bundle, WorkoutAnalysisBundle):

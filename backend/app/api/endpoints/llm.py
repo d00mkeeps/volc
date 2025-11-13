@@ -87,7 +87,6 @@ async def send_json_safe(websocket: WebSocket, data: Dict[str, Any]):
             "data": {"message": "Error sending response"}
         })
 
-# Base user connection for all LLM WebSockets
 @router.websocket("/api/llm/base/{user_id}")
 async def base_llm_websocket(websocket: WebSocket, user_id: str):
     """Base WebSocket endpoint for LLM interactions"""

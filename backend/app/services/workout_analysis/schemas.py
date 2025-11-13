@@ -112,7 +112,7 @@ class WorkoutExercise(BaseModel):
 
 class RecentWorkout(BaseModel):
     """
-    Complete workout detail for recent workouts (last 7 days).
+    Complete workout detail for recent workouts (last 14 days).
     
     Contains full set-by-set detail for each exercise. Workouts are
     sorted descending by date (newest first).
@@ -128,11 +128,19 @@ class RecentWorkout(BaseModel):
 
 # ==================== VOLUME DATA ====================
 
-class VolumeTimeSeries(BaseModel):
-    """Single data point in volume time series."""
-    date: datetime = Field(..., description="Workout date")
-    volume_kg: float = Field(..., description="Total volume for that workout")
-    workout_name: Optional[str] = Field(None, description="Name of workout for context")
+class ExerciseVolumeTimeSeries(BaseModel):
+    """Single data point in exercise volume time series."""
+    date: datetime = Field(..., description="Date of workout")
+    volume_kg: float = Field(..., description="Total volume for this exercise on this date")
+
+
+class ExerciseVolumeData(BaseModel):
+    """Volume time series for a single exercise."""
+    exercise: str = Field(..., description="Exercise name")
+    time_series: List[ExerciseVolumeTimeSeries] = Field(
+        default_factory=list,
+        description="Volume over time for this exercise, ordered chronologically"
+    )
 
 
 class VolumeData(BaseModel):
@@ -140,7 +148,7 @@ class VolumeData(BaseModel):
     Volume metrics and trends over time.
     
     Volume is calculated as weight × reps for all sets. Includes total volume,
-    per-exercise breakdowns, and time series for trend analysis.
+    current workout volume, and per-exercise time series for trend analysis.
     """
     total_volume_kg: float = Field(
         ...,
@@ -150,37 +158,30 @@ class VolumeData(BaseModel):
         ...,
         description="Volume from most recent workout only"
     )
-    by_exercise: Dict[str, float] = Field(
-        default_factory=dict,
-        description="Volume broken down per exercise (exercise name -> total volume)"
-    )
-    time_series: List[VolumeTimeSeries] = Field(
+    volume_by_exercise_over_time: List[ExerciseVolumeData] = Field(
         default_factory=list,
-        description="Volume per workout over time, ordered chronologically"
+        description="Per-exercise volume time series, aggregated by date"
     )
 
 
 # ==================== STRENGTH DATA ====================
 
-class E1RMPerformance(BaseModel):
-    """Single historical e1RM performance for an exercise."""
-    estimated_1rm: float = Field(..., description="Estimated 1RM value")
-    date: datetime = Field(..., description="When this performance occurred")
+class E1RMTimeSeries(BaseModel):
+    """Single data point in e1RM time series."""
+    date: datetime = Field(..., description="Date of workout")
+    estimated_1rm: float = Field(..., description="Best e1RM achieved on this date")
 
 
-class ExerciseStrengthData(BaseModel):
+class ExerciseStrengthProgress(BaseModel):
     """
-    Strength progression data for a single exercise.
+    Strength progression time series for a single exercise.
     
-    Contains the best e1RM achieved and full historical performance data
-    for tracking strength progression over time.
+    Contains full historical e1RM data for tracking strength progression over time.
     """
     exercise: str = Field(..., description="Exercise name")
-    best_e1rm: float = Field(..., description="Highest estimated 1RM achieved")
-    achieved_date: datetime = Field(..., description="When the PR was set")
-    all_performances: List[E1RMPerformance] = Field(
+    e1rm_time_series: List[E1RMTimeSeries] = Field(
         default_factory=list,
-        description="All e1RM performances for this exercise, ordered by date"
+        description="All e1RM performances for this exercise over time, ordered chronologically"
     )
 
 
@@ -189,19 +190,15 @@ class StrengthData(BaseModel):
     Strength metrics and progression for all exercises.
     
     Focuses on estimated 1RM (e1RM) as the primary strength indicator,
-    tracking personal records and historical performance.
+    tracking full historical performance across the data window.
     """
-    top_e1rms: List[ExerciseStrengthData] = Field(
+    exercise_strength_progress: List[ExerciseStrengthProgress] = Field(
         default_factory=list,
-        description="Best e1RM performances for each exercise with historical data"
+        description="E1RM time series for each exercise, showing strength progression"
     )
 
 
 # ==================== CONSISTENCY DATA ====================
-class WorkoutConsistencyEntry(BaseModel):
-    """Single workout entry for consistency tracking."""
-    workout_id: str = Field(..., description="Unique workout ID")
-    date: datetime = Field(..., description="Workout date")
 
 class ConsistencyData(BaseModel):
     """
@@ -210,10 +207,6 @@ class ConsistencyData(BaseModel):
     Analyzes the temporal pattern of workouts to assess training consistency,
     including average gaps between workouts and variance.
     """
-    workouts: List[WorkoutConsistencyEntry] = Field(
-    default_factory=list,
-    description="List of workouts with IDs and dates, ordered chronologically"
-)
     avg_days_between: float = Field(
         ...,
         description="Average gap between workouts in days"
@@ -222,34 +215,37 @@ class ConsistencyData(BaseModel):
         None,
         description="Variance in workout frequency (null if insufficient data)"
     )
-    workout_dates: List[datetime] = Field(
-        default_factory=list,
-        description="List of all workout dates in window, ordered chronologically"
-    )
 
 
 # ==================== MUSCLE GROUP BALANCE ====================
 
-class MuscleGroupEntry(BaseModel):
-    """Single muscle group with set count."""
-    muscle: str = Field(..., description="Muscle group name (e.g., 'Chest', 'Back', 'Legs')")
-    sets: int = Field(..., description="Total sets performed for this muscle group")
+class MuscleGroupDistribution(BaseModel):
+    """Single muscle group with percentage of total training volume."""
+    muscle_group: str = Field(..., description="Muscle group name (e.g., 'Chest', 'Back', 'Legs')")
+    percentage: float = Field(..., description="Percentage of total muscle-set instances")
 
 
 class MuscleGroupBalance(BaseModel):
     """
     Distribution of training across muscle groups.
     
-    Shows how training volume is distributed across major muscle groups,
-    helping identify potential imbalances or areas that need more attention.
+    Shows how training volume is distributed across major muscle groups.
+    Percentages are calculated from muscle-set instances (each primary muscle
+    for each set counts as one instance), ensuring percentages always sum to 100%.
+    
+    Example: 3 sets of Bench Press (primary: chest, triceps) counts as:
+    - 3 instances for Chest
+    - 3 instances for Arms (triceps)
+    - Total instances: 6
+    - If these are the only sets: Chest=50%, Arms=50%
     """
-    muscle_groups: List[MuscleGroupEntry] = Field(
-        default_factory=list,
-        description="List of muscle groups with set counts, ordered by sets descending"
-    )
     total_sets: int = Field(
         ...,
-        description="Total sets across all muscle groups"
+        description="Raw count of actual sets performed (each set counted once)"
+    )
+    distribution: List[MuscleGroupDistribution] = Field(
+        default_factory=list,
+        description="Percentage distribution across muscle groups, ordered by percentage descending"
     )
 
 
@@ -299,7 +295,7 @@ class WorkoutAnalysisBundle(BaseModel):
     )
     recent_workouts: List[RecentWorkout] = Field(
         default_factory=list,
-        description="Last 7 days of workouts with full detail (newest first)"
+        description="Last 14 days of workouts with full detail (newest first)"
     )
     volume_data: VolumeData = Field(..., description="Volume metrics and trends")
     strength_data: StrengthData = Field(..., description="Strength metrics and progression")

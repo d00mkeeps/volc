@@ -21,11 +21,11 @@ class AnalysisBundleGenerator:
     
     Analysis bundles include:
     - General workout data and statistics
-    - Recent workout history (last 7 days with full detail)
+    - Recent workout history (last 14 days with full detail)
     - Volume metrics and trends
     - Strength progression (e1RM tracking)
     - Consistency metrics
-    - Muscle group balance (coming soon)
+    - Muscle group balance
     - Correlation insights (coming soon)
     """
     
@@ -42,9 +42,10 @@ class AnalysisBundleGenerator:
         1. Create empty bundle (status='pending')
         2. Update to 'processing'
         3. Fetch last 30 days of workouts
-        4. Process data through AnalysisBundleProcessor
-        5. Save complete bundle (status='complete')
-        6. Cleanup old bundles
+        4. Fetch exercise definitions from cache
+        5. Process data through AnalysisBundleProcessor
+        6. Save complete bundle (status='complete')
+        7. Cleanup old bundles
         
         Args:
             user_id: User's ID
@@ -116,17 +117,24 @@ class AnalysisBundleGenerator:
             workout_data = self._format_workout_data(workouts)
             logger.info(f"📊 Formatted {workout_count} workouts for processing")
             
-            # 4. Process data
+            # 4. Fetch exercise definitions from cache (generator is async)
+            logger.info(f"📥 Fetching exercise definitions from cache")
+            from app.services.cache.exercise_definitions import exercise_cache
+            exercise_definitions = await exercise_cache.get_all_exercises()
+            logger.info(f"✅ Loaded {len(exercise_definitions)} exercise definitions from cache")
+            
+            # 5. Process data (pass exercise definitions to processor)
             logger.info(f"🔬 Processing {workout_count} workouts through AnalysisBundleProcessor")
             complete_bundle = self.processor.process(
                 bundle_id=bundle_id,
                 user_id=user_id,
-                raw_workout_data=workout_data
+                raw_workout_data=workout_data,
+                exercise_definitions=exercise_definitions
             )
             
             logger.info(f"✅ Processing complete. Bundle status: {complete_bundle.status}")
             
-            # 5. Save complete bundle
+            # 6. Save complete bundle
             logger.info(f"💾 Saving complete bundle: {bundle_id}")
             save_result = await self.analysis_service.save_analysis_bundle(
                 bundle_id, complete_bundle, jwt_token
@@ -143,7 +151,7 @@ class AnalysisBundleGenerator:
             
             logger.info(f"✅ Bundle saved successfully: {bundle_id}")
             
-            # 6. Cleanup old bundles (keep only the latest)
+            # 7. Cleanup old bundles (keep only the latest)
             logger.info(f"🧹 Cleaning up old bundles for user: {user_id}")
             cleanup_result = await self.analysis_service.delete_old_analysis_bundles(
                 user_id, jwt_token, keep_latest=1
