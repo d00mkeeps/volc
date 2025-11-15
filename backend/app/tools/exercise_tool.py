@@ -3,10 +3,10 @@ from typing import List, Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
-
 @tool
 async def get_exercises_by_muscle_groups(
     muscle_groups: List[str],
+    base_movement: Optional[str] = None,
     equipment: Optional[List[str]] = None,
     experience_level: Optional[str] = None
 ) -> List[Dict[str, Any]]:
@@ -15,7 +15,7 @@ async def get_exercises_by_muscle_groups(
     
     Use this tool when creating workout plans to get relevant exercise options.
     Call this once you understand the user's goals and target muscle groups.
-
+    
     When modifying workouts, use the exercises already available in your context.
     Only call the exercise tool again if the user requests muscle groups you haven't 
     fetched yet (e.g., if they want to add legs to a chest workout).
@@ -25,19 +25,40 @@ async def get_exercises_by_muscle_groups(
                       Valid: chest, back, shoulders, biceps, triceps, lats, traps,
                       quadriceps, hamstrings, glutes, abs, obliques, forearms,
                       abductors, adductors, hip_flexors, lower_back, cardiovascular_system
+        
+        base_movement: (Optional) Filter by movement type. 
+                      Valid: ab_wheel, back_extension, bench_press, bicep_curl, 
+                      bulgarian_split_squat, calf_raise, chest_fly, crunch, deadlift, 
+                      dip, face_pull, farmers_walk, front_raise, good_morning, hip_thrust, 
+                      lateral_raise, lat_pulldown, leg_curl, leg_extension, leg_press, 
+                      leg_raise, lunge, mobility, nordic_curl, overhead_tricep_extension, 
+                      plank, pullup, pushup, reverse_fly, romanian_deadlift, row, 
+                      russian_twist, shoulder_press, shrug, skullcrusher, squat, 
+                      tricep_pushdown, upright_row
+                      
+                      Use 'mobility' for stretches, mobility work, and warm-up movements.
+        
         equipment: (Optional) Filter by available equipment
+        
         experience_level: (Optional) Filter by difficulty - 'beginner', 'intermediate', 'advanced'
     
     Returns:
         List of exercises with: id, standard_name, primary_muscles,
-        secondary_muscles, equipment, movement_pattern. 
+        secondary_muscles, equipment, movement_pattern, base_movement. 
         IMPORTANT: Use the 'id' field as 'definition_id' when creating workout templates.
+    
+    Examples:
+        - Hip mobility/stretches: get_exercises_by_muscle_groups(['hip_flexors'], base_movement='mobility')
+        - All squat variations: get_exercises_by_muscle_groups(['quadriceps'], base_movement='squat')
+        - All chest exercises: get_exercises_by_muscle_groups(['chest'])
+        - Only bench press variations: get_exercises_by_muscle_groups(['chest'], base_movement='bench_press')
     """
     from app.services.cache.exercise_definitions import exercise_cache
     
     # Get all cached exercises
     all_exercises = await exercise_cache.get_all_exercises()
-    logger.info(f"🔧 Tool called: muscle_groups={muscle_groups}, equipment={equipment}, experience_level={experience_level}")
+    
+    logger.info(f"🔧 Tool called: muscle_groups={muscle_groups}, base_movement={base_movement}, equipment={equipment}")
     
     # Normalize muscle groups for matching
     normalized_groups = [mg.lower().strip() for mg in muscle_groups]
@@ -51,18 +72,24 @@ async def get_exercises_by_muscle_groups(
         if any(muscle in normalized_primary for muscle in normalized_groups):
             filtered.append(exercise)
     
+    # Filter by base_movement
+    if base_movement:
+        base_movement_normalized = base_movement.lower().strip()
+        filtered = [
+            ex for ex in filtered 
+            if ex.get('base_movement', '').lower().strip() == base_movement_normalized
+        ]
+        logger.info(f"  └─ Filtered to base_movement='{base_movement}': {len(filtered)} exercises")
+    
     # Optional: Filter by equipment (TEMPORARILY DISABLED)
     if equipment:
         logger.info(f"  └─ Equipment filter requested but temporarily disabled: {equipment}")
-        # TODO: Implement fuzzy equipment matching
-        # For now, just log it and return all exercises for the muscle groups
-
+    
     # Optional: Filter by experience level (ready for future use)
     if experience_level:
-        # Placeholder - implement when you add experience_level to exercise_definitions
         logger.info(f"  └─ Experience level filter requested but not yet implemented: {experience_level}")
     
-    # NEW: Return condensed version without descriptions to reduce context size
+    # Return condensed version without descriptions to reduce context size
     condensed = []
     for ex in filtered:
         condensed.append({
@@ -72,9 +99,8 @@ async def get_exercises_by_muscle_groups(
             'secondary_muscles': ex.get('secondary_muscles'),
             'equipment': ex.get('equipment'),
             'movement_pattern': ex.get('movement_pattern'),
-            # description excluded - saves ~150 chars per exercise
+            'base_movement': ex.get('base_movement'),
         })
     
     logger.info(f"✅ Tool returning {len(condensed)} exercises (condensed, no descriptions)")
-    
     return condensed

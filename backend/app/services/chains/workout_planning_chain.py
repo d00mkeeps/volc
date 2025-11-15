@@ -21,8 +21,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-
 async def stream_text_gradually(text: str, chunk_size: int = 5) -> AsyncGenerator[str, None]:
     """
     Split text into smaller chunks for gradual streaming effect.
@@ -67,8 +65,8 @@ class WorkoutPlanningChain(BaseConversationChain):
         self._user_profile = None
         self.user_profile_service = UserProfileService()
         self._recent_workouts = {"workouts": [], "patterns": {}}
+        self._analysis_bundle = None 
         
-        # Template detection and approval state
         self.current_template = None
         self.template_presented = False
         
@@ -113,6 +111,134 @@ class WorkoutPlanningChain(BaseConversationChain):
         except Exception as e:
             logger.error(f"❌ Failed to initialize agent: {str(e)}", exc_info=True)
             raise
+
+
+    def _format_date(self, date_str: str) -> str:
+        """Format ISO date string to readable format."""
+        try:
+            from datetime import datetime
+            workout_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+            return workout_date.strftime('%b %d, %Y')
+        except:
+            return 'Unknown date'
+
+    def _format_recent_workout_context_from_bundle(self) -> str:
+        """Format recent workouts from analysis bundle (preferred method)."""
+        if not self._analysis_bundle or not self._analysis_bundle.recent_workouts:
+            return "No recent workout history available"
+        
+        recent_workouts = self._analysis_bundle.recent_workouts[:5]  # Last 5
+        
+        workout_summaries = []
+        for idx, workout in enumerate(recent_workouts, 1):
+            # Parse date - workout.date is already a datetime object
+            date_str = self._format_date(workout.date.isoformat())
+            
+            # Get basics - use attribute access, not dict access
+            name = workout.name
+            workout_notes = workout.notes.strip() if workout.notes else ""
+            
+            # Exercise summary (just names + counts, not set details)
+            exercises = workout.exercises
+            exercise_count = len(exercises)
+            
+            # Duration estimate (12 min per exercise)
+            duration = exercise_count * 12
+            
+            # Build exercise list with notes
+            exercise_details = []
+            for ex in exercises:
+                ex_name = ex.name
+                ex_notes = ex.notes.strip() if ex.notes else ""
+                set_count = len(ex.sets)
+                
+                if ex_notes:
+                    exercise_details.append(f"  • {ex_name} ({set_count} sets) - {ex_notes}")
+                else:
+                    exercise_details.append(f"  • {ex_name} ({set_count} sets)")
+            
+            # Format workout
+            summary = f"\nWorkout {idx}: {name} ({date_str})\n"
+            summary += f"  Duration: ~{duration} min ({exercise_count} exercises)\n"
+            summary += f"  Exercises:\n" + '\n'.join(exercise_details)
+            
+            if workout_notes:
+                summary += f"\n  User reflection: \"{workout_notes}\""
+            
+            workout_summaries.append(summary)
+        
+        # Build the context string
+        context_parts = []
+        
+        # Add general stats header
+        general_data = self._analysis_bundle.general_workout_data
+        if general_data:
+            total = general_data.total_workouts if hasattr(general_data, 'total_workouts') else 0
+            context_parts.append(f"RECENT WORKOUT HISTORY ({total} workouts in analysis period):")
+            context_parts.append(''.join(workout_summaries))
+        else:
+            context_parts.append("RECENT WORKOUT HISTORY:")
+            context_parts.append(''.join(workout_summaries))
+        
+        # NEW: Add muscle group balance
+        if self._analysis_bundle.muscle_group_balance:
+            balance = self._analysis_bundle.muscle_group_balance
+            
+            # Extract total_sets and distribution
+            if isinstance(balance, dict):
+                total_sets = balance.get('total_sets', 0)
+                distribution = balance.get('distribution', [])
+                
+                if distribution:
+                    context_parts.append(f"\n\n**MUSCLE GROUP BALANCE ({total_sets} total sets):**")
+                    
+                    for item in distribution:
+                        muscle_group = item.get('muscle_group', 'Unknown')
+                        percentage = item.get('percentage', 0)
+                        context_parts.append(f"  • {muscle_group}: {percentage}%")
+                    
+                    context_parts.append("\n**Balance Insights:**")
+                    context_parts.append("- Balanced training = 15-20% per major group (Chest, Back, Legs, Shoulders, Arms, Core)")
+                    context_parts.append("- If any group is <10%, suggest incorporating it today")
+                    context_parts.append("- If any group is >35%, suggest giving it a rest and focusing elsewhere")
+        
+        # Add training pattern guidance
+        context_parts.append("\n\n**TRAINING PATTERNS:**")
+        context_parts.append("- These workouts show the user's recent training style, exercise preferences, and performance notes")
+        context_parts.append("- Use exercise notes to understand form focus, energy levels, and what's working well")
+        context_parts.append("- Infer primary training location from exercise types (barbell/cable/machine = gym, bodyweight/limited equipment = home)")
+        context_parts.append("- Notice typical workout duration and volume patterns")
+        context_parts.append("- Use muscle group balance to suggest undertrained areas and prevent overtraining")
+        
+        return '\n'.join(context_parts)
+
+    def _format_recent_workout_context(self) -> str:
+        """Format recent workout context - uses bundle if available, fallback to raw workouts."""
+        
+        if self._analysis_bundle:
+            return self._format_recent_workout_context_from_bundle()
+        
+        # Fallback to raw workout data
+        if not self._recent_workouts['patterns']:
+            return "No recent workout history available"
+        
+        patterns = self._recent_workouts['patterns']
+        
+        frequent_exercises = patterns.get('most_frequent_exercises', [])
+        frequent_exercise_lines = []
+        for exercise_name, frequency in frequent_exercises:
+            frequent_exercise_lines.append(f"- {exercise_name}: {frequency} times")
+        
+        if not frequent_exercise_lines:
+            frequent_exercise_lines.append("- No recent exercise data available")
+        
+        return RECENT_WORKOUT_CONTEXT_TEMPLATE.format(
+            total_workouts=patterns.get('total_workouts', 0),
+            workout_frequency=patterns.get('workout_frequency_per_week', 0),
+            exercise_variety=patterns.get('exercise_variety', 0),
+            frequent_exercises='\n'.join(frequent_exercise_lines)
+        )
+
 
     async def process_message(self, message: str, profiler=None) -> AsyncGenerator[Dict[str, Any], None]:
         """
@@ -348,19 +474,31 @@ class WorkoutPlanningChain(BaseConversationChain):
             logger.error(f"Exception loading user profile for planning {self.user_id}: {str(e)}", exc_info=True)
             return False
 
+
     async def load_planning_context(self, context: dict) -> bool:
-        """Load planning context (recent workouts only - exercises fetched via tool)."""
+        """Load planning context (analysis bundle preferred, raw workouts as fallback)."""
         try:
-            # NOTE: No longer loading exercise_definitions here!
-            # They're fetched on-demand via the tool
-            self._recent_workouts = context.get("recent_workouts", {"workouts": [], "patterns": {}})
+            # Check if we have an analysis bundle
+            if context.get("analysis_bundle"):
+                self._analysis_bundle = context["analysis_bundle"]
+                logger.info(f"Loaded planning context from analysis bundle: {len(self._analysis_bundle.recent_workouts)} recent workouts")
+                return True
             
-            logger.info(f"Loaded planning context: {self._recent_workouts['patterns'].get('total_workouts', 0)} recent workouts")
-            return True
+            # Fallback: use raw workouts
+            elif context.get("recent_workouts"):
+                self._recent_workouts = context.get("recent_workouts", {"workouts": [], "patterns": {}})
+                logger.info(f"Loaded planning context from raw workouts: {self._recent_workouts['patterns'].get('total_workouts', 0)} recent workouts")
+                return True
+            
+            else:
+                logger.warning("No workout context available")
+                return False
             
         except Exception as e:
             logger.error(f"Failed to load planning context: {str(e)}", exc_info=True)
             return False
+
+
 
     def _format_user_context(self) -> str:
         """Format user profile context for personalized planning."""
@@ -426,28 +564,6 @@ Do NOT try to create exercises from memory - always use the tool to ensure accur
 Example: If planning a chest workout, call get_exercises_by_muscle_groups(muscle_groups=['chest', 'triceps'])
 """
 
-    def _format_recent_workout_context(self) -> str:
-        """Format recent workout patterns for the LLM."""
-        if not self._recent_workouts['patterns']:
-            return "No recent workout history available"
-        
-        patterns = self._recent_workouts['patterns']
-        
-        frequent_exercises = patterns.get('most_frequent_exercises', [])
-        frequent_exercise_lines = []
-        for exercise_name, frequency in frequent_exercises:
-            frequent_exercise_lines.append(f"- {exercise_name}: {frequency} times")
-        
-        if not frequent_exercise_lines:
-            frequent_exercise_lines.append("- No recent exercise data available")
-        
-        return RECENT_WORKOUT_CONTEXT_TEMPLATE.format(
-            total_workouts=patterns.get('total_workouts', 0),
-            workout_frequency=patterns.get('workout_frequency_per_week', 0),
-            exercise_variety=patterns.get('exercise_variety', 0),
-            frequent_exercises='\n'.join(frequent_exercise_lines)
-        )
-
     def _initialize_prompt_template(self) -> None:
         """Sets up the workout planning prompt template."""
         self.prompt = ChatPromptTemplate.from_messages([
@@ -470,6 +586,18 @@ Example: If planning a chest workout, call get_exercises_by_muscle_groups(muscle
         user_context = self._format_user_context()
         exercise_context = self._format_exercise_context()  # Now just tells about tool
         workout_context = self._format_recent_workout_context()
+        
+        # 🔍 ADD THIS DEBUG LOGGING
+        logger.info(f"=" * 60)
+        logger.info(f"PROMPT CONTEXT BEING SENT TO LLM:")
+        logger.info(f"=" * 60)
+        logger.info(f"📊 Analysis bundle exists: {self._analysis_bundle is not None}")
+        if self._analysis_bundle:
+            logger.info(f"📊 Recent workouts in bundle: {len(self._analysis_bundle.recent_workouts)}")
+        logger.info(f"📝 Workout context length: {len(workout_context)} chars")
+        logger.info(f"📝 Workout context preview (first 800 chars):")
+        logger.info(workout_context[:800])
+        logger.info(f"=" * 60)
         
         full_context = ""
         if user_context:

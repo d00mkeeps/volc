@@ -49,14 +49,15 @@ class WorkoutPlanningLLMService:
         return self._conversation_chains[user_id]
 
 
+
     async def load_planning_context(self, user_id: str, profiler: PerformanceProfiler = None) -> dict:
-        """Load planning context (user profile and recent workouts only)."""
+        """Load planning context (user profile, analysis bundle, and fallback to recent workouts)."""
         try:
             logger.info(f"Loading planning context for user: {user_id}")
             
             context = {
-                # NOTE: No longer loading exercise_definitions!
                 "user_profile": None,
+                "analysis_bundle": None,
                 "recent_workouts": {
                     "workouts": [],
                     "patterns": {}
@@ -80,50 +81,70 @@ class WorkoutPlanningLLMService:
                 if profiler:
                     profiler.end_phase(loaded=False)
             
-            # Load recent workouts
+            # Load analysis bundle (preferred source)
             if profiler:
-                profiler.start_phase("load_recent_workouts")
-            from app.services.db.workout_service import WorkoutService
-            workout_service = WorkoutService()
-            workouts_result = await workout_service.get_user_workouts_admin(user_id, days_back=14)
+                profiler.start_phase("load_analysis_bundle")
+            from app.services.db.analysis_service import AnalysisBundleService
+            analysis_service = AnalysisBundleService()
+            bundle_result = await analysis_service.get_latest_analysis_bundle_admin(user_id)
             
-            if workouts_result.get('success') and workouts_result.get('data'):
-                recent_workouts = workouts_result['data']
-                context["recent_workouts"]["workouts"] = recent_workouts
-                
-                # Analyze patterns
-                exercise_frequency = {}
-                total_workouts = len(recent_workouts)
-                
-                for workout in recent_workouts:
-                    for exercise in workout.get("workout_exercises", []):
-                        exercise_name = exercise.get("name")
-                        if exercise_name:
-                            exercise_frequency[exercise_name] = exercise_frequency.get(exercise_name, 0) + 1
-                
-                context["recent_workouts"]["patterns"] = {
-                    "total_workouts": total_workouts,
-                    "workout_frequency_per_week": round(total_workouts / 2, 1),
-                    "most_frequent_exercises": sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:5],
-                    "exercise_variety": len(exercise_frequency)
-                }
-                
-                logger.info(f"✅ Loaded {total_workouts} recent workouts with {len(exercise_frequency)} unique exercises")
+            if bundle_result.get('success') and bundle_result.get('data'):
+                context["analysis_bundle"] = bundle_result['data']
+                logger.info(f"✅ Loaded analysis bundle with {len(bundle_result['data'].recent_workouts)} recent workouts")
                 if profiler:
-                    profiler.end_phase(
-                        workout_count=total_workouts,
-                        exercise_variety=len(exercise_frequency)
-                    )
+                    profiler.end_phase(loaded=True, workout_count=len(bundle_result['data'].recent_workouts))
             else:
-                logger.warning(f"❌ No recent workouts loaded: {workouts_result.get('error', 'Unknown error')}")
+                logger.warning(f"⚠️ No analysis bundle found, falling back to raw workouts")
                 if profiler:
-                    profiler.end_phase(workout_count=0)
+                    profiler.end_phase(loaded=False)
+                
+                # Fallback: Load raw recent workouts
+                if profiler:
+                    profiler.start_phase("load_recent_workouts_fallback")
+                from app.services.db.workout_service import WorkoutService
+                workout_service = WorkoutService()
+                workouts_result = await workout_service.get_user_workouts_admin(user_id, days_back=14)
+                
+                if workouts_result.get('success') and workouts_result.get('data'):
+                    recent_workouts = workouts_result['data']
+                    context["recent_workouts"]["workouts"] = recent_workouts
+                    
+                    # Analyze patterns
+                    exercise_frequency = {}
+                    total_workouts = len(recent_workouts)
+                    
+                    for workout in recent_workouts:
+                        for exercise in workout.get("workout_exercises", []):
+                            exercise_name = exercise.get("name")
+                            if exercise_name:
+                                exercise_frequency[exercise_name] = exercise_frequency.get(exercise_name, 0) + 1
+                    
+                    context["recent_workouts"]["patterns"] = {
+                        "total_workouts": total_workouts,
+                        "workout_frequency_per_week": round(total_workouts / 2, 1),
+                        "most_frequent_exercises": sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:5],
+                        "exercise_variety": len(exercise_frequency)
+                    }
+                    
+                    logger.info(f"✅ Loaded {total_workouts} recent workouts (fallback) with {len(exercise_frequency)} unique exercises")
+                    if profiler:
+                        profiler.end_phase(
+                            workout_count=total_workouts,
+                            exercise_variety=len(exercise_frequency)
+                        )
+                else:
+                    logger.warning(f"❌ No recent workouts loaded: {workouts_result.get('error', 'Unknown error')}")
+                    if profiler:
+                        profiler.end_phase(workout_count=0)
             
             # LOG FINAL CONTEXT SUMMARY
             logger.info(f"🎯 FINAL CONTEXT SUMMARY:")
-            logger.info(f"   - Exercise definitions: SKIPPED (loaded via tool on-demand)")
             logger.info(f"   - User profile: {'✅' if context['user_profile'] else '❌'}")
-            logger.info(f"   - Recent workouts: {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
+            if context['analysis_bundle']:
+                logger.info(f"   - Analysis bundle: ✅ with {len(context['analysis_bundle'].recent_workouts)} recent workouts")
+            else:
+                logger.info(f"   - Analysis bundle: ❌ (using fallback)")
+                logger.info(f"   - Recent workouts (fallback): {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
             
             return context
             
@@ -131,9 +152,10 @@ class WorkoutPlanningLLMService:
             logger.error(f"❌ Error loading planning context: {str(e)}", exc_info=True)
             return {
                 "user_profile": None,
+                "analysis_bundle": None,
                 "recent_workouts": {"workouts": [], "patterns": {}}
             }
-        
+
 
     async def process_websocket(self, websocket: WebSocket, user_id: str):
         """Process WebSocket connection for workout planning with seamless reconnection support"""

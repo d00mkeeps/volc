@@ -6,6 +6,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, HTTPExce
 from dotenv import load_dotenv
 from langchain_google_vertexai import ChatVertexAI
 
+from app.services.llm.onboarding import OnboardingLLMService
 from app.services.llm.workout_planning import WorkoutPlanningLLMService
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 from google.oauth2 import service_account
@@ -65,6 +66,13 @@ def get_workout_llm_service(credentials: dict = Depends(get_google_credentials))
         credentials=credentials["credentials"],
         project_id=credentials["project_id"]
     )
+
+def get_onboarding_service(credentials: dict = Depends(get_google_credentials)):
+    return OnboardingLLMService(
+        credentials=credentials["credentials"],
+        project_id=credentials["project_id"]
+    )
+
 
 # Custom JSON encoder that handles datetime objects
 class DateTimeEncoder(json.JSONEncoder):
@@ -128,89 +136,40 @@ async def base_llm_websocket(websocket: WebSocket, user_id: str):
         except:
             pass
 
-@router.websocket("/api/llm/onboarding")
+@router.websocket("/api/llm/onboarding/{user_id}")
 async def onboarding_websocket(
     websocket: WebSocket,
-    llm: ChatVertexAI = Depends(get_llm)
+    user_id: str,
+    onboarding_service: OnboardingLLMService = Depends(get_onboarding_service)
 ):
-    """WebSocket endpoint for onboarding conversations"""
+    """
+    WebSocket endpoint for user onboarding conversations.
     
+    Collects user profile information through natural conversation:
+    - Full name (first_name, last_name)
+    - Age (with numeric validation)
+    - Unit system preference (is_imperial)
+    - Fitness goals
+    - Current abilities/experience
+    - Training preferences
+    
+    The client should send messages with:
+    - type: 'message' and message: 'user message content'
+    - type: 'heartbeat' for connection keepalive
+    
+    The server streams back responses with:
+    - type: 'content' for content chunks
+    - type: 'onboarding_complete' with profile data when done
+    - type: 'error' for error messages
+    - type: 'complete' when each response is complete
+    - type: 'connection_status' for connection confirmation
+    """
     try:
-        await websocket.accept()
-        logger.info("Onboarding WebSocket connection accepted")
-        
-        # Send connection confirmation
-        await websocket.send_json({
-            "type": "connection_status",
-            "data": "connected"
-        })
-        
-        # Initialize conversation with system prompt
-        conversation_history = [{
-            "role": "system", 
-            "content": """You are a fitness assistant helping a new user set up their 
-            fitness profile. Guide them through questions about their fitness goals, 
-            experience level, preferred workout types, and any limitations they have. 
-            Be conversational, friendly, and helpful."""
-        }]
-        
-        # Process messages
-        while True:
-            data = await websocket.receive_json()
-            
-            # Handle heartbeat
-            if data.get('type') == 'heartbeat':
-                await websocket.send_json({
-                    "type": "heartbeat_ack",
-                    "timestamp": data.get('timestamp')
-                })
-                continue
-            
-            # Handle message
-            if data.get('type') == 'message' or 'message' in data:
-                message = data.get('message', '')
-                
-                # Add user message to history
-                conversation_history.append({"role": "user", "content": message})
-                
-                try:
-                    # Stream response
-                    response_content = ""
-                    
-                    with llm.stream(conversation_history) as stream:
-                        for chunk in stream:
-                            chunk_content = chunk.content
-                            if chunk_content:
-                                response_content += chunk_content
-                                await websocket.send_json({
-                                    "type": "content",
-                                    "data": {"content": chunk_content}
-                                })
-                    
-                    # Add assistant response to history
-                    conversation_history.append({"role": "assistant", "content": response_content})
-                    
-                    # Send completion notification
-                    await websocket.send_json({
-                        "type": "complete",
-                        "data": {"message_id": len(conversation_history) // 2}
-                    })
-                    
-                except Exception as e:
-                    logger.error(f"Error processing onboarding message: {str(e)}", exc_info=True)
-                    await websocket.send_json({
-                        "type": "error",
-                        "data": {"message": f"Error generating response: {str(e)}"}
-                    })
-            
+        await onboarding_service.process_websocket(websocket, user_id)
     except WebSocketDisconnect:
-        logger.info("Onboarding WebSocket disconnected")
+        logger.info(f"Onboarding WebSocket disconnected for user: {user_id}")
     except Exception as e:
         logger.error(f"Error in onboarding websocket: {str(e)}", exc_info=True)
-        try:
-            await websocket.close(code=1011)
-        except:
-            pass
 
 # Add new dependency
 def get_workout_planning_service(credentials: dict = Depends(get_google_credentials)):
