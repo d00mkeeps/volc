@@ -22,6 +22,7 @@ interface ChatInterfaceProps {
   placeholder?: string;
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   queuedMessageCount?: number;
+  onProfileConfirm?: () => void; // ✅ ADD THIS
   keyboardVerticalOffset?: number;
   statusMessage?: string | null;
 }
@@ -34,6 +35,7 @@ export const ChatInterface = ({
   connectionState = "ready",
   statusMessage,
   queuedMessageCount = 0,
+  onProfileConfirm,
   keyboardVerticalOffset = 120,
 }: ChatInterfaceProps) => {
   const getStatusText = () => {
@@ -70,6 +72,7 @@ export const ChatInterface = ({
           connectionState={connectionState}
           onTemplateApprove={onTemplateApprove}
           statusMessage={statusMessage}
+          onProfileConfirm={onProfileConfirm} // ✅ ADD THIS
         />
 
         {getStatusText() && (

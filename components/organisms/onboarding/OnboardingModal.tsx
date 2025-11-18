@@ -1,115 +1,79 @@
+// /components/organisms/onboarding/OnboardingModal.tsx
 import React, { useState, useEffect } from "react";
-import { YStack, ScrollView } from "tamagui";
+import { YStack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import { useUserStore } from "@/stores/userProfileStore";
-import OnboardingStep1 from "./Slide1";
-import OnboardingStep2 from "./Slide2";
-import { OnboardingSlide3 } from "./Slide3";
 import BaseModal from "@/components/atoms/core/BaseModal";
+import { ChatInterface } from "@/components/organisms/chat/ChatInterface";
+import { useOnboarding } from "@/hooks/chat/useOnboarding";
 
 interface OnboardingModalProps {
   isVisible: boolean;
   onComplete: () => void;
 }
-// ... existing imports ...
 
 export function OnboardingModal({
   isVisible,
   onComplete,
 }: OnboardingModalProps) {
-  const [currentSlide, setCurrentSlide] = useState<1 | 2 | 3>(1);
+  const onboarding = useOnboarding();
+  const { updateProfile } = useUserStore();
   const [showExitWarning, setShowExitWarning] = useState(false);
 
-  // Slide 1 state
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
-  const [units, setUnits] = useState<"metric" | "imperial">("imperial");
-
-  // Slide 2 state
-  const [goals, setGoals] = useState("");
-  const [fitnessLevel, setFitnessLevel] = useState("");
-
-  // ✅ Slide 3 state (moved from slide 2)
-  const [bio, setBio] = useState("");
-  const [profilePictureId, setProfilePictureId] = useState<string | null>(null);
-
-  const { updateProfile } = useUserStore();
-
+  // Connect when modal opens, disconnect when it closes
   useEffect(() => {
     if (isVisible) {
-      setCurrentSlide(1);
+      console.log("[OnboardingModal] Modal opened - connecting to websocket");
+      onboarding.connect();
       setShowExitWarning(false);
+    } else {
+      console.log(
+        "[OnboardingModal] Modal closed - disconnecting from websocket"
+      );
+      onboarding.disconnect();
     }
   }, [isVisible]);
 
+  // /components/organisms/onboarding/OnboardingModal.handleClose
   const handleClose = () => {
     setShowExitWarning(true);
   };
 
+  // /components/organisms/onboarding/OnboardingModal.handleConfirmExit
   const handleConfirmExit = () => {
     setShowExitWarning(false);
   };
 
-  const handleSlide1Continue = (data: {
-    firstName: string;
-    lastName: string;
-    age: string;
-    units: "metric" | "imperial";
-  }) => {
-    setFirstName(data.firstName);
-    setLastName(data.lastName);
-    setAge(data.age);
-    setUnits(data.units);
-    setCurrentSlide(2);
-  };
-
-  // ✅ Updated: removed bio from slide 2
-  const handleSlide2Continue = (data: {
-    goals: string;
-    fitnessLevel: string;
-  }) => {
-    setGoals(data.goals);
-    setFitnessLevel(data.fitnessLevel);
-    setCurrentSlide(3);
-  };
-
-  // ✅ Updated: now receives bio and profilePictureId from slide 3
-  const handleComplete = async (data: {
-    bio: string;
-    profilePictureId: string | null;
-  }) => {
-    setBio(data.bio);
-    setProfilePictureId(data.profilePictureId);
-
-    Keyboard.dismiss();
-
+  // /components/organisms/onboarding/OnboardingModal.handleSend
+  const handleSend = async (content: string) => {
     try {
-      await updateProfile({
-        first_name: firstName,
-        last_name: lastName,
-        age: age ? parseInt(age) : null,
-        is_imperial: units === "imperial",
-        bio: data.bio || null, // ✅ From slide 3
-        goals: { content: goals },
-        current_stats: fitnessLevel,
-        avatar_image_id: data.profilePictureId, // ✅ From slide 3
-        // ✅ Removed instagram_username
-      });
-
-      setTimeout(() => {
-        onComplete();
-      }, 100);
+      await onboarding.sendMessage(content);
     } catch (error) {
-      console.error("Failed to save onboarding data:", error);
+      console.error("[OnboardingModal] Failed to send message:", error);
     }
+  };
+
+  // /components/organisms/onboarding/OnboardingModal.handleProfileConfirm
+  const handleProfileConfirm = () => {
+    console.log("[OnboardingModal] Profile confirmed - completing onboarding");
+    // ProfileConfirmationView handles the actual save, so we just close the modal
+    onComplete();
+  };
+
+  // /components/organisms/onboarding/OnboardingModal.getConnectionState
+  const getConnectionState = ():
+    | "ready"
+    | "expecting_ai_message"
+    | "disconnected" => {
+    if (onboarding.connectionState === "disconnected") {
+      return "disconnected";
+    }
+    if (onboarding.messages.length === 0 && !onboarding.streamingMessage) {
+      return "expecting_ai_message";
+    }
+    return "ready";
   };
 
   return (
@@ -120,36 +84,30 @@ export function OnboardingModal({
       heightPercent={85}
     >
       <YStack flex={1}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={{ flex: 1 }}
-          >
-            <ScrollView
-              contentContainerStyle={{
-                padding: 16,
-                paddingBottom: 32,
-              }}
-              showsVerticalScrollIndicator={false}
-              style={{ flex: 1 }}
-            >
-              <YStack gap="$4">
-                {currentSlide === 1 && (
-                  <OnboardingStep1 onNext={handleSlide1Continue} />
-                )}
-                {currentSlide === 2 && (
-                  <OnboardingStep2 onNext={handleSlide2Continue} />
-                )}
-                {currentSlide === 3 && (
-                  <OnboardingSlide3
-                    firstName={firstName}
-                    onComplete={handleComplete}
-                  />
-                )}
-              </YStack>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        {/* Header */}
+        <XStack
+          justifyContent="space-between"
+          alignItems="center"
+          paddingHorizontal="$5"
+          paddingTop="$3"
+        >
+          <Text size="large" fontWeight="600" color="$primary">
+            Welcome to Volc!
+          </Text>
+        </XStack>
+
+        {/* Chat Interface */}
+        <YStack flex={1}>
+          <ChatInterface
+            messages={onboarding.messages}
+            streamingMessage={onboarding.streamingMessage}
+            onSend={handleSend}
+            placeholder="Type your response..."
+            connectionState={getConnectionState()}
+            onProfileConfirm={handleProfileConfirm}
+            keyboardVerticalOffset={100}
+          />
+        </YStack>
 
         {/* Exit warning overlay */}
         {showExitWarning && (

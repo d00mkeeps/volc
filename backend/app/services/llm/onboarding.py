@@ -8,6 +8,7 @@ from ..chains.onboarding_chain import OnboardingChain
 logger = logging.getLogger(__name__)
 
 
+
 class OnboardingLLMService:
     """Service for LLM-based onboarding conversations"""
     
@@ -66,10 +67,15 @@ class OnboardingLLMService:
                     })
                     continue
                 
+
                 # Handle regular messages
                 if data.get('type') == 'message' or 'message' in data:
                     message = data.get('message', '')
                     conversation_history = data.get('conversation_history', [])
+                    
+                    # Log incoming message before processing
+                    logger.info(f"📨 Incoming message from user {user_id}: '{message[:100]}{'...' if len(message) > 100 else ''}'")
+                    logger.info(f"📊 Current chain state: {len(chain.messages)} messages in history")
                     
                     # On first message, check if we should send greeting
                     if first_message:
@@ -83,13 +89,24 @@ class OnboardingLLMService:
                                 await websocket.send_json(response)
                             
                             logger.info(f"Sent onboarding greeting for user {user_id}")
+      
+
                         else:
                             # Reconnection - restore history
                             logger.info(f"🔄 Reconnection detected ({len(conversation_history)} messages) - restoring history")
                             
                             from langchain_core.messages import HumanMessage, AIMessage
                             
-                            for hist_msg in conversation_history:
+                            # Check if the last message in history matches the current message
+                            # If so, exclude it from restore to avoid duplication
+                            messages_to_restore = conversation_history
+                            if (len(conversation_history) > 0 and 
+                                conversation_history[-1].get('sender') == 'user' and 
+                                conversation_history[-1].get('content', '') == message):
+                                logger.info(f"⚠️ Last message in history matches current message - excluding from restore")
+                                messages_to_restore = conversation_history[:-1]
+                            
+                            for hist_msg in messages_to_restore:
                                 sender = hist_msg.get('sender')
                                 content = hist_msg.get('content', '')
                                 
@@ -99,40 +116,16 @@ class OnboardingLLMService:
                                     chain.messages.append(AIMessage(content=content))
                             
                             logger.info(f"✅ Restored {len(chain.messages)} messages to chain")
-                    
+
                     # Skip greeting trigger message
                     if message == "__GREETING_TRIGGER__":
                         logger.info("Skipping greeting trigger message")
                         continue
                     
-                    # Rate limit check
-                    if user_id:
-                        from app.services.rate_limiter import rate_limiter
-                        rate_check = await rate_limiter.check_rate_limit(user_id, "message_send", "")
-                        
-                        if not rate_check.get("success", False):
-                            logger.error(f"Rate limiter error: {rate_check.get('error')}")
-                            await websocket.send_json({
-                                "type": "error", 
-                                "data": {"message": "Rate limiting error"}
-                            })
-                            continue
-                            
-                        rate_limit_data = rate_check["data"]
-                        if not rate_limit_data["allowed"]:
-                            logger.info(f"Message rate limit exceeded for user {user_id}")
-                            await websocket.send_json({
-                                "type": "error",
-                                "data": {
-                                    "code": "rate_limit",
-                                    "message": f"Message rate limit exceeded. Try again at {rate_limit_data['reset_at']}",
-                                    "remaining": 0,
-                                    "reset_at": rate_limit_data["reset_at"]
-                                }
-                            })
-                            continue
+                    # REMOVED: Rate limit check section entirely
                     
                     # Process message through chain
+                    logger.info(f"🔄 Processing message through chain: '{message[:50]}'")
                     async for response in chain.process_message(message):
                         # Handle onboarding completion
                         if response.get("type") == "onboarding_complete":
@@ -145,7 +138,8 @@ class OnboardingLLMService:
                         await websocket.send_json(response)
                     
                     logger.info(f"✅ Message processed for user {user_id}")
-                            
+
+
         except google.api_core.exceptions.ResourceExhausted as e:
             logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
             try:

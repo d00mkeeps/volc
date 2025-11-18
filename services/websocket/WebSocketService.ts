@@ -5,6 +5,7 @@ import { getWsBaseUrl } from "../api/core/apiClient";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { authService } from "@/services/db/auth";
 
+export type OnboardingCompleteCallback = (data: any) => void;
 export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
 export type TerminationCallback = (reason: string) => void;
@@ -25,7 +26,7 @@ export type RateLimitCallback = (data: {
 }) => void;
 
 export type EndpointConfig = {
-  type: "workout-analysis" | "workout-planning";
+  type: "workout-analysis" | "workout-planning" | "onboarding";
   conversationId?: string;
 };
 
@@ -82,6 +83,10 @@ export class WebSocketService {
       throw new Error("conversationId required for workout-analysis endpoint");
     }
 
+    //ai suggested below segment but i don't think it's necessary
+    // if (config.type === "onboarding" && !config.userId) {
+    //   throw new Error("userId required for onboarding endpoint");
+    // }
     // Build connection key for comparison
     const connectionKey =
       config.type === "workout-planning"
@@ -192,13 +197,15 @@ export class WebSocketService {
     if (!userId) {
       throw new Error("No authenticated user found for WebSocket connection");
     }
-
     // Build URL based on endpoint type
     let url: string;
     if (config.type === "workout-planning") {
       url = `${baseUrl}/workout-planning/${userId}`;
     } else if (config.type === "workout-analysis") {
       url = `${baseUrl}/workout-analysis/${config.conversationId}/${userId}`;
+    } else if (config.type === "onboarding") {
+      // ADD THIS CASE:
+      url = `${baseUrl}/onboarding/${userId}`;
     } else {
       throw new Error(`Unknown endpoint type: ${config.type}`);
     }
@@ -206,6 +213,8 @@ export class WebSocketService {
     const connectionKey =
       config.type === "workout-planning"
         ? config.type
+        : config.type === "onboarding"
+        ? config.type // ADD THIS - just use type like workout-planning
         : `${config.type}-${config.conversationId}`;
 
     console.log(`[WSService] Connecting to: ${url}`);
@@ -309,9 +318,13 @@ export class WebSocketService {
         const currentConnectionKey = this.currentConnectionKey;
         if (currentConnectionKey) {
           // Parse the connection key to rebuild config
+          // Parse the connection key to rebuild config
           let config: EndpointConfig;
           if (currentConnectionKey === "workout-planning") {
             config = { type: "workout-planning" };
+          } else if (currentConnectionKey === "onboarding") {
+            // ADD THIS CASE:
+            config = { type: "onboarding" };
           } else if (currentConnectionKey.startsWith("workout-analysis-")) {
             const conversationId = currentConnectionKey.replace(
               "workout-analysis-",
@@ -391,6 +404,11 @@ export class WebSocketService {
           break;
         case "complete":
           this.events.emit("complete");
+          break;
+
+        case "onboarding_complete":
+          console.log("[WSService] Onboarding complete:", message.data);
+          this.events.emit("onboardingComplete", message.data);
           break;
 
         case "done": // Keep for backward compatibility
@@ -566,6 +584,14 @@ export class WebSocketService {
   }
 
   // PUBLIC EVENT REGISTRATION
+
+  /**
+   * Register onboarding complete handler
+   */
+  onOnboardingComplete(callback: OnboardingCompleteCallback): () => void {
+    this.events.on("onboardingComplete", callback);
+    return () => this.events.off("onboardingComplete", callback);
+  }
 
   /**
    * Register message content handler

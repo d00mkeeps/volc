@@ -12,10 +12,10 @@ interface SlideTwoProps {
   exercises: ExerciseDefinition[];
   onBack: () => void;
   onSelectExercise: (exercise: ExerciseDefinition) => void;
-  fromPopular?: boolean; // Add this
+  fromPopular?: boolean;
 }
 
-// Mapping of base_movement to muscle target (from SlideOne)
+// Mapping of base_movement to muscle target
 const BASE_MOVEMENT_TARGETS: Record<string, string> = {
   ab_wheel: "abs",
   back_extension: "lats",
@@ -54,9 +54,19 @@ const BASE_MOVEMENT_TARGETS: Record<string, string> = {
   squat: "quadriceps",
   tricep_pushdown: "triceps",
   upright_row: "shoulders",
+  // Cardio movements
+  running: "cardiovascular_system",
+  cycling: "cardiovascular_system",
+  swimming: "cardiovascular_system",
+  rowing: "cardiovascular_system",
+  elliptical: "cardiovascular_system",
+  stair_climber: "cardiovascular_system",
+  jump_rope: "cardiovascular_system",
+  hiking: "cardiovascular_system",
+  walking: "cardiovascular_system",
 };
 
-// Category groupings (from SlideOne)
+// Category groupings
 const CATEGORY_MAPPING: Record<string, string[]> = {
   CHEST: ["chest"],
   BACK: ["lats", "traps", "rear_delts"],
@@ -64,17 +74,19 @@ const CATEGORY_MAPPING: Record<string, string[]> = {
   ARMS: ["biceps", "triceps"],
   LEGS: ["quadriceps", "glutes", "hamstrings", "calves"],
   CORE: ["abs", "core", "lower_back"],
+  CARDIO: ["cardiovascular_system"],
 };
 
-// Category color mapping (from SlideOne)
+// Category color mapping
 const CATEGORY_COLORS: Record<string, string> = {
-  POPULAR: "$primary", // ← Add this
+  POPULAR: "$primary",
   CHEST: "$green9",
   BACK: "$darkBlue9",
   SHOULDERS: "$purple9",
   ARMS: "$primary",
   LEGS: "$blue9",
   CORE: "$purple9",
+  CARDIO: "$red9",
 };
 
 // Helper to get category for a base movement

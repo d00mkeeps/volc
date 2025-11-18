@@ -11,6 +11,79 @@ class UserProfileService(BaseDBService):
     
 
     
+
+    async def save_user_profile_admin(self, user_id: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Save user profile using admin client (no auth required) - for backend operations"""
+        try:
+            logger.info(f"Saving profile for user {user_id} (admin)")
+            
+            # Map profile data to database fields
+            user_profile = {}
+            
+            if "first_name" in profile_data:
+                user_profile["first_name"] = profile_data["first_name"]
+            if "last_name" in profile_data:
+                user_profile["last_name"] = profile_data["last_name"]
+            if "age" in profile_data:
+                user_profile["age"] = profile_data["age"]
+            if "is_imperial" in profile_data:
+                user_profile["is_imperial"] = profile_data["is_imperial"]
+            if "goals" in profile_data:
+                user_profile["goals"] = profile_data["goals"]
+            if "current_stats" in profile_data:
+                user_profile["current_stats"] = profile_data["current_stats"]
+            if "preferences" in profile_data:
+                user_profile["preferences"] = profile_data["preferences"]
+            if "avatar_image_id" in profile_data:
+                user_profile["avatar_image_id"] = profile_data["avatar_image_id"]
+            if "instagram_username" in profile_data:
+                user_profile["instagram_username"] = profile_data["instagram_username"]
+            if "training_history" in profile_data:
+                user_profile["training_history"] = profile_data["training_history"]
+            if "bio" in profile_data:
+                user_profile["bio"] = profile_data["bio"]
+            
+            # Try to update first
+            admin_client = self.get_admin_client()
+            result = admin_client.table("user_profiles") \
+                .update(user_profile) \
+                .eq("auth_user_uuid", user_id) \
+                .execute()
+            
+            if not hasattr(result, 'data') or not result.data:
+                # No rows updated - profile doesn't exist, so insert
+                logger.info(f"No existing profile found for user {user_id}, creating new profile")
+                user_profile["auth_user_uuid"] = user_id
+                
+                result = admin_client.table("user_profiles") \
+                    .insert(user_profile) \
+                    .execute()
+                
+                if not hasattr(result, 'data') or not result.data:
+                    raise Exception("Failed to create user profile: No data returned")
+            
+            # Fetch the saved profile
+            profile_result = admin_client.table("user_profiles") \
+                .select("*") \
+                .eq("auth_user_uuid", user_id) \
+                .execute()
+            
+            if not hasattr(profile_result, 'data') or not profile_result.data:
+                raise Exception("Failed to fetch saved user profile")
+            
+            logger.info(f"Successfully saved profile for user {user_id}")
+            return {
+                "success": True,
+                "data": profile_result.data[0]
+            }
+            
+        except Exception as e:
+            logger.error(f"Error saving user profile (admin) for {user_id}: {str(e)}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
     async def save_user_profile(self, user_id: str, profile_data: Dict[str, Any], jwt_token: str) -> Dict[str, Any]:
         """
         Save or update a user's profile information

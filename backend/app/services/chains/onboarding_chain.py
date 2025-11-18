@@ -9,53 +9,45 @@ from .base_conversation_chain import BaseConversationChain
 
 logger = logging.getLogger(__name__)
 
-# System prompt for onboarding
-ONBOARDING_SYSTEM_PROMPT = """You are a friendly fitness onboarding assistant helping new users set up their profile.
+ONBOARDING_SYSTEM_PROMPT = """You are helping a new user set up their fitness profile through conversation.
 
-Your goal is to collect the following information through natural conversation:
-1. Full name (first and last name)
-2. Age (must be a valid number)
-3. Unit system preference (imperial/lb or metric/kg)
-4. Fitness goals
-5. Current abilities/experience level
-6. Training preferences
+You need to collect:
+- First and last name
+- Age (numeric, between 13-120)
+- Unit preference (imperial/lb or metric/kg)
+- Their fitness goals
+- Current fitness level/experience
+- Training preferences (equipment, location, style)
 
-CONVERSATION GUIDELINES:
-- Be warm, encouraging, and conversational
-- Ask one question at a time naturally
-- If the user provides multiple pieces of info at once, acknowledge all of it
-- Validate age is numeric - if not, politely ask again
-- For unit system, accept variations like "imperial", "pounds", "lb", "metric", "kg", "kilograms"
-- Keep responses concise (2-3 sentences max per response)
-- Once you have all information, confirm it back to them and let them know they're all set
+Don't list these requirements. Just have a conversation and gather the information naturally.
 
-DATA EXTRACTION:
-When you have collected ALL required information, you must output a JSON block in this exact format:
-
+Once you have all the information, present it back to the user in this exact JSON format for confirmation:
 ```json
-{
+{{
   "type": "onboarding_complete",
-  "data": {
-    "first_name": "John",
-    "last_name": "Doe",
+  "data": {{
+    "first_name": "their first name",
+    "last_name": "their last name",
     "age": 25,
-    "is_imperial": true,
-    "goals": "Build muscle and improve overall fitness",
-    "current_stats": "Beginner, working out 2-3 times per week",
-    "preferences": "Prefer gym workouts with barbells and dumbbells"
-  }
-}
+    "is_imperial": false,
+    "goals": {{
+      "content": "their fitness goals as a string"
+    }},
+    "current_stats": "their current fitness level/experience",
+    "preferences": "their training preferences"
+  }}
+}}
 ```
 
-IMPORTANT:
-- is_imperial should be true for imperial/pounds/lb, false for metric/kg
-- goals, current_stats, and preferences should be free-text strings summarizing what the user told you
-- Only output this JSON when you have ALL six pieces of information
-- After outputting the JSON, thank them warmly
+IMPORTANT TYPE REQUIREMENTS:
+- age: Must be an integer (not "25.0", just 25)
+- is_imperial: Must be a boolean (true for imperial/lb, false for metric/kg)
+- goals: Must be an object with a "content" key containing their goals as a string
+- All other fields: strings
 
-Start the conversation by greeting them and asking for their name."""
+After showing the JSON, ask them to confirm the information is correct.
 
-
+Start by asking their name."""
 class OnboardingChain(BaseConversationChain):
     """
     Onboarding conversation chain for collecting user profile information.
@@ -149,9 +141,11 @@ class OnboardingChain(BaseConversationChain):
                     if parsed_json.get('type') == 'onboarding_complete' and 'data' in parsed_json:
                         profile = parsed_json['data']
                         
-                        # Validate required fields
-                        if self._validate_profile_data(profile):
-                            self.profile_data = profile
+                        # Validate and sanitize the data
+                        sanitized_profile = self._sanitize_profile_data(profile)
+                        
+                        if sanitized_profile and self._validate_profile_data(sanitized_profile):
+                            self.profile_data = sanitized_profile
                             logger.info(f"✅ Profile data extracted and validated for user {self.user_id}")
                             break
                         else:
@@ -163,6 +157,49 @@ class OnboardingChain(BaseConversationChain):
                     
         except Exception as e:
             logger.error(f"Error extracting profile data: {str(e)}", exc_info=True)
+    
+    def _sanitize_profile_data(self, profile: dict) -> Optional[dict]:
+        """Sanitize and convert profile data to correct types."""
+        try:
+            sanitized = {}
+            
+            # String fields - strip whitespace
+            for field in ['first_name', 'last_name', 'goals', 'current_stats', 'preferences']:
+                if field not in profile:
+                    logger.warning(f"Missing required field: {field}")
+                    return None
+                value = str(profile[field]).strip()
+                if not value:
+                    logger.warning(f"Empty string for required field: {field}")
+                    return None
+                sanitized[field] = value
+            
+            # Age - convert to integer
+            if 'age' not in profile:
+                logger.warning("Missing required field: age")
+                return None
+            try:
+                age = int(float(profile['age']))  # Handle both 21 and 21.0
+                if age < 13 or age > 120:
+                    logger.warning(f"Age out of valid range: {age}")
+                    return None
+                sanitized['age'] = age
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid age value: {profile['age']}")
+                return None
+            
+            # Boolean field
+            if 'is_imperial' not in profile:
+                logger.warning("Missing required field: is_imperial")
+                return None
+            sanitized['is_imperial'] = bool(profile['is_imperial'])
+            
+            logger.info("✅ Profile data sanitized successfully")
+            return sanitized
+            
+        except Exception as e:
+            logger.error(f"Error sanitizing profile data: {str(e)}")
+            return None
     
     def _validate_profile_data(self, profile: dict) -> bool:
         """Validate that profile data has all required fields with correct types."""
@@ -177,25 +214,14 @@ class OnboardingChain(BaseConversationChain):
                 'preferences': str
             }
             
-            # Check all required fields exist
+            # Check all required fields exist with correct types
             for field, expected_type in required_fields.items():
                 if field not in profile:
                     logger.warning(f"Missing required field: {field}")
                     return False
                 
-                # Type validation
-                value = profile[field]
-                if not isinstance(value, expected_type):
-                    logger.warning(f"Invalid type for {field}: expected {expected_type}, got {type(value)}")
-                    return False
-                
-                # Additional validations
-                if field == 'age' and (value < 13 or value > 120):
-                    logger.warning(f"Age out of valid range: {value}")
-                    return False
-                
-                if expected_type == str and not value.strip():
-                    logger.warning(f"Empty string for required field: {field}")
+                if not isinstance(profile[field], expected_type):
+                    logger.warning(f"Invalid type for {field}: expected {expected_type}, got {type(profile[field])}")
                     return False
             
             logger.info("✅ Profile data validation passed")

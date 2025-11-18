@@ -14,12 +14,14 @@ interface MessageListProps {
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   onTemplateApprove?: (templateData: any) => void;
   statusMessage?: string | null;
+  onProfileConfirm?: () => void; // ✅ ADD THIS;
 }
 
 export const MessageList = ({
   messages,
   streamingMessage,
   showLoadingIndicator = false,
+  onProfileConfirm,
   connectionState = "ready",
   statusMessage,
   onTemplateApprove,
@@ -95,6 +97,9 @@ export const MessageList = ({
     };
   }, []);
 
+  // /components/molecules/chat/MessageList.tsx
+
+  // In the renderMessage function, update it to:
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => {
       if (!item) return null;
@@ -108,12 +113,12 @@ export const MessageList = ({
           message={item}
           isStreaming={item.id === "streaming"}
           onTemplateApprove={onTemplateApprove}
+          onProfileConfirm={onProfileConfirm} // ✅ ADD THIS LINE
         />
       );
     },
-    [statusMessage, onTemplateApprove]
+    [statusMessage, onTemplateApprove, onProfileConfirm] // ✅ ADD onProfileConfirm to dependencies
   );
-
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
   // Don't show empty state when disconnected

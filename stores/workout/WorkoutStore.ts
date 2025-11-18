@@ -125,7 +125,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       const { templates } = get();
 
       // Get last 10 templates (most recent)
-      const recentTemplates = templates
+      const recentTemplates = (templates || [])
         .sort(
           (a: CompleteWorkout, b: CompleteWorkout) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -136,7 +136,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       const groups = new Map<string, CompleteWorkout[]>();
 
       recentTemplates.forEach((template: CompleteWorkout) => {
-        const definitionIds = template.workout_exercises
+        const definitionIds = (template.workout_exercises || [])
           .map((ex: any) => ex.definition_id)
           .filter(Boolean)
           .sort(); // Sort for consistent grouping regardless of order

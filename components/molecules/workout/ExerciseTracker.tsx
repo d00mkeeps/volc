@@ -242,7 +242,7 @@ export default function ExerciseTracker({
                 distanceUnit={exercise.distance_unit}
               />
 
-              {exercise.workout_exercise_sets
+              {(exercise.workout_exercise_sets || [])
                 .sort((a, b) => a.set_number - b.set_number)
                 .map((set) => (
                   <SetRow

@@ -1,3 +1,4 @@
+// /components/atoms/core/MessageItem.tsx
 import React, { memo } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -5,12 +6,14 @@ import { StyleSheet, useWindowDimensions } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
+import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
 
 interface MessageItemProps {
   message: Message;
   isStreaming?: boolean;
   enableUserMarkdown?: boolean;
-  onTemplateApprove?: (templateData: any) => void; // Add this
+  onTemplateApprove?: (templateData: any) => void;
+  onProfileConfirm?: () => void;
 }
 
 export const MessageItem = memo(
@@ -19,6 +22,7 @@ export const MessageItem = memo(
     isStreaming = false,
     enableUserMarkdown = false,
     onTemplateApprove,
+    onProfileConfirm,
   }: MessageItemProps) => {
     if (!message) return null;
 
@@ -48,7 +52,7 @@ export const MessageItem = memo(
 
       fence: (node: any, children: any, parent: any, styles: any) => {
         if (isStreaming) {
-          // Try to detect if this looks like it might be a workout template
+          // Try to detect if this looks like it might be a component
           const content = node.content.trim();
           const looksLikeJSON =
             content.startsWith("{") || content.startsWith("[");
@@ -56,13 +60,25 @@ export const MessageItem = memo(
           if (looksLikeJSON) {
             try {
               const parsed = JSON.parse(content);
-              // If it parses, it's complete enough to try rendering
+
+              // Handle workout_template
               if (parsed.type === "workout_template") {
                 return (
                   <WorkoutTemplateView
                     key={node.key}
                     data={parsed.data}
                     onApprove={onTemplateApprove}
+                  />
+                );
+              }
+
+              // Handle onboarding_complete (updated from profile_confirmation)
+              if (parsed.type === "onboarding_complete") {
+                return (
+                  <ProfileConfirmationView
+                    key={node.key}
+                    data={parsed.data}
+                    onComplete={onProfileConfirm}
                   />
                 );
               }
@@ -77,7 +93,7 @@ export const MessageItem = memo(
                   padding="$4"
                 >
                   <Text color="$textSoft" size="small">
-                    building a workout for you..
+                    loading...
                   </Text>
                 </YStack>
               );
@@ -95,12 +111,24 @@ export const MessageItem = memo(
         // Normal (non-streaming) rendering
         try {
           const parsed = JSON.parse(node.content);
+
           if (parsed.type === "workout_template") {
             return (
               <WorkoutTemplateView
                 key={node.key}
                 data={parsed.data}
                 onApprove={onTemplateApprove}
+              />
+            );
+          }
+
+          // Handle onboarding_complete (updated from profile_confirmation)
+          if (parsed.type === "onboarding_complete") {
+            return (
+              <ProfileConfirmationView
+                key={node.key}
+                data={parsed.data}
+                onComplete={onProfileConfirm}
               />
             );
           }
@@ -227,9 +255,9 @@ export const MessageItem = memo(
           {isUser && !enableUserMarkdown ? (
             <Text
               color="white"
-              fontSize={bodySize} // Use the same bodySize variable
-              fontWeight="400" // Match markdown weight
-              lineHeight={bodySize * 1.4} // Match markdown lineHeight
+              fontSize={bodySize}
+              fontWeight="400"
+              lineHeight={bodySize * 1.4}
             >
               {renderContent}
             </Text>

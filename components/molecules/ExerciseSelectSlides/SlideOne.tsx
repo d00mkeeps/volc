@@ -6,6 +6,15 @@ import * as Haptics from "expo-haptics";
 
 // Mapping of base_movement to muscle target
 const BASE_MOVEMENT_TARGETS: Record<string, string> = {
+  running: "cardiovascular_system",
+  cycling: "cardiovascular_system",
+  swimming: "cardiovascular_system",
+  rowing: "cardiovascular_system",
+  elliptical: "cardiovascular_system",
+  stair_climber: "cardiovascular_system",
+  jump_rope: "cardiovascular_system",
+  hiking: "cardiovascular_system",
+  walking: "cardiovascular_system",
   ab_wheel: "abs",
   back_extension: "lats",
   bench_press: "chest",
@@ -53,6 +62,7 @@ const CATEGORY_MAPPING: Record<string, string[]> = {
   ARMS: ["biceps", "triceps"],
   LEGS: ["quadriceps", "glutes", "hamstrings", "calves"],
   CORE: ["abs", "core", "lower_back"],
+  CARDIO: ["cardiovascular_system"],
 };
 
 // Category color mapping for visual hierarchy
@@ -64,6 +74,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   ARMS: "$primary",
   LEGS: "$blue9",
   CORE: "$purple9",
+  CARDIO: "$red9",
 };
 
 // Popular exercises (by base_movement key)
@@ -106,6 +117,7 @@ const organizeByCategory = (): Record<string, string[]> => {
     ARMS: [],
     LEGS: [],
     CORE: [],
+    CARDIO: [],
   };
 
   // Include ALL movements (popular exercises will appear in both POPULAR and their category)
@@ -208,7 +220,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
           right={0}
           bottom={0}
           backgroundColor={categoryColor}
-          opacity={0.15}
+          opacity={0.09}
           borderRadius="$4"
         />
 
@@ -262,7 +274,7 @@ export default function SlideOne({ onSelectBaseMovement }: SlideOneProps) {
             right={0}
             bottom={0}
             backgroundColor={CATEGORY_COLORS.POPULAR}
-            opacity={0.18}
+            opacity={0.1}
             borderRadius="$4"
           />
 

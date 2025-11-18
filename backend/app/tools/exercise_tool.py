@@ -3,6 +3,7 @@ from typing import List, Dict, Any, Optional
 import logging
 
 logger = logging.getLogger(__name__)
+
 @tool
 async def get_exercises_by_muscle_groups(
     muscle_groups: List[str],
@@ -24,7 +25,7 @@ async def get_exercises_by_muscle_groups(
         muscle_groups: Target muscle groups (e.g. ['chest', 'triceps', 'shoulders']).
                       Valid: chest, back, shoulders, biceps, triceps, lats, traps,
                       quadriceps, hamstrings, glutes, abs, obliques, forearms,
-                      abductors, adductors, hip_flexors, lower_back, cardiovascular_system
+                      abductors, adductors, hip_flexors, lower_back
         
         base_movement: (Optional) Filter by movement type. 
                       Valid: ab_wheel, back_extension, bench_press, bicep_curl, 
@@ -103,4 +104,84 @@ async def get_exercises_by_muscle_groups(
         })
     
     logger.info(f"✅ Tool returning {len(condensed)} exercises (condensed, no descriptions)")
+    return condensed
+
+
+@tool
+async def get_cardio_exercises(
+    base_movement: Optional[str] = None,
+    equipment: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Fetch cardio exercises from the exercise database.
+    
+    Use this tool when creating workout plans that include cardiovascular training.
+    
+    Args:
+        base_movement: (Optional) Filter by cardio type.
+                      Valid: running, cycling, swimming, rowing, elliptical, 
+                      stair_climber, jump_rope, hiking, walking
+        
+        equipment: (Optional) Filter by equipment type.
+                  Valid: machine, bodyweight
+    
+    Returns:
+        List of cardio exercises with: id, standard_name, primary_muscles,
+        secondary_muscles, equipment, movement_pattern, base_movement, major_variation.
+        IMPORTANT: Use the 'id' field as 'definition_id' when creating workout templates.
+    
+    Examples:
+        - All cardio: get_cardio_exercises()
+        - All running: get_cardio_exercises(base_movement='running')
+        - Machine cardio only: get_cardio_exercises(equipment='machine')
+        - Outdoor running: get_cardio_exercises(base_movement='running', equipment='bodyweight')
+    """
+    from app.services.cache.exercise_definitions import exercise_cache
+    
+    # Get all cached exercises
+    all_exercises = await exercise_cache.get_all_exercises()
+    
+    logger.info(f"🏃 Cardio tool called: base_movement={base_movement}, equipment={equipment}")
+    
+    # Filter for cardiovascular exercises
+    filtered = [
+        ex for ex in all_exercises
+        if 'cardiovascular_system' in [m.lower().strip() for m in ex.get('primary_muscles', [])]
+    ]
+    
+    logger.info(f"  └─ Found {len(filtered)} total cardio exercises")
+    
+    # Filter by base_movement
+    if base_movement:
+        base_movement_normalized = base_movement.lower().strip()
+        filtered = [
+            ex for ex in filtered 
+            if ex.get('base_movement', '').lower().strip() == base_movement_normalized
+        ]
+        logger.info(f"  └─ Filtered to base_movement='{base_movement}': {len(filtered)} exercises")
+    
+    # Filter by equipment
+    if equipment:
+        equipment_normalized = equipment.lower().strip()
+        filtered = [
+            ex for ex in filtered 
+            if ex.get('equipment', '').lower().strip() == equipment_normalized
+        ]
+        logger.info(f"  └─ Filtered to equipment='{equipment}': {len(filtered)} exercises")
+    
+    # Return condensed version without descriptions to reduce context size
+    condensed = []
+    for ex in filtered:
+        condensed.append({
+            'id': ex['id'],
+            'standard_name': ex['standard_name'],
+            'primary_muscles': ex.get('primary_muscles'),
+            'secondary_muscles': ex.get('secondary_muscles'),
+            'equipment': ex.get('equipment'),
+            'movement_pattern': ex.get('movement_pattern'),
+            'base_movement': ex.get('base_movement'),
+            'major_variation': ex.get('major_variation'),
+        })
+    
+    logger.info(f"✅ Cardio tool returning {len(condensed)} exercises")
     return condensed

@@ -18,7 +18,7 @@ class BaseConversationChain:
     Subclasses must implement:
     - get_formatted_prompt() - for chain-specific prompt formatting
     """
-    
+     
     def __init__(self, llm: ChatVertexAI):
         self.chat_model = llm
         self.messages: List[BaseMessage] = []
