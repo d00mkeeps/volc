@@ -1,9 +1,18 @@
 // /components/molecules/dashboard/MuscleGroupSpider.tsx
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
+import {
+  Canvas,
+  Path,
+  Circle,
+  Text as SkiaText,
+  useFont,
+  Skia,
+  vec,
+  Group,
+} from "@shopify/react-native-skia";
 import Select from "@/components/atoms/core/Select";
 import MetricsDisplay from "./MetricsDisplay";
 import { TimeframeData, MuscleData } from "@/types/workout";
@@ -17,9 +26,11 @@ export default function MuscleGroupSpider() {
   const allData = useDashboardStore((state) => state.allData);
   const isLoading = useDashboardStore((state) => state.isLoading);
   const error = useDashboardStore((state) => state.error);
+  
+  // Load font for Skia labels
+  const font = useFont(require("../../../assets/fonts/SpaceMono-Regular.ttf"), 12);
 
   // Calculate which timeframes should be disabled
-  // /stores/dashboardStore.calculateDisabledTimeframes
   const calculateDisabledTimeframes = () => {
     if (!allData) return [];
 
@@ -156,15 +167,27 @@ export default function MuscleGroupSpider() {
   const center = size / 2;
   const maxRadius = 80;
 
-  const points = muscleData.map((item: MuscleData, index: number) => {
-    const angle = (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-    const radius = (item.sets / maxSets) * maxRadius;
-    const x = center + radius * Math.cos(angle);
-    const y = center + radius * Math.sin(angle);
-    return { x, y, angle, label: item.muscle, sets: item.sets };
-  });
+  const points = useMemo(() => {
+    return muscleData.map((item: MuscleData, index: number) => {
+      const angle = (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
+      const radius = (item.sets / maxSets) * maxRadius;
+      const x = center + radius * Math.cos(angle);
+      const y = center + radius * Math.sin(angle);
+      return { x, y, angle, label: item.muscle, sets: item.sets };
+    });
+  }, [muscleData, maxSets, center, maxRadius]);
 
-  const polygonPoints = points.map((p: any) => `${p.x},${p.y}`).join(" ");
+  const polygonPath = useMemo(() => {
+    const path = Skia.Path.Make();
+    if (points.length > 0) {
+      path.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        path.lineTo(points[i].x, points[i].y);
+      }
+      path.close();
+    }
+    return path;
+  }, [points]);
 
   const handleTimeframeChange = (value: string) => {
     if (
@@ -203,87 +226,103 @@ export default function MuscleGroupSpider() {
       {/* Right Stack - Spider Chart */}
       <Stack flex={1} justifyContent="center">
         <Stack justifyContent="center" alignItems="center">
-          <Svg width={size} height={size}>
-            {/* Background grid circles */}
-            {[0.25, 0.5, 0.75, 1.0].map((ratio: number, i: number) => (
-              <Circle
-                key={i}
-                cx={center}
-                cy={center}
-                r={maxRadius * ratio}
-                stroke="#ef4444"
-                strokeWidth={1}
-                fill="transparent"
-                opacity={0.3}
-              />
-            ))}
-
-            {/* Grid lines to each muscle group */}
-            {points.map((point: any, index: number) => {
-              const angle =
-                (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-              const endX = center + maxRadius * Math.cos(angle);
-              const endY = center + maxRadius * Math.sin(angle);
-              return (
-                <Line
-                  key={index}
-                  x1={center}
-                  y1={center}
-                  x2={endX}
-                  y2={endY}
-                  stroke="#ef4444"
+          <Canvas style={{ width: size, height: size }}>
+            <Group>
+              {/* Background grid circles */}
+              {[0.25, 0.5, 0.75, 1.0].map((ratio: number, i: number) => (
+                <Circle
+                  key={i}
+                  cx={center}
+                  cy={center}
+                  r={maxRadius * ratio}
+                  style="stroke"
                   strokeWidth={1}
+                  color="#ef4444"
                   opacity={0.3}
                 />
-              );
-            })}
+              ))}
 
-            {/* Only render polygon and points if we have data */}
-            {muscleData.length > 0 && (
-              <>
-                <Polygon
-                  points={polygonPoints}
-                  fill="#f84f3e"
-                  fillOpacity={0.15}
-                  stroke="#f84f3e"
-                  strokeWidth={2}
-                />
-
-                {points.map((point: any, index: number) => (
-                  <Circle
-                    key={index}
-                    cx={point.x}
-                    cy={point.y}
-                    r={3}
-                    fill="#f84f3e"
+              {/* Grid lines to each muscle group */}
+              {points.map((point: any, index: number) => {
+                const angle =
+                  (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
+                const endX = center + maxRadius * Math.cos(angle);
+                const endY = center + maxRadius * Math.sin(angle);
+                const path = Skia.Path.Make();
+                path.moveTo(center, center);
+                path.lineTo(endX, endY);
+                
+                return (
+                  <Path
+                    key={`grid-line-${index}`}
+                    path={path}
+                    style="stroke"
+                    strokeWidth={1}
+                    color="#ef4444"
+                    opacity={0.3}
                   />
-                ))}
+                );
+              })}
 
-                {points.map((point: any, index: number) => {
-                  const angle =
-                    (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
-                  const labelRadius = maxRadius + 16;
-                  const labelX = center + labelRadius * Math.cos(angle);
-                  const labelY = center + labelRadius * Math.sin(angle);
+              {/* Only render polygon and points if we have data */}
+              {muscleData.length > 0 && (
+                <>
+                  <Path
+                    path={polygonPath}
+                    color="#f84f3e"
+                    style="fill"
+                    opacity={0.15}
+                  />
+                  <Path
+                    path={polygonPath}
+                    color="#f84f3e"
+                    style="stroke"
+                    strokeWidth={2}
+                  />
 
-                  return (
-                    <SvgText
-                      key={index}
-                      x={labelX}
-                      y={labelY}
-                      fontSize="12"
-                      fill="#6b6466"
-                      textAnchor="middle"
-                      alignmentBaseline="middle"
-                      fontWeight="500"
-                    >
-                      {point.label}
-                    </SvgText>
-                  );
-                })}
-              </>
-            )}
-          </Svg>
+                  {points.map((point: any, index: number) => (
+                    <Circle
+                      key={`point-${index}`}
+                      cx={point.x}
+                      cy={point.y}
+                      r={3}
+                      color="#f84f3e"
+                      style="fill"
+                    />
+                  ))}
+
+                  {points.map((point: any, index: number) => {
+                    const angle =
+                      (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
+                    const labelRadius = maxRadius + 16;
+                    const labelX = center + labelRadius * Math.cos(angle);
+                    const labelY = center + labelRadius * Math.sin(angle);
+
+                    // Simple centering adjustment for text
+                    // Skia text is drawn from bottom-left by default, or depends on font metrics
+                    // We'll just offset slightly. For perfect centering we'd measure text.
+                    // Assuming font size 12.
+                    const textWidth = font ? font.getTextWidth(point.label) : 0;
+                    const adjustedX = labelX - textWidth / 2;
+                    const adjustedY = labelY + 4; // approximate vertical center
+
+                    if (!font) return null;
+
+                    return (
+                      <SkiaText
+                        key={`label-${index}`}
+                        x={adjustedX}
+                        y={adjustedY}
+                        text={point.label}
+                        font={font}
+                        color="#6b6466"
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </Group>
+          </Canvas>
         </Stack>
       </Stack>
     </Stack>

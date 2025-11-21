@@ -1,7 +1,7 @@
 import * as Application from "expo-application";
 import { Platform } from "react-native";
 
-export const MINIMUM_APP_VERSION = "1.0.9";
+export const MINIMUM_APP_VERSION = "1.3";
 
 /**
  * Compares two semantic version strings (e.g., "1.0.0", "1.1.0")
@@ -22,11 +22,22 @@ export function compareVersions(v1: string, v2: string): number {
   return 0;
 }
 
+import Constants, { ExecutionEnvironment } from "expo-constants";
+
 /**
  * Gets the current native app version
  */
 export function getCurrentAppVersion(): string | null {
-  return Application.nativeApplicationVersion;
+  const version = Application.nativeApplicationVersion;
+  console.log(`📱 [VersionCheck] Detected native version: ${version}`);
+  
+  // Check if running in Expo Go
+  const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+  if (isExpoGo) {
+    console.log("⚠️ [VersionCheck] Running in Expo Go - version might be the client version, not the app version.");
+  }
+
+  return version;
 }
 
 /**
@@ -36,12 +47,20 @@ export function isVersionSupported(): boolean {
   const currentVersion = getCurrentAppVersion();
 
   if (!currentVersion) {
-    console.warn("Could not determine app version");
+    console.warn("⚠️ [VersionCheck] Could not determine app version. Allowing access.");
     return true; // Allow access if version can't be determined
   }
 
   const comparison = compareVersions(currentVersion, MINIMUM_APP_VERSION);
-  return comparison >= 0; // Current version must be >= minimum version
+  const isSupported = comparison >= 0;
+
+  console.log(
+    `🔍 [VersionCheck] Checking support: Current (${currentVersion}) >= Min (${MINIMUM_APP_VERSION})? ${
+      isSupported ? "✅ YES" : "❌ NO"
+    }`
+  );
+
+  return isSupported;
 }
 
 /**

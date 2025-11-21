@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { YStack, ScrollView, Stack, XStack } from "tamagui";
 import { RefreshControl } from "react-native";
+import { useRouter } from "expo-router";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useAuth } from "@/context/AuthContext";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
@@ -13,6 +14,7 @@ import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
 import TextEditModal from "@/components/molecules/core/TextEditModal";
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { userProfile, loading, error, updateProfile, refreshProfile } =
     useUserStore();
   const { workouts } = useWorkoutStore();
@@ -196,6 +198,21 @@ export default function ProfileScreen() {
           )}
 
           <Stack paddingTop="$10">
+            {userProfile?.permission_level === "admin" && (
+              <Button
+                onPress={() => router.push("/admin-dashboard" as any)}
+                backgroundColor="$blue10"
+                color="white"
+                size="medium"
+                borderRadius="$3"
+                width="50%"
+                alignSelf="center"
+                marginBottom="$4"
+              >
+                Admin Dashboard
+              </Button>
+            )}
+
             <Button
               onPress={handleLogout}
               disabled={isLoggingOut}

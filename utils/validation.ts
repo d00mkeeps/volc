@@ -1,13 +1,11 @@
 // /utils/validation.ts
-
 export const WorkoutValidation = {
   chatMessage: (message: string) => {
     if (!message?.trim()) return { isValid: false, error: "Message required" };
-    if (message.length > 240)
-      return { isValid: false, error: "Max 240 characters" };
+    if (message.length > 500)
+      return { isValid: false, error: "Max 500 characters" };
     return { isValid: true };
   },
-
   weight: (value: number | undefined, isMetric: boolean) => {
     if (value === undefined || value < 0)
       return { isValid: false, error: "Invalid weight" };
@@ -17,14 +15,12 @@ export const WorkoutValidation = {
       return { isValid: false, error: `Max ${max}${isMetric ? "kg" : "lbs"}` };
     return { isValid: true };
   },
-
   reps: (value: number | undefined) => {
     if (value === undefined || value < 0)
       return { isValid: false, error: "Invalid reps" };
     if (value > 100) return { isValid: false, error: "Max 100 reps" };
     return { isValid: true };
   },
-
   distance: (value: number | undefined, isMetric: boolean) => {
     if (value === undefined || value < 0)
       return { isValid: false, error: "Invalid distance" };
@@ -34,7 +30,6 @@ export const WorkoutValidation = {
       return { isValid: false, error: `Max ${max}${isMetric ? "km" : "mi"}` };
     return { isValid: true };
   },
-
   duration: (seconds: number | undefined) => {
     if (seconds === undefined || seconds < 0)
       return { isValid: false, error: "Invalid duration" };
@@ -42,14 +37,12 @@ export const WorkoutValidation = {
     if (seconds > maxSeconds) return { isValid: false, error: "Max 72:00:00" };
     return { isValid: true };
   },
-
   rpe: (value: number | undefined) => {
     if (value === undefined) return { isValid: true }; // RPE is optional
     if (value < 0 || value > 10)
       return { isValid: false, error: "RPE must be 0-10" };
     return { isValid: true };
   },
-
   // For sanitizing numeric input strings
   sanitizeNumeric: (input: string): string => {
     return input.replace(/[^0-9.,]/g, "");
@@ -74,7 +67,6 @@ export const DurationFormatter = {
   // Parse HH:MM:SS or MM:SS string to seconds
   displayToSeconds: (display: string): number | undefined => {
     const parts = display.split(":").map((p) => parseInt(p, 10));
-
     if (parts.some(isNaN)) return undefined;
 
     if (parts.length === 2) {
@@ -84,7 +76,6 @@ export const DurationFormatter = {
       const [hours, minutes, seconds] = parts;
       return hours * 3600 + minutes * 60 + seconds;
     }
-
     return undefined;
   },
 

@@ -58,6 +58,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.core.middleware.telemetry import TelemetryMiddleware
+app.add_middleware(TelemetryMiddleware)
+
 
 
 # Debug middleware to log all requests
@@ -98,6 +101,8 @@ app.include_router(leaderboard_router, tags=["leaderboard"])
 app.include_router(images_router, tags=["images"])
 app.include_router(workout_analysis_router, tags=["workout-analysis"])
 app.include_router(dashboard_router, tags=["dashboard"])
+from app.api.endpoints.admin import router as admin_router
+app.include_router(admin_router, tags=["admin"])
 
 @app.get("/health")
 async def health_check():

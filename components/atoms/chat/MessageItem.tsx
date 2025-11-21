@@ -7,6 +7,7 @@ import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
 import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
+import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 
 interface MessageItemProps {
   message: Message;
@@ -82,6 +83,11 @@ export const MessageItem = memo(
                   />
                 );
               }
+
+              // Handle chart_data
+              if (parsed.type === "chart_data") {
+                return <ChartDataView key={node.key} data={parsed.data} />;
+              }
             } catch (e) {
               // JSON is incomplete - show loading indicator
               return (
@@ -131,6 +137,11 @@ export const MessageItem = memo(
                 onComplete={onProfileConfirm}
               />
             );
+          }
+
+          // Handle chart_data
+          if (parsed.type === "chart_data") {
+            return <ChartDataView key={node.key} data={parsed.data} />;
           }
         } catch (e) {
           // Silent fail, fall back to default rendering

@@ -6,6 +6,8 @@ from ..chains.workout_analysis_chain import WorkoutAnalysisChain
 from ..db.message_service import MessageService
 from ..db.analysis_service import AnalysisBundleService
 from .performance_profiler import PerformanceProfiler
+from ..telemetry.llm_logger import llm_telemetry_logger
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -192,9 +194,12 @@ class WorkoutAnalysisLLMService:
                     
                     # Process message through chain
                     message_profiler.start_phase("llm_processing")
+                    llm_start_time = time.time()
                     full_ai_response = ""
                     first_token = True
                     token_count = 0
+                    input_tokens = 0
+                    output_tokens = 0
                     
                     async for response in chain.process_message(message):
                         if first_token and response.get("type") == "content":
@@ -207,6 +212,16 @@ class WorkoutAnalysisLLMService:
                             content = response.get("data", "")
                             full_ai_response += content
                             token_count += len(content.split())  # Rough count
+                        
+                        # Capture token usage from response metadata if available
+                        if response.get("type") == "complete":
+                            metadata = response.get("data", {})
+                            if "usage_metadata" in metadata:
+                                usage = metadata["usage_metadata"]
+                                input_tokens = usage.get("input_tokens", 0)
+                                output_tokens = usage.get("output_tokens", 0)
+                    
+                    llm_latency_ms = int((time.time() - llm_start_time) * 1000)
                     
                     if not first_token:
                         message_profiler.end_phase(
@@ -225,6 +240,24 @@ class WorkoutAnalysisLLMService:
                         if ai_msg.get('success') != False:
                             logger.info(f"Saved AI response with ID: {ai_msg.get('id')}")
                     message_profiler.end_phase()
+                    
+                    # Log LLM telemetry
+                    # If we didn't get token counts from metadata, estimate them
+                    if input_tokens == 0 and output_tokens == 0:
+                        # Rough estimation: ~4 chars per token
+                        input_tokens = len(message) // 4
+                        output_tokens = len(full_ai_response) // 4
+                    
+                    await llm_telemetry_logger.log_llm_request(
+                        path=f"/api/llm/workout-analysis/{conversation_id}",
+                        user_id=user_id,
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        latency_ms=llm_latency_ms,
+                        model_name="gemini-2.5-flash",
+                        status_code=200
+                    )
+                    
                     
                     # Log message processing summary
                     message_profiler.log_summary()

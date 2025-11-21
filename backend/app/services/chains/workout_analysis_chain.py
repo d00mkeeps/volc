@@ -1,7 +1,10 @@
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, AsyncGenerator
 import logging
+import re
+import json
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_anthropic import ChatAnthropic
 from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
 from .base_conversation_chain import BaseConversationChain
@@ -50,6 +53,85 @@ class WorkoutAnalysisChain(BaseConversationChain):
             MessagesPlaceholder(variable_name="messages"),
             ("human", "{current_message}")
         ])
+
+    async def process_message(self, message: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Process message and check for chart data.
+        
+        Overrides base class to add chart data extraction.
+        """
+        try:
+            # Get formatted prompt
+            formatted_prompt = await self.get_formatted_prompt(message)
+            
+            # Stream response
+            full_response = ""
+            async for chunk in self.chat_model.astream(input=formatted_prompt):
+                chunk_content = chunk.content
+                if chunk_content:
+                    full_response += chunk_content
+                    yield {
+                        "type": "content",
+                        "data": chunk_content
+                    }
+            
+            # Check for chart data in response
+            chart_data = self._extract_chart_data(full_response)
+            
+            # If chart data extracted, send it to frontend
+            if chart_data:
+                yield {
+                    "type": "chart_data",
+                    "data": chart_data
+                }
+                logger.info(f"✅ Chart data extracted and sent")
+            
+            # Send completion signal
+            yield {
+                "type": "complete",
+                "data": {"length": len(full_response)}
+            }
+            
+            # Add messages to history
+            self.messages.append(HumanMessage(content=message))
+            self.messages.append(AIMessage(content=full_response))
+            
+        except Exception as e:
+            logger.error(f"Error processing analysis message: {str(e)}", exc_info=True)
+            yield {
+                "type": "error",
+                "data": "An error occurred while processing your message"
+            }
+
+    def _extract_chart_data(self, response: str) -> Dict[str, Any]:
+        """Extract chart data from JSON block in LLM response."""
+        try:
+            # Look for JSON code blocks
+            json_pattern = r'```json\s*(.*?)\s*```'
+            json_matches = re.findall(json_pattern, response, re.DOTALL)
+            
+            for json_str in json_matches:
+                try:
+                    # Clean up potential comments in JSON (simple strip)
+                    cleaned_json = json_str.strip()
+                    # Remove JS-style comments if any (LLMs sometimes add them)
+                    cleaned_json = re.sub(r'//.*', '', cleaned_json)
+                    
+                    parsed_json = json.loads(cleaned_json)
+                    
+                    # Check if this is chart data
+                    if parsed_json.get('type') == 'chart_data' and 'data' in parsed_json:
+                        return parsed_json['data']
+                    
+                except json.JSONDecodeError as e:
+                    logger.warning(f"Failed to parse JSON in response: {e}")
+                    continue
+                    
+            return None
+                    
+        except Exception as e:
+            logger.error(f"Error extracting chart data: {str(e)}", exc_info=True)
+            return None
 
     async def add_data_bundle(self, bundle: WorkoutAnalysisBundle) -> bool:
         """

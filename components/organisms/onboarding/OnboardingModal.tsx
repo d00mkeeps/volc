@@ -105,7 +105,7 @@ export function OnboardingModal({
             placeholder="Type your response..."
             connectionState={getConnectionState()}
             onProfileConfirm={handleProfileConfirm}
-            keyboardVerticalOffset={100}
+            keyboardVerticalOffset={120}
           />
         </YStack>
 

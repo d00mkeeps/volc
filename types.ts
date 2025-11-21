@@ -152,6 +152,7 @@ export interface UserProfile {
   training_history: any | null;
   instagram_username: string | null;
   avatar_image_id: string | null;
+  permission_level: string | null;
 }
 
 export interface WorkoutExercise {

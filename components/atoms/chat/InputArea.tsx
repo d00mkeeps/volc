@@ -1,6 +1,6 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { XStack, Spinner, AnimatePresence } from "tamagui";
+import { XStack, YStack, Spinner, Text } from "tamagui";
 import { Animated } from "react-native";
 import TextArea from "@/components/atoms/core/TextArea";
 import Button from "@/components/atoms/core/Button";
@@ -11,8 +11,8 @@ interface InputAreaProps {
   placeholder?: string;
   onSendMessage: (message: string) => void;
   isLoading?: boolean;
-  shouldPulse?: boolean; // Add this
-  onPulseComplete?: () => void; // Add this
+  shouldPulse?: boolean;
+  onPulseComplete?: () => void;
 }
 
 export const InputArea = ({
@@ -29,6 +29,7 @@ export const InputArea = ({
   const [isPulsing, setIsPulsing] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const pulseTimeout = useRef<NodeJS.Timeout | null>(null);
+  const textAreaKey = useRef(0);
 
   // Pulse animation effect
   useEffect(() => {
@@ -70,18 +71,35 @@ export const InputArea = ({
     }
   }, [shouldPulse, pulseAnim, onPulseComplete]);
 
+  const clearInput = useCallback(() => {
+    // More robust clearing: update state, increment key to force remount, clear error
+    setInput("");
+    setError(undefined);
+    textAreaKey.current += 1;
+  }, []);
+
   const handleSend = useCallback(() => {
-    const validation = WorkoutValidation.chatMessage(input);
+    const trimmedInput = input.trim();
+
+    // Early return if empty
+    if (!trimmedInput) {
+      return;
+    }
+
+    // Validate the message
+    const validation = WorkoutValidation.chatMessage(trimmedInput);
     if (!validation.isValid) {
       setError(validation.error);
       return;
     }
-    if (!disabled && input.trim()) {
-      onSendMessage(input.trim());
-      setInput("");
-      setError(undefined);
+
+    // If not disabled, send the message and clear immediately
+    if (!disabled) {
+      onSendMessage(trimmedInput);
+      // Clear input immediately after sending
+      clearInput();
     }
-  }, [disabled, isLoading, input, onSendMessage]);
+  }, [disabled, input, onSendMessage, clearInput]);
 
   const handleFocus = useCallback(() => {
     // Stop pulse on focus
@@ -95,66 +113,92 @@ export const InputArea = ({
     }
   }, [isPulsing, pulseAnim, onPulseComplete]);
 
+  const handleTextChange = useCallback(
+    (text: string) => {
+      setInput(text);
+      // Clear error if we're back under the limit
+      if (error && text.length <= 500) {
+        setError(undefined);
+      }
+    },
+    [error]
+  );
+
+  // Calculate remaining characters
+  const length = input.length;
+  const showCounter = input.length >= 200;
+
   return (
     <Animated.View
       style={{
         transform: [{ scale: pulseAnim }],
       }}
     >
-      <XStack
-        padding="$2"
-        gap="$2"
-        backgroundColor="$transparent"
-        alignItems="flex-end"
-      >
-        <TextArea
-          flex={1}
-          size="small"
-          borderRadius={12}
-          value={input}
-          verticalAlign="top"
-          onChangeText={(text) => {
-            setInput(text);
-            if (error && text.length <= 500) setError(undefined);
-          }}
-          placeholder={isLoading ? "please wait" : placeholder}
-          disabled={disabled || isLoading}
-          borderColor={
-            error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
-          }
-          color="$color"
-          opacity={isLoading ? 0.6 : 1}
-          placeholderTextColor="$textMuted"
-          onSubmitEditing={handleSend}
-          onFocus={handleFocus}
-          returnKeyType="send"
-          maxLength={500}
-          paddingTop="$2"
-          paddingBottom="$2"
-          numberOfLines={8}
-        />
-        <Button
-          size="$3"
-          alignSelf="auto"
-          backgroundColor={isPressed ? "$primary" : "$background"}
-          disabled={disabled || !input.trim() || isLoading}
-          onPress={handleSend}
-          onPressIn={() => setIsPressed(true)}
-          onPressOut={() => setIsPressed(false)}
-          circular
-          icon={
-            isLoading ? (
-              <Spinner size="small" color="$primary" />
-            ) : (
-              <Send color="#f84f3e" size={22} />
-            )
-          }
-          disabledStyle={{
-            backgroundColor: "$background",
-            opacity: 0.7,
-          }}
-        />
-      </XStack>
+      <YStack gap="$1">
+        <XStack
+          padding="$2"
+          gap="$2"
+          backgroundColor="$transparent"
+          alignItems="flex-end"
+        >
+          <TextArea
+            key={textAreaKey.current}
+            flex={1}
+            size="small"
+            borderRadius={12}
+            value={input}
+            verticalAlign="top"
+            onChangeText={handleTextChange}
+            placeholder={isLoading ? "please wait" : placeholder}
+            disabled={disabled || isLoading}
+            borderColor={
+              error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
+            }
+            color="$color"
+            opacity={isLoading ? 0.6 : 1}
+            placeholderTextColor="$textMuted"
+            onSubmitEditing={handleSend}
+            onFocus={handleFocus}
+            returnKeyType="send"
+            maxLength={500}
+            paddingTop="$2"
+            paddingBottom="$2"
+            numberOfLines={8}
+          />
+          <Button
+            size="$3"
+            alignSelf="auto"
+            backgroundColor={isPressed ? "$primary" : "$background"}
+            disabled={disabled || !input.trim() || isLoading}
+            onPress={handleSend}
+            onPressIn={() => setIsPressed(true)}
+            onPressOut={() => setIsPressed(false)}
+            circular
+            icon={
+              isLoading ? (
+                <Spinner size="small" color="$primary" />
+              ) : (
+                <Send color="#f84f3e" size={22} />
+              )
+            }
+            disabledStyle={{
+              backgroundColor: "$background",
+              opacity: 0.7,
+            }}
+          />
+        </XStack>
+        {showCounter && (
+          <XStack justifyContent="flex-end" paddingHorizontal="$2">
+            <Text
+              fontSize={11}
+              color={length > 450 ? "$error" : "$textMuted"}
+              opacity={0.7}
+            >
+              {length}/500
+            </Text>
+          </XStack>
+        )}
+      </YStack>
     </Animated.View>
   );
 };
