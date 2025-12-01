@@ -140,8 +140,16 @@ class WorkoutPlanningLLMService:
             # LOG FINAL CONTEXT SUMMARY
             logger.info(f"🎯 FINAL CONTEXT SUMMARY:")
             logger.info(f"   - User profile: {'✅' if context['user_profile'] else '❌'}")
+            
             if context['analysis_bundle']:
-                logger.info(f"   - Analysis bundle: ✅ with {len(context['analysis_bundle'].recent_workouts)} recent workouts")
+                bundle = context['analysis_bundle']
+                memory_count = 0
+                if bundle.ai_memory and bundle.ai_memory.get('notes'):
+                    memory_count = len(bundle.ai_memory.get('notes', []))
+                
+                logger.info(f"   - Analysis bundle: ✅")
+                logger.info(f"     • Recent workouts: {len(bundle.recent_workouts)}")
+                logger.info(f"     • Memory notes: {memory_count}")
             else:
                 logger.info(f"   - Analysis bundle: ❌ (using fallback)")
                 logger.info(f"   - Recent workouts (fallback): {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
@@ -204,6 +212,12 @@ class WorkoutPlanningLLMService:
             profiler.start_phase("context_injection")
             logger.info(f"Loading planning context into chain: {user_id}")
             await chain.load_planning_context(planning_context)
+            
+            # NEW: Explicitly load bundles (Analysis Pattern)
+            if planning_context.get("analysis_bundle"):
+                chain.load_bundles([planning_context["analysis_bundle"]])
+                logger.info(f"✅ Loaded analysis bundle via load_bundles() for user {user_id}")
+            
             profiler.end_phase()
 
             profiler.log_summary()

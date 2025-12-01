@@ -94,13 +94,13 @@ class WorkoutAnalysisLLMService:
             chain.load_conversation_context(context)
             
             # Load user's basic bundle (instead of conversation-specific bundles)
-            from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
+            from app.services.workout_analysis.schemas import UserContextBundle
            
 
             # Load user's basic bundle (deserialization handled by analysis_service)
             bundle_result = await self.analysis_bundle_service.get_latest_analysis_bundle_admin(user_id)
             if bundle_result.get('success') and bundle_result.get('data'):
-                # bundle is already a WorkoutAnalysisBundle Pydantic object
+                # bundle is already a UserContextBundle Pydantic object
                 bundle = bundle_result['data']
                 chain.load_bundles([bundle])
                 logger.info(f"✅ Loaded basic bundle {bundle.id} for user {user_id}")
@@ -278,6 +278,12 @@ class WorkoutAnalysisLLMService:
                 
         except Exception as e:
             logger.error(f"Error in LLM websocket: {str(e)}", exc_info=True)
+            
+            # Trigger memory extraction on disconnect
+            if "WebSocketDisconnect" in str(type(e).__name__) or "1006" in str(e):
+                from app.core.utils.websocket_utils import trigger_memory_extraction
+                await trigger_memory_extraction(user_id, conversation_id)
+            
             try:
                 await websocket.send_json({
                     "type": "error",

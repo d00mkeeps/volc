@@ -1,7 +1,7 @@
 import * as Application from "expo-application";
 import { Platform } from "react-native";
 
-export const MINIMUM_APP_VERSION = "1.3";
+export const MINIMUM_APP_VERSION = "1.4.0";
 
 /**
  * Compares two semantic version strings (e.g., "1.0.0", "1.1.0")
@@ -69,7 +69,7 @@ export function isVersionSupported(): boolean {
 export function getAppStoreUrl(): string {
   if (Platform.OS === "ios") {
     // You'll need to replace this with your actual App Store ID once published
-    return "https://apps.apple.com/app/id YOUR_APP_ID";
+    return "https://apps.apple.com/gb/app/volc/id6751469055";
   } else {
     // Android Play Store
     return "https://play.google.com/store/apps/details?id=com.d00mkeeps.Volc";

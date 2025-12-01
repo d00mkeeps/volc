@@ -3,37 +3,37 @@ const config = {
     owner: "d00mkeeps",
     name: "Volc",
     slug: "Volc",
-    version: "1.4",
+    version: "1.4.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "volc", // ← Change this from "myapp" to "volc"
     userInterfaceStyle: "automatic",
     splash: {
-      image: "./assets/images/splash.png",
+      image: "./assets/images/icon.png",
       resizeMode: "contain",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#231f20"
     },
-// File: /app.config.js (or wherever this config lives)
+    // File: /app.config.js (or wherever this config lives)
 
-ios: {
-  supportsTablet: true,
-  bundleIdentifier: "com.d00mkeeps.Volc",
-  minimumOSVersion: "15.1",
-  infoPlist: {
-    "ITSAppUsesNonExemptEncryption": false,
-    "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
-    "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos.",
-    // ADD THIS:
-    "NSAppTransportSecurity": {
-      "NSExceptionDomains": {
-        "supabase.co": {
-          "NSIncludesSubdomains": true,
-          "NSTemporaryExceptionAllowsInsecureHTTPLoads": false
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "com.d00mkeeps.Volc",
+      minimumOSVersion: "15.1",
+      infoPlist: {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
+        "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos.",
+        // ADD THIS:
+        "NSAppTransportSecurity": {
+          "NSExceptionDomains": {
+            "supabase.co": {
+              "NSIncludesSubdomains": true,
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": false
+            }
+          }
         }
       }
-    }
-  }
-},
+    },
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",

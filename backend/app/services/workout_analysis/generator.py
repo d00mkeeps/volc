@@ -153,7 +153,7 @@ class AnalysisBundleGenerator:
             
             # 7. Cleanup old bundles (keep only the latest)
             logger.info(f"🧹 Cleaning up old bundles for user: {user_id}")
-            cleanup_result = await self.analysis_service.delete_old_analysis_bundles(
+            cleanup_result = await self.analysis_service.delete_old_user_context_bundles(
                 user_id, jwt_token, keep_latest=1
             )
             

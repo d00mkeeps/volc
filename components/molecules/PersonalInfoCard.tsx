@@ -84,6 +84,11 @@ export default function PersonalInfoCard({
       key: "instagram_username" as keyof UserProfile,
     },
     {
+      label: "Date of Birth",
+      value: profile.dob || "Not set",
+      key: "dob" as keyof UserProfile,
+    },
+    {
       label: "Age",
       value: profile.age ? `${profile.age} years old` : "Not set",
       key: "age" as keyof UserProfile,
@@ -164,8 +169,8 @@ export default function PersonalInfoCard({
                         {editedValues.is_imperial ? "Imperial" : "Metric"}
                       </Text>
                     </Button>
-                  ) : field.key === "age" ? (
-                    // Age is always read-only, even in edit mode
+                  ) : field.key === "age" || field.key === "dob" ? (
+                    // Age and DOB are read-only
                     <Text size="medium" fontWeight="600" color="$text">
                       {field.value}
                     </Text>

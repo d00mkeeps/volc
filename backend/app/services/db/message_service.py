@@ -31,6 +31,30 @@ class MessageService(BaseDBService):
             logger.error(f"Error getting messages: {str(e)}")
             return await self.handle_error("get_conversation_messages", e)
 
+    async def get_conversation_messages_admin(self, conversation_id: str) -> Dict[str, Any]:
+        """Get all messages for a conversation using admin access (for background tasks)"""
+        try:
+            logger.info(f"Getting messages (admin) for conversation: {conversation_id}")
+            
+            # Use admin client to bypass RLS
+            admin_client = self.get_admin_client()
+            result = admin_client.table("messages") \
+                .select("*") \
+                .eq("conversation_id", conversation_id) \
+                .order("timestamp") \
+                .execute()
+                
+            if hasattr(result, 'error') and result.error:
+                raise Exception(f"Failed to fetch messages: {result.error.message}")
+                
+            messages = result.data or []
+            logger.info(f"Retrieved {len(messages)} messages (admin)")
+            return await self.format_response(messages)
+            
+        except Exception as e:
+            logger.error(f"Error getting messages (admin): {str(e)}")
+            return await self.handle_error("get_conversation_messages_admin", e)
+
     async def save_message(self, conversation_id: str, content: str, sender: str, jwt_token: str) -> Dict[str, Any]:
         """Save a message to a conversation"""
         try:

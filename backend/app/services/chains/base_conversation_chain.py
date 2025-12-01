@@ -94,14 +94,19 @@ class BaseConversationChain:
         """
         Load messages from ConversationContext and replace existing history.
         
-        Args:
-            context: ConversationContext object with message history
-        """
-        from app.core.utils.conversation_attachments import ConversationContext
+        Uses duck typing to handle both NamedTuple and dict formats,
+        ensuring compatibility with cached contexts.
         
-        if isinstance(context, ConversationContext):
-            self.messages = context.messages.copy()
+        Args:
+            context: ConversationContext object (or dict) with message history
+        """
+        # Duck typing: check for required attributes instead of strict type check
+        # This handles both NamedTuple instances and dicts from cache
+        if hasattr(context, 'messages'):
+            # Ensure we create a mutable copy of the messages list
+            self.messages = list(context.messages)
             logger.info(f"Loaded {len(self.messages)} messages into conversation history")
         else:
-            logger.error("Invalid context type provided to load_conversation_context")
-            raise ValueError("Context must be a ConversationContext object")
+            logger.error(f"Invalid context type: {type(context).__name__}")
+            logger.error(f"Context value: {context}")
+            raise ValueError("Context must have 'messages' attribute")

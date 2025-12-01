@@ -1,17 +1,17 @@
 import re
 import json
 import asyncio
-from typing import Dict, Any, Optional, AsyncGenerator, TYPE_CHECKING
+from typing import Dict, Any, Optional, AsyncGenerator, TYPE_CHECKING, List
 import logging
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_google_vertexai import ChatVertexAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
+from app.services.workout_analysis.schemas import UserContextBundle
 from .base_conversation_chain import BaseConversationChain
 from app.services.db.user_profile_service import UserProfileService
 from app.core.prompts.workout_planning import (
     WORKOUT_PLANNING_SYSTEM_PROMPT,
-    WORKOUT_PLANNING_USER_CONTEXT_TEMPLATE,
     EXERCISE_CONTEXT_TEMPLATE,
     RECENT_WORKOUT_CONTEXT_TEMPLATE
 )
@@ -75,6 +75,7 @@ class WorkoutPlanningChain(BaseConversationChain):
         
         # Load system prompt from prompts module
         self.system_prompt = WORKOUT_PLANNING_SYSTEM_PROMPT
+        self._data_bundles: List[UserContextBundle] = []
         
         self._initialize_prompt_template()
         
@@ -239,6 +240,22 @@ class WorkoutPlanningChain(BaseConversationChain):
             frequent_exercises='\n'.join(frequent_exercise_lines)
         )
 
+    @property
+    def data_bundles(self) -> List[UserContextBundle]:
+        return self._data_bundles
+
+    def load_bundles(self, bundles: List) -> None:
+        """
+        Load workout bundles into context.
+        """
+        valid_bundles = []
+        for bundle in bundles:
+            if isinstance(bundle, UserContextBundle):
+                valid_bundles.append(bundle)
+            else:
+                logger.warning(f"Skipping invalid bundle type: {type(bundle)}")
+        
+        self._data_bundles = valid_bundles.copy()
 
     async def process_message(self, message: str, profiler=None) -> AsyncGenerator[Dict[str, Any], None]:
         """
@@ -455,6 +472,18 @@ class WorkoutPlanningChain(BaseConversationChain):
             logger.error(f"Error validating template structure: {str(e)}")
             return False
 
+    async def add_data_bundle(self, bundle: UserContextBundle) -> bool:
+        """
+        Add workout data bundle to conversation context.
+        """
+        try:
+            self._data_bundles.append(bundle)
+            logger.info(f"Added data bundle of type {type(bundle).__name__} to context.")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to add data bundle: {e}")
+            return False
+
     async def load_user_profile(self) -> bool:
         """Load user profile data for personalized planning context."""
         try:
@@ -501,7 +530,7 @@ class WorkoutPlanningChain(BaseConversationChain):
 
 
     def _format_user_context(self) -> str:
-        """Format user profile context for personalized planning."""
+        """Format user profile context using XML structure (matching analysis chain pattern)."""
         if not self._user_profile:
             return ""
         
@@ -535,18 +564,65 @@ class WorkoutPlanningChain(BaseConversationChain):
         elif isinstance(preferences, str):
             preference_text = preferences
         
-        preference_context = ""
-        if preference_text:
-            preference_context = f"\n    - Workout preferences: {preference_text}"
+        # Extract Memory from analysis bundle
+        memory_xml = ""
+        ai_memory = None
         
-        return WORKOUT_PLANNING_USER_CONTEXT_TEMPLATE.format(
-            name=name or 'Not provided',
-            age=age if age else 'Not provided',
-            units=units,
-            primary_goal=primary_goal,
-            experience=experience,
-            preference_context=preference_context
-        )
+        # PRIORITIZE _data_bundles (Analysis Pattern)
+        if self._data_bundles:
+            ai_memory = self._data_bundles[-1].ai_memory
+            logger.info(f"Using memory from _data_bundles (Analysis Pattern)")
+        # Fallback to legacy _analysis_bundle
+        elif self._analysis_bundle:
+            ai_memory = self._analysis_bundle.ai_memory
+            logger.info("Using memory from legacy _analysis_bundle")
+        
+        if ai_memory and ai_memory.get('notes'):
+            notes = ai_memory.get('notes', [])
+            
+            # Group notes by category
+            categorized_notes = {}
+            for note in notes:
+                category = note.get('category', 'general')
+                if category not in categorized_notes:
+                    categorized_notes[category] = []
+                categorized_notes[category].append(note)
+            
+            logger.info(f"🧠 Memory loaded for planning: {len(notes)} notes across {len(categorized_notes)} categories")
+            
+            # Format notes by category
+            category_sections = []
+            for category, cat_notes in categorized_notes.items():
+                notes_list = "\n".join([
+                    f"      <note>\n"
+                    f"        <text>{note.get('text', '')}</text>\n"
+                    f"        <date>{note.get('date', '')}</date>\n"
+                    f"      </note>"
+                    for note in cat_notes
+                ])
+                category_sections.append(
+                    f"    <{category}>\n"
+                    f"{notes_list}\n"
+                    f"    </{category}>"
+                )
+            
+            memory_xml = f"""
+  <ai_memory>
+    <description>Categorized notes from previous conversations. Use dates to identify info that needs reconfirmation.</description>
+{chr(10).join(category_sections)}
+  </ai_memory>"""
+            
+            logger.info(f"📝 Memory context formatted ({len(memory_xml)} chars)")
+        
+        return f"""<user_profile>
+  <name>{name or 'Not provided'}</name>
+  <age>{age if age else 'Not provided'}</age>
+  <units>{units}</units>
+  <primary_goal>{primary_goal}</primary_goal>
+  <experience_level>{experience}</experience_level>
+  <preferences>{preference_text}</preferences>
+  <important>Always use {units} when discussing weights and distances</important>{memory_xml}
+</user_profile>"""
 
     def _format_exercise_context(self) -> str:
         """
@@ -594,6 +670,11 @@ Example: If planning a chest workout, call get_exercises_by_muscle_groups(muscle
         logger.info(f"📊 Analysis bundle exists: {self._analysis_bundle is not None}")
         if self._analysis_bundle:
             logger.info(f"📊 Recent workouts in bundle: {len(self._analysis_bundle.recent_workouts)}")
+        
+        logger.info(f"📝 User context length: {len(user_context)} chars")
+        logger.info(f"📝 User context preview:")
+        logger.info(user_context)
+        
         logger.info(f"📝 Workout context length: {len(workout_context)} chars")
         logger.info(f"📝 Workout context preview (first 800 chars):")
         logger.info(workout_context[:800])

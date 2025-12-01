@@ -2,7 +2,7 @@ from typing import Dict, Any, Optional, List
 import logging
 from datetime import datetime, timedelta, timezone
 from .schemas import (
-    WorkoutAnalysisBundle,
+    UserContextBundle,
     BundleMetadata,
     GeneralWorkoutData,
     DateRange,
@@ -74,7 +74,7 @@ class AnalysisBundleProcessor:
         user_id: str,
         raw_workout_data: Dict[str, Any],
         exercise_definitions: List[Dict[str, Any]] = None
-    ) -> WorkoutAnalysisBundle:
+    ) -> UserContextBundle:
         """
         Process raw workout data into a complete analysis bundle.
         
@@ -85,7 +85,7 @@ class AnalysisBundleProcessor:
             exercise_definitions: List of exercise definition dicts from cache
             
         Returns:
-            WorkoutAnalysisBundle with all sections populated
+            UserContextBundle with all sections populated
         """
         workouts = raw_workout_data.get('workouts', [])
         logger.info(f"Processing bundle {bundle_id} with {len(workouts)} workouts")
@@ -119,7 +119,7 @@ class AnalysisBundleProcessor:
             # 8. Skip correlation_insights for now (to be implemented later)
             
             # Assemble final bundle
-            bundle = WorkoutAnalysisBundle(
+            bundle = UserContextBundle(
                 id=bundle_id,
                 user_id=user_id,
                 status='complete',
@@ -633,9 +633,9 @@ class AnalysisBundleProcessor:
         user_id: str,
         raw_workout_data: Dict,
         errors: list
-    ) -> WorkoutAnalysisBundle:
+    ) -> UserContextBundle:
         """Create minimal bundle when processing fails."""
-        return WorkoutAnalysisBundle(
+        return UserContextBundle(
             id=bundle_id,
             user_id=user_id,
             status='failed',

@@ -1,0 +1,5 @@
+2025-11-27 11:59:32,990 - app - INFO - Logging has been set up
+2025-11-27 11:59:32,990 - app.main - INFO - Application starting
+2025-11-27 11:59:32,990 - app.main - INFO - Loading .env from: /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/.env (exists: True)
+2025-11-27 11:59:32,990 - app.main - INFO - SUPABASE_URL present: True
+2025-11-27 11:59:32,991 - app.main - INFO - SUPABASE_KEY present: True

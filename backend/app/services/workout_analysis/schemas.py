@@ -7,7 +7,7 @@ derived metrics needed for intelligent coaching insights.
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 
 
@@ -267,24 +267,33 @@ class CorrelationInsights(BaseModel):
     )
 
 
+
+
+
 # ==================== MAIN BUNDLE ====================
 
-class WorkoutAnalysisBundle(BaseModel):
+class UserContextBundle(BaseModel):
     """
-    Complete workout analysis bundle for LLM-powered coaching.
+    Complete context bundle for LLM-powered coaching.
     
-    This is the single source of truth for user workout analysis. It contains
-    all workout data and derived metrics needed for the LLM to provide
-    intelligent coaching insights, training recommendations, and progress analysis.
-    
-    The bundle is regenerated after each workout creation or deletion,
-    ensuring the LLM always has access to current data.
+    Formerly known as WorkoutAnalysisBundle. Now includes user profile and memory
+    in addition to workout data.
     """
     id: str = Field(..., description="Unique bundle identifier (UUID)")
     user_id: str = Field(..., description="User this bundle belongs to")
     status: str = Field(
         default="complete",
         description="Bundle generation status: 'pending', 'processing', 'complete', 'failed'"
+    )
+    
+    # User Context
+    user_profile: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Full user profile"
+    )
+    ai_memory: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Long-term memory extracted from conversations (note-based)"
     )
     
     # Core data sections

@@ -43,6 +43,19 @@ export class UserProfileService extends BaseDBService {
     try {
       console.log("Getting user profile");
       const data = await apiGet("/db/user-profile");
+      
+      // Calculate age if dob exists
+      if (data.dob) {
+        const dob = new Date(data.dob);
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+          age--;
+        }
+        data.age = age;
+      }
+      
       console.log("User profile retrieved successfully");
       return data;
     } catch (error) {

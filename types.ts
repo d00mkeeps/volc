@@ -143,6 +143,7 @@ export interface UserProfile {
   goals: any;
   current_stats: any;
   age: number | null;
+  dob: string | null;
   bio: string | null;
   user_id: number;
   first_name: string | null;
@@ -153,6 +154,11 @@ export interface UserProfile {
   instagram_username: string | null;
   avatar_image_id: string | null;
   permission_level: string | null;
+  ai_memory?: {
+    summary: string;
+    facts: string[];
+    last_updated: string;
+  };
 }
 
 export interface WorkoutExercise {

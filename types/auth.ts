@@ -22,7 +22,10 @@ export interface SignInCredentials {
   password: string
 }
 
-export interface SignUpCredentials extends SignInCredentials {
+export interface SignUpCredentials {
+  email: string
+  password?: string
+  dob?: string
   //validation, referral code, other signup excliusive fields here
 }
 

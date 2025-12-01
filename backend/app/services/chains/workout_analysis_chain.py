@@ -6,7 +6,7 @@ import json
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_anthropic import ChatAnthropic
-from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
+from app.services.workout_analysis.schemas import UserContextBundle
 from .base_conversation_chain import BaseConversationChain
 from app.core.prompts.workout_analysis import get_workout_analysis_prompt
 
@@ -26,7 +26,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
         # Load the enhanced prompt from separate file
         self.system_prompt = get_workout_analysis_prompt()
         self.user_id = user_id
-        self._data_bundles: List[WorkoutAnalysisBundle] = []
+        self._data_bundles: List[UserContextBundle] = []
         self._user_profile = None
         self.logger = logging.getLogger(__name__)
         
@@ -38,7 +38,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
         self._initialize_prompt_template()
 
     @property
-    def data_bundles(self) -> List[WorkoutAnalysisBundle]:
+    def data_bundles(self) -> List[UserContextBundle]:
         return self._data_bundles
 
     def _initialize_prompt_template(self) -> None:
@@ -133,7 +133,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
             logger.error(f"Error extracting chart data: {str(e)}", exc_info=True)
             return None
 
-    async def add_data_bundle(self, bundle: WorkoutAnalysisBundle) -> bool:
+    async def add_data_bundle(self, bundle: UserContextBundle) -> bool:
         """
         Add workout data bundle to conversation context.
         
@@ -197,6 +197,50 @@ class WorkoutAnalysisChain(BaseConversationChain):
             experience = current_stats['notes']
         else:
             experience = 'Not specified'
+            
+        # Extract Memory from analysis bundle (not user profile)
+        memory_xml = ""
+        ai_memory = None
+        if self._data_bundles:
+            latest_bundle = self._data_bundles[-1]
+            ai_memory = latest_bundle.ai_memory
+        
+        if ai_memory and ai_memory.get('notes'):
+            notes = ai_memory.get('notes', [])
+            
+            # Group notes by category
+            categorized_notes = {}
+            for note in notes:
+                category = note.get('category', 'general')
+                if category not in categorized_notes:
+                    categorized_notes[category] = []
+                categorized_notes[category].append(note)
+            
+            logger.info(f"🧠 Memory loaded for analysis: {len(notes)} notes across {len(categorized_notes)} categories")
+            
+            # Format notes by category
+            category_sections = []
+            for category, cat_notes in categorized_notes.items():
+                notes_xml = "\n".join([
+                    f"      <note>\n"
+                    f"        <text>{note.get('text', '')}</text>\n"
+                    f"        <date>{note.get('date', '')}</date>\n"
+                    f"      </note>"
+                    for note in cat_notes
+                ])
+                category_sections.append(
+                    f"    <{category}>\n"
+                    f"{notes_xml}\n"
+                    f"    </{category}>"
+                )
+            
+            categories_xml = "\n".join(category_sections)
+            
+            memory_xml = f"""
+  <ai_memory>
+    <description>Categorized notes extracted from previous conversations. Use dates to identify stale information that needs reconfirmation.</description>
+{categories_xml}
+  </ai_memory>"""
         
         return f"""<user_profile>
   <name>{name or 'Not provided'}</name>
@@ -204,7 +248,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
   <units>{units}</units>
   <primary_goal>{primary_goal}</primary_goal>
   <experience_level>{experience}</experience_level>
-  <important>Always use {units} when discussing weights and distances</important>
+  <important>Always use {units} when discussing weights and distances</important>{memory_xml}
 </user_profile>"""
 
     def _format_strength_progression_time_series(self, strength_data) -> str:
@@ -635,7 +679,7 @@ class WorkoutAnalysisChain(BaseConversationChain):
         """
         valid_bundles = []
         for bundle in bundles:
-            if isinstance(bundle, WorkoutAnalysisBundle):
+            if isinstance(bundle, UserContextBundle):
                 valid_bundles.append(bundle)
             else:
                 logger.warning(f"Skipping invalid bundle type: {type(bundle)}")

@@ -10,7 +10,7 @@ import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
 from app.core.supabase.client import get_user_client, get_admin_client
-from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
+from ..workout_analysis.schemas import UserContextBundle
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +28,46 @@ class AnalysisBundleService:
         """Get Supabase admin client."""
         return get_admin_client()
     
-    def _deserialize_bundle(self, db_row: Dict[str, Any]) -> 'WorkoutAnalysisBundle':
+    def _default_metadata(self) -> Dict[str, Any]:
+        """Return default metadata structure for NULL/missing metadata."""
+        return {
+            'bundle_type': 'standard',
+            'created_at': datetime.utcnow().isoformat(),
+            'data_window': 'No data',
+            'errors': []
+        }
+    
+    def _default_general_workout_data(self) -> Dict[str, Any]:
+        """Return default general workout data structure for NULL/missing data."""
+        return {
+            'total_workouts': 0,
+            'total_exercises_unique': 0,
+            'date_range': {
+                'earliest': datetime.utcnow().isoformat(),
+                'latest': datetime.utcnow().isoformat()
+            },
+            'exercises_included': [],
+            'exercise_frequency': {'by_sets': {}}
+        }
+    
+    def _default_volume_data(self) -> Dict[str, Any]:
+        """Return default volume data structure for NULL/missing data."""
+        return {
+            'total_volume_kg': 0.0,
+            'today_volume_kg': 0.0,
+            'volume_by_exercise_over_time': []
+        }
+    
+    def _default_consistency_data(self) -> Dict[str, Any]:
+        """Return default consistency data structure for NULL/missing data."""
+        return {
+            'avg_days_between': 0.0,
+            'variance': None
+        }
+    
+    def _deserialize_bundle(self, db_row: Dict[str, Any]) -> 'UserContextBundle':
         """
-        Deserialize database row into WorkoutAnalysisBundle Pydantic object.
+        Deserialize database row into UserContextBundle Pydantic object.
         
         Transforms the nested database structure into the flat Pydantic structure.
         Handles both old and new database structures for backwards compatibility.
@@ -42,38 +79,41 @@ class AnalysisBundleService:
             db_row: Raw database row dict
             
         Returns:
-            WorkoutAnalysisBundle Pydantic object
+            UserContextBundle Pydantic object
         """
-        from app.services.workout_analysis.schemas import WorkoutAnalysisBundle
+        from ..workout_analysis.schemas import UserContextBundle
         
-        # Extract nested data from database columns
-        workouts_data = db_row.get('workouts', {})
-        top_performers_data = db_row.get('top_performers', {})
+        # Extract nested data from database columns (handle NULL values)
+        # Use 'or {}' to handle both missing keys AND None values
+        workouts_data = db_row.get('workouts') or {}
+        top_performers_data = db_row.get('top_performers') or {}
         
         # Build flat structure for Pydantic
+        # Use helper methods to provide complete default objects that satisfy Pydantic validation
         flat_bundle = {
             'id': db_row['id'],
             'user_id': db_row['user_id'],
-            'status': db_row.get('status', 'complete'),
-            'metadata': db_row.get('metadata', {}),
+            'status': db_row.get('status') or 'complete',
+            'metadata': db_row.get('metadata') or self._default_metadata(),
             
-            # Un-nest workouts data
-            'general_workout_data': workouts_data.get('general_workout_data', {}),
-            'recent_workouts': workouts_data.get('recent_workouts', []),
+            # Un-nest workouts data with proper defaults
+            'general_workout_data': workouts_data.get('general_workout_data') or self._default_general_workout_data(),
+            'recent_workouts': workouts_data.get('recent_workouts') or [],
             
-            # Un-nest top_performers data
-            'strength_data': top_performers_data.get('strength_data', {}),
-            'volume_data': top_performers_data.get('volume_data', {}),
+            # Un-nest top_performers data with proper defaults
+            'strength_data': top_performers_data.get('strength_data') or {'exercise_strength_progress': []},
+            'volume_data': top_performers_data.get('volume_data') or self._default_volume_data(),
             
-            # Other fields (already flat)
-            'consistency_data': db_row.get('consistency_metrics', {}),
+            # Other fields (already flat) with proper NULL handling
+            'consistency_data': db_row.get('consistency_metrics') or self._default_consistency_data(),
             'muscle_group_balance': db_row.get('muscle_group_balance'),
             'correlation_insights': db_row.get('correlation_data'),
-            'chart_urls': db_row.get('chart_urls', {})
+            'chart_urls': db_row.get('chart_urls') or {},
+            'ai_memory': db_row.get('ai_memory')
         }
         
         # Deserialize into Pydantic model
-        return WorkoutAnalysisBundle.model_validate(flat_bundle)
+        return UserContextBundle.model_validate(flat_bundle)
     
     async def create_analysis_bundle(self, user_id: str, jwt_token: str) -> Dict[str, Any]:
         """
@@ -97,7 +137,17 @@ class AnalysisBundleService:
             
             user_client = self.get_user_client(jwt_token)
             
-            result = user_client.table('analysis_bundles').insert({
+            # Fetch latest bundle to copy memory from
+            latest_bundle_result = await self.get_latest_analysis_bundle(user_id, jwt_token)
+            initial_memory = {"notes": []}
+            
+            if latest_bundle_result.get("success") and latest_bundle_result.get("data"):
+                latest_bundle = latest_bundle_result["data"]
+                if latest_bundle.ai_memory:
+                    initial_memory = latest_bundle.ai_memory
+                    logger.info(f"Copying memory from previous bundle for user {user_id}")
+
+            result = user_client.table('user_context_bundles').insert({
                 'id': bundle_id,
                 'user_id': user_id,
                 'status': 'pending',
@@ -108,7 +158,8 @@ class AnalysisBundleService:
                 'consistency_metrics': {},
                 'correlation_data': None,
                 'muscle_group_balance': None,
-                'chart_urls': {}
+                'chart_urls': {},
+                'ai_memory': initial_memory
             }).execute()
             
             if hasattr(result, 'data') and result.data:
@@ -170,7 +221,7 @@ class AnalysisBundleService:
             if status == 'failed' and error_msg:
                 update_data['metadata'] = {'errors': [error_msg]}
             
-            result = user_client.table('analysis_bundles') \
+            result = user_client.table('user_context_bundles') \
                 .update(update_data) \
                 .eq('id', bundle_id) \
                 .execute()
@@ -196,13 +247,13 @@ class AnalysisBundleService:
     async def save_analysis_bundle(
         self,
         bundle_id: str,
-        bundle: Any,  # WorkoutAnalysisBundle
+        bundle: Any,  # UserContextBundle
         jwt_token: str
     ) -> Dict[str, Any]:
         """
         Save the complete analysis bundle to database.
         
-        Maps the WorkoutAnalysisBundle schema to the database structure.
+        Maps the UserContextBundle schema to the database structure.
         Uses nested structure in 'workouts' and 'top_performers' columns.
         
         Location: /app/services/db/analysis_service.py
@@ -210,7 +261,7 @@ class AnalysisBundleService:
         
         Args:
             bundle_id: Bundle ID
-            bundle: WorkoutAnalysisBundle object
+            bundle: UserContextBundle object
             jwt_token: JWT for authentication
             
         Returns:
@@ -258,10 +309,11 @@ class AnalysisBundleService:
                 'correlation_data': db_correlation,
                 'muscle_group_balance': db_muscle_group_balance,
                 'chart_urls': {},
+                'ai_memory': bundle_dict.get('ai_memory'),
                 'updated_at': datetime.utcnow().isoformat()
             }
             
-            result = user_client.table('analysis_bundles') \
+            result = user_client.table('user_context_bundles') \
                 .update(update_data) \
                 .eq('id', bundle_id) \
                 .execute()
@@ -283,6 +335,92 @@ class AnalysisBundleService:
                 'success': False,
                 'error': str(e)
             }
+    async def save_analysis_bundle_admin(
+        self,
+        bundle_id: str,
+        bundle: Any  # UserContextBundle
+    ) -> Dict[str, Any]:
+        """
+        Save the complete analysis bundle to database (admin access).
+        
+        Location: /app/services/db/analysis_service.py
+        Method: AnalysisBundleService.save_analysis_bundle_admin()
+        
+        Args:
+            bundle_id: Bundle ID
+            bundle: UserContextBundle object
+            
+        Returns:
+            {'success': bool, 'error': str}
+        """
+        try:
+            logger.info(f"Saving analysis bundle (admin): {bundle_id}")
+            
+            admin_client = self.get_admin_client()
+            
+            # Convert bundle to dict for database storage
+            bundle_dict = bundle.model_dump(mode='json')
+            
+            # Build the database structure
+            db_metadata = {
+                'bundle_type': bundle_dict['metadata']['bundle_type'],
+                'created_at': bundle_dict['metadata']['created_at'],
+                'data_window': bundle_dict['metadata']['data_window'],
+                'errors': bundle_dict['metadata']['errors']
+            }
+            
+            # Store complete workout data (general + recent) in 'workouts' column
+            db_workouts = {
+                'general_workout_data': bundle_dict['general_workout_data'],
+                'recent_workouts': bundle_dict['recent_workouts']
+            }
+            
+            # Store all performance data in 'top_performers' column
+            db_top_performers = {
+                'strength_data': bundle_dict['strength_data'],
+                'volume_data': bundle_dict['volume_data']
+            }
+
+            # Extract other fields
+            db_muscle_group_balance = bundle_dict.get('muscle_group_balance')
+            db_consistency = bundle_dict['consistency_data']
+            db_correlation = bundle_dict.get('correlation_insights')
+            
+            update_data = {
+                'status': bundle_dict['status'],
+                'metadata': db_metadata,
+                'workouts': db_workouts,
+                'top_performers': db_top_performers,
+                'consistency_metrics': db_consistency,
+                'correlation_data': db_correlation,
+                'muscle_group_balance': db_muscle_group_balance,
+                'chart_urls': {},
+                'ai_memory': bundle_dict.get('ai_memory'),
+                'updated_at': datetime.utcnow().isoformat()
+            }
+            
+            result = admin_client.table('user_context_bundles') \
+                .update(update_data) \
+                .eq('id', bundle_id) \
+                .execute()
+            
+            if hasattr(result, 'data') and result.data:
+                logger.info(f"Analysis bundle saved successfully (admin): {bundle_id}")
+                return {'success': True}
+            else:
+                error = "Failed to save bundle (admin): No data returned"
+                logger.error(error)
+                return {
+                    'success': False,
+                    'error': error
+                }
+                
+        except Exception as e:
+            logger.error(f"Error saving analysis bundle (admin): {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
     
     async def get_latest_analysis_bundle(
         self,
@@ -292,7 +430,7 @@ class AnalysisBundleService:
         """
         Get the most recent completed analysis bundle for a user.
         
-        Returns a properly deserialized WorkoutAnalysisBundle Pydantic object.
+        Returns a properly deserialized UserContextBundle Pydantic object.
         
         Location: /app/services/db/analysis_service.py
         Method: AnalysisBundleService.get_latest_analysis_bundle()
@@ -302,14 +440,14 @@ class AnalysisBundleService:
             jwt_token: JWT for authentication
             
         Returns:
-            {'success': bool, 'data': WorkoutAnalysisBundle, 'error': str}
+            {'success': bool, 'data': UserContextBundle, 'error': str}
         """
         try:
             logger.info(f"Fetching latest analysis bundle for user: {user_id}")
             
             user_client = self.get_user_client(jwt_token)
             
-            result = user_client.table('analysis_bundles') \
+            result = user_client.table('user_context_bundles') \
                 .select('*') \
                 .eq('user_id', user_id) \
                 .eq('status', 'complete') \
@@ -327,7 +465,7 @@ class AnalysisBundleService:
                 
                 return {
                     'success': True,
-                    'data': bundle  # Now returns WorkoutAnalysisBundle object
+                    'data': bundle  # Now returns UserContextBundle object
                 }
             else:
                 logger.info(f"No analysis bundle found for user: {user_id}")
@@ -353,7 +491,7 @@ class AnalysisBundleService:
         Used for server-side operations like WebSocket LLM connections where we
         don't have a user JWT token.
         
-        Returns a properly deserialized WorkoutAnalysisBundle Pydantic object.
+        Returns a properly deserialized UserContextBundle Pydantic object.
         
         Location: /app/services/db/analysis_service.py
         Method: AnalysisBundleService.get_latest_analysis_bundle_admin()
@@ -362,14 +500,14 @@ class AnalysisBundleService:
             user_id: User's ID
             
         Returns:
-            {'success': bool, 'data': WorkoutAnalysisBundle, 'error': str}
+            {'success': bool, 'data': UserContextBundle, 'error': str}
         """
         try:
             logger.info(f"Fetching latest analysis bundle (admin) for user: {user_id}")
             
             admin_client = self.get_admin_client()
             
-            result = admin_client.table('analysis_bundles') \
+            result = admin_client.table('user_context_bundles') \
                 .select('*') \
                 .eq('user_id', user_id) \
                 .eq('status', 'complete') \
@@ -387,7 +525,7 @@ class AnalysisBundleService:
                 
                 return {
                     'success': True,
-                    'data': bundle  # Now returns WorkoutAnalysisBundle object
+                    'data': bundle  # Now returns UserContextBundle object
                 }
             else:
                 logger.info(f"No analysis bundle found (admin) for user: {user_id}")
@@ -403,7 +541,7 @@ class AnalysisBundleService:
                 'error': str(e)
             }
     
-    async def delete_old_analysis_bundles(
+    async def delete_old_user_context_bundles(
         self,
         user_id: str,
         jwt_token: str,
@@ -413,7 +551,7 @@ class AnalysisBundleService:
         Delete old analysis bundles, keeping only the most recent N bundles.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.delete_old_analysis_bundles()
+        Method: AnalysisBundleService.delete_old_user_context_bundles()
         
         Args:
             user_id: User's ID
@@ -429,7 +567,7 @@ class AnalysisBundleService:
             user_client = self.get_user_client(jwt_token)
             
             # Get all bundles for this user (not attached to conversations)
-            result = user_client.table('analysis_bundles') \
+            result = user_client.table('user_context_bundles') \
                 .select('id, created_at') \
                 .eq('user_id', user_id) \
                 .is_('conversation_id', 'null') \
@@ -457,7 +595,7 @@ class AnalysisBundleService:
             bundles_to_delete = [b['id'] for b in all_bundles[keep_latest:]]
             
             # Delete old bundles
-            delete_result = user_client.table('analysis_bundles') \
+            delete_result = user_client.table('user_context_bundles') \
                 .delete() \
                 .in_('id', bundles_to_delete) \
                 .execute()

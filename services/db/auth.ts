@@ -4,9 +4,22 @@ import { AuthError, SignInCredentials, SignUpCredentials } from "@/types/auth";
 export const authService = {
   signIn: async ({ email, password }: SignInCredentials) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Support for password-based sign in (legacy/alternative)
+      if (password) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        return data;
+      }
+      
+      // Magic link sign in
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          emailRedirectTo: "volc://auth/callback",
+        },
       });
       if (error) throw error;
       return data;
@@ -16,58 +29,71 @@ export const authService = {
     }
   },
 
-  signUp: async ({ email, password }: SignUpCredentials) => {
+  signInWithIdToken: async ({ token, nonce, fullName }: { token: string; nonce: string; fullName?: string | null }) => {
     try {
-      console.log("🚀 [authService.signUp] Starting signup for:", email);
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token,
+        nonce,
+      });
 
-      const { data, error } = await supabase.auth.signUp({
+      if (error) throw error;
+
+      // If we have a full name (first sign in), update the user profile immediately
+      if (fullName && data.user) {
+        const nameParts = fullName.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ');
+
+        const { error: updateError } = await supabase
+          .from('user_profiles')
+          .update({ 
+            first_name: firstName,
+            last_name: lastName
+          })
+          .eq('auth_user_uuid', data.user.id);
+          
+        if (updateError) {
+          console.error("Error saving full name:", updateError);
+          // Don't fail auth if name save fails, but log it
+        }
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Apple Sign-in error:", error);
+      throw handleAuthError(error);
+    }
+  },
+
+  signUp: async ({ email, dob }: SignUpCredentials) => {
+    try {
+      console.log("🚀 [authService.signUp] Starting magic link signup for:", email);
+
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
-        password,
         options: {
-          emailRedirectTo: "https://volc.uk/success",
+          emailRedirectTo: "volc://auth/callback",
+          data: {
+            dob: dob, // Pass DOB to be stored in user metadata
+          },
         },
       });
 
       console.log("📦 [authService.signUp] Supabase response:", {
         hasData: !!data,
         hasError: !!error,
-        user: data?.user?.id,
-        session: !!data?.session,
       });
 
       if (error) {
-        console.error("❌ [authService.signUp] Supabase error:", {
-          message: error.message,
-          status: error.status,
-          name: error.name,
-        });
+        console.error("❌ [authService.signUp] Supabase error:", error);
         throw error;
       }
 
-      // Check if user already exists (Supabase sometimes returns success with no session)
-      if (data.user && !data.session && data.user.identities?.length === 0) {
-        console.warn("⚠️ [authService.signUp] User already registered");
-        throw {
-          message:
-            "An account with this email already exists. Please sign in instead.",
-          status: 400,
-        };
-      }
-
-      console.log("✅ [authService.signUp] Signup successful");
+      console.log("✅ [authService.signUp] Magic link sent");
       return data;
     } catch (error: any) {
       console.error("💥 [authService.signUp] Caught error:", error);
-
-      // Handle specific error cases
-      if (error.message?.toLowerCase().includes("already registered")) {
-        throw {
-          message:
-            "An account with this email already exists. Please sign in instead.",
-          status: 400,
-        };
-      }
-
       throw handleAuthError(error);
     }
   },

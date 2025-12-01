@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 interface AuthContextType extends AuthState {
   signIn: typeof authService.signIn;
+  signInWithApple: typeof authService.signInWithIdToken;
   signUp: typeof authService.signUp;
   signOut: () => Promise<void>;
   resetPassword: typeof authService.resetPassword;
@@ -60,6 +61,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     });
 
+    // Handle deep links
+    const handleDeepLink = async (url: string | null) => {
+      if (!url) return;
+      
+      console.log("🔗 [AuthContext] Deep link received:", url);
+      
+      try {
+        // Parse the URL to see if it contains auth tokens
+        // Supabase magic links usually come as: volc://auth/callback#access_token=...&refresh_token=...
+        // or volc://auth/callback?code=... (if using PKCE)
+        
+        // For implicit flow (hash fragment):
+        if (url.includes("access_token") || url.includes("refresh_token")) {
+            // We can't easily extract tokens manually without a library, 
+            // but usually supabase.auth.getSession() might pick it up if we were in a browser.
+            // In React Native, we might need to manually set the session if we extract tokens.
+            
+            // However, a better approach with Supabase v2 is often just letting the listener handle it 
+            // IF we can pass the URL to supabase. But we disabled detectSessionInUrl.
+            
+            // Let's try to parse the hash
+            const hashIndex = url.indexOf("#");
+            if (hashIndex !== -1) {
+                const hash = url.substring(hashIndex + 1);
+                const params = new URLSearchParams(hash);
+                const accessToken = params.get("access_token");
+                const refreshToken = params.get("refresh_token");
+                
+                if (accessToken && refreshToken) {
+                    const { data, error } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                    });
+                    if (error) throw error;
+                    console.log("✅ [AuthContext] Session set from deep link");
+                }
+            }
+        }
+      } catch (error) {
+        console.error("❌ [AuthContext] Error handling deep link:", error);
+      }
+    };
+
+    // Check initial URL
+    import("expo-linking").then((Linking) => {
+        Linking.getInitialURL().then(handleDeepLink);
+        const subscription = Linking.addEventListener("url", ({ url }) => handleDeepLink(url));
+        return () => subscription.remove();
+    });
+
     return () => {
       subscription.unsubscribe();
     };
@@ -73,6 +124,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signIn: async (credentials: SignInCredentials) => {
       try {
         const result = await authService.signIn(credentials);
+        return result;
+      } catch (err) {
+        setError(err as AuthError);
+        throw err;
+      }
+    },
+
+    signInWithApple: async (params: { token: string; nonce: string; fullName?: string | null }) => {
+      try {
+        const result = await authService.signInWithIdToken(params);
         return result;
       } catch (err) {
         setError(err as AuthError);

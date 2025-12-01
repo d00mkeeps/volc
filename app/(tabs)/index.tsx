@@ -29,7 +29,6 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "@/components/organisms/workout/WorkoutCompletionModal";
 import { CompleteWorkout } from "@/types/workout";
-import { OnboardingModal } from "@/components/organisms/onboarding/OnboardingModal";
 import { SettingsModal } from "@/components/molecules/SettingsModal";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
@@ -62,7 +61,6 @@ export default function HomeScreen() {
   const { userProfile } = useUserStore();
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showFinishMessage, setShowFinishMessage] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
@@ -227,26 +225,7 @@ export default function HomeScreen() {
     }
   }, [isActive, sessionActions]);
 
-  useEffect(() => {
-    if (userProfile !== null) {
-      // Profile has been loaded
-      const needsOnboarding =
-        !userProfile.first_name ||
-        !userProfile.goals ||
-        Object.keys(userProfile.goals || {}).length === 0;
 
-      if (needsOnboarding) {
-        console.log("User needs onboarding - showing modal");
-        setShowOnboardingModal(true);
-      }
-    }
-  }, [userProfile]);
-
-  const handleOnboardingComplete = useCallback(() => {
-    setShowOnboardingModal(false);
-    // Optionally refresh the profile to get updated data
-    useUserStore.getState().refreshProfile();
-  }, []);
 
   const handleWorkoutCompletionClose = useCallback(() => {
     setShowCompletionModal(false);
@@ -389,10 +368,6 @@ export default function HomeScreen() {
         />
       )}
 
-      <OnboardingModal
-        isVisible={showOnboardingModal}
-        onComplete={handleOnboardingComplete}
-      />
 
       {!isActive && (
         <KeyboardAvoidingView

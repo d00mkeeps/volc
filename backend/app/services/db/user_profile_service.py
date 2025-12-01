@@ -42,16 +42,29 @@ class UserProfileService(BaseDBService):
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
                 user_profile["bio"] = profile_data["bio"]
+            if "ai_memory" in profile_data:
+                user_profile["ai_memory"] = profile_data["ai_memory"]
             
-            # Try to update first
+            # Check if profile exists first
             admin_client = self.get_admin_client()
-            result = admin_client.table("user_profiles") \
-                .update(user_profile) \
+            existing_profile = admin_client.table("user_profiles") \
+                .select("auth_user_uuid") \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
             
-            if not hasattr(result, 'data') or not result.data:
-                # No rows updated - profile doesn't exist, so insert
+            profile_exists = hasattr(existing_profile, 'data') and existing_profile.data
+            
+            if profile_exists:
+                # Profile exists - UPDATE
+                result = admin_client.table("user_profiles") \
+                    .update(user_profile) \
+                    .eq("auth_user_uuid", user_id) \
+                    .execute()
+                    
+                if not hasattr(result, 'data'):
+                    raise Exception("Failed to update user profile: No data returned")
+            else:
+                # Profile doesn't exist - INSERT
                 logger.info(f"No existing profile found for user {user_id}, creating new profile")
                 user_profile["auth_user_uuid"] = user_id
                 
@@ -71,7 +84,7 @@ class UserProfileService(BaseDBService):
             if not hasattr(profile_result, 'data') or not profile_result.data:
                 raise Exception("Failed to fetch saved user profile")
             
-            logger.info(f"Successfully saved profile for user {user_id}")
+            logger.info(f"Successfully saved profile for user {user_id} (admin)")
             return {
                 "success": True,
                 "data": profile_result.data[0]
@@ -207,7 +220,7 @@ class UserProfileService(BaseDBService):
         """Get user profile by user ID using admin client (no auth required)"""
         try:
             response = self.get_admin_client().table('user_profiles').select(
-                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username'
+                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username, ai_memory'
             ).eq('auth_user_uuid', user_id).execute()
             
             if response.data:

@@ -9,7 +9,9 @@ from langchain_google_vertexai import ChatVertexAI
 from app.services.llm.onboarding import OnboardingLLMService
 from app.services.llm.workout_planning import WorkoutPlanningLLMService
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
+from ...services.memory.memory_service import MemoryExtractionService
 from google.oauth2 import service_account
+import asyncio
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -223,5 +225,10 @@ async def llm_workout_analysis(
         await llm_service.process_websocket(websocket, conversation_id, user_id=user_id)
     except WebSocketDisconnect:
         logger.info(f"Workout analysis WebSocket disconnected: {conversation_id}")
+        
+        # Trigger memory extraction in background
+        from app.core.utils.websocket_utils import trigger_memory_extraction
+        await trigger_memory_extraction(user_id, conversation_id)
+            
     except Exception as e:
         logger.error(f"Error in workout analysis websocket: {str(e)}", exc_info=True)
