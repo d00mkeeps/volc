@@ -284,38 +284,33 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       updated_at: new Date().toISOString(),
     };
 
-    // Single database save with complete data
-    const savedWorkout = await workoutService.saveCompletedWorkout(
-      userProfile.user_id.toString(),
-      workoutToSave
-    );
-    await workoutPersistence.clear();
-    // Handle image commit if needed
+    // Initiate save in background (don't await - WorkoutStore handles retry logic)
+    useWorkoutStore.getState().createWorkout(workoutToSave);
+    
+    // Clear persistence immediately
+    workoutPersistence.clear();
+
+    // Handle image commit in background (don't await)
     if (pendingImageId) {
-      const commitResult = await imageService.commitImage(pendingImageId);
-      if (!commitResult.success) {
-        throw new Error(commitResult.error || "Failed to commit image");
-      }
+      imageService.commitImage(pendingImageId).then((commitResult) => {
+        if (!commitResult.success) {
+          console.error("Failed to commit image:", commitResult.error);
+        }
+      });
       set({ pendingImageId: null });
     }
 
     // Update session with saved workout
-    set({ currentWorkout: savedWorkout });
+    set({ currentWorkout: workoutToSave });
 
     useDashboardStore.getState().refreshDashboard();
 
-    // Refresh workout store to show the new workout in workout lists
-    useWorkoutStore.getState().loadWorkouts();
-
-    // Show success toast
-    Toast.show({
-      type: "success",
-      text1: "workout saved!",
-    });
-
+    // Show success toast (handled by WorkoutStore)
+    // WorkoutStore shows "Workout saved!" or "We can't save your workout right now"
+    
     set({ showWorkoutSavedPrompt: true });
 
-    return savedWorkout;
+    return workoutToSave;
   },
 
   finishWorkout: () => {

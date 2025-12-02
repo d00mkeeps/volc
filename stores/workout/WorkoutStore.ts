@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { workoutService } from "@/services/db/workout";
 import { authService } from "@/services/db/auth";
+import { pendingWorkoutQueue } from "@/utils/pendingWorkoutQueue";
+import { retryWithBackoff } from "@/utils/retryManager";
+import Toast from "react-native-toast-message";
 
 interface WorkoutState {
   // State
@@ -11,9 +14,11 @@ interface WorkoutState {
   loading: boolean;
   error: Error | null;
   initialized: boolean;
+  pendingWorkoutsCount: number;
 
   // Auth-triggered methods (called by authStore)
   initializeIfAuthenticated: () => Promise<void>;
+  syncPendingWorkouts: () => Promise<void>;
   clearData: () => void;
 
   loadWorkouts: () => Promise<void>;
@@ -72,11 +77,36 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     loading: false,
     error: null,
     initialized: false,
+    pendingWorkoutsCount: 0,
 
     // Called by authStore when user becomes authenticated
     initializeIfAuthenticated: async () => {
+      console.log("[WorkoutStore] initializeIfAuthenticated called");
+      
       const { initialized, loading } = get();
-      if (initialized || loading) return; // Prevent double-initialization
+      
+      // Always check and sync pending workouts, even if already initialized
+      // This ensures queue processing happens on every app startup
+      const queueBeforeSync = await pendingWorkoutQueue.getAll();
+      console.log("[WorkoutStore] 🔍 Queue contents on app startup:", {
+        count: queueBeforeSync.length,
+        workouts: queueBeforeSync.map(item => ({
+          id: item.id,
+          name: item.workout.name,
+          attempts: item.attempts,
+          addedAt: new Date(item.addedAt).toISOString(),
+          lastAttemptAt: item.lastAttemptAt ? new Date(item.lastAttemptAt).toISOString() : 'never',
+        })),
+      });
+
+      // Try to sync any pending workouts from previous session
+      await get().syncPendingWorkouts();
+      
+      // Only load workouts data if not already initialized
+      if (initialized || loading) {
+        console.log("[WorkoutStore] Already initialized or loading, skipping data load");
+        return;
+      }
 
       await loadWorkoutsData();
     },
@@ -90,6 +120,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         loading: false,
         error: null,
         initialized: false,
+        pendingWorkoutsCount: 0,
       });
     },
 
@@ -227,32 +258,153 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     },
 
     createWorkout: async (workout: CompleteWorkout) => {
-      try {
-        set({ loading: true, error: null });
+      console.log("[WorkoutStore] 📝 createWorkout called for:", workout.name);
+      
+      // 1. Add to queue FIRST (never fails)
+      await pendingWorkoutQueue.add(workout);
+      console.log("[WorkoutStore] ✅ Added to queue:", workout.id);
 
+      // 2. Optimistically update state immediately (non-blocking)
+      set((state) => ({
+        workouts: [workout, ...state.workouts],
+        currentWorkout: workout,
+        error: null,
+      }));
+
+      try {
         const session = await authService.getSession();
         if (!session?.user?.id) {
           throw new Error("No authenticated user found");
         }
 
-        const newWorkout = await workoutService.createWorkout(
-          session.user.id,
-          workout
-        );
+        console.log("[WorkoutStore] 🚀 Starting background save with retry logic");
+        
+        // 3. Attempt save with retry + Toast notifications (BACKGROUND)
+        // We do NOT await this so the UI can proceed immediately
+        retryWithBackoff(
+          () => workoutService.createWorkout(session.user.id, workout),
+          {
+            maxRetries: 3,
+            delays: [5000, 15000], // 5s, 15s delays
+            onRetry: (attempt, error) => {
+              console.log(`[WorkoutStore] ⚠️ Retry attempt ${attempt}/3 for workout:`, workout.id);
+              Toast.show({
+                type: "info",
+                text1: "Please check your network",
+                text2: `Retrying (${attempt}/3)`,
+              });
+            },
+          }
+        )
+          .then(async (newWorkout) => {
+            // 4. SUCCESS - Remove from queue
+            console.log("[WorkoutStore] ✅ Save successful, removing from queue:", workout.id);
+            await pendingWorkoutQueue.remove(workout.id);
+            Toast.show({ type: "success", text1: "Workout saved!" });
 
-        set((state) => ({
-          workouts: [newWorkout, ...state.workouts],
-          currentWorkout: newWorkout,
-        }));
+            // Update with server response
+            set((state) => ({
+              workouts: state.workouts.map((w) =>
+                w.id === workout.id ? newWorkout : w
+              ),
+              currentWorkout: newWorkout,
+            }));
+          })
+          .catch((err) => {
+            // 5. FAILED after all retries - Stay in queue
+            console.error("[WorkoutStore] ❌ Save failed after all retries, kept in queue:", workout.id, err);
+            Toast.show({
+              type: "error",
+              text1: "We can't save your workout right now",
+              text2: "Please try again later.",
+            });
+
+            set((state) => ({
+              error:
+                err instanceof Error
+                  ? err
+                  : new Error("Failed to sync workout"),
+            }));
+          });
       } catch (err) {
-        console.error("[WorkoutStore] Error creating workout:", err);
+        console.error("[WorkoutStore] Error initiating save:", err);
         set({
           error:
-            err instanceof Error ? err : new Error("Failed to create workout"),
+            err instanceof Error ? err : new Error("Failed to initiate save"),
         });
       } finally {
-        set({ loading: false });
+        // Update pending count
+        const remaining = await pendingWorkoutQueue.getAll();
+        console.log("[WorkoutStore] 📊 Pending workouts count:", remaining.length);
+        set({ pendingWorkoutsCount: remaining.length });
       }
+    },
+
+    syncPendingWorkouts: async () => {
+      console.log("[WorkoutStore] 🔄 Checking for pending workouts...");
+      const pending = await pendingWorkoutQueue.getAll();
+      console.log(`[WorkoutStore] Found ${pending.length} pending workouts`);
+
+      if (pending.length === 0) {
+        set({ pendingWorkoutsCount: 0 });
+        return;
+      }
+
+      console.log(`[WorkoutStore] 🚀 Syncing ${pending.length} pending workouts`);
+
+      // Show initial toast
+      Toast.show({
+        type: "info",
+        text1: `Attempting to save ${pending.length} workout${pending.length > 1 ? "s" : ""}`,
+      });
+
+      let successCount = 0;
+
+      for (const item of pending) {
+        console.log(`[WorkoutStore] 📤 Attempting to sync workout:`, {
+          id: item.id,
+          name: item.workout.name,
+          attempts: item.attempts,
+        });
+        
+        try {
+          const session = await authService.getSession();
+          if (!session?.user?.id) {
+            console.log("[WorkoutStore] ⚠️ No session found, skipping sync");
+            continue;
+          }
+
+          await workoutService.createWorkout(session.user.id, item.workout);
+          await pendingWorkoutQueue.remove(item.id);
+          successCount++;
+          console.log(`[WorkoutStore] ✅ Successfully synced workout: ${item.id}`);
+        } catch (err) {
+          console.error(
+            `[WorkoutStore] ❌ Failed to sync workout ${item.id}:`,
+            err
+          );
+          await pendingWorkoutQueue.updateAttempt(item.id);
+        }
+      }
+
+      console.log(`[WorkoutStore] 📊 Sync complete. Success: ${successCount}/${pending.length}`);
+
+      if (successCount > 0) {
+        Toast.show({
+          type: "success",
+          text1: `Synced ${successCount} workout${
+            successCount > 1 ? "s" : ""
+          }`,
+        });
+
+        // Reload workouts to get fresh data
+        await get().loadWorkouts();
+      }
+
+      // Update pending count
+      const remaining = await pendingWorkoutQueue.getAll();
+      console.log(`[WorkoutStore] 📊 Remaining pending workouts: ${remaining.length}`);
+      set({ pendingWorkoutsCount: remaining.length });
     },
 
     updateWorkout: async (

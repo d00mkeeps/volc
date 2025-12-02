@@ -5,9 +5,8 @@ import {
   CartesianChart,
   Line,
   Bar,
-  useChartPressState,
 } from "victory-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
+import { useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 
 interface ChartDataset {
@@ -30,46 +29,109 @@ interface ChartDataViewProps {
 // Helper to generate a key for each dataset's y-values in the transformed data
 const getDatasetKey = (index: number) => `dataset_${index}`;
 
+// Forward-fill helper: carries last known value forward to fill gaps
+const forwardFillDataset = (data: (number | null)[]): (number | null)[] => {
+  const result = [...data];
+  let lastValue: number | null = null;
+  
+  for (let i = 0; i < result.length; i++) {
+    if (result[i] != null) {
+      lastValue = result[i];
+    } else if (lastValue != null) {
+      result[i] = lastValue; // Carry forward last known value
+    }
+  }
+  
+  return result;
+};
+
+// Normalize to percentage change from first value
+const normalizeToPercentage = (dataArray: (number | null)[]): (number | null)[] => {
+  const firstValue = dataArray.find((v): v is number => v != null);
+  if (!firstValue || firstValue === 0) return dataArray; // Can't normalize from 0
+  
+  return dataArray.map(v => {
+    if (v == null) return null;
+    return ((v - firstValue) / firstValue) * 100; // % change
+  });
+};
+
 export default function ChartDataView({ data }: ChartDataViewProps) {
   const theme = useTheme();
   const screenWidth = Dimensions.get("window").width;
   const chartWidth = screenWidth - 48; // Adjust for padding
   const chartHeight = 300;
 
-  // Load a font for the chart axis labels. 
-  // In a real app, you might want to load this globally or use a system font.
-  // For now, we'll try to use a default system font if possible, but Skia needs a font file or loaded font object.
-  // If we don't have a font file, we can pass null to hide labels or use a default if available in the environment.
-  // However, Victory Native XL usually requires a font object for axes.
-  // Let's try to use `useFont` with a standard font if available, or skip axis labels if it fails.
-  // NOTE: In Expo Go/Dev Client, we might need a specific font file. 
-  // For this implementation, we will assume the user might not have a font asset ready and try to proceed without explicit axis labels if font is missing,
-  // or use a common approach. 
-  // Actually, let's try to use the system font via `require` if we had one, but we don't.
-  // We will omit the `font` prop for now and see if it falls back gracefully or if we need to add one.
-  // UPDATE: Victory Native XL *requires* a font for axes. 
-  // Let's try to load a standard font. If this fails, we might need to ask the user to add a font file.
-  // For now, let's assume we can't easily load a font without an asset. 
-  // We will render the chart without axis labels to avoid crashing, or use a placeholder.
   const font = useFont(require("../../../assets/fonts/SpaceMono-Regular.ttf"), 12); 
 
-  // Transform data for Victory Native XL
-  // It expects an array of objects: [{ x: label, dataset_0: val, dataset_1: val }, ...]
+  // Detect if we need percentage normalization (scales differ by >3x)
+  const shouldNormalizeToPercentage = useMemo(() => {
+    if (data.datasets.length <= 1) return false;
+    
+    const maxValues = data.datasets
+      .map(ds => Math.max(...ds.data.filter((v): v is number => v != null)))
+      .filter(v => !isNaN(v) && isFinite(v));
+    
+    if (maxValues.length < 2) return false;
+    
+    const minMax = Math.min(...maxValues);
+    const maxMax = Math.max(...maxValues);
+    const ratio = maxMax / minMax;
+    
+    return ratio > 3; // Normalize if scales differ by more than 3x
+  }, [data.datasets]);
+
+  // Apply forward-fill and optional percentage normalization
+  const processedDatasets = useMemo(() => {
+    return data.datasets.map(dataset => {
+      let processedData = forwardFillDataset(dataset.data);
+      
+      if (shouldNormalizeToPercentage) {
+        processedData = normalizeToPercentage(processedData);
+      }
+      
+      return {
+        ...dataset,
+        data: processedData
+      };
+    });
+  }, [data.datasets, shouldNormalizeToPercentage]);
+
+  // Transform processed data for Victory Native
   const transformedData = useMemo(() => {
     if (!data.labels || data.labels.length === 0) return [];
 
     return data.labels.map((label, index) => {
-      const dataPoint: any = { x: index }; // Use index for x-axis to avoid interpolation issues
-      data.datasets.forEach((dataset, datasetIndex) => {
-        dataPoint[getDatasetKey(datasetIndex)] = dataset.data[index];
+      const dataPoint: any = { x: index };
+      processedDatasets.forEach((dataset, datasetIndex) => {
+        dataPoint[getDatasetKey(datasetIndex)] = dataset.data[index] ?? null;
       });
       return dataPoint;
     });
-  }, [data]);
+  }, [data.labels, processedDatasets]);
 
-  // Manage press state for tooltips
-  const { state: chartState, isActive } = useChartPressState({ x: 0, y: { [getDatasetKey(0)]: 0 } });
+  // Calculate Y-axis bounds
+  const allValues = useMemo(() => {
+    return processedDatasets.flatMap((d) => d.data).filter((v): v is number => v != null);
+  }, [processedDatasets]);
 
+  const yDomain = useMemo(() => {
+    if (allValues.length === 0) return undefined;
+    const minVal = Math.min(...allValues);
+    const maxVal = Math.max(...allValues);
+    const range = Math.abs(maxVal - minVal);
+    const padding = range > 0 ? range * 0.1 : 10;
+    
+    return [minVal - padding, maxVal + padding] as [number, number];
+  }, [allValues]);
+
+  // Update chart title for percentage mode
+const chartTitle = useMemo(() => {
+  if (shouldNormalizeToPercentage && !data.title.includes("% Change")) {
+    return `${data.title} (% Change)`;
+  }
+  return data.title;
+}, [data.title, shouldNormalizeToPercentage]);
   // Helper for safe color access
   const getBlueColor = () => {
     // @ts-ignore
@@ -94,7 +156,7 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
     >
       <Card.Header padded>
         <Text fontSize="$5" fontWeight="bold" color="$color">
-          {data.title}
+          {chartTitle}
         </Text>
       </Card.Header>
 
@@ -104,6 +166,7 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
             data={transformedData}
             xKey="x"
             yKeys={data.datasets.map((_, i) => getDatasetKey(i))}
+            domain={yDomain ? { y: yDomain } : undefined}
             axisOptions={{
               font,
               tickCount: Math.min(data.labels.length, 6),
@@ -113,8 +176,13 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
                 const index = Math.round(Number(value));
                 return data.labels[index] || "";
               },
+              formatYLabel: (value) => {
+                if (shouldNormalizeToPercentage) {
+                  return `${Number(value).toFixed(0)}%`;
+                }
+                return `${Number(value).toFixed(0)}`;
+              },
             }}
-            chartPressState={chartState}
           >
             {({ points, chartBounds }) => (
               <>
@@ -138,30 +206,8 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
                       color={getDatasetColor(dataset, i)}
                       roundedCorners={{ topLeft: 5, topRight: 5 }}
                       animate={{ type: "timing", duration: 500 }}
-                      // Offset bars if multiple datasets? 
-                      // Victory Native XL handles bar groups differently (BarGroup), 
-                      // but for simple cases we might just render one on top or need BarGroup.
-                      // For now, assuming single dataset or stacked is acceptable, 
-                      // or we would need to use <BarGroup>.
-                      // Let's stick to simple Bar for now.
                     />
                   ))}
-                  
-                {/* Active Press Indicator (Simple Tooltip) */}
-                {isActive && (
-                  <>
-                    {data.datasets.map((dataset, i) => (
-                      <Circle
-                        key={`dot-${i}`}
-                        cx={chartState.x.position}
-                        cy={chartState.y[getDatasetKey(i)].position}
-                        r={6}
-                        color={getDatasetColor(dataset, i)}
-                        style="fill"
-                      />
-                    ))}
-                  </>
-                )}
               </>
             )}
           </CartesianChart>

@@ -34,9 +34,6 @@ export function WorkoutSummarySlide({
   const [workoutName, setWorkoutName] = useState("");
   const [workoutNotes, setWorkoutNotes] = useState("");
   const [showNameError, setShowNameError] = useState(false);
-  const [loadingState, setLoadingState] = useState<
-    "none" | "skip" | "continue"
-  >("none");
 
   // Track which exercises are expanded
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
@@ -91,20 +88,16 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE CONTINUE ===");
-    setLoadingState("continue");
 
-    try {
-      await saveCompletedWorkout({
-        name: workoutName.trim(),
-        notes: workoutNotes.trim(),
-        imageId: pendingImageId || undefined,
-      });
-      await initializeAnalysisAndChat();
-      onContinue();
-    } catch (error) {
-      console.error("Failed to continue to chat:", error);
-      setLoadingState("none");
-    }
+    // Don't await - let it run in background
+    saveCompletedWorkout({
+      name: workoutName.trim(),
+      notes: workoutNotes.trim(),
+      imageId: pendingImageId || undefined,
+    });
+    
+    initializeAnalysisAndChat();
+    onContinue();
   };
 
   const handleSkipChat = async () => {
@@ -115,7 +108,6 @@ export function WorkoutSummarySlide({
     setShowNameError(false);
 
     console.log("=== SUMMARY SLIDE SKIP ===");
-    setLoadingState("skip");
 
     // Sync exercise notes to store
     console.log("📝 Exercise notes before sync:", exerciseNotes);
@@ -134,17 +126,14 @@ export function WorkoutSummarySlide({
       }))
     );
 
-    try {
-      await saveCompletedWorkout({
-        name: workoutName.trim(),
-        notes: workoutNotes.trim(),
-        imageId: pendingImageId || undefined,
-      });
-      onSkip();
-    } catch (error) {
-      console.error("Failed to save workout:", error);
-      setLoadingState("none");
-    }
+    // Don't await - let it run in background
+    saveCompletedWorkout({
+      name: workoutName.trim(),
+      notes: workoutNotes.trim(),
+      imageId: pendingImageId || undefined,
+    });
+    
+    onSkip();
   };
 
   return (
@@ -315,21 +304,17 @@ export function WorkoutSummarySlide({
         borderTopWidth={1}
         borderTopColor="$borderSoft"
       >
-        {loadingState !== "continue" && (
-          <Button
-            size="$4"
-            backgroundColor={isNameValid ? "$primary" : "$background"}
-            color="$text"
-            onPress={handleSkipChat}
-            disabled={loadingState === "skip"}
-            opacity={loadingState !== "skip" ? 1 : 0.6}
-            borderColor="$primary"
-            borderWidth={1}
-            flex={1}
-          >
-            {loadingState === "skip" ? "saving.." : "Save & Exit"}
-          </Button>
-        )}
+        <Button
+          size="$4"
+          backgroundColor={isNameValid ? "$primary" : "$background"}
+          color="$text"
+          onPress={handleSkipChat}
+          borderColor="$primary"
+          borderWidth={1}
+          flex={1}
+        >
+          Save & Exit
+        </Button>
         {/* 
         {loadingState !== "skip" && (
           <Button

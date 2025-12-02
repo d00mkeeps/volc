@@ -29,9 +29,18 @@ export class WorkoutService extends BaseDBService {
       const data = (response as any).data || response;
 
       return data;
-    } catch (error) {
+    } catch (error: any) {
+      // If workout ID already exists on server, treat as success
+      if (error?.response?.status === 409 || error?.status === 409) {
+        console.log(
+          "[WorkoutService] Workout already exists on server (duplicate ID)"
+        );
+        // Return the workout that was attempted (it's already on server)
+        return workout as CompleteWorkout;
+      }
+
       console.error("[WorkoutService] Error creating workout:", error);
-      return this.handleError(error);
+      throw error; // Re-throw for retry logic
     }
   }
   /**

@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Stack, Spinner } from "tamagui";
 import { useAuth } from "../../../context/AuthContext";
 import Button from "@/components/atoms/core/Button";
 import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Platform, Alert, Image } from "react-native";
+import { Alert, Image } from "react-native";
 import React from "react";
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
@@ -242,8 +241,7 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
     <Stack flex={1} justifyContent="center" alignItems="center" gap="$4">
       {/* Branding / Logo Area */}
         <Image 
-          source={require('@/assets/images/volc11.png')}
-          style={{ width: 300, height: 300 }}
+  source={require('../../../assets/images/volc11.png')}          style={{ width: 300, height: 300 }}
           resizeMode="contain"
         />
 

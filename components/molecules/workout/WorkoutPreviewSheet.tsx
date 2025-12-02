@@ -25,7 +25,6 @@ export default function WorkoutPreviewSheet({
     string | null
   >(null);
 
-  console.log("🔷 [WorkoutPreviewSheet] Render - workoutIds:", workoutIds);
 
   // Animated values for tracking sheet position (like WorkoutTracker)
   const animatedIndex = useSharedValue(-1);
@@ -40,38 +39,25 @@ export default function WorkoutPreviewSheet({
       .map((id) => workouts.find((w) => w.id === id))
       .filter((w): w is CompleteWorkout => w !== undefined);
 
-    console.log("🔍 [WorkoutPreviewSheet] Found workouts:", found.length);
-    if (found.length > 0) {
-      console.log(
-        "📋 [WorkoutPreviewSheet] Workout names:",
-        found.map((w) => w.name)
-      );
-    }
-
     return found;
   }, [workoutIds, workouts]);
 
   const isOpen = workoutIds.length > 0 && selectedWorkouts.length > 0;
 
-  console.log("🚪 [WorkoutPreviewSheet] isOpen:", isOpen);
 
   // Handle sheet changes (like WorkoutTracker)
   const handleSheetChanges = useCallback(
     (index: number) => {
-      console.log("📐 [WorkoutPreviewSheet] Sheet index changed to:", index);
       animatedIndex.value = index;
 
       // If user closes sheet completely (index -1), call onClose
       if (index === -1) {
-        console.log("🔒 [WorkoutPreviewSheet] Sheet closed, calling onClose");
         onClose();
       }
 
       // If user swipes down from expanded view (index 0), go back to preview
       if (index === 0 && expandedWorkoutId) {
-        console.log(
-          "⬇️ [WorkoutPreviewSheet] Returning to preview from expanded view"
-        );
+  
         setExpandedWorkoutId(null);
       }
     },
@@ -80,17 +66,12 @@ export default function WorkoutPreviewSheet({
 
   // Control sheet visibility based on isOpen (similar to WorkoutTracker's pattern)
   useEffect(() => {
-    console.log("⚡ [WorkoutPreviewSheet] Effect - isOpen:", isOpen);
-
     if (isOpen) {
-      console.log("📤 [WorkoutPreviewSheet] Opening sheet to index 0");
       setTimeout(() => {
         bottomSheetRef.current?.snapToIndex(0);
-        console.log("✅ [WorkoutPreviewSheet] snapToIndex(0) called");
       }, 100);
       setExpandedWorkoutId(null);
     } else {
-      console.log("📥 [WorkoutPreviewSheet] Closing sheet");
       setTimeout(() => {
         bottomSheetRef.current?.close();
       }, 100);
@@ -137,14 +118,12 @@ export default function WorkoutPreviewSheet({
 
   // Handle expanding a workout to full view
   const handleViewFullWorkout = useCallback((workoutId: string) => {
-    console.log("🔍 [WorkoutPreviewSheet] Expanding workout:", workoutId);
     setExpandedWorkoutId(workoutId);
     bottomSheetRef.current?.snapToIndex(1); // Expand to 85%
   }, []);
 
   // Handle going back to preview
   const handleBackToPreview = useCallback(() => {
-    console.log("⬅️ [WorkoutPreviewSheet] Back to preview");
     setExpandedWorkoutId(null);
     bottomSheetRef.current?.snapToIndex(0); // Back to 35%
   }, []);
@@ -428,9 +407,7 @@ export default function WorkoutPreviewSheet({
   const expandedWorkout = expandedWorkoutId
     ? selectedWorkouts.find((w) => w.id === expandedWorkoutId)
     : null;
-
-  console.log("✨ [WorkoutPreviewSheet] Rendering BottomSheet");
-
+    
   return (
     <BottomSheet
       ref={bottomSheetRef}

@@ -5,11 +5,10 @@ import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
-import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
+// import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import { useRouter } from "expo-router";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import UnderConstructionModal from "../molecules/UnderConstructionModal";
 
 interface LeaderboardScreenProps {
   isActive?: boolean;
@@ -122,17 +121,12 @@ export const LeaderboardScreen = ({
         )}
       </ScrollView>
 
-      {/* Workout View Modal */}
-      <WorkoutViewModal
+      {/* <WorkoutViewModal
         isVisible={modalVisible}
         onClose={handleCloseModal}
         workoutId={selectedWorkout?.workout_id || ""}
         userId={selectedWorkout?.user_id || ""}
-      />
-      <UnderConstructionModal
-        isVisible={showUnderConstruction}
-        onConfirm={handleUnderConstructionConfirm}
-      />
+      /> */}
     </YStack>
   );
 };

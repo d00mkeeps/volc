@@ -98,6 +98,11 @@ export const InputArea = ({
       onSendMessage(trimmedInput);
       // Clear input immediately after sending
       clearInput();
+
+      // Double clear to handle autocorrect race conditions
+      setTimeout(() => {
+        clearInput();
+      }, 100);
     }
   }, [disabled, input, onSendMessage, clearInput]);
 

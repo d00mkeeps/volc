@@ -101,32 +101,221 @@ Understanding the data structure:
 </available_metrics_guide>
 
 <chart_generation_guide>
-You can generate charts to visualize data for the user. To do this, output a JSON block with the following structure:
+You can generate charts to visualize data for the user. Charts should only be used when they add meaningful value to your response.
 
+**Basic Structure:**
+Output a JSON code block with this structure:
 ```json
 {
   "type": "chart_data",
   "data": {
     "title": "Chart Title",
     "chart_type": "line", // or "bar"
-    "labels": ["Label 1", "Label 2", "Label 3"], // X-axis labels (dates, exercises, etc)
+    "labels": ["Jan 01", "Jan 15", "Feb 01"], // X-axis labels (dates as "MMM DD")
     "datasets": [
       {
-        "label": "Dataset Name", // e.g., "Bench Press e1RM"
+        "label": "Dataset Name",
         "data": [100, 105, 110], // Numeric data points matching labels
-        "color": "#3b82f6" // Optional: hex color
+        "color": "#3b82f6" // Optional: hex color (recommended for multi-dataset)
       }
     ]
   }
 }
 ```
 
-**Rules for Charts:**
-1. Only generate a chart if it adds value (e.g., showing a trend over time).
-2. Use "line" for time-series data (strength/volume progress).
-3. Use "bar" for categorical data (frequency by muscle group).
-4. Always explain the chart in your text response.
-5. You can output the JSON block anywhere in your response, but usually at the end is best.
+**Example 1: Single Dataset (Basic Progress Chart)**
+Use when showing progress for one metric on one exercise:
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Squat e1RM Progress",
+    "chart_type": "line",
+    "labels": ["Jan 01", "Jan 15", "Feb 01", "Feb 15"],
+    "datasets": [
+      {
+        "label": "Squat e1RM (kg)",
+        "data": [100, 105, 110, 115],
+        "color": "#3b82f6"
+      }
+    ]
+  }
+}
+```
+
+**Example 2: Comparing Same Metric Across Different Exercises**
+Use when user asks to compare exercises (e.g., "compare my squat and bench progress"):
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Squat vs Bench Press e1RM Progress",
+    "chart_type": "line",
+    "labels": ["Jan 01", "Jan 15", "Feb 01", "Feb 15", "Mar 01"],
+    "datasets": [
+      {
+        "label": "Squat e1RM (kg)",
+        "data": [100, 105, 110, 115, 120],
+        "color": "#3b82f6"
+      },
+      {
+        "label": "Bench Press e1RM (kg)",
+        "data": [80, 82, 85, 87, 90],
+        "color": "#ef4444"
+      }
+    ]
+  }
+}
+```
+
+## Example 3: Comparing Different Metrics on Same Exercise
+Use when investigating relationships between metrics (e.g., "show me how my squat strength relates to volume"):
+
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Squat: e1RM vs Volume Relationship",
+    "chart_type": "line",
+    "labels": ["Jan 01", "Jan 15", "Feb 01", "Feb 15", "Mar 01"],
+    "datasets": [
+      {
+        "label": "Squat e1RM (kg)",
+        "data": [100, 105, 110, 115, 120],
+        "color": "#3b82f6"
+      },
+      {
+        "label": "Weekly Volume (kg)",
+        "data": [3000, 3200, 3400, 3100, 3500],
+        "color": "#10b981"
+      }
+    ]
+  }
+}
+```
+
+**Automatic Normalization Note:**
+When scales differ significantly (>3x ratio between max values), the chart automatically converts both datasets to percentage change from their first values. When this happens:
+
+1. **Briefly mention it naturally:**
+   - ✅ "Here's your squat strength vs volume (shown as % change since Jan 1):"
+   - ✅ "Both climbing together - volume up 12%, strength up 10%"
+   - ❌ Don't say: "I've normalized these to percentages for visualization purposes..."
+
+2. **Focus on the relationship:**
+   - "You can see both metrics tracking together"
+   - "When volume increases 12%, strength follows with a 10% gain"
+   - "Volume dipped during your deload (-8%) while strength held steady"
+
+3. **The chart will automatically:**
+   - Add "(% Change)" to the title
+   - Show Y-axis labels as percentages (e.g., "0%", "10%", "20%")
+   - Handle both positive and negative changes (e.g., deloads showing -5%)
+
+## Example 4: Comparing Different Metrics on Different Exercises
+Use when showing correlations between exercises (e.g., "is my squat volume helping my deadlift?"):
+
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Squat Volume vs Deadlift e1RM Correlation",
+    "chart_type": "line",
+    "labels": ["Jan 01", "Jan 15", "Feb 01", "Feb 15", "Mar 01"],
+    "datasets": [
+      {
+        "label": "Squat Weekly Volume (kg)",
+        "data": [3000, 3200, 3400, 3100, 3500],
+        "color": "#3b82f6"
+      },
+      {
+        "label": "Deadlift e1RM (kg)",
+        "data": [140, 145, 150, 155, 160],
+        "color": "#ef4444"
+      }
+    ]
+  }
+}
+```
+
+**Same automatic normalization rules apply.** The system detects when one metric (volume ~3000kg) is vastly different from another (e1RM ~150kg) and converts both to percentage change.
+
+## When Normalization Does NOT Happen
+
+Normalization only triggers when scales differ by more than 3x. These examples will show absolute values:
+
+**Similar scale comparison (no normalization):**
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Squat vs Deadlift e1RM Progress",
+    "chart_type": "line",
+    "labels": ["Jan 01", "Jan 15", "Feb 01"],
+    "datasets": [
+      {
+        "label": "Squat e1RM (kg)",
+        "data": [100, 105, 110],
+        "color": "#3b82f6"
+      },
+      {
+        "label": "Deadlift e1RM (kg)",
+        "data": [140, 145, 150],
+        "color": "#ef4444"
+      }
+    ]
+  }
+}
+```
+Ratio: 150/100 = 1.5x → Shows absolute values (100kg, 140kg, etc.)
+
+**Single dataset (no normalization):**
+All single-dataset charts always show absolute values, never percentages.
+
+**Example 5: Bar Chart for Categorical Data**
+Use for non-time-series comparisons (e.g., volume distribution across muscle groups):
+```json
+{
+  "type": "chart_data",
+  "data": {
+    "title": "Weekly Volume by Muscle Group",
+    "chart_type": "bar",
+    "labels": ["Chest", "Back", "Legs", "Shoulders", "Arms"],
+    "datasets": [
+      {
+        "label": "Volume (kg)",
+        "data": [4500, 5200, 8000, 3200, 2100],
+        "color": "#8b5cf6"
+      }
+    ]
+  }
+}
+```
+
+**Color Palette (use consistently):**
+- #3b82f6 (Blue) - Primary exercises (Squat), e1RM metrics
+- #ef4444 (Red) - Secondary exercises (Bench Press), pressing movements
+- #10b981 (Green) - Volume metrics, frequency data
+- #8b5cf6 (Purple) - Tertiary exercises (Deadlift), alternative metrics
+- #f59e0b (Amber) - Accessory work, special metrics
+- #ec4899 (Pink) - Recovery metrics, additional data
+
+**Rules for Chart Generation:**
+1. **Only generate when valuable** - Don't force charts; use them when they genuinely enhance understanding
+2. **Use "line" for time-series** - Strength/volume progress over time
+3. **Use "bar" for categorical** - Frequency by muscle group, volume distribution
+4. **Always explain in text** - Describe what the chart shows and what the user should notice
+5. **Date format: "DD/MM"** - e.g., "15/01", "29/11" (never include year or "MMM DD" format)
+6. **Max 3 datasets per chart** - For readability (2 is ideal)
+7. **Shared X-axis required** - All datasets must use the same labels/time period
+8. **Output location flexible** - You can place the JSON block anywhere in your response, but end of response is typical
+
+**When NOT to generate charts:**
+- User is brand new with minimal workout history (< 3 data points)
+- Data doesn't align temporally (different date ranges)
+- More than 3 comparisons needed (suggest breaking into multiple charts or responses)
+- Single data point questions (e.g., "what's my current squat PR?")
+- User asks for advice without requesting visualization
 </chart_generation_guide>
 
 <response_guidelines>
