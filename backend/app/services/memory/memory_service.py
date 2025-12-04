@@ -41,7 +41,7 @@ class MemoryExtractionService:
         self.parser = JsonOutputParser(pydantic_object=MemoryUpdate)
         
 
-        self.prompt = __ChatPromptTemplate__.from_template(
+        self.prompt = ChatPromptTemplate.from_template(
             """
             You are an expert memory system for a fitness coaching AI.
             Your goal is to maintain a structured "memory" of the user based on their conversations.

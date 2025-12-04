@@ -264,13 +264,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       await pendingWorkoutQueue.add(workout);
       console.log("[WorkoutStore] ✅ Added to queue:", workout.id);
 
-      // 2. Optimistically update state immediately (non-blocking)
-      set((state) => ({
-        workouts: [workout, ...state.workouts],
-        currentWorkout: workout,
-        error: null,
-      }));
-
       try {
         const session = await authService.getSession();
         if (!session?.user?.id) {
@@ -279,7 +272,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
         console.log("[WorkoutStore] 🚀 Starting background save with retry logic");
         
-        // 3. Attempt save with retry + Toast notifications (BACKGROUND)
+        // 2. Attempt save with retry + Toast notifications (BACKGROUND)
         // We do NOT await this so the UI can proceed immediately
         retryWithBackoff(
           () => workoutService.createWorkout(session.user.id, workout),
@@ -297,21 +290,19 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           }
         )
           .then(async (newWorkout) => {
-            // 4. SUCCESS - Remove from queue
+            // 3. SUCCESS - Remove from queue and add to store
             console.log("[WorkoutStore] ✅ Save successful, removing from queue:", workout.id);
             await pendingWorkoutQueue.remove(workout.id);
             Toast.show({ type: "success", text1: "Workout saved!" });
 
-            // Update with server response
+            // Add to store only on success
             set((state) => ({
-              workouts: state.workouts.map((w) =>
-                w.id === workout.id ? newWorkout : w
-              ),
+              workouts: [newWorkout, ...state.workouts],
               currentWorkout: newWorkout,
             }));
           })
           .catch((err) => {
-            // 5. FAILED after all retries - Stay in queue
+            // 4. FAILED after all retries - Stay in queue only, don't add to store
             console.error("[WorkoutStore] ❌ Save failed after all retries, kept in queue:", workout.id, err);
             Toast.show({
               type: "error",
@@ -359,6 +350,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       });
 
       let successCount = 0;
+      const syncedWorkouts: CompleteWorkout[] = [];
 
       for (const item of pending) {
         console.log(`[WorkoutStore] 📤 Attempting to sync workout:`, {
@@ -374,8 +366,9 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
             continue;
           }
 
-          await workoutService.createWorkout(session.user.id, item.workout);
+          const savedWorkout = await workoutService.createWorkout(session.user.id, item.workout);
           await pendingWorkoutQueue.remove(item.id);
+          syncedWorkouts.push(savedWorkout);
           successCount++;
           console.log(`[WorkoutStore] ✅ Successfully synced workout: ${item.id}`);
         } catch (err) {
@@ -397,7 +390,12 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           }`,
         });
 
-        // Reload workouts to get fresh data
+        // Add synced workouts to store
+        set((state) => ({
+          workouts: [...syncedWorkouts, ...state.workouts],
+        }));
+
+        // Reload workouts to ensure consistency with database
         await get().loadWorkouts();
       }
 
