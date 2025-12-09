@@ -8,6 +8,7 @@ from app.api.endpoints.workout_analysis import router as workout_analysis_router
 from app.api.endpoints.images import router as images_router
 from app.api.endpoints.leaderboard import router as leaderboard_router
 from app.api.endpoints.dashboard import router as dashboard_router
+from app.api.endpoints.chat import router as chat_router
 from app.services.cache.exercise_definitions import exercise_cache
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import setup_logging
@@ -101,6 +102,7 @@ app.include_router(leaderboard_router, tags=["leaderboard"])
 app.include_router(images_router, tags=["images"])
 app.include_router(workout_analysis_router, tags=["workout-analysis"])
 app.include_router(dashboard_router, tags=["dashboard"])
+app.include_router(chat_router, tags=["chat"])
 from app.api.endpoints.admin import router as admin_router
 app.include_router(admin_router, tags=["admin"])
 

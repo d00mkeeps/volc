@@ -338,20 +338,20 @@ async def create_conversation(
             detail=str(e)
         )
 
-@router.post("/conversations/with-message")
-async def create_conversation_with_message(
+@router.post("/conversations/with-messages")
+async def create_conversation_with_messages(
     data: Dict[str, Any] = Body(...),
     user = Depends(get_current_user),
     jwt_token: str = Depends(get_jwt_token)
 ):
-    """Create a new conversation with the first message"""
+    """Create a new conversation with initial messages"""
     try:
-        logger.info(f"API: Creating conversation with message - {data.get('title')}")
+        logger.info(f"API: Creating conversation with messages - {data.get('title')}")
         
-        result = await conversation_service.create_conversation_with_message(
+        result = await conversation_service.create_conversation_with_messages(
             title=data.get("title"),
             config_name=data.get("configName"),
-            first_message=data.get("firstMessage"),
+            messages=data.get("messages", []),
             user=user,
             jwt_token=jwt_token
         )
@@ -359,7 +359,7 @@ async def create_conversation_with_message(
         return result
         
     except Exception as e:
-        logger.error(f"API error creating conversation with message: {str(e)}")
+        logger.error(f"API error creating conversation with messages: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)

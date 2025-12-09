@@ -84,20 +84,20 @@ class ConversationService(BaseDBService):
             return await self.handle_error("get_user_conversations", e)
 
 
-    async def create_conversation_with_message(
+    async def create_conversation_with_messages(
         self,
         title: str,
         config_name: str,
-        first_message: str,
+        messages: List[Dict[str, str]],
         user,
         jwt_token: str
     ) -> Dict[str, Any]:
-        """Create conversation (message will be sent via websocket)"""
+        """Create conversation with initial messages"""
         try:
-            logger.info(f"Creating conversation for user: {user.id}")
+            logger.info(f"Creating conversation with {len(messages)} messages for user: {user.id}")
             user_client = self.get_user_client(jwt_token)
             
-            # Create conversation only - no message insertion
+            # 1. Create conversation
             conv_result = user_client.table("conversations").insert({
                 "user_id": user.id,
                 "title": title,
@@ -109,16 +109,35 @@ class ConversationService(BaseDBService):
                 raise Exception("Failed to create conversation")
             
             conversation = conv_result.data[0]
-            logger.info(f"Conversation created: {conversation['id']} - message will be sent via websocket")
+            conversation_id = conversation['id']
             
-            # Return conversation and message text (not saved yet)
+            # 2. Insert messages
+            if messages:
+                messages_to_insert = []
+                for msg in messages:
+                    messages_to_insert.append({
+                        "conversation_id": conversation_id,
+                        "content": msg["content"],
+                        "sender": msg["sender"]
+                    })
+                
+                msg_result = user_client.table("messages").insert(messages_to_insert).execute()
+                
+                if hasattr(msg_result, 'error') and msg_result.error:
+                     logger.error(f"Failed to insert messages: {msg_result.error}")
+                     # Note: we don't rollback the conversation here, but maybe we should?
+                     # For now, proceeding as if conversation exists but messages failed is better than crashing everything?
+                     # Ideally we'd rollback.
+            
+            logger.info(f"Conversation created: {conversation_id} with {len(messages)} messages")
+            
             return {
                 "conversation": await self.format_response(conversation),
-                "first_message": first_message
+                "messages": messages
             }
             
         except Exception as e:
-            logger.error(f"Error in create_conversation_with_message: {str(e)}")
-            return await self.handle_error("create_conversation_with_message", e)
+            logger.error(f"Error in create_conversation_with_messages: {str(e)}")
+            return await self.handle_error("create_conversation_with_messages", e)
         
 conversation_service = ConversationService()

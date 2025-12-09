@@ -160,6 +160,10 @@ class AnalysisBundleGenerator:
             deleted_count = cleanup_result.get('data', {}).get('deleted_count', 0)
             logger.info(f"🧹 Deleted {deleted_count} old bundles")
             
+            # 8. Invalidate SharedContextLoader cache to ensure fresh data in next chat
+            from app.services.context.shared_context_loader import SharedContextLoader
+            SharedContextLoader.invalidate_bundle_cache(user_id)
+            
             # Success!
             logger.info(f"🎉 Analysis bundle generation complete for user {user_id}")
             return {

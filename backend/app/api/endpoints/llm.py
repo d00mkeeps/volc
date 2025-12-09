@@ -8,6 +8,7 @@ from langchain_google_vertexai import ChatVertexAI
 
 from app.services.llm.onboarding import OnboardingLLMService
 from app.services.llm.workout_planning import WorkoutPlanningLLMService
+from app.services.llm.unified_coach_service import UnifiedCoachService
 from ...services.llm.workout_analysis import WorkoutAnalysisLLMService
 from ...services.memory.memory_service import MemoryExtractionService
 from google.oauth2 import service_account
@@ -180,6 +181,13 @@ def get_workout_planning_service(credentials: dict = Depends(get_google_credenti
         project_id=credentials["project_id"]
     )
 
+def get_unified_coach_service(credentials: dict = Depends(get_google_credentials)):
+    """Dependency for unified coach service"""
+    return UnifiedCoachService(
+        credentials=credentials["credentials"],
+        project_id=credentials["project_id"]
+    )
+
 @router.websocket("/api/llm/workout-planning/{user_id}")
 async def llm_workout_planning(
     websocket: WebSocket, 
@@ -232,3 +240,39 @@ async def llm_workout_analysis(
             
     except Exception as e:
         logger.error(f"Error in workout analysis websocket: {str(e)}", exc_info=True)
+
+@router.websocket("/api/llm/coach/{conversation_id}/{user_id}")
+async def unified_coach(
+    websocket: WebSocket,
+    conversation_id: str,
+    user_id: str,
+    coach_service: UnifiedCoachService = Depends(get_unified_coach_service)
+):
+    """
+    Unified coaching endpoint - handles planning, analysis, and tracking
+    through a single conversation interface.
+    
+    This endpoint provides:
+    - Automatic tool selection (exercises, cardio, future: tracking)
+    - Seamless mode switching between analysis and planning
+    - Shared context loading (user profile, memory, workout history)
+    - Consistent coaching personality across all interactions
+    
+    The client should send messages with:
+    - type: 'message' and message: 'user message content'
+    - type: 'heartbeat' for connection keepalive
+    
+    The server streams back responses with:
+    - type: 'content' for content chunks
+    - type: 'workout_template' for workout templates
+    - type: 'chart_data' for progress visualizations
+    - type: 'error' for error messages
+    - type: 'complete' when the response is complete
+    - type: 'connection_status' for connection confirmation
+    """
+    try:
+        await coach_service.process_websocket(websocket, conversation_id, user_id)
+    except WebSocketDisconnect:
+        logger.info(f"Unified coach WebSocket disconnected: {conversation_id}")
+    except Exception as e:
+        logger.error(f"Error in unified coach websocket: {str(e)}", exc_info=True)
