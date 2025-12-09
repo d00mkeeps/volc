@@ -61,3 +61,4 @@ expo-env.d.ts
 # notes
 
 /notes
+**/__pycache__/
