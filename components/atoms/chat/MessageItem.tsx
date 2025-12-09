@@ -2,7 +2,7 @@
 import React, { memo } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet, useWindowDimensions, Pressable } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
@@ -15,6 +15,7 @@ interface MessageItemProps {
   enableUserMarkdown?: boolean;
   onTemplateApprove?: (templateData: any) => void;
   onProfileConfirm?: () => void;
+  onDismiss?: () => void;
 }
 
 export const MessageItem = memo(
@@ -24,6 +25,7 @@ export const MessageItem = memo(
     enableUserMarkdown = false,
     onTemplateApprove,
     onProfileConfirm,
+    onDismiss,
   }: MessageItemProps) => {
     if (!message) return null;
 
@@ -249,36 +251,39 @@ export const MessageItem = memo(
     });
 
     return (
-      <XStack
-        width="100%"
-        justifyContent={isUser ? "flex-end" : "flex-start"}
-        paddingHorizontal="$4"
-        paddingVertical="$1"
-      >
-        <YStack
-          maxWidth={"90%"}
-          backgroundColor={isUser ? "$primary" : "transparent"}
-          paddingHorizontal={isUser ? "$3" : "$0"}
+      <Pressable onPress={onDismiss} style={{ width: "100%" }}>
+        <XStack
+          width="100%"
+          justifyContent={isUser ? "flex-end" : "flex-start"}
+          paddingHorizontal="$4"
           paddingVertical="$1"
-          borderRadius={isUser ? "$4" : "$0"}
-          opacity={isStreaming ? 0.7 : 1}
+          pointerEvents="box-none"
         >
-          {isUser && !enableUserMarkdown ? (
-            <Text
-              color="white"
-              fontSize={bodySize}
-              fontWeight="400"
-              lineHeight={bodySize * 1.4}
-            >
-              {renderContent}
-            </Text>
-          ) : (
-            <Markdown style={markdownStyles} rules={customRules}>
-              {renderContent}
-            </Markdown>
-          )}
-        </YStack>
-      </XStack>
+          <YStack
+            maxWidth={"90%"}
+            backgroundColor={isUser ? "$primary" : "transparent"}
+            paddingHorizontal={isUser ? "$3" : "$0"}
+            paddingVertical="$1"
+            borderRadius={isUser ? "$4" : "$0"}
+            opacity={isStreaming ? 0.7 : 1}
+          >
+            {isUser && !enableUserMarkdown ? (
+              <Text
+                color="white"
+                fontSize={bodySize}
+                fontWeight="400"
+                lineHeight={bodySize * 1.4}
+              >
+                {renderContent}
+              </Text>
+            ) : (
+              <Markdown style={markdownStyles} rules={customRules}>
+                {renderContent}
+              </Markdown>
+            )}
+          </YStack>
+        </XStack>
+      </Pressable>
     );
   }
 );

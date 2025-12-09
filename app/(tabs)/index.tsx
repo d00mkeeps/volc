@@ -10,11 +10,12 @@ import {
   RefreshControl,
   ScrollView,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
+import BaseModal from "@/components/atoms/core/BaseModal";
+import ProfileView from "@/components/organisms/profile/ProfileView";
+import ChatsView from "@/components/organisms/chat/ChatsView";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
@@ -35,9 +36,11 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
-import { InputArea } from "@/components/atoms/chat/InputArea";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
-import { WorkoutStartButton } from "@/components/molecules/workout/WorkoutStartButton";
+// import { WorkoutStartButton } from "@/components/molecules/workout/WorkoutStartButton"; // Removed
+import { QuickChatActions } from '@/components/molecules/home/QuickChatActions';
+import { useMessageStore } from "@/stores/chat/MessageStore";
+import { useFreshGreeting } from "@/hooks/chat/useFreshGreeting";
 
 let count = 0;
 
@@ -62,6 +65,8 @@ export default function HomeScreen() {
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showChats, setShowChats] = useState(false);
   const [showFinishMessage, setShowFinishMessage] = useState(false);
   const [intendedToStart, setIntendedToStart] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -82,9 +87,6 @@ export default function HomeScreen() {
   );
   const selectedTemplate = useUserSessionStore(
     (state) => state.selectedTemplate
-  );
-  const showWorkoutSavedPrompt = useUserSessionStore(
-    (state) => state.showWorkoutSavedPrompt
   );
 
   // Stable reference to session actions
@@ -107,21 +109,52 @@ export default function HomeScreen() {
 
   const { templates } = useWorkoutTemplates(userProfile?.user_id?.toString());
 
-  const templatesWithEmpty = useMemo(() => {
-    if (!userProfile?.user_id) return templates;
+  // Conversation State for Quick Chat
+  const activeConversationId = useConversationStore((state) => state.activeConversationId);
+  const activeConversation = useConversationStore((state) => 
+    activeConversationId ? state.conversations.get(activeConversationId) : undefined
+  );
+  
+  // Check if conversation is fresh enough (< 60 mins)
+  // Initially we just use activeConversationId presence, but let's verify timeout logic is handling the archival?
+  // Yes, checkTimeout handles archival. So if activeConversationId exists, it's active.
 
-    const emptyTemplate = {
-      ...EMPTY_WORKOUT_TEMPLATE,
-      user_id: userProfile.user_id.toString(),
-    };
+  // Fresh greeting generation
+  const freshGreeting = useFreshGreeting();
 
-    return [emptyTemplate, ...templates];
-  }, [templates, userProfile?.user_id]);
+  const recentMessages = useMessageStore((state) => 
+    activeConversationId ? state.messages.get(activeConversationId) : undefined
+  );
+
+  const handleQuickReply = useCallback((text: string) => {
+    const activeId = useConversationStore.getState().activeConversationId;
+    
+    // Only set greeting for NEW conversations
+    if (!activeId) {
+      useConversationStore.getState().setPendingGreeting(freshGreeting);
+    }
+    
+    // Set pending message and open overlay
+    useConversationStore.getState().setPendingInitialMessage(text);
+    useConversationStore.getState().setPendingChatOpen(true);
+  }, [freshGreeting]);
+
 
   // Auto-load dashboard data on mount
   useEffect(() => {
+    console.log("⚡️ [HomeScreen] MOUNT EFFECT (Dashboard)");
     refreshDashboard();
   }, []);
+
+  // Fetch suggested actions only when user profile is available
+  useEffect(() => {
+    if (userProfile?.auth_user_uuid) {
+      console.log("⚡️ [HomeScreen] User ready, calling fetchSuggestedActions()");
+      useConversationStore.getState().fetchSuggestedActions();
+    } else {
+      console.log("⚡️ [HomeScreen] User not ready yet, skipping actions fetch");
+    }
+  }, [userProfile?.auth_user_uuid]);
 
   // Pull-to-refresh handler - refreshes dashboard data
   const onRefresh = useCallback(async () => {
@@ -138,7 +171,6 @@ export default function HomeScreen() {
   const handleWorkoutDayPress = useCallback((workoutIds: string[]) => {
     setSelectedWorkoutIds(workoutIds);
   }, []);
-  const isSheetVisible = selectedWorkoutIds.length > 0;
 
   const handleTemplateSelect = useCallback(
     (template: CompleteWorkout) => {
@@ -153,14 +185,12 @@ export default function HomeScreen() {
 
       if (intendedToStart) {
         setIntendedToStart(false);
-        // Get the workout directly from store after selection
-        setTimeout(() => {
-          const { currentWorkout } = useUserSessionStore.getState();
-          if (currentWorkout) {
-            sessionActions.startWorkout(currentWorkout);
-            workoutTrackerRef.current?.expandToFull();
-          }
-        }, 100);
+        // Show the chats modal
+        setShowChats(true);
+        
+        // We might need to handle auto-selection of the new conversation in ChatsView
+        // For now, we rely on the store having the new conversation.
+        useConversationStore.getState().getConversations();
       }
     },
     [sessionActions, intendedToStart]
@@ -273,36 +303,14 @@ export default function HomeScreen() {
     }
   }, [sessionActions, userProfile?.user_id]);
 
-  const handleChatSend = useCallback(async (message: string) => {
-    console.log("Chat message sent:", message);
+  const handleProfilePress = () => {
+    setShowProfile(true);
+  };
 
-    try {
-      setIsSendingMessage(true);
+  const handleRecentsPress = () => {
+    setShowChats(true);
+  };
 
-      const result = await useConversationStore
-        .getState()
-        .createConversationFromMessage(message);
-
-      console.log("✅ Navigating to conversation:", result.conversationId);
-
-      // Just pass conversationId - message is in store
-      router.push({
-        pathname: "/chats",
-        params: {
-          conversationId: result.conversationId,
-        },
-      });
-      useConversationStore.getState().getConversations();
-    } catch (error) {
-      console.error("Failed to create conversation:", error);
-      Toast.show({
-        type: "error",
-        text1: "Failed to start conversation",
-      });
-    } finally {
-      setIsSendingMessage(false);
-    }
-  }, []);
   return (
     <>
       {/* Main Content */}
@@ -316,6 +324,8 @@ export default function HomeScreen() {
           <Stack flex={1} padding="$4" paddingBottom="$20">
             <Header
               greeting="Welcome to Volc!"
+              onProfilePress={handleProfilePress}
+              onRecentsPress={handleRecentsPress}
               onSettingsPress={() => setShowSettingsModal(true)}
             />
             <Stack marginBottom="$5" paddingBlock="$6">
@@ -327,12 +337,14 @@ export default function HomeScreen() {
               />
             </Stack>
 
-            {!isActive && (
-              <WorkoutStartButton
-                onPlanWithCoach={handlePlanWithCoach}
-                onLogManually={handleLogManually}
-              />
-            )}
+            {/* Quick Chat Interface */}
+            {/* Quick Chat Actions */}
+            <QuickChatActions
+              isActive={!!activeConversationId}
+              onActionSelect={handleQuickReply}
+              recentMessages={recentMessages || undefined}
+              greeting={freshGreeting}
+            />
           </Stack>
         </ScrollView>
 
@@ -354,10 +366,28 @@ export default function HomeScreen() {
         />
 
         {/* Settings Modal */}
-        <SettingsModal
-          visible={showSettingsModal}
-          onClose={() => setShowSettingsModal(false)}
-        />
+      <SettingsModal
+        visible={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      />
+
+      {/* Profile Modal */}
+      <BaseModal
+        isVisible={showProfile}
+        onClose={() => setShowProfile(false)}
+        heightPercent={85}
+      >
+        <ProfileView />
+      </BaseModal>
+
+      {/* Chats Modal */}
+      <BaseModal
+        isVisible={showChats}
+        onClose={() => setShowChats(false)}
+        heightPercent={85}
+      >
+        <ChatsView onClose={() => setShowChats(false)} />
+      </BaseModal>
       </Stack>
 
       {/* WorkoutTracker - only show when active */}
@@ -366,32 +396,6 @@ export default function HomeScreen() {
           ref={workoutTrackerRef}
           currentTemplateName={selectedTemplate?.name}
         />
-      )}
-
-
-      {!isActive && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1,
-            elevation: 1,
-            opacity: isSheetVisible ? 0 : 1, // Move opacity here
-          }}
-          keyboardVerticalOffset={50}
-          pointerEvents={isSheetVisible ? "none" : "auto"}
-        >
-          <InputArea
-            placeholder="start new chat.."
-            onSendMessage={handleChatSend}
-            isLoading={isSendingMessage}
-            shouldPulse={showWorkoutSavedPrompt}
-            onPulseComplete={sessionActions.clearWorkoutSavedPrompt}
-          />
-        </KeyboardAvoidingView>
       )}
       {/* Floating Action Button - only show when active */}
       {isActive && (

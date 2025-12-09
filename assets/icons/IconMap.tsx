@@ -31,7 +31,10 @@ export type AppIconName =
   | "Info"
   | "AlertTriangle"
   | "AlertCircle"
+  | "AlertCircle"
   | "Lock"
+  | "Clock"
+  | "Wrench"
   | "ChevronUp";
 
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
@@ -64,6 +67,8 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   AlertTriangle: "warning-outline",
   AlertCircle: "alert-circle-outline",
   Lock: "lock-closed-outline",
+  Clock: "time-outline",
+  Wrench: "construct-outline",
 };
 
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
@@ -78,7 +83,7 @@ const resolveColor = (
 ): string | OpaqueColorValue => {
   if (!color) return "currentColor";
 
-  // If it's an OpaqueColorValue (platform color), return as-is
+
   if (typeof color !== "string") return color;
 
   // If it's a Tamagui token (starts with $), resolve it from theme
@@ -226,4 +231,12 @@ export const AlertCircle = (props: Omit<AppIconProps, "name">) => (
 
 export const Lock = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Lock" {...props} />
+);
+
+export const Clock = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Clock" {...props} />
+);
+
+export const Wrench = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Wrench" {...props} />
 );

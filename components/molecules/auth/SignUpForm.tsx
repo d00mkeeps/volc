@@ -12,6 +12,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 
 const isDev = typeof __DEV__ !== 'undefined' && __DEV__;
+const VOLC_LOGO = isDev
+  ? require('../../../assets/images/icon.png')
+  : require('../../../assets/images/volc11.png');
 
 interface SignUpFormProps {
   onSwitchToSignIn?: () => void; // Kept for compatibility but unused
@@ -241,7 +244,8 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
     <Stack flex={1} justifyContent="center" alignItems="center" gap="$4">
       {/* Branding / Logo Area */}
         <Image 
-  source={require('../../../assets/images/volc11.png')}          style={{ width: 300, height: 300 }}
+          source={VOLC_LOGO}
+          style={{ width: 300, height: 300 }}
           resizeMode="contain"
         />
 
