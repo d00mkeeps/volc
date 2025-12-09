@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Message } from "@/types";
 
 const EMPTY_MESSAGES: Message[] = [];
@@ -32,7 +34,9 @@ interface MessageStoreState {
   clearMessages: (conversationId: string) => void;
 }
 
-export const useMessageStore = create<MessageStoreState>((set) => ({
+export const useMessageStore = create<MessageStoreState>()(
+  persist(
+    (set) => ({
   // Initial state
   messages: new Map(),
   streamingMessages: new Map(),
@@ -64,7 +68,10 @@ export const useMessageStore = create<MessageStoreState>((set) => ({
     });
   },
 
+  // ... (updateStreamingMessage, completeStreamingMessage omitted for brevity but preserved in file via context)
+
   updateStreamingMessage: (conversationId, content) => {
+     // ... check existing ...
     set((state) => {
       const newStreamingMessages = new Map(state.streamingMessages);
       const existing = newStreamingMessages.get(conversationId);
@@ -139,11 +146,43 @@ export const useMessageStore = create<MessageStoreState>((set) => ({
 
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
-  clearMessages: (conversationId) => {
-    set((state) => {
-      const newMessages = new Map(state.messages);
-      newMessages.set(conversationId, []);
-      return { messages: newMessages };
-    });
-  },
-}));
+      clearMessages: (conversationId) => {
+        set((state) => {
+          const newMessages = new Map(state.messages);
+          newMessages.set(conversationId, []);
+          return { messages: newMessages };
+        });
+      },
+    }),
+    {
+      name: "message-store",
+      storage: {
+        getItem: async (name: string) => {
+          const str = await AsyncStorage.getItem(name);
+          if (!str) return null;
+          const { state } = JSON.parse(str);
+          return {
+            state: {
+              ...state,
+              messages: new Map(state.messages),
+              streamingMessages: new Map(), // Don't persist streaming state
+            },
+          };
+        },
+        setItem: (name: string, value: any) => {
+          const state = {
+            ...value.state,
+            messages: Array.from(value.state.messages.entries()),
+            streamingMessages: [], // Don't persist streaming state
+          };
+          return AsyncStorage.setItem(name, JSON.stringify({ state }));
+        },
+        removeItem: AsyncStorage.removeItem,
+      },
+      partialize: (state) => ({
+        messages: state.messages,
+        // streamingMessage is transient, don't persist
+      }),
+    }
+  )
+);

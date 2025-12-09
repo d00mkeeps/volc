@@ -22,6 +22,7 @@ export function useWorkoutPlanning() {
     webSocketService.getConnectionState()
   );
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [chartData, setChartData] = useState<any>(null);
 
   // State selectors
   const messages = useMessageStore((state) => {
@@ -65,6 +66,11 @@ export function useWorkoutPlanning() {
             templateApprovalCallbackRef.current(templateData);
           }
         });
+
+      const unsubscribeChartData = webSocketService.onChartData((data) => {
+        console.log("[useWorkoutPlanning] Chart data received:", data);
+        setChartData(data);
+      });
 
       const unsubscribeStatus = webSocketService.onStatus((statusText) => {
         console.log("[useWorkoutPlanning] Status update:", statusText);
@@ -114,6 +120,7 @@ export function useWorkoutPlanning() {
         unsubscribeTerminated,
         unsubscribeError,
         unsubscribeTemplateApproved,
+        unsubscribeChartData,
         unsubscribeStatus,
       ];
 
@@ -214,7 +221,7 @@ export function useWorkoutPlanning() {
       await registerHandlers(PLANNING_KEY);
 
       await webSocketService.ensureConnection({
-        type: "workout-planning",
+        type: "coach",
       });
 
       // ✅ Automatically send greeting trigger to let backend check for history
@@ -291,7 +298,7 @@ export function useWorkoutPlanning() {
           console.log(
             "[useWorkoutPlanning] Disconnected - reconnecting before sending message"
           );
-          await webSocketService.ensureConnection({ type: "workout-planning" });
+          await webSocketService.ensureConnection({ type: "coach" });
           await registerHandlers(PLANNING_KEY);
 
           // Send greeting trigger on reconnection
@@ -312,7 +319,7 @@ export function useWorkoutPlanning() {
           conversation_history: updatedMessages,
         };
 
-        await webSocketService.ensureConnection({ type: "workout-planning" });
+        await webSocketService.ensureConnection({ type: "coach" });
         webSocketService.sendMessage(payload);
       } catch (error) {
         console.error("Error sending planning message:", error);
@@ -342,7 +349,7 @@ export function useWorkoutPlanning() {
       useMessageStore.getState().clearStreamingMessage(PLANNING_KEY);
       useMessageStore.getState().setError(null);
 
-      await webSocketService.ensureConnection({ type: "workout-planning" });
+      await webSocketService.ensureConnection({ type: "coach" });
 
       // Send greeting trigger for fresh start
       webSocketService.sendMessage({
@@ -371,6 +378,7 @@ export function useWorkoutPlanning() {
     streamingMessage,
     isStreaming,
     statusMessage,
+    chartData,
     isLoading,
     error,
     connectionState,

@@ -26,11 +26,12 @@ export type RateLimitCallback = (data: {
 }) => void;
 
 export type EndpointConfig = {
-  type: "workout-analysis" | "workout-planning" | "onboarding";
+  type: "workout-analysis" | "workout-planning" | "onboarding" | "coach";
   conversationId?: string;
 };
 
 export type WorkoutTemplateApprovedCallback = (templateData: any) => void;
+export type ChartDataCallback = (chartData: any) => void;
 
 /**
  * Persistent WebSocket service - maintains single active connection per endpoint
@@ -82,14 +83,15 @@ export class WebSocketService {
     if (config.type === "workout-analysis" && !config.conversationId) {
       throw new Error("conversationId required for workout-analysis endpoint");
     }
+    
+    if (config.type === "coach" && !config.conversationId) {
+      throw new Error("conversationId required for coach endpoint");
+    }
 
-    //ai suggested below segment but i don't think it's necessary
-    // if (config.type === "onboarding" && !config.userId) {
-    //   throw new Error("userId required for onboarding endpoint");
-    // }
     // Build connection key for comparison
     const connectionKey =
-      config.type === "workout-planning"
+      config.type === "workout-planning" ||
+      config.type === "onboarding"
         ? config.type
         : `${config.type}-${config.conversationId}`;
 
@@ -204,17 +206,16 @@ export class WebSocketService {
     } else if (config.type === "workout-analysis") {
       url = `${baseUrl}/workout-analysis/${config.conversationId}/${userId}`;
     } else if (config.type === "onboarding") {
-      // ADD THIS CASE:
       url = `${baseUrl}/onboarding/${userId}`;
+    } else if (config.type === "coach") {
+      url = `${baseUrl}/coach/${config.conversationId}/${userId}`;
     } else {
       throw new Error(`Unknown endpoint type: ${config.type}`);
     }
 
     const connectionKey =
-      config.type === "workout-planning"
+      config.type === "workout-planning" || config.type === "onboarding"
         ? config.type
-        : config.type === "onboarding"
-        ? config.type // ADD THIS - just use type like workout-planning
         : `${config.type}-${config.conversationId}`;
 
     console.log(`[WSService] Connecting to: ${url}`);
@@ -318,13 +319,14 @@ export class WebSocketService {
         const currentConnectionKey = this.currentConnectionKey;
         if (currentConnectionKey) {
           // Parse the connection key to rebuild config
-          // Parse the connection key to rebuild config
           let config: EndpointConfig;
           if (currentConnectionKey === "workout-planning") {
             config = { type: "workout-planning" };
           } else if (currentConnectionKey === "onboarding") {
-            // ADD THIS CASE:
             config = { type: "onboarding" };
+          } else if (currentConnectionKey.startsWith("coach-")) {
+            const conversationId = currentConnectionKey.replace("coach-", "");
+            config = { type: "coach", conversationId };
           } else if (currentConnectionKey.startsWith("workout-analysis-")) {
             const conversationId = currentConnectionKey.replace(
               "workout-analysis-",
@@ -402,6 +404,11 @@ export class WebSocketService {
           console.log("[WSService] Workout template approved:", message.data);
           this.events.emit("workoutTemplateApproved", message.data);
           break;
+
+        case "chart_data":
+          console.log("[WSService] Chart data received:", message.data);
+          this.events.emit("chartData", message.data);
+          break;
         case "complete":
           this.events.emit("complete");
           break;
@@ -418,11 +425,7 @@ export class WebSocketService {
           );
           break;
 
-        case "status": // ← ADD THIS CASE
-          if (message.data) {
-            this.events.emit("status", message.data);
-          }
-          break;
+
 
         case "error":
           console.error("[WSService] Server error:", message);
@@ -639,6 +642,13 @@ export class WebSocketService {
     this.events.on("status", callback);
     return () => this.events.off("status", callback);
   }
+
+  onChartData(callback: ChartDataCallback): () => void {
+    this.events.on("chartData", callback);
+    return () => this.events.off("chartData", callback);
+  }
+
+
 
   /**
    * Remove all event listeners (for cleanup)

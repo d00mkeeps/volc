@@ -170,7 +170,7 @@ export function useOnboarding() {
       await registerHandlers(ONBOARDING_KEY);
 
       await webSocketService.ensureConnection({
-        type: "onboarding",
+        type: "coach",
       });
 
       const currentMessages =
@@ -247,7 +247,7 @@ export function useOnboarding() {
           );
 
           await webSocketService.ensureConnection({
-            type: "onboarding",
+            type: "coach",
           });
           await registerHandlers(ONBOARDING_KEY);
 
@@ -272,7 +272,7 @@ export function useOnboarding() {
         };
 
         await webSocketService.ensureConnection({
-          type: "onboarding",
+          type: "coach",
         });
         webSocketService.sendMessage(payload);
       } catch (error) {

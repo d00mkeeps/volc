@@ -189,7 +189,7 @@ export function useMessaging(isActive: boolean = true) {
           "[useMessaging] Auto-connecting websocket for:",
           conversationId
         );
-        await webSocketService.ensureConnection();
+        await webSocketService.ensureConnection({ type: "coach" });
 
         // Register handlers immediately after connection for proactive messages
         registerHandlers(conversationId);
@@ -301,7 +301,7 @@ export function useMessaging(isActive: boolean = true) {
         };
 
         // Connect and send (handlers already registered in useEffect)
-        await webSocketService.ensureConnection();
+        await webSocketService.ensureConnection({ type: "coach" });
         webSocketService.sendMessage(payload);
       } catch (error) {
         console.error("Error sending message:", error);

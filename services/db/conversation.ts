@@ -52,16 +52,16 @@ export class ConversationService extends BaseDBService {
   }
 
   /**
-   * Create a conversation with first message (message sent via websocket)
+   * Create a conversation with initial messages (sent via websocket auto-respond)
    */
-  async createConversationFromMessage(params: {
+  async createConversationWithMessages(params: {
     userId: string;
     title: string;
-    firstMessage: string;
+    messages: { content: string; sender: "user" | "assistant" }[];
     configName: string;
-  }): Promise<{ conversation: Conversation; firstMessage: string }> {
+  }): Promise<{ conversation: Conversation; messages: any[] }> {
     try {
-      console.log("📤 Creating conversation from message:", params);
+      console.log("📤 Creating conversation with messages:", params);
 
       const response = await apiPost<{
         conversation: {
@@ -69,10 +69,10 @@ export class ConversationService extends BaseDBService {
           data: Conversation;
           error: any;
         };
-        first_message: string;
-      }>("/db/conversations/with-message", {
+        messages: any[];
+      }>("/db/conversations/with-messages", {
         title: params.title,
-        firstMessage: params.firstMessage,
+        messages: params.messages,
         configName: params.configName,
       });
 
@@ -83,10 +83,10 @@ export class ConversationService extends BaseDBService {
 
       return {
         conversation,
-        firstMessage: response.first_message,
+        messages: response.messages,
       };
     } catch (error) {
-      console.error("❌ Error creating conversation from message:", error);
+      console.error("❌ Error creating conversation with messages:", error);
       return this.handleError(error);
     }
   }
