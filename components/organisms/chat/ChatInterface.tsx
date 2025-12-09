@@ -27,6 +27,9 @@ interface ChatInterfaceProps {
   statusMessage?: string | null;
 }
 
+/**
+ * @deprecated Use ChatOverlay instead for the main chat interface
+ */
 export const ChatInterface = ({
   messages = [],
   streamingMessage,

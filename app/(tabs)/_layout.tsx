@@ -3,13 +3,16 @@ import { View } from "react-native";
 import { YStack } from "tamagui";
 import PagerView from "react-native-pager-view";
 import { usePathname } from "expo-router";
-import CustomTabBar from "@/components/organisms/CustomTabBar";
 
 // Import your screen components
 import HomeScreen from "./index";
-import ProfileScreen from "./profile";
-import ChatScreen from "./chats";
 import WorkoutScreen from "./workouts";
+import CustomTabBar from "@/components/organisms/CustomTabBar";
+import { ChatOverlay } from "@/components/organisms/chat/ChatOverlay";
+
+interface TabLayoutProps {
+  // Define any props if needed
+}
 
 export default function TabLayout() {
   const pagerRef = useRef<PagerView>(null);
@@ -19,9 +22,7 @@ export default function TabLayout() {
   // Map routes to page indices
   const routeToPage: Record<string, number> = {
     "/": 0,
-    "/profile": 1,
-    "/chats": 2,
-    "/workouts": 3,
+    "/workouts": 1,
   };
 
   // Sync PagerView with route changes
@@ -32,7 +33,6 @@ export default function TabLayout() {
         `📱 Route changed: ${pathname} -> switching to page ${targetPage}`
       );
       pagerRef.current?.setPage(targetPage);
-      setCurrentPage(targetPage);
     }
   }, [pathname]);
 
@@ -44,27 +44,36 @@ export default function TabLayout() {
     setCurrentPage(e.nativeEvent.position);
   };
 
+  /*
+   * ARCHITECTURE NOTE:
+   * We wrap the entire PagerView in a container that has the TabBar and ChatOverlay at the bottom.
+   * The ChatOverlay sits visually above the TabBar.
+   * When collapsed, ChatOverlay is just the input bar.
+   * When expanded, ChatOverlay fills the screen (covering PagerView and TabBar).
+   */
+
   return (
-    <YStack flex={1}>
+    <YStack flex={1} backgroundColor="$background">
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
         initialPage={0}
         onPageSelected={handlePageSelected}
       >
-        <View key="home" style={{ flex: 1 }}>
+        <View key="home">
           <HomeScreen />
         </View>
-        <View key="profile" style={{ flex: 1 }}>
-          <ProfileScreen />
-        </View>
-        <View key="chats" style={{ flex: 1 }}>
-          <ChatScreen isActive={currentPage === 2} />
-        </View>
-        <View key="leaderboard" style={{ flex: 1 }}>
-          <WorkoutScreen isActive={currentPage === 3} />
+        <View key="workouts">
+          <WorkoutScreen />
         </View>
       </PagerView>
+
+      {/* Floating Overlay Component */}
+      {/* 
+        This sits at the bottom of the screen stack.
+        It contains the InputArea (collapsed) AND the full Modal (expanded).
+      */}
+      <ChatOverlay tabBarHeight={50} />
 
       <CustomTabBar activeIndex={currentPage} onTabPress={handleTabPress} />
     </YStack>

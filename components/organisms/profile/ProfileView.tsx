@@ -13,7 +13,7 @@ import Button from "@/components/atoms/core/Button";
 import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
 import TextEditModal from "@/components/molecules/core/TextEditModal";
 
-export default function ProfileScreen() {
+export default function ProfileView() {
   const router = useRouter();
   const { userProfile, loading, error, updateProfile, refreshProfile } =
     useUserStore();
@@ -25,11 +25,11 @@ export default function ProfileScreen() {
   const [goalsModalVisible, setGoalsModalVisible] = useState(false);
 
   useEffect(() => {
-    console.log("[ProfileScreen] Component mounted");
+    console.log("[ProfileView] Component mounted");
   }, []);
 
   const handleAvatarSelected = async (imageId: string) => {
-    console.log(`[ProfileScreen] Avatar selected: ${imageId}`);
+    console.log(`[ProfileView] Avatar selected: ${imageId}`);
     await updateProfile({ avatar_image_id: imageId });
   };
 

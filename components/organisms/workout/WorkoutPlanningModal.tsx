@@ -8,6 +8,7 @@ import { useWorkoutPlanning } from "@/hooks/chat/useWorkoutPlanning";
 import { CompleteWorkout } from "@/types/workout";
 import { EMPTY_WORKOUT_TEMPLATE } from "@/app/(tabs)/index";
 import { useUserStore } from "@/stores/userProfileStore";
+import { convertTemplateToWorkout } from "@/utils/workout/templateConversion";
 
 interface WorkoutPlanningModalProps {
   isVisible: boolean;
@@ -40,81 +41,16 @@ export const WorkoutPlanningModal = ({
     }
   }, [isVisible]);
 
-  const convertTemplateToWorkout = useCallback(
-    (templateData: any): CompleteWorkout | null => {
-      if (!templateData || !userProfile?.user_id) {
-        console.error(
-          "[WorkoutPlanningModal] Missing template data or user profile:",
-          {
-            hasTemplate: !!templateData,
-            hasUserId: !!userProfile?.user_id,
-            templateData,
-          }
-        );
-        return null;
-      }
-
-      const template = templateData;
-      const now = new Date().toISOString();
-
-      const convertedWorkout: CompleteWorkout = {
-        id: `ai-template-${Date.now()}`,
-        user_id: userProfile.user_id.toString(),
-        name: template.name || "AI Generated Workout",
-        notes: template.notes || "",
-        is_template: true,
-        workout_exercises:
-          template.workout_exercises?.map((exercise: any, index: number) => ({
-            id: `exercise-${Date.now()}-${index}`,
-            definition_id: exercise.definition_id || undefined,
-            workout_id: `ai-template-${Date.now()}`,
-            name: exercise.name || `Exercise ${index + 1}`,
-            notes: exercise.notes || undefined,
-            order_index: exercise.order_index ?? index,
-            weight_unit: "kg",
-            distance_unit: "km",
-            workout_exercise_sets:
-              exercise.workout_exercise_sets?.map(
-                (set: any, setIndex: number) => ({
-                  id: `set-${Date.now()}-${index}-${setIndex}`,
-                  exercise_id: `exercise-${Date.now()}-${index}`,
-                  set_number: set.set_number || setIndex + 1,
-                  reps: set.reps || undefined,
-                  weight: set.weight || undefined,
-                  distance: set.distance || undefined,
-                  duration: set.duration || undefined,
-                  rpe: set.rpe || undefined,
-                  is_completed: false,
-                  created_at: now,
-                  updated_at: now,
-                })
-              ) || [],
-            created_at: now,
-            updated_at: now,
-          })) || [],
-        created_at: now,
-        updated_at: now,
-      };
-
-      console.log("[WorkoutPlanningModal] Converted template:", {
-        originalName: template.name,
-        convertedName: convertedWorkout.name,
-        exerciseCount: convertedWorkout.workout_exercises.length,
-      });
-
-      return convertedWorkout;
-    },
-    [userProfile?.user_id]
-  );
-
   const handleTemplateApproved = useCallback(
     (templateData: any) => {
+        if (!userProfile?.user_id) return;
+        
       console.log(
         "[WorkoutPlanningModal] Template approved, processing data:",
         templateData
       );
 
-      const workout = convertTemplateToWorkout(templateData);
+      const workout = convertTemplateToWorkout(templateData, userProfile.user_id.toString());
       if (workout && onSelectTemplate) {
         console.log(
           "[WorkoutPlanningModal] Successfully converted template, selecting workout"
@@ -127,8 +63,9 @@ export const WorkoutPlanningModal = ({
         );
       }
     },
-    [convertTemplateToWorkout, onSelectTemplate, onClose]
+    [userProfile?.user_id, onSelectTemplate, onClose]
   );
+
 
   useEffect(() => {
     if (isVisible && planning.setTemplateApprovalHandler) {

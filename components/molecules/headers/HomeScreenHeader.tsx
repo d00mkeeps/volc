@@ -1,15 +1,20 @@
 import React from "react";
-import { Stack } from "tamagui";
+import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Settings } from "@/assets/icons/IconMap";
+import { Settings, User, Clock, Wrench } from "@/assets/icons/IconMap"; // Updated icons
+
 interface HeaderProps {
   greeting?: string;
+  onProfilePress?: () => void;
+  onRecentsPress?: () => void;
   onSettingsPress?: () => void;
 }
 
 export default function Header({
   greeting = "Welcome!",
+  onProfilePress,
+  onRecentsPress,
   onSettingsPress,
 }: HeaderProps) {
   return (
@@ -17,14 +22,23 @@ export default function Header({
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
-      marginBottom="$3" // This stays $3 as it's the gap from header to dashboard content
+      marginBottom="$3"
     >
       <Text size="large" fontWeight="700" color="$text">
         {greeting}
       </Text>
-      <Button size="$3" circular onPress={onSettingsPress}>
-        <Settings size={20} color="white" />
-      </Button>
+      
+      <XStack gap="$2">
+        <Button size="$3" circular onPress={onProfilePress} backgroundColor="$backgroundHover">
+          <User size={20} color="$text" />
+        </Button>
+        <Button size="$3" circular onPress={onRecentsPress} backgroundColor="$backgroundHover">
+          <Clock size={20} color="$text" />
+        </Button>
+        <Button size="$3" circular onPress={onSettingsPress} backgroundColor="$backgroundHover">
+          <Wrench size={20} color="$text" />
+        </Button>
+      </XStack>
     </Stack>
   );
 }

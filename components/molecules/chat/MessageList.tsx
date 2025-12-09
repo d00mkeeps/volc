@@ -1,6 +1,5 @@
-// MessageList.tsx
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import { YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { MessageItem } from "../../atoms/chat/MessageItem";
@@ -14,7 +13,8 @@ interface MessageListProps {
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   onTemplateApprove?: (templateData: any) => void;
   statusMessage?: string | null;
-  onProfileConfirm?: () => void; // ✅ ADD THIS;
+  onProfileConfirm?: () => void;
+  onDismiss?: () => void;
 }
 
 export const MessageList = ({
@@ -25,6 +25,7 @@ export const MessageList = ({
   connectionState = "ready",
   statusMessage,
   onTemplateApprove,
+  onDismiss,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
@@ -70,6 +71,7 @@ export const MessageList = ({
     }
 
     scrollTimeoutRef.current = setTimeout(() => {
+      // Use w/o animation for initial render to prevent jumpiness
       listRef.current?.scrollToEnd({ animated });
     }, 20); // Small delay to batch rapid updates
   }, []);
@@ -97,9 +99,6 @@ export const MessageList = ({
     };
   }, []);
 
-  // /components/molecules/chat/MessageList.tsx
-
-  // In the renderMessage function, update it to:
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => {
       if (!item) return null;
@@ -113,30 +112,35 @@ export const MessageList = ({
           message={item}
           isStreaming={item.id === "streaming"}
           onTemplateApprove={onTemplateApprove}
-          onProfileConfirm={onProfileConfirm} // ✅ ADD THIS LINE
+          onProfileConfirm={onProfileConfirm}
+          onDismiss={onDismiss}
         />
       );
     },
-    [statusMessage, onTemplateApprove, onProfileConfirm] // ✅ ADD onProfileConfirm to dependencies
+    [statusMessage, onTemplateApprove, onProfileConfirm, onDismiss]
   );
+
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
-  // Don't show empty state when disconnected
+  // Don't show empty state when disconnected if there are no messages
   if (allMessages.length === 0 && connectionState !== "disconnected") {
+    // We can also make this dismissible by wrapping it
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center">
-        <Text color="$textMuted" size="medium">
-          Start a conversation about your workout
-        </Text>
-      </YStack>
+      <Pressable style={{ flex: 1 }} onPress={onDismiss}>
+        <YStack flex={1} justifyContent="center" alignItems="center">
+          <Text color="$textMuted" size="medium">
+            Start a conversation about your workout
+          </Text>
+        </YStack>
+      </Pressable>
     );
   }
 
   return (
     <YStack flex={1} position="relative">
       <FlatList
-        style={{ flex: 1 }}
         ref={listRef}
+        style={{ flex: 1 }}
         data={allMessages}
         renderItem={renderMessage}
         keyExtractor={keyExtractor}

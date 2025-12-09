@@ -13,6 +13,7 @@ interface InputAreaProps {
   isLoading?: boolean;
   shouldPulse?: boolean;
   onPulseComplete?: () => void;
+  onFocus?: () => void; // Added onFocus prop
 }
 
 export const InputArea = ({
@@ -22,6 +23,7 @@ export const InputArea = ({
   isLoading = false,
   shouldPulse = false,
   onPulseComplete,
+  onFocus: onFocusProp,
 }: InputAreaProps) => {
   const [isPressed, setIsPressed] = useState(false);
   const [input, setInput] = useState("");
@@ -116,7 +118,9 @@ export const InputArea = ({
       }
       onPulseComplete?.();
     }
-  }, [isPulsing, pulseAnim, onPulseComplete]);
+    // Call external onFocus if provided
+    onFocusProp?.();
+  }, [isPulsing, pulseAnim, onPulseComplete, onFocusProp]);
 
   const handleTextChange = useCallback(
     (text: string) => {
@@ -128,7 +132,7 @@ export const InputArea = ({
     },
     [error]
   );
-
+  
   // Calculate remaining characters
   const length = input.length;
   const showCounter = input.length >= 200;
