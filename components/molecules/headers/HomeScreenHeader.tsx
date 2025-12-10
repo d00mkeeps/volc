@@ -3,6 +3,7 @@ import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { Settings, User, Clock, Wrench, Pencil } from "@/assets/icons/IconMap"; // Updated icons
+import { useLayoutStore } from "@/stores/layoutStore";
 
 interface HeaderProps {
   greeting?: string;
@@ -19,28 +20,50 @@ export default function Header({
   onSettingsPress,
   onManualLogPress,
 }: HeaderProps) {
+  const setHeaderHeight = useLayoutStore((state) => state.setHeaderHeight);
+
   return (
     <Stack
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
       marginBottom="$3"
+      onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
     >
       <Text size="large" fontWeight="700" color="$text">
         {greeting}
       </Text>
-      
       <XStack gap="$2">
-        <Button size="$3" circular onPress={onManualLogPress} backgroundColor="$backgroundHover">
+        <Button
+          size="$3"
+          circular
+          onPress={onManualLogPress}
+          backgroundColor="$backgroundHover"
+        >
           <Pencil size={20} color="$text" />
         </Button>
-        <Button size="$3" circular onPress={onProfilePress} backgroundColor="$backgroundHover">
+        <Button
+          size="$3"
+          circular
+          onPress={onProfilePress}
+          backgroundColor="$backgroundHover"
+        >
           <User size={20} color="$text" />
         </Button>
-        <Button size="$3" circular onPress={onRecentsPress} backgroundColor="$backgroundHover">
+        <Button
+          size="$3"
+          circular
+          onPress={onRecentsPress}
+          backgroundColor="$backgroundHover"
+        >
           <Clock size={20} color="$text" />
         </Button>
-        <Button size="$3" circular onPress={onSettingsPress} backgroundColor="$backgroundHover">
+        <Button
+          size="$3"
+          circular
+          onPress={onSettingsPress}
+          backgroundColor="$backgroundHover"
+        >
           <Wrench size={20} color="$text" />
         </Button>
       </XStack>

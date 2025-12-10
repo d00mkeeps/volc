@@ -1,3 +1,4 @@
+// /components/molecules/workout/WorkoutPreviewSheet.tsx
 import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -19,12 +20,14 @@ export default function WorkoutPreviewSheet({
   workoutIds,
   onClose,
 }: WorkoutPreviewSheetProps) {
+  console.log("🔍 [WorkoutPreviewSheet] Render - workoutIds:", workoutIds);
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
   const { workouts } = useWorkoutStore();
   const setWorkoutDetailOpen = useUserSessionStore(
     (state) => state.setWorkoutDetailOpen
-  ); // Helper
+  );
   const [expandedWorkoutId, setExpandedWorkoutId] = React.useState<
     string | null
   >(null);
@@ -38,24 +41,44 @@ export default function WorkoutPreviewSheet({
 
   // Find workouts from store
   const selectedWorkouts = useMemo(() => {
+    console.log(
+      "🔍 [WorkoutPreviewSheet] useMemo calculating - workoutIds:",
+      workoutIds,
+      "workouts count:",
+      workouts.length
+    );
     const found = workoutIds
       .map((id) => workouts.find((w) => w.id === id))
       .filter((w): w is CompleteWorkout => w !== undefined);
 
+    console.log(
+      "🔍 [WorkoutPreviewSheet] Found workouts:",
+      found.length,
+      found.map((w) => w.id)
+    );
     return found;
   }, [workoutIds, workouts]);
 
   const isOpen = workoutIds.length > 0 && selectedWorkouts.length > 0;
+  console.log(
+    "🔍 [WorkoutPreviewSheet] isOpen:",
+    isOpen,
+    "workoutIds.length:",
+    workoutIds.length,
+    "selectedWorkouts.length:",
+    selectedWorkouts.length
+  );
 
-  // /components/molecules/workout/WorkoutPreviewSheet.tsx
   const handleSheetChanges = useCallback(
     (index: number) => {
+      console.log(
+        "🔍 [WorkoutPreviewSheet] handleSheetChanges - index:",
+        index
+      );
       animatedIndex.value = index;
 
-      // Set closed state when closing starts (index -1)
-      // Set open state when opening starts (index >= 0)
       if (index === -1) {
-        setWorkoutDetailOpen(false); // ✅ Now matches opening behavior
+        setWorkoutDetailOpen(false);
         onClose();
       } else {
         setWorkoutDetailOpen(true);
@@ -69,14 +92,24 @@ export default function WorkoutPreviewSheet({
   );
 
   useEffect(() => {
+    console.log(
+      "🔍 [WorkoutPreviewSheet] useEffect triggered - isOpen:",
+      isOpen
+    );
     if (isOpen) {
-      setWorkoutDetailOpen(true); // ✅ Set immediately before sheet opens
+      console.log(
+        "🔍 [WorkoutPreviewSheet] Opening sheet - calling setWorkoutDetailOpen(true) and snapToIndex(0)"
+      );
+      setWorkoutDetailOpen(true);
       setTimeout(() => {
         bottomSheetRef.current?.snapToIndex(0);
       }, 100);
       setExpandedWorkoutId(null);
     } else {
-      setWorkoutDetailOpen(false); // ✅ Set immediately before closing
+      console.log(
+        "🔍 [WorkoutPreviewSheet] Closing sheet - calling setWorkoutDetailOpen(false) and close()"
+      );
+      setWorkoutDetailOpen(false);
       setTimeout(() => {
         bottomSheetRef.current?.close();
       }, 100);
@@ -415,8 +448,7 @@ export default function WorkoutPreviewSheet({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={-1} // Start closed (like WorkoutTracker starts at index 1 for its use case)
-      style={{ zIndex: 100 }} // Add this
+      index={-1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       enablePanDownToClose={true}

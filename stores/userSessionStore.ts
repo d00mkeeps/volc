@@ -16,6 +16,7 @@ import { useExerciseStore } from "./workout/exerciseStore";
 import Toast from "react-native-toast-message";
 import { AppState, AppStateStatus } from "react-native";
 import { workoutPersistence } from "@/utils/workoutPersistence";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface UserSessionState {
   currentWorkout: CompleteWorkout | null;
@@ -30,8 +31,6 @@ interface UserSessionState {
   selectedTemplate: CompleteWorkout | null;
   showTemplateSelector: boolean;
   isWorkoutDetailOpen: boolean; // Global visibility tracking for sheets/modals
-
-  activeConversationId: string | null;
 
   pendingImageId: string | null;
 
@@ -63,8 +62,6 @@ interface UserSessionState {
   closeTemplateSelector: () => void;
   setWorkoutDetailOpen: (isOpen: boolean) => void;
   selectTemplate: (template: CompleteWorkout) => void;
-
-  setActiveConversation: (id: string | null) => void;
 
   setPendingImage: (imageId: string | null) => void;
 
@@ -113,7 +110,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   selectedTemplate: null,
   showTemplateSelector: false,
   isWorkoutDetailOpen: false,
-  activeConversationId: null,
   pendingImageId: null,
   startWorkout: (workout) => {
     set({
@@ -238,7 +234,9 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       .initiateBackgroundAnalysis(definitionIds);
 
     if (analysisResult?.conversation_id) {
-      set({ activeConversationId: analysisResult.conversation_id });
+      useConversationStore
+        .getState()
+        .setActiveConversation(analysisResult.conversation_id);
     }
 
     return analysisResult;
@@ -289,7 +287,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Initiate save in background (don't await - WorkoutStore handles retry logic)
     useWorkoutStore.getState().createWorkout(workoutToSave);
-    
+
     // Clear persistence immediately
     workoutPersistence.clear();
 
@@ -310,7 +308,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     // Show success toast (handled by WorkoutStore)
     // WorkoutStore shows "Workout saved!" or "We can't save your workout right now"
-    
+
     set({ showWorkoutSavedPrompt: true });
 
     return workoutToSave;
@@ -387,7 +385,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       elapsedSeconds: 0,
       scheduledTime: undefined,
       selectedTemplate: null,
-      activeConversationId: null,
       pendingImageId: null,
     });
   },
@@ -458,11 +455,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       selectedTemplate: template,
       showTemplateSelector: false,
     });
-  },
-
-  // NEW: Conversation actions
-  setActiveConversation: (id) => {
-    set({ activeConversationId: id });
   },
 
   // Computed values

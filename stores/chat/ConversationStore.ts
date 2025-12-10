@@ -18,7 +18,9 @@ interface ConversationStoreState {
   initialized: boolean;
 
   // Updated return type
-  createConversationWithMessages: (messages: { content: string; sender: "user" | "assistant" }[]) => Promise<{
+  createConversationWithMessages: (
+    messages: { content: string; sender: "user" | "assistant" }[]
+  ) => Promise<{
     conversationId: string;
   }>;
 
@@ -29,10 +31,11 @@ interface ConversationStoreState {
   setPendingInitialMessage: (message: string | null) => void;
   pendingGreeting: string | null;
   setPendingGreeting: (greeting: string | null) => void;
-  
+
   // Dynamic Actions
 
   suggestedActions: QuickAction[];
+  isLoadingActions: boolean; // NEW
   setSuggestedActions: (actions: QuickAction[]) => void;
   fetchSuggestedActions: () => Promise<void>;
 
@@ -47,11 +50,11 @@ interface ConversationStoreState {
   getConversations: () => Promise<Conversation[]>;
   deleteConversation: (id: string) => Promise<void>;
   setActiveConversation: (id: string | null) => void;
-  
+
   // Timeout & Resume
   checkTimeout: () => void;
   resumeConversation: (id: string) => void;
-  touchConversation: (id: string) => void; 
+  touchConversation: (id: string) => void;
 
   // UI Coordination
   pendingChatOpen: boolean;
@@ -75,54 +78,81 @@ export const useConversationStore = create<ConversationStoreState>()(
       pendingGreeting: null,
       pendingChatOpen: false,
       suggestedActions: [], // Added suggestedActions to initial state
+      isLoadingActions: false, // NEW
 
       setPendingChatOpen: (open) => set({ pendingChatOpen: open }),
       setPendingGreeting: (greeting) => set({ pendingGreeting: greeting }),
       setSuggestedActions: (actions) => set({ suggestedActions: actions }), // Added setSuggestedActions implementation
 
       fetchSuggestedActions: async () => {
-          const userProfile = useUserStore.getState().userProfile;
-          if (!userProfile?.auth_user_uuid) {
-              console.log("[ConversationStore] Cannot fetch actions: No auth user ID");
-              return;
-          }
+        const userProfile = useUserStore.getState().userProfile;
+        if (!userProfile?.auth_user_uuid) {
+          console.log(
+            "[ConversationStore] Cannot fetch actions: No auth user ID"
+          );
+          return;
+        }
 
-          // Get recent messages from active conversation
-          const { activeConversationId } = get();
-          let recentMessages: any[] = [];
-          
-          if (activeConversationId) {
-             const messages = useMessageStore.getState().messages.get(activeConversationId);
-             if (messages && messages.length > 0) {
-                 // Format for backend: { sender: 'user' | 'assistant', content: string }
-                 // Taking last 10 messages for context
-                 recentMessages = messages.slice(-10).map(m => ({
-                     sender: m.sender,
-                     content: m.content
-                 }));
-             }
-          }
+        // Get recent messages from active conversation
+        const { activeConversationId } = get();
+        let recentMessages: any[] = [];
 
-          console.log(`[ConversationStore] 🚀 Fetching suggested actions for user (UUID): ${userProfile.auth_user_uuid} with ${recentMessages.length} msgs`);
-          try {
-              // Changed to POST to send message context in body
-              const response = await apiPost<{ actions: QuickAction[] }>(
-                  `/api/v1/chat/quick-actions/${userProfile.auth_user_uuid}`,
-                  recentMessages.length > 0 ? recentMessages : undefined 
-              );
-              
-              if (response && response.actions) {
-                  const formattedLog = response.actions.map((a, i) => `${i + 1}. [${a.label}]: ${a.message}`).join("\n");
-                  console.log(`[ConversationStore] Fetching quick replies:\n${formattedLog}`);
-                  set({ suggestedActions: response.actions });
-              } else {
-                  console.warn("[ConversationStore] ⚠️ Received empty or invalid actions response:", response);
-              }
-          } catch (error) {
-              console.error("[ConversationStore] ❌ Failed to fetch suggested actions:", error);
+        if (activeConversationId) {
+          const messages = useMessageStore
+            .getState()
+            .messages.get(activeConversationId);
+          if (messages && messages.length > 0) {
+            // Format for backend: { sender: 'user' | 'assistant', content: string }
+            // Taking last 10 messages for context
+            recentMessages = messages.slice(-10).map((m) => ({
+              sender: m.sender,
+              content: m.content,
+            }));
           }
+        }
+
+        console.log(
+          `[ConversationStore] 🚀 Fetching suggested actions for user (UUID): ${userProfile.auth_user_uuid} with ${recentMessages.length} msgs`
+        );
+
+        set({ isLoadingActions: true }); // NEW
+
+        try {
+          // Changed to POST to send message context in body
+          const response = await apiPost<{ actions: QuickAction[] }>(
+            `/api/v1/chat/quick-actions/${userProfile.auth_user_uuid}`,
+            recentMessages.length > 0 ? recentMessages : undefined
+          );
+
+          if (response && response.actions) {
+            const formattedLog = response.actions
+              .map((a, i) => `${i + 1}. [${a.label}]: ${a.message}`)
+              .join("\n");
+
+            console.log(
+              `[ConversationStore] Fetched quick replies:\n${formattedLog}`
+            );
+            set({
+              suggestedActions: response.actions,
+              isLoadingActions: false,
+            });
+          } else {
+            console.warn(
+              "[ConversationStore] ⚠️ Received empty or invalid actions response:",
+              response
+            );
+            set({ isLoadingActions: false });
+          }
+        } catch (error) {
+          console.error(
+            "[ConversationStore] ❌ Failed to fetch suggested actions:",
+            error
+          );
+          set({ isLoadingActions: false });
+        }
       },
 
+      // In /stores/chat/ConversationStore.ts
       initializeIfAuthenticated: async () => {
         let attempts = 0;
         const maxAttempts = 50;
@@ -137,12 +167,6 @@ export const useConversationStore = create<ConversationStoreState>()(
           userProfile = useUserStore.getState().userProfile;
           userStoreInitialized = useUserStore.getState().initialized;
           attempts++;
-
-          if (attempts % 10 === 0) {
-            console.log(
-              `🗣️ ConversationStore: Still waiting... attempt ${attempts}/50, userProfile exists: ${!!userProfile}, initialized: ${userStoreInitialized}`
-            );
-          }
         }
 
         if (!userProfile?.auth_user_uuid) {
@@ -150,13 +174,6 @@ export const useConversationStore = create<ConversationStoreState>()(
         }
 
         try {
-          // Skip full reload if we have persisted data? 
-          // Requirement: "Load on app start"
-          // If initialized is false (fresh start), we might rely on persist to load local state first.
-          // But we also want to sync with DB?
-          // For now, let's keep syncing but merge maybe?
-          // Simplest is to just fetch and overwrite for consistency with DB.
-          
           set({ isLoading: true, error: null });
 
           const result =
@@ -174,6 +191,9 @@ export const useConversationStore = create<ConversationStoreState>()(
             isLoading: false,
             initialized: true,
           });
+
+          // Fetch suggested actions after initialization
+          await get().fetchSuggestedActions();
         } catch (error) {
           console.error("❌ ConversationStore: Initialization failed:", error);
           set({
@@ -183,7 +203,6 @@ export const useConversationStore = create<ConversationStoreState>()(
           });
         }
       },
-
       clearData: () => {
         set({
           conversations: new Map(),
@@ -211,11 +230,12 @@ export const useConversationStore = create<ConversationStoreState>()(
             day: "numeric",
             year: "numeric",
           });
-          
+
           // Use first user message for title, or fallback to first message
-          const userMsg = messages.find(m => m.sender === "user")?.content;
-          const titleMsg = userMsg || messages[0]?.content || "New Conversation";
-          
+          const userMsg = messages.find((m) => m.sender === "user")?.content;
+          const titleMsg =
+            userMsg || messages[0]?.content || "New Conversation";
+
           const messageSnippet =
             titleMsg.length > 30 ? `${titleMsg.slice(0, 30)}..` : titleMsg;
           const title = `${messageSnippet} | ${dateStr}`;
@@ -227,7 +247,7 @@ export const useConversationStore = create<ConversationStoreState>()(
               messages: messages,
               configName: "workout-analysis",
             });
-            
+
           set((state) => {
             const newConversations = new Map(state.conversations);
             newConversations.set(result.conversation.id, result.conversation);
@@ -247,37 +267,37 @@ export const useConversationStore = create<ConversationStoreState>()(
             "✅ Conversation created with messages:",
             result.conversation.id
           );
-          
+
           // Add created messages to MessageStore
           const { addMessage } = useMessageStore.getState();
           // We can't use addMessage directly for batch without triggering multiple updates?
           // Or just loop through them. They are already saved in DB.
           // The MessageStore needs to know about them.
           // Let's add them locally.
-          
+
           // Note: result.messages is the array we sent, or returned from DB?
           // Service returns { conversation, messages: [] }.
           // Let's rely on what we sent + IDs if available, or just push.
-          
+
           // Actually, we should probably fetch the messages or construct them.
           // Since we just created them, we know them.
           const now = new Date();
-          
+
           // Clear current messages for this ID if any (should define new map entry)
           useMessageStore.getState().clearMessages(result.conversation.id);
-          
+
           messages.forEach((msg, index) => {
-             addMessage(result.conversation.id, {
-                 id: Math.random().toString(), // Temp ID until fetch? Or we should have got real IDs from backend? 
-                 // Backend service currently returns user provided messages array.
-                 // We should probably rely on the fact that they ARE in DB.
-                 // Let's just add them.
-                 content: msg.content,
-                 sender: msg.sender,
-                 timestamp: now,
-                 conversation_id: result.conversation.id,
-                 conversation_sequence: index + 1
-             });
+            addMessage(result.conversation.id, {
+              id: Math.random().toString(), // Temp ID until fetch? Or we should have got real IDs from backend?
+              // Backend service currently returns user provided messages array.
+              // We should probably rely on the fact that they ARE in DB.
+              // Let's just add them.
+              content: msg.content,
+              sender: msg.sender,
+              timestamp: now,
+              conversation_id: result.conversation.id,
+              conversation_sequence: index + 1,
+            });
           });
 
           return {
@@ -385,7 +405,7 @@ export const useConversationStore = create<ConversationStoreState>()(
 
       getConversations: async () => {
         // await loadConversations(); // Wrapped in `persist`, we might have data already?
-        // But for safety/sync, let's call init logic if needed. 
+        // But for safety/sync, let's call init logic if needed.
         // We'll stick to calling initializeIfAuthenticated explicitly in app flow.
         // But for this method, if initialized is true, maybe just return?
         // Implementation kept same as before but referring to internal logic
@@ -468,15 +488,21 @@ export const useConversationStore = create<ConversationStoreState>()(
 
         // Configurable timeout: 1 min for testing
         if (diffMins >= 1) {
-          console.log("⏳ Conversation timed out, archiving:", activeConversationId);
+          console.log(
+            "⏳ Conversation timed out, archiving:",
+            activeConversationId
+          );
           set((state) => {
             const newConversations = new Map(state.conversations);
-            const updatedConv = { ...conversation, status: "archived" as const };
+            const updatedConv = {
+              ...conversation,
+              status: "archived" as const,
+            };
             newConversations.set(activeConversationId, updatedConv);
-            
+
             return {
               conversations: newConversations,
-              activeConversationId: null
+              activeConversationId: null,
             };
           });
         }
@@ -488,34 +514,34 @@ export const useConversationStore = create<ConversationStoreState>()(
           if (!conversation) return {};
 
           const newConversations = new Map(state.conversations);
-          const updatedConv = { 
-            ...conversation, 
+          const updatedConv = {
+            ...conversation,
             status: "active" as const,
-            updated_at: new Date() // Bump timestamp on resume
+            updated_at: new Date(), // Bump timestamp on resume
           };
           newConversations.set(id, updatedConv);
 
           return {
             conversations: newConversations,
-            activeConversationId: id
+            activeConversationId: id,
           };
         });
       },
 
       touchConversation: (id) => {
         set((state) => {
-            const conversation = state.conversations.get(id);
-            if (!conversation) return {};
-            
-            const newConversations = new Map(state.conversations);
-            const updatedConv = {
-                ...conversation,
-                updated_at: new Date(),
-                status: "active" as const // Ensure active if touched
-            };
-            newConversations.set(id, updatedConv);
-            
-            return { conversations: newConversations };
+          const conversation = state.conversations.get(id);
+          if (!conversation) return {};
+
+          const newConversations = new Map(state.conversations);
+          const updatedConv = {
+            ...conversation,
+            updated_at: new Date(),
+            status: "active" as const, // Ensure active if touched
+          };
+          newConversations.set(id, updatedConv);
+
+          return { conversations: newConversations };
         });
       },
 
@@ -542,7 +568,9 @@ export const useConversationStore = create<ConversationStoreState>()(
           const state = {
             ...value.state,
             conversations: Array.from(value.state.conversations.entries()),
-            conversationConfigs: Array.from(value.state.conversationConfigs.entries()),
+            conversationConfigs: Array.from(
+              value.state.conversationConfigs.entries()
+            ),
           };
           return AsyncStorage.setItem(name, JSON.stringify({ state }));
         },
@@ -559,4 +587,3 @@ export const useConversationStore = create<ConversationStoreState>()(
     }
   )
 );
-

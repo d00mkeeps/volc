@@ -231,7 +231,8 @@ export default function ConsistencyCalendar({
     <Stack
       backgroundColor="$backgroundSoft"
       borderRadius="$3"
-      padding="$3"
+      paddingHorizontal="$3"
+      paddingVertical="$2"
       gap="$3"
     >
       {/* Header */}

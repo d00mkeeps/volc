@@ -128,6 +128,11 @@ export interface Message {
   expectsGraph?: boolean;
 }
 
+export interface QuickAction {
+  label: string;
+  message: string;
+}
+
 export interface Conversation {
   id: string;
   user_id: string;

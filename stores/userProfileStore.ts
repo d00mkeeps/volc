@@ -1,20 +1,18 @@
 import { create } from "zustand";
-import type { UserProfile } from "@/types";
+import type { UserProfile, UserContextBundle } from "@/types";
 import { userProfileService } from "@/services/db/userProfile";
 import { authService } from "@/services/db/auth";
+import { analysisBundleService } from "@/services/db/analysis";
 
 interface UserStoreState {
-  // State
   userProfile: UserProfile | null;
+  contextBundle: UserContextBundle | null;
   loading: boolean;
   error: Error | null;
   initialized: boolean;
 
-  // Auth-triggered methods (called by authStore)
   initializeIfAuthenticated: () => Promise<void>;
   clearData: () => void;
-
-  // Public methods (called by components)
   refreshProfile: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
 }
@@ -23,14 +21,31 @@ export const useUserStore = create<UserStoreState>((set, get) => {
   const loadProfile = async () => {
     try {
       set({ loading: true, error: null });
-
       const session = await authService.getSession();
       if (!session?.user?.id) {
         throw new Error("No authenticated user found");
       }
 
-      const data = await userProfileService.getUserProfile();
-      set({ userProfile: data, initialized: true });
+      // Fetch profile
+      const profile = await userProfileService.getUserProfile();
+
+      // Fetch context bundle
+      let bundle: UserContextBundle | null = null;
+      if (profile.user_id) {
+        try {
+          bundle = await analysisBundleService.getLatestUserContextBundle(
+            profile.user_id.toString()
+          );
+        } catch (e) {
+          console.warn("Failed to fetch context bundle", e);
+        }
+      }
+
+      set({
+        userProfile: profile,
+        contextBundle: bundle,
+        initialized: true,
+      });
     } catch (err) {
       set({
         error:
@@ -44,31 +59,28 @@ export const useUserStore = create<UserStoreState>((set, get) => {
   };
 
   return {
-    // Initial state - clean slate, no immediate loading
     userProfile: null,
+    contextBundle: null,
     loading: false,
     error: null,
     initialized: false,
 
-    // Called by authStore when user becomes authenticated
     initializeIfAuthenticated: async () => {
       const { initialized, loading } = get();
-      if (initialized || loading) return; // Prevent double-initialization
-
+      if (initialized || loading) return;
       await loadProfile();
     },
 
-    // Called by authStore when user logs out
     clearData: () => {
       set({
         userProfile: null,
+        contextBundle: null,
         loading: false,
         error: null,
         initialized: false,
       });
     },
 
-    // Public methods for components
     refreshProfile: async () => {
       try {
         set({ loading: true, error: null });
@@ -96,11 +108,7 @@ export const useUserStore = create<UserStoreState>((set, get) => {
         if (!session?.user?.id) {
           throw new Error("No authenticated user found");
         }
-
-        // Save updates directly using UserProfile format
         await userProfileService.saveUserProfile(updates);
-
-        // Refresh the profile to get updated data
         const updatedProfile = await userProfileService.getUserProfile();
         set({ userProfile: updatedProfile });
       } catch (err) {

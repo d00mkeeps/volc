@@ -4,6 +4,7 @@ import Toast from "react-native-toast-message";
 import { getWsBaseUrl } from "../api/core/apiClient";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { authService } from "@/services/db/auth";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 export type OnboardingCompleteCallback = (data: any) => void;
 export type MessageCallback = (content: string) => void;
@@ -74,7 +75,7 @@ export class WebSocketService {
     const defaultConfig: EndpointConfig = {
       type: "workout-analysis",
       conversationId:
-        useUserSessionStore.getState().activeConversationId || undefined,
+        useConversationStore.getState().activeConversationId || undefined,
     };
 
     const config = endpointConfig || defaultConfig;
@@ -83,15 +84,14 @@ export class WebSocketService {
     if (config.type === "workout-analysis" && !config.conversationId) {
       throw new Error("conversationId required for workout-analysis endpoint");
     }
-    
+
     if (config.type === "coach" && !config.conversationId) {
       throw new Error("conversationId required for coach endpoint");
     }
 
     // Build connection key for comparison
     const connectionKey =
-      config.type === "workout-planning" ||
-      config.type === "onboarding"
+      config.type === "workout-planning" || config.type === "onboarding"
         ? config.type
         : `${config.type}-${config.conversationId}`;
 
@@ -425,8 +425,6 @@ export class WebSocketService {
           );
           break;
 
-
-
         case "error":
           console.error("[WSService] Server error:", message);
 
@@ -647,8 +645,6 @@ export class WebSocketService {
     this.events.on("chartData", callback);
     return () => this.events.off("chartData", callback);
   }
-
-
 
   /**
    * Remove all event listeners (for cleanup)

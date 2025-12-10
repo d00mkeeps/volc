@@ -2,13 +2,18 @@ import React from "react";
 import {
   Button as TamaguiButton,
   ButtonProps as TamaguiButtonProps,
+  Stack,
 } from "tamagui";
+import { TouchableOpacity, useColorScheme } from "react-native";
+import { BlurView } from "expo-blur";
 
-interface ButtonProps extends Omit<TamaguiButtonProps, "size"> {
+interface __ButtonProps__ extends Omit<TamaguiButtonProps, "size" | "variant"> {
   size?: "small" | "medium" | "large" | "$2" | "$3" | "$4" | "$5" | "$6";
+  variant?: "default" | "blur";
+  blurIntensity?: number;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<__ButtonProps__> = ({
   size = "medium",
   backgroundColor = "$primary",
   borderRadius = "$4",
@@ -17,8 +22,15 @@ export const Button: React.FC<ButtonProps> = ({
   pressStyle,
   disabledStyle,
   alignSelf = "center",
+  variant = "default",
+  blurIntensity = 60,
+  disabled,
+  onPress,
+  children,
   ...props
 }) => {
+  const colorScheme = useColorScheme();
+
   // Map old Tamagui tokens to new semantic sizes
   const mapTokenToSemantic = (size: string): "small" | "medium" | "large" => {
     if (size.startsWith("$")) {
@@ -63,6 +75,71 @@ export const Button: React.FC<ButtonProps> = ({
     }
   };
 
+  // Get padding based on size for blur variant
+  const getPadding = (size: "small" | "medium" | "large") => {
+    switch (size) {
+      case "small":
+        return { paddingVertical: 8, paddingHorizontal: 16 };
+      case "medium":
+        return { paddingVertical: 12, paddingHorizontal: 20 };
+      case "large":
+        return { paddingVertical: 16, paddingHorizontal: 24 };
+    }
+  };
+
+  // Get border radius value
+  const getRadiusValue = () => {
+    if (typeof borderRadius === "string" && borderRadius.startsWith("$")) {
+      // Map token to numeric value
+      const tokenMap: Record<string, number> = {
+        $1: 4,
+        $2: 8,
+        $3: 12,
+        $4: 16,
+        $5: 20,
+      };
+      return tokenMap[borderRadius] || 16;
+    }
+    return typeof borderRadius === "number" ? borderRadius : 16;
+  };
+
+  // Render blur variant
+  if (variant === "blur") {
+    const padding = getPadding(semanticSize);
+    const radiusValue = getRadiusValue();
+
+    return (
+      <TouchableOpacity
+        onPress={onPress || undefined}
+        disabled={disabled}
+        style={{
+          opacity: disabled ? 0.5 : 1,
+          overflow: "hidden",
+          borderRadius: radiusValue,
+          alignSelf: alignSelf as any,
+        }}
+        activeOpacity={0.7}
+      >
+        <BlurView
+          intensity={blurIntensity}
+          tint={colorScheme === "dark" ? "dark" : "light"}
+          style={{
+            ...padding,
+            borderRadius: radiusValue,
+            overflow: "hidden",
+            borderColor: "#999",
+            borderWidth: 0.25,
+          }}
+        >
+          <Stack alignItems="center" justifyContent="center">
+            {children}
+          </Stack>
+        </BlurView>
+      </TouchableOpacity>
+    );
+  }
+
+  // Default variant - standard Tamagui button
   return (
     <TamaguiButton
       size={getSizeToken(semanticSize)}
@@ -72,6 +149,8 @@ export const Button: React.FC<ButtonProps> = ({
       fontWeight={fontWeight}
       color={color}
       alignSelf={alignSelf}
+      disabled={disabled}
+      onPress={onPress}
       pressStyle={{
         backgroundColor: "$primaryPress",
         scale: 0.98,
@@ -83,7 +162,9 @@ export const Button: React.FC<ButtonProps> = ({
         ...disabledStyle,
       }}
       {...props}
-    />
+    >
+      {children}
+    </TamaguiButton>
   );
 };
 

@@ -2,13 +2,20 @@
 import React, { memo } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { StyleSheet, useWindowDimensions, Pressable } from "react-native";
+import {
+  StyleSheet,
+  useWindowDimensions,
+  Pressable,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
 import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 
+import { BlurView } from "expo-blur";
 interface MessageItemProps {
   message: Message;
   isStreaming?: boolean;
@@ -259,29 +266,52 @@ export const MessageItem = memo(
           paddingVertical="$1"
           pointerEvents="box-none"
         >
-          <YStack
-            maxWidth={"90%"}
-            backgroundColor={isUser ? "$primary" : "transparent"}
-            paddingHorizontal={isUser ? "$3" : "$0"}
-            paddingVertical="$1"
-            borderRadius={isUser ? "$4" : "$0"}
-            opacity={isStreaming ? 0.7 : 1}
-          >
-            {isUser && !enableUserMarkdown ? (
-              <Text
-                color="white"
-                fontSize={bodySize}
-                fontWeight="400"
-                lineHeight={bodySize * 1.4}
+          {isUser ? (
+            <TouchableOpacity
+              disabled
+              style={{
+                maxWidth: "90%",
+                opacity: isStreaming ? 0.7 : 1,
+                overflow: "hidden",
+                backgroundColor: `${theme.primary.get()}80`, // 25% opacity
+                borderRadius: 8,
+              }}
+            >
+              <BlurView
+                intensity={60}
+                tint={useColorScheme() === "dark" ? "dark" : "light"}
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 4,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  borderColor: theme.primary.get(),
+                  borderWidth: 0.5,
+                }}
               >
-                {renderContent}
-              </Text>
-            ) : (
+                {enableUserMarkdown ? (
+                  <Markdown style={markdownStyles} rules={customRules}>
+                    {renderContent}
+                  </Markdown>
+                ) : (
+                  <Text
+                    color="white"
+                    fontSize={bodySize}
+                    fontWeight="400"
+                    lineHeight={bodySize * 1.4}
+                  >
+                    {renderContent}
+                  </Text>
+                )}
+              </BlurView>
+            </TouchableOpacity>
+          ) : (
+            <YStack maxWidth={"90%"}>
               <Markdown style={markdownStyles} rules={customRules}>
                 {renderContent}
               </Markdown>
-            )}
-          </YStack>
+            </YStack>
+          )}
         </XStack>
       </Pressable>
     );

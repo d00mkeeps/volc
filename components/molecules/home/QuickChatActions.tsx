@@ -1,85 +1,81 @@
-import React from 'react';
-import { YStack, XStack, ScrollView } from 'tamagui';
-import Button from '@/components/atoms/core/Button';
-import Text from '@/components/atoms/core/Text';
-import { MessageItem } from '@/components/atoms/chat/MessageItem'; // Reusing existing item
-import { useQuickChatActions } from '@/hooks/chat/useQuickChatActions';
-import { Message } from '@/types';
+import React, { useEffect } from "react";
+import { YStack, XStack, ScrollView } from "tamagui";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import Button from "@/components/atoms/core/Button";
+import Text from "@/components/atoms/core/Text";
+import { ActionsSkeleton } from "@/components/atoms/chat/SkeletonLoader";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 interface QuickChatActionsProps {
-  isActive: boolean; // True if < 60 mins since last message
+  isActive: boolean;
   onActionSelect: (text: string) => void;
-  recentMessages?: Message[];
-  greeting: string; // Dynamic greeting text
-  onMessagePress?: () => void; // Add this
-  showPreview?: boolean; // New prop to control preview visibility
+  actions: Array<{ label: string; message: string }> | null;
+  isLoadingActions: boolean;
+  isWaitingForResponse?: boolean;
 }
 
 export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
   isActive,
   onActionSelect,
-  recentMessages = [],
-  greeting,
-  onMessagePress,
-  showPreview = true, // Default to true
+  actions,
+  isLoadingActions,
+  isWaitingForResponse = false,
 }) => {
-  const actions = useQuickChatActions(recentMessages);
+  const fadeIn = useSharedValue(0);
+  const setQuickActionsHeight = useLayoutStore(
+    (state) => state.setQuickActionsHeight
+  );
 
-  const displayMessage: Message = React.useMemo(() => {
-    if (isActive && recentMessages.length > 0) {
-      const lastAiMsg = [...recentMessages].reverse().find(m => m.sender === 'assistant');
-      if (lastAiMsg) return lastAiMsg;
+  useEffect(() => {
+    if (!isLoadingActions && actions) {
+      fadeIn.value = withTiming(1, { duration: 200 });
+    } else {
+      fadeIn.value = 0;
     }
-    return {
-      id: 'greeting',
-      conversation_id: 'temp',
-      content: greeting,
-      sender: 'assistant',
-      timestamp: new Date(),
-      conversation_sequence: 0
-    } as Message;
-  }, [isActive, recentMessages, greeting]);
+  }, [isLoadingActions, actions]);
+
+  const fadeInStyle = useAnimatedStyle(() => ({
+    opacity: fadeIn.value,
+  }));
 
   return (
-    <YStack >
-{/* Compact Message Preview */}
-     {showPreview && (
-     <YStack 
-        backgroundColor="$transparent" 
-        borderRadius="$3" 
-        padding="$3"
-        maxHeight={280}
-        overflow="hidden"
-        onPress={onMessagePress} 
-        cursor="pointer"
-      >
-        <ScrollView showsVerticalScrollIndicator={true} nestedScrollEnabled>
-          <MessageItem 
-            message={displayMessage} 
-            isStreaming={false}
-          />
+    <YStack
+      onLayout={(e) => setQuickActionsHeight(e.nativeEvent.layout.height)}
+    >
+      {isLoadingActions || !actions ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ActionsSkeleton />
         </ScrollView>
-    </YStack>
-     )}
-
-      {/* Quick Action Chips */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <XStack gap="$2" paddingHorizontal="$1">
-          {actions.map((action, index) => (
-            <Button
-              key={`${index}-${action.label}`}
-              size="small"
-              backgroundColor="$backgroundHover"
-              pressStyle={{ backgroundColor: "$backgroundPress" }}
-              onPress={() => onActionSelect(action.message)}
-              borderRadius={20}
-              paddingHorizontal="$4"
-            >
-              <Text fontSize="$3" color="$text">{action.label}</Text>
-            </Button>
-          ))}
-        </XStack>
-      </ScrollView>
+      ) : (
+        <Animated.View style={fadeInStyle}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <XStack gap="$2" paddingHorizontal="$1">
+              {actions.map((action, index) => (
+                <Button
+                  key={`${index}-${action.label}`}
+                  size="medium"
+                  variant="blur"
+                  blurIntensity={60}
+                  pressStyle={{ backgroundColor: "$backgroundPress" }}
+                  onPress={() => onActionSelect(action.message)}
+                  borderRadius={20}
+                  paddingHorizontal="$4"
+                  disabled={isWaitingForResponse}
+                  opacity={isWaitingForResponse ? 0.5 : 1}
+                >
+                  <Text fontSize="$3" color="$text">
+                    {action.label}
+                  </Text>
+                </Button>
+              ))}
+            </XStack>
+          </ScrollView>
+        </Animated.View>
+      )}
     </YStack>
   );
 };

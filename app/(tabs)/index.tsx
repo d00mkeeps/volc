@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import { RefreshControl, ScrollView, Alert } from "react-native";
+import { Alert } from "react-native";
 import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
 import BaseModal from "@/components/atoms/core/BaseModal";
@@ -18,8 +18,6 @@ import WorkoutTracker, {
 } from "@/components/organisms/workout/WorkoutTracker";
 import { Keyboard } from "react-native";
 import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
-import { WorkoutPlanningModal } from "@/components/organisms/workout/WorkoutPlanningModal";
-import { useWorkoutTemplates } from "@/hooks/workout/useWorkoutTemplates";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "@/components/organisms/workout/WorkoutCompletionModal";
@@ -31,6 +29,9 @@ import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
+import { useLayoutStore } from "@/stores/layoutStore";
+import { useWindowDimensions } from "react-native";
+import { DisplayMessage } from "@/components/molecules/home/DisplayMessage";
 
 let count = 0;
 
@@ -61,6 +62,13 @@ export default function HomeScreen() {
   const [intendedToStart, setIntendedToStart] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
+  const setDashboardHeight = useLayoutStore(
+    (state) => state.setDashboardHeight
+  );
+  // Layout selectors for dynamic height calculation
+  const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
+  const expandChatOverlay = useLayoutStore((state) => state.expandChatOverlay);
+  const { height: screenHeight } = useWindowDimensions();
 
   // Dashboard state from store
   const {
@@ -72,11 +80,15 @@ export default function HomeScreen() {
 
   // Granular selectors - only subscribe to what we need
   const isActive = useUserSessionStore((state) => state.isActive);
-  const showTemplateSelector = useUserSessionStore(
-    (state) => state.showTemplateSelector
-  );
   const selectedTemplate = useUserSessionStore(
     (state) => state.selectedTemplate
+  );
+
+  const { workouts } = useWorkoutStore();
+  console.log(
+    "🏋️ Workouts in store:",
+    workouts.length,
+    workouts.map((w) => w.id)
   );
 
   // Stable reference to session actions
@@ -96,8 +108,6 @@ export default function HomeScreen() {
     }),
     []
   );
-
-  const { templates } = useWorkoutTemplates(userProfile?.user_id?.toString());
 
   // Auto-load dashboard data on mount
   useEffect(() => {
@@ -119,50 +129,27 @@ export default function HomeScreen() {
     }
   }, [userProfile?.auth_user_uuid]);
 
-  // Pull-to-refresh handler - refreshes dashboard data
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    try {
-      await refreshDashboard();
-    } catch (error) {
-      console.error("Failed to refresh dashboard:", error);
-    } finally {
-      setRefreshing(false);
+  useEffect(() => {
+    // Close workout preview sheet when workout tracker opens
+    if (isActive) {
+      console.log("🏠 [HomeScreen] Workout active - closing preview sheet");
+      setSelectedWorkoutIds([]);
     }
-  }, [refreshDashboard]);
+  }, [isActive]);
 
-  const handleWorkoutDayPress = useCallback((workoutIds: string[]) => {
-    setSelectedWorkoutIds(workoutIds);
-  }, []);
-
-  const handleTemplateSelect = useCallback(
-    (template: CompleteWorkout) => {
-      console.log("Selected template:", {
-        id: template.id,
-        name: template.name,
-        workoutExercises: template.workout_exercises?.length || 0,
-        exercises: (template as any).exercises?.length || 0,
-        fullTemplate: template,
-      });
-      sessionActions.selectTemplate(template);
-
-      if (intendedToStart) {
-        setIntendedToStart(false);
-        // Show the chats modal
-        setShowChats(true);
-
-        // We might need to handle auto-selection of the new conversation in ChatsView
-        // For now, we rely on the store having the new conversation.
-        useConversationStore.getState().getConversations();
-      }
+  // In HomeScreen, inside handleWorkoutDayPress
+  const handleWorkoutDayPress = useCallback(
+    (workoutIds: string[]) => {
+      console.log(
+        "🏠 [HomeScreen] handleWorkoutDayPress - before:",
+        selectedWorkoutIds,
+        "after:",
+        workoutIds
+      );
+      setSelectedWorkoutIds(workoutIds);
     },
-    [sessionActions, intendedToStart]
+    [selectedWorkoutIds]
   );
-
-  const handleTemplateClose = useCallback(() => {
-    setIntendedToStart(false);
-    sessionActions.closeTemplateSelector();
-  }, [sessionActions]);
 
   const handleToggleWorkout = useCallback(async () => {
     if (isActive) {
@@ -239,11 +226,6 @@ export default function HomeScreen() {
     });
   });
 
-  const handlePlanWithCoach = useCallback(() => {
-    setIntendedToStart(true);
-    sessionActions.openTemplateSelector();
-  }, [sessionActions]);
-
   const handleLogManually = useCallback(() => {
     if (userProfile?.user_id) {
       const emptyTemplate = {
@@ -275,42 +257,50 @@ export default function HomeScreen() {
     <>
       {/* Main Content */}
       <Stack flex={1} backgroundColor="$background">
-        <ScrollView
-          style={{ flex: 1 }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          <Stack flex={1} padding="$4" paddingBottom="$20">
-            <Header
-              greeting="Welcome to Volc!"
-              onProfilePress={handleProfilePress}
-              onRecentsPress={handleRecentsPress}
-              onSettingsPress={() => setShowSettingsModal(true)}
-              onManualLogPress={handleLogManually}
+        <Stack flex={1} padding="$2">
+          <Header
+            greeting="Welcome to Volc!"
+            onProfilePress={handleProfilePress}
+            onRecentsPress={handleRecentsPress}
+            onSettingsPress={() => setShowSettingsModal(true)}
+            onManualLogPress={handleLogManually}
+          />
+          <Stack
+            onLayout={(e) => setDashboardHeight(e.nativeEvent.layout.height)}
+            position="relative"
+            // zIndex={10}  // Remove or comment this out
+          >
+            <Dashboard
+              allData={dashboardAllData}
+              isLoading={dashboardLoading}
+              error={dashboardError}
+              onWorkoutDayPress={handleWorkoutDayPress}
             />
-            <Stack marginBottom="$5" paddingBlock="$6">
-              <Dashboard
-                allData={dashboardAllData}
-                isLoading={dashboardLoading}
-                error={dashboardError}
-                onWorkoutDayPress={handleWorkoutDayPress} // ✅ Add this prop
-              />
-            </Stack>
           </Stack>
-        </ScrollView>
 
-        <WorkoutPlanningModal
-          isVisible={showTemplateSelector}
-          onSelectTemplate={handleTemplateSelect}
-          onClose={handleTemplateClose}
-        />
-        <WorkoutPreviewSheet
-          workoutIds={selectedWorkoutIds}
-          onClose={() => {
-            setSelectedWorkoutIds([]);
-          }}
-        />
+          <DisplayMessage
+            maxHeight={screenHeight + 100}
+            onPress={() => expandChatOverlay?.()}
+          />
+        </Stack>
+
+        <Stack
+          zIndex={20}
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          pointerEvents="box-none"
+        >
+          <WorkoutPreviewSheet
+            workoutIds={selectedWorkoutIds}
+            onClose={() => {
+              console.log("🏠 [HomeScreen] WorkoutPreviewSheet onClose called");
+              setSelectedWorkoutIds([]);
+            }}
+          />
+        </Stack>
 
         <WorkoutCompletionModal
           isVisible={showCompletionModal}

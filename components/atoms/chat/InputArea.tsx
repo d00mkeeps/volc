@@ -132,7 +132,7 @@ export const InputArea = ({
     },
     [error]
   );
-  
+
   // Calculate remaining characters
   const length = input.length;
   const showCounter = input.length >= 200;
@@ -154,17 +154,17 @@ export const InputArea = ({
             key={textAreaKey.current}
             flex={1}
             size="small"
-            borderRadius={16}
+            borderRadius={12}
             value={input}
             verticalAlign="top"
             onChangeText={handleTextChange}
             placeholder={isLoading ? "please wait" : placeholder}
-            disabled={disabled || isLoading}
+            disabled={disabled}
             borderColor={
               error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
             }
             color="$color"
-            opacity={isLoading ? 0.6 : 1}
+            opacity={1}
             placeholderTextColor="$textMuted"
             onSubmitEditing={handleSend}
             onFocus={handleFocus}
@@ -191,8 +191,8 @@ export const InputArea = ({
               )
             }
             pressStyle={{
-  backgroundColor: "$transparent",
-}}
+              backgroundColor: "$transparent",
+            }}
             disabledStyle={{
               backgroundColor: "$transparent",
               opacity: 0.7,

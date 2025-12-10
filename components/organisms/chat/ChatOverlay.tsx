@@ -1,52 +1,64 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Platform,
-  KeyboardAvoidingView,
   Keyboard,
   StyleSheet,
   TouchableWithoutFeedback,
   BackHandler,
   View,
 } from "react-native";
-import { YStack, useTheme } from "tamagui";
+import { YStack } from "tamagui";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   interpolate,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { MessageList } from "../../molecules/chat/MessageList";
 import { InputArea } from "../../atoms/chat/InputArea";
-import { useChatOverlay } from "@/hooks/chat/useChatOverlay";
+import { useChatStore } from "@/stores/chat/ChatStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { QuickChatActions } from "@/components/molecules/home/QuickChatActions";
-import { useFreshGreeting } from "@/hooks/chat/useFreshGreeting";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { scheduleOnRN } from "react-native-worklets";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
+import { useLayoutStore } from "@/stores/layoutStore";
+import { useWindowDimensions } from "react-native";
 
 interface ChatOverlayProps {
   placeholder?: string;
-  tabBarHeight?: number;
-  keyboardVerticalOffset?: number;
-  currentPage?: number; // Add this
+  currentPage?: number;
 }
 
 export const ChatOverlay = ({
   placeholder = "Ask me anything...",
-  tabBarHeight = 50,
-  currentPage = 0, // Add this
-  keyboardVerticalOffset = 70,
+  currentPage = 0,
 }: ChatOverlayProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const chat = useChatOverlay();
 
-  // Animation State
+  // ChatStore selectors
+  const loadingState = useChatStore((state) => state.loadingState);
+  const greeting = useChatStore((state) => state.greeting);
+  const actions = useChatStore((state) => state.actions);
+  const isLoadingActions = useChatStore((state) => state.isLoadingActions);
+  const connectionState = useChatStore((state) => state.connectionState);
+  const statusMessage = useChatStore((state) => state.statusMessage);
+  const connect = useChatStore((state) => state.connect);
+  const disconnect = useChatStore((state) => state.disconnect);
+  const sendMessage = useChatStore((state) => state.sendMessage);
+
+  const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
+  const setExpandChatOverlay = useLayoutStore(
+    (state) => state.setExpandChatOverlay
+  );
+  const setInputAreaHeight = useLayoutStore(
+    (state) => state.setInputAreaHeight
+  );
+
+  const { height: screenHeight } = useWindowDimensions();
   const fadeProgress = useSharedValue(0);
 
-  // UI Coordination
   const pendingChatOpen = useConversationStore(
     (state) => state.pendingChatOpen
   );
@@ -56,57 +68,57 @@ export const ChatOverlay = ({
   const isWorkoutActive = useUserSessionStore((state) => state.isActive);
   const isWorkoutDetailOpen = useUserSessionStore(
     (state) => state.isWorkoutDetailOpen
-  ); // NEW Sub
+  );
 
-  // Quick Chat State Integration
   const isHome = currentPage === 0;
   const pageProgress = useSharedValue(isHome ? 1 : 0);
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId
   );
-  const freshGreeting = useFreshGreeting();
 
-  const recentMessages = useMessageStore((state) =>
-    activeConversationId ? state.messages.get(activeConversationId) : undefined
+  const messages =
+    useMessageStore((state) =>
+      activeConversationId
+        ? state.messages.get(activeConversationId)
+        : undefined
+    ) || [];
+
+  const streamingMessage = useMessageStore((state) =>
+    activeConversationId
+      ? state.streamingMessages.get(activeConversationId)
+      : undefined
   );
+
+  // Computed state
+  const canSend = loadingState === "idle";
+  const showLoading = loadingState === "pending";
+  const isStreaming = loadingState === "streaming";
 
   const handleQuickReply = useCallback(
     (text: string) => {
       const activeId = useConversationStore.getState().activeConversationId;
 
-      // Only set greeting for NEW conversations
       if (!activeId) {
-        useConversationStore.getState().setPendingGreeting(freshGreeting);
+        useConversationStore.getState().setPendingGreeting(greeting);
       }
 
-      // Set pending message and open overlay
       useConversationStore.getState().setPendingInitialMessage(text);
       useConversationStore.getState().setPendingChatOpen(true);
     },
-    [freshGreeting]
+    [greeting]
   );
 
   const quickChatStyle = useAnimatedStyle(() => {
-    const finalOpacity =
-      interpolate(fadeProgress.value, [0, 0.5], [1, 0]) * pageProgress.value;
-    console.log(
-      "👁️ QuickChat opacity:",
-      finalOpacity,
-      "page:",
-      pageProgress.value
-    );
+    // Keep visible in both states, only hide when switching pages or workout detail is open
+    const finalOpacity = pageProgress.value;
 
     return {
       opacity: finalOpacity,
       transform: [
-        { translateY: interpolate(fadeProgress.value, [0, 1], [0, 20]) },
+        { translateY: 0 }, // Remove the slide animation
       ],
       pointerEvents:
-        fadeProgress.value > 0.1 ||
-        isWorkoutDetailOpen ||
-        pageProgress.value < 0.9
-          ? "none"
-          : "auto",
+        isWorkoutDetailOpen || pageProgress.value < 0.9 ? "none" : "auto",
     };
   }, [pageProgress]);
 
@@ -119,37 +131,33 @@ export const ChatOverlay = ({
     if (!isExpanded) {
       setIsExpanded(true);
       fadeProgress.value = withTiming(1, { duration: 300 });
+      // Ensure we're connected when expanding
+      connect();
     }
-  }, [isExpanded, fadeProgress]);
+  }, [isExpanded, fadeProgress, connect]);
+
+  // Register expand function
+  useEffect(() => {
+    setExpandChatOverlay(handleExpand);
+    return () => setExpandChatOverlay(null);
+  }, [handleExpand, setExpandChatOverlay]);
 
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
       Keyboard.dismiss();
 
-      const refreshActions = () => {
-        if (useConversationStore.getState().activeConversationId) {
-          useConversationStore.getState().fetchSuggestedActions();
-        }
-      };
-
       fadeProgress.value = withTiming(0, { duration: 300 }, (finished) => {
         if (finished) {
           scheduleOnRN(setIsExpanded, false);
-          scheduleOnRN(refreshActions);
         }
       });
     }
   }, [isExpanded, fadeProgress]);
 
   useEffect(() => {
-    console.log(
-      "🎨 [ChatOverlay] Page animation - isHome:",
-      isHome,
-      "target:",
-      isHome ? 1 : 0
-    );
     pageProgress.value = withTiming(isHome ? 1 : 0, { duration: 300 });
-  }, [isHome]);
+  }, [isHome, pageProgress]);
+
   useEffect(() => {
     if (pendingChatOpen) {
       handleExpand();
@@ -159,13 +167,15 @@ export const ChatOverlay = ({
 
   useEffect(() => {
     if (isExpanded) {
-      chat.connect();
+      connect();
     } else {
-      chat.disconnect();
+      // Don't disconnect if streaming
+      if (!isStreaming && loadingState !== "pending") {
+        disconnect();
+      }
     }
-  }, [isExpanded, chat.connect, chat.disconnect]);
+  }, [isExpanded, connect, disconnect, isStreaming, loadingState]);
 
-  // Back handler
   useEffect(() => {
     const onBackPress = () => {
       if (isExpanded) {
@@ -193,29 +203,24 @@ export const ChatOverlay = ({
     | "ready"
     | "expecting_ai_message"
     | "disconnected" => {
-    if (chat.connectionState === "disconnected") {
+    if (connectionState === "disconnected") {
       return "disconnected";
     }
-    if (chat.messages.length === 0 && !chat.streamingMessage) {
+    if (loadingState === "pending") {
       return "expecting_ai_message";
     }
     return "ready";
   };
 
-  const isInputDisabled =
-    getConnectionState() === "expecting_ai_message" ||
-    (!!chat.streamingMessage && !chat.streamingMessage.isComplete);
-
   return (
     <View
-      style={[styles.root, { zIndex: isExpanded ? 9999 : 100 }]}
+      style={[styles.root, { zIndex: isExpanded ? 9999 : 1 }]}
       pointerEvents="box-none"
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      <ResponsiveKeyboardAvoidingView
+        additionalOffset={tabBarHeight}
         style={StyleSheet.absoluteFill}
         pointerEvents="box-none"
-        keyboardVerticalOffset={keyboardVerticalOffset}
       >
         <Animated.View
           style={[styles.expandedContent, overlayStyle, { backgroundColor }]}
@@ -223,18 +228,17 @@ export const ChatOverlay = ({
         >
           <TouchableWithoutFeedback onPress={handleCollapse}>
             <View
-              style={{ flex: 1, paddingBottom: 80 }}
+              style={{ flex: 1, paddingBottom: 120 }}
               onStartShouldSetResponder={() => true}
             >
               <MessageList
-                messages={chat.messages}
-                streamingMessage={chat.streamingMessage}
-                showLoadingIndicator={isInputDisabled}
+                messages={messages}
+                streamingMessage={streamingMessage}
+                showLoadingIndicator={showLoading}
                 connectionState={getConnectionState()}
-                statusMessage={chat.statusMessage}
+                statusMessage={statusMessage}
                 onDismiss={handleCollapse}
-                onTemplateApprove={(template) => {
-                  chat.processTemplateApproval(template);
+                onTemplateApprove={() => {
                   handleCollapse();
                 }}
               />
@@ -255,26 +259,30 @@ export const ChatOverlay = ({
                 <QuickChatActions
                   isActive={!!activeConversationId}
                   onActionSelect={handleQuickReply}
-                  recentMessages={recentMessages || undefined}
-                  greeting={freshGreeting}
-                  onMessagePress={handleExpand}
-                  showPreview={isHome}
+                  actions={actions}
+                  isLoadingActions={isLoadingActions}
+                  isWaitingForResponse={loadingState === "pending"}
                 />
               </Animated.View>
             )}
 
-            <YStack width="100%" padding="$2" backgroundColor="transparent">
+            <YStack
+              width="100%"
+              padding="$2"
+              backgroundColor="transparent"
+              onLayout={(e) => setInputAreaHeight(e.nativeEvent.layout.height)}
+            >
               <InputArea
                 placeholder={placeholder}
-                onSendMessage={chat.sendMessage}
-                isLoading={isInputDisabled}
-                disabled={isInputDisabled && isExpanded}
+                onSendMessage={sendMessage}
+                isLoading={!canSend}
+                disabled={!canSend}
                 onFocus={handleExpand}
               />
             </YStack>
           </Animated.View>
         </YStack>
-      </KeyboardAvoidingView>
+      </ResponsiveKeyboardAvoidingView>
     </View>
   );
 };

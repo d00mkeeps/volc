@@ -20,12 +20,19 @@ from app.core.utils.websocket_utils import trigger_memory_extraction
 logger = logging.getLogger(__name__)
 
 async def stream_text_gradually(text: str) -> AsyncGenerator[str, None]:
-    """Stream text word by word at 10ms intervals (600 WPM)"""
+    """Stream text two words at a time at 15ms intervals (800 WPM)"""
     words = text.split(' ')
-    for i, word in enumerate(words):
-        # Add space after word unless it's the last one
-        yield word + (' ' if i < len(words) - 1 else '')
-        await asyncio.sleep(0.01)  
+    for i in range(0, len(words), 2):
+        # Get current word and next word if it exists
+        chunk = words[i]
+        if i + 1 < len(words):
+            chunk += ' ' + words[i + 1]
+            # Add trailing space unless these are the last words
+            if i + 2 < len(words):
+                chunk += ' '
+        
+        yield chunk
+        await asyncio.sleep(0.01)
 
 class UnifiedCoachService:
     """

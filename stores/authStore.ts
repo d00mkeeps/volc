@@ -5,11 +5,8 @@ import { useExerciseStore } from "./workout/exerciseStore";
 import { useConversationStore } from "./chat/ConversationStore";
 import { useWorkoutStore } from "./workout/WorkoutStore";
 import { useDashboardStore } from "./dashboardStore";
+import { useChatStore } from "./chat/ChatStore";
 
-/**
- * Central auth state manager that coordinates all store initialization
- * Call this once at the app root level
- */
 export function useAuthStore() {
   const { user, loading } = useAuth();
 
@@ -17,13 +14,13 @@ export function useAuthStore() {
     if (!loading) {
       if (user) {
         console.log("[AuthStore] Initializing stores...");
-
         const initializeStores = async () => {
           try {
             await useUserStore.getState().initializeIfAuthenticated();
             await useExerciseStore.getState().initializeIfAuthenticated();
             await useConversationStore.getState().initializeIfAuthenticated();
             await useWorkoutStore.getState().initializeIfAuthenticated();
+            useChatStore.getState().refreshQuickChat();
             console.log("[AuthStore] All stores initialized");
           } catch (error) {
             console.error("❌ Store initialization failed:", error);
@@ -37,6 +34,13 @@ export function useAuthStore() {
         useConversationStore.getState().clearData();
         useWorkoutStore.getState().clearData();
         useDashboardStore.getState().clearData();
+        // Clear ChatStore quick chat data
+        useChatStore.setState({
+          greeting: null,
+          actions: null,
+          isLoadingGreeting: true,
+          isLoadingActions: true,
+        });
         console.log("[AuthStore] All stores cleared");
       }
     }
