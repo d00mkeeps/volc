@@ -57,6 +57,29 @@ async def get_templates(
             detail=str(e)
         )
 
+@router.get("/user-context/latest")
+async def get_latest_user_context(
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get the latest completed user context bundle"""
+    try:
+        logger.info(f"API request to get latest user context for user: {user.id}")
+        result = await analysis_bundle_service.get_latest_analysis_bundle(user.id, jwt_token)
+        
+        if result.get("success"):
+            return result.get("data")
+        else:
+            # It's okay if no bundle exists yet
+            return None
+            
+    except Exception as e:
+        logger.error(f"Error getting latest user context: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
 @router.get("/analysis-bundles")
 async def get_analysis_bundles(
     conversation_id: str, 

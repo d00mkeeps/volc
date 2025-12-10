@@ -84,11 +84,5 @@
       ]
     }
   },
-  "overrides": {
-    "metro": "0.82.5",
-    "metro-resolver": "0.82.5",
-    "metro-config": "0.82.5",
-    "metro-transform-worker": "0.82.5"
-  },
   "private": true
 }

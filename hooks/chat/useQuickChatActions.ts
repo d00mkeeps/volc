@@ -1,18 +1,6 @@
 import { useMemo } from 'react';
 import { Message } from '@/types';
 
-const FRESH_REPLIES = [
-  "Ready to workout",
-  "Help me plan",
-  "Just chatting"
-];
-
-const ACTIVE_REPLIES = [
-  "Add set",
-  "Finish workout",
-  "Modify weight"
-];
-
 import { useConversationStore } from '@/stores/chat/ConversationStore';
 
 export function useQuickChatActions(recentMessages?: Message[]) {
@@ -26,12 +14,23 @@ export function useQuickChatActions(recentMessages?: Message[]) {
 
     // State A: Fresh (No recent messages or empty conversation)
     if (!recentMessages || recentMessages.length === 0) {
-      return FRESH_REPLIES;
+      return [
+        { label: 'Track workout', message: 'I want to track my workout' },
+        { label: 'Show progress', message: 'Can you show me my recent progress?' },
+        { label: 'Plan workout', message: 'Help me plan my next workout' }
+      ];
     }
 
     // State B: Active (Has recent messages)
-    // Future: Use LLM to generate these based on conversation context
-    return ACTIVE_REPLIES;
+    // Use LLM generated actions from store
+    // Fallback to defaults if store is empty but we have messages (shouldn't happen often if fetch works)
+    return suggestedActions && suggestedActions.length > 0 
+      ? suggestedActions 
+      : [
+          { label: 'Continue workout', message: "Let's continue with my workout" },
+          { label: 'End session', message: "I'd like to end this workout session" },
+          { label: 'Ask question', message: 'I have a question about my training' }
+        ];
   }, [recentMessages, suggestedActions]);
 
   return actions;

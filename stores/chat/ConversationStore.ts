@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { conversationService } from "../../services/db/conversation";
-import { Conversation, ChatConfigName } from "@/types";
+import { Conversation, ChatConfigName, QuickAction } from "@/types";
 import { authService } from "@/services/db/auth";
 import { useMessageStore } from "./MessageStore";
 import { useUserStore } from "../userProfileStore";
@@ -32,8 +32,8 @@ interface ConversationStoreState {
   
   // Dynamic Actions
 
-  suggestedActions: string[];
-  setSuggestedActions: (actions: string[]) => void;
+  suggestedActions: QuickAction[];
+  setSuggestedActions: (actions: QuickAction[]) => void;
   fetchSuggestedActions: () => Promise<void>;
 
   // Core CRUD operations
@@ -106,13 +106,13 @@ export const useConversationStore = create<ConversationStoreState>()(
           console.log(`[ConversationStore] 🚀 Fetching suggested actions for user (UUID): ${userProfile.auth_user_uuid} with ${recentMessages.length} msgs`);
           try {
               // Changed to POST to send message context in body
-              const response = await apiPost<{ actions: string[] }>(
+              const response = await apiPost<{ actions: QuickAction[] }>(
                   `/api/v1/chat/quick-actions/${userProfile.auth_user_uuid}`,
                   recentMessages.length > 0 ? recentMessages : undefined 
               );
               
               if (response && response.actions) {
-                  const formattedLog = response.actions.map((a, i) => `${i + 1}. ${a}`).join("\n");
+                  const formattedLog = response.actions.map((a, i) => `${i + 1}. [${a.label}]: ${a.message}`).join("\n");
                   console.log(`[ConversationStore] Fetching quick replies:\n${formattedLog}`);
                   set({ suggestedActions: response.actions });
               } else {

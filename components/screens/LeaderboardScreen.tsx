@@ -5,10 +5,10 @@ import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { LeaderboardEntry } from "@/services/api/leaderboardService";
-// import WorkoutViewModal from "@/components/organisms/workout/WorkoutViewModal";
 import { useRouter } from "expo-router";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet"; // Import PreviewSheet
 
 interface LeaderboardScreenProps {
   isActive?: boolean;
@@ -51,10 +51,8 @@ export const LeaderboardScreen = ({
     useLeaderboard();
   const { getPublicWorkout } = useWorkoutStore();
 
-  // Modal state
-  const [selectedWorkout, setSelectedWorkout] =
-    useState<LeaderboardEntry | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  // Sheet state
+  const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
   const [showUnderConstruction, setShowUnderConstruction] = useState(false);
   useEffect(() => {
     if (isActive) {
@@ -63,19 +61,17 @@ export const LeaderboardScreen = ({
   }, [isActive]);
 
   const handleEntryTap = (entry: LeaderboardEntry) => {
-    setSelectedWorkout(entry);
-    setModalVisible(true);
+    if (entry.workout_id) {
+
+       getPublicWorkout(entry.workout_id); 
+       setSelectedWorkoutIds([entry.workout_id]);
+    }
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    setSelectedWorkout(null);
+  const handleCloseSheet = () => {
+    setSelectedWorkoutIds([]);
   };
 
-  const handleUnderConstructionConfirm = () => {
-    router.replace("/");
-    setShowUnderConstruction(false);
-  };
 
   const handleRefresh = async () => {
     clearError();
@@ -121,12 +117,10 @@ export const LeaderboardScreen = ({
         )}
       </ScrollView>
 
-      {/* <WorkoutViewModal
-        isVisible={modalVisible}
-        onClose={handleCloseModal}
-        workoutId={selectedWorkout?.workout_id || ""}
-        userId={selectedWorkout?.user_id || ""}
-      /> */}
+       <WorkoutPreviewSheet
+        workoutIds={selectedWorkoutIds}
+        onClose={handleCloseSheet}
+      />
     </YStack>
   );
 };

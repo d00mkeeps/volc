@@ -27,7 +27,7 @@ class ChatActionService:
             project=project_id
         )
     
-    async def generate_actions(self, user_id: str, messages: List[Dict[str, str]] = None) -> List[str]:
+    async def generate_actions(self, user_id: str, messages: List[Dict[str, str]] = None) -> List[Dict[str, str]]:
         """
         Generate 3 quick-reply actions based on user context and optional recent messages.
         
@@ -35,7 +35,7 @@ class ChatActionService:
             user_id: User's ID
             
         Returns:
-            List of 3 action strings (e.g. ["Plan Leg Day", "Detailed Analysis", "Log Workout"])
+            List of 3 action objects (e.g. [{"label": "Plan Leg Day", "message": "I want to plan a leg day"}])
         """
         try:
             # Load context (cached)
@@ -92,11 +92,17 @@ class ChatActionService:
             {formatted_context}
             {recent_chat_context}
             
+            EXAMPLES:
+            - Analysis Context: [{{"label": "Check depth", "message": "Can you analyze my squat depth?"}}, {{"label": "Compare to last", "message": "How does this compare to my last workout?"}}, {{"label": "Fix form", "message": "What cues can help fix my form?"}}]
+            - Planning Context: [{{"label": "Start plan", "message": "Help me create a workout plan"}}, {{"label": "Modify split", "message": "I want to change my current split"}}, {{"label": "What exercises?", "message": "What exercises should I include?"}}]
+            - General/Chat: [{{"label": "Continue workout", "message": "Let's continue with my workout"}}, {{"label": "End session", "message": "I'd like to end this workout session"}}, {{"label": "Ask question", "message": "I have a question about my training"}}]
+
             RULES:
-            1. Output ONLY a valid JSON array of strings. Example: ["Plan workout", "Log cardio", "Ask about diet"]
-            2. Keep each action under 4 words.
-            3. Make them relevant to the user's current state (e.g., if they just finished a workout, suggest recovery; if it's morning, suggest planning).
-            4. Do NOT include markdown formatting or backticks. Just the raw JSON string.
+            1. Output ONLY a valid JSON array of objects. Example: [{{"label": "Plan workout", "message": "I want to plan a workout"}}, ...]
+            2. "label" should be short (under 20 chars) for the button.
+            3. "message" should be the natural language text sent to chat (can be longer).
+            4. Make them relevant to the user's current state.
+            5. Do NOT include markdown formatting or backticks. Just the raw JSON string.
             """
             
             messages = [
@@ -114,15 +120,23 @@ class ChatActionService:
             # Fallback if empty or failed
             if not actions:
                 logger.warning(f"⚠️ Empty actions generated for user {user_id}, using defaults")
-                return ["Plan Workout", "Analyze Progress", "Just Chatting"]
+                return [
+                    {"label": "Continue workout", "message": "Let's continue with my workout"},
+                    {"label": "End session", "message": "I'd like to end this workout session"},
+                    {"label": "Ask question", "message": "I have a question about my training"}
+                ]
                 
             return actions[:3] # Ensure max 3
             
         except Exception as e:
             logger.error(f"❌ Error generating chat actions: {str(e)}", exc_info=True)
-            return ["Plan Workout", "Analyze Progress", "Just Chatting"]
+            return [
+                {"label": "Continue workout", "message": "Let's continue with my workout"},
+                {"label": "End session", "message": "I'd like to end this workout session"},
+                {"label": "Ask question", "message": "I have a question about my training"}
+            ]
     
-    def _parse_json_actions(self, text: str) -> List[str]:
+    def _parse_json_actions(self, text: str) -> List[Dict[str, str]]:
         """Extract and parse JSON list from LLM response"""
         try:
             # Try to find JSON block
@@ -130,8 +144,10 @@ class ChatActionService:
             if match:
                 json_str = match.group(0)
                 actions = json.loads(json_str)
-                if isinstance(actions, list) and all(isinstance(a, str) for a in actions):
+                # Validate structure
+                if isinstance(actions, list) and all(isinstance(a, dict) and 'label' in a and 'message' in a for a in actions):
                     return actions
             return []
         except Exception:
             return []
+

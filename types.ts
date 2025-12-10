@@ -154,11 +154,27 @@ export interface UserProfile {
   instagram_username: string | null;
   avatar_image_id: string | null;
   permission_level: string | null;
+}
+
+export interface UserContextBundle {
+  id: string;
+  user_id: string;
+  status: string;
+  user_profile?: UserProfile;
   ai_memory?: {
     summary: string;
     facts: string[];
     last_updated: string;
+    notes?: string[];
   };
+  metadata: any;
+  general_workout_data: any;
+  recent_workouts: any[];
+  volume_data: any;
+  strength_data: any;
+  consistency_data: any;
+  muscle_group_balance?: any;
+  correlation_insights?: any;
 }
 
 export interface WorkoutExercise {

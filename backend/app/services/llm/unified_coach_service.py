@@ -2,7 +2,7 @@ import logging
 import json
 import re
 import asyncio
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, AsyncGenerator
 from fastapi import WebSocket
 from starlette.websockets import WebSocketDisconnect
 import google.api_core.exceptions
@@ -16,7 +16,16 @@ from app.core.prompts.unified_coach import get_unified_coach_prompt
 from app.tools.exercise_tool import get_exercises_by_muscle_groups, get_cardio_exercises
 from app.core.utils.websocket_utils import trigger_memory_extraction
 
+
 logger = logging.getLogger(__name__)
+
+async def stream_text_gradually(text: str) -> AsyncGenerator[str, None]:
+    """Stream text word by word at 10ms intervals (600 WPM)"""
+    words = text.split(' ')
+    for i, word in enumerate(words):
+        # Add space after word unless it's the last one
+        yield word + (' ' if i < len(words) - 1 else '')
+        await asyncio.sleep(0.01)  
 
 class UnifiedCoachService:
     """
@@ -168,11 +177,11 @@ class UnifiedCoachService:
                         content = chunk.content
                         if content:
                             full_response += content
-                            await websocket.send_json({
-                                "type": "content",
-                                "data": content
-                            })
-                            
+                            async for word in stream_text_gradually(content):
+                                await websocket.send_json({
+                                    "type": "content",
+                                    "data": word
+                                })
                     # JSON Components
                     components = self._extract_json_components(full_response)
                     for component in components:
@@ -275,10 +284,11 @@ class UnifiedCoachService:
                         content = chunk.content
                         if content:
                             full_response += content
-                            await websocket.send_json({
-                                "type": "content",
-                                "data": content
-                            })
+                            async for word in stream_text_gradually(content):
+                                await websocket.send_json({
+                                    "type": "content",
+                "data": word
+            })
                 except google.api_core.exceptions.ResourceExhausted as e:
                     logger.error(f"Vertex AI rate limit: {str(e)}")
                     await websocket.send_json({

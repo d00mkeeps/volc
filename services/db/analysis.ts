@@ -1,5 +1,6 @@
 import { BaseDBService } from "./base";
 import { AnalysisBundle } from "@/types/workout";
+import { UserContextBundle } from "@/types";
 import { apiGet, apiPost, apiDelete } from "../api/core/apiClient";
 
 export class AnalysisBundleService extends BaseDBService {
@@ -93,6 +94,30 @@ export class AnalysisBundleService extends BaseDBService {
     } catch (error) {
       console.error(
         `[AnalysisBundleService] Error deleting conversation analysis bundles:`,
+        error
+      );
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Get the latest user context bundle
+   */
+  async getLatestUserContextBundle(userId: string): Promise<UserContextBundle | null> {
+    try {
+      console.log(`[AnalysisBundleService] Getting latest user context bundle`);
+      const bundle = await apiGet<UserContextBundle | null>("/db/user-context/latest");
+      
+      if (bundle) {
+        console.log(`[AnalysisBundleService] Retrieved latest user context bundle: ${bundle.id}`);
+      } else {
+        console.log(`[AnalysisBundleService] No user context bundle found`);
+      }
+      
+      return bundle;
+    } catch (error) {
+      console.error(
+        `[AnalysisBundleService] Error getting latest user context bundle:`,
         error
       );
       return this.handleError(error);

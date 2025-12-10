@@ -145,7 +145,7 @@ export const InputArea = ({
     >
       <YStack gap="$1">
         <XStack
-          padding="$2"
+          paddingHorizontal="$2"
           gap="$2"
           backgroundColor="$transparent"
           alignItems="flex-end"
@@ -154,7 +154,7 @@ export const InputArea = ({
             key={textAreaKey.current}
             flex={1}
             size="small"
-            borderRadius={12}
+            borderRadius={16}
             value={input}
             verticalAlign="top"
             onChangeText={handleTextChange}
@@ -170,14 +170,14 @@ export const InputArea = ({
             onFocus={handleFocus}
             returnKeyType="send"
             maxLength={500}
-            paddingTop="$2"
-            paddingBottom="$2"
             numberOfLines={8}
           />
           <Button
             size="$3"
             alignSelf="auto"
-            backgroundColor={isPressed ? "$primary" : "$background"}
+            backgroundColor="$transparent"
+            borderColor={isPressed ? "$primary" : "$borderSoft"}
+            borderWidth={isPressed ? 2 : 0}
             disabled={disabled || !input.trim() || isLoading}
             onPress={handleSend}
             onPressIn={() => setIsPressed(true)}
@@ -190,8 +190,11 @@ export const InputArea = ({
                 <Send color="#f84f3e" size={22} />
               )
             }
+            pressStyle={{
+  backgroundColor: "$transparent",
+}}
             disabledStyle={{
-              backgroundColor: "$background",
+              backgroundColor: "$transparent",
               opacity: 0.7,
             }}
           />

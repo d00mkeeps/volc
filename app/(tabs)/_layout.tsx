@@ -73,8 +73,7 @@ export default function TabLayout() {
         This sits at the bottom of the screen stack.
         It contains the InputArea (collapsed) AND the full Modal (expanded).
       */}
-      <ChatOverlay tabBarHeight={50} />
-
+<ChatOverlay tabBarHeight={50} currentPage={currentPage} />
       <CustomTabBar activeIndex={currentPage} onTabPress={handleTabPress} />
     </YStack>
   );

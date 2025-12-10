@@ -1,8 +1,7 @@
 import React from "react";
-import { TouchableOpacity, useColorScheme, KeyboardAvoidingView, Platform } from "react-native";
+import { TouchableOpacity, useColorScheme } from "react-native";
 import { XStack, YStack } from "tamagui";
-import { Home, User, MessageCircle, Trophy } from "@/assets/icons/IconMap";
-import { InputArea } from "@/components/atoms/chat/InputArea";
+import { Home, Trophy } from "@/assets/icons/IconMap";
 
 interface Tab {
   name: string;

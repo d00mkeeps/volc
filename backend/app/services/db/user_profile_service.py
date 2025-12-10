@@ -42,8 +42,7 @@ class UserProfileService(BaseDBService):
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
                 user_profile["bio"] = profile_data["bio"]
-            if "ai_memory" in profile_data:
-                user_profile["ai_memory"] = profile_data["ai_memory"]
+
             
             # Check if profile exists first
             admin_client = self.get_admin_client()
@@ -220,7 +219,7 @@ class UserProfileService(BaseDBService):
         """Get user profile by user ID using admin client (no auth required)"""
         try:
             response = self.get_admin_client().table('user_profiles').select(
-                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username, ai_memory'
+                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username'
             ).eq('auth_user_uuid', user_id).execute()
             
             if response.data:

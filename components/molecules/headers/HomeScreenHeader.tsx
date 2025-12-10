@@ -2,13 +2,14 @@ import React from "react";
 import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Settings, User, Clock, Wrench } from "@/assets/icons/IconMap"; // Updated icons
+import { Settings, User, Clock, Wrench, Pencil } from "@/assets/icons/IconMap"; // Updated icons
 
 interface HeaderProps {
   greeting?: string;
   onProfilePress?: () => void;
   onRecentsPress?: () => void;
   onSettingsPress?: () => void;
+  onManualLogPress?: () => void;
 }
 
 export default function Header({
@@ -16,6 +17,7 @@ export default function Header({
   onProfilePress,
   onRecentsPress,
   onSettingsPress,
+  onManualLogPress,
 }: HeaderProps) {
   return (
     <Stack
@@ -29,6 +31,9 @@ export default function Header({
       </Text>
       
       <XStack gap="$2">
+        <Button size="$3" circular onPress={onManualLogPress} backgroundColor="$backgroundHover">
+          <Pencil size={20} color="$text" />
+        </Button>
         <Button size="$3" circular onPress={onProfilePress} backgroundColor="$backgroundHover">
           <User size={20} color="$text" />
         </Button>

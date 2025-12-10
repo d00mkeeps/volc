@@ -2,9 +2,10 @@ import React, { useCallback, useMemo, useRef, useEffect } from "react";
 import { YStack, XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import { useSharedValue } from "react-native-reanimated";
 import { useTheme } from "tamagui";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
 import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
 import { ChevronRight } from "@/assets/icons/IconMap";
@@ -21,10 +22,12 @@ export default function WorkoutPreviewSheet({
   const bottomSheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
   const { workouts } = useWorkoutStore();
+  const setWorkoutDetailOpen = useUserSessionStore(
+    (state) => state.setWorkoutDetailOpen
+  ); // Helper
   const [expandedWorkoutId, setExpandedWorkoutId] = React.useState<
     string | null
   >(null);
-
 
   // Animated values for tracking sheet position (like WorkoutTracker)
   const animatedIndex = useSharedValue(-1);
@@ -44,41 +47,42 @@ export default function WorkoutPreviewSheet({
 
   const isOpen = workoutIds.length > 0 && selectedWorkouts.length > 0;
 
-
-  // Handle sheet changes (like WorkoutTracker)
+  // /components/molecules/workout/WorkoutPreviewSheet.tsx
   const handleSheetChanges = useCallback(
     (index: number) => {
       animatedIndex.value = index;
 
-      // If user closes sheet completely (index -1), call onClose
+      // Set closed state when closing starts (index -1)
+      // Set open state when opening starts (index >= 0)
       if (index === -1) {
+        setWorkoutDetailOpen(false); // ✅ Now matches opening behavior
         onClose();
+      } else {
+        setWorkoutDetailOpen(true);
       }
 
-      // If user swipes down from expanded view (index 0), go back to preview
       if (index === 0 && expandedWorkoutId) {
-  
         setExpandedWorkoutId(null);
       }
     },
-    [animatedIndex, onClose, expandedWorkoutId]
+    [animatedIndex, onClose, expandedWorkoutId, setWorkoutDetailOpen]
   );
 
-  // Control sheet visibility based on isOpen (similar to WorkoutTracker's pattern)
   useEffect(() => {
     if (isOpen) {
+      setWorkoutDetailOpen(true); // ✅ Set immediately before sheet opens
       setTimeout(() => {
         bottomSheetRef.current?.snapToIndex(0);
       }, 100);
       setExpandedWorkoutId(null);
     } else {
+      setWorkoutDetailOpen(false); // ✅ Set immediately before closing
       setTimeout(() => {
         bottomSheetRef.current?.close();
       }, 100);
     }
-  }, [isOpen]);
+  }, [isOpen, setWorkoutDetailOpen]);
 
-  // Format date nicely
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -407,7 +411,7 @@ export default function WorkoutPreviewSheet({
   const expandedWorkout = expandedWorkoutId
     ? selectedWorkouts.find((w) => w.id === expandedWorkoutId)
     : null;
-    
+
   return (
     <BottomSheet
       ref={bottomSheetRef}

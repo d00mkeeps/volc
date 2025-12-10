@@ -29,6 +29,7 @@ interface UserSessionState {
 
   selectedTemplate: CompleteWorkout | null;
   showTemplateSelector: boolean;
+  isWorkoutDetailOpen: boolean; // Global visibility tracking for sheets/modals
 
   activeConversationId: string | null;
 
@@ -60,6 +61,7 @@ interface UserSessionState {
   setSelectedTemplate: (template: CompleteWorkout | null) => void;
   openTemplateSelector: () => void;
   closeTemplateSelector: () => void;
+  setWorkoutDetailOpen: (isOpen: boolean) => void;
   selectTemplate: (template: CompleteWorkout) => void;
 
   setActiveConversation: (id: string | null) => void;
@@ -110,6 +112,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   scheduledTime: undefined,
   selectedTemplate: null,
   showTemplateSelector: false,
+  isWorkoutDetailOpen: false,
   activeConversationId: null,
   pendingImageId: null,
   startWorkout: (workout) => {
@@ -409,6 +412,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
   closeTemplateSelector: () => {
     set({ showTemplateSelector: false });
+  },
+
+  setWorkoutDetailOpen: (isOpen) => {
+    set({ isWorkoutDetailOpen: isOpen });
   },
 
   selectTemplate: (template) => {

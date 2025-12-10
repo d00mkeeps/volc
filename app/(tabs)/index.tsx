@@ -6,18 +6,12 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import {
-  RefreshControl,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { RefreshControl, ScrollView, Alert } from "react-native";
 import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
 import BaseModal from "@/components/atoms/core/BaseModal";
 import ProfileView from "@/components/organisms/profile/ProfileView";
 import ChatsView from "@/components/organisms/chat/ChatsView";
-import { router } from "expo-router";
-import Toast from "react-native-toast-message";
 import Header from "@/components/molecules/headers/HomeScreenHeader";
 import WorkoutTracker, {
   WorkoutTrackerRef,
@@ -37,10 +31,6 @@ import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
-// import { WorkoutStartButton } from "@/components/molecules/workout/WorkoutStartButton"; // Removed
-import { QuickChatActions } from '@/components/molecules/home/QuickChatActions';
-import { useMessageStore } from "@/stores/chat/MessageStore";
-import { useFreshGreeting } from "@/hooks/chat/useFreshGreeting";
 
 let count = 0;
 
@@ -109,37 +99,6 @@ export default function HomeScreen() {
 
   const { templates } = useWorkoutTemplates(userProfile?.user_id?.toString());
 
-  // Conversation State for Quick Chat
-  const activeConversationId = useConversationStore((state) => state.activeConversationId);
-  const activeConversation = useConversationStore((state) => 
-    activeConversationId ? state.conversations.get(activeConversationId) : undefined
-  );
-  
-  // Check if conversation is fresh enough (< 60 mins)
-  // Initially we just use activeConversationId presence, but let's verify timeout logic is handling the archival?
-  // Yes, checkTimeout handles archival. So if activeConversationId exists, it's active.
-
-  // Fresh greeting generation
-  const freshGreeting = useFreshGreeting();
-
-  const recentMessages = useMessageStore((state) => 
-    activeConversationId ? state.messages.get(activeConversationId) : undefined
-  );
-
-  const handleQuickReply = useCallback((text: string) => {
-    const activeId = useConversationStore.getState().activeConversationId;
-    
-    // Only set greeting for NEW conversations
-    if (!activeId) {
-      useConversationStore.getState().setPendingGreeting(freshGreeting);
-    }
-    
-    // Set pending message and open overlay
-    useConversationStore.getState().setPendingInitialMessage(text);
-    useConversationStore.getState().setPendingChatOpen(true);
-  }, [freshGreeting]);
-
-
   // Auto-load dashboard data on mount
   useEffect(() => {
     console.log("⚡️ [HomeScreen] MOUNT EFFECT (Dashboard)");
@@ -149,10 +108,14 @@ export default function HomeScreen() {
   // Fetch suggested actions only when user profile is available
   useEffect(() => {
     if (userProfile?.auth_user_uuid) {
-      console.log("⚡️ [HomeScreen] User ready, calling fetchSuggestedActions()");
+      console.log(
+        "⚡️ [HomeScreen] User ready, calling fetchSuggestedActions()"
+      );
       useConversationStore.getState().fetchSuggestedActions();
     } else {
-      console.log("⚡️ [HomeScreen] User not ready yet, skipping actions fetch");
+      console.log(
+        "⚡️ [HomeScreen] User not ready yet, skipping actions fetch"
+      );
     }
   }, [userProfile?.auth_user_uuid]);
 
@@ -187,7 +150,7 @@ export default function HomeScreen() {
         setIntendedToStart(false);
         // Show the chats modal
         setShowChats(true);
-        
+
         // We might need to handle auto-selection of the new conversation in ChatsView
         // For now, we rely on the store having the new conversation.
         useConversationStore.getState().getConversations();
@@ -242,10 +205,9 @@ export default function HomeScreen() {
           ]
         );
       } else {
-        // All sets complete, proceed normally
         setShowCompletionModal(true);
         try {
-          await sessionActions.finishWorkout();
+          sessionActions.finishWorkout();
           workoutTrackerRef.current?.finishWorkout();
         } catch (error) {
           console.error("Failed to finish workout:", error);
@@ -254,8 +216,6 @@ export default function HomeScreen() {
       }
     }
   }, [isActive, sessionActions]);
-
-
 
   const handleWorkoutCompletionClose = useCallback(() => {
     setShowCompletionModal(false);
@@ -327,6 +287,7 @@ export default function HomeScreen() {
               onProfilePress={handleProfilePress}
               onRecentsPress={handleRecentsPress}
               onSettingsPress={() => setShowSettingsModal(true)}
+              onManualLogPress={handleLogManually}
             />
             <Stack marginBottom="$5" paddingBlock="$6">
               <Dashboard
@@ -336,15 +297,6 @@ export default function HomeScreen() {
                 onWorkoutDayPress={handleWorkoutDayPress} // ✅ Add this prop
               />
             </Stack>
-
-            {/* Quick Chat Interface */}
-            {/* Quick Chat Actions */}
-            <QuickChatActions
-              isActive={!!activeConversationId}
-              onActionSelect={handleQuickReply}
-              recentMessages={recentMessages || undefined}
-              greeting={freshGreeting}
-            />
           </Stack>
         </ScrollView>
 
@@ -366,28 +318,28 @@ export default function HomeScreen() {
         />
 
         {/* Settings Modal */}
-      <SettingsModal
-        visible={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-      />
+        <SettingsModal
+          visible={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
+        />
 
-      {/* Profile Modal */}
-      <BaseModal
-        isVisible={showProfile}
-        onClose={() => setShowProfile(false)}
-        heightPercent={85}
-      >
-        <ProfileView />
-      </BaseModal>
+        {/* Profile Modal */}
+        <BaseModal
+          isVisible={showProfile}
+          onClose={() => setShowProfile(false)}
+          heightPercent={85}
+        >
+          <ProfileView />
+        </BaseModal>
 
-      {/* Chats Modal */}
-      <BaseModal
-        isVisible={showChats}
-        onClose={() => setShowChats(false)}
-        heightPercent={85}
-      >
-        <ChatsView onClose={() => setShowChats(false)} />
-      </BaseModal>
+        {/* Chats Modal */}
+        <BaseModal
+          isVisible={showChats}
+          onClose={() => setShowChats(false)}
+          heightPercent={85}
+        >
+          <ChatsView onClose={() => setShowChats(false)} />
+        </BaseModal>
       </Stack>
 
       {/* WorkoutTracker - only show when active */}

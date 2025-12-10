@@ -11,6 +11,8 @@ interface QuickChatActionsProps {
   onActionSelect: (text: string) => void;
   recentMessages?: Message[];
   greeting: string; // Dynamic greeting text
+  onMessagePress?: () => void; // Add this
+  showPreview?: boolean; // New prop to control preview visibility
 }
 
 export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
@@ -18,20 +20,16 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
   onActionSelect,
   recentMessages = [],
   greeting,
+  onMessagePress,
+  showPreview = true, // Default to true
 }) => {
   const actions = useQuickChatActions(recentMessages);
 
-  // Determine what message to show
-  // Fresh State: Use provided greeting
-  // Active State: Most recent AI message
   const displayMessage: Message = React.useMemo(() => {
     if (isActive && recentMessages.length > 0) {
-      // Find last AI message
       const lastAiMsg = [...recentMessages].reverse().find(m => m.sender === 'assistant');
       if (lastAiMsg) return lastAiMsg;
     }
-
-    // Default Greeting (construct a fake Message object for MessageItem)
     return {
       id: 'greeting',
       conversation_id: 'temp',
@@ -43,27 +41,41 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
   }, [isActive, recentMessages, greeting]);
 
   return (
-    <YStack gap="$4" paddingHorizontal="$4" marginTop="$4">
-      {/* Message Bubble - reusing standard Chat styling */}
-      <MessageItem 
-        message={displayMessage} 
-        isStreaming={false}
-      />
+    <YStack >
+{/* Compact Message Preview */}
+     {showPreview && (
+     <YStack 
+        backgroundColor="$transparent" 
+        borderRadius="$3" 
+        padding="$3"
+        maxHeight={280}
+        overflow="hidden"
+        onPress={onMessagePress} 
+        cursor="pointer"
+      >
+        <ScrollView showsVerticalScrollIndicator={true} nestedScrollEnabled>
+          <MessageItem 
+            message={displayMessage} 
+            isStreaming={false}
+          />
+        </ScrollView>
+    </YStack>
+     )}
 
-      {/* Quick Replies - Horizontal Scroll for chips */}
+      {/* Quick Action Chips */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <XStack gap="$2" paddingHorizontal="$1" paddingBottom="$2">
+        <XStack gap="$2" paddingHorizontal="$1">
           {actions.map((action, index) => (
             <Button
-              key={index}
+              key={`${index}-${action.label}`}
               size="small"
               backgroundColor="$backgroundHover"
               pressStyle={{ backgroundColor: "$backgroundPress" }}
-              onPress={() => onActionSelect(action)}
-              borderRadius={20} // Pill shape
+              onPress={() => onActionSelect(action.message)}
+              borderRadius={20}
               paddingHorizontal="$4"
             >
-              <Text fontSize="$3" color="$text">{action}</Text>
+              <Text fontSize="$3" color="$text">{action.label}</Text>
             </Button>
           ))}
         </XStack>

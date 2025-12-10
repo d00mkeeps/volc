@@ -44,7 +44,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const animatedPosition = useSharedValue(0);
 
     // Define snap points - using index 1 and 2 to avoid auto-generated index 0
-    const snapPoints = useMemo(() => ["40%", "100%"], []);
+    const snapPoints = useMemo(() => ["45%", "92%"], []);
 
     const handleSheetChanges = useCallback(
       (index: number) => {
