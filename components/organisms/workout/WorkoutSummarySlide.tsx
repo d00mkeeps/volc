@@ -95,7 +95,7 @@ export function WorkoutSummarySlide({
       notes: workoutNotes.trim(),
       imageId: pendingImageId || undefined,
     });
-    
+
     initializeAnalysisAndChat();
     onContinue();
   };
@@ -132,7 +132,7 @@ export function WorkoutSummarySlide({
       notes: workoutNotes.trim(),
       imageId: pendingImageId || undefined,
     });
-    
+
     onSkip();
   };
 

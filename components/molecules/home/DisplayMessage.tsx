@@ -17,6 +17,15 @@ import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useColorScheme } from "react-native";
+import { useUserStore } from "@/stores/userProfileStore";
+import {
+  CompleteWorkout,
+  WorkoutExercise,
+  WorkoutExerciseSet,
+} from "@/types/workout";
+import { useUserSessionStore } from "@/stores/userSessionStore";
+
+const EMPTY_ARRAY: Message[] = [];
 
 interface __DisplayMessageProps__ {
   maxHeight?: number;
@@ -35,21 +44,58 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   const greeting = useChatStore((state) => state.greeting);
   const loadingState = useChatStore((state) => state.loadingState);
   const isStreaming = loadingState === "streaming";
-  const streamingContent = useChatStore((state) => state.streamingContent);
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId
   );
-  const recentMessages = useMessageStore((state) =>
-    activeConversationId ? state.messages.get(activeConversationId) : []
+
+  const recentMessages = useMessageStore((state) => {
+    if (!activeConversationId) return EMPTY_ARRAY;
+    return state.messages.get(activeConversationId) || EMPTY_ARRAY;
+  });
+
+  const streamingState = useMessageStore((state) =>
+    activeConversationId
+      ? state.streamingMessages.get(activeConversationId)
+      : null
   );
 
-  // Get input area height to add bottom padding
+  const handleTemplateApprove = React.useCallback((templateData: any) => {
+    const userProfile = useUserStore.getState().userProfile;
+    if (!userProfile?.user_id) return;
+
+    const now = new Date().toISOString();
+    const workoutId = `temp-${Date.now()}`;
+
+    const workout: CompleteWorkout = {
+      ...templateData,
+      id: workoutId,
+      user_id: userProfile.user_id.toString(),
+      is_template: false,
+      template_id: templateData.id,
+      created_at: now,
+      updated_at: now,
+      workout_exercises: templateData.workout_exercises.map(
+        (exercise: WorkoutExercise, index: number) => ({
+          ...exercise,
+          id: `exercise-${Date.now()}-${index}`,
+          workout_id: workoutId,
+          workout_exercise_sets: exercise.workout_exercise_sets.map(
+            (set: WorkoutExerciseSet, setIndex: number) => ({
+              ...set,
+              id: `set-${Date.now()}-${index}-${setIndex}`,
+              exercise_id: `exercise-${Date.now()}-${index}`,
+              is_completed: false,
+            })
+          ),
+        })
+      ),
+    };
+
+    useUserSessionStore.getState().startWorkout(workout);
+  }, []);
+
   const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
-  const quickActionsHeight = useLayoutStore(
-    (state) => state.quickActionsHeight
-  );
 
-  // Calculate total bottom spacing needed
   const bottomSpacing = inputAreaHeight;
 
   // Fade in animation when content is ready
@@ -68,12 +114,12 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   const displayMessage: Message | null = React.useMemo(() => {
     if (isLoading || !greeting) return null;
 
-    // Show streaming content if actively streaming
-    if (isStreaming && streamingContent) {
+    // Show streaming message with stable reference
+    if (isStreaming && streamingState) {
       return {
         id: "streaming",
-        conversation_id: "temp",
-        content: streamingContent,
+        conversation_id: activeConversationId!,
+        content: "", // MessageItem fetches from store
         sender: "assistant",
         timestamp: new Date(),
         conversation_sequence: 0,
@@ -81,7 +127,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
     }
 
     // Show last AI message if active conversation
-    if (activeConversationId && recentMessages && recentMessages.length > 0) {
+    if (activeConversationId && recentMessages.length > 0) {
       const lastAiMsg = [...recentMessages]
         .reverse()
         .find((m) => m.sender === "assistant");
@@ -97,14 +143,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
       timestamp: new Date(),
       conversation_sequence: 0,
     } as Message;
-  }, [
-    activeConversationId,
-    recentMessages,
-    greeting,
-    isLoading,
-    isStreaming,
-    streamingContent,
-  ]);
+  }, [activeConversationId, recentMessages, greeting, isLoading, isStreaming]);
 
   return (
     <YStack
@@ -128,11 +167,15 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
             style={{ flex: 1 }}
           >
             <Animated.View style={fadeInStyle}>
-              <MessageItem message={displayMessage} isStreaming={isStreaming} />
+              <MessageItem
+                message={displayMessage}
+                isStreaming={isStreaming}
+                onTemplateApprove={handleTemplateApprove}
+              />
             </Animated.View>
           </ScrollView>
 
-          {/* Top Blur Gradient - fades from blur to clear */}
+          {/* Top Blur Gradient */}
           <YStack
             position="absolute"
             top={0}
@@ -160,7 +203,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
             </MaskedView>
           </YStack>
 
-          {/* Bottom Blur Gradient - fades from clear to blur */}
+          {/* Bottom Blur Gradient */}
           <YStack
             position="absolute"
             bottom={0}

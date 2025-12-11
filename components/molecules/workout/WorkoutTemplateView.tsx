@@ -10,14 +10,16 @@ interface WorkoutTemplateViewProps {
   data: {
     name: string;
     notes?: string;
-    workout_exercises: WorkoutExercise[];
+    workout_exercises?: WorkoutExercise[];
   };
-  onApprove?: (templateData: any) => void; // Add this
+  isComplete?: boolean; // Add this
+  onApprove?: (templateData: any) => void;
 }
 
 export default function WorkoutTemplateView({
   data,
   onApprove,
+  isComplete = true,
 }: WorkoutTemplateViewProps) {
   const [expanded, setExpanded] = useState(false);
   const [rejected, setRejected] = useState(false);
@@ -25,6 +27,9 @@ export default function WorkoutTemplateView({
     null
   );
 
+  const exercises = data.workout_exercises || [];
+  const hasExercises = exercises.length > 0;
+  const isLoading = !isComplete; // Use isComplete instead
   const renderExercisePreview = (exercise: WorkoutExercise) => {
     const sets = exercise.workout_exercise_sets || [];
     const setCount = sets.length;
@@ -164,7 +169,6 @@ export default function WorkoutTemplateView({
   return (
     <>
       {rejected ? (
-        // Rejected state - simple display with undo
         <YStack gap="$2">
           <YStack
             backgroundColor="$backgroundSoft"
@@ -180,7 +184,6 @@ export default function WorkoutTemplateView({
             </Text>
           </YStack>
 
-          {/* Undo Button */}
           <XStack justifyContent="center" paddingBottom="$2">
             <Stack
               paddingHorizontal="$4"
@@ -215,7 +218,9 @@ export default function WorkoutTemplateView({
         </YStack>
       ) : (
         <YStack gap="$2">
-          <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+          <TouchableOpacity
+            onPress={() => hasExercises && setExpanded(!expanded)}
+          >
             <YStack
               backgroundColor="$backgroundSoft"
               borderRadius="$3"
@@ -224,20 +229,26 @@ export default function WorkoutTemplateView({
               marginVertical="$2"
               borderWidth={1}
               borderColor="$borderSoft"
+              opacity={isLoading ? 0.6 : 1}
             >
-              {/* Header */}
               <XStack justifyContent="space-between" alignItems="center">
                 <YStack flex={1}>
                   <Text size="large" fontWeight="600" color="$color">
                     {data.name}
                   </Text>
                   <Text size="small" color="$textSoft">
-                    {data.workout_exercises.length} exercises
+                    {hasExercises
+                      ? `${exercises.length} exercise${
+                          exercises.length === 1 ? "" : "s"
+                        }`
+                      : "Loading exercises..."}
                   </Text>
                 </YStack>
-                <Text size="small" color="$primary">
-                  {expanded ? "Collapse" : "Expand"}
-                </Text>
+                {hasExercises && (
+                  <Text size="small" color="$primary">
+                    {expanded ? "Collapse" : "Expand"}
+                  </Text>
+                )}
               </XStack>
 
               {data.notes && (
@@ -256,78 +267,79 @@ export default function WorkoutTemplateView({
                 </Text>
               )}
 
-              <YStack gap="$2">
-                {expanded
-                  ? data.workout_exercises
-                      .sort(
-                        (a: WorkoutExercise, b: WorkoutExercise) =>
-                          a.order_index - b.order_index
-                      )
-                      .map(renderExerciseDetailed)
-                  : data.workout_exercises
-                      .sort(
-                        (a: WorkoutExercise, b: WorkoutExercise) =>
-                          a.order_index - b.order_index
-                      )
-                      .slice(0, 3)
-                      .map(renderExercisePreview)}
+              {hasExercises ? (
+                <YStack gap="$2">
+                  {expanded
+                    ? exercises
+                        .sort(
+                          (a, b) => (a.order_index || 0) - (b.order_index || 0)
+                        )
+                        .map(renderExerciseDetailed)
+                    : exercises
+                        .sort(
+                          (a, b) => (a.order_index || 0) - (b.order_index || 0)
+                        )
+                        .slice(0, 3)
+                        .map(renderExercisePreview)}
 
-                {!expanded && data.workout_exercises.length > 3 && (
-                  <Text size="small" color="$textSoft" textAlign="center">
-                    +{data.workout_exercises.length - 3} more exercise
-                    {data.workout_exercises.length - 3 === 1 ? "" : "s"}
-                  </Text>
-                )}
-              </YStack>
+                  {!expanded && exercises.length > 3 && (
+                    <Text size="small" color="$textSoft" textAlign="center">
+                      +{exercises.length - 3} more exercise
+                      {exercises.length - 3 === 1 ? "" : "s"}
+                    </Text>
+                  )}
+                </YStack>
+              ) : null}
             </YStack>
           </TouchableOpacity>
 
-          {/* Action Buttons */}
-          <XStack gap="$3" justifyContent="center" paddingBottom="$2">
-            <Stack
-              width={80}
-              height={40}
-              borderRadius="$3"
-              backgroundColor="$red9"
-              borderWidth={1}
-              borderColor="$borderColor"
-              justifyContent="center"
-              alignItems="center"
-              pressStyle={{
-                backgroundColor: "$backgroundPress",
-                scale: 0.95,
-              }}
-              onPress={() => {
-                console.log("Template rejected!");
-                setRejected(true);
-              }}
-              cursor="pointer"
-            >
-              <X size={24} color="white" />
-            </Stack>
+          {!isLoading && (
+            <XStack gap="$3" justifyContent="center" paddingBottom="$2">
+              <Stack
+                width={80}
+                height={40}
+                borderRadius="$3"
+                backgroundColor="$red9"
+                borderWidth={1}
+                borderColor="$borderColor"
+                justifyContent="center"
+                alignItems="center"
+                pressStyle={{
+                  backgroundColor: "$backgroundPress",
+                  scale: 0.95,
+                }}
+                onPress={() => {
+                  console.log("Template rejected!");
+                  setRejected(true);
+                }}
+                cursor="pointer"
+              >
+                <X size={24} color="white" />
+              </Stack>
 
-            <Stack
-              width={80}
-              height={40}
-              borderRadius="$3"
-              backgroundColor="$green8"
-              borderWidth={1}
-              borderColor="$borderColor"
-              justifyContent="center"
-              alignItems="center"
-              pressStyle={{
-                backgroundColor: "$backgroundPress",
-                scale: 0.95,
-              }}
-              onPress={() => {
-                console.log("Template approved!");
-                onApprove?.(data); // Call the callback with the template data
-              }}
-              cursor="pointer"
-            >
-              <Check size={24} color="white" />
-            </Stack>
-          </XStack>
+              <Stack
+                width={80}
+                height={40}
+                borderRadius="$3"
+                backgroundColor="$green8"
+                borderWidth={1}
+                borderColor="$borderColor"
+                justifyContent="center"
+                alignItems="center"
+                pressStyle={{
+                  backgroundColor: "$backgroundPress",
+                  scale: 0.95,
+                }}
+                onPress={() => {
+                  console.log("Template approved!");
+                  onApprove?.(data);
+                }}
+                cursor="pointer"
+              >
+                <Check size={24} color="white" />
+              </Stack>
+            </XStack>
+          )}
         </YStack>
       )}
       {selectedExerciseId && (

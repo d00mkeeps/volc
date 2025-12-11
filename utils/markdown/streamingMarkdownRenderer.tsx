@@ -1,10 +1,12 @@
-// /utils/markdown/streamingMarkdownRenderer.tsx
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { YStack } from "tamagui";
 import Animated, { FadeIn } from "react-native-reanimated";
 import Markdown from "react-native-markdown-display";
-import { createCustomRules, detectComponentType } from "./customRules";
+import {
+  createCustomRules,
+  detectComponentType,
+  parsePartialJSON,
+} from "./customRules";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
 import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
@@ -25,6 +27,7 @@ interface ContentSegment {
   type: "markdown" | "component";
   componentType?: string;
   componentData?: any;
+  isComplete?: boolean;
 }
 
 export const StreamingMarkdownRenderer = ({
@@ -36,12 +39,17 @@ export const StreamingMarkdownRenderer = ({
   const prevLengthRef = useRef(0);
   const contentRef = useRef(content);
 
-  // Parse content into segments
+  const customRules = createCustomRules({
+    isStreaming: true,
+    onTemplateApprove,
+    onProfileConfirm,
+    styles,
+  });
+
   const segments = useMemo(() => {
     const prevLength = prevLengthRef.current;
     const result: ContentSegment[] = [];
 
-    // Find all fence blocks (```)
     const fenceRegex = /```[\s\S]*?```/g;
     let lastIndex = 0;
     let match;
@@ -51,70 +59,53 @@ export const StreamingMarkdownRenderer = ({
       const fenceEnd = fenceRegex.lastIndex;
       const fenceContent = match[0].slice(3, -3).trim();
 
-      // Add markdown before fence
       if (fenceStart > lastIndex) {
         result.push({
           content: content.slice(lastIndex, fenceStart),
           startIndex: lastIndex,
           endIndex: fenceStart,
-          isNew: lastIndex >= prevLength,
+          isNew: false,
           type: "markdown",
         });
       }
 
-      // Check if fence is a component
       const looksLikeJSON =
         fenceContent.startsWith("{") || fenceContent.startsWith("[");
 
       if (looksLikeJSON) {
-        try {
-          const parsed = JSON.parse(fenceContent);
-          if (
-            parsed.type &&
-            ["workout_template", "onboarding_complete", "chart_data"].includes(
-              parsed.type
-            )
-          ) {
-            result.push({
-              content: match[0],
-              startIndex: fenceStart,
-              endIndex: fenceEnd,
-              isNew: fenceStart >= prevLength,
-              type: "component",
-              componentType: parsed.type,
-              componentData: parsed.data,
-            });
-          } else {
-            // JSON but not our component type
-            result.push({
-              content: match[0],
-              startIndex: fenceStart,
-              endIndex: fenceEnd,
-              isNew: fenceStart >= prevLength,
-              type: "markdown",
-            });
-          }
-        } catch (e) {
-          // Incomplete JSON - check for partial type detection
-          const detectedType = detectComponentType(fenceContent);
+        const parsed = parsePartialJSON(fenceContent);
 
+        if (
+          parsed.type &&
+          ["workout_template", "onboarding_complete", "chart_data"].includes(
+            parsed.type
+          )
+        ) {
           result.push({
             content: match[0],
             startIndex: fenceStart,
             endIndex: fenceEnd,
-            isNew: fenceStart >= prevLength,
-            type: detectedType ? "component" : "markdown",
-            componentType: detectedType || undefined,
-            componentData: null, // Incomplete
+            isNew: false,
+            type: "component",
+            componentType: parsed.type,
+            componentData: parsed.data || null,
+            isComplete: parsed.isComplete,
+          });
+        } else {
+          result.push({
+            content: match[0],
+            startIndex: fenceStart,
+            endIndex: fenceEnd,
+            isNew: false,
+            type: "markdown",
           });
         }
       } else {
-        // Regular code block
         result.push({
           content: match[0],
           startIndex: fenceStart,
           endIndex: fenceEnd,
-          isNew: fenceStart >= prevLength,
+          isNew: false,
           type: "markdown",
         });
       }
@@ -122,55 +113,55 @@ export const StreamingMarkdownRenderer = ({
       lastIndex = fenceEnd;
     }
 
-    // Add remaining markdown
     if (lastIndex < content.length) {
       result.push({
         content: content.slice(lastIndex),
         startIndex: lastIndex,
         endIndex: content.length,
-        isNew: lastIndex >= prevLength,
+        isNew: false,
         type: "markdown",
       });
     }
+
+    result.forEach((segment) => {
+      segment.isNew = segment.endIndex > prevLength;
+    });
+
     prevLengthRef.current = content.length;
     return result;
   }, [content]);
 
-  const customRules = createCustomRules({
-    isStreaming: true,
-    onTemplateApprove,
-    onProfileConfirm,
-    styles,
-  });
-
   const renderSegment = (segment: ContentSegment, index: number) => {
-    const key = `segment-${segment.startIndex}-${index}`;
+    const dataHash = segment.componentData
+      ? JSON.stringify(segment.componentData).length
+      : 0;
+    const key = `segment-${segment.startIndex}-${index}-${dataHash}`;
 
     if (segment.type === "component") {
-      // Render component
-      const component = (() => {
-        if (!segment.componentData) {
-          // Show skeleton for incomplete component
-          return (
-            <YStack
-              padding="$4"
-              justifyContent="center"
-              alignItems="center"
-              style={styles.fence}
-            >
-              <Text color="$textSoft" size="small">
-                loading {segment.componentType}...
-              </Text>
-            </YStack>
-          );
-        }
+      if (!segment.componentData) {
+        return (
+          <YStack
+            key={key}
+            padding="$4"
+            justifyContent="center"
+            alignItems="center"
+            style={styles.fence}
+          >
+            <Text color="$textSoft" size="small">
+              loading {segment.componentType}...
+            </Text>
+          </YStack>
+        );
+      }
 
+      const component = (() => {
         switch (segment.componentType) {
           case "workout_template":
             return (
               <WorkoutTemplateView
                 data={segment.componentData}
                 onApprove={onTemplateApprove}
+                isComplete={segment.isComplete}
               />
             );
           case "onboarding_complete":
@@ -181,7 +172,12 @@ export const StreamingMarkdownRenderer = ({
               />
             );
           case "chart_data":
-            return <ChartDataView data={segment.componentData} />;
+            return (
+              <ChartDataView
+                key={`${key}-stable`}
+                data={segment.componentData}
+              />
+            );
           default:
             return null;
         }
@@ -196,13 +192,9 @@ export const StreamingMarkdownRenderer = ({
       );
     }
 
-    // Render markdown
     const markdownContent = segment.content.replace(
       /```[\s\S]*?```/g,
-      (match) => {
-        // Remove fences that are handled as components
-        return match;
-      }
+      (match) => match
     );
 
     return segment.isNew ? (

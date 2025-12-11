@@ -78,22 +78,52 @@ export const GreetingSkeleton: React.FC = () => {
     </YStack>
   );
 };
+interface ActionsSkeletonProps {
+  previousActions?: Array<{ label: string; message: string }> | null;
+}
 
-export const ActionsSkeleton: React.FC = () => {
+export const ActionsSkeleton: React.FC<ActionsSkeletonProps> = ({
+  previousActions,
+}) => {
   return (
     <XStack gap="$2" paddingHorizontal="$1">
-      {[1, 2, 3].map((i) => (
-        <YStack
-          key={i}
-          backgroundColor="$backgroundHover"
-          borderRadius={20}
-          paddingHorizontal="$4"
-          paddingVertical="$2"
-          height={32}
-          width={100}
-          opacity={0.3}
-        />
-      ))}
+      {previousActions && previousActions.length > 0
+        ? previousActions.map((action, i) => (
+            <YStack
+              key={i}
+              backgroundColor="$backgroundHover"
+              borderRadius={20}
+              paddingHorizontal="$4"
+              paddingVertical="$2"
+              height={32}
+              minWidth={100}
+              opacity={0.4}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text fontSize="$3" color="$text">
+                {action.label}
+              </Text>
+            </YStack>
+          ))
+        : [1, 2, 3].map((i) => (
+            <YStack
+              key={i}
+              backgroundColor="$backgroundHover"
+              borderRadius={20}
+              paddingHorizontal="$4"
+              paddingVertical="$2"
+              height={32}
+              width={100}
+              opacity={0.4}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text fontSize="$3" color="$text">
+                •••
+              </Text>
+            </YStack>
+          ))}
     </XStack>
   );
 };

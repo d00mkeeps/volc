@@ -1,11 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { YStack, Text, useTheme, Card, XStack } from "tamagui";
-import {
-  CartesianChart,
-  Line,
-  Bar,
-} from "victory-native";
+import { CartesianChart, Line, Bar } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
 
@@ -26,78 +22,76 @@ interface ChartDataViewProps {
   data: ChartData;
 }
 
-// Helper to generate a key for each dataset's y-values in the transformed data
 const getDatasetKey = (index: number) => `dataset_${index}`;
 
-// Forward-fill helper: carries last known value forward to fill gaps
 const forwardFillDataset = (data: (number | null)[]): (number | null)[] => {
   const result = [...data];
   let lastValue: number | null = null;
-  
+
   for (let i = 0; i < result.length; i++) {
     if (result[i] != null) {
       lastValue = result[i];
     } else if (lastValue != null) {
-      result[i] = lastValue; // Carry forward last known value
+      result[i] = lastValue;
     }
   }
-  
+
   return result;
 };
 
-// Normalize to percentage change from first value
-const normalizeToPercentage = (dataArray: (number | null)[]): (number | null)[] => {
+const normalizeToPercentage = (
+  dataArray: (number | null)[]
+): (number | null)[] => {
   const firstValue = dataArray.find((v): v is number => v != null);
-  if (!firstValue || firstValue === 0) return dataArray; // Can't normalize from 0
-  
-  return dataArray.map(v => {
+  if (!firstValue || firstValue === 0) return dataArray;
+
+  return dataArray.map((v) => {
     if (v == null) return null;
-    return ((v - firstValue) / firstValue) * 100; // % change
+    return ((v - firstValue) / firstValue) * 100;
   });
 };
 
-export default function ChartDataView({ data }: ChartDataViewProps) {
+function ChartDataView({ data }: ChartDataViewProps) {
   const theme = useTheme();
   const screenWidth = Dimensions.get("window").width;
-  const chartWidth = screenWidth - 48; // Adjust for padding
   const chartHeight = 300;
 
-  const font = useFont(require("../../../assets/fonts/SpaceMono-Regular.ttf"), 12); 
+  const font = useFont(
+    require("../../../assets/fonts/SpaceMono-Regular.ttf"),
+    12
+  );
 
-  // Detect if we need percentage normalization (scales differ by >3x)
   const shouldNormalizeToPercentage = useMemo(() => {
     if (data.datasets.length <= 1) return false;
-    
+
     const maxValues = data.datasets
-      .map(ds => Math.max(...ds.data.filter((v): v is number => v != null)))
-      .filter(v => !isNaN(v) && isFinite(v));
-    
+      .map((ds) => Math.max(...ds.data.filter((v): v is number => v != null)))
+      .filter((v) => !isNaN(v) && isFinite(v));
+
     if (maxValues.length < 2) return false;
-    
+
     const minMax = Math.min(...maxValues);
     const maxMax = Math.max(...maxValues);
     const ratio = maxMax / minMax;
-    
-    return ratio > 3; // Normalize if scales differ by more than 3x
+
+    return ratio > 3;
   }, [data.datasets]);
 
-  // Apply forward-fill and optional percentage normalization
   const processedDatasets = useMemo(() => {
-    return data.datasets.map(dataset => {
+    return data.datasets.map((dataset) => {
       let processedData = forwardFillDataset(dataset.data);
-      
+
       if (shouldNormalizeToPercentage) {
         processedData = normalizeToPercentage(processedData);
       }
-      
+
       return {
         ...dataset,
-        data: processedData
+        data: processedData,
       };
     });
   }, [data.datasets, shouldNormalizeToPercentage]);
 
-  // Transform processed data for Victory Native
   const transformedData = useMemo(() => {
     if (!data.labels || data.labels.length === 0) return [];
 
@@ -110,9 +104,10 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
     });
   }, [data.labels, processedDatasets]);
 
-  // Calculate Y-axis bounds
   const allValues = useMemo(() => {
-    return processedDatasets.flatMap((d) => d.data).filter((v): v is number => v != null);
+    return processedDatasets
+      .flatMap((d) => d.data)
+      .filter((v): v is number => v != null);
   }, [processedDatasets]);
 
   const yDomain = useMemo(() => {
@@ -121,18 +116,17 @@ export default function ChartDataView({ data }: ChartDataViewProps) {
     const maxVal = Math.max(...allValues);
     const range = Math.abs(maxVal - minVal);
     const padding = range > 0 ? range * 0.1 : 10;
-    
+
     return [minVal - padding, maxVal + padding] as [number, number];
   }, [allValues]);
 
-  // Update chart title for percentage mode
-const chartTitle = useMemo(() => {
-  if (shouldNormalizeToPercentage && !data.title.includes("% Change")) {
-    return `${data.title} (% Change)`;
-  }
-  return data.title;
-}, [data.title, shouldNormalizeToPercentage]);
-  // Helper for safe color access
+  const chartTitle = useMemo(() => {
+    if (shouldNormalizeToPercentage && !data.title.includes("% Change")) {
+      return `${data.title} (% Change)`;
+    }
+    return data.title;
+  }, [data.title, shouldNormalizeToPercentage]);
+
   const getBlueColor = () => {
     // @ts-ignore
     return theme.blue10?.get() || "#3b82f6";
@@ -214,7 +208,6 @@ const chartTitle = useMemo(() => {
         )}
       </View>
 
-      {/* Legend */}
       <XStack flexWrap="wrap" gap="$3" marginTop="$2" justifyContent="center">
         {data.datasets.map((dataset, i) => (
           <XStack key={i} alignItems="center" gap="$2">
@@ -235,3 +228,12 @@ const chartTitle = useMemo(() => {
     </Card>
   );
 }
+
+export default memo(ChartDataView, (prev, next) => {
+  return (
+    prev.data.title === next.data.title &&
+    prev.data.chart_type === next.data.chart_type &&
+    JSON.stringify(prev.data.labels) === JSON.stringify(next.data.labels) &&
+    JSON.stringify(prev.data.datasets) === JSON.stringify(next.data.datasets)
+  );
+});

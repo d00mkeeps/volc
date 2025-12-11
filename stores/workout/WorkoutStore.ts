@@ -32,7 +32,6 @@ interface WorkoutState {
   clearError: () => void;
 
   // Template methods - work from workouts array, no separate API
-  fetchTemplates: () => Promise<void>;
   handleTemplateDeduplication: () => Promise<void>;
 
   saveAsTemplate: (workout: CompleteWorkout) => Promise<CompleteWorkout>;
@@ -82,29 +81,33 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     // Called by authStore when user becomes authenticated
     initializeIfAuthenticated: async () => {
       console.log("[WorkoutStore] initializeIfAuthenticated called");
-      
+
       const { initialized, loading } = get();
-      
+
       // Always check and sync pending workouts, even if already initialized
       // This ensures queue processing happens on every app startup
       const queueBeforeSync = await pendingWorkoutQueue.getAll();
       console.log("[WorkoutStore] 🔍 Queue contents on app startup:", {
         count: queueBeforeSync.length,
-        workouts: queueBeforeSync.map(item => ({
+        workouts: queueBeforeSync.map((item) => ({
           id: item.id,
           name: item.workout.name,
           attempts: item.attempts,
           addedAt: new Date(item.addedAt).toISOString(),
-          lastAttemptAt: item.lastAttemptAt ? new Date(item.lastAttemptAt).toISOString() : 'never',
+          lastAttemptAt: item.lastAttemptAt
+            ? new Date(item.lastAttemptAt).toISOString()
+            : "never",
         })),
       });
 
       // Try to sync any pending workouts from previous session
       await get().syncPendingWorkouts();
-      
+
       // Only load workouts data if not already initialized
       if (initialized || loading) {
-        console.log("[WorkoutStore] Already initialized or loading, skipping data load");
+        console.log(
+          "[WorkoutStore] Already initialized or loading, skipping data load"
+        );
         return;
       }
 
@@ -127,29 +130,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     // Actions
     loadWorkouts: async () => {
       await loadWorkoutsData();
-    },
-
-    fetchTemplates: async () => {
-      try {
-        const { workouts } = get();
-
-        // Filter workouts to get templates (completed workouts with exercises)
-        const templateList = workouts.filter(
-          (workout: CompleteWorkout) =>
-            workout.workout_exercises.length > 0 &&
-            !workout.is_template === false
-        );
-        set({ templates: templateList });
-
-        // Run deduplication on templates
-        await get().handleTemplateDeduplication();
-      } catch (err) {
-        console.error("[WorkoutStore] Error fetching templates:", err);
-        set({
-          error:
-            err instanceof Error ? err : new Error("Failed to load templates"),
-        });
-      }
     },
 
     handleTemplateDeduplication: async () => {
@@ -259,7 +239,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
     createWorkout: async (workout: CompleteWorkout) => {
       console.log("[WorkoutStore] 📝 createWorkout called for:", workout.name);
-      
+
       // 1. Add to queue FIRST (never fails)
       await pendingWorkoutQueue.add(workout);
       console.log("[WorkoutStore] ✅ Added to queue:", workout.id);
@@ -270,8 +250,10 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           throw new Error("No authenticated user found");
         }
 
-        console.log("[WorkoutStore] 🚀 Starting background save with retry logic");
-        
+        console.log(
+          "[WorkoutStore] 🚀 Starting background save with retry logic"
+        );
+
         // 2. Attempt save with retry + Toast notifications (BACKGROUND)
         // We do NOT await this so the UI can proceed immediately
         retryWithBackoff(
@@ -280,7 +262,10 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
             maxRetries: 3,
             delays: [5000, 15000], // 5s, 15s delays
             onRetry: (attempt, error) => {
-              console.log(`[WorkoutStore] ⚠️ Retry attempt ${attempt}/3 for workout:`, workout.id);
+              console.log(
+                `[WorkoutStore] ⚠️ Retry attempt ${attempt}/3 for workout:`,
+                workout.id
+              );
               Toast.show({
                 type: "info",
                 text1: "Please check your network",
@@ -291,7 +276,10 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         )
           .then(async (newWorkout) => {
             // 3. SUCCESS - Remove from queue and add to store
-            console.log("[WorkoutStore] ✅ Save successful, removing from queue:", workout.id);
+            console.log(
+              "[WorkoutStore] ✅ Save successful, removing from queue:",
+              workout.id
+            );
             await pendingWorkoutQueue.remove(workout.id);
             Toast.show({ type: "success", text1: "Workout saved!" });
 
@@ -303,7 +291,11 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           })
           .catch((err) => {
             // 4. FAILED after all retries - Stay in queue only, don't add to store
-            console.error("[WorkoutStore] ❌ Save failed after all retries, kept in queue:", workout.id, err);
+            console.error(
+              "[WorkoutStore] ❌ Save failed after all retries, kept in queue:",
+              workout.id,
+              err
+            );
             Toast.show({
               type: "error",
               text1: "We can't save your workout right now",
@@ -326,7 +318,10 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       } finally {
         // Update pending count
         const remaining = await pendingWorkoutQueue.getAll();
-        console.log("[WorkoutStore] 📊 Pending workouts count:", remaining.length);
+        console.log(
+          "[WorkoutStore] 📊 Pending workouts count:",
+          remaining.length
+        );
         set({ pendingWorkoutsCount: remaining.length });
       }
     },
@@ -341,12 +336,16 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         return;
       }
 
-      console.log(`[WorkoutStore] 🚀 Syncing ${pending.length} pending workouts`);
+      console.log(
+        `[WorkoutStore] 🚀 Syncing ${pending.length} pending workouts`
+      );
 
       // Show initial toast
       Toast.show({
         type: "info",
-        text1: `Attempting to save ${pending.length} workout${pending.length > 1 ? "s" : ""}`,
+        text1: `Attempting to save ${pending.length} workout${
+          pending.length > 1 ? "s" : ""
+        }`,
       });
 
       let successCount = 0;
@@ -358,7 +357,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
           name: item.workout.name,
           attempts: item.attempts,
         });
-        
+
         try {
           const session = await authService.getSession();
           if (!session?.user?.id) {
@@ -366,11 +365,16 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
             continue;
           }
 
-          const savedWorkout = await workoutService.createWorkout(session.user.id, item.workout);
+          const savedWorkout = await workoutService.createWorkout(
+            session.user.id,
+            item.workout
+          );
           await pendingWorkoutQueue.remove(item.id);
           syncedWorkouts.push(savedWorkout);
           successCount++;
-          console.log(`[WorkoutStore] ✅ Successfully synced workout: ${item.id}`);
+          console.log(
+            `[WorkoutStore] ✅ Successfully synced workout: ${item.id}`
+          );
         } catch (err) {
           console.error(
             `[WorkoutStore] ❌ Failed to sync workout ${item.id}:`,
@@ -380,14 +384,14 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         }
       }
 
-      console.log(`[WorkoutStore] 📊 Sync complete. Success: ${successCount}/${pending.length}`);
+      console.log(
+        `[WorkoutStore] 📊 Sync complete. Success: ${successCount}/${pending.length}`
+      );
 
       if (successCount > 0) {
         Toast.show({
           type: "success",
-          text1: `Synced ${successCount} workout${
-            successCount > 1 ? "s" : ""
-          }`,
+          text1: `Synced ${successCount} workout${successCount > 1 ? "s" : ""}`,
         });
 
         // Add synced workouts to store
@@ -401,7 +405,9 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
 
       // Update pending count
       const remaining = await pendingWorkoutQueue.getAll();
-      console.log(`[WorkoutStore] 📊 Remaining pending workouts: ${remaining.length}`);
+      console.log(
+        `[WorkoutStore] 📊 Remaining pending workouts: ${remaining.length}`
+      );
       set({ pendingWorkoutsCount: remaining.length });
     },
 

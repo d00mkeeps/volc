@@ -26,11 +26,12 @@ export default function MuscleGroupSpider() {
   const allData = useDashboardStore((state) => state.allData);
   const isLoading = useDashboardStore((state) => state.isLoading);
   const error = useDashboardStore((state) => state.error);
-  
-  // Load font for Skia labels
-  const font = useFont(require("../../../assets/fonts/SpaceMono-Regular.ttf"), 12);
 
-  // Calculate which timeframes should be disabled
+  const font = useFont(
+    require("../../../assets/fonts/SpaceMono-Regular.ttf"),
+    12
+  );
+
   const calculateDisabledTimeframes = () => {
     if (!allData) return [];
 
@@ -49,7 +50,6 @@ export default function MuscleGroupSpider() {
       const currentWorkouts = allData[currentKey]?.actualMetrics?.workouts || 0;
       const nextWorkouts = allData[nextKey]?.actualMetrics?.workouts || 0;
 
-      // If the next timeframe has the same workout count, it should be disabled
       if (nextWorkouts === currentWorkouts) {
         disabled.push(nextKey);
       }
@@ -83,7 +83,6 @@ export default function MuscleGroupSpider() {
     },
   ];
 
-  // Handle loading state
   if (isLoading) {
     return (
       <Stack
@@ -101,7 +100,6 @@ export default function MuscleGroupSpider() {
     );
   }
 
-  // Handle error state
   if (error) {
     return (
       <Stack
@@ -119,7 +117,6 @@ export default function MuscleGroupSpider() {
     );
   }
 
-  // Handle no data
   if (!allData) {
     return (
       <Stack
@@ -137,7 +134,6 @@ export default function MuscleGroupSpider() {
     );
   }
 
-  // Get current timeframe data with safe access
   const currentData: TimeframeData | undefined = allData[timeframe];
   if (!currentData) {
     return (
@@ -158,7 +154,6 @@ export default function MuscleGroupSpider() {
 
   const muscleData: MuscleData[] = currentData.muscleBalance || [];
 
-  // Use real data or fallback to empty state
   const maxSets =
     muscleData.length > 0
       ? Math.max(...muscleData.map((d: MuscleData) => d.sets))
@@ -209,9 +204,8 @@ export default function MuscleGroupSpider() {
       flexDirection="row"
       paddingRight="$1.5"
     >
-      {/* Left Stack - Data Display Area */}
       <Stack flex={0.5} backgroundColor="$backgroundSoft" gap="$2" padding="$2">
-        <Stack zIndex={1}>
+        <Stack>
           <Select
             options={timeframeOptions}
             value={timeframe}
@@ -219,16 +213,13 @@ export default function MuscleGroupSpider() {
           />
         </Stack>
 
-        {/* Pass actualMetrics directly to MetricsDisplay */}
         <MetricsDisplay actualMetrics={currentData.actualMetrics} />
       </Stack>
 
-      {/* Right Stack - Spider Chart */}
       <Stack flex={1} justifyContent="center">
         <Stack justifyContent="center" alignItems="center">
           <Canvas style={{ width: size, height: size }}>
             <Group>
-              {/* Background grid circles */}
               {[0.25, 0.5, 0.75, 1.0].map((ratio: number, i: number) => (
                 <Circle
                   key={i}
@@ -242,7 +233,6 @@ export default function MuscleGroupSpider() {
                 />
               ))}
 
-              {/* Grid lines to each muscle group */}
               {points.map((point: any, index: number) => {
                 const angle =
                   (index * 2 * Math.PI) / muscleData.length - Math.PI / 2;
@@ -251,7 +241,7 @@ export default function MuscleGroupSpider() {
                 const path = Skia.Path.Make();
                 path.moveTo(center, center);
                 path.lineTo(endX, endY);
-                
+
                 return (
                   <Path
                     key={`grid-line-${index}`}
@@ -264,7 +254,6 @@ export default function MuscleGroupSpider() {
                 );
               })}
 
-              {/* Only render polygon and points if we have data */}
               {muscleData.length > 0 && (
                 <>
                   <Path
@@ -298,13 +287,9 @@ export default function MuscleGroupSpider() {
                     const labelX = center + labelRadius * Math.cos(angle);
                     const labelY = center + labelRadius * Math.sin(angle);
 
-                    // Simple centering adjustment for text
-                    // Skia text is drawn from bottom-left by default, or depends on font metrics
-                    // We'll just offset slightly. For perfect centering we'd measure text.
-                    // Assuming font size 12.
                     const textWidth = font ? font.getTextWidth(point.label) : 0;
                     const adjustedX = labelX - textWidth / 2;
-                    const adjustedY = labelY + 4; // approximate vertical center
+                    const adjustedY = labelY + 4;
 
                     if (!font) return null;
 

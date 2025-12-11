@@ -30,6 +30,7 @@ export const MessageList = ({
   onTemplateApprove,
   onDismiss,
 }: MessageListProps) => {
+  const isStreaming = !!streamingMessage;
   const listRef = useRef<FlatList>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
 
@@ -74,8 +75,11 @@ export const MessageList = ({
     }
 
     scrollTimeoutRef.current = setTimeout(() => {
-      listRef.current?.scrollToEnd({ animated });
-    }, 20);
+      listRef.current?.scrollToOffset({
+        offset: Number.MAX_SAFE_INTEGER,
+        animated,
+      });
+    }, 200);
   }, []);
 
   useEffect(() => {
@@ -83,13 +87,6 @@ export const MessageList = ({
       scrollToBottom();
     }
   }, [allMessages.length, scrollToBottom]);
-
-  useEffect(() => {
-    if (streamingMessage?.content) {
-      // Direct scroll for streaming - no debounce needed
-      listRef.current?.scrollToEnd({ animated: true });
-    }
-  }, [streamingMessage?.content]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -138,19 +135,18 @@ export const MessageList = ({
   }
 
   return (
-    <YStack flex={1} position="relative">
+    <YStack flex={1} position="relative" paddingBottom={110}>
       <FlatList
         ref={listRef}
         style={{ flex: 1 }}
         data={allMessages}
         renderItem={renderMessage}
         keyExtractor={keyExtractor}
-        scrollEventThrottle={100}
+        scrollEventThrottle={200}
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={true}
         onContentSizeChange={() => scrollToBottom()}
         onLayout={() => scrollToBottom(false)}
-        contentContainerStyle={{ paddingBottom: 100 }}
       />
     </YStack>
   );

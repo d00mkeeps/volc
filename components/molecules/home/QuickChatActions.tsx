@@ -16,6 +16,7 @@ interface QuickChatActionsProps {
   actions: Array<{ label: string; message: string }> | null;
   isLoadingActions: boolean;
   isWaitingForResponse?: boolean;
+  isStreaming?: boolean; // Add this
 }
 
 export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
@@ -23,6 +24,7 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
   onActionSelect,
   actions,
   isLoadingActions,
+  isStreaming = false,
   isWaitingForResponse = false,
 }) => {
   const fadeIn = useSharedValue(0);
@@ -42,13 +44,16 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
     opacity: fadeIn.value,
   }));
 
+  const isDisabled = isWaitingForResponse || isStreaming;
+  const displayOpacity = isDisabled ? 0.4 : 1;
+
   return (
     <YStack
       onLayout={(e) => setQuickActionsHeight(e.nativeEvent.layout.height)}
     >
       {isLoadingActions || !actions ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <ActionsSkeleton />
+          <ActionsSkeleton previousActions={actions} />
         </ScrollView>
       ) : (
         <Animated.View style={fadeInStyle}>
@@ -64,8 +69,8 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
                   onPress={() => onActionSelect(action.message)}
                   borderRadius={20}
                   paddingHorizontal="$4"
-                  disabled={isWaitingForResponse}
-                  opacity={isWaitingForResponse ? 0.5 : 1}
+                  disabled={isDisabled}
+                  opacity={displayOpacity}
                 >
                   <Text fontSize="$3" color="$text">
                     {action.label}

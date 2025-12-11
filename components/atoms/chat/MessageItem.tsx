@@ -1,4 +1,3 @@
-// /components/atoms/core/MessageItem.tsx
 import React, { memo } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -11,13 +10,10 @@ import {
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { Message } from "@/types";
-import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
-import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
-import ChartDataView from "@/components/molecules/visualization/ChartDataView";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import { StreamingMarkdownRenderer } from "@/utils/markdown/streamingMarkdownRenderer";
 import { createCustomRules } from "@/utils/markdown/customRules";
+import { useMessageStore } from "@/stores/chat/MessageStore";
 
 interface MessageItemProps {
   message: Message;
@@ -27,6 +23,7 @@ interface MessageItemProps {
   onProfileConfirm?: () => void;
   onDismiss?: () => void;
 }
+
 export const MessageItem = memo(
   ({
     message,
@@ -38,19 +35,28 @@ export const MessageItem = memo(
   }: MessageItemProps) => {
     if (!message) return null;
 
+    // Subscribe directly to streaming content for this message
+    const streamingContent = useMessageStore((state) => {
+      if (!isStreaming) return null;
+      const streaming = state.streamingMessages.get(message.conversation_id);
+      return streaming && !streaming.isComplete ? streaming.content : null;
+    });
+
+    const displayContent = streamingContent || message.content;
+    const actuallyStreaming = isStreaming && !!streamingContent;
+
     const theme = useTheme();
     const tokens = getTokens();
     const { width } = useWindowDimensions();
     const isUser = message.sender === "user";
-
     const isTablet = width >= 768;
 
     const safeContent =
-      typeof message.content === "string"
-        ? message.content
-        : String(message.content || "");
+      typeof displayContent === "string"
+        ? displayContent
+        : String(displayContent || "");
 
-    const renderContent = safeContent + (isStreaming ? "..." : "");
+    const renderContent = safeContent + (actuallyStreaming ? "..." : "");
 
     // Markdown styles
     const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
@@ -136,14 +142,20 @@ export const MessageItem = memo(
         padding: 0,
       },
     });
+
     const customRules = createCustomRules({
-      isStreaming,
+      isStreaming: actuallyStreaming,
       onTemplateApprove,
       onProfileConfirm,
       styles: markdownStyles,
     });
+
     return (
-      <Pressable onPress={onDismiss} style={{ width: "100%" }}>
+      <Pressable
+        onPress={onDismiss}
+        disabled={actuallyStreaming}
+        style={{ width: "100%" }}
+      >
         <XStack
           width="100%"
           justifyContent={isUser ? "flex-end" : "flex-start"}
@@ -156,7 +168,7 @@ export const MessageItem = memo(
               disabled
               style={{
                 maxWidth: "90%",
-                opacity: isStreaming ? 0.7 : 1,
+                opacity: actuallyStreaming ? 0.7 : 1,
                 overflow: "hidden",
                 backgroundColor: `${theme.primary.get()}80`,
                 borderRadius: 8,
@@ -192,7 +204,7 @@ export const MessageItem = memo(
             </TouchableOpacity>
           ) : (
             <YStack maxWidth={"90%"}>
-              {isStreaming ? (
+              {actuallyStreaming ? (
                 <StreamingMarkdownRenderer
                   content={safeContent}
                   styles={markdownStyles}

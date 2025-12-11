@@ -284,8 +284,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     const unsubscribeContent = webSocketService.onMessage((chunk) => {
       useMessageStore.getState().updateStreamingMessage(conversationId, chunk);
-      set((state) => ({ streamingContent: state.streamingContent + chunk }));
-
       // Update loading state to streaming on first chunk
       if (get().loadingState === "pending") {
         set({ loadingState: "streaming" });

@@ -5,13 +5,14 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
   View,
+  TouchableOpacity,
 } from "react-native";
 import { YStack } from "tamagui";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  interpolate,
+  FadeIn,
 } from "react-native-reanimated";
 
 import { MessageList } from "../../molecules/chat/MessageList";
@@ -25,6 +26,15 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useWindowDimensions } from "react-native";
+import { useColorScheme } from "react-native";
+import { useUserStore } from "@/stores/userProfileStore";
+import { BlurView } from "expo-blur";
+import { X } from "@/assets/icons/IconMap";
+import {
+  CompleteWorkout,
+  WorkoutExercise,
+  WorkoutExerciseSet,
+} from "@/types/workout";
 
 interface ChatOverlayProps {
   placeholder?: string;
@@ -47,7 +57,7 @@ export const ChatOverlay = ({
   const connect = useChatStore((state) => state.connect);
   const disconnect = useChatStore((state) => state.disconnect);
   const sendMessage = useChatStore((state) => state.sendMessage);
-
+  const colorScheme = useColorScheme();
   const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
   const setExpandChatOverlay = useLayoutStore(
     (state) => state.setExpandChatOverlay
@@ -96,16 +106,20 @@ export const ChatOverlay = ({
 
   const handleQuickReply = useCallback(
     (text: string) => {
-      const activeId = useConversationStore.getState().activeConversationId;
-
-      if (!activeId) {
-        useConversationStore.getState().setPendingGreeting(greeting);
+      if (isExpanded && connectionState !== "disconnected") {
+        // Send immediately if already expanded and connected
+        sendMessage(text);
+      } else {
+        // Queue for expansion
+        const activeId = useConversationStore.getState().activeConversationId;
+        if (!activeId) {
+          useConversationStore.getState().setPendingGreeting(greeting);
+        }
+        useConversationStore.getState().setPendingInitialMessage(text);
+        useConversationStore.getState().setPendingChatOpen(true);
       }
-
-      useConversationStore.getState().setPendingInitialMessage(text);
-      useConversationStore.getState().setPendingChatOpen(true);
     },
-    [greeting]
+    [isExpanded, connectionState, sendMessage, greeting]
   );
 
   const quickChatStyle = useAnimatedStyle(() => {
@@ -197,7 +211,8 @@ export const ChatOverlay = ({
     pointerEvents: fadeProgress.value > 0.1 ? "auto" : "none",
   }));
 
-  const backgroundColor = "rgba(0,0,0,0.9)";
+  const backgroundColor =
+    colorScheme === "dark" ? "rgba(0,0,0,0.9)" : "rgba(255,255,255,0.9)";
 
   const getConnectionState = ():
     | "ready"
@@ -238,12 +253,89 @@ export const ChatOverlay = ({
                 connectionState={getConnectionState()}
                 statusMessage={statusMessage}
                 onDismiss={handleCollapse}
-                onTemplateApprove={() => {
+                onTemplateApprove={(templateData) => {
+                  const userProfile = useUserStore.getState().userProfile;
+                  if (!userProfile?.user_id) return;
+
+                  const now = new Date().toISOString();
+                  const workoutId = `temp-${Date.now()}`;
+
+                  // Properly generate IDs like selectTemplate does
+                  const workout: CompleteWorkout = {
+                    ...templateData,
+                    id: workoutId,
+                    user_id: userProfile.user_id.toString(),
+                    is_template: false,
+                    template_id: templateData.id,
+                    created_at: now,
+                    updated_at: now,
+                    workout_exercises: templateData.workout_exercises.map(
+                      (exercise: WorkoutExercise, index: number) => ({
+                        ...exercise,
+                        id: `exercise-${Date.now()}-${index}`,
+                        workout_id: workoutId,
+                        workout_exercise_sets:
+                          exercise.workout_exercise_sets.map(
+                            (set: WorkoutExerciseSet, setIndex: number) => ({
+                              ...set,
+                              id: `set-${Date.now()}-${index}-${setIndex}`,
+                              exercise_id: `exercise-${Date.now()}-${index}`,
+                              is_completed: false,
+                            })
+                          ),
+                      })
+                    ),
+                  };
+                  useUserSessionStore.getState().startWorkout(workout);
                   handleCollapse();
                 }}
               />
             </View>
           </TouchableWithoutFeedback>
+
+          {isStreaming && (
+            <Animated.View
+              entering={FadeIn.duration(300)}
+              style={{
+                position: "absolute",
+                top: 60,
+                right: 20,
+                zIndex: 9999,
+              }}
+            >
+              <TouchableOpacity
+                onPress={handleCollapse}
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                  overflow: "hidden",
+                  borderWidth: 1,
+                  borderColor:
+                    colorScheme === "dark" ? "rgba(255,255,255)" : "rgba(0,0,0",
+                }}
+              >
+                <BlurView
+                  intensity={30}
+                  tint={colorScheme === "dark" ? "dark" : "light"}
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor:
+                      colorScheme === "dark"
+                        ? "rgba(40,40,40,0.6)"
+                        : "rgba(240,240,240,0.6)",
+                  }}
+                >
+                  <X
+                    size={20}
+                    color={colorScheme === "dark" ? "#fff" : "#000"}
+                  />
+                </BlurView>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </Animated.View>
 
         <YStack
@@ -254,7 +346,8 @@ export const ChatOverlay = ({
           style={styles.inputContainer}
         >
           <Animated.View style={[globalVisibilityStyle, { width: "100%" }]}>
-            {!isWorkoutActive && (
+            {/* Show in collapsed state only when appropriate */}
+            {!isExpanded && !isWorkoutActive && (
               <Animated.View style={[quickChatStyle, { marginBottom: 0 }]}>
                 <QuickChatActions
                   isActive={!!activeConversationId}
@@ -262,6 +355,21 @@ export const ChatOverlay = ({
                   actions={actions}
                   isLoadingActions={isLoadingActions}
                   isWaitingForResponse={loadingState === "pending"}
+                  isStreaming={!!streamingMessage}
+                />
+              </Animated.View>
+            )}
+
+            {/* Show in expanded state always */}
+            {isExpanded && (
+              <Animated.View style={[overlayStyle, { marginBottom: 0 }]}>
+                <QuickChatActions
+                  isActive={!!activeConversationId}
+                  onActionSelect={handleQuickReply}
+                  actions={actions}
+                  isLoadingActions={isLoadingActions}
+                  isWaitingForResponse={loadingState === "pending"}
+                  isStreaming={!!streamingMessage}
                 />
               </Animated.View>
             )}

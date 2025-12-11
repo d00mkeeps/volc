@@ -59,9 +59,6 @@ export function WorkoutCompletionModal({
 
   const handleClose = () => {
     workoutAnalysisStore.resetAnalysis();
-    // Clear active conversation when modal closes
-    useUserSessionStore.getState().setActiveConversation(null);
-
     onClose();
   };
 

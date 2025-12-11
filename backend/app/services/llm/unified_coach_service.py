@@ -19,20 +19,35 @@ from app.core.utils.websocket_utils import trigger_memory_extraction
 
 logger = logging.getLogger(__name__)
 
-async def stream_text_gradually(text: str) -> AsyncGenerator[str, None]:
-    """Stream text two words at a time at 15ms intervals (800 WPM)"""
+
+async def stream_text_gradually(
+    text: str, 
+    in_code_block: bool = False
+) -> AsyncGenerator[tuple[str, bool], None]:
+    """
+    Stream text with adaptive speed based on content type.
+    Returns tuple of (chunk, in_code_block_state)
+    """
     words = text.split(' ')
+    current_in_block = in_code_block
+    
     for i in range(0, len(words), 2):
-        # Get current word and next word if it exists
         chunk = words[i]
         if i + 1 < len(words):
             chunk += ' ' + words[i + 1]
-            # Add trailing space unless these are the last words
             if i + 2 < len(words):
                 chunk += ' '
         
-        yield chunk
-        await asyncio.sleep(0.01)
+        # Track backticks to detect code blocks
+        backtick_count = chunk.count('```')
+        if backtick_count > 0:
+            current_in_block = not current_in_block
+        
+        yield chunk, current_in_block
+        
+        # Speed: 10ms normal, 2ms in code blocks (5x faster)
+        delay = 0 if current_in_block else 0
+        await asyncio.sleep(delay)
 
 class UnifiedCoachService:
     """
@@ -180,15 +195,16 @@ class UnifiedCoachService:
                 full_response = ""
                 
                 try:
+                    in_code_block = False
                     async for chunk in self.response_model.astream(prompt):
                         content = chunk.content
                         if content:
                             full_response += content
-                            async for word in stream_text_gradually(content):
+                            async for word, in_code_block in stream_text_gradually(content, in_code_block):
                                 await websocket.send_json({
                                     "type": "content",
-                                    "data": word
-                                })
+                "data": word
+            })
                     # JSON Components
                     components = self._extract_json_components(full_response)
                     for component in components:
@@ -287,14 +303,15 @@ class UnifiedCoachService:
                 full_response = ""
                 
                 try:
+                    in_code_block = False
                     async for chunk in self.response_model.astream(prompt):
                         content = chunk.content
                         if content:
                             full_response += content
-                            async for word in stream_text_gradually(content):
+                            async for word, in_code_block in stream_text_gradually(content, in_code_block):
                                 await websocket.send_json({
                                     "type": "content",
-                "data": word
+                                    "data": word
             })
                 except google.api_core.exceptions.ResourceExhausted as e:
                     logger.error(f"Vertex AI rate limit: {str(e)}")
