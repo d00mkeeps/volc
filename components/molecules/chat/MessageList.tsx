@@ -8,7 +8,11 @@ import { Message } from "@/types";
 
 interface MessageListProps {
   messages: Message[];
-  streamingMessage?: { content: string; isComplete: boolean } | null;
+  streamingMessage?: {
+    content: string;
+    chunks?: Array<{ text: string; timestamp: number }>;
+    isComplete: boolean;
+  } | null;
   showLoadingIndicator?: boolean;
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   onTemplateApprove?: (templateData: any) => void;
@@ -16,7 +20,6 @@ interface MessageListProps {
   onProfileConfirm?: () => void;
   onDismiss?: () => void;
 }
-
 export const MessageList = ({
   messages,
   streamingMessage,
@@ -71,24 +74,22 @@ export const MessageList = ({
     }
 
     scrollTimeoutRef.current = setTimeout(() => {
-      // Use w/o animation for initial render to prevent jumpiness
       listRef.current?.scrollToEnd({ animated });
-    }, 20); // Small delay to batch rapid updates
+    }, 20);
   }, []);
 
-  // Scroll when new messages arrive
   useEffect(() => {
     if (allMessages.length > 0) {
       scrollToBottom();
     }
   }, [allMessages.length, scrollToBottom]);
 
-  // Scroll when streaming content updates
   useEffect(() => {
     if (streamingMessage?.content) {
-      scrollToBottom();
+      // Direct scroll for streaming - no debounce needed
+      listRef.current?.scrollToEnd({ animated: true });
     }
-  }, [streamingMessage?.content, scrollToBottom]);
+  }, [streamingMessage?.content]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -107,10 +108,12 @@ export const MessageList = ({
         return <LoadingMessage statusMessage={statusMessage} />;
       }
 
+      const isStreamingMessage = item.id === "streaming";
+
       return (
         <MessageItem
           message={item}
-          isStreaming={item.id === "streaming"}
+          isStreaming={isStreamingMessage}
           onTemplateApprove={onTemplateApprove}
           onProfileConfirm={onProfileConfirm}
           onDismiss={onDismiss}
@@ -122,9 +125,7 @@ export const MessageList = ({
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
-  // Don't show empty state when disconnected if there are no messages
   if (allMessages.length === 0 && connectionState !== "disconnected") {
-    // We can also make this dismissible by wrapping it
     return (
       <Pressable style={{ flex: 1 }} onPress={onDismiss}>
         <YStack flex={1} justifyContent="center" alignItems="center">
@@ -149,6 +150,7 @@ export const MessageList = ({
         showsVerticalScrollIndicator={true}
         onContentSizeChange={() => scrollToBottom()}
         onLayout={() => scrollToBottom(false)}
+        contentContainerStyle={{ paddingBottom: 100 }}
       />
     </YStack>
   );

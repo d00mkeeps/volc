@@ -57,9 +57,9 @@ export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
               {actions.map((action, index) => (
                 <Button
                   key={`${index}-${action.label}`}
-                  size="medium"
+                  size="small"
                   variant="blur"
-                  blurIntensity={60}
+                  blurIntensity={30}
                   pressStyle={{ backgroundColor: "$backgroundPress" }}
                   onPress={() => onActionSelect(action.message)}
                   borderRadius={20}

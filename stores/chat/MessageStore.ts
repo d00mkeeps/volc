@@ -37,115 +37,112 @@ interface MessageStoreState {
 export const useMessageStore = create<MessageStoreState>()(
   persist(
     (set) => ({
-  // Initial state
-  messages: new Map(),
-  streamingMessages: new Map(),
-  isLoading: false,
-  error: null,
+      // Initial state
+      messages: new Map(),
+      streamingMessages: new Map(),
+      isLoading: false,
+      error: null,
 
-  // Pure state mutations
-  setBulkMessages: (messagesByConversation) => {
-    set((state) => {
-      const newMessages = new Map(state.messages);
-      Object.entries(messagesByConversation).forEach(
-        ([conversationId, msgs]) => {
-          const sortedMessages = msgs.sort(
-            (a, b) => a.conversation_sequence - b.conversation_sequence
+      // Pure state mutations
+      setBulkMessages: (messagesByConversation) => {
+        set((state) => {
+          const newMessages = new Map(state.messages);
+          Object.entries(messagesByConversation).forEach(
+            ([conversationId, msgs]) => {
+              const sortedMessages = msgs.sort(
+                (a, b) => a.conversation_sequence - b.conversation_sequence
+              );
+              newMessages.set(conversationId, sortedMessages);
+            }
           );
-          newMessages.set(conversationId, sortedMessages);
-        }
-      );
-      return { messages: newMessages };
-    });
-  },
-
-  addMessage: (conversationId, message) => {
-    set((state) => {
-      const conversationMessages = state.messages.get(conversationId) || [];
-      const newMessages = new Map(state.messages);
-      newMessages.set(conversationId, [...conversationMessages, message]);
-      return { messages: newMessages };
-    });
-  },
-
-  // ... (updateStreamingMessage, completeStreamingMessage omitted for brevity but preserved in file via context)
-
-  updateStreamingMessage: (conversationId, content) => {
-     // ... check existing ...
-    set((state) => {
-      const newStreamingMessages = new Map(state.streamingMessages);
-      const existing = newStreamingMessages.get(conversationId);
-
-      if (existing) {
-        newStreamingMessages.set(conversationId, {
-          ...existing,
-          content: existing.content + content,
+          return { messages: newMessages };
         });
-      } else {
-        newStreamingMessages.set(conversationId, {
-          conversationId,
-          content,
-          isComplete: false,
+      },
+
+      addMessage: (conversationId, message) => {
+        set((state) => {
+          const conversationMessages = state.messages.get(conversationId) || [];
+          const newMessages = new Map(state.messages);
+          newMessages.set(conversationId, [...conversationMessages, message]);
+          return { messages: newMessages };
         });
-      }
+      },
 
-      return { streamingMessages: newStreamingMessages };
-    });
-  },
+      updateStreamingMessage: (conversationId, content) => {
+        set((state) => {
+          const newStreamingMessages = new Map(state.streamingMessages);
+          const existing = newStreamingMessages.get(conversationId);
 
-  completeStreamingMessage: (conversationId) => {
-    set((state) => {
-      const streamingState = state.streamingMessages.get(conversationId);
-      if (!streamingState) return {};
+          if (existing) {
+            newStreamingMessages.set(conversationId, {
+              ...existing,
+              content: existing.content + content,
+            });
+          } else {
+            newStreamingMessages.set(conversationId, {
+              conversationId,
+              content,
+              isComplete: false,
+            });
+          }
 
-      // Add completed message to messages
-      const aiMessage: Message = {
-        id: `temp-ai-${Date.now()}`,
-        conversation_id: conversationId,
-        content: streamingState.content,
-        sender: "assistant",
-        conversation_sequence:
-          (state.messages.get(conversationId)?.length || 0) + 1,
-        timestamp: new Date(),
-      };
+          return { streamingMessages: newStreamingMessages };
+        });
+      },
 
-      const conversationMessages = state.messages.get(conversationId) || [];
-      const newMessages = new Map(state.messages);
-      newMessages.set(conversationId, [...conversationMessages, aiMessage]);
+      completeStreamingMessage: (conversationId) => {
+        set((state) => {
+          const streamingState = state.streamingMessages.get(conversationId);
+          if (!streamingState) return {};
 
-      // Clear streaming state
-      const newStreamingMessages = new Map(state.streamingMessages);
-      newStreamingMessages.delete(conversationId);
+          // Add completed message to messages
+          const aiMessage: Message = {
+            id: `temp-ai-${Date.now()}`,
+            conversation_id: conversationId,
+            content: streamingState.content,
+            sender: "assistant",
+            conversation_sequence:
+              (state.messages.get(conversationId)?.length || 0) + 1,
+            timestamp: new Date(),
+          };
 
-      return {
-        messages: newMessages,
-        streamingMessages: newStreamingMessages,
-      };
-    });
-  },
+          const conversationMessages = state.messages.get(conversationId) || [];
+          const newMessages = new Map(state.messages);
+          newMessages.set(conversationId, [...conversationMessages, aiMessage]);
 
-  clearStreamingMessage: (conversationId) => {
-    set((state) => {
-      const newStreamingMessages = new Map(state.streamingMessages);
-      newStreamingMessages.delete(conversationId);
-      return { streamingMessages: newStreamingMessages };
-    });
-  },
+          // Clear streaming state
+          const newStreamingMessages = new Map(state.streamingMessages);
+          newStreamingMessages.delete(conversationId);
 
-  setStreamingMessage: (conversationId, streamingState) => {
-    set((state) => {
-      const newStreamingMessages = new Map(state.streamingMessages);
-      if (streamingState === null) {
-        newStreamingMessages.delete(conversationId);
-      } else {
-        newStreamingMessages.set(conversationId, streamingState);
-      }
-      return { streamingMessages: newStreamingMessages };
-    });
-  },
+          return {
+            messages: newMessages,
+            streamingMessages: newStreamingMessages,
+          };
+        });
+      },
 
-  setLoading: (loading) => set({ isLoading: loading }),
-  setError: (error) => set({ error }),
+      clearStreamingMessage: (conversationId) => {
+        set((state) => {
+          const newStreamingMessages = new Map(state.streamingMessages);
+          newStreamingMessages.delete(conversationId);
+          return { streamingMessages: newStreamingMessages };
+        });
+      },
+
+      setStreamingMessage: (conversationId, streamingState) => {
+        set((state) => {
+          const newStreamingMessages = new Map(state.streamingMessages);
+          if (streamingState === null) {
+            newStreamingMessages.delete(conversationId);
+          } else {
+            newStreamingMessages.set(conversationId, streamingState);
+          }
+          return { streamingMessages: newStreamingMessages };
+        });
+      },
+
+      setLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
       clearMessages: (conversationId) => {
         set((state) => {
           const newMessages = new Map(state.messages);

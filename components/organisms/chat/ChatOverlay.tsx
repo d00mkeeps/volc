@@ -228,7 +228,7 @@ export const ChatOverlay = ({
         >
           <TouchableWithoutFeedback onPress={handleCollapse}>
             <View
-              style={{ flex: 1, paddingBottom: 120 }}
+              style={{ flex: 1, paddingBottom: 10 }}
               onStartShouldSetResponder={() => true}
             >
               <MessageList

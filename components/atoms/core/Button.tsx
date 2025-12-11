@@ -128,7 +128,7 @@ export const Button: React.FC<__ButtonProps__> = ({
             borderRadius: radiusValue,
             overflow: "hidden",
             borderColor: "#999",
-            borderWidth: 0.25,
+            borderWidth: 1,
           }}
         >
           <Stack alignItems="center" justifyContent="center">
