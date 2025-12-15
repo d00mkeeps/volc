@@ -1,7 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ComponentProps } from "react";
 import { useTheme } from "tamagui";
-import { OpaqueColorValue, useColorScheme } from "react-native";
+import { OpaqueColorValue, useColorScheme, Platform } from "react-native";
+import { SFSymbol } from "react-native-sfsymbols";
 
 export type AppIconName =
   | "Settings"
@@ -35,7 +36,11 @@ export type AppIconName =
   | "Lock"
   | "Clock"
   | "Wrench"
-  | "ChevronUp";
+  | "ChevronUp"
+  | "NetworkExcellent"
+  | "NetworkGood"
+  | "NetworkPoor"
+  | "NetworkOffline";
 
 const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Camera: "camera",
@@ -69,6 +74,10 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Lock: "lock-closed-outline",
   Clock: "time-outline",
   Wrench: "construct-outline",
+  NetworkExcellent: "wifi",
+  NetworkGood: "wifi",
+  NetworkPoor: "wifi-outline",
+  NetworkOffline: "cloud-offline-outline",
 };
 
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
@@ -82,7 +91,6 @@ const resolveColor = (
   theme: any
 ): string | OpaqueColorValue => {
   if (!color) return "currentColor";
-
 
   if (typeof color !== "string") return color;
 
@@ -240,3 +248,70 @@ export const Clock = (props: Omit<AppIconProps, "name">) => (
 export const Wrench = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Wrench" {...props} />
 );
+
+interface NetworkIconProps extends Omit<AppIconProps, "name"> {
+  quality: "excellent" | "good" | "poor" | "offline";
+}
+
+// /assets/icons/IconMap.NetworkStatusIcon
+export const NetworkStatusIcon = ({
+  quality,
+  size = 20,
+  color,
+  ...props
+}: NetworkIconProps) => {
+  const theme = useTheme();
+  const colorScheme = useColorScheme();
+
+  // Use same color logic as other icons
+  const defaultColor = colorScheme === "dark" ? "#ffffff" : "#231f20";
+  const resolvedColor = resolveColor(color || defaultColor, theme);
+
+  // iOS: Use SF Symbols
+  if (Platform.OS === "ios") {
+    let symbolName: string;
+    switch (quality) {
+      case "excellent":
+        symbolName = "wifi";
+        break;
+      case "good":
+        symbolName = "wifi";
+        break;
+      case "poor":
+        symbolName = "wifi.exclamationmark";
+        break;
+      case "offline":
+        symbolName = "wifi.slash";
+        break;
+    }
+
+    return (
+      // @ts-ignore
+      <SFSymbol
+        name={symbolName}
+        size={size}
+        color={resolvedColor}
+        {...props}
+      />
+    );
+  }
+
+  // Android: Use Ionicons fallback
+  let iconName: AppIconName;
+  switch (quality) {
+    case "excellent":
+    case "good":
+      iconName = "NetworkGood";
+      break;
+    case "poor":
+      iconName = "NetworkPoor";
+      break;
+    case "offline":
+      iconName = "NetworkOffline";
+      break;
+  }
+
+  return (
+    <AppIcon name={iconName} size={size} color={resolvedColor} {...props} />
+  );
+};

@@ -6,6 +6,7 @@ import { useConversationStore } from "./chat/ConversationStore";
 import { useWorkoutStore } from "./workout/WorkoutStore";
 import { useDashboardStore } from "./dashboardStore";
 import { useChatStore } from "./chat/ChatStore";
+import { networkMonitor, NetworkQuality } from "@/services/networkMonitor";
 
 export function useAuthStore() {
   const { user, loading } = useAuth();
@@ -44,5 +45,50 @@ export function useAuthStore() {
         console.log("[AuthStore] All stores cleared");
       }
     }
+
+    // Network recovery handling
+    const handleQualityChange = async ({
+      from,
+      to,
+    }: {
+      from: NetworkQuality;
+      to: NetworkQuality;
+    }) => {
+      const isImprovement =
+        (from === "offline" || from === "poor") &&
+        (to === "good" || to === "excellent");
+
+      if (isImprovement && user && !loading) {
+        const refreshStores = async () => {
+          console.log(
+            `[AuthStore] Network improved (${from} -> ${to}), refreshing stores...`
+          );
+          try {
+            await Promise.all([
+              useUserStore.getState().refreshProfile(),
+              useExerciseStore.getState().refreshExercises(),
+              useConversationStore.getState().initializeIfAuthenticated(),
+              useWorkoutStore.getState().loadWorkouts(),
+              // ChatStore actions are sync triggers
+              Promise.resolve(useChatStore.getState().refreshQuickChat()),
+            ]);
+            console.log("[AuthStore] Stores refreshed after network recovery");
+          } catch (error) {
+            console.error(
+              "[AuthStore] Error refreshing stores on network recovery:",
+              error
+            );
+          }
+        };
+
+        refreshStores();
+      }
+    };
+
+    networkMonitor.on("qualityChange", handleQualityChange);
+
+    return () => {
+      networkMonitor.off("qualityChange", handleQualityChange);
+    };
   }, [user, loading]);
 }

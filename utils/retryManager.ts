@@ -1,5 +1,3 @@
-import Toast from "react-native-toast-message";
-
 interface RetryOptions {
   maxRetries?: number;
   baseDelay?: number;
@@ -16,12 +14,7 @@ export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {}
 ): Promise<T> {
-  const {
-    maxRetries = 3,
-    baseDelay = 2000,
-    delays,
-    onRetry
-  } = options;
+  const { maxRetries = 3, baseDelay = 2000, delays, onRetry } = options;
 
   let lastError: any;
 
@@ -32,21 +25,23 @@ export async function retryWithBackoff<T>(
         if (onRetry) {
           onRetry(attempt, lastError);
         }
-        
+
         // Use custom delays if provided, otherwise exponential backoff
-        const delay = delays 
+        const delay = delays
           ? delays[attempt - 1] || delays[delays.length - 1] // Use last delay if array is shorter
           : baseDelay * Math.pow(2, attempt - 1);
-        
-        console.log(`[RetryManager] Retry attempt ${attempt}/${maxRetries} waiting ${delay}ms`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+
+        console.log(
+          `[RetryManager] Retry attempt ${attempt}/${maxRetries} waiting ${delay}ms`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
 
       return await fn();
     } catch (error) {
       lastError = error;
       console.error(`[RetryManager] Attempt ${attempt + 1} failed:`, error);
-      
+
       // If we've exhausted retries, throw the last error
       if (attempt === maxRetries) {
         console.error("[RetryManager] All retries exhausted");
