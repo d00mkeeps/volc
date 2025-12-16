@@ -29,12 +29,15 @@ import Constants, { ExecutionEnvironment } from "expo-constants";
  */
 export function getCurrentAppVersion(): string | null {
   const version = Application.nativeApplicationVersion;
-  console.log(`📱 [VersionCheck] Detected native version: ${version}`);
-  
+  // console.log(`📱 [VersionCheck] Detected native version: ${version}`);
+
   // Check if running in Expo Go
-  const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+  const isExpoGo =
+    Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
   if (isExpoGo) {
-    console.log("⚠️ [VersionCheck] Running in Expo Go - version might be the client version, not the app version.");
+    console.log(
+      "⚠️ [VersionCheck] Running in Expo Go - version might be the client version, not the app version."
+    );
   }
 
   return version;
@@ -47,7 +50,9 @@ export function isVersionSupported(): boolean {
   const currentVersion = getCurrentAppVersion();
 
   if (!currentVersion) {
-    console.warn("⚠️ [VersionCheck] Could not determine app version. Allowing access.");
+    console.warn(
+      "⚠️ [VersionCheck] Could not determine app version. Allowing access."
+    );
     return true; // Allow access if version can't be determined
   }
 

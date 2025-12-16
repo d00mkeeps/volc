@@ -13,7 +13,7 @@ interface MetricsDisplayProps {
 }
 
 export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
-  console.log("📊 [MetricsDisplay] Received actualMetrics:", actualMetrics);
+  // console.log("📊 [MetricsDisplay] Received actualMetrics:", actualMetrics);
 
   // Helper to pluralize labels
   const pluralize = (count: number, singular: string, plural: string) => {
@@ -35,7 +35,7 @@ export default function MetricsDisplay({ actualMetrics }: MetricsDisplayProps) {
     },
   ];
 
-  console.log("📋 [MetricsDisplay] Computed metrics:", metrics);
+  // console.log("📋 [MetricsDisplay] Computed metrics:", metrics);
 
   return (
     <Stack gap="$3" paddingLeft="$2" paddingTop="$3" borderRadius="$3">

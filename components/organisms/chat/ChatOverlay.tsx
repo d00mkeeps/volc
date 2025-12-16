@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Keyboard,
   StyleSheet,
@@ -14,6 +14,7 @@ import Animated, {
   withTiming,
   FadeIn,
 } from "react-native-reanimated";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 import { MessageList } from "../../molecules/chat/MessageList";
 import { InputArea } from "../../atoms/chat/InputArea";
@@ -50,13 +51,27 @@ export const ChatOverlay = ({
   // ChatStore selectors
   const loadingState = useChatStore((state) => state.loadingState);
   const greeting = useChatStore((state) => state.greeting);
-  const actions = useChatStore((state) => state.actions);
-  const isLoadingActions = useChatStore((state) => state.isLoadingActions);
+
   const connectionState = useChatStore((state) => state.connectionState);
   const statusMessage = useChatStore((state) => state.statusMessage);
   const connect = useChatStore((state) => state.connect);
   const disconnect = useChatStore((state) => state.disconnect);
+
   const sendMessage = useChatStore((state) => state.sendMessage);
+  const cancelStreaming = useChatStore((state) => state.cancelStreaming);
+
+  const { isUnreliable } = useNetworkQuality();
+
+  // Network-based auto-cancel
+  useEffect(() => {
+    const isActuallyStreaming = loadingState === "streaming";
+
+    if (isActuallyStreaming && isUnreliable) {
+      console.log("[ChatOverlay] Auto-cancelling due to poor network");
+      cancelStreaming("network_failure");
+    }
+  }, [loadingState, isUnreliable, cancelStreaming]);
+
   const colorScheme = useColorScheme();
   const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
   const setExpandChatOverlay = useLayoutStore(
@@ -93,12 +108,6 @@ export const ChatOverlay = ({
         : undefined
     ) || [];
 
-  const streamingMessage = useMessageStore((state) =>
-    activeConversationId
-      ? state.streamingMessages.get(activeConversationId)
-      : undefined
-  );
-
   // Computed state
   const canSend = loadingState === "idle";
   const showLoading = loadingState === "pending";
@@ -107,10 +116,8 @@ export const ChatOverlay = ({
   const handleQuickReply = useCallback(
     (text: string) => {
       if (isExpanded && connectionState !== "disconnected") {
-        // Send immediately if already expanded and connected
         sendMessage(text);
       } else {
-        // Queue for expansion
         const activeId = useConversationStore.getState().activeConversationId;
         if (!activeId) {
           useConversationStore.getState().setPendingGreeting(greeting);
@@ -123,14 +130,11 @@ export const ChatOverlay = ({
   );
 
   const quickChatStyle = useAnimatedStyle(() => {
-    // Keep visible in both states, only hide when switching pages or workout detail is open
     const finalOpacity = pageProgress.value;
 
     return {
       opacity: finalOpacity,
-      transform: [
-        { translateY: 0 }, // Remove the slide animation
-      ],
+      transform: [{ translateY: 0 }],
       pointerEvents:
         isWorkoutDetailOpen || pageProgress.value < 0.9 ? "none" : "auto",
     };
@@ -145,16 +149,9 @@ export const ChatOverlay = ({
     if (!isExpanded) {
       setIsExpanded(true);
       fadeProgress.value = withTiming(1, { duration: 300 });
-      // Ensure we're connected when expanding
       connect();
     }
   }, [isExpanded, fadeProgress, connect]);
-
-  // Register expand function
-  useEffect(() => {
-    setExpandChatOverlay(handleExpand);
-    return () => setExpandChatOverlay(null);
-  }, [handleExpand, setExpandChatOverlay]);
 
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
@@ -168,6 +165,54 @@ export const ChatOverlay = ({
     }
   }, [isExpanded, fadeProgress]);
 
+  const handleTemplateApprove = useCallback(
+    (templateData: any) => {
+      const userProfile = useUserStore.getState().userProfile;
+      if (!userProfile?.user_id) return;
+
+      const now = new Date().toISOString();
+      const workoutId = `temp-${Date.now()}`;
+
+      const workout: CompleteWorkout = {
+        ...templateData,
+        id: workoutId,
+        user_id: userProfile.user_id.toString(),
+        is_template: false,
+        template_id: templateData.id,
+        created_at: now,
+        updated_at: now,
+        workout_exercises: templateData.workout_exercises.map(
+          (exercise: WorkoutExercise, index: number) => ({
+            ...exercise,
+            id: `exercise-${Date.now()}-${index}`,
+            workout_id: workoutId,
+            workout_exercise_sets: exercise.workout_exercise_sets.map(
+              (set: WorkoutExerciseSet, setIndex: number) => ({
+                ...set,
+                id: `set-${Date.now()}-${index}-${setIndex}`,
+                exercise_id: `exercise-${Date.now()}-${index}`,
+                is_completed: false,
+              })
+            ),
+          })
+        ),
+      };
+      useUserSessionStore.getState().startWorkout(workout);
+      handleCollapse();
+    },
+    [handleCollapse]
+  );
+
+  const handleDismiss = useCallback(() => {
+    handleCollapse();
+  }, [handleCollapse]);
+
+  // Register expand function
+  useEffect(() => {
+    setExpandChatOverlay(handleExpand);
+    return () => setExpandChatOverlay(null);
+  }, [handleExpand, setExpandChatOverlay]);
+
   useEffect(() => {
     pageProgress.value = withTiming(isHome ? 1 : 0, { duration: 300 });
   }, [isHome, pageProgress]);
@@ -179,11 +224,19 @@ export const ChatOverlay = ({
     }
   }, [pendingChatOpen, handleExpand, setPendingChatOpen]);
 
+  const countRef = useRef(0);
+  countRef.current += 1;
+  const now = new Date();
+  const timestamp = `${now.getMinutes()}:${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+  console.log(`[ChatOverlay] render #${countRef.current} at ${timestamp}`);
+
   useEffect(() => {
     if (isExpanded) {
       connect();
     } else {
-      // Don't disconnect if streaming
       if (!isStreaming && loadingState !== "pending") {
         disconnect();
       }
@@ -241,54 +294,18 @@ export const ChatOverlay = ({
           style={[styles.expandedContent, overlayStyle, { backgroundColor }]}
           pointerEvents={isExpanded ? "auto" : "none"}
         >
-          <TouchableWithoutFeedback onPress={handleCollapse}>
+          <TouchableWithoutFeedback onPress={handleDismiss}>
             <View
               style={{ flex: 1, paddingBottom: 10 }}
               onStartShouldSetResponder={() => true}
             >
               <MessageList
                 messages={messages}
-                streamingMessage={streamingMessage}
                 showLoadingIndicator={showLoading}
                 connectionState={getConnectionState()}
                 statusMessage={statusMessage}
-                onDismiss={handleCollapse}
-                onTemplateApprove={(templateData) => {
-                  const userProfile = useUserStore.getState().userProfile;
-                  if (!userProfile?.user_id) return;
-
-                  const now = new Date().toISOString();
-                  const workoutId = `temp-${Date.now()}`;
-
-                  // Properly generate IDs like selectTemplate does
-                  const workout: CompleteWorkout = {
-                    ...templateData,
-                    id: workoutId,
-                    user_id: userProfile.user_id.toString(),
-                    is_template: false,
-                    template_id: templateData.id,
-                    created_at: now,
-                    updated_at: now,
-                    workout_exercises: templateData.workout_exercises.map(
-                      (exercise: WorkoutExercise, index: number) => ({
-                        ...exercise,
-                        id: `exercise-${Date.now()}-${index}`,
-                        workout_id: workoutId,
-                        workout_exercise_sets:
-                          exercise.workout_exercise_sets.map(
-                            (set: WorkoutExerciseSet, setIndex: number) => ({
-                              ...set,
-                              id: `set-${Date.now()}-${index}-${setIndex}`,
-                              exercise_id: `exercise-${Date.now()}-${index}`,
-                              is_completed: false,
-                            })
-                          ),
-                      })
-                    ),
-                  };
-                  useUserSessionStore.getState().startWorkout(workout);
-                  handleCollapse();
-                }}
+                onDismiss={handleDismiss}
+                onTemplateApprove={handleTemplateApprove}
               />
             </View>
           </TouchableWithoutFeedback>
@@ -346,30 +363,22 @@ export const ChatOverlay = ({
           style={styles.inputContainer}
         >
           <Animated.View style={[globalVisibilityStyle, { width: "100%" }]}>
-            {/* Show in collapsed state only when appropriate */}
             {!isExpanded && !isWorkoutActive && (
               <Animated.View style={[quickChatStyle, { marginBottom: 0 }]}>
                 <QuickChatActions
-                  isActive={!!activeConversationId}
                   onActionSelect={handleQuickReply}
-                  actions={actions}
-                  isLoadingActions={isLoadingActions}
                   isWaitingForResponse={loadingState === "pending"}
-                  isStreaming={!!streamingMessage}
+                  isStreaming={isStreaming}
                 />
               </Animated.View>
             )}
 
-            {/* Show in expanded state always */}
             {isExpanded && (
               <Animated.View style={[overlayStyle, { marginBottom: 0 }]}>
                 <QuickChatActions
-                  isActive={!!activeConversationId}
                   onActionSelect={handleQuickReply}
-                  actions={actions}
-                  isLoadingActions={isLoadingActions}
                   isWaitingForResponse={loadingState === "pending"}
-                  isStreaming={!!streamingMessage}
+                  isStreaming={isStreaming}
                 />
               </Animated.View>
             )}
@@ -383,9 +392,9 @@ export const ChatOverlay = ({
               <InputArea
                 placeholder={placeholder}
                 onSendMessage={sendMessage}
-                isLoading={!canSend}
-                disabled={!canSend}
+                isStreaming={isStreaming}
                 onFocus={handleExpand}
+                onCancel={() => cancelStreaming("user_requested")}
               />
             </YStack>
           </Animated.View>

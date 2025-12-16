@@ -10,6 +10,7 @@ export type OnboardingCompleteCallback = (data: any) => void;
 export type MessageCallback = (content: string) => void;
 export type CompletionCallback = () => void;
 export type TerminationCallback = (reason: string) => void;
+export type CancelledCallback = (data: { reason: string }) => void;
 export type ErrorCallback = (error: Error) => void;
 export type StatusCallback = (statusText: string) => void;
 
@@ -470,6 +471,13 @@ export class WebSocketService {
           console.log("[WSService] Heartbeat acknowledged");
           break;
 
+        case "cancelled":
+          console.log("[WSService] Stream cancelled:", message.reason);
+          this.events.emit("cancelled", {
+            reason: message.reason || "unknown",
+          });
+          break;
+
         default:
           console.warn("[WSService] Unknown message type:", message.type);
       }
@@ -616,6 +624,14 @@ export class WebSocketService {
   onTerminated(callback: TerminationCallback): () => void {
     this.events.on("terminated", callback);
     return () => this.events.off("terminated", callback);
+  }
+
+  /**
+   * Register cancelled handler
+   */
+  onCancelled(callback: CancelledCallback): () => void {
+    this.events.on("cancelled", callback);
+    return () => this.events.off("cancelled", callback);
   }
 
   /**

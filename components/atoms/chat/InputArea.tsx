@@ -1,44 +1,75 @@
 import { WorkoutValidation } from "@/utils/validation";
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { XStack, YStack, Spinner, Text } from "tamagui";
-import { Animated } from "react-native";
+import { XStack, YStack, Text } from "tamagui";
+import { Animated, useColorScheme } from "react-native";
+import { BlurView } from "expo-blur";
 import TextArea from "@/components/atoms/core/TextArea";
 import Button from "@/components/atoms/core/Button";
-import { Send } from "@/assets/icons/IconMap";
+import { Send, Stop } from "@/assets/icons/IconMap";
+import { useChatStore } from "@/stores/chat/ChatStore";
 
 interface InputAreaProps {
-  disabled?: boolean;
   placeholder?: string;
   onSendMessage: (message: string) => void;
-  isLoading?: boolean;
+  isStreaming?: boolean;
   shouldPulse?: boolean;
   onPulseComplete?: () => void;
-  onFocus?: () => void; // Added onFocus prop
+  onFocus?: () => void;
+  onCancel?: () => void;
 }
 
 export const InputArea = ({
-  disabled = false,
   placeholder = "send message...",
   onSendMessage,
-  isLoading = false,
+  isStreaming = false, // Keep for backwards compatibility, but we'll override with store
   shouldPulse = false,
   onPulseComplete,
   onFocus: onFocusProp,
+  onCancel,
 }: InputAreaProps) => {
+  const colorScheme = useColorScheme();
   const [isPressed, setIsPressed] = useState(false);
   const [input, setInput] = useState("");
   const [error, setError] = useState<string | undefined>();
   const [isPulsing, setIsPulsing] = useState(false);
+  const [stopCooldown, setStopCooldown] = useState(false);
+
+  // Get loading state from ChatStore
+  const loadingState = useChatStore((state) => state.loadingState);
+
+  // Component is busy when pending OR streaming
+  const isBusy = loadingState === "pending" || loadingState === "streaming";
+
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const sendOpacity = useRef(new Animated.Value(1)).current;
+  const stopOpacity = useRef(new Animated.Value(0)).current;
+  const stopCooldownOpacity = useRef(new Animated.Value(1)).current;
+
   const pulseTimeout = useRef<NodeJS.Timeout | null>(null);
+  const cooldownTimeout = useRef<NodeJS.Timeout | null>(null);
   const textAreaKey = useRef(0);
+
+  // Crossfade between Send and Stop buttons (now triggers on pending OR streaming)
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(sendOpacity, {
+        toValue: isBusy ? 0 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(stopOpacity, {
+        toValue: isBusy ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isBusy, sendOpacity, stopOpacity]);
 
   // Pulse animation effect
   useEffect(() => {
     if (shouldPulse) {
       setIsPulsing(true);
 
-      // Start pulse animation
       const pulse = Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
@@ -55,7 +86,6 @@ export const InputArea = ({
       );
       pulse.start();
 
-      // Stop after 10 seconds
       pulseTimeout.current = setTimeout(() => {
         pulse.stop();
         pulseAnim.setValue(1);
@@ -74,7 +104,6 @@ export const InputArea = ({
   }, [shouldPulse, pulseAnim, onPulseComplete]);
 
   const clearInput = useCallback(() => {
-    // More robust clearing: update state, increment key to force remount, clear error
     setInput("");
     setError(undefined);
     textAreaKey.current += 1;
@@ -83,33 +112,65 @@ export const InputArea = ({
   const handleSend = useCallback(() => {
     const trimmedInput = input.trim();
 
-    // Early return if empty
     if (!trimmedInput) {
       return;
     }
 
-    // Validate the message
     const validation = WorkoutValidation.chatMessage(trimmedInput);
     if (!validation.isValid) {
       setError(validation.error);
       return;
     }
 
-    // If not disabled, send the message and clear immediately
-    if (!disabled) {
-      onSendMessage(trimmedInput);
-      // Clear input immediately after sending
-      clearInput();
+    onSendMessage(trimmedInput);
+    clearInput();
 
-      // Double clear to handle autocorrect race conditions
-      setTimeout(() => {
-        clearInput();
-      }, 100);
+    setTimeout(() => {
+      clearInput();
+    }, 100);
+  }, [input, onSendMessage, clearInput]);
+
+  const handleCancel = useCallback(() => {
+    if (stopCooldown) return;
+
+    onCancel?.();
+    setStopCooldown(true);
+
+    // Fade out stop button opacity over 5 seconds
+    Animated.timing(stopCooldownOpacity, {
+      toValue: 0.3,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+
+    // Re-enable after 5 seconds
+    cooldownTimeout.current = setTimeout(() => {
+      setStopCooldown(false);
+      stopCooldownOpacity.setValue(1);
+    }, 5000) as unknown as NodeJS.Timeout;
+  }, [stopCooldown, onCancel, stopCooldownOpacity]);
+
+  // Cleanup cooldown timer
+  useEffect(() => {
+    return () => {
+      if (cooldownTimeout.current) {
+        clearTimeout(cooldownTimeout.current);
+      }
+    };
+  }, []);
+
+  // Reset cooldown when no longer busy
+  useEffect(() => {
+    if (!isBusy && stopCooldown) {
+      setStopCooldown(false);
+      stopCooldownOpacity.setValue(1);
+      if (cooldownTimeout.current) {
+        clearTimeout(cooldownTimeout.current);
+      }
     }
-  }, [disabled, input, onSendMessage, clearInput]);
+  }, [isBusy, stopCooldown, stopCooldownOpacity]);
 
   const handleFocus = useCallback(() => {
-    // Stop pulse on focus
     if (isPulsing) {
       setIsPulsing(false);
       pulseAnim.setValue(1);
@@ -118,14 +179,12 @@ export const InputArea = ({
       }
       onPulseComplete?.();
     }
-    // Call external onFocus if provided
     onFocusProp?.();
   }, [isPulsing, pulseAnim, onPulseComplete, onFocusProp]);
 
   const handleTextChange = useCallback(
     (text: string) => {
       setInput(text);
-      // Clear error if we're back under the limit
       if (error && text.length <= 500) {
         setError(undefined);
       }
@@ -133,7 +192,8 @@ export const InputArea = ({
     [error]
   );
 
-  // Calculate remaining characters
+  // Internal validation - can send if not busy and input is valid
+  const canSend = !isBusy && !!input.trim();
   const length = input.length;
   const showCounter = input.length >= 200;
 
@@ -144,61 +204,110 @@ export const InputArea = ({
       }}
     >
       <YStack gap="$1">
-        <XStack
-          paddingHorizontal="$2"
-          gap="$2"
-          backgroundColor="$transparent"
-          alignItems="flex-end"
+        <BlurView
+          intensity={80}
+          style={{
+            borderRadius: 16,
+            overflow: "hidden",
+          }}
         >
-          <TextArea
-            key={textAreaKey.current}
-            flex={1}
-            size="small"
-            borderRadius={16}
-            value={input}
-            verticalAlign="top"
-            onChangeText={handleTextChange}
-            placeholder={isLoading ? "please wait" : placeholder}
-            disabled={disabled}
-            borderColor={
-              error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
-            }
-            color="$color"
-            opacity={1}
-            placeholderTextColor="$textMuted"
-            onSubmitEditing={handleSend}
-            onFocus={handleFocus}
-            returnKeyType="send"
-            maxLength={500}
-            numberOfLines={8}
-          />
-          <Button
-            size="$3"
-            alignSelf="auto"
+          <XStack
+            paddingHorizontal="$2"
+            gap="$2"
             backgroundColor="$transparent"
-            borderColor={isPressed ? "$primary" : "$borderSoft"}
-            borderWidth={isPressed ? 2 : 0}
-            disabled={disabled || !input.trim() || isLoading}
-            onPress={handleSend}
-            onPressIn={() => setIsPressed(true)}
-            onPressOut={() => setIsPressed(false)}
-            circular
-            icon={
-              isLoading ? (
-                <Spinner size="small" color="$primary" />
-              ) : (
-                <Send color="#f84f3e" size={22} />
-              )
-            }
-            pressStyle={{
-              backgroundColor: "$transparent",
-            }}
-            disabledStyle={{
-              backgroundColor: "$transparent",
-              opacity: 0.7,
-            }}
-          />
-        </XStack>
+            alignItems="flex-end"
+          >
+            <TextArea
+              key={textAreaKey.current}
+              flex={1}
+              size="small"
+              borderRadius={16}
+              value={input}
+              verticalAlign="top"
+              onChangeText={handleTextChange}
+              placeholder={placeholder}
+              disabled={false} // Always enabled
+              borderColor={
+                error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
+              }
+              color="$color"
+              opacity={1}
+              placeholderTextColor="$textMuted"
+              onSubmitEditing={handleSend}
+              onFocus={handleFocus}
+              returnKeyType="send"
+              maxLength={500}
+              numberOfLines={8}
+            />
+
+            {/* Send Button */}
+            <Animated.View
+              style={{
+                opacity: sendOpacity,
+                position: isBusy ? "absolute" : "relative",
+                right: isBusy ? 8 : undefined,
+                bottom: isBusy ? 8 : undefined,
+              }}
+              pointerEvents={isBusy ? "none" : "auto"}
+            >
+              <Button
+                size="$3"
+                alignSelf="auto"
+                backgroundColor="$transparent"
+                borderColor={isPressed ? "$primary" : "$borderSoft"}
+                borderWidth={isPressed ? 2 : 0}
+                disabled={!canSend}
+                onPress={handleSend}
+                onPressIn={() => setIsPressed(true)}
+                onPressOut={() => setIsPressed(false)}
+                circular
+                icon={<Send color="#f84f3e" size={22} />}
+                pressStyle={{
+                  backgroundColor: "$transparent",
+                }}
+                disabledStyle={{
+                  backgroundColor: "$transparent",
+                  opacity: 0.7,
+                }}
+              />
+            </Animated.View>
+
+            {/* Stop Button */}
+            <Animated.View
+              style={{
+                opacity: Animated.multiply(stopOpacity, stopCooldownOpacity),
+                position: !isBusy ? "absolute" : "relative",
+                right: !isBusy ? 8 : undefined,
+                bottom: !isBusy ? 8 : undefined,
+              }}
+              pointerEvents={!isBusy ? "none" : "auto"}
+            >
+              <Button
+                size="$3"
+                alignSelf="auto"
+                backgroundColor="$transparent"
+                borderColor={
+                  isPressed && !stopCooldown ? "$primary" : "$borderSoft"
+                }
+                borderWidth={isPressed && !stopCooldown ? 2 : 0}
+                disabled={stopCooldown}
+                onPress={handleCancel}
+                onPressIn={() => !stopCooldown && setIsPressed(true)}
+                onPressOut={() => setIsPressed(false)}
+                circular
+                icon={<Stop color="#f84f3e" size={22} />}
+                pressStyle={{
+                  backgroundColor: "$transparent",
+                }}
+                disabledStyle={{
+                  backgroundColor: "$transparent",
+                  opacity: 1, // Don't apply default disabled opacity
+                }}
+              />
+            </Animated.View>
+          </XStack>
+        </BlurView>
+
         {showCounter && (
           <XStack justifyContent="flex-end" paddingHorizontal="$2">
             <Text

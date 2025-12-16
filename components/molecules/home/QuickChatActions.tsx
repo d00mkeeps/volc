@@ -9,24 +9,26 @@ import Button from "@/components/atoms/core/Button";
 import Text from "@/components/atoms/core/Text";
 import { ActionsSkeleton } from "@/components/atoms/chat/SkeletonLoader";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { useChatStore } from "@/stores/chat/ChatStore";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface QuickChatActionsProps {
-  isActive: boolean;
   onActionSelect: (text: string) => void;
-  actions: Array<{ label: string; message: string }> | null;
-  isLoadingActions: boolean;
   isWaitingForResponse?: boolean;
   isStreaming?: boolean; // Add this
 }
 
 export const QuickChatActions: React.FC<QuickChatActionsProps> = ({
-  isActive,
   onActionSelect,
-  actions,
-  isLoadingActions,
   isStreaming = false,
   isWaitingForResponse = false,
 }) => {
+  const actions = useChatStore((state) => state.actions);
+  const isLoadingActions = useChatStore((state) => state.isLoadingActions);
+  const activeConversationId = useConversationStore(
+    (state) => state.activeConversationId
+  );
+
   const fadeIn = useSharedValue(0);
   const setQuickActionsHeight = useLayoutStore(
     (state) => state.setQuickActionsHeight

@@ -15,6 +15,7 @@ interface ChatStore {
   connectionState: ConnectionState;
   loadingState: LoadingState;
   statusMessage: string | null;
+  lastCancelTime: number; // For cooldown tracking
 
   // Quick chat
   greeting: string | null;
@@ -32,6 +33,7 @@ interface ChatStore {
   connect: () => Promise<void>;
   disconnect: () => void;
   sendMessage: (content: string) => Promise<void>;
+  cancelStreaming: (reason: "user_requested" | "network_failure") => void;
   computeGreeting: () => void;
   fetchActions: () => Promise<void>;
   refreshQuickChat: () => void;
@@ -45,6 +47,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   connectionState: "disconnected",
   loadingState: "idle",
   statusMessage: null,
+  lastCancelTime: 0,
   greeting: null,
   actions: null,
   isLoadingGreeting: true,
@@ -300,7 +303,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       useMessageStore.getState().clearStreamingMessage(conversationId);
       set({ statusMessage: null, loadingState: "idle", streamingContent: "" });
       Toast.show({
-        type: "warning",
+        type: "info",
         text1: "Message Cut Off",
         text2: "Response was interrupted",
       });
@@ -430,6 +433,68 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     webSocketService.disconnect();
 
     get()._updateConnectionState();
+  },
+
+  cancelStreaming: (reason) => {
+    const { loadingState, lastCancelTime } = get();
+    const webSocketService = getWebSocketService();
+
+    // Check if streaming
+    if (loadingState !== "streaming" && loadingState !== "pending") {
+      console.log("[ChatStore] Not streaming/pending, ignoring cancel");
+      return;
+    }
+
+    // 5s cooldown protection (only for user requests)
+    const now = Date.now();
+    if (reason === "user_requested" && now - lastCancelTime < 5000) {
+      Toast.show({
+        type: "info",
+        text1: "Please wait",
+        text2: "Too many cancellations, cooling down",
+      });
+      return;
+    }
+
+    console.log(`[ChatStore] Cancelling stream: ${reason}`);
+
+    // Send cancel message to backend
+    try {
+      webSocketService.sendMessage({
+        type: "cancel",
+        reason,
+      });
+    } catch (error) {
+      console.error("[ChatStore] Failed to send cancel message:", error);
+    }
+
+    // Update local state immediately
+    const activeConversationId =
+      useConversationStore.getState().activeConversationId;
+    if (activeConversationId) {
+      useMessageStore.getState().clearStreamingMessage(activeConversationId);
+    }
+
+    set({
+      loadingState: "idle",
+      streamingContent: "",
+      lastCancelTime: now,
+    });
+
+    // Show appropriate toast
+    if (reason === "user_requested") {
+      Toast.show({
+        type: "info",
+        text1: "Message Cancelled",
+        text2: "Stream stopped by user",
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Message Cancelled",
+        text2: "Poor network connection detected",
+      });
+    }
   },
 
   sendMessage: async (content: string) => {

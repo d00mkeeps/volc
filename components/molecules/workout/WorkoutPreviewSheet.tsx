@@ -20,7 +20,7 @@ export default function WorkoutPreviewSheet({
   workoutIds,
   onClose,
 }: WorkoutPreviewSheetProps) {
-  console.log("🔍 [WorkoutPreviewSheet] Render - workoutIds:", workoutIds);
+  // console.log("🔍 [WorkoutPreviewSheet] Render - workoutIds:", workoutIds);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
@@ -41,40 +41,40 @@ export default function WorkoutPreviewSheet({
 
   // Find workouts from store
   const selectedWorkouts = useMemo(() => {
-    console.log(
-      "🔍 [WorkoutPreviewSheet] useMemo calculating - workoutIds:",
-      workoutIds,
-      "workouts count:",
-      workouts.length
-    );
+    // console.log(
+    //   "🔍 [WorkoutPreviewSheet] useMemo calculating - workoutIds:",
+    //   workoutIds,
+    //   "workouts count:",
+    //   workouts.length
+    // );
     const found = workoutIds
       .map((id) => workouts.find((w) => w.id === id))
       .filter((w): w is CompleteWorkout => w !== undefined);
 
-    console.log(
-      "🔍 [WorkoutPreviewSheet] Found workouts:",
-      found.length,
-      found.map((w) => w.id)
-    );
+    // console.log(
+    //   "🔍 [WorkoutPreviewSheet] Found workouts:",
+    //   found.length,
+    //   found.map((w) => w.id)
+    // );
     return found;
   }, [workoutIds, workouts]);
 
   const isOpen = workoutIds.length > 0 && selectedWorkouts.length > 0;
-  console.log(
-    "🔍 [WorkoutPreviewSheet] isOpen:",
-    isOpen,
-    "workoutIds.length:",
-    workoutIds.length,
-    "selectedWorkouts.length:",
-    selectedWorkouts.length
-  );
+  // console.log(
+  //   "🔍 [WorkoutPreviewSheet] isOpen:",
+  //   isOpen,
+  //   "workoutIds.length:",
+  //   workoutIds.length,
+  //   "selectedWorkouts.length:",
+  //   selectedWorkouts.length
+  // );
 
   const handleSheetChanges = useCallback(
     (index: number) => {
-      console.log(
-        "🔍 [WorkoutPreviewSheet] handleSheetChanges - index:",
-        index
-      );
+      // console.log(
+      //   "🔍 [WorkoutPreviewSheet] handleSheetChanges - index:",
+      //   index
+      // );
       animatedIndex.value = index;
 
       if (index === -1) {
@@ -92,23 +92,23 @@ export default function WorkoutPreviewSheet({
   );
 
   useEffect(() => {
-    console.log(
-      "🔍 [WorkoutPreviewSheet] useEffect triggered - isOpen:",
-      isOpen
-    );
+    // console.log(
+    //   "🔍 [WorkoutPreviewSheet] useEffect triggered - isOpen:",
+    //   isOpen
+    // );
     if (isOpen) {
-      console.log(
-        "🔍 [WorkoutPreviewSheet] Opening sheet - calling setWorkoutDetailOpen(true) and snapToIndex(0)"
-      );
+      // console.log(
+      //   "🔍 [WorkoutPreviewSheet] Opening sheet - calling setWorkoutDetailOpen(true) and snapToIndex(0)"
+      // );
       setWorkoutDetailOpen(true);
       setTimeout(() => {
         bottomSheetRef.current?.snapToIndex(0);
       }, 100);
       setExpandedWorkoutId(null);
     } else {
-      console.log(
-        "🔍 [WorkoutPreviewSheet] Closing sheet - calling setWorkoutDetailOpen(false) and close()"
-      );
+      // console.log(
+      //   "🔍 [WorkoutPreviewSheet] Closing sheet - calling setWorkoutDetailOpen(false) and close()"
+      // );
       setWorkoutDetailOpen(false);
       setTimeout(() => {
         bottomSheetRef.current?.close();

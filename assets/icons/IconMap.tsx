@@ -15,6 +15,7 @@ export type AppIconName =
   | "Check"
   | "CheckCircle"
   | "X"
+  | "Stop"
   | "Trash2"
   | "Plus"
   | "Camera"
@@ -56,6 +57,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Check: "checkmark-sharp",
   CheckCircle: "checkmark-circle",
   X: "close",
+  Stop: "stop-circle", // Ionicons mapping
   Trash2: "trash-outline",
   Plus: "add",
   RotateCw: "refresh",
@@ -177,6 +179,10 @@ export const X = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="X" {...props} />
 );
 
+export const Stop = (props: Omit<AppIconProps, "name">) => (
+  <AppIcon name="Stop" {...props} />
+);
+
 export const Trash2 = (props: Omit<AppIconProps, "name">) => (
   <AppIcon name="Trash2" {...props} />
 );
@@ -251,6 +257,8 @@ export const Wrench = (props: Omit<AppIconProps, "name">) => (
 
 interface NetworkIconProps extends Omit<AppIconProps, "name"> {
   quality: "excellent" | "good" | "poor" | "offline";
+  // Added 'name' to props to allow access within component for Stop icon check
+  name?: AppIconName;
 }
 
 // /assets/icons/IconMap.NetworkStatusIcon
@@ -258,6 +266,7 @@ export const NetworkStatusIcon = ({
   quality,
   size = 20,
   color,
+  name,
   ...props
 }: NetworkIconProps) => {
   const theme = useTheme();
@@ -285,13 +294,23 @@ export const NetworkStatusIcon = ({
         break;
     }
 
+    if (name === "Stop") {
+      return (
+        <SFSymbol
+          name="stop.circle.fill"
+          size={size}
+          color={resolvedColor}
+          {...(props as any)}
+        />
+      );
+    }
+
     return (
-      // @ts-ignore
       <SFSymbol
         name={symbolName}
         size={size}
         color={resolvedColor}
-        {...props}
+        {...(props as any)}
       />
     );
   }

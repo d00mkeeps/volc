@@ -48,8 +48,8 @@ export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
 };
 
 export default function HomeScreen() {
-  console.log(`=== homescreen render count: ${count} ===`);
-  count++;
+  // console.log(`=== homescreen render count: ${count} ===`);
+  // count++;
 
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
@@ -85,11 +85,11 @@ export default function HomeScreen() {
   );
 
   const { workouts } = useWorkoutStore();
-  console.log(
-    "🏋️ Workouts in store:",
-    workouts.length,
-    workouts.map((w) => w.id)
-  );
+  // console.log(
+  //   "🏋️ Workouts in store:",
+  //   workouts.length,
+  //   workouts.map((w) => w.id)
+  // );
 
   // Stable reference to session actions
   const sessionActions = useMemo(
@@ -111,28 +111,28 @@ export default function HomeScreen() {
 
   // Auto-load dashboard data on mount
   useEffect(() => {
-    console.log("⚡️ [HomeScreen] MOUNT EFFECT (Dashboard)");
+    // console.log("⚡️ [HomeScreen] MOUNT EFFECT (Dashboard)");
     refreshDashboard();
   }, []);
 
   // Fetch suggested actions only when user profile is available
   useEffect(() => {
     if (userProfile?.auth_user_uuid) {
-      console.log(
-        "⚡️ [HomeScreen] User ready, calling fetchSuggestedActions()"
-      );
+      // console.log(
+      //   "⚡️ [HomeScreen] User ready, calling fetchSuggestedActions()"
+      // );
       useConversationStore.getState().fetchSuggestedActions();
     } else {
-      console.log(
-        "⚡️ [HomeScreen] User not ready yet, skipping actions fetch"
-      );
+      // console.log(
+      //   "⚡️ [HomeScreen] User not ready yet, skipping actions fetch"
+      // );
     }
   }, [userProfile?.auth_user_uuid]);
 
   useEffect(() => {
     // Close workout preview sheet when workout tracker opens
     if (isActive) {
-      console.log("🏠 [HomeScreen] Workout active - closing preview sheet");
+      // console.log("🏠 [HomeScreen] Workout active - closing preview sheet");
       setSelectedWorkoutIds([]);
     }
   }, [isActive]);
@@ -296,7 +296,7 @@ export default function HomeScreen() {
           <WorkoutPreviewSheet
             workoutIds={selectedWorkoutIds}
             onClose={() => {
-              console.log("🏠 [HomeScreen] WorkoutPreviewSheet onClose called");
+              // console.log("🏠 [HomeScreen] WorkoutPreviewSheet onClose called");
               setSelectedWorkoutIds([]);
             }}
           />

@@ -129,9 +129,9 @@ export const useConversationStore = create<ConversationStoreState>()(
               .map((a, i) => `${i + 1}. [${a.label}]: ${a.message}`)
               .join("\n");
 
-            console.log(
-              `[ConversationStore] Fetched quick replies:\n${formattedLog}`
-            );
+            // console.log(
+            //   `[ConversationStore] Fetched quick replies:\n${formattedLog}`
+            // );
             set({
               suggestedActions: response.actions,
               isLoadingActions: false,

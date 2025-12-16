@@ -20,8 +20,8 @@ export function WorkoutCompletionModal({
   isVisible,
   onClose,
 }: WorkoutCompletionModalProps) {
-  console.log(`=== postworkout modal render count: ${count} ===`);
-  count++;
+  // console.log(`=== postworkout modal render count: ${count} ===`);
+  // count++;
 
   const [currentSlide, setCurrentSlide] = useState<"summary" | "chat">(
     "summary"

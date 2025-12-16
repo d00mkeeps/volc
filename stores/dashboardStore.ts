@@ -67,24 +67,24 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       // ✅ Log data shape
       const { allData } = get();
       if (allData) {
-        console.log("📊 [DashboardStore] Dashboard data received:");
+        // console.log("📊 [DashboardStore] Dashboard data received:");
 
         (["1week", "2weeks", "1month", "2months"] as const).forEach(
           (timeframe) => {
             const data = allData[timeframe];
             const workouts = data.consistency.workouts || [];
 
-            console.log(`\n  ${timeframe}:`);
-            console.log(
-              `    ✓ ${workouts.length} workouts received with fields: ${
-                workouts.length > 0
-                  ? Object.keys(workouts[0]).join(", ")
-                  : "N/A"
-              }`
-            );
+            // console.log(`\n  ${timeframe}:`);
+            // console.log(
+            //   `    ✓ ${workouts.length} workouts received with fields: ${
+            //     workouts.length > 0
+            //       ? Object.keys(workouts[0]).join(", ")
+            //       : "N/A"
+            //   }`
+            // );
 
             if (workouts.length > 0) {
-              console.log(`    Sample:`, workouts[0]);
+              // console.log(`    Sample:`, workouts[0]);
             }
           }
         );

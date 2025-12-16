@@ -5,14 +5,11 @@ import Text from "@/components/atoms/core/Text";
 import { MessageItem } from "../../atoms/chat/MessageItem";
 import { LoadingMessage } from "../../atoms/chat/LoadingMessage";
 import { Message } from "@/types";
+import { useMessageStore } from "@/stores/chat/MessageStore";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface MessageListProps {
   messages: Message[];
-  streamingMessage?: {
-    content: string;
-    chunks?: Array<{ text: string; timestamp: number }>;
-    isComplete: boolean;
-  } | null;
   showLoadingIndicator?: boolean;
   connectionState?: "ready" | "expecting_ai_message" | "disconnected";
   onTemplateApprove?: (templateData: any) => void;
@@ -20,9 +17,9 @@ interface MessageListProps {
   onProfileConfirm?: () => void;
   onDismiss?: () => void;
 }
+
 export const MessageList = ({
   messages,
-  streamingMessage,
   showLoadingIndicator = false,
   onProfileConfirm,
   connectionState = "ready",
@@ -30,28 +27,44 @@ export const MessageList = ({
   onTemplateApprove,
   onDismiss,
 }: MessageListProps) => {
-  const isStreaming = !!streamingMessage;
   const listRef = useRef<FlatList>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
+
+  const activeConversationId = useConversationStore(
+    (state) => state.activeConversationId
+  );
+
+  const hasStreamingMessage = useMessageStore((state) =>
+    activeConversationId
+      ? state.streamingMessages.has(activeConversationId)
+      : false
+  );
+
+  const countRef = useRef(0);
+  countRef.current += 1;
+  const now = new Date();
+  const timestamp = `${now.getMinutes()}:${now
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+  console.log(`[MessageList] render #${countRef.current} at ${timestamp}`);
 
   const allMessages = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
 
-    if (streamingMessage) {
+    if (hasStreamingMessage) {
       const tempStreamingMessage: Message = {
         id: "streaming",
-        content: streamingMessage.content || "",
+        content: "",
         sender: "assistant",
-        conversation_id: safeMessages[0]?.conversation_id || "",
+        conversation_id: activeConversationId!,
         conversation_sequence: safeMessages.length + 1,
         timestamp: new Date(),
       };
       return [...safeMessages, tempStreamingMessage];
     }
 
-    const lastMessage = safeMessages[safeMessages.length - 1];
-    const shouldShowLoading =
-      showLoadingIndicator || lastMessage?.sender === "user";
+    const shouldShowLoading = showLoadingIndicator;
 
     if (shouldShowLoading) {
       const tempLoadingMessage: Message = {
@@ -66,9 +79,13 @@ export const MessageList = ({
     }
 
     return safeMessages;
-  }, [messages, streamingMessage, showLoadingIndicator]);
+  }, [
+    messages,
+    hasStreamingMessage,
+    showLoadingIndicator,
+    activeConversationId,
+  ]);
 
-  // Smooth scroll helper with debouncing
   const scrollToBottom = useCallback((animated = true) => {
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
@@ -88,7 +105,6 @@ export const MessageList = ({
     }
   }, [allMessages.length, scrollToBottom]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (scrollTimeoutRef.current) {

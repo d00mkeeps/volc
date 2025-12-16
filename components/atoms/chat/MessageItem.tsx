@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import {
@@ -24,202 +24,232 @@ interface MessageItemProps {
   onDismiss?: () => void;
 }
 
-export const MessageItem = memo(
-  ({
-    message,
-    isStreaming = false,
-    enableUserMarkdown = false,
+const MessageItemComponent = ({
+  message,
+  isStreaming = false,
+  enableUserMarkdown = false,
+  onTemplateApprove,
+  onProfileConfirm,
+  onDismiss,
+}: MessageItemProps) => {
+  if (!message) return null;
+
+  const streamingContent = useMessageStore((state) => {
+    if (!isStreaming) return null;
+    const streaming = state.streamingMessages.get(message.conversation_id);
+    return streaming && !streaming.isComplete ? streaming.content : null;
+  });
+
+  const displayContent = streamingContent || message.content;
+  const actuallyStreaming = isStreaming && !!streamingContent;
+
+  const theme = useTheme();
+  const tokens = getTokens();
+  const { width } = useWindowDimensions();
+  const isUser = message.sender === "user";
+  const isTablet = width >= 768;
+
+  const safeContent =
+    typeof displayContent === "string"
+      ? displayContent
+      : String(displayContent || "");
+
+  const renderContent = safeContent + (actuallyStreaming ? "..." : "");
+
+  const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
+  const h2Size = isTablet ? tokens.fontSize.$6.val : tokens.fontSize.$4.val;
+  const h1Size = isTablet ? tokens.fontSize.$8.val : tokens.fontSize.$6.val;
+
+  const markdownStyles = StyleSheet.create({
+    body: {
+      fontSize: bodySize,
+      fontWeight: "400",
+      lineHeight: bodySize * 1.4,
+      color: isUser ? "#ffffff" : theme.color.get(),
+      margin: 0,
+      padding: 0,
+    },
+    paragraph: {
+      marginVertical: 8,
+    },
+    heading1: {
+      fontSize: h1Size,
+      lineHeight: h1Size * 1.2,
+      fontWeight: "600",
+      paddingVertical: 8,
+      color: isUser ? "#ffffff" : theme.color.get(),
+    },
+    heading2: {
+      fontSize: h2Size,
+      lineHeight: h2Size * 1.3,
+      fontWeight: "600",
+      paddingVertical: 8,
+      color: isUser ? "#ffffff" : theme.color.get(),
+    },
+    strong: {
+      fontWeight: "600",
+      color: isUser ? "#ffffff" : theme.color.get(),
+    },
+    em: {
+      fontStyle: "italic",
+      color: isUser ? "#ffffff" : theme.color.get(),
+    },
+    code_inline: {
+      fontFamily: "monospace",
+      backgroundColor: isUser
+        ? "rgba(255,255,255,0.2)"
+        : theme.backgroundStrong.get(),
+      color: isUser ? "#ffffff" : theme.color.get(),
+      paddingHorizontal: 4,
+      borderRadius: 3,
+      fontSize: bodySize,
+    },
+    code_block: {
+      fontFamily: "monospace",
+      backgroundColor: isUser
+        ? "rgba(255,255,255,0.2)"
+        : theme.backgroundStrong.get(),
+      color: isUser ? "#ffffff" : theme.color.get(),
+      padding: 8,
+      borderRadius: 6,
+      marginVertical: 4,
+      fontSize: bodySize,
+    },
+    fence: {
+      fontFamily: "monospace",
+      backgroundColor: isUser
+        ? "rgba(255,255,255,0.2)"
+        : theme.backgroundStrong.get(),
+      color: isUser ? "#ffffff" : theme.color.get(),
+      padding: 8,
+      borderRadius: 6,
+      marginVertical: 4,
+      fontSize: bodySize,
+    },
+    code_container: {
+      backgroundColor: "transparent",
+      borderRadius: 0,
+      margin: 0,
+      padding: 0,
+    },
+    pre: {
+      backgroundColor: "transparent",
+      borderRadius: 0,
+      margin: 0,
+      padding: 0,
+    },
+  });
+
+  const customRules = createCustomRules({
+    isStreaming: actuallyStreaming,
     onTemplateApprove,
     onProfileConfirm,
-    onDismiss,
-  }: MessageItemProps) => {
-    if (!message) return null;
+    styles: markdownStyles,
+  });
 
-    // Subscribe directly to streaming content for this message
-    const streamingContent = useMessageStore((state) => {
-      if (!isStreaming) return null;
-      const streaming = state.streamingMessages.get(message.conversation_id);
-      return streaming && !streaming.isComplete ? streaming.content : null;
-    });
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
 
-    const displayContent = streamingContent || message.content;
-    const actuallyStreaming = isStreaming && !!streamingContent;
+  // Only log streaming or old assistant messages
+  if (isStreaming) {
+    const now = new Date();
+    const timestamp = `${now.getMinutes()}:${now
+      .getSeconds()
+      .toString()
+      .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+    console.log(
+      `[MessageItem:streaming] render #${renderCountRef.current} at ${timestamp}`
+    );
+  } else if (!isStreaming && message.sender === "assistant") {
+    console.log(`⚠️ OLD MESSAGE RE-RENDERED: ${message.id.slice(0, 8)}`);
+  }
 
-    const theme = useTheme();
-    const tokens = getTokens();
-    const { width } = useWindowDimensions();
-    const isUser = message.sender === "user";
-    const isTablet = width >= 768;
-
-    const safeContent =
-      typeof displayContent === "string"
-        ? displayContent
-        : String(displayContent || "");
-
-    const renderContent = safeContent + (actuallyStreaming ? "..." : "");
-
-    // Markdown styles
-    const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
-    const h2Size = isTablet ? tokens.fontSize.$6.val : tokens.fontSize.$4.val;
-    const h1Size = isTablet ? tokens.fontSize.$8.val : tokens.fontSize.$6.val;
-
-    const markdownStyles = StyleSheet.create({
-      body: {
-        fontSize: bodySize,
-        fontWeight: "400",
-        lineHeight: bodySize * 1.4,
-        color: isUser ? "#ffffff" : theme.color.get(),
-        margin: 0,
-        padding: 0,
-      },
-      paragraph: {
-        marginVertical: 8,
-      },
-      heading1: {
-        fontSize: h1Size,
-        lineHeight: h1Size * 1.2,
-        fontWeight: "600",
-        paddingVertical: 8,
-        color: isUser ? "#ffffff" : theme.color.get(),
-      },
-      heading2: {
-        fontSize: h2Size,
-        lineHeight: h2Size * 1.3,
-        fontWeight: "600",
-        paddingVertical: 8,
-        color: isUser ? "#ffffff" : theme.color.get(),
-      },
-      strong: {
-        fontWeight: "600",
-        color: isUser ? "#ffffff" : theme.color.get(),
-      },
-      em: {
-        fontStyle: "italic",
-        color: isUser ? "#ffffff" : theme.color.get(),
-      },
-      code_inline: {
-        fontFamily: "monospace",
-        backgroundColor: isUser
-          ? "rgba(255,255,255,0.2)"
-          : theme.backgroundStrong.get(),
-        color: isUser ? "#ffffff" : theme.color.get(),
-        paddingHorizontal: 4,
-        borderRadius: 3,
-        fontSize: bodySize,
-      },
-      code_block: {
-        fontFamily: "monospace",
-        backgroundColor: isUser
-          ? "rgba(255,255,255,0.2)"
-          : theme.backgroundStrong.get(),
-        color: isUser ? "#ffffff" : theme.color.get(),
-        padding: 8,
-        borderRadius: 6,
-        marginVertical: 4,
-        fontSize: bodySize,
-      },
-      fence: {
-        fontFamily: "monospace",
-        backgroundColor: isUser
-          ? "rgba(255,255,255,0.2)"
-          : theme.backgroundStrong.get(),
-        color: isUser ? "#ffffff" : theme.color.get(),
-        padding: 8,
-        borderRadius: 6,
-        marginVertical: 4,
-        fontSize: bodySize,
-      },
-      code_container: {
-        backgroundColor: "transparent",
-        borderRadius: 0,
-        margin: 0,
-        padding: 0,
-      },
-      pre: {
-        backgroundColor: "transparent",
-        borderRadius: 0,
-        margin: 0,
-        padding: 0,
-      },
-    });
-
-    const customRules = createCustomRules({
-      isStreaming: actuallyStreaming,
-      onTemplateApprove,
-      onProfileConfirm,
-      styles: markdownStyles,
-    });
-
-    return (
-      <Pressable
-        onPress={onDismiss}
-        disabled={actuallyStreaming}
-        style={{ width: "100%" }}
+  return (
+    <Pressable
+      onPress={onDismiss}
+      disabled={actuallyStreaming}
+      style={{ width: "100%" }}
+    >
+      <XStack
+        width="100%"
+        justifyContent={isUser ? "flex-end" : "flex-start"}
+        paddingHorizontal="$4"
+        paddingVertical="$1"
+        pointerEvents="box-none"
       >
-        <XStack
-          width="100%"
-          justifyContent={isUser ? "flex-end" : "flex-start"}
-          paddingHorizontal="$4"
-          paddingVertical="$1"
-          pointerEvents="box-none"
-        >
-          {isUser ? (
-            <TouchableOpacity
-              disabled
+        {isUser ? (
+          <TouchableOpacity
+            disabled
+            style={{
+              maxWidth: "90%",
+              opacity: actuallyStreaming ? 0.7 : 1,
+              overflow: "hidden",
+              backgroundColor: `${theme.primary.get()}80`,
+              borderRadius: 8,
+            }}
+          >
+            <BlurView
+              intensity={60}
+              tint={useColorScheme() === "dark" ? "dark" : "light"}
               style={{
-                maxWidth: "90%",
-                opacity: actuallyStreaming ? 0.7 : 1,
-                overflow: "hidden",
-                backgroundColor: `${theme.primary.get()}80`,
+                paddingHorizontal: 12,
+                paddingVertical: 4,
                 borderRadius: 8,
+                overflow: "hidden",
+                borderColor: theme.primary.get(),
+                borderWidth: 0.5,
               }}
             >
-              <BlurView
-                intensity={60}
-                tint={useColorScheme() === "dark" ? "dark" : "light"}
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 4,
-                  borderRadius: 8,
-                  overflow: "hidden",
-                  borderColor: theme.primary.get(),
-                  borderWidth: 0.5,
-                }}
-              >
-                {enableUserMarkdown ? (
-                  <Markdown style={markdownStyles} rules={customRules}>
-                    {renderContent}
-                  </Markdown>
-                ) : (
-                  <Text
-                    color="white"
-                    fontSize={bodySize}
-                    fontWeight="400"
-                    lineHeight={bodySize * 1.4}
-                  >
-                    {renderContent}
-                  </Text>
-                )}
-              </BlurView>
-            </TouchableOpacity>
-          ) : (
-            <YStack maxWidth={"90%"}>
-              {actuallyStreaming ? (
-                <StreamingMarkdownRenderer
-                  content={safeContent}
-                  styles={markdownStyles}
-                  onTemplateApprove={onTemplateApprove}
-                  onProfileConfirm={onProfileConfirm}
-                />
-              ) : (
+              {enableUserMarkdown ? (
                 <Markdown style={markdownStyles} rules={customRules}>
                   {renderContent}
                 </Markdown>
+              ) : (
+                <Text
+                  color="white"
+                  fontSize={bodySize}
+                  fontWeight="400"
+                  lineHeight={bodySize * 1.4}
+                >
+                  {renderContent}
+                </Text>
               )}
-            </YStack>
-          )}
-        </XStack>
-      </Pressable>
-    );
+            </BlurView>
+          </TouchableOpacity>
+        ) : (
+          <YStack maxWidth={"90%"}>
+            {actuallyStreaming ? (
+              <StreamingMarkdownRenderer
+                content={safeContent}
+                styles={markdownStyles}
+                onTemplateApprove={onTemplateApprove}
+                onProfileConfirm={onProfileConfirm}
+              />
+            ) : (
+              <Markdown style={markdownStyles} rules={customRules}>
+                {renderContent}
+              </Markdown>
+            )}
+          </YStack>
+        )}
+      </XStack>
+    </Pressable>
+  );
+};
+
+export const MessageItem = memo(
+  MessageItemComponent,
+  (prevProps, nextProps) => {
+    // Re-render if message ID changed
+    if (prevProps.message.id !== nextProps.message.id) return false;
+
+    // Re-render if content changed
+    if (prevProps.message.content !== nextProps.message.content) return false;
+
+    // Re-render if streaming state changed
+    if (prevProps.isStreaming !== nextProps.isStreaming) return false;
+
+    // Don't re-render for callback changes (they're stable now)
+    return true;
   }
 );

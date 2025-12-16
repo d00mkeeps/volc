@@ -29,7 +29,7 @@ export default function Header({
   onManualLogPress,
 }: HeaderProps) {
   const setHeaderHeight = useLayoutStore((state) => state.setHeaderHeight);
-  const { quality, isHealthy } = useNetworkQuality();
+  const { health, isUnreliable } = useNetworkQuality();
 
   return (
     <Stack
@@ -44,13 +44,13 @@ export default function Header({
       </Text>
       <XStack gap="$2">
         {/* Network Status - only show if not healthy */}
-        {!isHealthy && (
+        {isUnreliable && (
           <Stack
             justifyContent="center"
             alignItems="center"
             paddingHorizontal="$2"
           >
-            <NetworkStatusIcon quality={quality} size={20} color="$text" />
+            <NetworkStatusIcon quality={health} size={20} color="$text" />
           </Stack>
         )}
         <Button

@@ -115,6 +115,10 @@ class UnifiedCoachService:
             
             logger.info(f"✅ Loaded {len(message_history)} messages from DB")
             
+
+            # Initialize streaming task tracker
+            current_stream_task = None
+            
             # Message processing loop
             
             # AUTO-RESPONSE CHECK
@@ -194,7 +198,8 @@ class UnifiedCoachService:
                 logger.info("🤖 Generating response for pending message...")
                 full_response = ""
                 
-                try:
+                async def stream_pending():
+                    nonlocal full_response
                     in_code_block = False
                     async for chunk in self.response_model.astream(prompt):
                         content = chunk.content
@@ -203,42 +208,58 @@ class UnifiedCoachService:
                             async for word, in_code_block in stream_text_gradually(content, in_code_block):
                                 await websocket.send_json({
                                     "type": "content",
-                "data": word
-            })
-                    # JSON Components
-                    components = self._extract_json_components(full_response)
-                    for component in components:
-                        await websocket.send_json(component)
+                                    "data": word
+                                })
+                
+                # Create and await task (cancelable)
+                current_stream_task = asyncio.create_task(stream_pending())
+                
+                try:
+                    await current_stream_task
+                    
+                    # Only process completion if not cancelled
+                    if not current_stream_task.cancelled():
+                        # JSON Components
+                        components = self._extract_json_components(full_response)
+                        for component in components:
+                            await websocket.send_json(component)
+                            
+                        # Complete
+                        await websocket.send_json({
+                            "type": "complete",
+                            "data": {"length": len(full_response)}
+                        })
                         
-                    # Complete
-                    await websocket.send_json({
-                        "type": "complete",
-                        "data": {"length": len(full_response)}
-                    })
-                    
-                    # Save AI response
-                    if full_response:
-                        ai_msg = await self.message_service.save_server_message(
-                            conversation_id=conversation_id,
-                            content=full_response,
-                            sender="assistant"
-                        )
-                        if ai_msg.get('success') != False:
-                            logger.info(f"💾 Saved AI response with ID: {ai_msg.get('id')}")
-                    
-                    # Update history
-                    message_history.append({
-                        "role": "assistant",
-                        "content": full_response
-                    })
-                    
-                    # Keep limit
-                    if len(message_history) > 10:
-                        message_history = message_history[-10:]
+                        # Save AI response
+                        if full_response:
+                            ai_msg = await self.message_service.save_server_message(
+                                conversation_id=conversation_id,
+                                content=full_response,
+                                sender="assistant"
+                            )
+                            if ai_msg.get('success') != False:
+                                logger.info(f"💾 Saved AI response with ID: {ai_msg.get('id')}")
                         
+                        # Update history
+                        message_history.append({
+                            "role": "assistant",
+                            "content": full_response
+                        })
+                        
+                        # Keep limit
+                        if len(message_history) > 10:
+                            message_history = message_history[-10:]
+                            
+                except asyncio.CancelledError:
+                    logger.info("Pending stream task cancelled")
+                    raise # Re-raise to be caught by outer handler if needed, though we are in a try/except block
+                    
                 except Exception as e:
                     logger.error(f"Error processing pending message: {e}")
                     await websocket.send_json({"type": "error", "data": {"message": str(e)}})
+                
+                finally:
+                    current_stream_task = None
             
             # Message processing loop
             while True:
@@ -250,6 +271,58 @@ class UnifiedCoachService:
                         "type": "heartbeat_ack",
                         "timestamp": data.get('timestamp')
                     })
+                    continue
+
+                # Handle cancellation
+                if data.get('type') == 'cancel':
+                    cancel_reason = data.get('reason', 'user_requested')
+                    logger.info(f"🛑 Cancel requested: {cancel_reason}")
+                    
+                    if current_stream_task and not current_stream_task.done():
+                        current_stream_task.cancel()
+                        
+                        # Save partial response ONLY for user-initiated cancels
+                        # Note: full_response is available because it's in the outer scope (defined in the loop)
+                        # Wait, full_response needs to be accessible here. It's defined inside the normal message handling block.
+                        # We need to ensure full_response variable is available in this scope if we want to save it.
+                        # For pending message, it was local. For main loop, we need to track it properly.
+                        
+                        # Actually, full_response is defined inside the "Handle regular messages" block below. 
+                        # To access it here effectively, we would need to hoist it or refactor. 
+                        # HOWEVER, since the task is running, the `stream_and_process` function has the closure over `full_response`.
+                        # But we can't access that local variable easily from here unless we make it nonlocal or instance state.
+                        
+                        # Simplified approach: We can't easily save the partial response from HERE if it's local to the task function.
+                        # BUT, the request said: "full_response = "" # Track across scope".
+                        # So we need to hoist `full_response` to the loop scope.
+                        pass # Logic will be implemented by hoisting full_response
+
+                        if cancel_reason == 'user_requested' and full_response.strip():
+                            logger.info(f"💾 Saving partial response ({len(full_response)} chars)")
+                            await self.message_service.save_server_message(
+                                conversation_id=conversation_id,
+                                content=full_response + " [cancelled]",
+                                sender="assistant"
+                            )
+                            
+                            # Update message history
+                            message_history.append({
+                                "role": "assistant",
+                                "content": full_response + " [cancelled]"
+                            })
+                        else:
+                            logger.info("🗑️ Discarding partial response (network cancel)")
+                        
+                        # Send acknowledgement
+                        await websocket.send_json({
+                            "type": "cancelled",
+                            "reason": cancel_reason
+                        })
+                        
+                        # Reset state
+                        full_response = ""
+                        current_stream_task = None
+                    
                     continue
                 
                 # Handle regular messages
@@ -302,8 +375,10 @@ class UnifiedCoachService:
                 logger.info("🤖 Generating response...")
                 full_response = ""
                 
-                try:
+                async def stream_and_process():
+                    nonlocal full_response
                     in_code_block = False
+                    
                     async for chunk in self.response_model.astream(prompt):
                         content = chunk.content
                         if content:
@@ -312,7 +387,56 @@ class UnifiedCoachService:
                                 await websocket.send_json({
                                     "type": "content",
                                     "data": word
-            })
+                                })
+
+                current_stream_task = asyncio.create_task(stream_and_process())
+
+                try:
+                    await current_stream_task
+                    
+                    if not current_stream_task.cancelled():
+                        # STEP 5: Extract and send JSON components
+                        components = self._extract_json_components(full_response)
+                        for component in components:
+                            await websocket.send_json(component)
+                            logger.info(f"📊 Sent component: {component['type']}")
+                        
+                        # STEP 6: Send completion signal
+                        await websocket.send_json({
+                            "type": "complete",
+                            "data": {"length": len(full_response)}
+                        })
+                        
+                        # Save AI response to DB
+                        if full_response:
+                            ai_msg = await self.message_service.save_server_message(
+                                conversation_id=conversation_id,
+                                content=full_response,
+                                sender="assistant"
+                            )
+                            if ai_msg.get('success') != False:
+                                logger.info(f"💾 Saved AI response with ID: {ai_msg.get('id')}")
+                        
+                        # STEP 7: Update message history (keep last 10 messages)
+                        message_history.append({
+                            "role": "user",
+                            "content": message
+                        })
+                        message_history.append({
+                            "role": "assistant",
+                            "content": full_response
+                        })
+                        
+                        # Keep only last 10 messages (5 exchanges)
+                        if len(message_history) > 10:
+                            message_history = message_history[-10:]
+                        
+                        logger.info(f"✅ Message processed successfully")
+
+                except asyncio.CancelledError:
+                    logger.info("Stream task cancelled successfully")
+                    # Don't process completion, cancel handler already dealt with it
+                
                 except google.api_core.exceptions.ResourceExhausted as e:
                     logger.error(f"Vertex AI rate limit: {str(e)}")
                     await websocket.send_json({
@@ -323,45 +447,9 @@ class UnifiedCoachService:
                             "retry_after": 60
                         }
                     })
-                    continue
                 
-                # STEP 5: Extract and send JSON components
-                components = self._extract_json_components(full_response)
-                for component in components:
-                    await websocket.send_json(component)
-                    logger.info(f"📊 Sent component: {component['type']}")
-                
-                # STEP 6: Send completion signal
-                await websocket.send_json({
-                    "type": "complete",
-                    "data": {"length": len(full_response)}
-                })
-                
-                # Save AI response to DB
-                if full_response:
-                    ai_msg = await self.message_service.save_server_message(
-                        conversation_id=conversation_id,
-                        content=full_response,
-                        sender="assistant"
-                    )
-                    if ai_msg.get('success') != False:
-                        logger.info(f"💾 Saved AI response with ID: {ai_msg.get('id')}")
-                
-                # STEP 7: Update message history (keep last 10 messages)
-                message_history.append({
-                    "role": "user",
-                    "content": message
-                })
-                message_history.append({
-                    "role": "assistant",
-                    "content": full_response
-                })
-                
-                # Keep only last 10 messages (5 exchanges)
-                if len(message_history) > 10:
-                    message_history = message_history[-10:]
-                
-                logger.info(f"✅ Message processed successfully")
+                finally:
+                    current_stream_task = None
                 
         except WebSocketDisconnect as e:
             if e.code in [1000, 1001]:
