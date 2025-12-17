@@ -29,8 +29,8 @@ interface ChatStore {
   // Failed message recovery
   failedMessageContent: string | null;
 
-  // Websocket handler refs
   _handlerRefs: (() => void)[];
+  _initializationPromise: Promise<void> | null;
 
   // Methods
   connect: () => Promise<void>;
@@ -52,6 +52,7 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>((set, get) => ({
   // Initial state
   failedMessageContent: null,
+  _initializationPromise: null,
 
   setFailedMessageContent: (content) => set({ failedMessageContent: content }),
 
@@ -359,48 +360,73 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const webSocketService = getWebSocketService();
 
     try {
+      /* 
+         RACE CONDITION FIX:
+         The initialization promise acts as a lock. If we are creating a conversation,
+         other callers (like sendMessage) should wait for this to complete.
+      */
+      const { _initializationPromise } = get();
+      if (_initializationPromise) {
+        await _initializationPromise;
+      }
+
       let activeConversationId =
         useConversationStore.getState().activeConversationId;
 
       // Create conversation if none exists
       if (!activeConversationId) {
-        const {
-          pendingGreeting,
-          pendingInitialMessage,
-          setPendingInitialMessage,
-          setPendingGreeting,
-          createConversationWithMessages,
-        } = useConversationStore.getState();
+        // Create a new promise for this initialization
+        let resolveInit: (() => void) | undefined;
+        const initPromise = new Promise<void>((resolve) => {
+          resolveInit = resolve;
+        });
+        set({ _initializationPromise: initPromise });
 
-        const messagesToCreate: {
-          content: string;
-          sender: "user" | "assistant";
-        }[] = [];
+        try {
+          const {
+            pendingGreeting,
+            pendingInitialMessage,
+            setPendingInitialMessage,
+            setPendingGreeting,
+            createConversationWithMessages,
+          } = useConversationStore.getState();
 
-        if (pendingGreeting) {
-          messagesToCreate.push({
-            content: pendingGreeting,
-            sender: "assistant",
-          });
-        }
+          const messagesToCreate: {
+            content: string;
+            sender: "user" | "assistant";
+          }[] = [];
 
-        if (pendingInitialMessage) {
-          messagesToCreate.push({
-            content: pendingInitialMessage,
-            sender: "user",
-          });
-          setPendingInitialMessage(null);
-        } else if (messagesToCreate.length === 0) {
-          messagesToCreate.push({
-            content: "Hello! Ready to workout?",
-            sender: "assistant",
-          });
-        }
+          if (pendingGreeting) {
+            messagesToCreate.push({
+              content: pendingGreeting,
+              sender: "assistant",
+            });
+          }
 
-        if (messagesToCreate.length > 0) {
-          const result = await createConversationWithMessages(messagesToCreate);
-          activeConversationId = result.conversationId;
-          setPendingGreeting(null);
+          if (pendingInitialMessage) {
+            messagesToCreate.push({
+              content: pendingInitialMessage,
+              sender: "user",
+            });
+            setPendingInitialMessage(null);
+          } else if (messagesToCreate.length === 0) {
+            messagesToCreate.push({
+              content: "Hello! Ready to workout?",
+              sender: "assistant",
+            });
+          }
+
+          if (messagesToCreate.length > 0) {
+            const result = await createConversationWithMessages(
+              messagesToCreate
+            );
+            activeConversationId = result.conversationId;
+            setPendingGreeting(null);
+          }
+        } finally {
+          // Always clear the promise, even if creation failed
+          set({ _initializationPromise: null });
+          resolveInit?.();
         }
       }
 
@@ -506,6 +532,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const currentHealth = getCurrentHealth?.() || "good"; // ← Use optional chaining with fallback
     let messageSentToBackend = false;
     try {
+      // WAIT FOR INITIALIZATION IF IN PROGRESS
+      const { _initializationPromise } = get();
+      if (_initializationPromise) {
+        console.log(
+          "[ChatStore] Initialization in progress, waiting before sending..."
+        );
+        await _initializationPromise;
+      }
+
       // Get or create conversation
       let conversationId = useConversationStore.getState().activeConversationId;
 
