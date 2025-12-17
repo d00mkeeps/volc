@@ -1,22 +1,40 @@
+// /hooks/useNetworkQuality.tsx
 import { useState, useEffect, useRef } from "react";
 import { networkMonitor } from "../services/networkMonitor";
 
-export type NetworkHealth = "good" | "poor" | "offline";
+export type __NetworkHealth__ = "good" | "poor" | "offline";
 
-interface PingResult {
+interface __PingResult__ {
   latency: number;
   success: boolean;
   timestamp: number;
 }
 
 export function useNetworkQuality() {
-  const [health, setHealth] = useState<NetworkHealth>("good");
-  const recentPingsRef = useRef<PingResult[]>([]);
+  const [health, setHealth] = useState<__NetworkHealth__>("good");
+  const recentPingsRef = useRef<__PingResult__[]>([]);
+  const previousHealthRef = useRef<__NetworkHealth__>("good");
+
+  // Helper function to update health with logging
+  const updateHealth = (newHealth: __NetworkHealth__) => {
+    if (previousHealthRef.current !== newHealth) {
+      const timestamp = new Date();
+      const mm = String(timestamp.getMinutes()).padStart(2, "0");
+      const ss = String(timestamp.getSeconds()).padStart(2, "0");
+      const ms = String(timestamp.getMilliseconds()).padStart(3, "0");
+
+      // console.log(
+      //   `[useNetworkQuality] Network health changed: ${previousHealthRef.current} -> ${newHealth} ${mm}:${ss}.${ms}`
+      // );
+
+      previousHealthRef.current = newHealth;
+      setHealth(newHealth);
+    }
+  };
 
   useEffect(() => {
-    const handlePing = (ping: PingResult) => {
+    const handlePing = (ping: __PingResult__) => {
       const pings = recentPingsRef.current;
-
       pings.push(ping);
 
       // Keep only last 10 pings
@@ -30,7 +48,7 @@ export function useNetworkQuality() {
 
       // Offline: 2 consecutive failures
       if (last2.every((p) => !p.success)) {
-        setHealth("offline");
+        updateHealth("offline");
         return;
       }
 
@@ -39,25 +57,38 @@ export function useNetworkQuality() {
       const slowPings = last5.filter((p) => p.latency > 800).length;
 
       if (hasFailure || slowPings >= 3) {
-        setHealth("poor");
+        updateHealth("poor");
         return;
       }
 
-      // Good: 3+ fast successful pings (<300ms)
-      if (last5.length >= 3) {
-        const fastPings = last5.filter(
-          (p) => p.success && p.latency < 300
-        ).length;
-        if (fastPings >= 3) {
-          setHealth("good");
-        }
+      // Good: Check with available data (don't require 5 pings)
+      // This allows faster recovery from offline/poor states
+      const availablePings = last5.filter((p) => p.success);
+      const fastPings = availablePings.filter((p) => p.latency < 300).length;
+
+      // If we have at least 2 successful fast pings and no failures, mark as good
+      if (availablePings.length >= 2 && fastPings >= 2) {
+        updateHealth("good");
+        return;
+      }
+
+      // Default: If we're offline but have recent successes, upgrade to poor
+      // This handles the transition state
+      if (health === "offline" && availablePings.length > 0) {
+        updateHealth("poor");
       }
     };
 
     const handleNetInfo = ({ isConnected }: { isConnected: boolean }) => {
       if (!isConnected) {
-        setHealth("offline");
+        updateHealth("offline");
         recentPingsRef.current = [];
+      } else {
+        // Device says we're online - if we were offline, upgrade to poor
+        // Let the ping results determine if we should go to good
+        if (health === "offline") {
+          updateHealth("poor");
+        }
       }
     };
 
@@ -68,7 +99,7 @@ export function useNetworkQuality() {
       networkMonitor.off("ping", handlePing);
       networkMonitor.off("netinfo", handleNetInfo);
     };
-  }, []);
+  }, [health]); // Added dependency to access current health
 
   return {
     health,

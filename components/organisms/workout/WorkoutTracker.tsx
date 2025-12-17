@@ -1,26 +1,30 @@
+// /components/organisms/WorkoutTracker
+
 import React, {
-  useCallback,
-  useMemo,
   useRef,
   forwardRef,
   useImperativeHandle,
   useEffect,
+  useMemo,
   useState,
+  useCallback,
 } from "react";
 import { YStack, XStack, Stack } from "tamagui";
-import Text from "@/components/atoms/core/Text";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useSharedValue } from "react-native-reanimated";
+import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useTheme } from "tamagui";
 import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
+import Text from "@/components/atoms/core/Text";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
-import { useUserSessionStore } from "@/stores/userSessionStore";
-import { PlusCircle } from "@/assets/icons/IconMap";
-import { useTheme } from "tamagui";
 import Toast from "react-native-toast-message";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface WorkoutTrackerProps {
   currentTemplateName?: string;
+  onFinishPress?: () => void;
+  hasAtLeastOneCompleteSet?: boolean;
 }
 
 export interface WorkoutTrackerRef {
@@ -31,55 +35,52 @@ export interface WorkoutTrackerRef {
 }
 
 const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
-  ({ currentTemplateName }, ref) => {
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
-
+  ({ currentTemplateName, onFinishPress, hasAtLeastOneCompleteSet }, ref) => {
+    const theme = useTheme();
     const { currentWorkout, isActive, updateCurrentWorkout } =
       useUserSessionStore();
-    const theme = useTheme();
-
-    // Animated values for tracking sheet position
-    const animatedIndex = useSharedValue(1);
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const animatedIndex = useSharedValue(-1);
     const animatedPosition = useSharedValue(0);
 
-    // Define snap points - using index 1 and 2 to avoid auto-generated index 0
+    const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
+
     const snapPoints = useMemo(() => ["45%", "92%"], []);
 
-    const handleSheetChanges = useCallback(
-      (index: number) => {
-        animatedIndex.value = index;
-      },
-      [animatedIndex]
-    );
+    console.log("🟡 [WorkoutTracker] Render:", {
+      isActive,
+      workoutId: currentWorkout?.id,
+    });
 
-    // Force start at index 1 (40%) to avoid auto-generated index 0
     useEffect(() => {
-      setTimeout(() => {
-        bottomSheetRef.current?.snapToIndex(1);
-      }, 100);
-    }, []);
+      console.log("🟡 [WorkoutTracker] Effect triggered:", {
+        isActive,
+        workoutId: currentWorkout?.id,
+      });
 
-    // Expand to 91% (index 2)
-    const expandSheet = useCallback(() => {
-      bottomSheetRef.current?.snapToIndex(2);
-    }, []);
+      if (isActive && currentWorkout?.id) {
+        console.log("🟡 [WorkoutTracker] Presenting modal");
+        bottomSheetModalRef.current?.present();
+      } else if (!isActive) {
+        console.log("🟡 [WorkoutTracker] Dismissing modal");
+        bottomSheetModalRef.current?.dismiss();
+      }
+    }, [isActive, currentWorkout?.id]);
 
-    // Snap to 40% (index 1)
-    const snapToPeek = useCallback(() => {
-      bottomSheetRef.current?.snapToIndex(1);
-    }, []);
+    const handleSheetChanges = (index: number) => {
+      console.log("🟡 [WorkoutTracker] Sheet index changed:", index);
+      animatedIndex.value = index;
+    };
 
-    // Expose imperative methods
     useImperativeHandle(
       ref,
       () => ({
-        startWorkout: snapToPeek, // Keep at 40% when starting
-        finishWorkout: snapToPeek, // Return to 40% when finishing
-        expandToFull: expandSheet,
-        snapToPeek: snapToPeek,
+        startWorkout: () => bottomSheetModalRef.current?.present(),
+        finishWorkout: () => bottomSheetModalRef.current?.dismiss(),
+        expandToFull: () => bottomSheetModalRef.current?.snapToIndex(1),
+        snapToPeek: () => bottomSheetModalRef.current?.snapToIndex(0),
       }),
-      [expandSheet, snapToPeek]
+      []
     );
 
     // Track editing state across all exercises
@@ -143,6 +144,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       },
       [isActive, currentWorkout, updateCurrentWorkout]
     );
+
     const handleAddExercise = useCallback(() => {
       if (!isActive || !currentWorkout || isAnyExerciseEditing) return;
 
@@ -165,7 +167,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         exercise_id: `exercise-${Date.now()}-${Math.random()
           .toString(36)
-          .substr(2, 9)}`, // Will be updated with actual exercise ID
+          .substr(2, 9)}`,
         set_number: 1,
         weight: undefined,
         reps: undefined,
@@ -190,7 +192,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         name: "",
         order_index: maxOrderIndex + 1,
         weight_unit: "kg",
-        workout_exercise_sets: [defaultSet], // Include the default set
+        workout_exercise_sets: [defaultSet],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
@@ -202,6 +204,82 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       updateCurrentWorkout(updatedWorkout);
     }, [isActive, currentWorkout, updateCurrentWorkout, isAnyExerciseEditing]);
 
+    // NEW: Handle moving exercise up
+    const handleMoveExerciseUp = useCallback(
+      (exerciseId: string) => {
+        if (!currentWorkout) return;
+
+        const currentIndex = sortedExercises.findIndex(
+          (ex) => ex.id === exerciseId
+        );
+        if (currentIndex <= 0) return; // Already at top
+
+        // Swap with previous exercise
+        const reorderedExercises = [...sortedExercises];
+        [
+          reorderedExercises[currentIndex - 1],
+          reorderedExercises[currentIndex],
+        ] = [
+          reorderedExercises[currentIndex],
+          reorderedExercises[currentIndex - 1],
+        ];
+
+        // Update order_index for all
+        const updatedExercises = reorderedExercises.map((ex, index) => ({
+          ...ex,
+          order_index: index,
+        }));
+
+        const updatedWorkout = {
+          ...currentWorkout,
+          workout_exercises: updatedExercises,
+        };
+        updateCurrentWorkout(updatedWorkout);
+      },
+      [currentWorkout, updateCurrentWorkout]
+    );
+
+    // NEW: Handle moving exercise down
+    const handleMoveExerciseDown = useCallback(
+      (exerciseId: string) => {
+        if (!currentWorkout) return;
+
+        const currentIndex = sortedExercises.findIndex(
+          (ex) => ex.id === exerciseId
+        );
+        if (currentIndex >= sortedExercises.length - 1) return; // Already at bottom
+
+        // Swap with next exercise
+        const reorderedExercises = [...sortedExercises];
+        [
+          reorderedExercises[currentIndex],
+          reorderedExercises[currentIndex + 1],
+        ] = [
+          reorderedExercises[currentIndex + 1],
+          reorderedExercises[currentIndex],
+        ];
+
+        // Update order_index for all
+        const updatedExercises = reorderedExercises.map((ex, index) => ({
+          ...ex,
+          order_index: index,
+        }));
+
+        const updatedWorkout = {
+          ...currentWorkout,
+          workout_exercises: updatedExercises,
+        };
+        updateCurrentWorkout(updatedWorkout);
+      },
+      [currentWorkout, updateCurrentWorkout]
+    );
+
+    const sortedExercises = useMemo(() => {
+      return (currentWorkout?.workout_exercises || []).sort(
+        (a, b) => a.order_index - b.order_index
+      );
+    }, [currentWorkout?.workout_exercises]);
+
     const isExerciseLimitReached =
       (currentWorkout?.workout_exercises || []).length >= 10;
 
@@ -211,12 +289,146 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     );
     const shouldDisableAddButton = isAnyExerciseEditing || hasUnnamedExercise;
 
+    const renderHeader = () => (
+      <YStack gap="$3">
+        {(!currentWorkout?.workout_exercises ||
+          currentWorkout.workout_exercises.length === 0) && (
+          <YStack
+            padding="$6"
+            alignItems="center"
+            gap="$4"
+            backgroundColor="$backgroundSoft"
+            borderRadius="$4"
+            marginTop="$4"
+          >
+            <Text size="medium">💪</Text>
+            <YStack alignItems="center" gap="$2">
+              <Text
+                size="medium"
+                color="$color"
+                textAlign="center"
+                fontWeight="600"
+              >
+                Are you ready?
+              </Text>
+              <Text
+                size="medium"
+                color="$textMuted"
+                textAlign="center"
+                lineHeight={18}
+              >
+                Press start below or add an exercise
+              </Text>
+            </YStack>
+          </YStack>
+        )}
+      </YStack>
+    );
+
+    const renderFooter = () => (
+      <YStack gap="$3" marginTop="$3">
+        {isActive && isExerciseLimitReached && (
+          <Text
+            color="$textMuted"
+            size="medium"
+            textAlign="center"
+            marginTop="$2"
+          >
+            Exercise limit reached (10/10)
+          </Text>
+        )}
+
+        {isActive && !isExerciseLimitReached && (
+          <Stack
+            padding="$4"
+            borderRadius="$4"
+            width="60%"
+            alignSelf="center"
+            backgroundColor={
+              shouldDisableAddButton ? "$backgroundMuted" : "$primary"
+            }
+            alignItems="center"
+            opacity={shouldDisableAddButton ? 0.6 : 1}
+            pressStyle={
+              shouldDisableAddButton
+                ? {}
+                : {
+                    backgroundColor: "$primaryPress",
+                    scale: 0.98,
+                  }
+            }
+            onPress={handleAddExercise}
+            cursor={shouldDisableAddButton ? "default" : "pointer"}
+          >
+            <XStack gap="$2" alignItems="center">
+              <AppIcon
+                name="PlusCircle"
+                size={20}
+                color={shouldDisableAddButton ? "#666" : "white"}
+              />
+              <Text
+                color={shouldDisableAddButton ? "$textMuted" : "white"}
+                size="medium"
+                fontWeight="600"
+              >
+                Add Exercise
+              </Text>
+            </XStack>
+          </Stack>
+        )}
+      </YStack>
+    );
+
+    const renderItem = useCallback(
+      ({ item: exercise, index }: { item: WorkoutExercise; index: number }) => {
+        const isFirst = index === 0;
+        const isLast = index === sortedExercises.length - 1;
+
+        return (
+          <YStack marginBottom="$3">
+            <ExerciseTracker
+              key={exercise.id}
+              exercise={exercise}
+              isActive={isActive}
+              onExerciseUpdate={handleExerciseUpdate}
+              onExerciseDelete={handleExerciseDelete}
+              startInEditMode={exercise.name === ""}
+              onEditingChange={handleEditingChange}
+              // Pass reorder handlers
+              onMoveUp={
+                !isFirst ? () => handleMoveExerciseUp(exercise.id) : undefined
+              }
+              onMoveDown={
+                !isLast ? () => handleMoveExerciseDown(exercise.id) : undefined
+              }
+            />
+          </YStack>
+        );
+      },
+      [
+        isActive,
+        handleExerciseUpdate,
+        handleExerciseDelete,
+        handleEditingChange,
+        sortedExercises.length,
+        handleMoveExerciseUp,
+        handleMoveExerciseDown,
+      ]
+    );
+
     return (
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={1} // Start at index 1 (40%) to avoid auto-generated index 0
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
+        onAnimate={(fromIndex, toIndex) => {
+          console.log(
+            "🟡 [WorkoutTracker] Animating from",
+            fromIndex,
+            "to",
+            toIndex
+          );
+        }}
         enablePanDownToClose={false}
         enableHandlePanningGesture={true}
         enableContentPanningGesture={true}
@@ -234,120 +446,29 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           paddingVertical: 8,
         }}
       >
-        {/* Header - always visible, no blur */}
+        {/* Header - always visible */}
         <WorkoutTrackerHeader
           workoutName={currentWorkout?.name}
           workoutDescription={currentWorkout?.notes}
           isActive={isActive}
+          onFinishPress={onFinishPress}
+          hasAtLeastOneCompleteSet={hasAtLeastOneCompleteSet}
           currentTemplateName={currentTemplateName || currentWorkout?.name}
         />
 
-        <BottomSheetScrollView
+        <BottomSheetFlatList
+          data={sortedExercises}
+          keyExtractor={(item: WorkoutExercise) => item.id}
+          renderItem={renderItem}
           contentContainerStyle={{
             padding: 12,
             paddingBottom: 120,
           }}
           showsVerticalScrollIndicator={false}
-        >
-          <YStack gap="$3">
-            {(currentWorkout?.workout_exercises || [])
-              .sort((a, b) => a.order_index - b.order_index)
-              .map((exercise) => (
-                <ExerciseTracker
-                  key={exercise.id}
-                  exercise={exercise}
-                  isActive={isActive}
-                  onExerciseUpdate={handleExerciseUpdate}
-                  onExerciseDelete={handleExerciseDelete}
-                  startInEditMode={exercise.name === ""}
-                  onEditingChange={handleEditingChange}
-                />
-              ))}
-
-            {isActive && isExerciseLimitReached && (
-              <Text
-                color="$textMuted"
-                size="medium"
-                textAlign="center"
-                marginTop="$2"
-              >
-                Exercise limit reached (10/10)
-              </Text>
-            )}
-
-            {isActive && !isExerciseLimitReached && (
-              <Stack
-                marginTop="$3"
-                padding="$4"
-                borderRadius="$4"
-                width="60%"
-                alignSelf="center"
-                backgroundColor={
-                  shouldDisableAddButton ? "$backgroundMuted" : "$primary"
-                }
-                alignItems="center"
-                opacity={shouldDisableAddButton ? 0.6 : 1}
-                pressStyle={
-                  shouldDisableAddButton
-                    ? {} // No press style when disabled
-                    : {
-                        backgroundColor: "$primaryPress",
-                        scale: 0.98,
-                      }
-                }
-                onPress={handleAddExercise}
-                cursor={shouldDisableAddButton ? "default" : "pointer"}
-              >
-                <XStack gap="$2" alignItems="center">
-                  <PlusCircle
-                    size={20}
-                    color={shouldDisableAddButton ? "#666" : "white"}
-                  />
-                  <Text
-                    color={shouldDisableAddButton ? "$textMuted" : "white"}
-                    size="medium"
-                    fontWeight="600"
-                  >
-                    Add Exercise
-                  </Text>
-                </XStack>
-              </Stack>
-            )}
-
-            {(!currentWorkout?.workout_exercises ||
-              currentWorkout.workout_exercises.length === 0) && (
-              <YStack
-                padding="$6"
-                alignItems="center"
-                gap="$4"
-                backgroundColor="$backgroundSoft"
-                borderRadius="$4"
-                marginTop="$4"
-              >
-                <Text size="medium">💪</Text>
-                <YStack alignItems="center" gap="$2">
-                  <Text
-                    size="medium"
-                    color="$color"
-                    textAlign="center"
-                    fontWeight="600"
-                  >
-                    Are you ready?
-                  </Text>
-                  <Text
-                    size="medium"
-                    color="$textMuted"
-                    textAlign="center"
-                    lineHeight={18}
-                  >
-                    Press start below or add an exercise
-                  </Text>
-                </YStack>
-              </YStack>
-            )}
-          </YStack>
-        </BottomSheetScrollView>
-      </BottomSheet>
+          ListHeaderComponent={renderHeader}
+          ListFooterComponent={renderFooter}
+        />
+      </BottomSheetModal>
     );
   }
 );

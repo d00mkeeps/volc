@@ -57,11 +57,13 @@ export default function TabLayout() {
           </View>
         </PagerView>
         <ChatOverlay currentPage={currentPage} />
-        <CustomTabBar
-          activeIndex={currentPage}
-          onTabPress={handleTabPress}
-          onLayout={setTabBarHeight}
-        />
+        <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+          <CustomTabBar
+            activeIndex={currentPage}
+            onTabPress={handleTabPress}
+            onLayout={setTabBarHeight}
+          />
+        </View>
       </View>
     </YStack>
   );

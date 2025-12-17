@@ -15,7 +15,7 @@ import { useConversationStore } from "@/stores/chat/ConversationStore";
 interface QuickChatActionsProps {
   onActionSelect: (text: string) => void;
   isWaitingForResponse?: boolean;
-  isStreaming?: boolean; // Add this
+  isStreaming?: boolean;
 }
 
 export const QuickChatActions: React.FC<QuickChatActionsProps> = ({

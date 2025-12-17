@@ -2,7 +2,7 @@ import React from "react";
 import { YStack, XStack, Circle } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Play, Pause } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { Alert } from "react-native";
 
@@ -11,19 +11,21 @@ interface WorkoutTrackerHeaderProps {
   workoutDescription?: string;
   isActive: boolean;
   currentTemplateName?: string;
+  onFinishPress?: () => void;
+  hasAtLeastOneCompleteSet?: boolean;
 }
 
 export default function WorkoutTrackerHeader({
   isActive,
-  currentTemplateName,
+  onFinishPress,
+  hasAtLeastOneCompleteSet = false,
 }: WorkoutTrackerHeaderProps) {
   const {
-    openTemplateSelector,
-    getTimeString,
     isPaused,
     togglePause,
     updateElapsedTime,
     cancelWorkout,
+    getTimeString,
   } = useUserSessionStore();
 
   const handleCancelWorkout = () => {
@@ -54,52 +56,13 @@ export default function WorkoutTrackerHeader({
   return (
     <YStack
       paddingHorizontal="$3"
-      paddingVertical="$1.5"
+      paddingVertical="$2"
       backgroundColor="$backgroundSoft"
       borderBottomWidth={1}
       borderBottomColor="$borderSoft"
     >
-      {/* Timer and Controls Row */}
-      <XStack
-        justifyContent="center"
-        alignItems="center"
-        gap="$4"
-        paddingTop="$2"
-      >
-        {/* Pause/Play button - moved to left */}
-        <Circle
-          size={40}
-          justifyContent="center"
-          alignItems="center"
-          pressStyle={
-            isActive
-              ? {
-                  backgroundColor: "$text",
-                  scale: 0.9,
-                }
-              : {}
-          }
-          onPress={isActive ? togglePause : undefined}
-          opacity={isActive ? 1 : 0.4}
-        >
-          {isPaused ? (
-            <Play size={22} color="#f84f3e" />
-          ) : (
-            <Pause size={22} color="#f84f3e" />
-          )}
-        </Circle>
-
-        {/* Timer - made bigger */}
-        <Text
-          size="large"
-          fontWeight="700"
-          color="$color"
-          fontFamily="$heading"
-        >
-          {getTimeString()}
-        </Text>
-
-        {/* Cancel button - red outline */}
+      <XStack justifyContent="space-between" alignItems="center">
+        {/* Left: Cancel button */}
         <Button
           size="small"
           backgroundColor="transparent"
@@ -109,7 +72,7 @@ export default function WorkoutTrackerHeader({
           paddingHorizontal="$3"
           paddingVertical="$1.5"
           pressStyle={{
-            backgroundColor: "",
+            backgroundColor: "$red2",
             borderColor: "$red9",
             scale: 0.95,
           }}
@@ -120,28 +83,63 @@ export default function WorkoutTrackerHeader({
             Cancel
           </Text>
         </Button>
-      </XStack>
 
-      <XStack
-        justifyContent="center"
-        alignItems="center"
-        gap="$1.5"
-        marginTop="$1"
-        paddingVertical="$3"
-      >
-        <Circle
-          size={6}
-          backgroundColor={
-            !isActive ? "$textMuted" : isPaused ? "$primaryLight" : "$primary"
+        {/* Center: Timer and Pause button */}
+        <XStack gap="$3" alignItems="center">
+          <Circle
+            size={40}
+            justifyContent="center"
+            alignItems="center"
+            pressStyle={
+              isActive
+                ? {
+                    backgroundColor: "$backgroundMuted",
+                    scale: 0.9,
+                  }
+                : {}
+            }
+            onPress={isActive ? togglePause : undefined}
+            opacity={isActive ? 1 : 0.4}
+          >
+            {isPaused ? (
+              <AppIcon name="Play" size={22} color="#f84f3e" />
+            ) : (
+              <AppIcon name="Pause" size={22} color="#f84f3e" />
+            )}
+          </Circle>
+
+          <Text
+            size="large"
+            fontWeight="700"
+            color="$color"
+            fontFamily="$heading"
+          >
+            {getTimeString()}
+          </Text>
+        </XStack>
+
+        {/* Right: Finish button */}
+        <Button
+          size="small"
+          width="30%"
+          backgroundColor="$primaryMuted"
+          color="$text"
+          paddingHorizontal="$3"
+          paddingVertical="$1.5"
+          pressStyle={{
+            backgroundColor: "$primaryPress",
+            scale: 0.95,
+          }}
+          onPress={
+            isActive && hasAtLeastOneCompleteSet ? onFinishPress : undefined
           }
-        />
-        <Text size="medium" color="$textSoft" fontWeight="500">
-          {!isActive
-            ? "Workout not started"
-            : isPaused
-            ? "Workout paused"
-            : "Workout in progress"}
-        </Text>
+          opacity={isActive && hasAtLeastOneCompleteSet ? 1 : 0.4}
+          disabled={!isActive || !hasAtLeastOneCompleteSet}
+        >
+          <Text color="$text" fontWeight="600">
+            Finish
+          </Text>
+        </Button>
       </XStack>
     </YStack>
   );

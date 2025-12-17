@@ -22,6 +22,7 @@ interface MessageStoreState {
   // Pure state mutations
   setBulkMessages: (messagesByConversation: Record<string, Message[]>) => void;
   addMessage: (conversationId: string, message: Message) => void;
+  removeMessage: (conversationId: string, messageId: string) => void; // ← Add this line
   updateStreamingMessage: (conversationId: string, content: string) => void;
   completeStreamingMessage: (conversationId: string) => void;
   clearStreamingMessage: (conversationId: string) => void;
@@ -64,6 +65,20 @@ export const useMessageStore = create<MessageStoreState>()(
           const conversationMessages = state.messages.get(conversationId) || [];
           const newMessages = new Map(state.messages);
           newMessages.set(conversationId, [...conversationMessages, message]);
+          return { messages: newMessages };
+        });
+      },
+      removeMessage: (conversationId: string, messageId: string) => {
+        set((state) => {
+          const conversationMessages = state.messages.get(conversationId);
+          if (!conversationMessages) return state;
+
+          const updated = conversationMessages.filter(
+            (m) => m.id !== messageId
+          );
+          const newMessages = new Map(state.messages);
+          newMessages.set(conversationId, updated);
+
           return { messages: newMessages };
         });
       },

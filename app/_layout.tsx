@@ -25,7 +25,6 @@ import {
   MINIMUM_APP_VERSION,
   getAppStoreUrl,
 } from "@/utils/versionCheck";
-import { networkMonitor, NetworkQuality } from "@/services/networkMonitor";
 
 export { ErrorBoundary } from "expo-router";
 

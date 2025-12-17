@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, useColorScheme } from "react-native";
 import { XStack, YStack } from "tamagui";
 import { BlurView } from "expo-blur";
-import { Home, Trophy } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface __CustomTabBarProps__ {
   activeIndex: number;
@@ -21,23 +21,24 @@ export default function CustomTabBar({
 
   return (
     <YStack
+      position="absolute"
+      bottom={0}
+      left={0}
+      right={0}
       onLayout={(e) => onLayout?.(e.nativeEvent.layout.height)}
       overflow="hidden"
     >
-      <BlurView
-        intensity={80}
-        tint={colorScheme === "dark" ? "dark" : "light"}
-        style={{ overflow: "hidden" }}
-      >
+      <BlurView intensity={80} tint={colorScheme === "dark" ? "dark" : "light"}>
         {/* Tabs Row */}
-        <XStack justifyContent="space-around" alignItems="center">
+        <XStack justifyContent="space-around" alignItems="center" height={24}>
           {/* Home Tab */}
           <TouchableOpacity
             onPress={() => onTabPress(0)}
             style={{ padding: 8 }}
           >
             <YStack alignItems="center" justifyContent="center">
-              <Home
+              <AppIcon
+                name="Home"
                 size={24}
                 color={activeIndex === 0 ? activeColor : inactiveColor}
               />
@@ -50,7 +51,8 @@ export default function CustomTabBar({
             style={{ padding: 8 }}
           >
             <YStack alignItems="center" justifyContent="center">
-              <Trophy
+              <AppIcon
+                name="Trophy"
                 size={24}
                 color={activeIndex === 1 ? activeColor : inactiveColor}
               />

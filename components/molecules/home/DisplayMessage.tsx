@@ -96,7 +96,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
 
   const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
 
-  const bottomSpacing = inputAreaHeight;
+  const bottomSpacing = inputAreaHeight + 40;
 
   // Fade in animation when content is ready
   useEffect(() => {
@@ -162,6 +162,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
           <ScrollView
             showsVerticalScrollIndicator={true}
             contentContainerStyle={{
+              paddingTop: 20,
               paddingBottom: bottomSpacing,
             }}
             style={{ flex: 1 }}

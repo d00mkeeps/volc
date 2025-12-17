@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
-import { Plus, RotateCw, Camera } from "@/assets/icons/IconMap";
+import { AppIcon, AppIconName } from "@/assets/icons/IconMap";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
@@ -66,10 +66,10 @@ export default function ImagePickerButton({
 }: ImagePickerButtonProps) {
   const [uploading, setUploading] = useState(false);
 
-  const getIconComponent = (iconName: string, uploading: boolean) => {
-    if (uploading) return RotateCw;
-    if (iconName === "camera") return Camera;
-    return iconName === "add" ? Plus : Plus;
+  const getIconName = (iconName: string, uploading: boolean): AppIconName => {
+    if (uploading) return "RotateCw";
+    if (iconName === "camera") return "Camera";
+    return "Plus";
   };
 
   const handleImagePick = async () => {
@@ -182,10 +182,11 @@ export default function ImagePickerButton({
           gap={label ? "$1" : 0}
           flex={1}
         >
-          {React.createElement(getIconComponent(icon, uploading), {
-            size: iconSize, // ✅ Dynamic icon size
-            color: uploading ? "#999" : "white",
-          })}
+          <AppIcon
+            name={getIconName(icon, uploading)}
+            size={iconSize}
+            color={uploading ? "#999" : "white"}
+          />
           {label && (
             <Text
               color={uploading ? "$textMuted" : "white"}
@@ -221,10 +222,11 @@ export default function ImagePickerButton({
         gap={label ? "$1" : 0}
         flexDirection={label ? "column" : "row"}
       >
-        {React.createElement(getIconComponent(icon, uploading), {
-          size: getIconSize(size),
-          color: "$text",
-        })}
+        <AppIcon
+          name={getIconName(icon, uploading)}
+          size={getIconSize(size)}
+          color="$text"
+        />
         {label && (
           <Text color="$text" size="medium" fontWeight="500" textAlign="center">
             {uploading ? "..." : label}

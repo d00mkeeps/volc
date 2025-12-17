@@ -2,23 +2,18 @@ import React from "react";
 import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import {
-  Settings,
-  User,
-  Clock,
-  Wrench,
-  Pencil,
-  NetworkStatusIcon,
-} from "@/assets/icons/IconMap"; // Updated icons
+import { AppIcon } from "@/assets/icons/IconMap";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
+import { HomeScreenHeaderMenu } from "./HomeScreenHeaderMenu";
 
 interface HeaderProps {
   greeting?: string;
   onProfilePress?: () => void;
   onRecentsPress?: () => void;
   onSettingsPress?: () => void;
-  onManualLogPress?: () => void;
+  onNewChat?: () => void;
+  onNewWorkout?: () => void;
 }
 
 export default function Header({
@@ -26,7 +21,8 @@ export default function Header({
   onProfilePress,
   onRecentsPress,
   onSettingsPress,
-  onManualLogPress,
+  onNewChat,
+  onNewWorkout,
 }: HeaderProps) {
   const setHeaderHeight = useLayoutStore((state) => state.setHeaderHeight);
   const { health, isUnreliable } = useNetworkQuality();
@@ -50,24 +46,36 @@ export default function Header({
             alignItems="center"
             paddingHorizontal="$2"
           >
-            <NetworkStatusIcon quality={health} size={20} color="$text" />
+            <AppIcon
+              name={
+                health === "excellent"
+                  ? "NetworkExcellent"
+                  : health === "good"
+                  ? "NetworkGood"
+                  : health === "poor"
+                  ? "NetworkPoor"
+                  : "NetworkOffline"
+              }
+              size={20}
+              color="$text"
+            />
           </Stack>
         )}
-        <Button
-          size="$3"
-          circular
-          onPress={onManualLogPress}
-          backgroundColor="$backgroundHover"
-        >
-          <Pencil size={20} color="$text" />
-        </Button>
+
+        {onNewChat && onNewWorkout && (
+          <HomeScreenHeaderMenu
+            onNewChat={onNewChat}
+            onNewWorkout={onNewWorkout}
+          />
+        )}
+
         <Button
           size="$3"
           circular
           onPress={onProfilePress}
           backgroundColor="$backgroundHover"
         >
-          <User size={20} color="$text" />
+          <AppIcon name="User" size={20} color="$text" />
         </Button>
         <Button
           size="$3"
@@ -75,7 +83,7 @@ export default function Header({
           onPress={onRecentsPress}
           backgroundColor="$backgroundHover"
         >
-          <Clock size={20} color="$text" />
+          <AppIcon name="Clock" size={20} color="$text" />
         </Button>
         <Button
           size="$3"
@@ -83,7 +91,7 @@ export default function Header({
           onPress={onSettingsPress}
           backgroundColor="$backgroundHover"
         >
-          <Wrench size={20} color="$text" />
+          <AppIcon name="Wrench" size={20} color="$text" />
         </Button>
       </XStack>
     </Stack>

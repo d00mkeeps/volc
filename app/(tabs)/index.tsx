@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
 import BaseModal from "@/components/atoms/core/BaseModal";
@@ -17,7 +17,6 @@ import WorkoutTracker, {
   WorkoutTrackerRef,
 } from "@/components/organisms/workout/WorkoutTracker";
 import { Keyboard } from "react-native";
-import FloatingActionButton from "@/components/atoms/core/FloatingActionButton";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { WorkoutCompletionModal } from "@/components/organisms/workout/WorkoutCompletionModal";
@@ -99,7 +98,6 @@ export default function HomeScreen() {
       closeTemplateSelector:
         useUserSessionStore.getState().closeTemplateSelector,
       openTemplateSelector: useUserSessionStore.getState().openTemplateSelector,
-      selectTemplate: useUserSessionStore.getState().selectTemplate,
       resetSession: useUserSessionStore.getState().resetSession,
       clearWorkoutSavedPrompt:
         useUserSessionStore.getState().clearWorkoutSavedPrompt,
@@ -225,25 +223,48 @@ export default function HomeScreen() {
       );
     });
   });
-
+  useEffect(() => {
+    console.log("🟣 [HomeScreen] isActive changed:", isActive);
+  }, [isActive]);
   const handleLogManually = useCallback(() => {
+    console.log("🔵 [HomeScreen] Pencil button pressed");
+    console.log("🔵 [HomeScreen] userProfile:", userProfile?.user_id);
+
     if (userProfile?.user_id) {
       const emptyTemplate = {
         ...EMPTY_WORKOUT_TEMPLATE,
         user_id: userProfile.user_id.toString(),
       };
 
-      // Select and immediately start with empty template
-      sessionActions.selectTemplate(emptyTemplate);
+      console.log("🔵 [HomeScreen] Calling startWorkout with:", emptyTemplate);
+      sessionActions.startWorkout(emptyTemplate);
+
+      // Check state immediately after
       setTimeout(() => {
-        const { currentWorkout } = useUserSessionStore.getState();
-        if (currentWorkout) {
-          sessionActions.startWorkout(currentWorkout);
-          workoutTrackerRef.current?.expandToFull();
-        }
-      }, 100);
+        const state = useUserSessionStore.getState();
+        console.log("🔵 [HomeScreen] State after startWorkout:", {
+          isActive: state.isActive,
+          hasCurrentWorkout: !!state.currentWorkout,
+          workoutId: state.currentWorkout?.id,
+        });
+      }, 0);
+    } else {
+      console.log("❌ [HomeScreen] No user profile, cannot start workout");
     }
   }, [sessionActions, userProfile?.user_id]);
+
+  const handleNewChat = useCallback(() => {
+    console.log("💬 [HomeScreen] Starting new chat");
+
+    // Clear active conversation (like timeout/archive)
+    useConversationStore.getState().setActiveConversation(null);
+
+    // Clear any pending messages
+    useConversationStore.getState().setPendingInitialMessage(null);
+
+    // Expand the chat overlay
+    expandChatOverlay?.();
+  }, [expandChatOverlay]);
 
   const handleProfilePress = () => {
     setShowProfile(true);
@@ -263,7 +284,8 @@ export default function HomeScreen() {
             onProfilePress={handleProfilePress}
             onRecentsPress={handleRecentsPress}
             onSettingsPress={() => setShowSettingsModal(true)}
-            onManualLogPress={handleLogManually}
+            onNewChat={handleNewChat}
+            onNewWorkout={handleLogManually}
           />
           <Stack
             onLayout={(e) => setDashboardHeight(e.nativeEvent.layout.height)}
@@ -332,41 +354,12 @@ export default function HomeScreen() {
         </BaseModal>
       </Stack>
 
-      {/* WorkoutTracker - only show when active */}
-      {isActive && (
-        <WorkoutTracker
-          ref={workoutTrackerRef}
-          currentTemplateName={selectedTemplate?.name}
-        />
-      )}
-      {/* Floating Action Button - only show when active */}
-      {isActive && (
-        <Stack
-          position="absolute"
-          bottom={0}
-          left={0}
-          right={0}
-          paddingBottom="$5"
-          pointerEvents="box-none"
-        >
-          {/* System Message */}
-          {showFinishMessage && (
-            <Stack paddingHorizontal="$4" paddingBottom="$2">
-              <SystemMessage
-                message="Complete at least one set to finish your workout"
-                type="info"
-              />
-            </Stack>
-          )}
-
-          {/* Floating Action Button */}
-          <FloatingActionButton
-            label="FINISH"
-            onPress={handleToggleWorkout}
-            disabled={!hasAtLeastOneCompleteSet}
-          />
-        </Stack>
-      )}
+      <WorkoutTracker
+        ref={workoutTrackerRef}
+        currentTemplateName={selectedTemplate?.name}
+        onFinishPress={handleToggleWorkout}
+        hasAtLeastOneCompleteSet={hasAtLeastOneCompleteSet}
+      />
     </>
   );
 }

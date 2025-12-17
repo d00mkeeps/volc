@@ -7,7 +7,8 @@ import { LoadingMessage } from "../../atoms/chat/LoadingMessage";
 import { Message } from "@/types";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
-
+import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
+import { Keyboard } from "react-native";
 interface MessageListProps {
   messages: Message[];
   showLoadingIndicator?: boolean;
@@ -28,6 +29,7 @@ export const MessageList = ({
   onDismiss,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
+  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
   const scrollTimeoutRef = useRef<number | null>(null);
 
   const activeConversationId = useConversationStore(
@@ -39,15 +41,19 @@ export const MessageList = ({
       ? state.streamingMessages.has(activeConversationId)
       : false
   );
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
 
-  const countRef = useRef(0);
-  countRef.current += 1;
-  const now = new Date();
-  const timestamp = `${now.getMinutes()}:${now
-    .getSeconds()
-    .toString()
-    .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-  console.log(`[MessageList] render #${countRef.current} at ${timestamp}`);
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const allMessages = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
@@ -137,33 +143,40 @@ export const MessageList = ({
   );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
-
   if (allMessages.length === 0 && connectionState !== "disconnected") {
     return (
-      <Pressable style={{ flex: 1 }} onPress={onDismiss}>
-        <YStack flex={1} justifyContent="center" alignItems="center">
-          <Text color="$textMuted" size="medium">
-            Start a conversation about your workout
-          </Text>
-        </YStack>
-      </Pressable>
+      <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
+        <Pressable style={{ flex: 1 }} onPress={onDismiss}>
+          <YStack flex={1} justifyContent="center" alignItems="center">
+            <Text color="$textMuted" size="medium">
+              Start a conversation about your workout
+            </Text>
+          </YStack>
+        </Pressable>
+      </ResponsiveKeyboardAvoidingView>
     );
   }
 
   return (
-    <YStack flex={1} position="relative" paddingBottom={110}>
-      <FlatList
-        ref={listRef}
-        style={{ flex: 1 }}
-        data={allMessages}
-        renderItem={renderMessage}
-        keyExtractor={keyExtractor}
-        scrollEventThrottle={200}
-        removeClippedSubviews={true}
-        showsVerticalScrollIndicator={true}
-        onContentSizeChange={() => scrollToBottom()}
-        onLayout={() => scrollToBottom(false)}
-      />
-    </YStack>
+    <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
+      <YStack
+        flex={1}
+        position="relative"
+        paddingBottom={keyboardVisible ? 130 : 110}
+      >
+        <FlatList
+          ref={listRef}
+          style={{ flex: 1 }}
+          data={allMessages}
+          renderItem={renderMessage}
+          keyExtractor={keyExtractor}
+          scrollEventThrottle={200}
+          removeClippedSubviews={true}
+          showsVerticalScrollIndicator={true}
+          onContentSizeChange={() => scrollToBottom()}
+          onLayout={() => scrollToBottom(false)}
+        />
+      </YStack>
+    </ResponsiveKeyboardAvoidingView>
   );
 };

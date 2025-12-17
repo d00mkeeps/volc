@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { Trash2 } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 interface ContentCardProps {
   title: string;
   subtitle: string;
@@ -77,7 +77,7 @@ export default function ContentCard({
               pressStyle={{ backgroundColor: "$backgroundHover" }}
               onPress={handleDelete}
             >
-              <Trash2 size={18} color="#dc2626" />
+              <AppIcon name="Trash2" size={18} color="#dc2626" />
             </Stack>
           )}
         </Stack>

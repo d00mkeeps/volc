@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { WorkoutExerciseSet, ExerciseDefinition } from "@/types/workout";
-import { Trash2, Check } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import * as Haptics from "expo-haptics";
 import MetricInput from "@/components/atoms/workout/MetricInput";
 import { useUserStore } from "@/stores/userProfileStore";
@@ -182,7 +182,7 @@ export default function SetRow({
         onPress={handleDeletePress}
         cursor="pointer"
       >
-        <Trash2 size={22} color="$white" />
+        <AppIcon name="Trash2" size={22} color="$white" />
       </Stack>
 
       {/* Main swipeable content */}
@@ -268,7 +268,11 @@ export default function SetRow({
               cursor="pointer"
               margin="$1"
             >
-              <Check size={32} color={set.is_completed ? "white" : iconColor} />
+              <AppIcon
+                name="Check"
+                size={32}
+                color={set.is_completed ? "white" : iconColor}
+              />
             </Stack>
           </XStack>
         </Animated.View>

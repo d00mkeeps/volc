@@ -4,7 +4,7 @@ import Text from "@/components/atoms/core/Text";
 import Input from "@/components/atoms/core/Input";
 import Button from "@/components/atoms/core/Button";
 import { View } from "react-native";
-import { X } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import { CompleteWorkout } from "@/types/workout";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import TemplateItem from "../../atoms/workout/TemplateItem";
@@ -174,7 +174,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           onPress={onClose}
           pressStyle={{ backgroundColor: "$backgroundPress" }}
         >
-          <X size={20} color="$textSoft" />
+          <AppIcon name="X" size={20} color="$textSoft" />
         </Button>
       </XStack>
 

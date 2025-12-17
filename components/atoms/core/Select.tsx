@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Stack, XStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { Lock } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface SelectOption {
   value: string;
@@ -96,7 +96,9 @@ export default function Select({
                   >
                     {option.label}
                   </Text>
-                  {option.disabled && <Lock size={16} color="$textSoft" />}
+                  {option.disabled && (
+                    <AppIcon name="Lock" size={16} color="$textSoft" />
+                  )}
                 </XStack>
               </Stack>
               {/* Separator - only show between options, not after the last one */}

@@ -6,7 +6,7 @@ import Button from "@/components/atoms/core/Button";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import ImagePickerButton from "../../atoms/ImagePickerButton";
 import WorkoutImage from "../../molecules/workout/WorkoutImage";
-import { ChevronDown, ChevronRight } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import { TabsSegmented } from "@/components/molecules/core/TabsSegmented";
 import TextArea from "@/components/atoms/core/TextArea";
 
@@ -255,9 +255,17 @@ export function WorkoutSummarySlide({
                               {exercise.name}
                             </Text>
                             {isExpanded ? (
-                              <ChevronDown size={20} color="$text" />
+                              <AppIcon
+                                name="ChevronDown"
+                                size={20}
+                                color="$text"
+                              />
                             ) : (
-                              <ChevronRight size={20} color="$text" />
+                              <AppIcon
+                                name="ChevronRight"
+                                size={20}
+                                color="$text"
+                              />
                             )}
                           </XStack>
                         </Stack>

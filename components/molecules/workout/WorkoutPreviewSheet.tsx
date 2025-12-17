@@ -9,7 +9,7 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
 import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
-import { ChevronRight } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface WorkoutPreviewSheetProps {
   workoutIds: string[];
@@ -209,7 +209,7 @@ export default function WorkoutPreviewSheet({
             <Text size="medium" color="$primary" fontWeight="600">
               View Full Workout
             </Text>
-            <ChevronRight size={16} color={theme.primary.val} />
+            <AppIcon name="ChevronRight" size={16} color={theme.primary.val} />
           </XStack>
         </YStack>
       </Stack>

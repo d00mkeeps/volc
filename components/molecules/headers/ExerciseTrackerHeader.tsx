@@ -1,29 +1,99 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { XStack, YStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { Trash2 } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import { TouchableOpacity } from "react-native";
 import * as Haptics from "expo-haptics";
 import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  runOnJS,
+} from "react-native-reanimated";
 
 interface ExerciseTrackerHeaderProps {
   exerciseName: string;
   isActive: boolean;
-  isEditing?: boolean; // Add this
+  isEditing?: boolean;
   onEditPress: () => void;
-  onCancelEdit?: () => void; // Add this
-  exerciseNotes?: string; // ADD THIS LINE
+  onCancelEdit?: () => void;
+  exerciseNotes?: string;
   onDelete: () => void;
   onShowDefinition?: () => void;
   canDelete: boolean;
-  canCancelEdit?: boolean; // Add this
-  onNotesLongPress?: () => void; // ADD THIS
+  canCancelEdit?: boolean;
+  onNotesLongPress?: () => void;
+  onMoveUp?: () => void; // NEW
+  onMoveDown?: () => void; // NEW
+}
+
+// Hold-to-move button component
+function HoldToMoveButton({
+  onMove,
+  direction,
+  disabled,
+}: {
+  onMove: () => void;
+  direction: "up" | "down";
+  disabled?: boolean;
+}) {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  const longPress = Gesture.LongPress()
+    .minDuration(500)
+    .onBegin(() => {
+      if (disabled) return;
+      scale.value = withSpring(0.9);
+      opacity.value = withSpring(0.7);
+    })
+    .onStart(() => {
+      if (disabled) return;
+      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Medium);
+      runOnJS(onMove)();
+      scale.value = withSpring(1);
+      opacity.value = withSpring(1);
+    })
+    .onFinalize(() => {
+      scale.value = withSpring(1);
+      opacity.value = withSpring(1);
+    });
+
+  if (disabled) {
+    return null;
+  }
+
+  const iconName = direction === "up" ? "ChevronUp" : "ChevronDown";
+
+  return (
+    <GestureDetector gesture={longPress}>
+      <Animated.View style={animatedStyle}>
+        <Stack
+          width={32}
+          height={32}
+          borderRadius="$2"
+          backgroundColor="$backgroundMuted"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <AppIcon name={iconName} size={18} color="$textMuted" />
+        </Stack>
+      </Animated.View>
+    </GestureDetector>
+  );
 }
 
 export default function ExerciseTrackerHeader({
   exerciseName,
-  exerciseNotes, // ADD THIS LINE
+  exerciseNotes,
   isActive,
   onEditPress,
   onDelete,
@@ -33,6 +103,8 @@ export default function ExerciseTrackerHeader({
   onCancelEdit,
   canCancelEdit,
   canDelete,
+  onMoveUp, // NEW
+  onMoveDown, // NEW
 }: ExerciseTrackerHeaderProps) {
   const handleDeletePress = () => {
     if (!isActive || !canDelete) return;
@@ -43,34 +115,52 @@ export default function ExerciseTrackerHeader({
   return (
     <YStack gap="$2" paddingVertical="$2">
       <XStack alignItems="center" justifyContent="space-between">
-        <TouchableOpacity
-          onPress={onShowDefinition}
-          disabled={!exerciseName || !onShowDefinition}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-            flex: 1,
-          }}
-        >
-          <Text
-            size="medium"
-            color="$color"
-            fontWeight="600"
-            numberOfLines={2}
-            textDecorationLine={
-              exerciseName && onShowDefinition && !isEditing
-                ? "underline"
-                : "none"
-            }
-          >
-            {isEditing
-              ? "Select new exercise"
-              : exerciseName || "Select an exercise"}
-          </Text>
-        </TouchableOpacity>
+        <XStack flex={1} alignItems="center" gap="$2">
+          {/* Move Up/Down Buttons */}
+          {!isEditing && isActive && (
+            <XStack gap="$1">
+              <HoldToMoveButton
+                onMove={onMoveUp!}
+                direction="up"
+                disabled={!onMoveUp}
+              />
+              <HoldToMoveButton
+                onMove={onMoveDown!}
+                direction="down"
+                disabled={!onMoveDown}
+              />
+            </XStack>
+          )}
 
-        {/* Action Buttons - moved up inline */}
+          <TouchableOpacity
+            onPress={onShowDefinition}
+            disabled={!exerciseName || !onShowDefinition || isEditing}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              flex: 1,
+            }}
+          >
+            <Text
+              size="medium"
+              color="$color"
+              fontWeight="600"
+              numberOfLines={2}
+              textDecorationLine={
+                exerciseName && onShowDefinition && !isEditing
+                  ? "underline"
+                  : "none"
+              }
+            >
+              {isEditing
+                ? "Select new exercise"
+                : exerciseName || "Select an exercise"}
+            </Text>
+          </TouchableOpacity>
+        </XStack>
+
+        {/* Action Buttons */}
         {isActive && (
           <XStack gap="$2" alignItems="center">
             {/* Delete Button */}
@@ -88,7 +178,7 @@ export default function ExerciseTrackerHeader({
                 onPress={handleDeletePress}
                 cursor="pointer"
               >
-                <Trash2 size={20} color="#ef4444" />
+                <AppIcon name="Trash2" size={20} color="#ef4444" />
               </Stack>
             )}
 

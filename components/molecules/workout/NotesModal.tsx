@@ -2,7 +2,7 @@
 // import { YStack, XStack, TextArea } from "tamagui";
 // import Text from "@/components/atoms/core/Text";
 // import Button from "@/components/atoms/core/Button";
-// import { X } from "@/assets/icons/IconMap";
+// import { AppIcon } from "@/assets/icons/IconMap";
 // import BaseModal from "../../atoms/core/BaseModal";
 
 // interface NotesModalProps {
@@ -52,7 +52,7 @@
 //           onPress={onClose}
 //           pressStyle={{ backgroundColor: "$backgroundPress" }}
 //         >
-//           <X size={20} color="$textSoft" />
+//           <AppIcon name="X" size={20} color="$textSoft" />
 //         </Button>
 //       </XStack>
 

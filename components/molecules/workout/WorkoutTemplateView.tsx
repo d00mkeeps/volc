@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import ExerciseDefinitionView from "@/components/molecules/workout/ExerciseDefinitionView";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
-import { ArrowLeft, Check, Info, X } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface WorkoutTemplateViewProps {
   data: {
@@ -61,7 +61,7 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
-          <Info size={16} color="$textSoft" />
+          <AppIcon name="Info" size={16} color="$textSoft" />
         </TouchableOpacity>
         <Text size="small" color="$textSoft">
           {setCount} {setCount === 1 ? "set" : "sets"} • {repRange}
@@ -91,7 +91,7 @@ export default function WorkoutTemplateView({
             >
               {exercise.name}
             </Text>
-            <Info size={16} color="$textSoft" />
+            <AppIcon name="Info" size={16} color="$textSoft" />
           </TouchableOpacity>
           {exercise.notes && (
             <Text size="medium" color="$textSoft" fontStyle="italic">
@@ -120,7 +120,7 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
-          <Info size={16} color="$textSoft" />
+          <AppIcon name="Info" size={16} color="$textSoft" />
         </TouchableOpacity>
         {exercise.notes && (
           <Text size="small" color="$textSoft">
@@ -203,7 +203,7 @@ export default function WorkoutTemplateView({
               cursor="pointer"
             >
               <XStack gap="$2" alignItems="center">
-                <ArrowLeft size={18} color="$textSoft" />
+                <AppIcon name="ArrowLeft" size={18} color="$textSoft" />
                 <Text
                   size="medium"
                   color="$color"
@@ -314,7 +314,7 @@ export default function WorkoutTemplateView({
                 }}
                 cursor="pointer"
               >
-                <X size={24} color="white" />
+                <AppIcon name="X" size={24} color="white" />
               </Stack>
 
               <Stack
@@ -336,7 +336,7 @@ export default function WorkoutTemplateView({
                 }}
                 cursor="pointer"
               >
-                <Check size={24} color="white" />
+                <AppIcon name="Check" size={24} color="white" />
               </Stack>
             </XStack>
           )}

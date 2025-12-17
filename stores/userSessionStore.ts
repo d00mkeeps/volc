@@ -30,19 +30,19 @@ interface UserSessionState {
 
   selectedTemplate: CompleteWorkout | null;
   showTemplateSelector: boolean;
-  isWorkoutDetailOpen: boolean; // Global visibility tracking for sheets/modals
+  isWorkoutDetailOpen: boolean;
 
   pendingImageId: string | null;
 
-  startWorkout: (workout: CompleteWorkout) => void;
+  startWorkout: (templateOrWorkout: CompleteWorkout) => void;
   pauseWorkout: () => void;
   resumeWorkout: () => void;
   togglePause: () => void;
   cancelWorkout: () => void;
   hasAtLeastOneCompleteSet: () => boolean;
   finishWorkout: () => void;
-  showWorkoutSavedPrompt: boolean; // Add this
-  clearWorkoutSavedPrompt: () => void; // Add this
+  showWorkoutSavedPrompt: boolean;
+  clearWorkoutSavedPrompt: () => void;
   saveCompletedWorkout: (metadata: {
     name: string;
     notes: string;
@@ -61,7 +61,6 @@ interface UserSessionState {
   openTemplateSelector: () => void;
   closeTemplateSelector: () => void;
   setWorkoutDetailOpen: (isOpen: boolean) => void;
-  selectTemplate: (template: CompleteWorkout) => void;
 
   setPendingImage: (imageId: string | null) => void;
 
@@ -82,6 +81,7 @@ export function createEmptyWorkout(userId: string): CompleteWorkout {
     updated_at: now,
   };
 }
+
 /**
  * Debounce helper for auto-save
  * (/stores/userSessionStore.debounce)
@@ -96,6 +96,7 @@ function debounce<T extends (...args: any[]) => any>(
     timeout = setTimeout(() => func(...args), wait);
   };
 }
+
 export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   // Initial state
   currentWorkout: null,
@@ -111,15 +112,76 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   showTemplateSelector: false,
   isWorkoutDetailOpen: false,
   pendingImageId: null,
-  startWorkout: (workout) => {
+
+  startWorkout: (templateOrWorkout) => {
+    console.log("🟢 [Store] startWorkout called with:", templateOrWorkout);
+
+    const userProfile = useUserStore.getState().userProfile;
+    if (!userProfile?.user_id) {
+      console.error("❌ [Store] Cannot start workout: No user profile found");
+      return;
+    }
+
+    let workout: CompleteWorkout;
+    let selectedTemplate: CompleteWorkout | null = null;
+
+    // If it's a template, convert to workout instance
+    if (
+      templateOrWorkout.is_template ||
+      !templateOrWorkout.workout_exercises[0]?.workout_id
+    ) {
+      console.log("🟢 [Store] Converting template to workout");
+      selectedTemplate = templateOrWorkout;
+      const now = new Date().toISOString();
+      const workoutId = uuidv4();
+
+      workout = {
+        ...templateOrWorkout,
+        id: workoutId,
+        user_id: userProfile.user_id.toString(),
+        template_id: templateOrWorkout.id,
+        is_template: false,
+        created_at: now,
+        updated_at: now,
+        workout_exercises: templateOrWorkout.workout_exercises.map(
+          (exercise, index) => ({
+            ...exercise,
+            id: `exercise-${Date.now()}-${index}`,
+            workout_id: workoutId,
+            workout_exercise_sets: exercise.workout_exercise_sets.map(
+              (set, setIndex) => ({
+                ...set,
+                id: `set-${Date.now()}-${index}-${setIndex}`,
+                exercise_id: `exercise-${Date.now()}-${index}`,
+                is_completed: false,
+              })
+            ),
+          })
+        ),
+      };
+      console.log("🟢 [Store] Created workout:", workout.id);
+    } else {
+      console.log("🟢 [Store] Using workout as-is");
+      workout = templateOrWorkout;
+    }
+
+    console.log(
+      "🟢 [Store] Setting state - isActive: true, workoutId:",
+      workout.id
+    );
     set({
       currentWorkout: workout,
+      selectedTemplate,
       isActive: true,
       isPaused: false,
       startTime: new Date(),
       elapsedSeconds: 0,
+      totalPausedMs: 0,
+      pausedAt: null,
       scheduledTime: workout.scheduled_time,
     });
+
+    console.log("✅ [Store] startWorkout complete");
   },
 
   pauseWorkout: () => {
@@ -398,6 +460,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       set({ elapsedSeconds: adjustedElapsed });
     }
   },
+
   // Template actions
   setSelectedTemplate: (template) => {
     set({ selectedTemplate: template });
@@ -413,48 +476,6 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
   setWorkoutDetailOpen: (isOpen) => {
     set({ isWorkoutDetailOpen: isOpen });
-  },
-
-  selectTemplate: (template) => {
-    const userProfile = useUserStore.getState().userProfile;
-    if (!userProfile?.user_id) {
-      console.error("Cannot select template: No user profile found");
-      return;
-    }
-    const now = new Date().toISOString();
-    const newWorkout: CompleteWorkout = {
-      ...template,
-      id: uuidv4(),
-      user_id: userProfile.user_id.toString(),
-      template_id: template.id,
-      is_template: false,
-      created_at: now,
-      updated_at: now,
-
-      name: "",
-      notes: "",
-      image_id: null,
-
-      workout_exercises: template.workout_exercises.map((exercise, index) => ({
-        ...exercise,
-        id: `exercise-${Date.now()}-${index}`,
-        workout_id: `temp-${Date.now()}`,
-        workout_exercise_sets: exercise.workout_exercise_sets.map(
-          (set, setIndex) => ({
-            ...set,
-            id: `set-${Date.now()}-${index}-${setIndex}`,
-            exercise_id: `exercise-${Date.now()}-${index}`,
-            is_completed: false,
-          })
-        ),
-      })),
-    };
-
-    set({
-      currentWorkout: newWorkout,
-      selectedTemplate: template,
-      showTemplateSelector: false,
-    });
   },
 
   // Computed values
@@ -503,6 +524,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     return { completed: completedSets, total: totalSets };
   },
 }));
+
 // ============================================
 // PERSISTENCE INITIALIZATION & AUTO-SAVE
 // ============================================

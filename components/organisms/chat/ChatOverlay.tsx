@@ -17,7 +17,7 @@ import Animated, {
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 import { MessageList } from "../../molecules/chat/MessageList";
-import { InputArea } from "../../atoms/chat/InputArea";
+import { InputArea, InputAreaRef } from "../../atoms/chat/InputArea";
 import { useChatStore } from "@/stores/chat/ChatStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { QuickChatActions } from "@/components/molecules/home/QuickChatActions";
@@ -28,14 +28,8 @@ import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/Responsi
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useWindowDimensions } from "react-native";
 import { useColorScheme } from "react-native";
-import { useUserStore } from "@/stores/userProfileStore";
 import { BlurView } from "expo-blur";
-import { X } from "@/assets/icons/IconMap";
-import {
-  CompleteWorkout,
-  WorkoutExercise,
-  WorkoutExerciseSet,
-} from "@/types/workout";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface ChatOverlayProps {
   placeholder?: string;
@@ -51,16 +45,36 @@ export const ChatOverlay = ({
   // ChatStore selectors
   const loadingState = useChatStore((state) => state.loadingState);
   const greeting = useChatStore((state) => state.greeting);
+  const inputAreaRef = useRef<InputAreaRef>(null);
+
+  const failedMessageContent = useChatStore(
+    (state) => state.failedMessageContent
+  );
+  const setFailedMessageContent = useChatStore(
+    (state) => state.setFailedMessageContent
+  );
 
   const connectionState = useChatStore((state) => state.connectionState);
   const statusMessage = useChatStore((state) => state.statusMessage);
   const connect = useChatStore((state) => state.connect);
   const disconnect = useChatStore((state) => state.disconnect);
-
+  const { health, isUnreliable } = useNetworkQuality();
   const sendMessage = useChatStore((state) => state.sendMessage);
   const cancelStreaming = useChatStore((state) => state.cancelStreaming);
 
-  const { isUnreliable } = useNetworkQuality();
+  useEffect(() => {
+    if (failedMessageContent && inputAreaRef.current) {
+      inputAreaRef.current.setText(failedMessageContent);
+      setFailedMessageContent(null);
+    }
+  }, [failedMessageContent, setFailedMessageContent]);
+
+  const handleSendMessage = useCallback(
+    (content: string) => {
+      sendMessage(content, () => health);
+    },
+    [sendMessage, health]
+  );
 
   // Network-based auto-cancel
   useEffect(() => {
@@ -167,38 +181,12 @@ export const ChatOverlay = ({
 
   const handleTemplateApprove = useCallback(
     (templateData: any) => {
-      const userProfile = useUserStore.getState().userProfile;
-      if (!userProfile?.user_id) return;
-
-      const now = new Date().toISOString();
-      const workoutId = `temp-${Date.now()}`;
-
-      const workout: CompleteWorkout = {
-        ...templateData,
-        id: workoutId,
-        user_id: userProfile.user_id.toString(),
-        is_template: false,
-        template_id: templateData.id,
-        created_at: now,
-        updated_at: now,
-        workout_exercises: templateData.workout_exercises.map(
-          (exercise: WorkoutExercise, index: number) => ({
-            ...exercise,
-            id: `exercise-${Date.now()}-${index}`,
-            workout_id: workoutId,
-            workout_exercise_sets: exercise.workout_exercise_sets.map(
-              (set: WorkoutExerciseSet, setIndex: number) => ({
-                ...set,
-                id: `set-${Date.now()}-${index}-${setIndex}`,
-                exercise_id: `exercise-${Date.now()}-${index}`,
-                is_completed: false,
-              })
-            ),
-          })
-        ),
-      };
-      useUserSessionStore.getState().startWorkout(workout);
       handleCollapse();
+
+      // Start workout after collapse animation completes
+      setTimeout(() => {
+        useUserSessionStore.getState().startWorkout(templateData);
+      }, 350);
     },
     [handleCollapse]
   );
@@ -206,6 +194,14 @@ export const ChatOverlay = ({
   const handleDismiss = useCallback(() => {
     handleCollapse();
   }, [handleCollapse]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      useConversationStore.getState().checkTimeout();
+    }, 60000); // Check every 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Register expand function
   useEffect(() => {
@@ -224,14 +220,14 @@ export const ChatOverlay = ({
     }
   }, [pendingChatOpen, handleExpand, setPendingChatOpen]);
 
-  const countRef = useRef(0);
-  countRef.current += 1;
-  const now = new Date();
-  const timestamp = `${now.getMinutes()}:${now
-    .getSeconds()
-    .toString()
-    .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-  console.log(`[ChatOverlay] render #${countRef.current} at ${timestamp}`);
+  // const countRef = useRef(0);
+  // countRef.current += 1;
+  // const now = new Date();
+  // const timestamp = `${now.getMinutes()}:${now
+  //   .getSeconds()
+  //   .toString()
+  //   .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+  // console.log(`[ChatOverlay] render #${countRef.current} at ${timestamp}`);
 
   useEffect(() => {
     if (isExpanded) {
@@ -294,21 +290,25 @@ export const ChatOverlay = ({
           style={[styles.expandedContent, overlayStyle, { backgroundColor }]}
           pointerEvents={isExpanded ? "auto" : "none"}
         >
-          <TouchableWithoutFeedback onPress={handleDismiss}>
-            <View
-              style={{ flex: 1, paddingBottom: 10 }}
-              onStartShouldSetResponder={() => true}
-            >
-              <MessageList
-                messages={messages}
-                showLoadingIndicator={showLoading}
-                connectionState={getConnectionState()}
-                statusMessage={statusMessage}
-                onDismiss={handleDismiss}
-                onTemplateApprove={handleTemplateApprove}
-              />
+          {isExpanded ? (
+            <View style={{ flex: 1 }}>
+              <TouchableWithoutFeedback onPress={handleDismiss}>
+                <View
+                  style={{ flex: 1, paddingBottom: 10 }}
+                  onStartShouldSetResponder={() => true}
+                >
+                  <MessageList
+                    messages={messages}
+                    showLoadingIndicator={showLoading}
+                    connectionState={getConnectionState()}
+                    statusMessage={statusMessage}
+                    onDismiss={handleDismiss}
+                    onTemplateApprove={handleTemplateApprove}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
-          </TouchableWithoutFeedback>
+          ) : null}
 
           {isStreaming && (
             <Animated.View
@@ -345,7 +345,8 @@ export const ChatOverlay = ({
                         : "rgba(240,240,240,0.6)",
                   }}
                 >
-                  <X
+                  <AppIcon
+                    name="X"
                     size={20}
                     color={colorScheme === "dark" ? "#fff" : "#000"}
                   />
@@ -390,8 +391,9 @@ export const ChatOverlay = ({
               onLayout={(e) => setInputAreaHeight(e.nativeEvent.layout.height)}
             >
               <InputArea
+                ref={inputAreaRef}
                 placeholder={placeholder}
-                onSendMessage={sendMessage}
+                onSendMessage={handleSendMessage}
                 isStreaming={isStreaming}
                 onFocus={handleExpand}
                 onCancel={() => cancelStreaming("user_requested")}
@@ -407,6 +409,7 @@ export const ChatOverlay = ({
 const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
+    paddingBottom: 16,
   },
   expandedContent: {
     ...StyleSheet.absoluteFillObject,
@@ -416,5 +419,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     zIndex: 2,
     elevation: 2,
+    paddingBottom: 24,
   },
 });

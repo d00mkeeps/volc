@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack } from "tamagui";
-import { Pencil } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import GradientBlur from "./core/GradientBlur";
 
 interface EditButtonProps {
@@ -54,7 +54,7 @@ export default function EditButton({
         justifyContent="center"
         alignItems="center"
       >
-        <Pencil size={iconSize} color="white" />
+        <AppIcon name="Pencil" size={iconSize} color="white" />
       </Stack>
     </Stack>
   );

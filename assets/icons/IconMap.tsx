@@ -1,3 +1,4 @@
+// /assets/icons/IconMap.tsx
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { ComponentProps } from "react";
 import { useTheme } from "tamagui";
@@ -33,7 +34,6 @@ export type AppIconName =
   | "Info"
   | "AlertTriangle"
   | "AlertCircle"
-  | "AlertCircle"
   | "Lock"
   | "Clock"
   | "Wrench"
@@ -41,9 +41,12 @@ export type AppIconName =
   | "NetworkExcellent"
   | "NetworkGood"
   | "NetworkPoor"
-  | "NetworkOffline";
+  | "NetworkOffline"
+  | "GripVertical"
+  | "Dumbbell";
 
-const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
+// Ionicons mapping (Android fallback)
+const ioniconsMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Camera: "camera",
   ChevronUp: "chevron-up",
   Settings: "settings-outline",
@@ -57,7 +60,7 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   Check: "checkmark-sharp",
   CheckCircle: "checkmark-circle",
   X: "close",
-  Stop: "stop-circle", // Ionicons mapping
+  Stop: "stop-circle",
   Trash2: "trash-outline",
   Plus: "add",
   RotateCw: "refresh",
@@ -80,32 +83,78 @@ const iconMapping: Record<AppIconName, keyof typeof Ionicons.glyphMap> = {
   NetworkGood: "wifi",
   NetworkPoor: "wifi-outline",
   NetworkOffline: "cloud-offline-outline",
+  GripVertical: "menu-outline",
+  Dumbbell: "barbell-outline",
+};
+
+// SF Symbols mapping (iOS)
+const sfSymbolsMapping: Partial<Record<AppIconName, string>> = {
+  Camera: "camera",
+  ChevronUp: "chevron.up",
+  Settings: "gear",
+  FileText: "doc.text",
+  ArrowLeftRight: "arrow.left.arrow.right",
+  Play: "play.fill",
+  Pause: "pause.fill",
+  ChevronDown: "chevron.down",
+  ChevronLeft: "chevron.left",
+  ChevronRight: "chevron.right",
+  Check: "checkmark",
+  CheckCircle: "checkmark.circle",
+  X: "xmark",
+  Stop: "stop.circle",
+  Trash2: "trash",
+  Plus: "plus",
+  RotateCw: "arrow.clockwise",
+  PlusCircle: "plus.circle",
+  Send: "paperplane.fill",
+  ArrowLeft: "arrow.left",
+  Home: "house",
+  User: "person",
+  MessageCircle: "bubble.left.and.text.bubble.right",
+  Trophy: "trophy.fill",
+  Pencil: "pencil",
+  Edit: "pencil",
+  Info: "info.circle",
+  AlertTriangle: "exclamationmark.triangle",
+  AlertCircle: "exclamationmark.circle",
+  Lock: "lock",
+  Clock: "clock",
+  Wrench: "wrench",
+  NetworkExcellent: "wifi",
+  NetworkGood: "wifi",
+  NetworkPoor: "wifi.exclamationmark",
+  NetworkOffline: "wifi.slash",
+  GripVertical: "line.3.horizontal",
+  Dumbbell: "dumbbell.fill",
+};
+
+// /assets/icons/IconMap.resolveColor
+const resolveColor = (
+  color: string | OpaqueColorValue | undefined,
+  theme: any,
+  colorScheme: string | null | undefined
+): string | OpaqueColorValue => {
+  if (!color || color === "currentColor") {
+    // Default to white in dark mode, black in light mode
+    return colorScheme === "dark" ? "#ffffff" : "#231f20";
+  }
+
+  if (typeof color !== "string") return color;
+
+  // Resolve Tamagui tokens (starts with $)
+  if (color.startsWith("$")) {
+    const tokenName = color.slice(1);
+    const resolvedColor = theme[tokenName];
+    return resolvedColor?.val || resolvedColor || color;
+  }
+
+  return color;
 };
 
 interface AppIconProps extends Omit<ComponentProps<typeof Ionicons>, "name"> {
   name: AppIconName;
 }
-
-// Helper function to resolve Tamagui color tokens
-// /assets/icons/IconMap.resolveColor
-const resolveColor = (
-  color: string | OpaqueColorValue | undefined,
-  theme: any
-): string | OpaqueColorValue => {
-  if (!color) return "currentColor";
-
-  if (typeof color !== "string") return color;
-
-  // If it's a Tamagui token (starts with $), resolve it from theme
-  if (color.startsWith("$")) {
-    const tokenName = color.slice(1); // Remove the $
-    const resolvedColor = theme[tokenName];
-    return resolvedColor?.val || resolvedColor || color;
-  }
-
-  // Otherwise return the color as-is (hex, rgb, etc.)
-  return color;
-};
 
 // /assets/icons/IconMap.AppIcon
 export const AppIcon = ({
@@ -116,221 +165,26 @@ export const AppIcon = ({
 }: AppIconProps) => {
   const theme = useTheme();
   const colorScheme = useColorScheme();
-  const ionIconName = iconMapping[name];
+  const resolvedColor = resolveColor(color, theme, colorScheme);
 
-  // Use white icons in dark mode, black icons in light mode
-  const defaultColor = colorScheme === "dark" ? "#ffffff" : "#231f20";
-  const resolvedColor = resolveColor(color || defaultColor, theme);
-
-  return (
-    <Ionicons name={ionIconName} size={size} color={resolvedColor} {...props} />
-  );
-};
-
-// Export individual icon components
-export const Settings = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Settings" {...props} />
-);
-
-export const Camera = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Camera" {...props} />
-);
-export const ChevronUp = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ChevronUp" {...props} />
-);
-
-export const FileText = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="FileText" {...props} />
-);
-
-export const ArrowLeftRight = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ArrowLeftRight" {...props} />
-);
-
-export const Play = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Play" {...props} />
-);
-
-export const Pause = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Pause" {...props} />
-);
-
-export const ChevronDown = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ChevronDown" {...props} />
-);
-
-export const ChevronRight = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ChevronRight" {...props} />
-);
-
-export const ChevronLeft = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ChevronLeft" {...props} />
-);
-
-export const Check = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Check" {...props} />
-);
-
-export const CheckCircle = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="CheckCircle" {...props} />
-);
-
-export const X = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="X" {...props} />
-);
-
-export const Stop = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Stop" {...props} />
-);
-
-export const Trash2 = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Trash2" {...props} />
-);
-
-export const Plus = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Plus" {...props} />
-);
-
-export const RotateCw = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="RotateCw" {...props} />
-);
-
-export const PlusCircle = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="PlusCircle" {...props} />
-);
-
-export const Send = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Send" {...props} />
-);
-
-export const ArrowLeft = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="ArrowLeft" {...props} />
-);
-
-export const Home = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Home" {...props} />
-);
-
-export const User = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="User" {...props} />
-);
-
-export const MessageCircle = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="MessageCircle" {...props} />
-);
-
-export const Trophy = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Trophy" {...props} />
-);
-
-export const Pencil = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Pencil" {...props} />
-);
-
-export const Edit = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Edit" {...props} />
-);
-
-export const Info = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Info" {...props} />
-);
-
-export const AlertTriangle = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="AlertTriangle" {...props} />
-);
-
-export const AlertCircle = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="AlertCircle" {...props} />
-);
-
-export const Lock = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Lock" {...props} />
-);
-
-export const Clock = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Clock" {...props} />
-);
-
-export const Wrench = (props: Omit<AppIconProps, "name">) => (
-  <AppIcon name="Wrench" {...props} />
-);
-
-interface NetworkIconProps extends Omit<AppIconProps, "name"> {
-  quality: "excellent" | "good" | "poor" | "offline";
-  // Added 'name' to props to allow access within component for Stop icon check
-  name?: AppIconName;
-}
-
-// /assets/icons/IconMap.NetworkStatusIcon
-export const NetworkStatusIcon = ({
-  quality,
-  size = 20,
-  color,
-  name,
-  ...props
-}: NetworkIconProps) => {
-  const theme = useTheme();
-  const colorScheme = useColorScheme();
-
-  // Use same color logic as other icons
-  const defaultColor = colorScheme === "dark" ? "#ffffff" : "#231f20";
-  const resolvedColor = resolveColor(color || defaultColor, theme);
-
-  // iOS: Use SF Symbols
+  // iOS: Use SF Symbols when available
   if (Platform.OS === "ios") {
-    let symbolName: string;
-    switch (quality) {
-      case "excellent":
-        symbolName = "wifi";
-        break;
-      case "good":
-        symbolName = "wifi";
-        break;
-      case "poor":
-        symbolName = "wifi.exclamationmark";
-        break;
-      case "offline":
-        symbolName = "wifi.slash";
-        break;
-    }
-
-    if (name === "Stop") {
+    const sfSymbol = sfSymbolsMapping[name];
+    if (sfSymbol) {
       return (
         <SFSymbol
-          name="stop.circle.fill"
+          name={sfSymbol}
           size={size}
           color={resolvedColor}
           {...(props as any)}
         />
       );
     }
-
-    return (
-      <SFSymbol
-        name={symbolName}
-        size={size}
-        color={resolvedColor}
-        {...(props as any)}
-      />
-    );
   }
 
-  // Android: Use Ionicons fallback
-  let iconName: AppIconName;
-  switch (quality) {
-    case "excellent":
-    case "good":
-      iconName = "NetworkGood";
-      break;
-    case "poor":
-      iconName = "NetworkPoor";
-      break;
-    case "offline":
-      iconName = "NetworkOffline";
-      break;
-  }
-
+  // Android or fallback: Use Ionicons
+  const ionIconName = ioniconsMapping[name];
   return (
-    <AppIcon name={iconName} size={size} color={resolvedColor} {...props} />
+    <Ionicons name={ionIconName} size={size} color={resolvedColor} {...props} />
   );
 };

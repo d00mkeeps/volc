@@ -481,13 +481,11 @@ export const useConversationStore = create<ConversationStoreState>()(
         const conversation = conversations.get(activeConversationId);
         if (!conversation) return;
 
-        // Check time
         const lastMessageAt = new Date(conversation.updated_at).getTime();
         const now = Date.now();
         const diffMins = (now - lastMessageAt) / 1000 / 60;
 
-        // Configurable timeout: 1 min for testing
-        if (diffMins >= 1) {
+        if (diffMins >= 120) {
           console.log(
             "⏳ Conversation timed out, archiving:",
             activeConversationId

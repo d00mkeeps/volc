@@ -7,7 +7,7 @@ const CONFIG = {
   TIMEOUT: 5000,
 };
 
-class NetworkMonitor extends EventEmitter {
+class __NetworkMonitor__ extends EventEmitter {
   private pingInterval: ReturnType<typeof setInterval> | null = null;
   private isMonitoring: boolean = false;
 
@@ -28,7 +28,6 @@ class NetworkMonitor extends EventEmitter {
 
   public startMonitoring(): void {
     if (this.isMonitoring) return;
-
     this.isMonitoring = true;
     console.log("[NetworkMonitor] Starting network monitoring...");
 
@@ -57,18 +56,42 @@ class NetworkMonitor extends EventEmitter {
         method: "HEAD",
         signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
+      clearTimeout(timeoutId);
       const latency = Date.now() - start;
-      this.emit("ping", { latency, success: true, timestamp: Date.now() });
+      const result = { latency, success: true, timestamp: Date.now() };
+
+      const timestamp = new Date(result.timestamp);
+      const mm = String(timestamp.getMinutes()).padStart(2, "0");
+      const ss = String(timestamp.getSeconds()).padStart(2, "0");
+      const ms = String(timestamp.getMilliseconds()).padStart(3, "0");
+
+      // console.log(
+      //   `[NetworkMonitor] Ping sent: ${JSON.stringify(
+      //     result
+      //   )} ${mm}:${ss}.${ms}`
+      // );
+      this.emit("ping", result);
     } catch (error) {
-      this.emit("ping", {
+      const result = {
         latency: CONFIG.TIMEOUT,
         success: false,
         timestamp: Date.now(),
-      });
+      };
+
+      const timestamp = new Date(result.timestamp);
+      const mm = String(timestamp.getMinutes()).padStart(2, "0");
+      const ss = String(timestamp.getSeconds()).padStart(2, "0");
+      const ms = String(timestamp.getMilliseconds()).padStart(3, "0");
+
+      // console.log(
+      //   `[NetworkMonitor] Ping sent: ${JSON.stringify(
+      //     result
+      //   )} ${mm}:${ss}.${ms}`
+      // );
+      this.emit("ping", result);
     }
   }
 }
 
-export const networkMonitor = new NetworkMonitor();
+export const networkMonitor = new __NetworkMonitor__();

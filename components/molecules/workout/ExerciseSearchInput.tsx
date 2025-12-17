@@ -5,7 +5,7 @@ import Input from "@/components/atoms/core/Input";
 import { TouchableOpacity } from "react-native";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { ExerciseDefinition } from "@/types/workout";
-import { Check, X, Info } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 import ExerciseDefinitionView from "./ExerciseDefinitionView";
 
 interface ExerciseSearchInputProps {
@@ -133,7 +133,7 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
             handleShowDefinition(exercise);
           }}
         >
-          <Info size={16} color="$text" />
+          <AppIcon name="Info" size={16} color="$text" />
         </TouchableOpacity>
       </Stack>
     </XStack>
@@ -168,11 +168,11 @@ const ExerciseSearchInput: React.FC<ExerciseSearchInputProps> = ({
         />
         {isValid ? (
           <Stack justifyContent="center">
-            <Check size={20} color="#22c55e" />
+            <AppIcon name="Check" size={20} color="#22c55e" />
           </Stack>
         ) : (
           <Stack justifyContent="center">
-            <X size={20} color="#ef4444" />
+            <AppIcon name="X" size={20} color="#ef4444" />
           </Stack>
         )}
       </XStack>

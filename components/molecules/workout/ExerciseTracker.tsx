@@ -23,6 +23,12 @@ interface ExerciseTrackerProps {
   onExerciseDelete?: (exerciseId: string) => void;
   startInEditMode?: boolean;
   onEditingChange?: (isEditing: boolean) => void;
+  collapsed?: boolean;
+  isDragging?: boolean;
+  onToggleCollapse?: () => void;
+  dragHandleProps?: any;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }
 
 export default function ExerciseTracker({
@@ -31,7 +37,13 @@ export default function ExerciseTracker({
   onExerciseUpdate,
   onExerciseDelete,
   onEditingChange,
+  onMoveUp,
+  onMoveDown,
   startInEditMode,
+  collapsed = false,
+  isDragging = false,
+  onToggleCollapse,
+  dragHandleProps,
 }: ExerciseTrackerProps) {
   const [isEditing, setIsEditing] = useState(
     startInEditMode || exercise.name === ""
@@ -227,6 +239,8 @@ export default function ExerciseTracker({
               exercise.definition_id ? handleShowDefinition : undefined
             }
             canDelete={canDeleteExercise}
+            onMoveUp={onMoveUp}
+            onMoveDown={onMoveDown}
           />
         </Stack>
 

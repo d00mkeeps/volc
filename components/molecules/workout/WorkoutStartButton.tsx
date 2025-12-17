@@ -9,7 +9,7 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import { ChevronUp } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface __WorkoutStartButtonProps__ {
   onPlanWithCoach: () => void;
@@ -107,7 +107,7 @@ export const WorkoutStartButton = ({
                 gap="$1"
                 paddingVertical="$2"
               >
-                <ChevronUp size={16} color={iconColor} />
+                <AppIcon name="ChevronUp" size={16} color={iconColor} />
                 <Text size="small" color="$textSecondary">
                   Hide
                 </Text>

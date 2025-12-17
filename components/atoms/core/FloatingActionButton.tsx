@@ -1,5 +1,5 @@
 // /components/atoms/FloatingActionButton
-import { PlusCircle, Settings, Play, Pause } from "@/assets/icons/IconMap";
+import { AppIcon, AppIconName } from "@/assets/icons/IconMap";
 import React from "react";
 import { Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
@@ -14,14 +14,14 @@ interface ActionButtonProps {
   backgroundColor?: string; // ✅ NEW: Custom background color
 }
 
-const getIconComponent = (iconName: string) => {
-  const iconMap: Record<string, any> = {
-    "add-circle": PlusCircle,
-    "settings-outline": Settings,
-    play: Play,
-    pause: Pause,
+const getIconName = (iconName: string): AppIconName => {
+  const iconMap: Record<string, AppIconName> = {
+    "add-circle": "PlusCircle",
+    "settings-outline": "Settings",
+    play: "Play",
+    pause: "Pause",
   };
-  return iconMap[iconName] || PlusCircle;
+  return iconMap[iconName] || "PlusCircle";
 };
 
 export default function FloatingActionButton({
@@ -33,7 +33,7 @@ export default function FloatingActionButton({
   backgroundColor, // ✅ NEW
 }: ActionButtonProps) {
   // Use provided icon component, or fall back to iconName lookup
-  const IconComponent = icon || (iconName ? getIconComponent(iconName) : null);
+  const resolvedIconName = iconName ? getIconName(iconName) : "PlusCircle";
 
   // ✅ Icon size based on whether label exists
   const iconSize = label ? 20 : 28;
@@ -74,14 +74,21 @@ export default function FloatingActionButton({
       <Stack
         alignItems="center"
         justifyContent="center"
-        gap={IconComponent && label ? "$1" : 0}
+        gap={label ? "$1" : 0}
         flex={1}
       >
-        {IconComponent &&
-          React.createElement(IconComponent, {
-            size: iconSize, // ✅ Dynamic icon size
+        {icon ? (
+          React.createElement(icon, {
+            size: iconSize,
             color: disabled ? "#999" : "white",
-          })}
+          })
+        ) : (
+          <AppIcon
+            name={resolvedIconName}
+            size={iconSize}
+            color={disabled ? "#999" : "white"}
+          />
+        )}
         {label && (
           <Text
             color={disabled ? "$textMuted" : "white"}

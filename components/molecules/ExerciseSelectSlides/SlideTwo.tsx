@@ -5,7 +5,7 @@ import Chip from "@/components/atoms/core/Chip";
 import { ScrollView, TouchableOpacity, ViewStyle } from "react-native";
 import { ExerciseDefinition } from "@/types/workout";
 import * as Haptics from "expo-haptics";
-import { ChevronLeft } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface SlideTwoProps {
   baseMovement: string;
@@ -248,7 +248,7 @@ export default function SlideTwo({
       >
         <TouchableOpacity onPress={onBack} activeOpacity={0.7}>
           <Stack borderRadius="$2" padding="$1">
-            <ChevronLeft size={24} color={categoryColor} />
+            <AppIcon name="ChevronLeft" size={24} color={categoryColor} />
           </Stack>
         </TouchableOpacity>
         <Text size="large" fontWeight="700" color="$text">

@@ -9,7 +9,7 @@ import ImagePickerButton from "../atoms/ImagePickerButton";
 import LongPressToEdit from "../atoms/core/LongPressToEdit";
 import FloatingActionButton from "../atoms/core/FloatingActionButton";
 import { Modal, Pressable, StyleSheet } from "react-native";
-import { X } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface ProfileAvatarProps {
   editMode?: boolean;

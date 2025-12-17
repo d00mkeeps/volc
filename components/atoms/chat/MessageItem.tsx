@@ -150,19 +150,19 @@ const MessageItemComponent = ({
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
 
-  // Only log streaming or old assistant messages
-  if (isStreaming) {
-    const now = new Date();
-    const timestamp = `${now.getMinutes()}:${now
-      .getSeconds()
-      .toString()
-      .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-    console.log(
-      `[MessageItem:streaming] render #${renderCountRef.current} at ${timestamp}`
-    );
-  } else if (!isStreaming && message.sender === "assistant") {
-    console.log(`⚠️ OLD MESSAGE RE-RENDERED: ${message.id.slice(0, 8)}`);
-  }
+  // // Only log streaming or old assistant messages
+  // if (isStreaming) {
+  //   const now = new Date();
+  //   const timestamp = `${now.getMinutes()}:${now
+  //     .getSeconds()
+  //     .toString()
+  //     .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
+  //   console.log(
+  //     `[MessageItem:streaming] render #${renderCountRef.current} at ${timestamp}`
+  //   );
+  // } else if (!isStreaming && message.sender === "assistant") {
+  //   console.log(`⚠️ OLD MESSAGE RE-RENDERED: ${message.id.slice(0, 8)}`);
+  // }
 
   return (
     <Pressable

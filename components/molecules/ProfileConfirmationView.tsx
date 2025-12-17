@@ -6,7 +6,7 @@ import Button from "@/components/atoms/core/Button";
 import ProfileAvatarOnboarding from "./ProfileAvatarOnboarding";
 import { useUserStore } from "@/stores/userProfileStore";
 import Toast from "react-native-toast-message";
-import { Check } from "@/assets/icons/IconMap";
+import { AppIcon } from "@/assets/icons/IconMap";
 
 interface ProfileConfirmationData {
   first_name?: string;
@@ -181,7 +181,7 @@ export default function ProfileConfirmationView({
           }}
         >
           <XStack gap="$2" alignItems="center">
-            <Check size={24} color="white" />
+            <AppIcon name="Check" size={24} color="white" />
             <Text size="large" color="white" fontWeight="600">
               {isSaving ? "Saving..." : "Done"}
             </Text>

@@ -15,7 +15,7 @@ interface ChatStore {
   connectionState: ConnectionState;
   loadingState: LoadingState;
   statusMessage: string | null;
-  lastCancelTime: number; // For cooldown tracking
+  lastCancelTime: number;
 
   // Quick chat
   greeting: string | null;
@@ -26,24 +26,35 @@ interface ChatStore {
   // Streaming preview
   streamingContent: string;
 
+  // Failed message recovery
+  failedMessageContent: string | null;
+
   // Websocket handler refs
   _handlerRefs: (() => void)[];
 
   // Methods
   connect: () => Promise<void>;
   disconnect: () => void;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (
+    content: string,
+    getCurrentHealth?: () => "good" | "poor" | "offline"
+  ) => Promise<void>;
   cancelStreaming: (reason: "user_requested" | "network_failure") => void;
   computeGreeting: () => void;
   fetchActions: () => Promise<void>;
   refreshQuickChat: () => void;
   setLoadingState: (state: LoadingState) => void;
+  setFailedMessageContent: (content: string | null) => void;
   _registerHandlers: (conversationId: string) => void;
   _updateConnectionState: () => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   // Initial state
+  failedMessageContent: null,
+
+  setFailedMessageContent: (content) => set({ failedMessageContent: content }),
+
   connectionState: "disconnected",
   loadingState: "idle",
   statusMessage: null,
@@ -286,6 +297,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     });
 
     const unsubscribeContent = webSocketService.onMessage((chunk) => {
+      const { loadingState } = get();
+      if (loadingState !== "streaming" && loadingState !== "pending") {
+        return; // ← Ignore chunks when not actively streaming
+      }
+
       useMessageStore.getState().updateStreamingMessage(conversationId, chunk);
       // Update loading state to streaming on first chunk
       if (get().loadingState === "pending") {
@@ -309,6 +325,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       });
     });
 
+    const unsubscribeCancelled = webSocketService.onCancelled((data) => {
+      console.log(`[ChatStore] Backend confirmed cancel: ${data.reason}`);
+      // Complete whatever we have (don't clear)
+      useMessageStore.getState().completeStreamingMessage(conversationId);
+      set({ statusMessage: null });
+    });
+
     const unsubscribeError = webSocketService.onError((error) => {
       useMessageStore.getState().clearStreamingMessage(conversationId);
       useMessageStore.getState().setError(error);
@@ -325,6 +348,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         unsubscribeStatus,
         unsubscribeContent,
         unsubscribeComplete,
+        unsubscribeCancelled,
         unsubscribeTerminated,
         unsubscribeError,
       ],
@@ -437,15 +461,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   cancelStreaming: (reason) => {
     const { loadingState, lastCancelTime } = get();
-    const webSocketService = getWebSocketService();
 
-    // Check if streaming
     if (loadingState !== "streaming" && loadingState !== "pending") {
       console.log("[ChatStore] Not streaming/pending, ignoring cancel");
       return;
     }
 
-    // 5s cooldown protection (only for user requests)
     const now = Date.now();
     if (reason === "user_requested" && now - lastCancelTime < 5000) {
       Toast.show({
@@ -458,49 +479,34 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     console.log(`[ChatStore] Cancelling stream: ${reason}`);
 
-    // Send cancel message to backend
     try {
-      webSocketService.sendMessage({
-        type: "cancel",
-        reason,
-      });
+      getWebSocketService().sendMessage({ type: "cancel", reason });
     } catch (error) {
-      console.error("[ChatStore] Failed to send cancel message:", error);
-    }
-
-    // Update local state immediately
-    const activeConversationId =
-      useConversationStore.getState().activeConversationId;
-    if (activeConversationId) {
-      useMessageStore.getState().clearStreamingMessage(activeConversationId);
+      console.error("[ChatStore] Failed to send cancel:", error);
     }
 
     set({
-      loadingState: "idle",
+      loadingState: "idle", // Guard in onMessage will ignore new chunks
       streamingContent: "",
       lastCancelTime: now,
     });
 
-    // Show appropriate toast
-    if (reason === "user_requested") {
-      Toast.show({
-        type: "info",
-        text1: "Message Cancelled",
-        text2: "Stream stopped by user",
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Message Cancelled",
-        text2: "Poor network connection detected",
-      });
-    }
+    Toast.show({
+      type: "info",
+      text1: "Stopping...",
+      text2: "Cancelling message generation",
+    });
   },
 
-  sendMessage: async (content: string) => {
+  sendMessage: async (
+    content: string,
+    getCurrentHealth?: () => "good" | "poor" | "offline"
+  ) => {
     const webSocketService = getWebSocketService();
-
+    const currentHealth = getCurrentHealth?.() || "good"; // ← Use optional chaining with fallback
+    let messageSentToBackend = false;
     try {
+      // Get or create conversation
       let conversationId = useConversationStore.getState().activeConversationId;
 
       if (!conversationId) {
@@ -518,12 +524,20 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         });
       }
 
-      // Set loading state
-      set({ loadingState: "pending", streamingContent: "" });
+      // Show warning for poor or offline network
+      if (currentHealth === "poor" || currentHealth === "offline") {
+        Toast.show({
+          type: "info",
+          text1: "Poor Connection",
+          text2: "Messages may take longer than usual",
+          visibilityTime: 3000,
+        });
+      }
 
-      // Optimistic update
+      // Add optimistic message immediately
+      const tempMessageId = `temp-user-${Date.now()}`;
       const userMessage: Message = {
-        id: `temp-user-${Date.now()}`,
+        id: tempMessageId,
         conversation_id: conversationId,
         content,
         sender: "user",
@@ -532,10 +546,70 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       };
       useMessageStore.getState().addMessage(conversationId, userMessage);
 
+      // Set loading state
+      set({ loadingState: "pending", streamingContent: "" });
+
+      // If offline, wait up to 5s for network to improve
+      if (currentHealth === "offline") {
+        console.log(
+          "[ChatStore] Offline detected - waiting for network improvement"
+        );
+
+        const startTime = Date.now();
+        const maxWait = 5000;
+        const pollInterval = 500;
+
+        while (Date.now() - startTime < maxWait) {
+          await new Promise((resolve) => setTimeout(resolve, pollInterval));
+
+          const healthNow = getCurrentHealth?.() || "good";
+          if (healthNow !== "offline") {
+            console.log(
+              `[ChatStore] Network improved to ${healthNow} after ${
+                Date.now() - startTime
+              }ms`
+            );
+            break;
+          }
+        }
+
+        // Check final network status
+        const finalHealth = getCurrentHealth?.() || "good";
+        if (finalHealth === "offline") {
+          console.log(
+            "[ChatStore] Still offline after 5s - rolling back message"
+          );
+
+          // Remove optimistic message
+          useMessageStore
+            .getState()
+            .removeMessage(conversationId, tempMessageId);
+
+          // Store content for recovery
+          set({
+            failedMessageContent: content,
+            loadingState: "idle",
+            streamingContent: "",
+          });
+
+          Toast.show({
+            type: "error",
+            text1: "Connection Failed",
+            text2: "No internet connection",
+            visibilityTime: 4000,
+          });
+
+          return; // Exit without sending
+        }
+      }
+
+      // Network is good or poor - proceed with send
+      console.log("[ChatStore] Sending message to backend");
+
       // Touch conversation
       useConversationStore.getState().touchConversation(conversationId);
 
-      // Send message
+      // Build payload
       const currentMessages =
         useMessageStore.getState().messages.get(conversationId) || [];
       const payload = {
@@ -544,6 +618,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         conversation_history: currentMessages,
       };
 
+      // Ensure connection and send
       if (!webSocketService.isConnected()) {
         await webSocketService.ensureConnection({
           type: "coach",
@@ -552,10 +627,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }
 
       webSocketService.sendMessage(payload);
+      messageSentToBackend = true;
+
+      console.log("[ChatStore] Message sent to backend successfully");
     } catch (error) {
       console.error("[ChatStore] Error sending message:", error);
       const errorMessage =
         error instanceof Error ? error : new Error(String(error));
+
+      // Only rollback if we never sent to backend
+      if (!messageSentToBackend) {
+        const conversationId =
+          useConversationStore.getState().activeConversationId;
+        if (conversationId) {
+          const tempMessageId = `temp-user-${Date.now()}`; // Would need to track this better
+          useMessageStore
+            .getState()
+            .removeMessage(conversationId, tempMessageId);
+          set({ failedMessageContent: content });
+        }
+      }
 
       Toast.show({
         type: "error",
