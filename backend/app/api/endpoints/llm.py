@@ -274,5 +274,10 @@ async def unified_coach(
         await coach_service.process_websocket(websocket, conversation_id, user_id)
     except WebSocketDisconnect:
         logger.info(f"Unified coach WebSocket disconnected: {conversation_id}")
+        
+        # Trigger memory extraction in background
+        from app.core.utils.websocket_utils import trigger_memory_extraction
+        await trigger_memory_extraction(user_id, conversation_id)
+        
     except Exception as e:
         logger.error(f"Error in unified coach websocket: {str(e)}", exc_info=True)

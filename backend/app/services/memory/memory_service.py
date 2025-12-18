@@ -32,7 +32,7 @@ class MemoryExtractionService:
         self.user_profile_service = UserProfileService()
         
         self.llm = ChatVertexAI(
-            model="gemini-2.5-flash",
+            model="gemini-3-flash",
             temperature=0,
             credentials=credentials,
             project=project_id
