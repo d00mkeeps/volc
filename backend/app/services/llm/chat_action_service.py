@@ -2,7 +2,7 @@ import logging
 import json
 import re
 from typing import List, Dict, Any
-from langchain_google_vertexai import ChatVertexAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from app.services.context.shared_context_loader import SharedContextLoader
@@ -19,9 +19,8 @@ class ChatActionService:
         self.context_loader = SharedContextLoader()
         
         # Use lightweight model for speed
-        self.llm = ChatVertexAI(
+        self.llm = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash-lite",
-            temperature=0.4, # Slightly creative but consistent
             max_output_tokens=150, # Actions are short
             credentials=credentials,
             project=project_id

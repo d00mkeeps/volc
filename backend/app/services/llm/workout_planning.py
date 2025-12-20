@@ -1,495 +1,495 @@
-# /app/services/llm/workout_planning.py
+# # /app/services/llm/workout_planning.py
 
-import logging
-from fastapi import WebSocket
-import google.api_core.exceptions
-from starlette.websockets import WebSocketDisconnect
-from langchain_google_vertexai import ChatVertexAI
-from ..chains.workout_planning_chain import WorkoutPlanningChain
-from ..db.message_service import MessageService
-from .performance_profiler import PerformanceProfiler 
-from app.tools.exercise_tool import get_exercises_by_muscle_groups
+# import logging
+# from fastapi import WebSocket
+# import google.api_core.exceptions
+# from starlette.websockets import WebSocketDisconnect
+# from langchain_google_vertexai import ChatVertexAI
+# from ..chains.workout_planning_chain import WorkoutPlanningChain
+# from ..db.message_service import MessageService
+# from .performance_profiler import PerformanceProfiler 
+# from app.tools.exercise_tool import get_exercises_by_muscle_groups
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
-class WorkoutPlanningLLMService:
-    """Service for LLM-based workout planning conversations"""
+# class WorkoutPlanningLLMService:
+#     """Service for LLM-based workout planning conversations"""
     
-    def __init__(self, credentials=None, project_id=None, enable_profiling: bool = True):
-        self._conversation_chains = {}
-        self.message_service = MessageService()
-        self.credentials = credentials  
-        self.project_id = project_id
-        self.enable_profiling = enable_profiling
+#     def __init__(self, credentials=None, project_id=None, enable_profiling: bool = True):
+#         self._conversation_chains = {}
+#         self.message_service = MessageService()
+#         self.credentials = credentials  
+#         self.project_id = project_id
+#         self.enable_profiling = enable_profiling
         
-    def get_chain(self, user_id: str) -> WorkoutPlanningChain:
-        """Get or create a planning conversation chain"""
-        if user_id not in self._conversation_chains:
-            # Initialize new LLM
-            llm = ChatVertexAI(
-                model="gemini-2.5-flash",
-                streaming=True,
-                max_retries=0,
-                temperature=0,
-                credentials=self.credentials,
-                project=self.project_id
-            )
+#     def get_chain(self, user_id: str) -> WorkoutPlanningChain:
+#         """Get or create a planning conversation chain"""
+#         if user_id not in self._conversation_chains:
+#             # Initialize new LLM
+#             llm = ChatVertexAI(
+#                 model="gemini-2.5-flash",
+#                 streaming=True,
+#                 max_retries=0,
+#                 temperature=0,
+#                 credentials=self.credentials,
+#                 project=self.project_id
+#             )
             
-            # Create chain with tools
-            chain = WorkoutPlanningChain(
-                llm=llm, 
-                user_id=user_id,
-                tools=[get_exercises_by_muscle_groups]
-            )
+#             # Create chain with tools
+#             chain = WorkoutPlanningChain(
+#                 llm=llm, 
+#                 user_id=user_id,
+#                 tools=[get_exercises_by_muscle_groups]
+#             )
             
-            # NOTE: Sentiment analyzer removed - approval handled by UI buttons
+#             # NOTE: Sentiment analyzer removed - approval handled by UI buttons
             
-            self._conversation_chains[user_id] = chain
+#             self._conversation_chains[user_id] = chain
             
-        return self._conversation_chains[user_id]
+#         return self._conversation_chains[user_id]
 
 
 
-    async def load_planning_context(self, user_id: str, profiler: PerformanceProfiler = None) -> dict:
-        """Load planning context (user profile, analysis bundle, and fallback to recent workouts)."""
-        try:
-            logger.info(f"Loading planning context for user: {user_id}")
+#     async def load_planning_context(self, user_id: str, profiler: PerformanceProfiler = None) -> dict:
+#         """Load planning context (user profile, analysis bundle, and fallback to recent workouts)."""
+#         try:
+#             logger.info(f"Loading planning context for user: {user_id}")
             
-            context = {
-                "user_profile": None,
-                "analysis_bundle": None,
-                "recent_workouts": {
-                    "workouts": [],
-                    "patterns": {}
-                }
-            }
+#             context = {
+#                 "user_profile": None,
+#                 "analysis_bundle": None,
+#                 "recent_workouts": {
+#                     "workouts": [],
+#                     "patterns": {}
+#                 }
+#             }
             
-            # Load user profile
-            if profiler:
-                profiler.start_phase("load_user_profile_for_planning")
-            from app.services.db.user_profile_service import UserProfileService
-            profile_service = UserProfileService()
-            profile_result = await profile_service.get_user_profile_admin(user_id)
+#             # Load user profile
+#             if profiler:
+#                 profiler.start_phase("load_user_profile_for_planning")
+#             from app.services.db.user_profile_service import UserProfileService
+#             profile_service = UserProfileService()
+#             profile_result = await profile_service.get_user_profile_admin(user_id)
             
-            if profile_result.get('success') and profile_result.get('data'):
-                context["user_profile"] = profile_result['data']
-                logger.info(f"✅ Loaded user profile for planning")
-                if profiler:
-                    profiler.end_phase(loaded=True)
-            else:
-                logger.warning(f"❌ No user profile loaded: {profile_result.get('error', 'Unknown error')}")
-                if profiler:
-                    profiler.end_phase(loaded=False)
+#             if profile_result.get('success') and profile_result.get('data'):
+#                 context["user_profile"] = profile_result['data']
+#                 logger.info(f"✅ Loaded user profile for planning")
+#                 if profiler:
+#                     profiler.end_phase(loaded=True)
+#             else:
+#                 logger.warning(f"❌ No user profile loaded: {profile_result.get('error', 'Unknown error')}")
+#                 if profiler:
+#                     profiler.end_phase(loaded=False)
             
-            # Load analysis bundle (preferred source)
-            if profiler:
-                profiler.start_phase("load_analysis_bundle")
-            from app.services.db.analysis_service import AnalysisBundleService
-            analysis_service = AnalysisBundleService()
-            bundle_result = await analysis_service.get_latest_analysis_bundle_admin(user_id)
+#             # Load analysis bundle (preferred source)
+#             if profiler:
+#                 profiler.start_phase("load_analysis_bundle")
+#             from app.services.db.analysis_service import AnalysisBundleService
+#             analysis_service = AnalysisBundleService()
+#             bundle_result = await analysis_service.get_latest_analysis_bundle_admin(user_id)
             
-            if bundle_result.get('success') and bundle_result.get('data'):
-                context["analysis_bundle"] = bundle_result['data']
-                logger.info(f"✅ Loaded analysis bundle with {len(bundle_result['data'].recent_workouts)} recent workouts")
-                if profiler:
-                    profiler.end_phase(loaded=True, workout_count=len(bundle_result['data'].recent_workouts))
-            else:
-                logger.warning(f"⚠️ No analysis bundle found, falling back to raw workouts")
-                if profiler:
-                    profiler.end_phase(loaded=False)
+#             if bundle_result.get('success') and bundle_result.get('data'):
+#                 context["analysis_bundle"] = bundle_result['data']
+#                 logger.info(f"✅ Loaded analysis bundle with {len(bundle_result['data'].recent_workouts)} recent workouts")
+#                 if profiler:
+#                     profiler.end_phase(loaded=True, workout_count=len(bundle_result['data'].recent_workouts))
+#             else:
+#                 logger.warning(f"⚠️ No analysis bundle found, falling back to raw workouts")
+#                 if profiler:
+#                     profiler.end_phase(loaded=False)
                 
-                # Fallback: Load raw recent workouts
-                if profiler:
-                    profiler.start_phase("load_recent_workouts_fallback")
-                from app.services.db.workout_service import WorkoutService
-                workout_service = WorkoutService()
-                workouts_result = await workout_service.get_user_workouts_admin(user_id, days_back=14)
+#                 # Fallback: Load raw recent workouts
+#                 if profiler:
+#                     profiler.start_phase("load_recent_workouts_fallback")
+#                 from app.services.db.workout_service import WorkoutService
+#                 workout_service = WorkoutService()
+#                 workouts_result = await workout_service.get_user_workouts_admin(user_id, days_back=14)
                 
-                if workouts_result.get('success') and workouts_result.get('data'):
-                    recent_workouts = workouts_result['data']
-                    context["recent_workouts"]["workouts"] = recent_workouts
+#                 if workouts_result.get('success') and workouts_result.get('data'):
+#                     recent_workouts = workouts_result['data']
+#                     context["recent_workouts"]["workouts"] = recent_workouts
                     
-                    # Analyze patterns
-                    exercise_frequency = {}
-                    total_workouts = len(recent_workouts)
+#                     # Analyze patterns
+#                     exercise_frequency = {}
+#                     total_workouts = len(recent_workouts)
                     
-                    for workout in recent_workouts:
-                        for exercise in workout.get("workout_exercises", []):
-                            exercise_name = exercise.get("name")
-                            if exercise_name:
-                                exercise_frequency[exercise_name] = exercise_frequency.get(exercise_name, 0) + 1
+#                     for workout in recent_workouts:
+#                         for exercise in workout.get("workout_exercises", []):
+#                             exercise_name = exercise.get("name")
+#                             if exercise_name:
+#                                 exercise_frequency[exercise_name] = exercise_frequency.get(exercise_name, 0) + 1
                     
-                    context["recent_workouts"]["patterns"] = {
-                        "total_workouts": total_workouts,
-                        "workout_frequency_per_week": round(total_workouts / 2, 1),
-                        "most_frequent_exercises": sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:5],
-                        "exercise_variety": len(exercise_frequency)
-                    }
+#                     context["recent_workouts"]["patterns"] = {
+#                         "total_workouts": total_workouts,
+#                         "workout_frequency_per_week": round(total_workouts / 2, 1),
+#                         "most_frequent_exercises": sorted(exercise_frequency.items(), key=lambda x: x[1], reverse=True)[:5],
+#                         "exercise_variety": len(exercise_frequency)
+#                     }
                     
-                    logger.info(f"✅ Loaded {total_workouts} recent workouts (fallback) with {len(exercise_frequency)} unique exercises")
-                    if profiler:
-                        profiler.end_phase(
-                            workout_count=total_workouts,
-                            exercise_variety=len(exercise_frequency)
-                        )
-                else:
-                    logger.warning(f"❌ No recent workouts loaded: {workouts_result.get('error', 'Unknown error')}")
-                    if profiler:
-                        profiler.end_phase(workout_count=0)
+#                     logger.info(f"✅ Loaded {total_workouts} recent workouts (fallback) with {len(exercise_frequency)} unique exercises")
+#                     if profiler:
+#                         profiler.end_phase(
+#                             workout_count=total_workouts,
+#                             exercise_variety=len(exercise_frequency)
+#                         )
+#                 else:
+#                     logger.warning(f"❌ No recent workouts loaded: {workouts_result.get('error', 'Unknown error')}")
+#                     if profiler:
+#                         profiler.end_phase(workout_count=0)
             
-            # LOG FINAL CONTEXT SUMMARY
-            logger.info(f"🎯 FINAL CONTEXT SUMMARY:")
-            logger.info(f"   - User profile: {'✅' if context['user_profile'] else '❌'}")
+#             # LOG FINAL CONTEXT SUMMARY
+#             logger.info(f"🎯 FINAL CONTEXT SUMMARY:")
+#             logger.info(f"   - User profile: {'✅' if context['user_profile'] else '❌'}")
             
-            if context['analysis_bundle']:
-                bundle = context['analysis_bundle']
-                memory_count = 0
-                if bundle.ai_memory and bundle.ai_memory.get('notes'):
-                    memory_count = len(bundle.ai_memory.get('notes', []))
+#             if context['analysis_bundle']:
+#                 bundle = context['analysis_bundle']
+#                 memory_count = 0
+#                 if bundle.ai_memory and bundle.ai_memory.get('notes'):
+#                     memory_count = len(bundle.ai_memory.get('notes', []))
                 
-                logger.info(f"   - Analysis bundle: ✅")
-                logger.info(f"     • Recent workouts: {len(bundle.recent_workouts)}")
-                logger.info(f"     • Memory notes: {memory_count}")
-            else:
-                logger.info(f"   - Analysis bundle: ❌ (using fallback)")
-                logger.info(f"   - Recent workouts (fallback): {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
+#                 logger.info(f"   - Analysis bundle: ✅")
+#                 logger.info(f"     • Recent workouts: {len(bundle.recent_workouts)}")
+#                 logger.info(f"     • Memory notes: {memory_count}")
+#             else:
+#                 logger.info(f"   - Analysis bundle: ❌ (using fallback)")
+#                 logger.info(f"   - Recent workouts (fallback): {context['recent_workouts']['patterns'].get('total_workouts', 0)}")
             
-            return context
+#             return context
             
-        except Exception as e:
-            logger.error(f"❌ Error loading planning context: {str(e)}", exc_info=True)
-            return {
-                "user_profile": None,
-                "analysis_bundle": None,
-                "recent_workouts": {"workouts": [], "patterns": {}}
-            }
+#         except Exception as e:
+#             logger.error(f"❌ Error loading planning context: {str(e)}", exc_info=True)
+#             return {
+#                 "user_profile": None,
+#                 "analysis_bundle": None,
+#                 "recent_workouts": {"workouts": [], "patterns": {}}
+#             }
 
 
-    async def process_websocket(self, websocket: WebSocket, user_id: str):
-        """Process WebSocket connection for workout planning with seamless reconnection support"""
+#     async def process_websocket(self, websocket: WebSocket, user_id: str):
+#         """Process WebSocket connection for workout planning with seamless reconnection support"""
         
-        profiler = PerformanceProfiler(f"planning-{user_id}", enabled=self.enable_profiling)
+#         profiler = PerformanceProfiler(f"planning-{user_id}", enabled=self.enable_profiling)
         
-        try:
-            profiler.start_phase("websocket_accept")
-            await websocket.accept()
-            logger.info(f"Workout planning WebSocket connection accepted for user: {user_id}")
-            profiler.end_phase()
+#         try:
+#             profiler.start_phase("websocket_accept")
+#             await websocket.accept()
+#             logger.info(f"Workout planning WebSocket connection accepted for user: {user_id}")
+#             profiler.end_phase()
             
-            profiler.start_phase("connection_confirmation")
-            await websocket.send_json({
-                "type": "connection_status",
-                "data": "connected"
-            })
-            profiler.end_phase()
+#             profiler.start_phase("connection_confirmation")
+#             await websocket.send_json({
+#                 "type": "connection_status",
+#                 "data": "connected"
+#             })
+#             profiler.end_phase()
             
-            # Load planning context
-            profiler.start_phase("context_loading")
-            logger.info(f"Loading planning context for user: {user_id}")
-            planning_context = await self.load_planning_context(user_id, profiler)
-            profiler.end_phase(
-                has_profile=planning_context["user_profile"] is not None,
-                recent_workouts=planning_context["recent_workouts"]["patterns"].get("total_workouts", 0)
-            )
+#             # Load planning context
+#             profiler.start_phase("context_loading")
+#             logger.info(f"Loading planning context for user: {user_id}")
+#             planning_context = await self.load_planning_context(user_id, profiler)
+#             profiler.end_phase(
+#                 has_profile=planning_context["user_profile"] is not None,
+#                 recent_workouts=planning_context["recent_workouts"]["patterns"].get("total_workouts", 0)
+#             )
             
-            # Get or create planning chain
-            profiler.start_phase("chain_initialization")
-            chain = self.get_chain(user_id)
-            profiler.end_phase()
+#             # Get or create planning chain
+#             profiler.start_phase("chain_initialization")
+#             chain = self.get_chain(user_id)
+#             profiler.end_phase()
 
-            # Load user profile into chain
-            profiler.start_phase("user_profile_loading")
-            logger.info(f"Loading user profile for planning session: {user_id}")
-            profile_loaded = await chain.load_user_profile()
-            profiler.end_phase(profile_loaded=profile_loaded)
+#             # Load user profile into chain
+#             profiler.start_phase("user_profile_loading")
+#             logger.info(f"Loading user profile for planning session: {user_id}")
+#             profile_loaded = await chain.load_user_profile()
+#             profiler.end_phase(profile_loaded=profile_loaded)
             
-            if profile_loaded:
-                logger.info(f"User profile loaded successfully for planning: {user_id}")
-            else:
-                logger.info(f"No user profile available for planning: {user_id} - continuing with generic prompts")
+#             if profile_loaded:
+#                 logger.info(f"User profile loaded successfully for planning: {user_id}")
+#             else:
+#                 logger.info(f"No user profile available for planning: {user_id} - continuing with generic prompts")
 
-            # Load planning context into chain
-            profiler.start_phase("context_injection")
-            logger.info(f"Loading planning context into chain: {user_id}")
-            await chain.load_planning_context(planning_context)
+#             # Load planning context into chain
+#             profiler.start_phase("context_injection")
+#             logger.info(f"Loading planning context into chain: {user_id}")
+#             await chain.load_planning_context(planning_context)
             
-            # NEW: Explicitly load bundles (Analysis Pattern)
-            if planning_context.get("analysis_bundle"):
-                chain.load_bundles([planning_context["analysis_bundle"]])
-                logger.info(f"✅ Loaded analysis bundle via load_bundles() for user {user_id}")
+#             # NEW: Explicitly load bundles (Analysis Pattern)
+#             if planning_context.get("analysis_bundle"):
+#                 chain.load_bundles([planning_context["analysis_bundle"]])
+#                 logger.info(f"✅ Loaded analysis bundle via load_bundles() for user {user_id}")
             
-            profiler.end_phase()
+#             profiler.end_phase()
 
-            profiler.log_summary()
+#             profiler.log_summary()
 
-            # ✅ Track if we need to check for greeting on first message
-            first_message = True
+#             # ✅ Track if we need to check for greeting on first message
+#             first_message = True
 
-            # Process ongoing conversation messages
-            while True:
-                data = await websocket.receive_json()
+#             # Process ongoing conversation messages
+#             while True:
+#                 data = await websocket.receive_json()
                 
-                # Handle heartbeat
-                if data.get('type') == 'heartbeat':
-                    await websocket.send_json({
-                        "type": "heartbeat_ack",
-                        "timestamp": data.get('timestamp')
-                    })
-                    continue
+#                 # Handle heartbeat
+#                 if data.get('type') == 'heartbeat':
+#                     await websocket.send_json({
+#                         "type": "heartbeat_ack",
+#                         "timestamp": data.get('timestamp')
+#                     })
+#                     continue
                 
-                # Handle regular messages
-                if data.get('type') == 'message' or 'message' in data:
-                    message = data.get('message', '')
-                    conversation_history = data.get('conversation_history', [])
+#                 # Handle regular messages
+#                 if data.get('type') == 'message' or 'message' in data:
+#                     message = data.get('message', '')
+#                     conversation_history = data.get('conversation_history', [])
                     
-                    # ✅ On first message, check if we should send greeting
-                    if first_message:
-                        first_message = False
+#                     # ✅ On first message, check if we should send greeting
+#                     if first_message:
+#                         first_message = False
                         
-                        if len(conversation_history) == 0:
-                            # New conversation - send greeting FIRST
-                            logger.info("📝 New conversation (no history) - sending greeting before processing message")
+#                         if len(conversation_history) == 0:
+#                             # New conversation - send greeting FIRST
+#                             logger.info("📝 New conversation (no history) - sending greeting before processing message")
                             
-                            greeting_profiler = PerformanceProfiler(
-                                f"planning-{user_id}-greeting",
-                                enabled=self.enable_profiling
-                            )
-                            greeting_profiler.start_phase("llm_processing")
+#                             greeting_profiler = PerformanceProfiler(
+#                                 f"planning-{user_id}-greeting",
+#                                 enabled=self.enable_profiling
+#                             )
+#                             greeting_profiler.start_phase("llm_processing")
                             
-                            full_response_content = ""
-                            first_token = True
+#                             full_response_content = ""
+#                             first_token = True
                             
-                            async for response in chain.process_message(
-                                "Start workout planning conversation", 
-                                profiler=greeting_profiler
-                            ):
-                                if first_token and response.get("type") == "content":
-                                    greeting_profiler.end_phase()
-                                    greeting_profiler.start_phase("llm_streaming")
-                                    first_token = False
+#                             async for response in chain.process_message(
+#                                 "Start workout planning conversation", 
+#                                 profiler=greeting_profiler
+#                             ):
+#                                 if first_token and response.get("type") == "content":
+#                                     greeting_profiler.end_phase()
+#                                     greeting_profiler.start_phase("llm_streaming")
+#                                     first_token = False
                                 
-                                if response.get("type") == "workout_template_approved":
-                                    await websocket.send_json(response)
-                                    continue
+#                                 if response.get("type") == "workout_template_approved":
+#                                     await websocket.send_json(response)
+#                                     continue
                                     
-                                await websocket.send_json(response)
-                                if response.get("type") == "content":
-                                    full_response_content += response.get("data", "")
+#                                 await websocket.send_json(response)
+#                                 if response.get("type") == "content":
+#                                     full_response_content += response.get("data", "")
                             
-                            if not first_token:
-                                greeting_profiler.end_phase(
-                                    token_count=len(full_response_content.split()),
-                                    response_length=len(full_response_content)
-                                )
+#                             if not first_token:
+#                                 greeting_profiler.end_phase(
+#                                     token_count=len(full_response_content.split()),
+#                                     response_length=len(full_response_content)
+#                                 )
                             
-                            logger.info(f"Sent contextual planning greeting for user {user_id}")
-                            greeting_profiler.log_summary()
-                        else:
-                            # Reconnection
-                            logger.info(f"🔄 Reconnection detected ({len(conversation_history)} messages) - skipping greeting")
+#                             logger.info(f"Sent contextual planning greeting for user {user_id}")
+#                             greeting_profiler.log_summary()
+#                         else:
+#                             # Reconnection
+#                             logger.info(f"🔄 Reconnection detected ({len(conversation_history)} messages) - skipping greeting")
                     
 
-                            from langchain_core.messages import HumanMessage, AIMessage
+#                             from langchain_core.messages import HumanMessage, AIMessage
                             
-                            for hist_msg in conversation_history:
-                                sender = hist_msg.get('sender')
-                                content = hist_msg.get('content', '')
+#                             for hist_msg in conversation_history:
+#                                 sender = hist_msg.get('sender')
+#                                 content = hist_msg.get('content', '')
                                 
-                                if sender == 'user':
-                                    chain.messages.append(HumanMessage(content=content))
-                                elif sender == 'assistant':
-                                    chain.messages.append(AIMessage(content=content))
+#                                 if sender == 'user':
+#                                     chain.messages.append(HumanMessage(content=content))
+#                                 elif sender == 'assistant':
+#                                     chain.messages.append(AIMessage(content=content))
                             
-                            logger.info(f"✅ Restored {len(chain.messages)} messages to chain")
+#                             logger.info(f"✅ Restored {len(chain.messages)} messages to chain")
 
 
 
-                    # ✅ Skip processing if this was just the greeting trigger
-                    if message == "__GREETING_TRIGGER__":
-                        logger.info("Skipping greeting trigger message")
-                        continue
+#                     # ✅ Skip processing if this was just the greeting trigger
+#                     if message == "__GREETING_TRIGGER__":
+#                         logger.info("Skipping greeting trigger message")
+#                         continue
                     
-                    # Now process the actual user message
-                    message_profiler = PerformanceProfiler(
-                        f"planning-{user_id}-msg",
-                        enabled=self.enable_profiling
-                    )
+#                     # Now process the actual user message
+#                     message_profiler = PerformanceProfiler(
+#                         f"planning-{user_id}-msg",
+#                         enabled=self.enable_profiling
+#                     )
                     
-                    # Rate limit check
-                    message_profiler.start_phase("rate_limit_check")
-                    if user_id:
-                        from app.services.rate_limiter import rate_limiter
-                        rate_check = await rate_limiter.check_rate_limit(user_id, "message_send", "")
+#                     # Rate limit check
+#                     message_profiler.start_phase("rate_limit_check")
+#                     if user_id:
+#                         from app.services.rate_limiter import rate_limiter
+#                         rate_check = await rate_limiter.check_rate_limit(user_id, "message_send", "")
                         
-                        if not rate_check.get("success", False):
-                            logger.error(f"Rate limiter error: {rate_check.get('error')}")
-                            await websocket.send_json({
-                                "type": "error", 
-                                "data": {"message": "Rate limiting error"}
-                            })
-                            continue
+#                         if not rate_check.get("success", False):
+#                             logger.error(f"Rate limiter error: {rate_check.get('error')}")
+#                             await websocket.send_json({
+#                                 "type": "error", 
+#                                 "data": {"message": "Rate limiting error"}
+#                             })
+#                             continue
                             
-                        rate_limit_data = rate_check["data"]
-                        if not rate_limit_data["allowed"]:
-                            logger.info(f"Message rate limit exceeded for user {user_id}")
-                            await websocket.send_json({
-                                "type": "error",
-                                "data": {
-                                    "code": "rate_limit",
-                                    "message": f"Message rate limit exceeded. Try again at {rate_limit_data['reset_at']}",
-                                    "remaining": 0,
-                                    "reset_at": rate_limit_data["reset_at"]
-                                }
-                            })
-                            continue
-                    message_profiler.end_phase()
+#                         rate_limit_data = rate_check["data"]
+#                         if not rate_limit_data["allowed"]:
+#                             logger.info(f"Message rate limit exceeded for user {user_id}")
+#                             await websocket.send_json({
+#                                 "type": "error",
+#                                 "data": {
+#                                     "code": "rate_limit",
+#                                     "message": f"Message rate limit exceeded. Try again at {rate_limit_data['reset_at']}",
+#                                     "remaining": 0,
+#                                     "reset_at": rate_limit_data["reset_at"]
+#                                 }
+#                             })
+#                             continue
+#                     message_profiler.end_phase()
                     
-                    # Process message through chain with profiler
-                    message_profiler.start_phase("llm_processing")
-                    full_ai_response = ""
-                    template_approved = False
-                    first_token = True
-                    token_count = 0
+#                     # Process message through chain with profiler
+#                     message_profiler.start_phase("llm_processing")
+#                     full_ai_response = ""
+#                     template_approved = False
+#                     first_token = True
+#                     token_count = 0
                     
-                    async for response in chain.process_message(message, profiler=message_profiler):
-                        if first_token and response.get("type") == "content":
-                            message_profiler.end_phase()  # End llm_processing
-                            message_profiler.start_phase("llm_streaming")
-                            first_token = False
+#                     async for response in chain.process_message(message, profiler=message_profiler):
+#                         if first_token and response.get("type") == "content":
+#                             message_profiler.end_phase()  # End llm_processing
+#                             message_profiler.start_phase("llm_streaming")
+#                             first_token = False
                         
-                        # Handle template approval
-                        if response.get("type") == "workout_template_approved":
-                            logger.info(f"🎉 Workout template approved by user {user_id}")
-                            logger.info(f"Template data: {response.get('data', {}).get('name', 'Unknown')}")
+#                         # Handle template approval
+#                         if response.get("type") == "workout_template_approved":
+#                             logger.info(f"🎉 Workout template approved by user {user_id}")
+#                             logger.info(f"Template data: {response.get('data', {}).get('name', 'Unknown')}")
                             
-                            await websocket.send_json({
-                                "type": "workout_template_approved",
-                                "data": response.get("data")
-                            })
+#                             await websocket.send_json({
+#                                 "type": "workout_template_approved",
+#                                 "data": response.get("data")
+#                             })
                             
-                            template_approved = True
-                            continue
+#                             template_approved = True
+#                             continue
                             
-                        # Handle regular content
-                        await websocket.send_json(response)
-                        if response.get("type") == "content":
-                            content = response.get("data", "")
-                            full_ai_response += content
-                            token_count += len(content.split())
+#                         # Handle regular content
+#                         await websocket.send_json(response)
+#                         if response.get("type") == "content":
+#                             content = response.get("data", "")
+#                             full_ai_response += content
+#                             token_count += len(content.split())
                     
-                    if not first_token:
-                        message_profiler.end_phase(
-                            token_count=token_count,
-                            response_length=len(full_ai_response),
-                            template_approved=template_approved
-                        )
+#                     if not first_token:
+#                         message_profiler.end_phase(
+#                             token_count=token_count,
+#                             response_length=len(full_ai_response),
+#                             template_approved=template_approved
+#                         )
                     
-                    # Log message completion
-                    if template_approved:
-                        logger.info(f"✅ Message processed with template approval for user {user_id}")
-                    else:
-                        logger.info(f"✅ Message processed normally for user {user_id}")
+#                     # Log message completion
+#                     if template_approved:
+#                         logger.info(f"✅ Message processed with template approval for user {user_id}")
+#                     else:
+#                         logger.info(f"✅ Message processed normally for user {user_id}")
                         
-                        if chain.current_template:
-                            logger.info(f"📋 Current template: {chain.current_template.get('name', 'Unknown')}")
-                            logger.info(f"🎯 Template presented: {chain.template_presented}")
+#                         if chain.current_template:
+#                             logger.info(f"📋 Current template: {chain.current_template.get('name', 'Unknown')}")
+#                             logger.info(f"🎯 Template presented: {chain.template_presented}")
                     
-                    # Log message processing summary
-                    message_profiler.log_summary()
+#                     # Log message processing summary
+#                     message_profiler.log_summary()
                             
-        except google.api_core.exceptions.ResourceExhausted as e:
-            logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
-            try:
-                await websocket.send_json({
-                    "type": "error",
-                    "data": {
-                        "code": "rate_limit",
-                        "message": f"AI service rate limit exceeded. Please try again later.",
-                        "retry_after": 60
-                    }
-                })
-            except Exception:
-                logger.error("Failed to send rate limit error response")
+#         except google.api_core.exceptions.ResourceExhausted as e:
+#             logger.error(f"Vertex AI rate limit exceeded: {str(e)}")
+#             try:
+#                 await websocket.send_json({
+#                     "type": "error",
+#                     "data": {
+#                         "code": "rate_limit",
+#                         "message": f"AI service rate limit exceeded. Please try again later.",
+#                         "retry_after": 60
+#                     }
+#                 })
+#             except Exception:
+#                 logger.error("Failed to send rate limit error response")
         
-        except WebSocketDisconnect as e:
-            # Normal closure (1000) or client-initiated close (1001) are expected
-            if e.code in [1000, 1001]:
-                logger.info(f"WebSocket closed normally: code={e.code}, reason={e.reason}")
-            else:
-                logger.warning(f"WebSocket disconnected unexpectedly: code={e.code}, reason={e.reason}")
+#         except WebSocketDisconnect as e:
+#             # Normal closure (1000) or client-initiated close (1001) are expected
+#             if e.code in [1000, 1001]:
+#                 logger.info(f"WebSocket closed normally: code={e.code}, reason={e.reason}")
+#             else:
+#                 logger.warning(f"WebSocket disconnected unexpectedly: code={e.code}, reason={e.reason}")
                 
-        except Exception as e:
-            logger.error(f"Error in planning websocket: {str(e)}", exc_info=True)
-            try:
-                await websocket.send_json({
-                    "type": "error",
-                    "data": {
-                        "message": f"Connection error: {str(e)}"
-                    }
-                })
-                await websocket.close(code=1011)
-            except Exception:
-                logger.error("Failed to send error response or close websocket")
+#         except Exception as e:
+#             logger.error(f"Error in planning websocket: {str(e)}", exc_info=True)
+#             try:
+#                 await websocket.send_json({
+#                     "type": "error",
+#                     "data": {
+#                         "message": f"Connection error: {str(e)}"
+#                     }
+#                 })
+#                 await websocket.close(code=1011)
+#             except Exception:
+#                 logger.error("Failed to send error response or close websocket")
 
-    def get_chain_state(self, user_id: str) -> dict:
-        """Get current state of planning chain for debugging/monitoring"""
-        if user_id in self._conversation_chains:
-            chain = self._conversation_chains[user_id]
-            return {
-                "user_id": user_id,
-                "messages_count": len(chain.messages),
-                "has_template": chain.current_template is not None,
-                "template_presented": chain.template_presented,
-                "template_name": chain.current_template.get('name') if chain.current_template else None,
-                "has_sentiment_analyzer": chain.sentiment_analyzer is not None,
-                "has_user_profile": chain._user_profile is not None,
-                "recent_workouts_count": chain._recent_workouts['patterns'].get('total_workouts', 0)
-            }
-        return {"error": "No chain found for user"}
+#     def get_chain_state(self, user_id: str) -> dict:
+#         """Get current state of planning chain for debugging/monitoring"""
+#         if user_id in self._conversation_chains:
+#             chain = self._conversation_chains[user_id]
+#             return {
+#                 "user_id": user_id,
+#                 "messages_count": len(chain.messages),
+#                 "has_template": chain.current_template is not None,
+#                 "template_presented": chain.template_presented,
+#                 "template_name": chain.current_template.get('name') if chain.current_template else None,
+#                 "has_sentiment_analyzer": chain.sentiment_analyzer is not None,
+#                 "has_user_profile": chain._user_profile is not None,
+#                 "recent_workouts_count": chain._recent_workouts['patterns'].get('total_workouts', 0)
+#             }
+#         return {"error": "No chain found for user"}
 
-    def reset_chain(self, user_id: str) -> bool:
-        """Reset planning chain for user (useful for testing or fresh starts)"""
-        try:
-            if user_id in self._conversation_chains:
-                del self._conversation_chains[user_id]
-                logger.info(f"Reset planning chain for user: {user_id}")
-                return True
-            return False
-        except Exception as e:
-            logger.error(f"Error resetting chain for user {user_id}: {str(e)}")
-            return False
+#     def reset_chain(self, user_id: str) -> bool:
+#         """Reset planning chain for user (useful for testing or fresh starts)"""
+#         try:
+#             if user_id in self._conversation_chains:
+#                 del self._conversation_chains[user_id]
+#                 logger.info(f"Reset planning chain for user: {user_id}")
+#                 return True
+#             return False
+#         except Exception as e:
+#             logger.error(f"Error resetting chain for user {user_id}: {str(e)}")
+#             return False
 
-    async def test_approval_detection(self, user_id: str, test_message: str) -> dict:
-        """Test method for approval detection (development/debugging use)"""
-        try:
-            chain = self.get_chain(user_id)
+#     async def test_approval_detection(self, user_id: str, test_message: str) -> dict:
+#         """Test method for approval detection (development/debugging use)"""
+#         try:
+#             chain = self.get_chain(user_id)
             
-            if not chain.current_template or not chain.template_presented:
-                return {
-                    "error": "No template presented for testing",
-                    "current_template": chain.current_template is not None,
-                    "template_presented": chain.template_presented
-                }
+#             if not chain.current_template or not chain.template_presented:
+#                 return {
+#                     "error": "No template presented for testing",
+#                     "current_template": chain.current_template is not None,
+#                     "template_presented": chain.template_presented
+#                 }
             
-            # Test both sentiment analyzer and fallback
-            sentiment_result = None
-            if chain.sentiment_analyzer:
-                sentiment_result = await chain.sentiment_analyzer.analyze_approval(
-                    message=test_message,
-                    messages=chain.messages,
-                    template_data=chain.current_template
-                )
+#             # Test both sentiment analyzer and fallback
+#             sentiment_result = None
+#             if chain.sentiment_analyzer:
+#                 sentiment_result = await chain.sentiment_analyzer.analyze_approval(
+#                     message=test_message,
+#                     messages=chain.messages,
+#                     template_data=chain.current_template
+#                 )
             
-            fallback_result = await chain._check_for_approval(test_message)
+#             fallback_result = await chain._check_for_approval(test_message)
             
-            return {
-                "test_message": test_message,
-                "sentiment_analyzer_result": sentiment_result,
-                "fallback_result": fallback_result,
-                "template_name": chain.current_template.get('name') if chain.current_template else None,
-                "message_history_count": len(chain.messages)
-            }
+#             return {
+#                 "test_message": test_message,
+#                 "sentiment_analyzer_result": sentiment_result,
+#                 "fallback_result": fallback_result,
+#                 "template_name": chain.current_template.get('name') if chain.current_template else None,
+#                 "message_history_count": len(chain.messages)
+#             }
             
-        except Exception as e:
-            logger.error(f"Error in approval detection test: {str(e)}")
-            return {"error": str(e)}
+#         except Exception as e:
+#             logger.error(f"Error in approval detection test: {str(e)}")
+#             return {"error": str(e)}

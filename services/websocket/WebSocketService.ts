@@ -47,6 +47,7 @@ export class WebSocketService {
   // Timers
   private inactivityTimer: ReturnType<typeof setTimeout> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null; // ADD THIS LINE
 
   // Retry logic
   private retryAttempts = 0;
@@ -237,6 +238,9 @@ export class WebSocketService {
         this.setConnectionState("connected");
         this.retryAttempts = 0; // Reset retry counter on successful connection
         this.resetInactivityTimer();
+
+        // Start heartbeat
+        this.startHeartbeat(); // ADD THIS LINE
 
         console.log(`[WSService] Connected to endpoint: ${connectionKey}`);
         resolve();
@@ -488,6 +492,34 @@ export class WebSocketService {
   }
 
   /**
+   * Start sending heartbeat messages to server
+   */
+  private startHeartbeat(): void {
+    // Clear any existing interval
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+
+    // Send heartbeat every 20 seconds
+    this.heartbeatInterval = setInterval(() => {
+      if (this.isConnected()) {
+        try {
+          this.socket!.send(
+            JSON.stringify({
+              type: "heartbeat",
+              timestamp: Date.now(),
+            })
+          );
+        } catch (error) {
+          console.error("[WSService] Failed to send heartbeat:", error);
+        }
+      }
+    }, 20000); // 20 seconds
+
+    console.log("[WSService] Heartbeat started (20s interval)");
+  }
+
+  /**
    * Set disconnect reason (call before disconnect() for intentional disconnects)
    */
   setDisconnectReason(reason: string): void {
@@ -581,6 +613,12 @@ export class WebSocketService {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
+    }
+
+    // ADD THESE LINES:
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
     }
 
     // Close socket

@@ -2,7 +2,7 @@ import logging
 import json
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from langchain_google_vertexai import ChatVertexAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
@@ -31,11 +31,12 @@ class MemoryExtractionService:
         self.message_service = MessageService()
         self.user_profile_service = UserProfileService()
         
-        self.llm = ChatVertexAI(
-            model="gemini-3-flash",
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-3-flash-preview",
             temperature=0,
             credentials=credentials,
-            project=project_id
+            project=project_id,
+            vertexai=True  # Explicit Vertex AI backend selection
         )
         
         self.parser = JsonOutputParser(pydantic_object=MemoryUpdate)

@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
-from langchain_google_vertexai import ChatVertexAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.tools.exercise_tool import get_exercises_by_muscle_groups, get_cardio_exercises
 
@@ -15,11 +15,12 @@ class ToolSelector:
     
     def __init__(self, credentials=None, project_id=None):
         # Initialize the fast model
-        self.model = ChatVertexAI(
+        self.model = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash-lite",
             temperature=0,
             credentials=credentials,
-            project=project_id
+            project=project_id,
+            vertexai=True
         )
         
         # Bind tools to the model

@@ -193,82 +193,72 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       return;
     }
 
-    // Active conversation - fetch contextual actions
-    if (activeConversationId) {
-      const messages = useMessageStore
-        .getState()
-        .messages.get(activeConversationId);
-      if (messages && messages.length > 0) {
-        set({ isLoadingActions: true });
+    // Returning user - fetch personalized actions (with or without context)
+    set({ isLoadingActions: true });
 
-        try {
-          if (!userProfile?.auth_user_uuid) {
-            throw new Error("No auth user UUID");
-          }
+    try {
+      if (!userProfile?.auth_user_uuid) {
+        throw new Error("No auth user UUID");
+      }
 
-          const recentMessages = messages.slice(-10).map((m) => ({
+      let recentMessages:
+        | Array<{ sender: "user" | "assistant"; content: string }>
+        | undefined;
+
+      if (activeConversationId) {
+        const messages = useMessageStore
+          .getState()
+          .messages.get(activeConversationId);
+        if (messages && messages.length > 0) {
+          recentMessages = messages.slice(-10).map((m) => ({
             sender: m.sender,
             content: m.content,
           }));
-
-          const fetchedActions = await quickChatService.fetchQuickActions(
-            userProfile.auth_user_uuid,
-            recentMessages
-          );
-
-          set({
-            actions:
-              fetchedActions.length > 0
-                ? fetchedActions
-                : [
-                    {
-                      label: "Track workout",
-                      message: "I want to track my workout",
-                    },
-                    {
-                      label: "Show progress",
-                      message: "Can you show me my recent progress?",
-                    },
-                    {
-                      label: "Plan workout",
-                      message: "Help me plan my next workout",
-                    },
-                  ],
-            isLoadingActions: false,
-          });
-        } catch (error) {
-          console.error("[ChatStore] Failed to fetch actions:", error);
-          set({
-            actions: [
-              { label: "Track workout", message: "I want to track my workout" },
-              {
-                label: "Show progress",
-                message: "Can you show me my recent progress?",
-              },
-              {
-                label: "Plan workout",
-                message: "Help me plan my next workout",
-              },
-            ],
-            isLoadingActions: false,
-          });
         }
-        return;
       }
-    }
 
-    // Default actions
-    set({
-      actions: [
-        { label: "Track workout", message: "I want to track my workout" },
-        {
-          label: "Show progress",
-          message: "Can you show me my recent progress?",
-        },
-        { label: "Plan workout", message: "Help me plan my next workout" },
-      ],
-      isLoadingActions: false,
-    });
+      const fetchedActions = await quickChatService.fetchQuickActions(
+        userProfile.auth_user_uuid,
+        recentMessages
+      );
+
+      set({
+        actions:
+          fetchedActions.length > 0
+            ? fetchedActions
+            : [
+                {
+                  label: "Track workout",
+                  message: "I want to track my workout",
+                },
+                {
+                  label: "Show progress",
+                  message: "Can you show me my recent progress?",
+                },
+                {
+                  label: "Plan workout",
+                  message: "Help me plan my next workout",
+                },
+              ],
+        isLoadingActions: false,
+      });
+    } catch (error) {
+      console.error("[ChatStore] Failed to fetch actions:", error);
+      set({
+        actions: [
+          { label: "Track workout", message: "I want to track my workout" },
+          {
+            label: "Show progress",
+            message: "Can you show me my recent progress?",
+          },
+          {
+            label: "Plan workout",
+            message: "Help me plan my next workout",
+          },
+        ],
+        isLoadingActions: false,
+      });
+    }
   },
 
   refreshQuickChat: () => {

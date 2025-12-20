@@ -3,10 +3,8 @@ import json
 import re
 import asyncio
 from typing import Dict, Any, List, AsyncGenerator
-from fastapi import WebSocket
-from starlette.websockets import WebSocketDisconnect
 import google.api_core.exceptions
-from langchain_google_vertexai import ChatVertexAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
 from app.services.context.shared_context_loader import SharedContextLoader
@@ -14,45 +12,17 @@ from app.services.llm.tool_selector import ToolSelector
 from app.services.db.message_service import MessageService
 from app.core.prompts.unified_coach import get_unified_coach_prompt
 from app.tools.exercise_tool import get_exercises_by_muscle_groups, get_cardio_exercises
-from app.core.utils.websocket_utils import trigger_memory_extraction
-
 
 logger = logging.getLogger(__name__)
 
 
-async def stream_text_gradually(
-    text: str, 
-    in_code_block: bool = False
-) -> AsyncGenerator[tuple[str, bool], None]:
-    """
-    Stream text with adaptive speed based on content type.
-    Returns tuple of (chunk, in_code_block_state)
-    """
-    words = text.split(' ')
-    current_in_block = in_code_block
-    
-    for i in range(0, len(words), 2):
-        chunk = words[i]
-        if i + 1 < len(words):
-            chunk += ' ' + words[i + 1]
-            if i + 2 < len(words):
-                chunk += ' '
-        
-        # Track backticks to detect code blocks
-        backtick_count = chunk.count('```')
-        if backtick_count > 0:
-            current_in_block = not current_in_block
-        
-        yield chunk, current_in_block
-        
-        # Speed: 10ms normal, 2ms in code blocks (5x faster)
-        delay = 0 if current_in_block else 0
-        await asyncio.sleep(delay)
-
 class UnifiedCoachService:
     """
     Unified coaching service that handles all coaching modes
-    (planning, analysis, tracking) through a single conversation interface.
+    (planning, analysis, tracking) through message processing.
+    
+    Service is stateful per-connection - initialized once with context,
+    then processes messages using that context.
     """
     
     def __init__(self, credentials=None, project_id=None):
@@ -60,12 +30,13 @@ class UnifiedCoachService:
         self.project_id = project_id
         
         # Main response model (Gemini 2.5 Flash)
-        self.response_model = ChatVertexAI(
+        self.response_model = ChatGoogleGenerativeAI(
             model="gemini-2.5-flash",
             streaming=True,
             temperature=0,
             credentials=credentials,
-            project=project_id
+            project=project_id,
+            vertexai=True  # Explicit Vertex AI backend selection
         )
         
         # Shared services
@@ -78,411 +49,157 @@ class UnifiedCoachService:
             "get_exercises_by_muscle_groups": get_exercises_by_muscle_groups,
             "get_cardio_exercises": get_cardio_exercises
         }
-    
-
-
-    async def process_websocket(self, websocket: WebSocket, conversation_id: str, user_id: str):
-        """Main WebSocket processing loop"""
-        try:
-            await websocket.accept()
-            logger.info(f"🔌 Unified coach connected for user: {user_id}")
-            
-            await websocket.send_json({
-                "type": "connection_status",
-                "data": "connected"
-            })
-            
-            # Load conversation context
-            logger.info(f"📚 Loading conversation context for: {conversation_id}")
-            from app.services.context.conversation_context_service import conversation_context_service
-            context = await conversation_context_service.load_context_admin(conversation_id, user_id)
-            
-            # Load shared context ONCE
-            logger.info(f"📦 Loading shared context for user: {user_id}")
-            shared_context = await self.context_loader.load_all(user_id)
-            formatted_context = self._format_shared_context(shared_context)
-            logger.info(f"✅ Context formatted and ready")
-            
-            # Initialize message history
-            message_history = []
-            for msg in context.messages:
-                role = "user" if msg.type == "human" else "assistant"
-                message_history.append({
-                    "role": role,
-                    "content": msg.content
-                })
-            
-            logger.info(f"✅ Loaded {len(message_history)} messages from DB")
-            
-            # Initialize streaming task tracker
-            current_stream_task = None
-            
-            # AUTO-RESPONSE: Handle pending user message
-            if message_history and message_history[-1]["role"] == "user":
-                last_user_msg = message_history[-1]["content"]
-                logger.info(f"🚀 Found pending user message - Auto-responding")
-                
-                message = last_user_msg
-                full_response = ""
-                
-                # Execute tools
-                tool_calls = await self.tool_selector.select_tools(message, message_history[:-1])
-                tool_results = {}
-                if tool_calls:
-                    logger.info(f"🔧 Executing {len(tool_calls)} tools")
-                    tool_tasks = [self._execute_tool(tc["name"], tc["args"]) for tc in tool_calls]
-                    results = await asyncio.gather(*tool_tasks, return_exceptions=True)
-                    for tc, result in zip(tool_calls, results):
-                        if not isinstance(result, Exception):
-                            tool_results[tc['name']] = result
-                
-                # Build prompt and stream
-                prompt = self._build_prompt(
-                    message=message,
-                    message_history=message_history[:-1],
-                    formatted_context=formatted_context,
-                    tool_results=tool_results
-                )
-                
-                logger.info("🤖 Generating response for pending message...")
-                
-                async def stream_pending():
-                    nonlocal full_response
-                    in_code_block = False
-                    async for chunk in self.response_model.astream(prompt):
-                        content = chunk.content
-                        if content:
-                            full_response += content
-                            async for word, in_code_block in stream_text_gradually(content, in_code_block):
-                                await websocket.send_json({
-                                    "type": "content",
-                                    "data": word
-                                })
-                
-                current_stream_task = asyncio.create_task(stream_pending())
-                
-                try:
-                    await current_stream_task
-                    
-                    if not current_stream_task.cancelled():
-                        components = self._extract_json_components(full_response)
-                        for component in components:
-                            await websocket.send_json(component)
-                            
-                        await websocket.send_json({
-                            "type": "complete",
-                            "data": {"length": len(full_response)}
-                        })
-                        
-                        if full_response:
-                            await self.message_service.save_server_message(
-                                conversation_id=conversation_id,
-                                content=full_response,
-                                sender="assistant"
-                            )
-                        
-                        message_history.append({
-                            "role": "assistant",
-                            "content": full_response
-                        })
-                        
-                        if len(message_history) > 10:
-                            message_history = message_history[-10:]
-                            
-                except asyncio.CancelledError:
-                    logger.info("Pending stream cancelled")
-                except Exception as e:
-                    logger.error(f"Error processing pending message: {e}")
-                    await websocket.send_json({"type": "error", "data": {"message": str(e)}})
-                finally:
-                    current_stream_task = None
-            
-            # Main message processing loop
-            while True:
-                try:
-                    # Create receive task
-                    receive_task = asyncio.create_task(websocket.receive_json())
-                    
-                    # If stream is active, race it against incoming messages
-                    if current_stream_task:
-                        try:
-                            done, pending = await asyncio.wait(
-                                {current_stream_task, receive_task},
-                                return_when=asyncio.FIRST_COMPLETED
-                            )
-                            
-                            stream_finished = current_stream_task in done
-                            
-                            if stream_finished:
-                                # Stream completed normally
-                                if not current_stream_task.cancelled():
-                                    # Extract and send components
-                                    components = self._extract_json_components(full_response)
-                                    for component in components:
-                                        await websocket.send_json(component)
-                                        logger.info(f"📊 Sent component: {component['type']}")
-                                    
-                                    # Send completion
-                                    await websocket.send_json({
-                                        "type": "complete",
-                                        "data": {"length": len(full_response)}
-                                    })
-                                    
-                                    # Save to DB
-                                    if full_response:
-                                        ai_msg = await self.message_service.save_server_message(
-                                            conversation_id=conversation_id,
-                                            content=full_response,
-                                            sender="assistant"
-                                        )
-                                        if ai_msg.get('success') != False:
-                                            logger.info(f"💾 Saved AI response with ID: {ai_msg.get('id')}")
-                                    
-                                    # Update history
-                                    message_history.append({"role": "user", "content": message})
-                                    message_history.append({"role": "assistant", "content": full_response})
-                                    
-                                    if len(message_history) > 10:
-                                        message_history = message_history[-10:]
-                                    
-                                    logger.info(f"✅ Message processed successfully")
-                                
-                                # Cancel pending receive
-                                try:
-                                    receive_task.cancel()
-                                    await receive_task
-                                except asyncio.CancelledError:
-                                    pass
-                                
-                                current_stream_task = None
-                                continue
-                            
-                            else:
-                                # Message arrived during stream
-                                data = receive_task.result()
-                                
-                                if data.get('type') == 'cancel':
-                                    cancel_reason = data.get('reason', 'user_requested')
-                                    logger.info(f"🛑 Cancel during stream: {cancel_reason}")
-                                    
-                                    # Cancel stream
-                                    current_stream_task.cancel()
-                                    try:
-                                        await current_stream_task
-                                    except asyncio.CancelledError:
-                                        pass
-                                    
-                                    # Save partial if user requested
-                                    if cancel_reason == 'user_requested' and full_response.strip():
-                                        logger.info(f"💾 Saving partial response ({len(full_response)} chars)")
-                                        await self.message_service.save_server_message(
-                                            conversation_id=conversation_id,
-                                            content=full_response + " [cancelled]",
-                                            sender="assistant"
-                                        )
-                                        
-                                        message_history.append({"role": "user", "content": message})
-                                        message_history.append({"role": "assistant", "content": full_response + " [cancelled]"})
-                                        
-                                        if len(message_history) > 10:
-                                            message_history = message_history[-10:]
-                                    else:
-                                        logger.info("🗑️ Discarding partial response")
-                                    
-                                    # Send ack
-                                    await websocket.send_json({
-                                        "type": "cancelled",
-                                        "reason": cancel_reason
-                                    })
-                                    
-                                    current_stream_task = None
-                                    continue
-                                
-                                else:
-                                    # Other message during stream
-                                    logger.warning(f"Unexpected message during stream: {data.get('type')}")
-                                    current_stream_task.cancel()
-                                    current_stream_task = None
-                                    # Fall through to handle message
-                        
-                        except WebSocketDisconnect:
-                            logger.info("WebSocket disconnected during stream")
-                            if current_stream_task:
-                                current_stream_task.cancel()
-                            break
-                        
-                        except asyncio.CancelledError:
-                            logger.info("Stream cancelled")
-                            current_stream_task = None
-                            try:
-                                receive_task.cancel()
-                                await receive_task
-                            except asyncio.CancelledError:
-                                pass
-                            continue
-                        
-                        except google.api_core.exceptions.ResourceExhausted as e:
-                            logger.error(f"Vertex AI rate limit: {str(e)}")
-                            await websocket.send_json({
-                                "type": "error",
-                                "data": {
-                                    "code": "rate_limit",
-                                    "message": "AI service rate limit exceeded.",
-                                    "retry_after": 60
-                                }
-                            })
-                            current_stream_task = None
-                            try:
-                                receive_task.cancel()
-                                await receive_task
-                            except asyncio.CancelledError:
-                                pass
-                            continue
-                    
-                    else:
-                        # No active stream - wait for message
-                        try:
-                            data = await receive_task
-                        except WebSocketDisconnect:
-                            logger.info("WebSocket disconnected")
-                            break
-                        except Exception as e:
-                            error_msg = str(e).lower()
-                            if "disconnect" in error_msg:
-                                logger.info("Disconnect detected")
-                                break
-                            logger.error(f"Receive error: {str(e)}")
-                            continue
-                    
-                    # Handle heartbeat
-                    if data.get('type') == 'heartbeat':
-                        await websocket.send_json({
-                            "type": "heartbeat_ack",
-                            "timestamp": data.get('timestamp')
-                        })
-                        continue
-                    
-                    # Handle regular messages
-                    message = data.get('message', '')
-                    if not message:
-                        continue
-                    
-                    logger.info(f"📨 Processing message: {message[:80]}...")
-                    
-                    # Save user message
-                    user_msg = await self.message_service.save_server_message(
-                        conversation_id=conversation_id,
-                        content=message,
-                        sender="user"
-                    )
-                    if user_msg.get('success') != False:
-                        logger.info(f"💾 Saved user message")
-                    
-                    # Tool selection
-                    tool_calls = await self.tool_selector.select_tools(message, message_history)
-                    tool_results = {}
-                    if tool_calls:
-                        logger.info(f"🔧 Executing {len(tool_calls)} tools")
-                        tool_tasks = [self._execute_tool(tc["name"], tc["args"]) for tc in tool_calls]
-                        results = await asyncio.gather(*tool_tasks, return_exceptions=True)
-                        
-                        for tc, result in zip(tool_calls, results):
-                            if not isinstance(result, Exception):
-                                tool_results[tc["name"]] = result
-                    else:
-                        logger.info("✨ No tools needed")
-                    
-                    # Build prompt
-                    prompt = self._build_prompt(
-                        message=message,
-                        message_history=message_history,
-                        formatted_context=formatted_context,
-                        tool_results=tool_results
-                    )
-                    
-                    # Start streaming
-                    logger.info("🤖 Generating response...")
-                    full_response = ""
-                    
-                    async def stream_and_process():
-                        nonlocal full_response
-                        in_code_block = False
-                        
-                        async for chunk in self.response_model.astream(prompt):
-                            content = chunk.content
-                            if content:
-                                full_response += content
-                                async for word, in_code_block in stream_text_gradually(content, in_code_block):
-                                    await websocket.send_json({
-                                        "type": "content",
-                                        "data": word
-                                    })
-                    
-                    current_stream_task = asyncio.create_task(stream_and_process())
-                
-                except WebSocketDisconnect:
-                    logger.info("WebSocket disconnected in main loop")
-                    if current_stream_task:
-                        current_stream_task.cancel()
-                    break
-                
-                except Exception as e:
-                    error_msg = str(e).lower()
-                    if "disconnect" in error_msg:
-                        logger.info(f"Disconnect via exception: {e}")
-                        if current_stream_task:
-                            current_stream_task.cancel()
-                        break
-                    logger.error(f"Loop error: {str(e)}", exc_info=True)
-                    break
         
-        except WebSocketDisconnect as e:
-            logger.info(f"WebSocket closed: code={e.code}")
-            await trigger_memory_extraction(user_id, conversation_id)
-                
-        except Exception as e:
-            logger.error(f"Error in unified coach: {str(e)}", exc_info=True)
-            try:
-                await websocket.send_json({
-                    "type": "error",
-                    "data": {"message": str(e)}
-                })
-            except:
-                pass
+        # State (initialized per connection)
+        self.conversation_id: str = ""
+        self.user_id: str = ""
+        self.message_history: List[Dict] = []
+        self.formatted_context: Dict[str, str] = {}
+        self.current_response: str = ""  # For tracking partial responses
+        self.initialized: bool = False
+    
+    async def initialize(self, conversation_id: str, user_id: str) -> None:
+        """
+        Initialize service with conversation context.
+        Call once per WebSocket connection before processing messages.
+        
+        Args:
+            conversation_id: Conversation ID
+            user_id: User ID
+        """
+        logger.info(f"🔄 Initializing service for conversation: {conversation_id}")
+        
+        self.conversation_id = conversation_id
+        self.user_id = user_id
+        
+        # Load conversation context
+        from app.services.context.conversation_context_service import conversation_context_service
+        context = await conversation_context_service.load_context_admin(conversation_id, user_id)
+        
+        # Load shared context (profile, memory, workout history, strength data)
+        shared_context = await self.context_loader.load_all(user_id)
+        self.formatted_context = self._format_shared_context(shared_context)
+        
+        # Build message history from DB
+        self.message_history = []
+        for msg in context.messages:
+            role = "user" if msg.type == "human" else "assistant"
+            self.message_history.append({
+                "role": role,
+                "content": msg.content
+            })
+        
+        # Keep only last 10 messages for context
+        if len(self.message_history) > 10:
+            self.message_history = self.message_history[-10:]
+        
+        logger.info(f"✅ Service initialized - {len(self.message_history)} messages loaded")
+        self.initialized = True
+    
+    async def process_message(self, message: str) -> AsyncGenerator[str, None]:
+        """
+        Process a single user message and yield response chunks.
+        
+        Args:
+            message: User's message text
             
-            await trigger_memory_extraction(user_id, conversation_id)
-
-
-        except WebSocketDisconnect as e:
-            if e.code in [1000, 1001]:
-                logger.info(f"WebSocket closed normally: code={e.code}")
-            else:
-                logger.warning(f"WebSocket disconnected unexpectedly: code={e.code}")
+        Yields:
+            str: Response text chunks
+        """
+        if not self.initialized:
+            raise RuntimeError("Service not initialized - call initialize() first")
+        
+        logger.info(f"🤖 Processing message: {message[:80]}...")
+        
+        # Reset current response tracker
+        self.current_response = ""
+        
+        # Add user message to history
+        self.message_history.append({"role": "user", "content": message})
+        
+        # Keep history manageable
+        if len(self.message_history) > 10:
+            self.message_history = self.message_history[-10:]
+        
+        # Select and execute tools
+        tool_calls = await self.tool_selector.select_tools(message, self.message_history[:-1])
+        tool_results = {}
+        
+        if tool_calls:
+            logger.info(f"🔧 Executing {len(tool_calls)} tools")
+            tool_tasks = [self._execute_tool(tc["name"], tc["args"]) for tc in tool_calls]
+            results = await asyncio.gather(*tool_tasks, return_exceptions=True)
             
-            await trigger_memory_extraction(user_id, conversation_id)
-                
-        except Exception as e:
-            logger.error(f"Error in unified coach: {str(e)}", exc_info=True)
-            try:
-                await websocket.send_json({
-                    "type": "error",
-                    "data": {"message": str(e)}
-                })
-            except:
-                pass
-            
-            await trigger_memory_extraction(user_id, conversation_id)
-
-
+            for tc, result in zip(tool_calls, results):
+                if not isinstance(result, Exception):
+                    tool_results[tc["name"]] = result
+        else:
+            logger.info("✨ No tools needed")
+        
+        # Build prompt
+        prompt = self._build_prompt(
+            message=message,
+            message_history=self.message_history[:-1],  # Exclude current message
+            formatted_context=self.formatted_context,
+            tool_results=tool_results
+        )
+        
+        # Stream response
+        logger.info("📤 Streaming LLM response...")
+        
+        async for chunk in self.response_model.astream(prompt):
+            content = chunk.content
+            if content:
+                self.current_response += content
+                yield content
+        
+        # Add assistant response to history
+        self.message_history.append({"role": "assistant", "content": self.current_response})
+        
+        # Keep history manageable
+        if len(self.message_history) > 10:
+            self.message_history = self.message_history[-10:]
+        
+        logger.info(f"✅ Response complete ({len(self.current_response)} chars)")
+    
+    def get_current_response(self) -> str:
+        """Get the current partial response (for cancellation handling)"""
+        return self.current_response
+    
+    def reset_current_response(self) -> None:
+        """Reset the current response tracker"""
+        self.current_response = ""
+    
+    def add_to_history(self, role: str, content: str) -> None:
+        """
+        Add a message to history (used for cancelled responses).
+        
+        Args:
+            role: 'user' or 'assistant'
+            content: Message content
+        """
+        self.message_history.append({"role": role, "content": content})
+        
+        if len(self.message_history) > 10:
+            self.message_history = self.message_history[-10:]
+    
     async def _execute_tool(self, tool_name: str, args: Dict) -> Any:
-        """Execute a specific tool with the given arguments"""
+        """
+        Execute a specific tool with the given arguments.
+        
+        Args:
+            tool_name: Name of the tool to execute
+            args: Tool arguments
+            
+        Returns:
+            Tool execution result
+        """
         if tool_name not in self.tool_executors:
             logger.error(f"Unknown tool: {tool_name}")
             return []
         
         try:
             tool_func = self.tool_executors[tool_name]
-            # LangChain tools are called with ainvoke
             result = await tool_func.ainvoke(args)
             return result
         except Exception as e:
@@ -491,8 +208,14 @@ class UnifiedCoachService:
     
     def _format_shared_context(self, shared_context: Dict) -> Dict[str, str]:
         """
-        Format all shared context into strings ONCE at connection init.
+        Format all shared context into strings ONCE at initialization.
         Returns dict of pre-formatted strings to reuse on every message.
+        
+        Args:
+            shared_context: Raw context from SharedContextLoader
+            
+        Returns:
+            Dict with formatted context strings
         """
         bundle = shared_context.get("bundle")
         profile = shared_context.get("profile")
@@ -636,8 +359,18 @@ class UnifiedCoachService:
         formatted_context: Dict[str, str],
         tool_results: Dict
     ) -> List:
-        """Build the complete prompt with PRE-FORMATTED context and tool results"""
+        """
+        Build the complete prompt with pre-formatted context and tool results.
         
+        Args:
+            message: Current user message
+            message_history: List of previous messages
+            formatted_context: Pre-formatted context strings
+            tool_results: Results from tool execution
+            
+        Returns:
+            List of LangChain message objects
+        """
         # Get base prompt
         system_prompt = get_unified_coach_prompt()
         
@@ -691,20 +424,6 @@ class UnifiedCoachService:
         
         return messages
 
-        messages = [SystemMessage(content=system_prompt)]
-        
-        # Add message history
-        for msg in message_history:
-            if msg["role"] == "user":
-                messages.append(HumanMessage(content=msg["content"]))
-            else:
-                messages.append(AIMessage(content=msg["content"]))
-        
-        # Add current message
-        messages.append(HumanMessage(content=message))
-        
-        return messages
-    
     def _extract_json_components(self, response: str) -> List[Dict]:
         """Extract JSON code blocks from response (workout_template, chart_data, etc.)"""
         components = []

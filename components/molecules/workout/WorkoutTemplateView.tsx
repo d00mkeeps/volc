@@ -61,7 +61,6 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
-          <AppIcon name="Info" size={16} color="$textSoft" />
         </TouchableOpacity>
         <Text size="small" color="$textSoft">
           {setCount} {setCount === 1 ? "set" : "sets"} • {repRange}
