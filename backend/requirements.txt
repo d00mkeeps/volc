@@ -14,6 +14,7 @@ supabase==2.17.0
 
 # AI/LLM
 anthropic==0.60.0
+langchain_google_genai==4.1.2
 langchain-anthropic==0.3.18
 langchain-core==0.3.78
 langchain-google-vertexai==2.0.27
