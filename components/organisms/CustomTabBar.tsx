@@ -30,7 +30,12 @@ export default function CustomTabBar({
     >
       <BlurView intensity={80} tint={colorScheme === "dark" ? "dark" : "light"}>
         {/* Tabs Row */}
-        <XStack justifyContent="space-around" alignItems="center" height={24}>
+        <XStack
+          justifyContent="space-around"
+          alignItems="center"
+          height={24}
+          marginBottom={6}
+        >
           {/* Home Tab */}
           <TouchableOpacity
             onPress={() => onTabPress(0)}
