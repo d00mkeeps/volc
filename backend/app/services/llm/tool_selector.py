@@ -61,19 +61,24 @@ If unsure whether the user wants to plan a NEW workout, err on the side of calli
     async def select_tools(self, message: str, history: List[Dict]) -> List[Dict[str, Any]]:
         """
         Determine if tools are needed and return the tool calls.
-        
         Args:
-            message: User's message
-            history: Recent message history (not used in this simple version but kept for interface)
-            
+            message: User's current message
+            history: Recent message history for context
         Returns:
             List of tool call dicts: [{'name': 'tool_name', 'args': {...}}, ...]
         """
         try:
-            messages = [
-                SystemMessage(content=self.system_prompt),
-                HumanMessage(content=message)
-            ]
+            messages = [SystemMessage(content=self.system_prompt)]
+            
+            # Add recent history for context (last 6 messages = ~3 exchanges)
+            for msg in history[-6:]:
+                if msg["role"] == "user":
+                    messages.append(HumanMessage(content=msg["content"]))
+                elif msg["role"] == "assistant":
+                    messages.append(AIMessage(content=msg["content"]))
+            
+            # Add current message
+            messages.append(HumanMessage(content=message))
             
             # Invoke model
             response = await self.model_with_tools.ainvoke(messages)
@@ -89,7 +94,7 @@ If unsure whether the user wants to plan a NEW workout, err on the side of calli
                     logger.info(f"  └─ {tc['name']}: {tc['args']}")
             else:
                 logger.info("✨ ToolSelector decided NO tools needed")
-                
+            
             return tool_calls
             
         except Exception as e:

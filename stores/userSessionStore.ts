@@ -173,7 +173,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       currentWorkout: workout,
       selectedTemplate,
       isActive: true,
-      isPaused: false,
+      isPaused: true,
       startTime: new Date(),
       elapsedSeconds: 0,
       totalPausedMs: 0,

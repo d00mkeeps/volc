@@ -261,7 +261,7 @@ export const ChatOverlay = ({
   }));
 
   const backgroundColor =
-    colorScheme === "dark" ? "rgba(0,0,0,0.9)" : "rgba(255,255,255,0.9)";
+    colorScheme === "dark" ? "rgba(0, 0, 0, .95)" : "rgba(255,255,255,.95)";
 
   const getConnectionState = ():
     | "ready"
@@ -309,51 +309,6 @@ export const ChatOverlay = ({
               </TouchableWithoutFeedback>
             </View>
           ) : null}
-
-          {isStreaming && (
-            <Animated.View
-              entering={FadeIn.duration(300)}
-              style={{
-                position: "absolute",
-                top: 60,
-                right: 20,
-                zIndex: 9999,
-              }}
-            >
-              <TouchableOpacity
-                onPress={handleCollapse}
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor:
-                    colorScheme === "dark" ? "rgba(255,255,255)" : "rgba(0,0,0",
-                }}
-              >
-                <BlurView
-                  intensity={30}
-                  tint={colorScheme === "dark" ? "dark" : "light"}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor:
-                      colorScheme === "dark"
-                        ? "rgba(40,40,40,0.6)"
-                        : "rgba(240,240,240,0.6)",
-                  }}
-                >
-                  <AppIcon
-                    name="X"
-                    size={20}
-                    color={colorScheme === "dark" ? "#fff" : "#000"}
-                  />
-                </BlurView>
-              </TouchableOpacity>
-            </Animated.View>
-          )}
         </Animated.View>
 
         <YStack

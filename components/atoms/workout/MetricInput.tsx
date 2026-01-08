@@ -94,7 +94,7 @@ export default function MetricInput({
           }}
           placeholder="0"
           placeholderTextColor={shouldShowError ? "$red8" : "$textMuted"}
-          keyboardType="numeric"
+          keyboardType="decimal-pad" // For decimals (weight, distance)
           textAlign="center"
           backgroundColor={
             shouldShowError ? "rgba(239, 68, 68, 0.08)" : "$background"
