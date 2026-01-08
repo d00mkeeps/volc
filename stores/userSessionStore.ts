@@ -326,11 +326,11 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     const filteredWorkout = filterIncompleteSets(currentWorkout, exercises);
 
     // Get user's preferred units
-    const isImperial = userProfile.is_imperial ?? false;
-    const preferredUnits = {
-      weight: isImperial ? ("lbs" as const) : ("kg" as const),
-      distance: isImperial ? ("mi" as const) : ("km" as const),
-    };
+    // const isImperial = userProfile.is_imperial ?? false;
+    // const preferredUnits = {
+    //   weight: isImperial ? ("lbs" as const) : ("kg" as const),
+    //   distance: isImperial ? ("mi" as const) : ("km" as const),
+    // };
 
     // Create complete workout with metadata and normalized units
     const workoutToSave: CompleteWorkout = {
@@ -340,8 +340,8 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       image_id: metadata.imageId || pendingImageId || null,
       workout_exercises: filteredWorkout.workout_exercises.map((exercise) => ({
         ...exercise,
-        weight_unit: preferredUnits.weight,
-        distance_unit: preferredUnits.distance,
+        // We no longer set weight_unit or distance_unit here
+        // The backend handles data storage, and the frontend handles display based on user profile
       })),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

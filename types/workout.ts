@@ -5,8 +5,6 @@ export type ExerciseInput = {
     sets: SetInput[];
   };
   order_in_workout: number;
-  weight_unit?: "kg" | "lbs";
-  distance_unit?: "km" | "m" | "mi";
 };
 
 export type WorkoutInput = {
@@ -63,8 +61,6 @@ export type WorkoutExercise = {
   workout_id: string;
   name: string;
   order_index: number;
-  weight_unit?: "kg" | "lbs";
-  distance_unit?: "km" | "mi";
   created_at: string;
   updated_at: string;
   workout_exercise_sets: WorkoutExerciseSet[];

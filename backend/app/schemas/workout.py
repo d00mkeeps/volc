@@ -9,8 +9,6 @@ class WorkoutExercise(BaseModel):
     exercise_name: str
     set_data: SetData
     order_in_workout: int
-    weight_unit: Optional[Literal['kg', 'lbs']] = None
-    distance_unit: Optional[Literal['km', 'm', 'mi']] = None
 
 class Workout(BaseModel):
     name: str

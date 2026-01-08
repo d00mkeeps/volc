@@ -2,20 +2,22 @@ import React from "react";
 import { XStack, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { ExerciseDefinition } from "@/types/workout";
+import { useUserStore } from "@/stores/userProfileStore";
 
 interface SetHeaderProps {
   isActive: boolean;
   exerciseDefinition?: ExerciseDefinition;
-  weightUnit?: string;
-  distanceUnit?: string;
 }
 
 export default function SetHeader({
   isActive,
   exerciseDefinition,
-  weightUnit = "kg",
-  distanceUnit = "km",
 }: SetHeaderProps) {
+  const { userProfile } = useUserStore();
+  const isImperial = userProfile?.is_imperial ?? false;
+  const weightUnit = isImperial ? "lbs" : "kg";
+  const distanceUnit = isImperial ? "mi" : "km";
+
   const showWeight = exerciseDefinition?.uses_weight ?? true;
   const showReps = exerciseDefinition?.uses_reps ?? true;
   const showDistance = exerciseDefinition?.uses_distance ?? false;

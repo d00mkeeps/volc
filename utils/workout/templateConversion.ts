@@ -33,8 +33,6 @@
 //         name: exercise.name || `Exercise ${index + 1}`,
 //         notes: exercise.notes || undefined,
 //         order_index: exercise.order_index ?? index,
-//         weight_unit: "kg",
-//         distance_unit: "km",
 //         workout_exercise_sets:
 //           exercise.workout_exercise_sets?.map(
 //             (set: any, setIndex: number) => ({

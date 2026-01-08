@@ -277,7 +277,6 @@ class WorkoutService(BaseDBService):
                 "notes": workout_data.get("description") or workout_data.get("notes"),
                 "image_id": workout_data.get("image_id"),
                 "created_at": workout_data.get("created_at") or now,
-                "used_as_template": now,  # Set this to creation date by default
             }
 
             logger.info(f"Inserting workout with data: {workout_insert_data.get('name')}")
@@ -310,8 +309,6 @@ class WorkoutService(BaseDBService):
                         "name": exercise_name,
                         "definition_id": definition_id,
                         "order_index": order_index,
-                        "weight_unit": exercise.get("weight_unit") or "kg",
-                        "distance_unit": exercise.get("distance_unit") or "m",
                         "notes": exercise.get("notes"),  # ADD THIS LINE
                     }).execute()
 
@@ -436,8 +433,6 @@ class WorkoutService(BaseDBService):
                         "name": exercise_name,
                         "definition_id": exercise.get("definition_id"),
                         "order_index": exercise.get("order_index", index),
-                        "weight_unit": exercise.get("weight_unit", "kg"),
-                        "distance_unit": exercise.get("distance_unit", "m"),
                         "notes": exercise.get("notes"),
                     }).execute()
 

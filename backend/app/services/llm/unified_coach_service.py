@@ -3,7 +3,6 @@ import json
 import re
 import asyncio
 from typing import Dict, Any, List, AsyncGenerator
-import google.api_core.exceptions
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 

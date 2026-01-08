@@ -25,9 +25,12 @@ import {
   MINIMUM_APP_VERSION,
   getAppStoreUrl,
 } from "@/utils/versionCheck";
-import Constants from "expo-constants";
-import * as Facebook from "expo-facebook";
 export { ErrorBoundary } from "expo-router";
+import { Settings } from "react-native-fbsdk-next";
+
+useEffect(() => {
+  Settings.initializeSDK();
+}, []);
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -43,10 +46,6 @@ function AuthStoreManager({ children }: { children: React.ReactNode }) {
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  Facebook.initializeAsync({
-    appId: Constants.expoConfig?.extra?.metaAppId,
   });
 
   useEffect(() => {

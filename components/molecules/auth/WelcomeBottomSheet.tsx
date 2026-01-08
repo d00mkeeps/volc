@@ -370,9 +370,9 @@ export function WelcomeBottomSheet({
 
                     <Animated.View style={{ opacity: iconOpacity }}>
                       {isValid ? (
-                        <AppIcon name="Check" size={36} color="$green8" />
+                        <AppIcon name="Check" size={24} color="$green8" />
                       ) : (
-                        <AppIcon name="X" size={36} color="$red8" />
+                        <AppIcon name="X" size={24} color="$red8" />
                       )}
                     </Animated.View>
                   </XStack>

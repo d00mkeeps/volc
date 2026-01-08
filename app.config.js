@@ -3,7 +3,7 @@ const config = {
     owner: "d00mkeeps",
     name: "Volc",
     slug: "Volc",
-    version: "1.4.10",
+    version: "1.4.14",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "volc", // ← Change this from "myapp" to "volc"
@@ -51,9 +51,14 @@ const config = {
     plugins: [
       "expo-router",
       "expo-font",
-      "expo-web-browser",
-      "expo-facebook"
-    ],
+      "expo-web-browser",[
+"react-native-fbsdk-next", {
+
+"appID": "877598598033367",
+
+"clientToken": "07a6783f37e47490f3fa17aa9e66089f",
+
+"displayName": "Volc"}    ], ],
     experiments: {
       typedRoutes: true
     },

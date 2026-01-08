@@ -191,7 +191,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         workout_id: currentWorkout.id,
         name: "",
         order_index: maxOrderIndex + 1,
-        weight_unit: "kg",
         workout_exercise_sets: [defaultSet],
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

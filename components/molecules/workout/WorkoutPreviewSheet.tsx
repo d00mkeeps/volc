@@ -7,6 +7,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { useTheme } from "tamagui";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useUserStore } from "@/stores/userProfileStore";
 import { CompleteWorkout, WorkoutExercise } from "@/types/workout";
 import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
 import { AppIcon } from "@/assets/icons/IconMap";
@@ -232,8 +233,10 @@ export default function WorkoutPreviewSheet({
 
     const renderExerciseSets = (exercise: WorkoutExercise) => {
       const sets = exercise.workout_exercise_sets || [];
-      const weightUnit = exercise.weight_unit || "kg";
-      const distanceUnit = exercise.distance_unit || "m";
+      const { userProfile } = useUserStore();
+      const isImperial = userProfile?.is_imperial ?? false;
+      const weightUnit = isImperial ? "lbs" : "kg";
+      const distanceUnit = isImperial ? "mi" : "km";
 
       if (sets.length === 0) {
         return (

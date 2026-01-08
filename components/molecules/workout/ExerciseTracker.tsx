@@ -252,8 +252,6 @@ export default function ExerciseTracker({
               <SetHeader
                 isActive={isActive}
                 exerciseDefinition={exerciseDefinition}
-                weightUnit={exercise.weight_unit}
-                distanceUnit={exercise.distance_unit}
               />
 
               {(exercise.workout_exercise_sets || [])
@@ -263,8 +261,6 @@ export default function ExerciseTracker({
                     key={set.id}
                     set={set}
                     exerciseDefinition={exerciseDefinition}
-                    weightUnit={exercise.weight_unit}
-                    distanceUnit={exercise.distance_unit}
                     isActive={isActive}
                     onDelete={handleSetDelete}
                     onUpdate={handleSetUpdate}

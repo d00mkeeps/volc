@@ -20,8 +20,6 @@ import { useColorScheme } from "react-native";
 interface SetRowProps {
   set: WorkoutExerciseSet;
   exerciseDefinition?: ExerciseDefinition;
-  weightUnit?: string;
-  distanceUnit?: string;
   isActive?: boolean;
   onUpdate: (set: WorkoutExerciseSet) => void;
   onDelete?: (setId: string) => void;
@@ -33,8 +31,6 @@ interface SetRowProps {
 export default function SetRow({
   set,
   exerciseDefinition,
-  weightUnit = "kg",
-  distanceUnit = "km",
   isActive = true,
   onUpdate,
   onDelete,
@@ -210,7 +206,7 @@ export default function SetRow({
                 <MetricInput
                   type="weight"
                   value={set.weight}
-                  unit={weightUnit}
+                  unit={isImperial ? "lbs" : "kg"}
                   isMetric={!isImperial}
                   onChange={(value) => handleUpdate("weight", value)}
                   isActive={isActive}
@@ -231,7 +227,7 @@ export default function SetRow({
                 <MetricInput
                   type="distance"
                   value={set.distance}
-                  unit={distanceUnit}
+                  unit={isImperial ? "mi" : "km"}
                   isMetric={!isImperial}
                   onChange={(value) => handleUpdate("distance", value)}
                   isActive={isActive}

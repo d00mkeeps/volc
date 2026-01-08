@@ -3,6 +3,7 @@ import { YStack, XStack, ScrollView, Stack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import BaseModal from "@/components/atoms/core/BaseModal";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { useUserStore } from "@/stores/userProfileStore";
 import WorkoutImage from "@/components/molecules/workout/WorkoutImage";
 
 interface WorkoutViewModalProps {
@@ -60,8 +61,10 @@ export default function WorkoutViewModal({
 
   const renderExerciseSets = (exercise: any) => {
     const sets = exercise.workout_exercise_sets || [];
-    const weightUnit = exercise.weight_unit || "kg";
-    const distanceUnit = exercise.distance_unit || "m";
+    const { userProfile } = useUserStore();
+    const isImperial = userProfile?.is_imperial ?? false;
+    const weightUnit = isImperial ? "lbs" : "kg";
+    const distanceUnit = isImperial ? "mi" : "km";
 
     if (sets.length === 0) {
       return (
