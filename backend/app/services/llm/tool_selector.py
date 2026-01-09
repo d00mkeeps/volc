@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from app.tools.exercise_tool import get_exercises_by_muscle_groups, get_cardio_exercises
 
 logger = logging.getLogger(__name__)

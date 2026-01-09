@@ -45,7 +45,7 @@ export function useStoreInitializer() {
           isLoadingActions: true,
         });
         console.log("[AuthStore] All stores cleared");
-        setInitialized(false);
+        setInitialized(true);
       }
     }
   }, [user, loading, setInitialized]);
