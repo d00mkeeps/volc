@@ -5,14 +5,12 @@ import {
   TouchableWithoutFeedback,
   BackHandler,
   View,
-  TouchableOpacity,
 } from "react-native";
 import { YStack } from "tamagui";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  FadeIn,
 } from "react-native-reanimated";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
@@ -26,10 +24,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { useWindowDimensions } from "react-native";
 import { useColorScheme } from "react-native";
-import { BlurView } from "expo-blur";
-import { AppIcon } from "@/assets/icons/IconMap";
 
 interface ChatOverlayProps {
   placeholder?: string;
@@ -95,7 +90,6 @@ export const ChatOverlay = ({
     (state) => state.setInputAreaHeight
   );
 
-  const { height: screenHeight } = useWindowDimensions();
   const fadeProgress = useSharedValue(0);
 
   const pendingChatOpen = useConversationStore(
@@ -123,7 +117,6 @@ export const ChatOverlay = ({
     ) || [];
 
   // Computed state
-  const canSend = loadingState === "idle";
   const showLoading = loadingState === "pending";
   const isStreaming = loadingState === "streaming";
 
@@ -156,22 +149,28 @@ export const ChatOverlay = ({
    *    - SHOW if workout is ACTIVE (isWorkoutActive)
    */
 
-  const quickChatStyle = useAnimatedStyle(() => {
-    const finalOpacity = pageProgress.value;
+  // /components/organisms/chat/ChatOverlay.tsx
 
+  // /components/organisms/chat/ChatOverlay.tsx
+  // /components/organisms/chat/ChatOverlay.tsx
+
+  // /components/organisms/chat/ChatOverlay.tsx
+
+  const quickChatStyle = useAnimatedStyle(() => {
     const shouldHide =
-      isWorkoutDetailOpen || isWorkoutActive || pageProgress.value < 0.9;
+      fadeProgress.value < 0.5 && // Use fadeProgress instead of isExpanded
+      (isWorkoutDetailOpen || pageProgress.value < 0.9 || isWorkoutActive);
 
     return {
-      opacity: shouldHide ? 0 : finalOpacity,
+      opacity: withTiming(shouldHide ? 0 : pageProgress.value, {
+        duration: 200,
+      }),
       transform: [{ translateY: 0 }],
       pointerEvents: shouldHide ? "none" : "auto",
     };
-  }, [pageProgress, isWorkoutDetailOpen, isWorkoutActive]);
+  }, [pageProgress, isWorkoutDetailOpen, isWorkoutActive, fadeProgress]);
 
   const globalVisibilityStyle = useAnimatedStyle(() => ({
-    // If workout is active, we validly show the input bar (opacity 1)
-    // ONLY hide if workout detail is explicitly open (a different modal)
     opacity: withTiming(isWorkoutDetailOpen ? 0 : 1, { duration: 200 }),
     pointerEvents: isWorkoutDetailOpen ? "none" : "auto",
   }));

@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { Stack } from "tamagui";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
 import Dashboard from "@/components/organisms/Dashboard";
 import BaseModal from "@/components/atoms/core/BaseModal";
@@ -24,15 +24,12 @@ import { CompleteWorkout } from "@/types/workout";
 import { SettingsModal } from "@/components/molecules/SettingsModal";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import { SystemMessage } from "@/components/atoms/core/SystemMessage";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useWindowDimensions } from "react-native";
 import { DisplayMessage } from "@/components/molecules/home/DisplayMessage";
-
-let count = 0;
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   id: "empty-workout-template",
@@ -47,25 +44,17 @@ export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
 };
 
 export default function HomeScreen() {
-  // console.log(`=== homescreen render count: ${count} ===`);
-  // count++;
-
   const workoutTrackerRef = useRef<WorkoutTrackerRef>(null);
   const { userProfile } = useUserStore();
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showChats, setShowChats] = useState(false);
-  const [showFinishMessage, setShowFinishMessage] = useState(false);
-  const [intendedToStart, setIntendedToStart] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
   const setDashboardHeight = useLayoutStore(
     (state) => state.setDashboardHeight
   );
   // Layout selectors for dynamic height calculation
-  const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
   const expandChatOverlay = useLayoutStore((state) => state.expandChatOverlay);
   const { height: screenHeight } = useWindowDimensions();
 
@@ -82,13 +71,6 @@ export default function HomeScreen() {
   const selectedTemplate = useUserSessionStore(
     (state) => state.selectedTemplate
   );
-
-  const { workouts } = useWorkoutStore();
-  // console.log(
-  //   "🏋️ Workouts in store:",
-  //   workouts.length,
-  //   workouts.map((w) => w.id)
-  // );
 
   // Stable reference to session actions
   const sessionActions = useMemo(
@@ -204,7 +186,6 @@ export default function HomeScreen() {
 
   const handleWorkoutCompletionClose = useCallback(() => {
     setShowCompletionModal(false);
-    setIntendedToStart(false);
     sessionActions.resetSession();
     useWorkoutStore.getState().fetchTemplates();
     useDashboardStore.getState().invalidateAfterWorkout();

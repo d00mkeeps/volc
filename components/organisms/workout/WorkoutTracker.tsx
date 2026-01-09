@@ -1,4 +1,4 @@
-// /components/organisms/WorkoutTracker
+// /components/organisms/WorkoutTracker.tsx
 
 import React, {
   useRef,
@@ -10,7 +10,7 @@ import React, {
   useCallback,
 } from "react";
 import { YStack, XStack, Stack } from "tamagui";
-import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useSharedValue } from "react-native-reanimated";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useTheme } from "tamagui";
@@ -39,7 +39,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const theme = useTheme();
     const { currentWorkout, isActive, updateCurrentWorkout } =
       useUserSessionStore();
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const bottomSheetRef = useRef<BottomSheet>(null);
     const animatedIndex = useSharedValue(-1);
     const animatedPosition = useSharedValue(0);
 
@@ -47,38 +47,17 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
     const snapPoints = useMemo(() => ["45%", "92%"], []);
 
-    console.log("🟡 [WorkoutTracker] Render:", {
-      isActive,
-      workoutId: currentWorkout?.id,
-    });
-
-    useEffect(() => {
-      console.log("🟡 [WorkoutTracker] Effect triggered:", {
-        isActive,
-        workoutId: currentWorkout?.id,
-      });
-
-      if (isActive && currentWorkout?.id) {
-        console.log("🟡 [WorkoutTracker] Presenting modal");
-        bottomSheetModalRef.current?.present();
-      } else if (!isActive) {
-        console.log("🟡 [WorkoutTracker] Dismissing modal");
-        bottomSheetModalRef.current?.dismiss();
-      }
-    }, [isActive, currentWorkout?.id]);
-
     const handleSheetChanges = (index: number) => {
-      console.log("🟡 [WorkoutTracker] Sheet index changed:", index);
       animatedIndex.value = index;
     };
 
     useImperativeHandle(
       ref,
       () => ({
-        startWorkout: () => bottomSheetModalRef.current?.present(),
-        finishWorkout: () => bottomSheetModalRef.current?.dismiss(),
-        expandToFull: () => bottomSheetModalRef.current?.snapToIndex(1),
-        snapToPeek: () => bottomSheetModalRef.current?.snapToIndex(0),
+        startWorkout: () => {},
+        finishWorkout: () => {},
+        expandToFull: () => bottomSheetRef.current?.snapToIndex(1),
+        snapToPeek: () => bottomSheetRef.current?.snapToIndex(0),
       }),
       []
     );
@@ -203,7 +182,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       updateCurrentWorkout(updatedWorkout);
     }, [isActive, currentWorkout, updateCurrentWorkout, isAnyExerciseEditing]);
 
-    // NEW: Handle moving exercise up
+    // Handle moving exercise up
     const handleMoveExerciseUp = useCallback(
       (exerciseId: string) => {
         if (!currentWorkout) return;
@@ -238,7 +217,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       [currentWorkout, updateCurrentWorkout]
     );
 
-    // NEW: Handle moving exercise down
+    // Handle moving exercise down
     const handleMoveExerciseDown = useCallback(
       (exerciseId: string) => {
         if (!currentWorkout) return;
@@ -393,7 +372,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
               onExerciseDelete={handleExerciseDelete}
               startInEditMode={exercise.name === ""}
               onEditingChange={handleEditingChange}
-              // Pass reorder handlers
               onMoveUp={
                 !isFirst ? () => handleMoveExerciseUp(exercise.id) : undefined
               }
@@ -416,18 +394,11 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     );
 
     return (
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={isActive && currentWorkout?.id ? 0 : -1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
-        onAnimate={(fromIndex, toIndex) => {
-          console.log(
-            "🟡 [WorkoutTracker] Animating from",
-            fromIndex,
-            "to",
-            toIndex
-          );
-        }}
         enablePanDownToClose={false}
         enableHandlePanningGesture={true}
         enableContentPanningGesture={true}
@@ -467,7 +438,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           ListHeaderComponent={renderHeader}
           ListFooterComponent={renderFooter}
         />
-      </BottomSheetModal>
+      </BottomSheet>
     );
   }
 );

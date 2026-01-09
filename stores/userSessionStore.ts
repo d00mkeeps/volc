@@ -5,7 +5,6 @@ import {
   WorkoutExercise,
   WorkoutExerciseSet,
 } from "@/types/workout";
-import { workoutService } from "@/services/db/workout";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useWorkoutAnalysisStore } from "./analysis/WorkoutAnalysisStore";
@@ -13,7 +12,6 @@ import { imageService } from "@/services/api/imageService";
 import { useWorkoutStore } from "./workout/WorkoutStore";
 import { filterIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "./workout/exerciseStore";
-import Toast from "react-native-toast-message";
 import { AppState, AppStateStatus } from "react-native";
 import { workoutPersistence } from "@/utils/workoutPersistence";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
@@ -114,23 +112,18 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   pendingImageId: null,
 
   startWorkout: (templateOrWorkout) => {
-    console.log("🟢 [Store] startWorkout called with:", templateOrWorkout);
-
     const userProfile = useUserStore.getState().userProfile;
     if (!userProfile?.user_id) {
-      console.error("❌ [Store] Cannot start workout: No user profile found");
       return;
     }
 
     let workout: CompleteWorkout;
     let selectedTemplate: CompleteWorkout | null = null;
 
-    // If it's a template, convert to workout instance
     if (
       templateOrWorkout.is_template ||
       !templateOrWorkout.workout_exercises[0]?.workout_id
     ) {
-      console.log("🟢 [Store] Converting template to workout");
       selectedTemplate = templateOrWorkout;
       const now = new Date().toISOString();
       const workoutId = uuidv4();
@@ -159,16 +152,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
           })
         ),
       };
-      console.log("🟢 [Store] Created workout:", workout.id);
     } else {
-      console.log("🟢 [Store] Using workout as-is");
       workout = templateOrWorkout;
     }
 
-    console.log(
-      "🟢 [Store] Setting state - isActive: true, workoutId:",
-      workout.id
-    );
     set({
       currentWorkout: workout,
       selectedTemplate,
