@@ -227,19 +227,18 @@ class UserProfileService(BaseDBService):
     ) -> Dict[str, Any]:
         """
         Complete user onboarding: update profile and add memory notes.
-        
         Expected onboarding_data:
         {
             "is_imperial": bool,
             "dob": str (ISO date),
-            "experience_years": int (0-10),
+            "experience_level": str (beginner/intermediate/advanced/elite),
             "training_location": str,
             "height": str (optional),
             "weight": str (optional)
         }
         """
         try:
-            logger.info(f"Completing onboarding for user {user_id}")
+            logger.info(f"Completing onboarding for user {user_id} with data: {onboarding_data}")
             
             # 1. Update user profile
             profile_updates = {
@@ -252,53 +251,68 @@ class UserProfileService(BaseDBService):
                 .update(profile_updates) \
                 .eq("auth_user_uuid", user_id) \
                 .execute()
-                
+            
             if not result.data:
                 raise Exception("Failed to update user profile")
+            
+            logger.info(f"Updated user profile for {user_id}")
             
             # 2. Format memory notes
             from datetime import datetime
             current_date = datetime.now().isoformat()
-            
             notes = []
             
             # Experience note
-            exp_years = onboarding_data["experience_years"]
-            exp_text = f"Has {exp_years}+ years of training experience." if exp_years == 10 else f"Has {exp_years} years of training experience."
+            exp_level = onboarding_data["experience_level"]
+            exp_text_map = {
+                "beginner": "User is a beginner, with less than 2 years training experience.",
+                "intermediate": "User is intermediate, with 2-5 years training experience.",
+                "advanced": "User is advanced, with 5-10 years training experience.",
+                "elite": "User is elite, with 10+ years training experience."
+            }
+            exp_text = exp_text_map.get(exp_level, f"Has {exp_level} level experience.")
             notes.append({
                 "text": exp_text,
                 "date": current_date,
                 "category": "profile"
             })
+            logger.info(f"Created experience note: {exp_text}")
             
             # Location note
+            location_note = f"Prefers to train at {onboarding_data['training_location']}."
             notes.append({
-                "text": f"Trains at {onboarding_data['training_location']}.",
+                "text": location_note,
                 "date": current_date,
                 "category": "preference"
             })
+            logger.info(f"Created location note: {location_note}")
             
             # Height note (optional)
             if onboarding_data.get("height"):
                 unit = "inches" if onboarding_data["is_imperial"] else "cm"
+                height_note = f"Height is {onboarding_data['height']} {unit}."
                 notes.append({
-                    "text": f"Height is {onboarding_data['height']} {unit}.",
+                    "text": height_note,
                     "date": current_date,
                     "category": "profile"
                 })
+                logger.info(f"Created height note: {height_note}")
             
             # Weight note (optional)
             if onboarding_data.get("weight"):
                 unit = "lbs" if onboarding_data["is_imperial"] else "kg"
+                weight_note = f"Weight is {onboarding_data['weight']} {unit}."
                 notes.append({
-                    "text": f"Weight is {onboarding_data['weight']} {unit}.",
+                    "text": weight_note,
                     "date": current_date,
                     "category": "profile"
                 })
+                logger.info(f"Created weight note: {weight_note}")
             
             # 3. Append notes to context bundle
             from app.services.db.analysis_service import AnalysisBundleService
             analysis_service = AnalysisBundleService()
+            logger.info(f"Appending {len(notes)} notes to context bundle for user {user_id}")
             await analysis_service.append_onboarding_notes(user_id, notes, jwt_token)
             
             logger.info(f"Successfully completed onboarding for user {user_id}")

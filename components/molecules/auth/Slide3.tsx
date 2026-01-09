@@ -45,10 +45,10 @@ export default function Slide3({
             onPress={() => goToSlide(1)}
             style={{ padding: 4, marginLeft: -4 }}
           >
-            <AppIcon name="ChevronLeft" size={28} color={theme.color.val} />
+            <AppIcon name="ChevronLeft" size={20} color={theme.color.val} />
           </TouchableOpacity>
           <Text size="large" fontWeight="700" fontSize={24}>
-            Tell us about you
+            Tell us about you!
           </Text>
         </XStack>
       </YStack>
@@ -58,7 +58,7 @@ export default function Slide3({
         {/* Experience Level */}
         <YStack gap="$3">
           <Text fontSize={16} fontWeight="600" color="$color">
-            Training experience (years)
+            How many years have you been training?
           </Text>
           <XStack
             backgroundColor="$gray4"
@@ -118,6 +118,7 @@ export default function Slide3({
             borderRadius="$4"
             padding="$1.5"
             width="100%"
+            gap="$2"
           >
             {["home", "gym", "other"].map((loc) =>
               loc === "other" && trainingLocation === "other" ? (

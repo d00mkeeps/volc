@@ -6,19 +6,13 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import {
-  Keyboard,
-  useColorScheme,
-  TouchableOpacity,
-  Animated,
-  Dimensions,
-} from "react-native";
+import { Animated, Dimensions } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
-import { useTheme, YStack, XStack, Stack } from "tamagui";
+import { useTheme } from "tamagui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/context/AuthContext";

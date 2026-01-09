@@ -43,10 +43,10 @@ export default function Slide4({
               onPress={() => goToSlide(2)}
               style={{ padding: 4, marginLeft: -4 }}
             >
-              <AppIcon name="ChevronLeft" size={28} color={theme.color.val} />
+              <AppIcon name="ChevronLeft" size={20} color={theme.color.val} />
             </TouchableOpacity>
             <Text size="large" fontWeight="700" fontSize={24}>
-              Height & weight
+              Last step..
             </Text>
           </XStack>
 
@@ -63,12 +63,17 @@ export default function Slide4({
             </Text>
           </TouchableOpacity>
         </XStack>
-        <Text fontSize={14} color="$textMuted" marginTop="$1">
+        <Text fontSize={14} color="$textMuted" marginTop="$1" marginLeft="$2">
           Optional
         </Text>
       </YStack>
 
-      <XStack gap="$6" paddingTop="$4" justifyContent="center">
+      <XStack
+        gap="$6"
+        paddingTop="$4"
+        justifyContent="flex-start"
+        paddingLeft="$2"
+      >
         <YStack gap="$2">
           <Text fontSize={16} fontWeight="600" color="$color">
             Height ({isImperial ? "inches" : "cm"})

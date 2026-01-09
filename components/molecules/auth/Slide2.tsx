@@ -36,23 +36,23 @@ export default function Slide2({
   return (
     <YStack flex={1} paddingHorizontal="$6">
       {/* Header */}
-      <YStack paddingBottom="$2">
+      <YStack paddingBottom="$2" flex={1}>
         <XStack alignItems="center" gap="$4" marginBottom="$1">
           <TouchableOpacity
             onPress={() => goToSlide(0)}
             style={{ padding: 4, marginLeft: -4 }}
           >
-            <AppIcon name="ChevronLeft" size={28} color={theme.color.val} />
+            <AppIcon name="ChevronLeft" size={20} color={theme.color.val} />
           </TouchableOpacity>
           <Text size="large" fontWeight="700" fontSize={24}>
-            Enter your birthday
+            Select your birthday
           </Text>
         </XStack>
       </YStack>
 
       {/* Middle content */}
-      <YStack justifyContent="center" paddingTop="$10">
-        <YStack alignItems="center" gap="$2">
+      <YStack justifyContent="center" marginTop="$10">
+        <YStack alignItems="center" gap="$2" marginTop="$10">
           <XStack gap="$4" alignItems="center" justifyContent="center">
             <Text
               color="$textMuted"
@@ -111,11 +111,10 @@ export default function Slide2({
         </Stack>
       </YStack>
 
-      {/* Button - marginTop="auto" pushes it to bottom */}
       <Button
         onPress={() => goToSlide(2)}
         disabled={!canProgressDob}
-        marginTop="$10"
+        marginTop={100}
         size="large"
         shadowColor="$shadowColor"
         shadowOffset={{ width: 0, height: 2 }}
