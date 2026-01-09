@@ -1,5 +1,5 @@
 import { BaseDBService } from "./base";
-import { UserOnboarding } from "@/types/onboarding";
+import { OnboardingFormData } from "@/types/onboarding";
 import { UserProfile } from "@/types";
 import { apiGet, apiPost } from "../api/core/apiClient";
 
@@ -24,7 +24,7 @@ export class UserProfileService extends BaseDBService {
    * Save onboarding data (legacy method for UserOnboarding format)
    * Keep this for backward compatibility if needed elsewhere
    */
-  async saveUserOnboarding(summary: UserOnboarding) {
+  async saveUserOnboarding(summary: OnboardingFormData) {
     try {
       console.log("Saving user onboarding:", summary);
       const data = await apiPost("/db/user-profile", summary);
@@ -43,7 +43,7 @@ export class UserProfileService extends BaseDBService {
     try {
       console.log("Getting user profile");
       const data = await apiGet("/db/user-profile");
-      
+
       // Calculate age if dob exists
       if (data.dob) {
         const dob = new Date(data.dob);
@@ -55,11 +55,32 @@ export class UserProfileService extends BaseDBService {
         }
         data.age = age;
       }
-      
+
       console.log("User profile retrieved successfully");
       return data;
     } catch (error) {
       console.error("Error getting user profile:", error);
+      throw error;
+    }
+  }
+  async completeOnboarding(data: OnboardingFormData) {
+    try {
+      console.log("Completing onboarding:", data);
+
+      const payload = {
+        is_imperial: data.isImperial,
+        dob: data.dob.toISOString().split("T")[0],
+        experience_level: data.experienceLevel,
+        training_location: data.trainingLocation,
+        ...(data.height && { height: data.height }),
+        ...(data.weight && { weight: data.weight }),
+      };
+
+      const result = await apiPost("/db/user-profile/onboarding", payload);
+      console.log("Onboarding completed successfully");
+      return result;
+    } catch (error) {
+      console.error("Error completing onboarding:", error);
       throw error;
     }
   }

@@ -59,15 +59,6 @@ export default function ProfileHeader({
                 : "Loading..."}
               {userProfile?.age && `, ${userProfile.age}`}
             </Text>
-            {userProfile?.instagram_username ? (
-              <Text size="medium" color="$textMuted" textAlign="center">
-                @{userProfile.instagram_username}
-              </Text>
-            ) : userProfile === null ? (
-              <Text size="medium" color="$textMuted" textAlign="center">
-                Loading...
-              </Text>
-            ) : null}
           </YStack>
         </YStack>
 

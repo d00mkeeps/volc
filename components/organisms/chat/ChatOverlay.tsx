@@ -143,18 +143,35 @@ export const ChatOverlay = ({
     [isExpanded, connectionState, sendMessage, greeting]
   );
 
+  /*
+   * VISIBILITY EXPLANATION:
+   *
+   * 1. Quick Chat Actions:
+   *    - Hide if workout is active (isWorkoutActive)
+   *    - Hide if workout detail sheet is open (isWorkoutDetailOpen)
+   *    - Hide if not on home page (pageProgress < 0.9)
+   *
+   * 2. Global Overlay (Input Bar):
+   *    - HIDE ONLY if workout detail sheet is open (isWorkoutDetailOpen covers full screen context)
+   *    - SHOW if workout is ACTIVE (isWorkoutActive)
+   */
+
   const quickChatStyle = useAnimatedStyle(() => {
     const finalOpacity = pageProgress.value;
 
+    const shouldHide =
+      isWorkoutDetailOpen || isWorkoutActive || pageProgress.value < 0.9;
+
     return {
-      opacity: finalOpacity,
+      opacity: shouldHide ? 0 : finalOpacity,
       transform: [{ translateY: 0 }],
-      pointerEvents:
-        isWorkoutDetailOpen || pageProgress.value < 0.9 ? "none" : "auto",
+      pointerEvents: shouldHide ? "none" : "auto",
     };
-  }, [pageProgress]);
+  }, [pageProgress, isWorkoutDetailOpen, isWorkoutActive]);
 
   const globalVisibilityStyle = useAnimatedStyle(() => ({
+    // If workout is active, we validly show the input bar (opacity 1)
+    // ONLY hide if workout detail is explicitly open (a different modal)
     opacity: withTiming(isWorkoutDetailOpen ? 0 : 1, { duration: 200 }),
     pointerEvents: isWorkoutDetailOpen ? "none" : "auto",
   }));
@@ -319,25 +336,13 @@ export const ChatOverlay = ({
           style={styles.inputContainer}
         >
           <Animated.View style={[globalVisibilityStyle, { width: "100%" }]}>
-            {!isExpanded && !isWorkoutActive && (
-              <Animated.View style={[quickChatStyle, { marginBottom: 0 }]}>
-                <QuickChatActions
-                  onActionSelect={handleQuickReply}
-                  isWaitingForResponse={loadingState === "pending"}
-                  isStreaming={isStreaming}
-                />
-              </Animated.View>
-            )}
-
-            {isExpanded && (
-              <Animated.View style={[overlayStyle, { marginBottom: 0 }]}>
-                <QuickChatActions
-                  onActionSelect={handleQuickReply}
-                  isWaitingForResponse={loadingState === "pending"}
-                  isStreaming={isStreaming}
-                />
-              </Animated.View>
-            )}
+            <Animated.View style={[quickChatStyle, { marginBottom: 0 }]}>
+              <QuickChatActions
+                onActionSelect={handleQuickReply}
+                isWaitingForResponse={loadingState === "pending"}
+                isStreaming={isStreaming}
+              />
+            </Animated.View>
 
             <YStack
               width="100%"

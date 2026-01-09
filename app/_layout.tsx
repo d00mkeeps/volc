@@ -10,7 +10,6 @@ import { useColorScheme, Linking } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthGate } from "@/components/AuthGate";
-import { useAuthStore } from "@/stores/authStore";
 import Toast from "react-native-toast-message";
 import React from "react";
 import { TamaguiProvider, Theme } from "@tamagui/core";
@@ -19,6 +18,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-get-random-values";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { UpdatePromptModal } from "@/components/molecules/UpdatePromptModal";
+import WelcomeBottomSheet from "@/components/molecules/auth/WelcomeBottomSheet";
 import {
   isVersionSupported,
   getCurrentAppVersion,
@@ -27,10 +27,9 @@ import {
 } from "@/utils/versionCheck";
 export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
+import { useStoreInitializer } from "@/hooks/useStoreInitializer";
 
-useEffect(() => {
-  Settings.initializeSDK();
-}, []);
+Settings.initializeSDK();
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -39,7 +38,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 function AuthStoreManager({ children }: { children: React.ReactNode }) {
-  useAuthStore();
+  useStoreInitializer();
   return children as React.ReactElement;
 }
 
@@ -68,8 +67,8 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
-  // (/app/_layout.tsx.RootLayoutNav) - Check version on mount
   useEffect(() => {
     const checkVersion = () => {
       const isSupported = isVersionSupported();
@@ -86,8 +85,9 @@ function RootLayoutNav() {
 
     checkVersion();
   }, []);
-
-  // Monitor network quality
+  useEffect(() => {
+    console.log("[_layout] showWelcome changed:", showWelcome);
+  }, [showWelcome]);
 
   const handleUpdate = async () => {
     const storeUrl = getAppStoreUrl();
@@ -115,7 +115,7 @@ function RootLayoutNav() {
                     <ThemeProvider
                       value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                     >
-                      <AuthGate>
+                      <AuthGate onWelcomeNeeded={setShowWelcome}>
                         <Stack screenOptions={{ headerShown: false }}>
                           <Stack.Screen name="(tabs)" />
                           <Stack.Screen
@@ -126,10 +126,17 @@ function RootLayoutNav() {
                       </AuthGate>
                     </ThemeProvider>
                   </AuthStoreManager>
+
+                  <WelcomeBottomSheet
+                    isVisible={showWelcome}
+                    onComplete={() => {
+                      console.log("[_layout] onComplete called");
+                      setShowWelcome(false);
+                    }}
+                  />
                 </AuthProvider>
               </BottomSheetModalProvider>
 
-              {/* Update Modal - now inside TamaguiProvider and Theme */}
               <UpdatePromptModal
                 isVisible={showUpdateModal}
                 currentVersion={getCurrentAppVersion()}

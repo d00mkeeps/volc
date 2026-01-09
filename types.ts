@@ -144,10 +144,7 @@ export interface Conversation {
   message_count: number;
 }
 export interface UserProfile {
-  preferences: any;
-  goals: any;
-  current_stats: any;
-  age: number | null;
+  age: number | null; // Derived from dob
   dob: string | null;
   bio: string | null;
   user_id: number;
@@ -156,7 +153,6 @@ export interface UserProfile {
   is_imperial: boolean;
   auth_user_uuid: string | null;
   training_history: any | null;
-  instagram_username: string | null;
   avatar_image_id: string | null;
   permission_level: string | null;
 }

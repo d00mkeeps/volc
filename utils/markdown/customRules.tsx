@@ -2,7 +2,7 @@ import React from "react";
 import { YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
-import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
+
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 
 interface __CustomRulesConfig__ {
@@ -134,14 +134,7 @@ export const createCustomRules = ({
               isComplete={parsed.isComplete}
             />
           );
-        case "onboarding_complete":
-          return (
-            <ProfileConfirmationView
-              key={node.key}
-              data={parsed.data}
-              onComplete={onProfileConfirm}
-            />
-          );
+
         case "chart_data":
           return <ChartDataView key={node.key} data={parsed.data} />;
         default:

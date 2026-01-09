@@ -2,20 +2,23 @@ import { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { AuthScreen } from "./screens/AuthScreen";
-import { AuthGateProps } from "@/types/auth";
-import { WelcomeBottomSheet } from "./molecules/auth/WelcomeBottomSheet";
 import { supabase } from "@/lib/supabaseClient";
+import { useAuthStore } from "@/stores/authStore";
 
-export function AuthGate({ children }: AuthGateProps) {
+interface AuthGateProps {
+  children: React.ReactNode;
+  onWelcomeNeeded: (needed: boolean) => void;
+}
+
+export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
   const { user, loading } = useAuth();
-  const [showWelcome, setShowWelcome] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(false);
+  const storesInitialized = useAuthStore((state) => state.initialized);
 
-  // Check if user has a name in their profile
   useEffect(() => {
     const checkProfile = async () => {
       if (!user) {
-        setShowWelcome(false);
+        onWelcomeNeeded(false);
         return;
       }
 
@@ -28,13 +31,21 @@ export function AuthGate({ children }: AuthGateProps) {
           .single();
 
         if (!error && data) {
-          // Show welcome sheet if DOB is missing (even if name exists)
-          // This handles both new email signups (need name) and Apple signups (need DOB)
+          console.log("[AuthGate] Profile check:", data);
+
           if (!data.dob) {
-            setShowWelcome(true);
+            console.log("[AuthGate] Missing DOB -> Showing Welcome Sheet");
+            onWelcomeNeeded(true);
           } else {
-            setShowWelcome(false);
+            console.log("[AuthGate] DOB exists -> Hiding Welcome Sheet");
+            onWelcomeNeeded(false);
           }
+        } else {
+          console.log(
+            "[AuthGate] Profile fetch error or no data:",
+            error,
+            data
+          );
         }
       } catch (err) {
         console.error("Error checking profile:", err);
@@ -43,19 +54,21 @@ export function AuthGate({ children }: AuthGateProps) {
       }
     };
 
-    if (!loading) {
+    if (!loading && storesInitialized) {
       checkProfile();
     }
-  }, [user, loading]);
+  }, [user, loading, storesInitialized, onWelcomeNeeded]);
 
   console.log(
     "AuthGate render - user:",
     user ? "exists" : "null",
     "loading:",
-    loading
+    loading,
+    "storesInitialized:",
+    storesInitialized
   );
 
-  if (loading || checkingProfile) {
+  if (loading || checkingProfile || !storesInitialized) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
@@ -67,13 +80,5 @@ export function AuthGate({ children }: AuthGateProps) {
     return <AuthScreen />;
   }
 
-  return (
-    <>
-      {children}
-      <WelcomeBottomSheet 
-        isVisible={showWelcome} 
-        onComplete={() => setShowWelcome(false)} 
-      />
-    </>
-  );
+  return <View style={{ flex: 1 }}>{children}</View>;
 }

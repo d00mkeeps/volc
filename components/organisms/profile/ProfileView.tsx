@@ -22,7 +22,6 @@ export default function ProfileView() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [goalsModalVisible, setGoalsModalVisible] = useState(false);
 
   useEffect(() => {
     console.log("[ProfileView] Component mounted");
@@ -31,16 +30,6 @@ export default function ProfileView() {
   const handleAvatarSelected = async (imageId: string) => {
     console.log(`[ProfileView] Avatar selected: ${imageId}`);
     await updateProfile({ avatar_image_id: imageId });
-  };
-
-  const handleGoalsLongPress = () => {
-    setGoalsModalVisible(true);
-  };
-
-  const handleGoalsSave = async (goals: string) => {
-    await updateProfile({
-      goals: goals.trim() ? { content: goals.trim() } : {},
-    });
   };
 
   const handleLogout = async () => {
@@ -112,34 +101,6 @@ export default function ProfileView() {
             onAvatarSelected={handleAvatarSelected}
             isEditMode={false}
           />
-
-          {/* Goals Section */}
-          <YStack
-            backgroundColor="$background"
-            borderRadius="$3"
-            padding="$3"
-            gap="$3"
-          >
-            <Text size="medium" fontWeight="600" color="$color">
-              Goals
-            </Text>
-
-            <LongPressToEdit onLongPress={handleGoalsLongPress}>
-              <YStack
-                backgroundColor="$backgroundSoft"
-                borderRadius="$2"
-                padding="$3"
-              >
-                <Text size="medium" color="$color" lineHeight={22}>
-                  {userProfile === null
-                    ? "Loading..."
-                    : userProfile.goals?.content ||
-                      Object.values(userProfile.goals || {}).join("\n\n") ||
-                      "No goals set"}
-                </Text>
-              </YStack>
-            </LongPressToEdit>
-          </YStack>
 
           {/* Recent Workouts Section */}
           <YStack
@@ -233,19 +194,6 @@ export default function ProfileView() {
       <WorkoutListModal
         isVisible={showWorkoutModal}
         onClose={() => setShowWorkoutModal(false)}
-      />
-
-      {/* Goals edit modal */}
-      <TextEditModal
-        isVisible={goalsModalVisible}
-        onClose={() => setGoalsModalVisible(false)}
-        currentNotes={
-          userProfile?.goals?.content ||
-          Object.values(userProfile?.goals || {}).join("\n\n") ||
-          ""
-        }
-        onSave={handleGoalsSave}
-        title="Edit Goals"
       />
     </YStack>
   );

@@ -609,8 +609,77 @@ class AnalysisBundleService:
             }
             
         except Exception as e:
-            logger.error(f"Error deleting old analysis bundles: {str(e)}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e)
             }
+
+    async def append_onboarding_notes(
+        self, 
+        user_id: str, 
+        notes: list[Dict[str, str]], 
+        jwt_token: str
+    ) -> Dict[str, Any]:
+        """
+        Append onboarding notes to user's latest context bundle.
+        Creates bundle if none exists.
+        
+        Args:
+            user_id: Auth user UUID
+            notes: List of dicts with 'text', 'date', 'category'
+            jwt_token: User JWT token
+        """
+        try:
+            logger.info(f"Appending onboarding notes for user {user_id}")
+            
+            # Get latest bundle
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("user_context_bundles") \
+                .select("*") \
+                .eq("user_id", user_id) \
+                .is_("conversation_id", "null") \
+                .order("created_at", desc=True) \
+                .limit(1) \
+                .execute()
+            
+            if result.data and len(result.data) > 0:
+                # Update existing bundle
+                bundle = result.data[0]
+                current_memory = bundle.get("ai_memory") or {"notes": []}
+                # Ensure notes list exists
+                if "notes" not in current_memory:
+                    current_memory["notes"] = []
+                current_memory["notes"].extend(notes)
+                
+                update_result = user_client.table("user_context_bundles") \
+                    .update({"ai_memory": current_memory}) \
+                    .eq("id", bundle["id"]) \
+                    .execute()
+                    
+                logger.info(f"Updated bundle {bundle['id']} with onboarding notes")
+                return await self.format_response(update_result.data[0]) if hasattr(self, 'format_response') else {'success': True, 'data': update_result.data[0]}
+            else:
+                # Create new bundle
+                from uuid import uuid4
+                new_bundle = {
+                    "id": str(uuid4()),
+                    "user_id": user_id,
+                    "conversation_id": None,
+                    "ai_memory": {"notes": notes},
+                    "status": "completed",
+                    "created_at": datetime.utcnow().isoformat()
+                }
+                
+                insert_result = user_client.table("user_context_bundles") \
+                    .insert(new_bundle) \
+                    .execute()
+                    
+                logger.info(f"Created new bundle with onboarding notes for user {user_id}")
+                return await self.format_response(insert_result.data[0]) if hasattr(self, 'format_response') else {'success': True, 'data': insert_result.data[0]}
+                
+        except Exception as e:
+            logger.error(f"Error appending onboarding notes: {str(e)}")
+            # Handle if handle_error exists, otherwise return dict
+            if hasattr(self, 'handle_error'):
+                return await self.handle_error("append_onboarding_notes", e)
+            return {'success': False, 'error': str(e)}

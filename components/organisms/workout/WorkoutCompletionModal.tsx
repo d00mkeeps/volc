@@ -13,9 +13,6 @@ interface WorkoutCompletionModalProps {
   isVisible: boolean;
   onClose: () => void;
 }
-
-let count = 0;
-
 export function WorkoutCompletionModal({
   isVisible,
   onClose,
@@ -52,20 +49,10 @@ export function WorkoutCompletionModal({
     setShowCloseConfirmation(false);
   };
 
-  const handleChatError = (error: Error) => {
-    console.error("[WorkoutCompletionModal] Chat error:", error);
-    handleClose();
-  };
-
   const handleClose = () => {
     workoutAnalysisStore.resetAnalysis();
     onClose();
   };
-
-  const handleContinueToChat = useCallback(async () => {
-    console.log("Continuing to chat slide");
-    setCurrentSlide("chat");
-  }, []);
 
   return (
     <BaseModal
@@ -80,11 +67,7 @@ export function WorkoutCompletionModal({
           style={{ flex: 1 }}
         >
           <ScrollView flex={1} padding="$2">
-            <WorkoutSummarySlide
-              onSkip={handleClose}
-              onContinue={handleContinueToChat}
-              showContinueButton={true}
-            />
+            <WorkoutSummarySlide onSkip={handleClose} />
           </ScrollView>
         </KeyboardAvoidingView>
 

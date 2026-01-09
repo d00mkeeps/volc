@@ -24,20 +24,8 @@ class UserProfileService(BaseDBService):
                 user_profile["first_name"] = profile_data["first_name"]
             if "last_name" in profile_data:
                 user_profile["last_name"] = profile_data["last_name"]
-            if "age" in profile_data:
-                user_profile["age"] = profile_data["age"]
-            if "is_imperial" in profile_data:
-                user_profile["is_imperial"] = profile_data["is_imperial"]
-            if "goals" in profile_data:
-                user_profile["goals"] = profile_data["goals"]
-            if "current_stats" in profile_data:
-                user_profile["current_stats"] = profile_data["current_stats"]
-            if "preferences" in profile_data:
-                user_profile["preferences"] = profile_data["preferences"]
             if "avatar_image_id" in profile_data:
                 user_profile["avatar_image_id"] = profile_data["avatar_image_id"]
-            if "instagram_username" in profile_data:
-                user_profile["instagram_username"] = profile_data["instagram_username"]
             if "training_history" in profile_data:
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
@@ -111,20 +99,10 @@ class UserProfileService(BaseDBService):
                 user_profile["first_name"] = profile_data["first_name"]
             if "avatar_image_id" in profile_data:
                 user_profile["avatar_image_id"] = profile_data["avatar_image_id"]
-            if "age" in profile_data:
-                user_profile["age"] = profile_data["age"]
             if "last_name" in profile_data:
                 user_profile["last_name"] = profile_data["last_name"]
             if "is_imperial" in profile_data:
                 user_profile["is_imperial"] = profile_data["is_imperial"]
-            if "instagram_username" in profile_data:
-                user_profile["instagram_username"] = profile_data["instagram_username"]
-            if "goals" in profile_data: 
-                user_profile["goals"] = profile_data["goals"]
-            if "current_stats" in profile_data:
-                user_profile["current_stats"] = profile_data["current_stats"]
-            if "preferences" in profile_data:
-                user_profile["preferences"] = profile_data["preferences"]
             if "training_history" in profile_data:
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
@@ -219,7 +197,7 @@ class UserProfileService(BaseDBService):
         """Get user profile by user ID using admin client (no auth required)"""
         try:
             response = self.get_admin_client().table('user_profiles').select(
-                'user_id, first_name, last_name, age, is_imperial, goals, current_stats, preferences, instagram_username'
+                'user_id, first_name, last_name, is_imperial'
             ).eq('auth_user_uuid', user_id).execute()
             
             if response.data:
@@ -236,8 +214,98 @@ class UserProfileService(BaseDBService):
                 }
                 
         except Exception as e:
-            logger.error(f"Error fetching user profile for {user_id}: {str(e)}", exc_info=True)
             return {
                 "success": False,
                 "error": str(e)
             }
+
+    async def complete_onboarding(
+        self, 
+        user_id: str, 
+        onboarding_data: Dict[str, Any], 
+        jwt_token: str
+    ) -> Dict[str, Any]:
+        """
+        Complete user onboarding: update profile and add memory notes.
+        
+        Expected onboarding_data:
+        {
+            "is_imperial": bool,
+            "dob": str (ISO date),
+            "experience_years": int (0-10),
+            "training_location": str,
+            "height": str (optional),
+            "weight": str (optional)
+        }
+        """
+        try:
+            logger.info(f"Completing onboarding for user {user_id}")
+            
+            # 1. Update user profile
+            profile_updates = {
+                "is_imperial": onboarding_data["is_imperial"],
+                "dob": onboarding_data["dob"]
+            }
+            
+            user_client = self.get_user_client(jwt_token)
+            result = user_client.table("user_profiles") \
+                .update(profile_updates) \
+                .eq("auth_user_uuid", user_id) \
+                .execute()
+                
+            if not result.data:
+                raise Exception("Failed to update user profile")
+            
+            # 2. Format memory notes
+            from datetime import datetime
+            current_date = datetime.now().isoformat()
+            
+            notes = []
+            
+            # Experience note
+            exp_years = onboarding_data["experience_years"]
+            exp_text = f"Has {exp_years}+ years of training experience." if exp_years == 10 else f"Has {exp_years} years of training experience."
+            notes.append({
+                "text": exp_text,
+                "date": current_date,
+                "category": "profile"
+            })
+            
+            # Location note
+            notes.append({
+                "text": f"Trains at {onboarding_data['training_location']}.",
+                "date": current_date,
+                "category": "preference"
+            })
+            
+            # Height note (optional)
+            if onboarding_data.get("height"):
+                unit = "inches" if onboarding_data["is_imperial"] else "cm"
+                notes.append({
+                    "text": f"Height is {onboarding_data['height']} {unit}.",
+                    "date": current_date,
+                    "category": "profile"
+                })
+            
+            # Weight note (optional)
+            if onboarding_data.get("weight"):
+                unit = "lbs" if onboarding_data["is_imperial"] else "kg"
+                notes.append({
+                    "text": f"Weight is {onboarding_data['weight']} {unit}.",
+                    "date": current_date,
+                    "category": "profile"
+                })
+            
+            # 3. Append notes to context bundle
+            from app.services.db.analysis_service import AnalysisBundleService
+            analysis_service = AnalysisBundleService()
+            await analysis_service.append_onboarding_notes(user_id, notes, jwt_token)
+            
+            logger.info(f"Successfully completed onboarding for user {user_id}")
+            return await self.format_response(result.data[0])
+            
+        except Exception as e:
+            logger.error(f"Error completing onboarding: {str(e)}")
+            if hasattr(self, 'handle_error'):
+                return await self.handle_error("complete_onboarding", e)
+            return {"success": False, "error": str(e)}

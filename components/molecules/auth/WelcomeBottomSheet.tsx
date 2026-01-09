@@ -1,180 +1,231 @@
-import { useState, useRef, useMemo, useEffect, useCallback } from "react";
+// /components/organisms/WelcomeBottomSheet.tsx
+import React, {
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   Keyboard,
-  Platform,
   useColorScheme,
-  Animated,
   TouchableOpacity,
+  Animated,
+  Dimensions,
 } from "react-native";
-import { Stack, useTheme, XStack, YStack } from "tamagui";
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Button from "@/components/atoms/core/Button";
-import Text from "@/components/atoms/core/Text";
+import { useTheme, YStack, XStack, Stack } from "tamagui";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/lib/supabaseClient";
-import { AppIcon } from "@/assets/icons/IconMap";
+import { useUserStore } from "@/stores/userProfileStore";
+import { userProfileService } from "@/services/db/userProfile";
+import Toast from "react-native-toast-message";
+
+import Slide1 from "./Slide1";
+import Slide2 from "./Slide2";
+import Slide3 from "./Slide3";
+import Slide4 from "./Slide4";
 
 interface WelcomeBottomSheetProps {
   isVisible: boolean;
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
-export function WelcomeBottomSheet({
+export default function WelcomeBottomSheet({
   isVisible,
   onComplete,
 }: WelcomeBottomSheetProps) {
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["60%"], []);
+  console.log("[WelcomeBottomSheet] Render - isVisible:", isVisible);
 
-  const [dob, setDob] = useState<Date>(() => new Date(2000, 0, 1));
-  const [hasChanged, setHasChanged] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [showState2, setShowState2] = useState(false);
-  const [isImperial, setIsImperial] = useState<boolean | null>(null); // null = no selection
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { user } = useAuth();
-  const theme = useTheme();
-  const colorScheme = useColorScheme();
+  const refreshProfile = useUserStore((state) => state.refreshProfile);
 
-  // Animation values
-  const state1Opacity = useRef(new Animated.Value(1)).current;
-  const state1TranslateX = useRef(new Animated.Value(0)).current;
-  const state2Opacity = useRef(new Animated.Value(0)).current;
-  const state2TranslateX = useRef(new Animated.Value(50)).current;
+  // State
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  // Form Data
+  const [isImperial, setIsImperial] = useState<boolean | null>(null);
+  const [dob, setDob] = useState(new Date());
+  const [dobChanged, setDobChanged] = useState(false);
+  const [experienceLevel, setExperienceLevel] = useState<string | null>(null);
+  const [trainingLocation, setTrainingLocation] = useState<string | null>(null);
+  const [locationOther, setLocationOther] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+
+  // Animation refs for 4 slides
+  const slideOpacity = useRef([
+    new Animated.Value(1), // Slide 0 starts visible
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
+  const slideTranslateX = useRef([
+    new Animated.Value(0), // Slide 0 starts at position
+    new Animated.Value(50),
+    new Animated.Value(50),
+    new Animated.Value(50),
+  ]).current;
   const iconOpacity = useRef(new Animated.Value(0)).current;
 
+  const snapPoints = useMemo(() => {
+    const screenHeight = Dimensions.get("window").height;
+    return [screenHeight * 0.7];
+  }, []);
+
+  // Handle visibility changes
   useEffect(() => {
+    console.log("[WelcomeBottomSheet] isVisible changed:", isVisible);
+
     if (isVisible) {
+      console.log("[WelcomeBottomSheet] Presenting modal");
       bottomSheetRef.current?.present();
-      // Reset animation values when sheet opens
-      state1Opacity.setValue(1);
-      state1TranslateX.setValue(0);
-      state2Opacity.setValue(0);
-      state2TranslateX.setValue(50);
-      setShowState2(false);
+      // Reset to slide 0
+      setCurrentSlide(0);
+      slideOpacity.forEach((anim, i) => anim.setValue(i === 0 ? 1 : 0));
+      slideTranslateX.forEach((anim, i) => anim.setValue(i === 0 ? 0 : 50));
       setIsImperial(null);
-      setHasChanged(false);
+      setDob(new Date());
+      setDobChanged(false);
+      setExperienceLevel(null);
+      setTrainingLocation(null);
+      setLocationOther("");
+      setHeight("");
+      setWeight("");
       iconOpacity.setValue(0);
     } else {
+      console.log("[WelcomeBottomSheet] Dismissing modal");
       bottomSheetRef.current?.dismiss();
     }
   }, [isVisible]);
 
+  // DOB Icon Animation
   useEffect(() => {
-    if (hasChanged) {
+    if (dobChanged) {
+      console.log("[WelcomeBottomSheet] DOB changed, animating icon");
       Animated.timing(iconOpacity, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
       }).start();
     }
-  }, [hasChanged]);
+  }, [dobChanged]);
 
-  // WelcomeBottomSheet.handleUnitSelect - Auto-progress to State 2 when unit is selected
-  const handleUnitSelect = (imperial: boolean) => {
-    setIsImperial(imperial);
-
-    // Auto-advance to State 2
-    setTimeout(() => {
-      setShowState2(true);
-      Animated.parallel([
-        Animated.timing(state1Opacity, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-        Animated.timing(state1TranslateX, {
-          toValue: -50,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-        Animated.timing(state2Opacity, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-        Animated.timing(state2TranslateX, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }, 150); // Small delay for visual feedback
-  };
-
-  // WelcomeBottomSheet.handleBackToState1 - Navigate back to unit selection
-  const handleBackToState1 = () => {
-    setShowState2(false);
-    Animated.parallel([
-      Animated.timing(state2Opacity, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.timing(state2TranslateX, {
-        toValue: 50,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.timing(state1Opacity, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-      Animated.timing(state1TranslateX, {
-        toValue: 0,
-        duration: 400,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  // WelcomeBottomSheet.handleComplete - Save DOB and unit preference
-  const handleComplete = async () => {
-    if (!dob || !user || isImperial === null) return;
-
-    setLoading(true);
-    try {
-      const formattedDob = dob.toISOString().split("T")[0];
-
-      const updates: any = {
-        dob: formattedDob,
-        is_imperial: isImperial,
-      };
-
-      const { error } = await supabase
-        .from("user_profiles")
-        .update(updates)
-        .eq("auth_user_uuid", user.id);
-
-      if (error) throw error;
-
-      Keyboard.dismiss();
-      onComplete();
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Log on mount/unmount
+  useEffect(() => {
+    console.log("[WelcomeBottomSheet] Component mounted");
+    return () => console.log("[WelcomeBottomSheet] Component unmounted");
+  }, []);
 
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
         {...props}
         disappearsOnIndex={-1}
-        appearsOnIndex={0}
+        appearsOnIndex={1}
         opacity={0.5}
         pressBehavior="none"
       />
     ),
     []
   );
+
+  const goToSlide = (targetIndex: number) => {
+    console.log("[WelcomeBottomSheet] goToSlide:", targetIndex);
+    const currentIndex = currentSlide;
+    const direction = targetIndex > currentIndex ? -50 : 50;
+
+    Animated.parallel([
+      Animated.timing(slideOpacity[currentIndex], {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideTranslateX[currentIndex], {
+        toValue: direction,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideOpacity[targetIndex], {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideTranslateX[targetIndex], {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setCurrentSlide(targetIndex);
+    });
+  };
+
+  const handleComplete = async () => {
+    console.log("[WelcomeBottomSheet] handleComplete called");
+
+    if (!user || isImperial === null || !trainingLocation || !experienceLevel) {
+      console.log("[WelcomeBottomSheet] Missing required data:", {
+        hasUser: !!user,
+        isImperial,
+        trainingLocation,
+        experienceLevel,
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const finalLocation =
+        trainingLocation === "other" ? locationOther : trainingLocation;
+
+      console.log("[WelcomeBottomSheet] Saving profile data:", {
+        isImperial,
+        dob: dob.toISOString().split("T")[0],
+        experienceLevel,
+        trainingLocation: finalLocation,
+      });
+
+      await userProfileService.completeOnboarding({
+        isImperial,
+        dob,
+        experienceLevel,
+        trainingLocation: finalLocation,
+        height: height || undefined,
+        weight: weight || undefined,
+      });
+
+      await refreshProfile();
+
+      console.log("[WelcomeBottomSheet] Profile saved successfully");
+      Toast.show({
+        type: "success",
+        text1: "Profile setup complete!",
+      });
+
+      if (onComplete) onComplete();
+      bottomSheetRef.current?.dismiss();
+    } catch (error) {
+      console.error("[WelcomeBottomSheet] Error saving profile:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to save profile",
+        text2: "Please try again",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-GB", {
@@ -194,251 +245,138 @@ export function WelcomeBottomSheet({
     return date <= minAgeDate;
   };
 
-  const isValid = isAgeValid(dob);
+  const canProgressDob = dobChanged && isAgeValid(dob);
+  const canProgressExperience =
+    trainingLocation !== null &&
+    (trainingLocation !== "other" || locationOther.trim() !== "");
 
   return (
     <BottomSheetModal
       ref={bottomSheetRef}
-      index={0}
-      snapPoints={snapPoints}
-      backdropComponent={renderBackdrop}
+      index={1}
       enablePanDownToClose={false}
       enableContentPanningGesture={false}
-      enableHandlePanningGesture={false}
-      backgroundStyle={{ backgroundColor: theme.background.val }}
-      handleIndicatorStyle={{ backgroundColor: theme.color.val }}
+      snapPoints={snapPoints}
+      backdropComponent={renderBackdrop}
+      onChange={(index) =>
+        console.log("[WelcomeBottomSheet] Sheet index changed to:", index)
+      }
+      backgroundStyle={{
+        backgroundColor: theme.background.val,
+      }}
+      handleIndicatorStyle={{
+        backgroundColor: "#1f1c1cff",
+        width: 40,
+        height: 4,
+      }}
+      handleStyle={{
+        paddingVertical: 8,
+      }}
     >
-      <BottomSheetView style={{ flex: 1, padding: 24, paddingBottom: 48 }}>
-        <YStack flex={1} position="relative">
-          {/* State 1: Welcome + Unit Selection */}
-          <Animated.View
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              paddingTop: 8,
-              opacity: state1Opacity,
-              transform: [{ translateX: state1TranslateX }],
-            }}
-            pointerEvents={showState2 ? "none" : "auto"}
-          >
-            <YStack paddingTop="$2">
-              {/* Header */}
-              <YStack paddingBottom="$2">
-                <Text size="large" fontWeight="700" fontSize={28}>
-                  Welcome to Volc! 🌋
-                </Text>
-              </YStack>
+      <BottomSheetView
+        style={{
+          paddingBottom: insets.bottom + 20,
+          flex: 1,
+        }}
+      >
+        {/* Slide 1: Units */}
+        <Animated.View
+          style={{
+            position: "absolute",
+            flex: 1,
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: slideOpacity[0],
+            transform: [{ translateX: slideTranslateX[0] }],
+          }}
+          pointerEvents={currentSlide === 0 ? "auto" : "none"}
+        >
+          <Slide1
+            isImperial={isImperial}
+            setIsImperial={setIsImperial}
+            goToSlide={goToSlide}
+          />
+        </Animated.View>
 
-              {/* Main Content Section */}
-              <YStack
-                gap="$4"
-                alignItems="center"
-                justifyContent="center"
-                paddingTop="$10"
-              >
-                {/* Label */}
-                <Text
-                  fontSize={18}
-                  fontWeight="600"
-                  color="$color"
-                  marginBottom="$2"
-                >
-                  Which do you use?
-                </Text>
+        {/* Slide 2: DOB */}
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: slideOpacity[1],
+            transform: [{ translateX: slideTranslateX[1] }],
+          }}
+          pointerEvents={currentSlide === 1 ? "auto" : "none"}
+        >
+          <Slide2
+            theme={theme}
+            dob={dob}
+            setDob={setDob}
+            dobChanged={dobChanged}
+            setDobChanged={setDobChanged}
+            formatDate={formatDate}
+            isAgeValid={isAgeValid}
+            iconOpacity={iconOpacity}
+            canProgressDob={canProgressDob}
+            goToSlide={goToSlide}
+          />
+        </Animated.View>
 
-                {/* Segmented Control */}
-                <XStack
-                  backgroundColor="$gray4"
-                  borderRadius="$4"
-                  padding="$1.5"
-                  width="100%"
-                >
-                  <Button
-                    flex={1}
-                    backgroundColor={
-                      isImperial === false ? "$background" : "transparent"
-                    }
-                    borderRadius="$3"
-                    paddingVertical="$2"
-                    onPress={() => handleUnitSelect(false)}
-                    pressStyle={{ opacity: 0.8 }}
-                    borderColor={"$primary"}
-                    borderWidth={isImperial === false ? 0.25 : 0}
-                    shadowColor={
-                      isImperial === false ? "$shadowColor" : "transparent"
-                    }
-                    shadowOffset={
-                      isImperial === false
-                        ? { width: 0, height: 1 }
-                        : { width: 0, height: 0 }
-                    }
-                    shadowOpacity={isImperial === false ? 0.1 : 0}
-                    shadowRadius={isImperial === false ? 2 : 0}
-                    elevation={isImperial === false ? 2 : 0}
-                  >
-                    <Text
-                      fontWeight={isImperial === false ? "600" : "400"}
-                      color={isImperial === false ? "$color" : "$textMuted"}
-                      fontSize={16}
-                    >
-                      kg / km
-                    </Text>
-                  </Button>
+        {/* Slide 3: Experience & Location */}
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: slideOpacity[2],
+            transform: [{ translateX: slideTranslateX[2] }],
+          }}
+          pointerEvents={currentSlide === 2 ? "auto" : "none"}
+        >
+          <Slide3
+            theme={theme}
+            experienceLevel={experienceLevel}
+            setExperienceLevel={setExperienceLevel}
+            trainingLocation={trainingLocation}
+            setTrainingLocation={setTrainingLocation}
+            locationOther={locationOther}
+            setLocationOther={setLocationOther}
+            canProgressExperience={canProgressExperience}
+            goToSlide={goToSlide}
+          />
+        </Animated.View>
 
-                  <Button
-                    flex={1}
-                    backgroundColor={
-                      isImperial === true ? "$background" : "transparent"
-                    }
-                    borderRadius="$3"
-                    paddingVertical="$2"
-                    onPress={() => handleUnitSelect(true)}
-                    pressStyle={{ opacity: 0.8 }}
-                    borderColor={"$primary"}
-                    borderWidth={isImperial === true ? 0.25 : 0}
-                    shadowColor={
-                      isImperial === true ? "$shadowColor" : "transparent"
-                    }
-                    shadowOffset={
-                      isImperial === true
-                        ? { width: 0, height: 1 }
-                        : { width: 0, height: 0 }
-                    }
-                    shadowOpacity={isImperial === true ? 0.1 : 0}
-                    shadowRadius={isImperial === true ? 2 : 0}
-                    elevation={isImperial === true ? 2 : 0}
-                  >
-                    <Text
-                      fontWeight={isImperial === true ? "600" : "400"}
-                      color={isImperial === true ? "$color" : "$textMuted"}
-                      fontSize={16}
-                    >
-                      lbs / miles
-                    </Text>
-                  </Button>
-                </XStack>
-
-                {/* Unit preview - only show when selected */}
-                {/* Unit preview removed per feedback */}
-              </YStack>
-            </YStack>
-          </Animated.View>
-          {/* State 2: DOB Entry */}
-          <Animated.View
-            style={{
-              flex: 1,
-              opacity: state2Opacity,
-              transform: [{ translateX: state2TranslateX }],
-            }}
-            pointerEvents={showState2 ? "auto" : "none"}
-          >
-            <YStack flex={1} justifyContent="space-between">
-              {/* Header with Back Button */}
-              <YStack paddingBottom="$2">
-                <XStack alignItems="center" gap="$2" marginBottom="$1">
-                  <TouchableOpacity
-                    onPress={handleBackToState1}
-                    style={{ padding: 4, marginLeft: -4 }}
-                  >
-                    <AppIcon
-                      name="ChevronLeft"
-                      size={28}
-                      color={theme.color.val}
-                    />
-                  </TouchableOpacity>
-                  <Text size="large" fontWeight="700" fontSize={24}>
-                    Please enter your birthday
-                  </Text>
-                </XStack>
-              </YStack>
-
-              {/* Main Content Section (Centered) */}
-              <YStack alignItems="center" justifyContent="center" flex={1}>
-                {/* Date Display with Validation Icon */}
-                <YStack alignItems="center" gap="$2">
-                  <XStack alignItems="center" gap="$3">
-                    <Text
-                      color={"$textMuted"}
-                      fontWeight="700"
-                      fontSize={22}
-                      textAlign="center"
-                    >
-                      {formatDate(dob)}
-                    </Text>
-
-                    <Animated.View style={{ opacity: iconOpacity }}>
-                      {isValid ? (
-                        <AppIcon name="Check" size={24} color="$green8" />
-                      ) : (
-                        <AppIcon name="X" size={24} color="$red8" />
-                      )}
-                    </Animated.View>
-                  </XStack>
-
-                  {/* Always render but control opacity */}
-                  <Text
-                    color="$red10"
-                    fontSize={14}
-                    textAlign="center"
-                    opacity={hasChanged && !isValid ? 1 : 0}
-                  >
-                    You must be 16 or older to use Volc
-                  </Text>
-                </YStack>
-
-                {/* Date Picker */}
-                <Stack
-                  backgroundColor="transparent"
-                  borderRadius="$4"
-                  overflow="hidden"
-                  width="100%"
-                  alignItems="center"
-                  paddingVertical="$2"
-                >
-                  <DateTimePicker
-                    value={dob}
-                    mode="date"
-                    display="spinner"
-                    themeVariant={colorScheme === "dark" ? "dark" : "light"}
-                    onChange={(event, selectedDate) => {
-                      if (selectedDate) {
-                        setDob(selectedDate);
-                        setHasChanged(true);
-                      }
-                    }}
-                    minimumDate={(() => {
-                      const minDate = new Date();
-                      minDate.setFullYear(minDate.getFullYear() - 100);
-                      return minDate;
-                    })()}
-                    style={{ height: 180 }}
-                    maximumDate={new Date()}
-                  />
-                </Stack>
-              </YStack>
-
-              {/* Continue Button */}
-              {/* Continue Button */}
-              <Button
-                onPress={handleComplete}
-                disabled={!hasChanged || !isValid || loading}
-                marginBottom="$8"
-                size="large"
-                shadowColor="$shadowColor"
-                shadowOffset={{ width: 0, height: 2 }}
-                shadowOpacity={0.15}
-                shadowRadius={4}
-                elevation={3}
-              >
-                <Text color="white" fontWeight="600" fontSize={18}>
-                  {loading ? "Saving..." : "Done"}
-                </Text>
-              </Button>
-            </YStack>
-          </Animated.View>
-        </YStack>
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: slideOpacity[3],
+            transform: [{ translateX: slideTranslateX[3] }],
+          }}
+          pointerEvents={currentSlide === 3 ? "auto" : "none"}
+        >
+          <Slide4
+            theme={theme}
+            isImperial={isImperial}
+            height={height}
+            setHeight={setHeight}
+            weight={weight}
+            setWeight={setWeight}
+            loading={loading}
+            handleComplete={handleComplete}
+            goToSlide={goToSlide}
+          />
+        </Animated.View>
       </BottomSheetView>
     </BottomSheetModal>
   );

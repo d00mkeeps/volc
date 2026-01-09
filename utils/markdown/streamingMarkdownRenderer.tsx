@@ -8,7 +8,6 @@ import {
   parsePartialJSON,
 } from "./customRules";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
-import ProfileConfirmationView from "@/components/molecules/ProfileConfirmationView";
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 import Text from "@/components/atoms/core/Text";
 
@@ -162,13 +161,6 @@ export const StreamingMarkdownRenderer = ({
                 data={segment.componentData}
                 onApprove={onTemplateApprove}
                 isComplete={segment.isComplete}
-              />
-            );
-          case "onboarding_complete":
-            return (
-              <ProfileConfirmationView
-                data={segment.componentData}
-                onComplete={onProfileConfirm}
               />
             );
           case "chart_data":

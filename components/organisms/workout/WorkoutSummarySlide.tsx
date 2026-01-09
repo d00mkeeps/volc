@@ -11,16 +11,10 @@ import { TabsSegmented } from "@/components/molecules/core/TabsSegmented";
 import TextArea from "@/components/atoms/core/TextArea";
 
 interface WorkoutSummarySlideProps {
-  onContinue: () => void;
   onSkip: () => void;
-  showContinueButton?: boolean;
 }
 
-export function WorkoutSummarySlide({
-  onContinue,
-  onSkip,
-  showContinueButton = true,
-}: WorkoutSummarySlideProps) {
+export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
   const {
     currentWorkout,
     pendingImageId,
@@ -78,26 +72,6 @@ export function WorkoutSummarySlide({
 
   const handleImageError = (error: string) => {
     console.error(`[WorkoutSummary] Image upload error: ${error}`);
-  };
-
-  const handleContinue = async () => {
-    if (!workoutName.trim()) {
-      setShowNameError(true);
-      return;
-    }
-    setShowNameError(false);
-
-    console.log("=== SUMMARY SLIDE CONTINUE ===");
-
-    // Don't await - let it run in background
-    saveCompletedWorkout({
-      name: workoutName.trim(),
-      notes: workoutNotes.trim(),
-      imageId: pendingImageId || undefined,
-    });
-
-    initializeAnalysisAndChat();
-    onContinue();
   };
 
   const handleSkipChat = async () => {

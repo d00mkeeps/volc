@@ -32,7 +32,6 @@ export default function PersonalInfoCard({
       setEditedValues({
         first_name: profile.first_name || "",
         last_name: profile.last_name || "",
-        instagram_username: profile.instagram_username || "",
         is_imperial: profile.is_imperial,
       });
     }
@@ -74,15 +73,7 @@ export default function PersonalInfoCard({
         : profile.last_name || "Not set",
       key: "last_name" as keyof UserProfile,
     },
-    {
-      label: "Instagram",
-      value: isEditing
-        ? editedValues.instagram_username || ""
-        : profile.instagram_username
-        ? `@${profile.instagram_username}`
-        : "Not set",
-      key: "instagram_username" as keyof UserProfile,
-    },
+
     {
       label: "Date of Birth",
       value: profile.dob || "Not set",

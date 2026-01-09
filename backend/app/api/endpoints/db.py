@@ -499,4 +499,23 @@ async def save_user_profile(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
+
+        )
+
+@router.post("/user-profile/onboarding")
+async def complete_onboarding(
+    data: Dict[str, Any] = Body(...),
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Complete user onboarding"""
+    try:
+        logger.info(f"API request to complete onboarding for user: {user.id}")
+        result = await user_profile_service.complete_onboarding(user.id, data, jwt_token)
+        return result
+    except Exception as e:
+        logger.error(f"Error completing onboarding: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
         )
