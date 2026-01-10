@@ -1,4 +1,5 @@
 from app.utils.one_rm_calc import OneRMCalculator
+from app.services.cache.exercise_definitions import exercise_cache
 from .base_service import BaseDBService
 from typing import Dict, List, Any
 import logging
@@ -259,7 +260,11 @@ class WorkoutService(BaseDBService):
         }
         
     async def create_workout(
-        self, user_id: str, workout_data: Dict[str, Any], jwt_token: str
+        self, 
+        user_id: str, 
+        workout_data: Dict[str, Any], 
+        jwt_token: str,
+        user_bodyweight_kg: float = None
     ) -> Dict[str, Any]:
         """
         Create a new workout and store it in the database
@@ -280,6 +285,16 @@ class WorkoutService(BaseDBService):
             }
 
             logger.info(f"Inserting workout with data: {workout_insert_data.get('name')}")
+            
+            # Build bodyweight exercise lookup from cache
+            bodyweight_exercises = {}
+            if user_bodyweight_kg and workout_data.get("workout_exercises"):
+                all_exercises = await exercise_cache.get_all_exercises()
+                bodyweight_exercises = {
+                    ex['id']: ex.get('is_bodyweight', False) 
+                    for ex in all_exercises
+                }
+                logger.info(f"Loaded {len(bodyweight_exercises)} exercise definition statuses for bodyweight check")
 
             # Insert workout
             user_client = self.get_user_client(jwt_token)
@@ -325,10 +340,22 @@ class WorkoutService(BaseDBService):
                             # Calculate e1rm if weight and reps are present
                             estimated_1rm = None
                             if set_data.get("weight") and set_data.get("reps"):
+                                total_weight = float(set_data.get("weight"))
+                                
+                                # Add bodyweight for bodyweight exercises
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+                                    total_weight += user_bodyweight_kg
+                                    logger.debug(f"Added {user_bodyweight_kg}kg bodyweight to {set_data.get('weight')}kg for bodyweight exercise")
+                                
                                 estimated_1rm = OneRMCalculator.calculate(
-                                    weight=float(set_data.get("weight")),
+                                    weight=total_weight,
                                     reps=int(set_data.get("reps"))
                                 )
+                                
+                                # If it was a bodyweight exercise, subtract bodyweight from the final 1RM
+                                # to represent the estimated "added weight" 1RM
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+                                    estimated_1rm -= user_bodyweight_kg
                             
                             set_result = user_client.table("workout_exercise_sets").insert({
                                 "exercise_id": exercise_id,
@@ -377,7 +404,11 @@ class WorkoutService(BaseDBService):
             return await self.handle_error("create_workout", e)
              
     async def update_workout(
-        self, workout_id: str, workout_data: Dict[str, Any], jwt_token: str
+        self, 
+        workout_id: str, 
+        workout_data: Dict[str, Any], 
+        jwt_token: str,
+        user_bodyweight_kg: float = None
     ) -> Dict[str, Any]:
         """
         Update an existing workout
@@ -402,6 +433,15 @@ class WorkoutService(BaseDBService):
 
             if not hasattr(workout_result, "data") or not workout_result.data:
                 raise Exception("Failed to update workout")
+
+            # Build bodyweight exercise lookup from cache (same as create)
+            bodyweight_exercises = {}
+            if user_bodyweight_kg and workout_data.get("workout_exercises"):
+                all_exercises = await exercise_cache.get_all_exercises()
+                bodyweight_exercises = {
+                    ex['id']: ex.get('is_bodyweight', False) 
+                    for ex in all_exercises
+                }
 
             # If exercises are provided, replace them entirely
             if workout_data.get("workout_exercises"):
@@ -445,11 +485,22 @@ class WorkoutService(BaseDBService):
                             # Calculate e1rm if weight and reps are present
                             estimated_1rm = None
                             if set_data.get("weight") and set_data.get("reps"):
-                       
+                                total_weight = float(set_data.get("weight"))
+                                definition_id = exercise.get("definition_id")
+                                
+                                # Add bodyweight for bodyweight exercises
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+                                    total_weight += user_bodyweight_kg
+
                                 estimated_1rm = OneRMCalculator.calculate(
-                                    weight=float(set_data.get("weight")),
+                                    weight=total_weight,
                                     reps=int(set_data.get("reps"))
                                 )
+
+                                # If it was a bodyweight exercise, subtract bodyweight from the final 1RM
+                                # to represent the estimated "added weight" 1RM
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+                                    estimated_1rm -= user_bodyweight_kg
                             
                             user_client.table("workout_exercise_sets").insert({
                                 "exercise_id": exercise_id,

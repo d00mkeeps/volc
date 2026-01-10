@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 import { AppIcon, AppIconName } from "@/assets/icons/IconMap";
-import { Stack } from "tamagui";
+import { Stack, YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { imageService } from "@/services/api/imageService";
@@ -22,11 +22,11 @@ interface ImagePickerButtonProps {
 const getIconSize = (size: "small" | "medium" | "large") => {
   switch (size) {
     case "small":
-      return 18;
+      return 16;
     case "medium":
-      return 22;
+      return 20;
     case "large":
-      return 26;
+      return 20;
   }
 };
 
@@ -216,11 +216,11 @@ export default function ImagePickerButton({
       disabled={uploading}
       opacity={uploading ? 0.7 : 1}
     >
-      <Stack
+      <YStack
         alignItems="center"
         justifyContent="center"
-        gap={label ? "$1" : 0}
         flexDirection={label ? "column" : "row"}
+        gap={label ? "$3" : 0}
       >
         <AppIcon
           name={getIconName(icon, uploading)}
@@ -232,7 +232,7 @@ export default function ImagePickerButton({
             {uploading ? "..." : label}
           </Text>
         )}
-      </Stack>
+      </YStack>
     </Button>
   );
 }

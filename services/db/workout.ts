@@ -2,6 +2,50 @@ import { BaseDBService } from "./base";
 import { CompleteWorkout, WorkoutWithConversation } from "@/types/workout";
 import { apiGet, apiPost, apiPut, apiDelete } from "../api/core/apiClient";
 
+// Conversion constants
+const KG_TO_LBS = 2.20462;
+const LBS_TO_KG = 1 / KG_TO_LBS;
+
+// Helper to recursively convert weights in a workout object
+const convertWorkoutWeights = <T extends any>(obj: T, factor: number): T => {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertWorkoutWeights(item, factor)) as any;
+  }
+
+  const newObj = { ...obj } as any;
+
+  // If this object has a 'weight' field and it's a number, convert it
+  if ("weight" in newObj && typeof newObj.weight === "number") {
+    newObj.weight = Math.round(newObj.weight * factor * 100) / 100;
+  }
+
+  // If this object has 'workout_exercise_sets', recurse into it
+  if (
+    "workout_exercise_sets" in newObj &&
+    Array.isArray(newObj.workout_exercise_sets)
+  ) {
+    newObj.workout_exercise_sets = newObj.workout_exercise_sets.map(
+      (set: any) => convertWorkoutWeights(set, factor)
+    );
+  }
+
+  // If this object has 'workout_exercises', recurse into it
+  if (
+    "workout_exercises" in newObj &&
+    Array.isArray(newObj.workout_exercises)
+  ) {
+    newObj.workout_exercises = newObj.workout_exercises.map((ex: any) =>
+      convertWorkoutWeights(ex, factor)
+    );
+  }
+
+  return newObj;
+};
+
 export class WorkoutService extends BaseDBService {
   /**
    * Create a new workout and store it in the database with direct conversation ID
@@ -9,7 +53,8 @@ export class WorkoutService extends BaseDBService {
 
   async createWorkout(
     userId: string,
-    workout: CompleteWorkout | WorkoutWithConversation
+    workout: CompleteWorkout | WorkoutWithConversation,
+    isImperial: boolean = false
   ): Promise<CompleteWorkout> {
     try {
       const workoutId = "id" in workout ? workout.id : "N/A";
@@ -17,16 +62,30 @@ export class WorkoutService extends BaseDBService {
       console.log(
         `[WorkoutService] Creating workout: ${workoutId} with exercises:`
       );
-      workout.workout_exercises?.forEach((exercise) => {
+
+      // Convert to metric for storage if user is imperial
+      const workoutToSave = isImperial
+        ? convertWorkoutWeights(workout, LBS_TO_KG)
+        : workout;
+
+      workoutToSave.workout_exercises?.forEach((exercise) => {
         const setCount = exercise.workout_exercise_sets?.length || 0;
         console.log(`    ${exercise.id} (${exercise.name}, ${setCount} sets)`);
       });
 
-      const response = await apiPost<CompleteWorkout>("/db/workouts", workout);
+      const response = await apiPost<CompleteWorkout>(
+        "/db/workouts",
+        workoutToSave
+      );
       console.log("[WorkoutService] API Response:", response);
 
       // Extract the actual workout data from the wrapped response
-      const data = (response as any).data || response;
+      let data = (response as any).data || response;
+
+      // Convert back to imperial for display if needed
+      if (isImperial) {
+        data = convertWorkoutWeights(data, KG_TO_LBS);
+      }
 
       return data;
     } catch (error: any) {
@@ -48,13 +107,14 @@ export class WorkoutService extends BaseDBService {
    */
   async saveCompletedWorkout(
     userId: string,
-    workout: CompleteWorkout
+    workout: CompleteWorkout,
+    isImperial: boolean = false
   ): Promise<CompleteWorkout> {
     try {
       console.log("[WorkoutService] Saving completed workout:", workout.id);
 
-      // Use existing createWorkout method
-      const result = await this.createWorkout(userId, workout);
+      // Use existing createWorkout method with conversion support
+      const result = await this.createWorkout(userId, workout, isImperial);
 
       console.log(
         "[WorkoutService] Completed workout saved with ID:",
@@ -70,7 +130,10 @@ export class WorkoutService extends BaseDBService {
   /**
    * Get a workout by ID
    */
-  async getWorkout(workoutId: string): Promise<CompleteWorkout> {
+  async getWorkout(
+    workoutId: string,
+    isImperial: boolean = false
+  ): Promise<CompleteWorkout> {
     try {
       console.log(`[WorkoutService] Getting workout: ${workoutId}`);
 
@@ -81,7 +144,8 @@ export class WorkoutService extends BaseDBService {
         `[WorkoutService] Successfully retrieved workout: ${workoutId}`
       );
 
-      return data;
+      // Convert for display if needed
+      return isImperial ? convertWorkoutWeights(data, KG_TO_LBS) : data;
     } catch (error) {
       console.error(
         `[WorkoutService] Error fetching workout ${workoutId}:`,
@@ -94,18 +158,24 @@ export class WorkoutService extends BaseDBService {
   /**
    * Get all workouts for a user
    */
-  async getUserWorkouts(userId: string): Promise<CompleteWorkout[]> {
+  async getUserWorkouts(
+    userId: string,
+    isImperial: boolean = false
+  ): Promise<CompleteWorkout[]> {
     try {
       console.log(`[WorkoutService] Getting all workouts for user: ${userId}`);
 
-      // Call the endpoint to get all user workouts
+      // Call the endpoint to get all user workouts (always in KG)
       const data = await apiGet<CompleteWorkout[]>("/db/workouts/user");
 
       console.log(
         `[WorkoutService] Retrieved ${data.length} workouts for user: ${userId}`
       );
 
-      return data;
+      // Convert all workouts if needed
+      return isImperial
+        ? data.map((w) => convertWorkoutWeights(w, KG_TO_LBS))
+        : data;
     } catch (error) {
       console.error(`[WorkoutService] Error fetching user workouts:`, error);
       return this.handleError(error);
@@ -117,7 +187,8 @@ export class WorkoutService extends BaseDBService {
    */
   async getWorkoutsByConversation(
     userId: string,
-    conversationId: string
+    conversationId: string,
+    isImperial: boolean = false
   ): Promise<WorkoutWithConversation[]> {
     try {
       console.log(
@@ -133,7 +204,9 @@ export class WorkoutService extends BaseDBService {
         `[WorkoutService] Retrieved ${data.length} workouts for conversation: ${conversationId}`
       );
 
-      return data;
+      return isImperial
+        ? data.map((w) => convertWorkoutWeights(w, KG_TO_LBS))
+        : data;
     } catch (error) {
       console.error(
         `[WorkoutService] Error fetching workouts for conversation ${conversationId}:`,
@@ -148,21 +221,27 @@ export class WorkoutService extends BaseDBService {
    */
   async updateWorkout(
     workoutId: string,
-    workout: Partial<CompleteWorkout> // ✅ Changed from CompleteWorkout to Partial<CompleteWorkout>
+    workout: Partial<CompleteWorkout>, // ✅ Changed from CompleteWorkout to Partial<CompleteWorkout>
+    isImperial: boolean = false
   ): Promise<CompleteWorkout> {
     try {
       console.log(`[WorkoutService] Updating workout: ${workoutId}`);
 
+      // Convert to metric for storage if user is imperial
+      const workoutToSave = isImperial
+        ? convertWorkoutWeights(workout, LBS_TO_KG)
+        : workout;
+
       const data = await apiPut<CompleteWorkout>(
         `/db/workouts/${workoutId}`,
-        workout
+        workoutToSave
       );
 
       console.log(
         `[WorkoutService] Successfully updated workout: ${workoutId}`
       );
 
-      return data;
+      return isImperial ? convertWorkoutWeights(data, KG_TO_LBS) : data;
     } catch (error) {
       console.error(`[WorkoutService] Error updating workout:`, error);
       return this.handleError(error);
@@ -216,7 +295,10 @@ export class WorkoutService extends BaseDBService {
   /**
    * Get all workout templates for a user
    */
-  async getTemplates(userId: string): Promise<CompleteWorkout[]> {
+  async getTemplates(
+    userId: string,
+    isImperial: boolean = false
+  ): Promise<CompleteWorkout[]> {
     try {
       console.log(
         `[WorkoutService] Getting workout templates for user: ${userId}`
@@ -229,7 +311,9 @@ export class WorkoutService extends BaseDBService {
         `[WorkoutService] Retrieved ${data.length} templates for user: ${userId}`
       );
 
-      return data;
+      return isImperial
+        ? data.map((t) => convertWorkoutWeights(t, KG_TO_LBS))
+        : data;
     } catch (error) {
       console.error(`[WorkoutService] Error getting templates:`, error);
       return this.handleError(error);
@@ -240,20 +324,28 @@ export class WorkoutService extends BaseDBService {
    * Save a workout as a template
    */
   // Remove the conversion in saveAsTemplate
-  async saveAsTemplate(workout: CompleteWorkout): Promise<CompleteWorkout> {
+  async saveAsTemplate(
+    workout: CompleteWorkout,
+    isImperial: boolean = false
+  ): Promise<CompleteWorkout> {
     try {
       console.log(`[WorkoutService] Saving workout as template: ${workout.id}`);
+
+      // Convert to metric for storage if needed
+      const workoutToSave = isImperial
+        ? convertWorkoutWeights(workout, LBS_TO_KG)
+        : workout;
 
       // Send CompleteWorkout directly instead of converting
       const data = await apiPost<CompleteWorkout>(
         "/db/workouts/template",
-        workout
+        workoutToSave
       );
 
       console.log(
         `[WorkoutService] Successfully saved workout as template: ${data.id}`
       );
-      return data;
+      return isImperial ? convertWorkoutWeights(data, KG_TO_LBS) : data;
     } catch (error) {
       console.error(
         `[WorkoutService] Error saving workout as template:`,
@@ -270,7 +362,10 @@ export class WorkoutService extends BaseDBService {
   /**
    * Get a public workout by ID (for leaderboard viewing)
    */
-  async getPublicWorkout(workoutId: string): Promise<CompleteWorkout> {
+  async getPublicWorkout(
+    workoutId: string,
+    isImperial: boolean = false
+  ): Promise<CompleteWorkout> {
     try {
       console.log(`[WorkoutService] Getting public workout: ${workoutId}`);
 
@@ -286,7 +381,7 @@ export class WorkoutService extends BaseDBService {
         `[WorkoutService] Successfully retrieved public workout: ${workoutId}`
       );
 
-      return data;
+      return isImperial ? convertWorkoutWeights(data, KG_TO_LBS) : data;
     } catch (error) {
       console.error(
         `[WorkoutService] Error fetching public workout ${workoutId}:`,

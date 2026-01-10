@@ -5,6 +5,7 @@ import { authService } from "@/services/db/auth";
 import { pendingWorkoutQueue } from "@/utils/pendingWorkoutQueue";
 import { retryWithBackoff } from "@/utils/retryManager";
 import Toast from "react-native-toast-message";
+import { useUserStore } from "../userProfileStore";
 
 interface WorkoutState {
   // State
@@ -241,8 +242,18 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     createWorkout: async (workout: CompleteWorkout) => {
       // console.log("[WorkoutStore] 📝 createWorkout called for:", workout.name);
 
+      // Capture current bodyweight
+      const userProfile = useUserStore.getState().userProfile;
+      const workoutWithWeight = {
+        ...workout,
+        user_bodyweight_kg: userProfile?.current_weight_kg,
+      };
+
       // 1. Add to queue FIRST (never fails)
-      await pendingWorkoutQueue.add(workout);
+      // Cast to any to bypass type check for the extra field
+      await pendingWorkoutQueue.add(
+        workoutWithWeight as any as CompleteWorkout
+      );
       // console.log("[WorkoutStore] ✅ Added to queue:", workout.id);
 
       try {
@@ -258,7 +269,11 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
         // 2. Attempt save with retry + Toast notifications (BACKGROUND)
         // We do NOT await this so the UI can proceed immediately
         retryWithBackoff(
-          () => workoutService.createWorkout(session.user.id, workout),
+          () =>
+            workoutService.createWorkout(
+              session.user.id,
+              workoutWithWeight as any as CompleteWorkout
+            ),
           {
             maxRetries: 3,
             delays: [5000, 15000], // 5s, 15s delays
@@ -418,9 +433,17 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
     ): Promise<CompleteWorkout> => {
       try {
         set({ loading: true, error: null });
+
+        // Capture current bodyweight
+        const userProfile = useUserStore.getState().userProfile;
+        const updatesWithWeight = {
+          ...updates,
+          user_bodyweight_kg: userProfile?.current_weight_kg,
+        };
+
         const updatedWorkout = await workoutService.updateWorkout(
           workoutId,
-          updates
+          updatesWithWeight as any as Partial<CompleteWorkout>
         );
 
         set((state) => ({

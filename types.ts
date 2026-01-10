@@ -155,6 +155,8 @@ export interface UserProfile {
   training_history: any | null;
   avatar_image_id: string | null;
   permission_level: string | null;
+  height_cm: number | null;
+  current_weight_kg: number | null;
 }
 
 export interface UserContextBundle {

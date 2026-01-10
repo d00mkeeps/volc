@@ -30,6 +30,14 @@ class UserProfileService(BaseDBService):
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
                 user_profile["bio"] = profile_data["bio"]
+            if "height_cm" in profile_data:
+                user_profile["height_cm"] = profile_data["height_cm"]
+            if "current_weight_kg" in profile_data:
+                user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
+            if "height_cm" in profile_data:
+                user_profile["height_cm"] = profile_data["height_cm"]
+            if "current_weight_kg" in profile_data:
+                user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
 
             
             # Check if profile exists first
@@ -107,6 +115,10 @@ class UserProfileService(BaseDBService):
                 user_profile["training_history"] = profile_data["training_history"]
             if "bio" in profile_data:
                 user_profile["bio"] = profile_data["bio"]
+            if "height_cm" in profile_data:
+                user_profile["height_cm"] = profile_data["height_cm"]
+            if "current_weight_kg" in profile_data:
+                user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
             
             # Update the user profile - RLS handles user filtering
             user_client = self.get_user_client(jwt_token)
@@ -246,6 +258,20 @@ class UserProfileService(BaseDBService):
                 "dob": onboarding_data["dob"]
             }
             
+            # Height conversion
+            if onboarding_data.get("height"):
+                height_val = float(onboarding_data["height"])
+                if onboarding_data.get("is_imperial"):
+                    height_val = height_val * 2.54  # inches to cm
+                profile_updates["height_cm"] = round(height_val, 2)
+            
+            # Weight conversion
+            if onboarding_data.get("weight"):
+                weight_val = float(onboarding_data["weight"])
+                if onboarding_data.get("is_imperial"):
+                    weight_val = weight_val * 0.453592  # lbs to kg
+                profile_updates["current_weight_kg"] = round(weight_val, 2)
+
             user_client = self.get_user_client(jwt_token)
             result = user_client.table("user_profiles") \
                 .update(profile_updates) \
@@ -254,7 +280,7 @@ class UserProfileService(BaseDBService):
             
             if not result.data:
                 raise Exception("Failed to update user profile")
-            
+
             logger.info(f"Updated user profile for {user_id}")
             
             # 2. Format memory notes
@@ -286,28 +312,6 @@ class UserProfileService(BaseDBService):
                 "category": "preference"
             })
             logger.info(f"Created location note: {location_note}")
-            
-            # Height note (optional)
-            if onboarding_data.get("height"):
-                unit = "inches" if onboarding_data["is_imperial"] else "cm"
-                height_note = f"Height is {onboarding_data['height']} {unit}."
-                notes.append({
-                    "text": height_note,
-                    "date": current_date,
-                    "category": "profile"
-                })
-                logger.info(f"Created height note: {height_note}")
-            
-            # Weight note (optional)
-            if onboarding_data.get("weight"):
-                unit = "lbs" if onboarding_data["is_imperial"] else "kg"
-                weight_note = f"Weight is {onboarding_data['weight']} {unit}."
-                notes.append({
-                    "text": weight_note,
-                    "date": current_date,
-                    "category": "profile"
-                })
-                logger.info(f"Created weight note: {weight_note}")
             
             # 3. Append notes to context bundle
             from app.services.db.analysis_service import AnalysisBundleService

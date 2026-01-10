@@ -212,7 +212,16 @@ async def create_workout(
     """Create a new workout"""
     try:
         logger.info(f"API request to create workout: {workout.get('name')}")
-        result = await workout_service.create_workout(user.id, workout, jwt_token)
+        
+        # Extract bodyweight if provided
+        user_bodyweight_kg = workout.pop("user_bodyweight_kg", None)
+        
+        result = await workout_service.create_workout(
+            user.id, 
+            workout, 
+            jwt_token,
+            user_bodyweight_kg
+        )
         return result
     except Exception as e:
         logger.error(f"Error creating workout: {str(e)}")
@@ -275,7 +284,16 @@ async def update_workout(
     """Update an existing workout"""
     try:
         logger.info(f"API request to update workout: {workout_id}")
-        result = await workout_service.update_workout(workout_id, workout, jwt_token)
+        
+        # Extract bodyweight if provided
+        user_bodyweight_kg = workout.pop("user_bodyweight_kg", None)
+        
+        result = await workout_service.update_workout(
+            workout_id, 
+            workout, 
+            jwt_token,
+            user_bodyweight_kg
+        )
         return result
     except Exception as e:
         logger.error(f"Error updating workout: {str(e)}")
