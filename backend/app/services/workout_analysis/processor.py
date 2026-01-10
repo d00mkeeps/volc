@@ -262,6 +262,7 @@ class AnalysisBundleProcessor:
                     
                     exercise = WorkoutExercise(
                         name=exercise_data.get('name', ''),
+                        definition_id=exercise_data.get('definition_id'),
                         notes=exercise_data.get('notes'),
                         sets=sets
                     )

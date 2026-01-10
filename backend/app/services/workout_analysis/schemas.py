@@ -103,6 +103,7 @@ class WorkoutExercise(BaseModel):
     Exercise within a workout, containing all sets performed.
     """
     name: str = Field(..., description="Exercise name")
+    definition_id: Optional[str] = None  
     notes: Optional[str] = Field(None, description="User's notes about this exercise")
     sets: List[WorkoutSet] = Field(
         default_factory=list,

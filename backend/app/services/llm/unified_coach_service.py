@@ -5,6 +5,7 @@ import asyncio
 from typing import Dict, Any, List, AsyncGenerator
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from datetime import datetime, date
 
 from app.services.context.shared_context_loader import SharedContextLoader
 from app.services.llm.tool_selector import ToolSelector
@@ -35,7 +36,7 @@ class UnifiedCoachService:
             temperature=0,
             credentials=credentials,
             project=project_id,
-            vertexai=True  # Explicit Vertex AI backend selection
+            vertexai=True
         )
         
         # Shared services
@@ -43,7 +44,7 @@ class UnifiedCoachService:
         self.tool_selector = ToolSelector(credentials=credentials, project_id=project_id)
         self.message_service = MessageService()
         
-        # Tool registry (tools that can be executed)
+        # Tool registry
         self.tool_executors = {
             "get_exercises_by_muscle_groups": get_exercises_by_muscle_groups,
             "get_cardio_exercises": get_cardio_exercises
@@ -54,7 +55,8 @@ class UnifiedCoachService:
         self.user_id: str = ""
         self.message_history: List[Dict] = []
         self.formatted_context: Dict[str, str] = {}
-        self.current_response: str = ""  # For tracking partial responses
+        self.raw_bundle = None  # Store raw bundle for weight lookups
+        self.current_response: str = ""
         self.initialized: bool = False
     
     async def initialize(self, conversation_id: str, user_id: str) -> None:
@@ -79,6 +81,9 @@ class UnifiedCoachService:
         shared_context = await self.context_loader.load_all(user_id)
         self.formatted_context = self._format_shared_context(shared_context)
         
+        # Store raw bundle for weight lookups
+        self.raw_bundle = shared_context.get("bundle")
+        
         # Build message history from DB
         self.message_history = []
         for msg in context.messages:
@@ -88,7 +93,7 @@ class UnifiedCoachService:
                 "content": msg.content
             })
         
-        # Keep only last 10 messages for context
+        # Keep only last 10 messages
         if len(self.message_history) > 10:
             self.message_history = self.message_history[-10:]
         
@@ -135,10 +140,24 @@ class UnifiedCoachService:
         else:
             logger.info("✨ No tools needed")
         
+        # Enrich exercises with last weights
+        if "get_exercises_by_muscle_groups" in tool_results:
+            exercises = tool_results["get_exercises_by_muscle_groups"]
+            if exercises:
+                exercise_ids = [ex['id'] for ex in exercises]
+                last_weights = self._get_last_weights_for_exercises(exercise_ids)
+                
+                # Add weight data to each exercise
+                for ex in exercises:
+                    if ex['id'] in last_weights:
+                        ex['last_tracked'] = last_weights[ex['id']]
+                
+                logger.info(f"💪 Enriched {len(last_weights)} exercises with weight history")
+        
         # Build prompt
         prompt = self._build_prompt(
             message=message,
-            message_history=self.message_history[:-1],  # Exclude current message
+            message_history=self.message_history[:-1],
             formatted_context=self.formatted_context,
             tool_results=tool_results
         )
@@ -181,6 +200,57 @@ class UnifiedCoachService:
         
         if len(self.message_history) > 10:
             self.message_history = self.message_history[-10:]
+    
+    def _get_last_weights_for_exercises(
+        self, 
+        exercise_ids: List[str]
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Get last tracked weight for each exercise definition_id.
+        
+        Location: /app/services/unified_coach_service.UnifiedCoachService._get_last_weights_for_exercises()
+        
+        Args:
+            exercise_ids: List of exercise definition_ids from tool results
+            
+        Returns:
+            {definition_id: {"weight": float, "reps": int, "date": str}}
+        """
+        if not self.raw_bundle or not hasattr(self.raw_bundle, 'recent_workouts'):
+            return {}
+        
+        # Track most recent weight per definition_id
+        last_weights = {}
+        
+        # Iterate workouts chronologically (recent_workouts already sorted newest first)
+        for workout in self.raw_bundle.recent_workouts:
+            for exercise in workout.exercises:
+                def_id = exercise.definition_id
+                
+                # Skip if no definition_id or already found (we want most recent)
+                if not def_id or def_id in last_weights:
+                    continue
+                
+                # Skip if not in our target list
+                if def_id not in exercise_ids:
+                    continue
+                
+                # Find the heaviest set (typically the working weight)
+                if exercise.sets:
+                    heaviest_set = max(
+                        [s for s in exercise.sets if s.weight],
+                        key=lambda s: s.weight,
+                        default=None
+                    )
+                    
+                    if heaviest_set and heaviest_set.weight:
+                        last_weights[def_id] = {
+                            "weight": heaviest_set.weight,
+                            "reps": heaviest_set.reps,
+                            "date": workout.date.strftime('%b %d') if hasattr(workout.date, 'strftime') else str(workout.date)
+                        }
+        
+        return last_weights
     
     async def _execute_tool(self, tool_name: str, args: Dict) -> Any:
         """
@@ -241,7 +311,20 @@ class UnifiedCoachService:
         # Format user profile
         if profile:
             name = f"{profile.get('first_name', '')} {profile.get('last_name', '')}".strip()
-            age = profile.get('age', 'Not provided')
+            # Calculate age from DOB
+            age = 'Not provided'
+            dob_str = profile.get('dob')
+            if dob_str:
+                try:
+                    dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+                    today = date.today()
+                    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+                except (ValueError, TypeError):
+                    # Fallback to age field if DOB parsing fails
+                    age = profile.get('age', 'Not provided')
+            else:
+                # Fallback to age field if no DOB
+                age = profile.get('age', 'Not provided')
             units = "imperial (lb/mi)" if profile.get('is_imperial') else "metric (kg/km)"
             user_profile_text = f"Name: {name or 'Not provided'}, Age: {age}, Units: {units}"
         else:
@@ -275,7 +358,7 @@ class UnifiedCoachService:
         
         # Format workout history with FULL DETAILS
         if bundle and hasattr(bundle, 'recent_workouts'):
-            recent = bundle.recent_workouts[:5]  # Last 5 workouts
+            recent = bundle.recent_workouts[:5]
             if recent:
                 workout_lines = []
                 for w in recent:
@@ -299,8 +382,6 @@ class UnifiedCoachService:
                             exercise_details.append(f"    - {ex_name}: {sets_str}")
                     
                     exercises_str = "\n".join(exercise_details) if exercise_details else "    - No exercises"
-                    
-                    # Add workout notes if present
                     notes_str = f"\n  Notes: {w.notes}" if hasattr(w, 'notes') and w.notes else ""
                     
                     workout_lines.append(
@@ -314,12 +395,11 @@ class UnifiedCoachService:
         else:
             workout_history_text = "No workout history available"
         
-        # Format strength progression (e1RM data for top exercises)
+        # Format strength progression
         strength_prog_text = ""
         if bundle and hasattr(bundle, 'strength_data') and bundle.strength_data:
             strength_data = bundle.strength_data
             if hasattr(strength_data, 'exercise_strength_progress') and strength_data.exercise_strength_progress:
-                # Get top 5 exercises by best e1RM
                 exercises_with_best = []
                 for ex_prog in strength_data.exercise_strength_progress:
                     if hasattr(ex_prog, 'e1rm_time_series') and ex_prog.e1rm_time_series:
@@ -335,7 +415,6 @@ class UnifiedCoachService:
                     strength_lines = ["**Top Exercise Strength Progression (e1RM):**"]
                     
                     for ex_data in top_exercises:
-                        # Get first and last points for change calculation
                         if len(ex_data['time_series']) > 1:
                             first = ex_data['time_series'][0]
                             last = ex_data['time_series'][-1]
@@ -345,7 +424,6 @@ class UnifiedCoachService:
                             change_formatted = self._format_weight(abs(change_kg), is_imperial)
                             change_str = f"+{change_formatted} (+{change_pct:.1f}%)" if change_kg >= 0 else f"-{change_formatted} ({change_pct:.1f}%)"
                             
-                            # Show last 3 data points for recent trend
                             recent_points = ex_data['time_series'][-3:]
                             points_str = ", ".join([
                                 f"{p.date.strftime('%b %d') if hasattr(p.date, 'strftime') else str(p.date)}: {self._format_weight(p.estimated_1rm, is_imperial)}"
@@ -382,6 +460,8 @@ class UnifiedCoachService:
         """
         Build the complete prompt with pre-formatted context and tool results.
         
+        Location: /app/services/unified_coach_service.UnifiedCoachService._build_prompt()
+        
         Args:
             message: Current user message
             message_history: List of previous messages
@@ -394,15 +474,27 @@ class UnifiedCoachService:
         # Get base prompt
         system_prompt = get_unified_coach_prompt()
         
-        # Format available exercises (from tool results - dynamic per message)
+        # Get user's unit preference for weight formatting
+        is_imperial = False
+        if self.raw_bundle and hasattr(self.raw_bundle, 'ai_memory'):
+            is_imperial = self.raw_bundle.ai_memory.get('is_imperial', False)
+        
+        # Format available exercises
         if "get_exercises_by_muscle_groups" in tool_results:
             exercises = tool_results["get_exercises_by_muscle_groups"]
             if exercises:
                 exercise_lines = [f"**{len(exercises)} exercises available:**"]
-                for ex in exercises[:30]:  # Limit to 30 to avoid token explosion
-                    exercise_lines.append(
-                        f"- {ex['standard_name']} (ID: {ex['id']}, Muscles: {', '.join(ex.get('primary_muscles', []))})"
-                    )
+                for ex in exercises[:30]:
+                    base_info = f"- {ex['standard_name']} (ID: {ex['id']}, Muscles: {', '.join(ex.get('primary_muscles', []))})"
+                    
+                    # Add last tracked weight if available
+                    if 'last_tracked' in ex:
+                        lt = ex['last_tracked']
+                        weight_str = self._format_weight(lt['weight'], is_imperial)
+                        base_info += f" | Last: {lt['reps']}x{weight_str} ({lt['date']})"
+                    
+                    exercise_lines.append(base_info)
+                
                 available_exercises_text = "\n".join(exercise_lines)
             else:
                 available_exercises_text = "No exercises available (ask user which muscles to target)"
@@ -420,7 +512,7 @@ class UnifiedCoachService:
         else:
             available_exercises_text = "No exercises fetched yet. If user wants to plan a workout, ask which muscles to target."
         
-        # Inject ALL context into system prompt (pre-formatted + dynamic tools)
+        # Inject ALL context into system prompt
         system_prompt = system_prompt.format(
             user_profile=formatted_context["user_profile"],
             ai_memory=formatted_context["ai_memory"],
@@ -449,7 +541,6 @@ class UnifiedCoachService:
         components = []
         
         try:
-            # Find all JSON code blocks
             json_pattern = r'```json\s*(.*?)\s*```'
             matches = re.findall(json_pattern, response, re.DOTALL)
             
@@ -457,7 +548,6 @@ class UnifiedCoachService:
                 try:
                     parsed = json.loads(json_str.strip())
                     
-                    # Check if it's a valid component (has type and data)
                     if parsed.get('type') and parsed.get('data'):
                         components.append(parsed)
                         logger.info(f"Extracted component: {parsed['type']}")
