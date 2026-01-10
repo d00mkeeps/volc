@@ -3,6 +3,7 @@ import { QuickAction } from "@/types";
 
 interface QuickActionsResponse {
   actions: QuickAction[];
+  placeholder: string;
 }
 
 class QuickChatService extends BaseApiService {
@@ -13,17 +14,23 @@ class QuickChatService extends BaseApiService {
   async fetchQuickActions(
     authUserUuid: string,
     recentMessages?: Array<{ sender: "user" | "assistant"; content: string }>
-  ): Promise<QuickAction[]> {
+  ): Promise<QuickActionsResponse> {
     try {
       const response = await this.post<QuickActionsResponse>(
         `/quick-actions/${authUserUuid}`,
         recentMessages && recentMessages.length > 0 ? recentMessages : undefined
       );
 
-      return response?.actions || [];
+      return {
+        actions: response?.actions || [],
+        placeholder: response?.placeholder || "ask me anything",
+      };
     } catch (error) {
       console.error("[QuickChatService] Failed to fetch quick actions:", error);
-      return [];
+      return {
+        actions: [],
+        placeholder: "ask me anything",
+      };
     }
   }
 }

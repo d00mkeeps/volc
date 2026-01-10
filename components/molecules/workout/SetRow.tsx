@@ -44,7 +44,7 @@ export default function SetRow({
   const colorScheme = useColorScheme();
 
   const iconColor = colorScheme === "dark" ? "#cdcdcdff" : "#6e6e6eff";
-
+  const COMPLETION_BUTTON_SIZE = 44;
   const translateX = useSharedValue(0);
   const DELETE_BUTTON_WIDTH = 80;
   const SWIPE_THRESHOLD = -60;
@@ -246,8 +246,8 @@ export default function SetRow({
 
             {/* Completion Button */}
             <Stack
-              width={50}
-              height="70%"
+              width={COMPLETION_BUTTON_SIZE}
+              height={COMPLETION_BUTTON_SIZE}
               justifyContent="center"
               alignItems="center"
               borderRadius={24}
@@ -266,7 +266,7 @@ export default function SetRow({
             >
               <AppIcon
                 name="Check"
-                size={32}
+                size={24}
                 color={set.is_completed ? "white" : iconColor}
               />
             </Stack>

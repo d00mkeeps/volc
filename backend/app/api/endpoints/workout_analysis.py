@@ -3,13 +3,10 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from app.core.supabase.auth import get_current_user, get_jwt_token
 from app.core.rate_limit import rate_limit
 from ...services.workout_analysis.generator import AnalysisBundleGenerator
-# from ...services.workout_analysis_service import WorkoutAnalysisService
 from ...schemas.workout_analysis import WorkoutAnalysisRequest
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-
-# workout_analysis_service = WorkoutAnalysisService()
 
 analysis_bundle_generator = AnalysisBundleGenerator()
 

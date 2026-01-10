@@ -95,6 +95,19 @@ export default function HomeScreen() {
     refreshDashboard();
   }, []);
 
+  // Realtime subscription management
+  const { subscribeToUpdates, unsubscribe } = useDashboardStore();
+
+  useEffect(() => {
+    if (userProfile?.user_id) {
+      subscribeToUpdates(userProfile.user_id.toString());
+    }
+
+    return () => {
+      unsubscribe();
+    };
+  }, [userProfile?.user_id]);
+
   // Fetch suggested actions only when user profile is available
   useEffect(() => {
     if (userProfile?.auth_user_uuid) {
@@ -161,8 +174,16 @@ export default function HomeScreen() {
               onPress: async () => {
                 setShowCompletionModal(true);
                 try {
+                  console.log("🔵 [HomeScreen] Before finishWorkout");
                   await sessionActions.finishWorkout();
+                  console.log(
+                    "🔵 [HomeScreen] After sessionActions.finishWorkout"
+                  );
+                  console.log(
+                    "🔵 [HomeScreen] About to call ref.finishWorkout"
+                  );
                   workoutTrackerRef.current?.finishWorkout();
+                  console.log("🔵 [HomeScreen] After ref.finishWorkout");
                 } catch (error) {
                   console.error("Failed to finish workout:", error);
                   setShowCompletionModal(false);

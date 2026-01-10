@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { dashboardService } from "@/services/api/dashboard";
 import { AllTimeframeData } from "@/types/workout";
+import { supabase } from "@/lib/supabaseClient";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 interface DashboardStore {
   // Data - complete object from API
@@ -15,6 +17,9 @@ interface DashboardStore {
   refreshDashboard: () => Promise<void>;
   invalidateAfterWorkout: () => void;
   shouldRefresh: () => boolean;
+  subscription: RealtimeChannel | null;
+  subscribeToUpdates: (userId: string) => void;
+  unsubscribe: () => void;
 }
 
 export const useDashboardStore = create<DashboardStore>((set, get) => ({
@@ -23,7 +28,9 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   isLoading: false,
   lastUpdated: null,
   error: null,
+
   cacheValidForHours: 1, // 1 hour cache
+  subscription: null,
 
   // Check if we should refresh (cache expired)
   shouldRefresh: () => {
@@ -41,6 +48,50 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       lastUpdated: null,
       error: null,
     });
+  },
+
+  subscribeToUpdates: (userId: string) => {
+    const { subscription } = get();
+    if (subscription) return; // Prevent duplicates
+
+    console.log(
+      `🔌 [DashboardStore] Subscribing to realtime updates for user: ${userId}`
+    );
+
+    const channel = supabase
+      .channel("dashboard_updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "user_context_bundles",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          console.log(
+            "⚡️ [DashboardStore] Realtime bundle update received:",
+            payload.new
+          );
+          // Force refresh on next call
+          set({ lastUpdated: null });
+          get().refreshDashboard();
+        }
+      )
+      .subscribe((status) => {
+        console.log(`📡 [DashboardStore] Subscription status: ${status}`);
+      });
+
+    set({ subscription: channel });
+  },
+
+  unsubscribe: () => {
+    const { subscription } = get();
+    if (subscription) {
+      console.log("🔌 [DashboardStore] Unsubscribing from realtime updates");
+      supabase.removeChannel(subscription);
+      set({ subscription: null });
+    }
   },
 
   // Main refresh method - calls API
@@ -113,7 +164,13 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
       lastUpdated: null, // Force refresh on next call
       error: null,
     });
-    // Trigger immediate refresh
-    get().refreshDashboard();
+    // Trigger immediate refresh logic is now handled by realtime subscription mostly,
+    // but we can still force check if needed, or just let the next mount/update handle it.
+    // The original code called get().refreshDashboard() here.
+    // Given the new pattern, we primarily just want to invalidate the cache.
+    // If the user is on the dashboard, the realtime event would have triggered a refresh.
+    // If they are navigating back to it, the mount effect might trigger it if cache is invalid.
+    // Let's keep the immediate refresh for now to be safe, as realtime might have distinct timing.
+    // Actually, per user request: "Now just invalidates cache, lets realtime handle refresh"
   },
 }));

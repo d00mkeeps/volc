@@ -27,19 +27,16 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { useColorScheme } from "react-native";
 
 interface ChatOverlayProps {
-  placeholder?: string;
   currentPage?: number;
 }
 
-export const ChatOverlay = ({
-  placeholder = "Ask me anything...",
-  currentPage = 0,
-}: ChatOverlayProps) => {
+export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // ChatStore selectors
   const loadingState = useChatStore((state) => state.loadingState);
   const greeting = useChatStore((state) => state.greeting);
+  const placeholder = useChatStore((state) => state.placeholder);
   const inputAreaRef = useRef<InputAreaRef>(null);
 
   const failedMessageContent = useChatStore(
@@ -351,7 +348,7 @@ export const ChatOverlay = ({
             >
               <InputArea
                 ref={inputAreaRef}
-                placeholder={placeholder}
+                placeholder={placeholder || "ask me anything"}
                 onSendMessage={handleSendMessage}
                 isStreaming={isStreaming}
                 onFocus={handleExpand}

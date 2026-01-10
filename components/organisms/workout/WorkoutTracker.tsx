@@ -48,14 +48,27 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const snapPoints = useMemo(() => ["45%", "92%"], []);
 
     const handleSheetChanges = (index: number) => {
+      console.log("🟡 [WorkoutTracker] handleSheetChanges -", index);
       animatedIndex.value = index;
     };
+
+    // Add effect to log state changes
+    useEffect(() => {
+      console.log("🟢 [WorkoutTracker] State:", {
+        isActive,
+        hasWorkout: !!currentWorkout?.id,
+        computedIndex: isActive && currentWorkout?.id ? 0 : -1,
+      });
+    }, [isActive, currentWorkout?.id]);
 
     useImperativeHandle(
       ref,
       () => ({
         startWorkout: () => {},
-        finishWorkout: () => {},
+        finishWorkout: () => {
+          console.log("🔴 [WorkoutTracker] finishWorkout called");
+          bottomSheetRef.current?.close();
+        },
         expandToFull: () => bottomSheetRef.current?.snapToIndex(1),
         snapToPeek: () => bottomSheetRef.current?.snapToIndex(0),
       }),
@@ -181,6 +194,13 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       };
       updateCurrentWorkout(updatedWorkout);
     }, [isActive, currentWorkout, updateCurrentWorkout, isAnyExerciseEditing]);
+
+    useEffect(() => {
+      if (!isActive || !currentWorkout?.id) {
+        console.log("🔴 [WorkoutTracker] Forcing close via snapToIndex(-1)");
+        bottomSheetRef.current?.close();
+      }
+    }, [isActive, currentWorkout?.id]);
 
     // Handle moving exercise up
     const handleMoveExerciseUp = useCallback(

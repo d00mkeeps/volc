@@ -26,15 +26,16 @@ class ChatActionService:
             project=project_id
         )
     
-    async def generate_actions(self, user_id: str, messages: List[Dict[str, str]] = None) -> List[Dict[str, str]]:
+    async def generate_actions(self, user_id: str, messages: List[Dict[str, str]] = None) -> Dict[str, Any]:
         """
-        Generate 3 quick-reply actions based on user context and optional recent messages.
+        Generate 3 quick-reply actions based on user context and optional recent messages,
+        plus a dynamic placeholder text.
         
         Args:
             user_id: User's ID
             
         Returns:
-            List of 3 action objects (e.g. [{"label": "Plan Leg Day", "message": "I want to plan a leg day"}])
+            Dict containing actions list and placeholder string
         """
         try:
             # Load context (cached)
@@ -97,11 +98,26 @@ class ChatActionService:
             - General/Chat: [{{"label": "Continue workout", "message": "Let's continue with my workout"}}, {{"label": "End session", "message": "I'd like to end this workout session"}}, {{"label": "Ask question", "message": "I have a question about my training"}}]
 
             RULES:
-            1. Output ONLY a valid JSON array of objects. Example: [{{"label": "Plan workout", "message": "I want to plan a workout"}}, ...]
+            1. Output ONLY a valid JSON object.
             2. "label" should be short (under 20 chars) for the button.
             3. "message" should be the natural language text sent to chat (can be longer).
             4. Make them relevant to the user's current state.
             5. Do NOT include markdown formatting or backticks. Just the raw JSON string.
+
+            Additionally, generate a short placeholder text (3-5 words) that guides what the user should type next.
+
+            PLACEHOLDER GUIDELINES:
+            - Lowercase, no punctuation
+            - Frame as the user's next action, not AI's capability
+            - If last message asked a question → suggest answering ("share your answer", "let me know", "tell me more")
+            - If last message gave information → suggest follow-up ("ask a follow-up", "need anything else", "what's next")
+            - If analyzing a workout → suggest specific action ("describe the issue", "which exercise", "how did it feel")
+            - If planning → suggest specifics ("which muscle groups", "how many days", "any constraints")
+            - Be conversation-aware and specific
+            - Avoid generic phrases like "ask anything" or "send message"
+            - Never use first-person ("I can help...")
+
+            Output format: {{"actions": [...], "placeholder": "your contextual placeholder here"}}
             """
             
             messages = [
@@ -114,39 +130,47 @@ class ChatActionService:
             content = response.content
             
             # Extract JSON
-            actions = self._parse_json_actions(content)
+            response_data = self._parse_json_response(content)
             
-            # Fallback if empty or failed
-            if not actions:
+            if not response_data.get("actions"):
                 logger.warning(f"⚠️ Empty actions generated for user {user_id}, using defaults")
-                return [
-                    {"label": "Continue workout", "message": "Let's continue with my workout"},
-                    {"label": "End session", "message": "I'd like to end this workout session"},
-                    {"label": "Ask question", "message": "I have a question about my training"}
-                ]
+                return {
+                    "actions": [
+                        {"label": "Continue workout", "message": "Let's continue with my workout"},
+                        {"label": "End session", "message": "I'd like to end this workout session"},
+                        {"label": "Ask question", "message": "I have a question about my training"}
+                    ],
+                    "placeholder": "ask me anything"
+                }
                 
-            return actions[:3] # Ensure max 3
+            return {
+                "actions": response_data["actions"][:3],  # Ensure max 3
+                "placeholder": response_data.get("placeholder", "ask me anything")
+            }
             
         except Exception as e:
             logger.error(f"❌ Error generating chat actions: {str(e)}", exc_info=True)
-            return [
-                {"label": "Continue workout", "message": "Let's continue with my workout"},
-                {"label": "End session", "message": "I'd like to end this workout session"},
-                {"label": "Ask question", "message": "I have a question about my training"}
-            ]
+            return {
+                "actions": [
+                    {"label": "Continue workout", "message": "Let's continue with my workout"},
+                    {"label": "End session", "message": "I'd like to end this workout session"},
+                    {"label": "Ask question", "message": "I have a question about my training"}
+                ],
+                "placeholder": "ask me anything"
+            }
     
-    def _parse_json_actions(self, text: str) -> List[Dict[str, str]]:
-        """Extract and parse JSON list from LLM response"""
+    def _parse_json_response(self, text: str) -> Dict[str, Any]:
+        """Extract and parse JSON response with actions and placeholder"""
         try:
-            # Try to find JSON block
-            match = re.search(r'\[.*\]', text, re.DOTALL)
+            match = re.search(r'\{.*\}', text, re.DOTALL)
             if match:
                 json_str = match.group(0)
-                actions = json.loads(json_str)
+                response = json.loads(json_str)
                 # Validate structure
-                if isinstance(actions, list) and all(isinstance(a, dict) and 'label' in a and 'message' in a for a in actions):
-                    return actions
-            return []
+                if isinstance(response, dict) and 'actions' in response and 'placeholder' in response:
+                    if isinstance(response['actions'], list) and isinstance(response['placeholder'], str):
+                        return response
+            return {"actions": [], "placeholder": ""}
         except Exception:
-            return []
+            return {"actions": [], "placeholder": ""}
 

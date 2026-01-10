@@ -52,11 +52,13 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
 
     // Component is busy when pending OR streaming
     const isBusy = loadingState === "pending" || loadingState === "streaming";
+    const isPending = loadingState === "pending";
 
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const sendOpacity = useRef(new Animated.Value(1)).current;
     const stopOpacity = useRef(new Animated.Value(0)).current;
     const stopCooldownOpacity = useRef(new Animated.Value(1)).current;
+    const loadingOpacity = useRef(new Animated.Value(1)).current;
 
     const pulseTimeout = useRef<NodeJS.Timeout | null>(null);
     const cooldownTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -74,6 +76,15 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
       }),
       []
     );
+
+    // Opacity animation for loading state (similar to QuickChatActions)
+    useEffect(() => {
+      Animated.timing(loadingOpacity, {
+        toValue: isPending ? 0.4 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, [isPending, loadingOpacity]);
 
     // Crossfade between Send and Stop buttons (now triggers on pending OR streaming)
     useEffect(() => {
@@ -181,7 +192,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
         setStopCooldown(false);
         stopCooldownOpacity.setValue(1);
       }, 5000) as unknown as NodeJS.Timeout;
-    }, [stopCooldown, onCancel, stopCooldownOpacity]);
+    }, [stopCooldown, onCancel, stopCooldownOpacity, isBusy, loadingState]);
 
     // Cleanup cooldown timer
     useEffect(() => {
@@ -234,6 +245,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
       <Animated.View
         style={{
           transform: [{ scale: pulseAnim }],
+          opacity: loadingOpacity,
         }}
       >
         <YStack gap="$1">

@@ -20,7 +20,9 @@ interface ChatStore {
   // Quick chat
   greeting: string | null;
   actions: Array<{ label: string; message: string }> | null;
+  placeholder: string | null;
   isLoadingGreeting: boolean;
+  isLoadingPlaceholder: boolean;
   isLoadingActions: boolean;
 
   // Streaming preview
@@ -62,7 +64,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   lastCancelTime: 0,
   greeting: null,
   actions: null,
+  placeholder: null,
   isLoadingGreeting: true,
+  isLoadingPlaceholder: true,
   isLoadingActions: true,
   streamingContent: "",
   _handlerRefs: [],
@@ -188,13 +192,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           { label: "Learn about Volc", message: "What can you help me with?" },
           { label: "Track workout", message: "I want to track my workout" },
         ],
+        placeholder: "share your fitness goals",
         isLoadingActions: false,
+        isLoadingPlaceholder: false,
       });
       return;
     }
 
     // Returning user - fetch personalized actions (with or without context)
-    set({ isLoadingActions: true });
+    set({ isLoadingActions: true, isLoadingPlaceholder: true });
 
     try {
       if (!userProfile?.auth_user_uuid) {
@@ -224,8 +230,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       set({
         actions:
-          fetchedActions.length > 0
-            ? fetchedActions
+          fetchedActions.actions.length > 0
+            ? fetchedActions.actions
             : [
                 {
                   label: "Track workout",
@@ -240,7 +246,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                   message: "Help me plan my next workout",
                 },
               ],
+        placeholder: fetchedActions.placeholder || "ask me anything",
         isLoadingActions: false,
+        isLoadingPlaceholder: false,
       });
     } catch (error) {
       console.error("[ChatStore] Failed to fetch actions:", error);
@@ -256,7 +264,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             message: "Help me plan my next workout",
           },
         ],
+        placeholder: "ask me anything",
         isLoadingActions: false,
+        isLoadingPlaceholder: false,
       });
     }
   },
