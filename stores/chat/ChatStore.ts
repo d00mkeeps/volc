@@ -182,24 +182,43 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
 
     const memory = contextBundle.ai_memory;
-    const isNewUser = !memory || !memory.notes || memory.notes.length === 0;
+    const hasAiMemory = memory && memory.notes && memory.notes.length > 0;
 
-    // New user onboarding actions
-    if (isNewUser) {
-      set({
-        actions: [
-          { label: "Set goals", message: "I'd like to set some fitness goals" },
-          { label: "Learn about Volc", message: "What can you help me with?" },
-          { label: "Track workout", message: "I want to track my workout" },
-        ],
-        placeholder: "share your fitness goals",
-        isLoadingActions: false,
-        isLoadingPlaceholder: false,
-      });
-      return;
+    // For NEW users (no AI memory), check if they've sent a message yet
+    if (!hasAiMemory) {
+      let hasUserMessages = false;
+      if (activeConversationId) {
+        const messages = useMessageStore
+          .getState()
+          .messages.get(activeConversationId);
+        if (messages && messages.length > 0) {
+          hasUserMessages = messages.some((m) => m.sender === "user");
+        }
+      }
+
+      // Show default actions only if new user hasn't sent a message yet
+      if (!hasUserMessages) {
+        set({
+          actions: [
+            {
+              label: "Set goals",
+              message: "I'd like to set some fitness goals",
+            },
+            {
+              label: "Learn about Volc",
+              message: "What can you help me with?",
+            },
+            { label: "Track workout", message: "I want to track my workout" },
+          ],
+          placeholder: "share your fitness goals",
+          isLoadingActions: false,
+          isLoadingPlaceholder: false,
+        });
+        return;
+      }
     }
 
-    // Returning user - fetch personalized actions (with or without context)
+    // For existing users OR new users after first message - fetch contextual actions
     set({ isLoadingActions: true, isLoadingPlaceholder: true });
 
     try {
@@ -396,9 +415,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             sender: "user" | "assistant";
           }[] = [];
 
-          if (pendingGreeting) {
+          const greetingToUse = pendingGreeting || get().greeting;
+
+          if (greetingToUse) {
             messagesToCreate.push({
-              content: pendingGreeting,
+              content: greetingToUse,
               sender: "assistant",
             });
           }
@@ -409,7 +430,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
               sender: "user",
             });
             setPendingInitialMessage(null);
-          } else if (messagesToCreate.length === 0) {
+          }
+
+          // Only use hardcoded fallback if we have nothing else
+          if (messagesToCreate.length === 0) {
             messagesToCreate.push({
               content: "Hello! Ready to workout?",
               sender: "assistant",

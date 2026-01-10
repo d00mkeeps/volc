@@ -25,14 +25,15 @@ class ChatActionService:
             credentials=credentials,
             project=project_id
         )
-    
+        
     async def generate_actions(self, user_id: str, messages: List[Dict[str, str]] = None) -> Dict[str, Any]:
         """
         Generate 3 quick-reply actions based on user context and optional recent messages,
-        plus a dynamic placeholder text.
+        with hardcoded placeholder text.
         
         Args:
             user_id: User's ID
+            messages: Optional recent conversation messages
             
         Returns:
             Dict containing actions list and placeholder string
@@ -44,6 +45,7 @@ class ChatActionService:
             
             last_workout_info = "None"
             ai_memory_info = "None"
+            is_early_user = True  # Default to early user
             
             if bundle:
                 # Extract Last Workout
@@ -52,9 +54,11 @@ class ChatActionService:
                     date_str = last.date.strftime('%Y-%m-%d') if hasattr(last.date, 'strftime') else str(last.date)
                     last_workout_info = f"{last.name} on {date_str}"
                 
-                # Extract AI Memory
+                # Extract AI Memory and check user status
                 if hasattr(bundle, 'ai_memory') and bundle.ai_memory:
                     notes = bundle.ai_memory.get('notes', [])
+                    is_early_user = len(notes) < 3
+                    
                     # Get last 3 notes
                     recent_notes = [n.get('text', '') for n in notes[-3:]]
                     if recent_notes:
@@ -62,12 +66,13 @@ class ChatActionService:
             
             logger.info("🔍 [ChatActionService] Context Verification:")
             logger.info(f"   - User ID: {user_id}")
+            logger.info(f"   - Is Early User: {is_early_user}")
             logger.info(f"   - Last Workout: {last_workout_info}")
             logger.info(f"   - AI Memory: {ai_memory_info[:100]}..." if len(ai_memory_info) > 100 else f"   - AI Memory: {ai_memory_info}")
             if messages:
                 logger.info(f"   - Conversation Context: {len(messages)} messages provided")
                 if len(messages) > 0:
-                     logger.info(f"   - Last Message: {messages[-1].get('content', '')[:50]}...")
+                    logger.info(f"   - Last Message: {messages[-1].get('content', '')[:50]}...")
             else:
                 logger.info("   - Conversation Context: None provided")
             
@@ -76,76 +81,97 @@ class ChatActionService:
             Context:
             - Last Workout: {last_workout_info}
             - AI Memory Notes: {ai_memory_info}
+            - User Status: {"Early user (< 3 memory notes)" if is_early_user else "Established user"}
             """
 
             # Add recent conversation context if provided
             recent_chat_context = ""
             if messages:
-                # Assuming 'messages' is a list of dicts like [{'sender': 'user', 'content': '...'}]
-                formatted_msgs = "\n".join([f"{m.get('sender', 'user')}: {m.get('content', '')}" for m in messages[-5:]]) # Limit to last 5
+                formatted_msgs = "\n".join([f"{m.get('sender', 'user')}: {m.get('content', '')}" for m in messages[-5:]])
                 recent_chat_context = f"\nRECENT CONVERSATION:\n{formatted_msgs}\n"
 
-            # Build Prompt
-            prompt = f"""
-            You are an expert fitness coach assistant. Based on this user's context, generate exactly 3 short, punchy "suggested action" buttons that the user might want to click right now.
+            # Build Prompt - different approach for early users
+            if is_early_user:
+                prompt = f"""
+                You are an expert fitness coach assistant helping onboard a new user. This user has fewer than 3 AI memory notes, so we need to learn more about them.
+                
+                {formatted_context}
+                {recent_chat_context}
+                
+                Generate exactly 3 short, punchy "suggested action" buttons that guide the user to share:
+                - Their fitness goals
+                - Their current abilities/fitness level
+                - Their preferences (workout style, equipment, time availability)
+                - Any injury history or limitations
+                
+                ONBOARDING EXAMPLES:
+                - [{{"label": "Set goals", "message": "I'd like to set some fitness goals"}}, {{"label": "Share abilities", "message": "Let me tell you about my current fitness level"}}, {{"label": "Any injuries?", "message": "I have some injury history to share"}}]
+                - [{{"label": "What's my level?", "message": "Help me figure out my fitness level"}}, {{"label": "Equipment access", "message": "Here's what equipment I have access to"}}, {{"label": "Time available", "message": "I want to discuss how much time I have for training"}}]
+                
+                Make the actions feel natural based on the conversation, but keep the focus on collecting information we need to coach them effectively.
+                
+                RULES:
+                1. Output ONLY a valid JSON array of action objects.
+                2. "label" should be short (under 20 chars) for the button.
+                3. "message" should be the natural language text sent to chat (can be longer).
+                4. Make them relevant to what we still need to learn about the user.
+                5. Do NOT include markdown formatting or backticks. Just the raw JSON array.
+
+                Output format: [{{"label": "...", "message": "..."}}, ...]
+                """
+            else:
+                prompt = f"""
+                You are an expert fitness coach assistant. Based on this user's context, generate exactly 3 short, punchy "suggested action" buttons that the user might want to click right now.
+                
+                {formatted_context}
+                {recent_chat_context}
+                
+                EXAMPLES:
+                - Analysis Context: [{{"label": "Check depth", "message": "Can you analyze my squat depth?"}}, {{"label": "Compare to last", "message": "How does this compare to my last workout?"}}, {{"label": "Fix form", "message": "What cues can help fix my form?"}}]
+                - Planning Context: [{{"label": "Start plan", "message": "Help me create a workout plan"}}, {{"label": "Modify split", "message": "I want to change my current split"}}, {{"label": "What exercises?", "message": "What exercises should I include?"}}]
+                - General/Chat: [{{"label": "Continue workout", "message": "Let's continue with my workout"}}, {{"label": "End session", "message": "I'd like to end this workout session"}}, {{"label": "Ask question", "message": "I have a question about my training"}}]
+
+                RULES:
+                1. Output ONLY a valid JSON array of action objects.
+                2. "label" should be short (under 20 chars) for the button.
+                3. "message" should be the natural language text sent to chat (can be longer).
+                4. Make them relevant to the user's current state.
+                5. Do NOT include markdown formatting or backticks. Just the raw JSON array.
+
+                Output format: [{{"label": "...", "message": "..."}}, ...]
+                """
             
-            {formatted_context}
-            {recent_chat_context}
-            
-            EXAMPLES:
-            - Analysis Context: [{{"label": "Check depth", "message": "Can you analyze my squat depth?"}}, {{"label": "Compare to last", "message": "How does this compare to my last workout?"}}, {{"label": "Fix form", "message": "What cues can help fix my form?"}}]
-            - Planning Context: [{{"label": "Start plan", "message": "Help me create a workout plan"}}, {{"label": "Modify split", "message": "I want to change my current split"}}, {{"label": "What exercises?", "message": "What exercises should I include?"}}]
-            - General/Chat: [{{"label": "Continue workout", "message": "Let's continue with my workout"}}, {{"label": "End session", "message": "I'd like to end this workout session"}}, {{"label": "Ask question", "message": "I have a question about my training"}}]
-
-            RULES:
-            1. Output ONLY a valid JSON object.
-            2. "label" should be short (under 20 chars) for the button.
-            3. "message" should be the natural language text sent to chat (can be longer).
-            4. Make them relevant to the user's current state.
-            5. Do NOT include markdown formatting or backticks. Just the raw JSON string.
-
-            Additionally, generate a short placeholder text (3-5 words) that guides what the user should type next.
-
-            PLACEHOLDER GUIDELINES:
-            - Lowercase, no punctuation
-            - Frame as the user's next action, not AI's capability
-            - If last message asked a question → suggest answering ("share your answer", "let me know", "tell me more")
-            - If last message gave information → suggest follow-up ("ask a follow-up", "need anything else", "what's next")
-            - If analyzing a workout → suggest specific action ("describe the issue", "which exercise", "how did it feel")
-            - If planning → suggest specifics ("which muscle groups", "how many days", "any constraints")
-            - Be conversation-aware and specific
-            - Avoid generic phrases like "ask anything" or "send message"
-            - Never use first-person ("I can help...")
-
-            Output format: {{"actions": [...], "placeholder": "your contextual placeholder here"}}
-            """
-            
-            messages = [
+            messages_to_send = [
                 SystemMessage(content="You are a helpful fitness coach assistant. Generate JSON only."),
                 HumanMessage(content=prompt)
             ]
             
             # Generate
-            response = await self.llm.ainvoke(messages)
+            response = await self.llm.ainvoke(messages_to_send)
             content = response.content
             
             # Extract JSON
-            response_data = self._parse_json_response(content)
+            actions = self._parse_json_response(content)
             
-            if not response_data.get("actions"):
+            if not actions:
                 logger.warning(f"⚠️ Empty actions generated for user {user_id}, using defaults")
-                return {
-                    "actions": [
+                # Different defaults for early vs established users
+                if is_early_user:
+                    actions = [
+                        {"label": "Set goals", "message": "I'd like to set some fitness goals"},
+                        {"label": "Share abilities", "message": "Let me tell you about my current fitness level"},
+                        {"label": "Any limitations?", "message": "I have some injury history or limitations to share"}
+                    ]
+                else:
+                    actions = [
                         {"label": "Continue workout", "message": "Let's continue with my workout"},
                         {"label": "End session", "message": "I'd like to end this workout session"},
                         {"label": "Ask question", "message": "I have a question about my training"}
-                    ],
-                    "placeholder": "ask me anything"
-                }
+                    ]
                 
             return {
-                "actions": response_data["actions"][:3],  # Ensure max 3
-                "placeholder": response_data.get("placeholder", "ask me anything")
+                "actions": actions[:3],  # Ensure max 3
+                "placeholder": "Reply..."
             }
             
         except Exception as e:
@@ -156,21 +182,21 @@ class ChatActionService:
                     {"label": "End session", "message": "I'd like to end this workout session"},
                     {"label": "Ask question", "message": "I have a question about my training"}
                 ],
-                "placeholder": "ask me anything"
+                "placeholder": "Reply..."
             }
-    
-    def _parse_json_response(self, text: str) -> Dict[str, Any]:
-        """Extract and parse JSON response with actions and placeholder"""
+
+
+
+    def _parse_json_response(self, text: str) -> List[Dict[str, str]]:
+        """Extract and parse JSON array of actions"""
         try:
-            match = re.search(r'\{.*\}', text, re.DOTALL)
+            match = re.search(r'\[.*\]', text, re.DOTALL)
             if match:
                 json_str = match.group(0)
-                response = json.loads(json_str)
+                actions = json.loads(json_str)
                 # Validate structure
-                if isinstance(response, dict) and 'actions' in response and 'placeholder' in response:
-                    if isinstance(response['actions'], list) and isinstance(response['placeholder'], str):
-                        return response
-            return {"actions": [], "placeholder": ""}
+                if isinstance(actions, list):
+                    return actions
+            return []
         except Exception:
-            return {"actions": [], "placeholder": ""}
-
+            return []

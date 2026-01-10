@@ -4,6 +4,7 @@ from .base_service import BaseDBService
 from typing import Dict, List, Any
 import logging
 from datetime import datetime, timedelta
+import uuid
 from ...core.utils.id_gen import new_uuid
 
 logger = logging.getLogger(__name__)
@@ -274,9 +275,18 @@ class WorkoutService(BaseDBService):
 
             now = datetime.utcnow().isoformat()
 
+            # Sanitize UUID if provided
+            workout_id = workout_data.get("id")
+            if workout_id:
+                try:
+                    uuid.UUID(str(workout_id))
+                except ValueError:
+                    logger.warning(f"Invalid UUID provided: {workout_id}. Generating new one.")
+                    workout_id = None
+
             # Prepare the workout data including user_id for business logic
             workout_insert_data = {
-                "id": workout_data.get("id") or str(await new_uuid()),
+                "id": workout_id or str(await new_uuid()),
                 "user_id": user_id,  # Keep user_id for business logic
                 "name": workout_data.get("name"),
                 "notes": workout_data.get("description") or workout_data.get("notes"),

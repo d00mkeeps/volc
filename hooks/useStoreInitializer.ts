@@ -23,6 +23,15 @@ export function useStoreInitializer() {
             await useConversationStore.getState().initializeIfAuthenticated();
             await useWorkoutStore.getState().initializeIfAuthenticated();
             useChatStore.getState().refreshQuickChat();
+
+            // Subscribe to dashboard realtime updates
+            const userProfile = useUserStore.getState().userProfile;
+            if (userProfile?.auth_user_uuid) {
+              useDashboardStore
+                .getState()
+                .subscribeToUpdates(userProfile.auth_user_uuid);
+            }
+
             console.log("[AuthStore] All stores initialized");
             setInitialized(true);
           } catch (error) {
@@ -33,6 +42,10 @@ export function useStoreInitializer() {
         initializeStores();
       } else {
         console.log("[AuthStore] User logged out - clearing stores...");
+
+        // Unsubscribe from dashboard updates BEFORE clearing
+        useDashboardStore.getState().unsubscribe();
+
         useUserStore.getState().clearData();
         useExerciseStore.getState().clearData();
         useConversationStore.getState().clearData();

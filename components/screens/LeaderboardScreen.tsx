@@ -4,7 +4,7 @@ import { YStack, XStack, ScrollView } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
-import { LeaderboardEntry } from "@/services/api/leaderboardService";
+import { LeaderboardEntry, FormattedLeaderboardEntry } from "@/types";
 import { useRouter } from "expo-router";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
@@ -47,7 +47,7 @@ export const LeaderboardScreen = ({
   isActive = true,
 }: LeaderboardScreenProps) => {
   const router = useRouter();
-  const { entries, loading, error, refresh, clearError, hasEntries } =
+  const { formattedEntries, loading, error, refresh, clearError, hasEntries } =
     useLeaderboard();
   const { getPublicWorkout } = useWorkoutStore();
 
@@ -60,18 +60,16 @@ export const LeaderboardScreen = ({
     }
   }, [isActive]);
 
-  const handleEntryTap = (entry: LeaderboardEntry) => {
+  const handleEntryTap = (entry: FormattedLeaderboardEntry) => {
     if (entry.workout_id) {
-
-       getPublicWorkout(entry.workout_id); 
-       setSelectedWorkoutIds([entry.workout_id]);
+      getPublicWorkout(entry.workout_id);
+      setSelectedWorkoutIds([entry.workout_id]);
     }
   };
 
   const handleCloseSheet = () => {
     setSelectedWorkoutIds([]);
   };
-
 
   const handleRefresh = async () => {
     clearError();
@@ -106,7 +104,7 @@ export const LeaderboardScreen = ({
           <EmptyState />
         ) : (
           <YStack paddingBottom="$4">
-            {entries.map((entry) => (
+            {formattedEntries.map((entry) => (
               <LeaderboardItem
                 key={`${entry.user_id}-${entry.workout_id}-${entry.exercise_id}`}
                 entry={entry}
@@ -117,7 +115,7 @@ export const LeaderboardScreen = ({
         )}
       </ScrollView>
 
-       <WorkoutPreviewSheet
+      <WorkoutPreviewSheet
         workoutIds={selectedWorkoutIds}
         onClose={handleCloseSheet}
       />

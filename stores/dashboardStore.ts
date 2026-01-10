@@ -71,15 +71,36 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         (payload) => {
           console.log(
             "⚡️ [DashboardStore] Realtime bundle update received:",
-            payload.new
+            JSON.stringify(payload, null, 2)
           );
+
+          if (payload.errors) {
+            console.error(
+              "❌ [DashboardStore] Realtime payload contains errors:",
+              payload.errors
+            );
+            return;
+          }
+
+          console.log("🔄 [DashboardStore] Triggering dashboard refresh...");
           // Force refresh on next call
           set({ lastUpdated: null });
           get().refreshDashboard();
         }
       )
-      .subscribe((status) => {
+      .subscribe((status, err) => {
         console.log(`📡 [DashboardStore] Subscription status: ${status}`);
+        if (status === "SUBSCRIBED") {
+          console.log(
+            "✅ [DashboardStore] Successfully subscribed to changes!"
+          );
+        }
+        if (status === "CHANNEL_ERROR") {
+          console.error("❌ [DashboardStore] Channel error:", err);
+        }
+        if (status === "TIMED_OUT") {
+          console.error("⚠️ [DashboardStore] Subscription timed out");
+        }
       });
 
     set({ subscription: channel });

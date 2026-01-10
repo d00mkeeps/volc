@@ -1,11 +1,11 @@
 import React from "react";
 import { YStack, XStack, Circle } from "tamagui";
 import Text from "@/components/atoms/core/Text";
-import { LeaderboardEntry } from "@/services/api/leaderboardService";
+import { FormattedLeaderboardEntry } from "@/types";
 
 interface LeaderboardItemProps {
-  entry: LeaderboardEntry;
-  onTap: (entry: LeaderboardEntry) => void;
+  entry: FormattedLeaderboardEntry;
+  onTap: (entry: FormattedLeaderboardEntry) => void;
 }
 
 export default function LeaderboardItem({
@@ -67,7 +67,7 @@ export default function LeaderboardItem({
       {/* Performance Stats */}
       <YStack alignItems="flex-end">
         <Text size="medium" fontWeight="700" color="$primary">
-          {entry.estimated_1rm}kg
+          {entry.display_weight} {entry.display_unit}
         </Text>
         {entry.verified && (
           <Text size="medium" color="$green10">

@@ -1,8 +1,6 @@
 import { create } from "zustand";
-import {
-  leaderboardService,
-  LeaderboardEntry,
-} from "@/services/api/leaderboardService";
+import { leaderboardService } from "@/services/api/leaderboardService";
+import { LeaderboardEntry } from "@/types";
 
 interface LeaderboardState {
   entries: LeaderboardEntry[];

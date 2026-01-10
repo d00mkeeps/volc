@@ -164,7 +164,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       startTime: new Date(),
       elapsedSeconds: 0,
       totalPausedMs: 0,
-      pausedAt: null,
+      pausedAt: new Date(),
       scheduledTime: workout.scheduled_time,
     });
 

@@ -209,3 +209,22 @@ export interface WorkoutHeaderProps {
 }
 
 export { ChatConfigName };
+
+export interface LeaderboardEntry {
+  rank: number;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  workout_id: string;
+  exercise_id: string;
+  definition_id: string;
+  exercise_name: string;
+  estimated_1rm: number; // In kg
+  performed_at: string;
+  verified: boolean;
+}
+
+export interface FormattedLeaderboardEntry extends LeaderboardEntry {
+  display_weight: string;
+  display_unit: "lbs" | "kg";
+}
