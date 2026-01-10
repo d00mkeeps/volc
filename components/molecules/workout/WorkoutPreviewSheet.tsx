@@ -29,6 +29,7 @@ export default function WorkoutPreviewSheet({
   const setWorkoutDetailOpen = useUserSessionStore(
     (state) => state.setWorkoutDetailOpen
   );
+  const { userProfile } = useUserStore();
   const [expandedWorkoutId, setExpandedWorkoutId] = React.useState<
     string | null
   >(null);
@@ -233,7 +234,7 @@ export default function WorkoutPreviewSheet({
 
     const renderExerciseSets = (exercise: WorkoutExercise) => {
       const sets = exercise.workout_exercise_sets || [];
-      const { userProfile } = useUserStore();
+
       const isImperial = userProfile?.is_imperial ?? false;
       const weightUnit = isImperial ? "lbs" : "kg";
       const distanceUnit = isImperial ? "mi" : "km";

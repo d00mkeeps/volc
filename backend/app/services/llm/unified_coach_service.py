@@ -204,6 +204,22 @@ class UnifiedCoachService:
         except Exception as e:
             logger.error(f"Tool {tool_name} execution failed: {str(e)}")
             return []
+
+    def _format_weight(self, weight_kg: float, is_imperial: bool) -> str:
+        """
+        Format weight in user's preferred units.
+        
+        Args:
+            weight_kg: Weight in kilograms
+            is_imperial: Whether user prefers imperial units
+            
+        Returns:
+            Formatted weight string with unit (e.g., "225.0lbs" or "102.0kg")
+        """
+        if is_imperial:
+            weight_lbs = weight_kg / 0.453592
+            return f"{weight_lbs:.1f}lbs"
+        return f"{weight_kg:.1f}kg"
     
     def _format_shared_context(self, shared_context: Dict) -> Dict[str, str]:
         """
@@ -218,6 +234,9 @@ class UnifiedCoachService:
         """
         bundle = shared_context.get("bundle")
         profile = shared_context.get("profile")
+        
+        # Extract user's unit preference
+        is_imperial = profile.get('is_imperial', False) if profile else False
         
         # Format user profile
         if profile:
@@ -272,7 +291,7 @@ class UnifiedCoachService:
                             if hasattr(ex, 'sets') and ex.sets:
                                 for s in ex.sets:
                                     reps = s.reps if hasattr(s, 'reps') else 'N/A'
-                                    weight = f"{s.weight}kg" if hasattr(s, 'weight') and s.weight else 'bodyweight'
+                                    weight = self._format_weight(s.weight, is_imperial) if hasattr(s, 'weight') and s.weight else 'bodyweight'
                                     sets_info.append(f"{reps}x{weight}")
                             
                             sets_str = ", ".join(sets_info) if sets_info else "No sets"
@@ -322,21 +341,23 @@ class UnifiedCoachService:
                             last = ex_data['time_series'][-1]
                             change_kg = last.estimated_1rm - first.estimated_1rm
                             change_pct = (change_kg / first.estimated_1rm * 100) if first.estimated_1rm > 0 else 0
-                            change_str = f"+{change_kg:.1f}kg (+{change_pct:.1f}%)" if change_kg >= 0 else f"{change_kg:.1f}kg ({change_pct:.1f}%)"
+                            
+                            change_formatted = self._format_weight(abs(change_kg), is_imperial)
+                            change_str = f"+{change_formatted} (+{change_pct:.1f}%)" if change_kg >= 0 else f"-{change_formatted} ({change_pct:.1f}%)"
                             
                             # Show last 3 data points for recent trend
                             recent_points = ex_data['time_series'][-3:]
                             points_str = ", ".join([
-                                f"{p.date.strftime('%b %d') if hasattr(p.date, 'strftime') else str(p.date)}: {p.estimated_1rm:.1f}kg"
+                                f"{p.date.strftime('%b %d') if hasattr(p.date, 'strftime') else str(p.date)}: {self._format_weight(p.estimated_1rm, is_imperial)}"
                                 for p in recent_points
                             ])
                             
                             strength_lines.append(
-                                f"- {ex_data['exercise']}: Best {ex_data['best_e1rm']:.1f}kg | Change: {change_str} | Recent: {points_str}"
+                                f"- {ex_data['exercise']}: Best {self._format_weight(ex_data['best_e1rm'], is_imperial)} | Change: {change_str} | Recent: {points_str}"
                             )
                         else:
                             strength_lines.append(
-                                f"- {ex_data['exercise']}: {ex_data['best_e1rm']:.1f}kg (single data point)"
+                                f"- {ex_data['exercise']}: {self._format_weight(ex_data['best_e1rm'], is_imperial)} (single data point)"
                             )
                     
                     strength_prog_text = "\n".join(strength_lines)

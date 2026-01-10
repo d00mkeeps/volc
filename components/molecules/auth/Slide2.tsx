@@ -34,9 +34,9 @@ export default function Slide2({
   const colorScheme = useColorScheme();
 
   return (
-    <YStack flex={1} paddingHorizontal="$6">
+    <YStack paddingHorizontal="$6">
       {/* Header */}
-      <YStack paddingBottom="$2" flex={1}>
+      <YStack paddingBottom="$2">
         <XStack alignItems="center" gap="$4" marginBottom="$1">
           <TouchableOpacity
             onPress={() => goToSlide(0)}
@@ -51,8 +51,8 @@ export default function Slide2({
       </YStack>
 
       {/* Middle content */}
-      <YStack justifyContent="center" marginTop="$10">
-        <YStack alignItems="center" gap="$2" marginTop="$10">
+      <YStack justifyContent="center">
+        <YStack alignItems="center" gap="$2" marginTop="$6">
           <XStack gap="$4" alignItems="center" justifyContent="center">
             <Text
               color="$textMuted"

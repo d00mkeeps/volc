@@ -351,11 +351,13 @@ class WorkoutService(BaseDBService):
                                     weight=total_weight,
                                     reps=int(set_data.get("reps"))
                                 )
-                                
-                                # If it was a bodyweight exercise, subtract bodyweight from the final 1RM
-                                # to represent the estimated "added weight" 1RM
-                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+
+                                # If bodyweight exercise, subtract bodyweight from 1RM result
+                                # This ensures the 1RM stored represents "Max Added Weight" not "Total Force"
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg and estimated_1rm:
                                     estimated_1rm -= user_bodyweight_kg
+                                    # Ensure we don't store negative numbers if logic yields < 0 (unlikely but safe)
+                                    estimated_1rm = max(0, estimated_1rm)
                             
                             set_result = user_client.table("workout_exercise_sets").insert({
                                 "exercise_id": exercise_id,
@@ -497,10 +499,12 @@ class WorkoutService(BaseDBService):
                                     reps=int(set_data.get("reps"))
                                 )
 
-                                # If it was a bodyweight exercise, subtract bodyweight from the final 1RM
-                                # to represent the estimated "added weight" 1RM
-                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg:
+                                # If bodyweight exercise, subtract bodyweight from 1RM result
+                                # This ensures the 1RM stored represents "Max Added Weight" not "Total Force"
+                                if definition_id and bodyweight_exercises.get(definition_id) and user_bodyweight_kg and estimated_1rm:
                                     estimated_1rm -= user_bodyweight_kg
+                                    # Ensure we don't store negative numbers if logic yields < 0 (unlikely but safe)
+                                    estimated_1rm = max(0, estimated_1rm)
                             
                             user_client.table("workout_exercise_sets").insert({
                                 "exercise_id": exercise_id,
