@@ -9,7 +9,7 @@ import logging
 from typing import Dict, Any
 
 from app.services.db.workout_service import WorkoutService
-from app.services.db.analysis_service import AnalysisBundleService
+from app.services.db.context_service import ContextBundleService
 from app.services.workout_analysis.processor import AnalysisBundleProcessor
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class AnalysisBundleGenerator:
     
     def __init__(self):
         self.workout_service = WorkoutService()
-        self.analysis_service = AnalysisBundleService()
+        self.analysis_service = ContextBundleService()
         self.processor = AnalysisBundleProcessor()
     
     async def generate_analysis_bundle(self, user_id: str, jwt_token: str) -> Dict[str, Any]:

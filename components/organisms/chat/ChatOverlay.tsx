@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import {
   Keyboard,
   StyleSheet,
   TouchableWithoutFeedback,
   BackHandler,
   View,
+  Platform,
 } from "react-native";
 import { YStack } from "tamagui";
 import Animated, {
@@ -32,11 +39,12 @@ interface ChatOverlayProps {
 
 export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isInputAreaFocused, setIsInputAreaFocused] = useState(false);
 
   // ChatStore selectors
   const loadingState = useChatStore((state) => state.loadingState);
   const greeting = useChatStore((state) => state.greeting);
-  const placeholder = useChatStore((state) => state.placeholder);
   const inputAreaRef = useRef<InputAreaRef>(null);
 
   const failedMessageContent = useChatStore(
@@ -100,11 +108,41 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     (state) => state.isWorkoutDetailOpen
   );
 
+  // Keyboard listeners
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
+
+  // Compute placeholder client-side based on app state
+  const placeholder = useMemo(() => {
+    if (isWorkoutActive) return "Ask me anything..";
+    return "Reply..";
+  }, [isWorkoutActive]);
+
   const isHome = currentPage === 0;
   const pageProgress = useSharedValue(isHome ? 1 : 0);
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId
   );
+
+  console.log(
+    "🎨 [ChatOverlay] RENDER - activeConversationId:",
+    activeConversationId
+  );
+  console.log("🎨 [ChatOverlay] RENDER - isExpanded:", isExpanded);
 
   const messages =
     useMessageStore((state) =>
@@ -133,29 +171,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     [isExpanded, connectionState, sendMessage, greeting]
   );
 
-  /*
-   * VISIBILITY EXPLANATION:
-   *
-   * 1. Quick Chat Actions:
-   *    - Hide if workout is active (isWorkoutActive)
-   *    - Hide if workout detail sheet is open (isWorkoutDetailOpen)
-   *    - Hide if not on home page (pageProgress < 0.9)
-   *
-   * 2. Global Overlay (Input Bar):
-   *    - HIDE ONLY if workout detail sheet is open (isWorkoutDetailOpen covers full screen context)
-   *    - SHOW if workout is ACTIVE (isWorkoutActive)
-   */
-
-  // /components/organisms/chat/ChatOverlay.tsx
-
-  // /components/organisms/chat/ChatOverlay.tsx
-  // /components/organisms/chat/ChatOverlay.tsx
-
-  // /components/organisms/chat/ChatOverlay.tsx
-
   const quickChatStyle = useAnimatedStyle(() => {
     const shouldHide =
-      fadeProgress.value < 0.5 && // Use fadeProgress instead of isExpanded
+      fadeProgress.value < 0.5 &&
       (isWorkoutDetailOpen || pageProgress.value < 0.9 || isWorkoutActive);
 
     return {
@@ -167,16 +185,38 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     };
   }, [pageProgress, isWorkoutDetailOpen, isWorkoutActive, fadeProgress]);
 
-  const globalVisibilityStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isWorkoutDetailOpen ? 0 : 1, { duration: 200 }),
-    pointerEvents: isWorkoutDetailOpen ? "none" : "auto",
-  }));
+  const globalVisibilityStyle = useAnimatedStyle(() => {
+    // Hide if workout detail is open
+    if (isWorkoutDetailOpen) {
+      return {
+        opacity: withTiming(0, { duration: 200 }),
+        pointerEvents: "none",
+      };
+    }
+
+    // ONLY apply keyboard hiding when chat is NOT expanded
+    const shouldHideForKeyboard =
+      !isExpanded && isKeyboardVisible && !isInputAreaFocused;
+
+    return {
+      opacity: withTiming(shouldHideForKeyboard ? 0 : 1, { duration: 200 }),
+      pointerEvents: shouldHideForKeyboard ? "none" : "auto",
+    };
+  }, [isWorkoutDetailOpen, isKeyboardVisible, isInputAreaFocused, isExpanded]);
 
   const handleExpand = useCallback(() => {
+    console.log("📂 [ChatOverlay.handleExpand] Called");
+    console.log("📂 [ChatOverlay.handleExpand] isExpanded:", isExpanded);
+    console.log(
+      "📂 [ChatOverlay.handleExpand] activeConversationId:",
+      useConversationStore.getState().activeConversationId
+    );
+
     if (!isExpanded) {
       setIsExpanded(true);
       fadeProgress.value = withTiming(1, { duration: 300 });
       connect();
+      console.log("📂 [ChatOverlay.handleExpand] Called connect()");
     }
   }, [isExpanded, fadeProgress, connect]);
 
@@ -196,7 +236,6 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     (templateData: any) => {
       handleCollapse();
 
-      // Start workout after collapse animation completes
       setTimeout(() => {
         useUserSessionStore.getState().startWorkout(templateData);
       }, 350);
@@ -211,12 +250,11 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       useConversationStore.getState().checkTimeout();
-    }, 60000); // Check every 60 seconds
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Register expand function
   useEffect(() => {
     setExpandChatOverlay(handleExpand);
     return () => setExpandChatOverlay(null);
@@ -232,15 +270,6 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
       setPendingChatOpen(false);
     }
   }, [pendingChatOpen, handleExpand, setPendingChatOpen]);
-
-  // const countRef = useRef(0);
-  // countRef.current += 1;
-  // const now = new Date();
-  // const timestamp = `${now.getMinutes()}:${now
-  //   .getSeconds()
-  //   .toString()
-  //   .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-  // console.log(`[ChatOverlay] render #${countRef.current} at ${timestamp}`);
 
   useEffect(() => {
     if (isExpanded) {
@@ -348,11 +377,12 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
             >
               <InputArea
                 ref={inputAreaRef}
-                placeholder={placeholder || "ask me anything"}
+                placeholder={placeholder}
                 onSendMessage={handleSendMessage}
                 isStreaming={isStreaming}
                 onFocus={handleExpand}
                 onCancel={() => cancelStreaming("user_requested")}
+                onFocusChange={setIsInputAreaFocused}
               />
             </YStack>
           </Animated.View>

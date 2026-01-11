@@ -10,8 +10,6 @@ import WorkoutListModal from "@/components/organisms/workout/WorkoutListModal";
 import WorkoutList from "@/components/molecules/workout/WorkoutList";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
-import LongPressToEdit from "@/components/atoms/core/LongPressToEdit";
-import TextEditModal from "@/components/molecules/core/TextEditModal";
 
 export default function ProfileView() {
   const router = useRouter();

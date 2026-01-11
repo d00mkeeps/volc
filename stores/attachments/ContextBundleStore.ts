@@ -1,19 +1,19 @@
-// // stores/AnalysisBundleStore.ts
+// // stores/ContextBundleStore.ts
 // import { create } from 'zustand';
-// import { analysisBundleService } from '@/services/db/analysis';
+// import { contextBundleService } from '@/services/db/analysis';
 // import { authService } from '@/services/db/auth';
-// import { AnalysisBundle } from '@/types/workout';
+// import { ContextBundle } from '@/types/workout';
 
-// // AnalysisBundleStore.ts - Update the interface:
-// interface AnalysisBundleState {
-//   bundles: Map<string, AnalysisBundle>;
+// // ContextBundleStore.ts - Update the interface:
+// interface ContextBundleState {
+//   bundles: Map<string, ContextBundle>;
 //   isLoading: boolean;
 //   error: Error | null;
 
 //   // Actions
 //   loadBundlesForConversation: (conversationId: string) => Promise<void>;
-//   getBundlesByConversation: (conversationId: string) => AnalysisBundle[];
-//   addBundle: (bundle: AnalysisBundle, conversationId: string) => Promise<void>;
+//   getBundlesByConversation: (conversationId: string) => ContextBundle[];
+//   addBundle: (bundle: ContextBundle, conversationId: string) => Promise<void>;
 //   deleteBundle: (bundleId: string) => Promise<void>;
 //   clearBundlesForConversation: (conversationId: string) => Promise<void>;
 //   updateBundleConversation: (oldConversationId: string, newConversationId: string) => Promise<void>; // Add this line
@@ -21,8 +21,8 @@
 
 // const MAX_BUNDLES_PER_CONVERSATION = 20;
 
-// export const useAnalysisBundleStore = create<AnalysisBundleState>((set, get) => ({
-//   bundles: new Map<string, AnalysisBundle>(),
+// export const useContextBundleStore = create<ContextBundleState>((set, get) => ({
+//   bundles: new Map<string, ContextBundle>(),
 //   isLoading: false,
 //   error: null,
 
@@ -33,21 +33,21 @@
 //       const session = await authService.getSession();
 //       if (!session?.user?.id) return;
 
-//       const savedBundles = await analysisBundleService.getAnalysisBundlesByConversation(
+//       const savedBundles = await contextBundleService.getContextBundlesByConversation(
 //         session.user.id,
 //         conversationId
 //       );
 
 //       if (savedBundles?.length) {
-//         const bundleMap = new Map<string, AnalysisBundle>();
-//         savedBundles.forEach((bundle: AnalysisBundle) => {
+//         const bundleMap = new Map<string, ContextBundle>();
+//         savedBundles.forEach((bundle: ContextBundle) => {
 //           bundleMap.set(bundle.bundle_id, bundle);
 //         });
 
 //         set({ bundles: bundleMap });
 //       }
 //     } catch (error) {
-//       console.error("[AnalysisBundleStore] Failed to load bundles:", error);
+//       console.error("[ContextBundleStore] Failed to load bundles:", error);
 //       set({ error: error instanceof Error ? error : new Error(String(error)) });
 //     } finally {
 //       set({ isLoading: false });
@@ -63,7 +63,7 @@
 //       );
 //   },
 
-//   addBundle: async (bundle: AnalysisBundle, conversationId: string) => {
+//   addBundle: async (bundle: ContextBundle, conversationId: string) => {
 //     const { bundles } = get();
 
 //     try {
@@ -105,10 +105,10 @@
 //       set({ bundles: newBundles });
 
 //       // Save to database
-//       await analysisBundleService.saveAnalysisBundle(session.user.id, bundleWithConversation);
+//       await contextBundleService.saveContextBundle(session.user.id, bundleWithConversation);
 
 //     } catch (error) {
-//       console.error("[AnalysisBundleStore] Failed to add bundle:", error);
+//       console.error("[ContextBundleStore] Failed to add bundle:", error);
 
 //       // Rollback state
 //       const rollbackBundles = new Map(get().bundles);
@@ -136,16 +136,16 @@
 //       set({ bundles: newBundles });
 
 //       // Delete from database
-//       await analysisBundleService.deleteAnalysisBundle(session.user.id, bundleId);
+//       await contextBundleService.deleteContextBundle(session.user.id, bundleId);
 
 //     } catch (error) {
-//       console.error("[AnalysisBundleStore] Failed to delete bundle:", error);
+//       console.error("[ContextBundleStore] Failed to delete bundle:", error);
 //       set({ error: error instanceof Error ? error : new Error(String(error)) });
 //     } finally {
 //       set({ isLoading: false });
 //     }
 //   },
-//   // AnalysisBundleStore.ts - Update updateBundleConversation method:
+//   // ContextBundleStore.ts - Update updateBundleConversation method:
 // updateBundleConversation: async (oldConversationId: string, newConversationId: string) => {
 //   try {
 //     set({ isLoading: true, error: null });
@@ -156,7 +156,7 @@
 //     }
 
 //     // Get pending bundles
-//     const pendingBundles = await analysisBundleService.getAnalysisBundlesByConversation(
+//     const pendingBundles = await contextBundleService.getContextBundlesByConversation(
 //       session.user.id,
 //       oldConversationId
 //     );
@@ -171,8 +171,8 @@
 //       };
 
 //       // Delete old bundle and save new one
-//       await analysisBundleService.deleteAnalysisBundle(session.user.id, bundle.bundle_id);
-//       await analysisBundleService.saveAnalysisBundle(session.user.id, updatedBundle);
+//       await contextBundleService.deleteContextBundle(session.user.id, bundle.bundle_id);
+//       await contextBundleService.saveContextBundle(session.user.id, updatedBundle);
 
 //       // Update local state
 //       const newBundles = new Map(get().bundles);
@@ -181,7 +181,7 @@
 //       set({ bundles: newBundles });
 //     }
 //   } catch (error) {
-//     console.error("[AnalysisBundleStore] Failed to update bundle conversation:", error);
+//     console.error("[ContextBundleStore] Failed to update bundle conversation:", error);
 //     set({ error: error instanceof Error ? error : new Error(String(error)) });
 //   } finally {
 //     set({ isLoading: false });
@@ -206,10 +206,10 @@
 //       set({ bundles: newBundles });
 
 //       // Delete from database
-//       await analysisBundleService.deleteConversationAnalysisBundles(session.user.id, conversationId);
+//       await contextBundleService.deleteConversationContextBundles(session.user.id, conversationId);
 
 //     } catch (error) {
-//       console.error("[AnalysisBundleStore] Failed to clear bundles for conversation:", error);
+//       console.error("[ContextBundleStore] Failed to clear bundles for conversation:", error);
 //       set({ error: error instanceof Error ? error : new Error(String(error)) });
 //     } finally {
 //       set({ isLoading: false });

@@ -103,7 +103,15 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
       // });
 
       // Try to sync any pending workouts from previous session
-      await get().syncPendingWorkouts();
+      try {
+        await get().syncPendingWorkouts();
+      } catch (err) {
+        console.error(
+          "[WorkoutStore] ⚠️ Failed to sync pending workouts on startup:",
+          err
+        );
+        // Continue initialization even if sync fails
+      }
 
       // Only load workouts data if not already initialized
       if (initialized || loading) {

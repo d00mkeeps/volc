@@ -29,13 +29,12 @@ async def get_quick_chat_actions(
         actions = await action_service.generate_actions(user_id, messages=messages)
         logger.info(f"✅ [ChatAPI] Generated actions: {actions.get('actions', [])}")
         return {
-            "actions": actions["actions"], 
-            "placeholder": actions.get("placeholder", "ask me anything")
+            "actions": actions["actions"]
         }
     except Exception as e:
         logger.error(f"❌ [ChatAPI] Error generating actions for user {user_id}: {e}", exc_info=True)
         # Return empty list or defaults on error to prevent frontend crash
         return {
-            "actions": ["Ready to workout", "Help me plan", "Just chatting"],
-            "placeholder": "ask me anything"
+            "actions": ["Ready to workout", "Help me plan", "Just chatting"]
         }
+

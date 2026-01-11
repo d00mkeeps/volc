@@ -43,15 +43,12 @@ export default function MuscleGroupSpider() {
     ];
     const disabled: TimeframeKey[] = [];
 
-    for (let i = 0; i < timeframeOrder.length - 1; i++) {
-      const currentKey = timeframeOrder[i];
-      const nextKey = timeframeOrder[i + 1];
-
-      const currentWorkouts = allData[currentKey]?.actualMetrics?.workouts || 0;
-      const nextWorkouts = allData[nextKey]?.actualMetrics?.workouts || 0;
-
-      if (nextWorkouts === currentWorkouts) {
-        disabled.push(nextKey);
+    // Disable a timeframe only if it has zero workouts
+    // (i.e., user hasn't been working out that long)
+    for (const key of timeframeOrder) {
+      const workouts = allData[key]?.actualMetrics?.workouts || 0;
+      if (workouts === 0) {
+        disabled.push(key);
       }
     }
 

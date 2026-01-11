@@ -56,6 +56,7 @@ class UnifiedCoachService:
         self.message_history: List[Dict] = []
         self.formatted_context: Dict[str, str] = {}
         self.raw_bundle = None  # Store raw bundle for weight lookups
+        self.is_imperial: bool = False  # User's unit preference
         self.current_response: str = ""
         self.initialized: bool = False
     
@@ -83,6 +84,10 @@ class UnifiedCoachService:
         
         # Store raw bundle for weight lookups
         self.raw_bundle = shared_context.get("bundle")
+        
+        # Store unit preference from profile (source of truth)
+        profile = shared_context.get("profile")
+        self.is_imperial = profile.get('is_imperial', False) if profile else False
         
         # Build message history from DB
         self.message_history = []
@@ -474,10 +479,8 @@ class UnifiedCoachService:
         # Get base prompt
         system_prompt = get_unified_coach_prompt()
         
-        # Get user's unit preference for weight formatting
-        is_imperial = False
-        if self.raw_bundle and hasattr(self.raw_bundle, 'ai_memory'):
-            is_imperial = self.raw_bundle.ai_memory.get('is_imperial', False)
+        # Get user's unit preference (stored during initialization from profile)
+        is_imperial = self.is_imperial
         
         # Format available exercises
         if "get_exercises_by_muscle_groups" in tool_results:

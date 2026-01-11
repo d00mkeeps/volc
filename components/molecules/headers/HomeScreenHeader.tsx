@@ -48,9 +48,7 @@ export default function Header({
           >
             <AppIcon
               name={
-                health === "excellent"
-                  ? "NetworkExcellent"
-                  : health === "good"
+                health === "good"
                   ? "NetworkGood"
                   : health === "poor"
                   ? "NetworkPoor"

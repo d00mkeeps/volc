@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 from ...core.utils.conversation_attachments import load_conversation_context
 from ..db.conversation_service import ConversationService
 from ..db.message_service import MessageService  
-from ..db.analysis_service import AnalysisBundleService
+from ..db.context_service import ContextBundleService
 from app.schemas.schemas import ConversationContext
 import logging
 import asyncio
@@ -19,7 +19,7 @@ class ConversationContextService:
     Automatically handles:
     - Smart caching with 30-minute expiration
     - Fallback from cache to database
-    - Retry logic for pending analysis
+    - Retry logic for pending analysis 
     - Type conversion from database formats to typed objects
     - Cache invalidation when new data is added
     - Both user (JWT) and server (admin) operations
@@ -32,7 +32,7 @@ class ConversationContextService:
         # Database services (used as fallback when cache misses)
         self.conversation_service = ConversationService()
         self.message_service = MessageService()
-        self.analysis_bundle_service = AnalysisBundleService()
+        self.context_bundle_service = ContextBundleService()
         
         # Cache configuration
         self.cache_expiry_minutes = 30
@@ -221,7 +221,7 @@ class ConversationContextService:
         
         # Load messages and bundles separately
         messages = await self.message_service.get_conversation_messages(conversation_id, jwt_token)
-        bundles = await self.analysis_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
+        bundles = await self.context_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
         
         # Convert to proper typed objects (this is complex - RPC does it for us)
         from ..db.base_service import ConversationAttachmentsService

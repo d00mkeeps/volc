@@ -40,10 +40,6 @@ export default function ExerciseTracker({
   onMoveUp,
   onMoveDown,
   startInEditMode,
-  collapsed = false,
-  isDragging = false,
-  onToggleCollapse,
-  dragHandleProps,
 }: ExerciseTrackerProps) {
   const [isEditing, setIsEditing] = useState(
     startInEditMode || exercise.name === ""

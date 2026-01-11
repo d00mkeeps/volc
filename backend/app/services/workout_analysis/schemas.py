@@ -277,7 +277,7 @@ class UserContextBundle(BaseModel):
     """
     Complete context bundle for LLM-powered coaching.
     
-    Formerly known as WorkoutAnalysisBundle. Now includes user profile and memory
+    Formerly known as WorkoutContextBundle. Now includes user profile and memory
     in addition to workout data.
     """
     id: str = Field(..., description="Unique bundle identifier (UUID)")

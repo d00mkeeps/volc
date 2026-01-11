@@ -34,10 +34,8 @@ class UserProfileService(BaseDBService):
                 user_profile["height_cm"] = profile_data["height_cm"]
             if "current_weight_kg" in profile_data:
                 user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
-            if "height_cm" in profile_data:
-                user_profile["height_cm"] = profile_data["height_cm"]
-            if "current_weight_kg" in profile_data:
-                user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
+            if "completed_onboarding_tour" in profile_data:
+                user_profile["completed_onboarding_tour"] = profile_data["completed_onboarding_tour"]
 
             
             # Check if profile exists first
@@ -119,6 +117,8 @@ class UserProfileService(BaseDBService):
                 user_profile["height_cm"] = profile_data["height_cm"]
             if "current_weight_kg" in profile_data:
                 user_profile["current_weight_kg"] = profile_data["current_weight_kg"]
+            if "completed_onboarding_tour" in profile_data:
+                user_profile["completed_onboarding_tour"] = profile_data["completed_onboarding_tour"]
             
             # Update the user profile - RLS handles user filtering
             user_client = self.get_user_client(jwt_token)

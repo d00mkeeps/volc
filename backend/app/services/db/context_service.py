@@ -14,7 +14,7 @@ from ..workout_analysis.schemas import UserContextBundle
 
 logger = logging.getLogger(__name__)
 
-class AnalysisBundleService:
+class ContextBundleService:
     """Service for managing workout analysis bundles in the database."""
     
     def __init__(self):
@@ -73,7 +73,7 @@ class AnalysisBundleService:
         Handles both old and new database structures for backwards compatibility.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService._deserialize_bundle()
+        Method: ContextBundleService._deserialize_bundle()
         
         Args:
             db_row: Raw database row dict
@@ -120,7 +120,7 @@ class AnalysisBundleService:
         Create an empty analysis bundle with 'pending' status.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.create_analysis_bundle()
+        Method: ContextBundleService.create_analysis_bundle()
         
         Args:
             user_id: User's ID
@@ -196,7 +196,7 @@ class AnalysisBundleService:
         Update bundle status (pending/processing/complete/failed).
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.update_bundle_status()
+        Method: ContextBundleService.update_bundle_status()
         
         Args:
             bundle_id: Bundle ID to update
@@ -257,7 +257,7 @@ class AnalysisBundleService:
         Uses nested structure in 'workouts' and 'top_performers' columns.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.save_analysis_bundle()
+        Method: ContextBundleService.save_analysis_bundle()
         
         Args:
             bundle_id: Bundle ID
@@ -344,7 +344,7 @@ class AnalysisBundleService:
         Save the complete analysis bundle to database (admin access).
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.save_analysis_bundle_admin()
+        Method: ContextBundleService.save_analysis_bundle_admin()
         
         Args:
             bundle_id: Bundle ID
@@ -433,7 +433,7 @@ class AnalysisBundleService:
         Returns a properly deserialized UserContextBundle Pydantic object.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.get_latest_analysis_bundle()
+        Method: ContextBundleService.get_latest_analysis_bundle()
         
         Args:
             user_id: User's ID
@@ -494,7 +494,7 @@ class AnalysisBundleService:
         Returns a properly deserialized UserContextBundle Pydantic object.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.get_latest_analysis_bundle_admin()
+        Method: ContextBundleService.get_latest_analysis_bundle_admin()
         
         Args:
             user_id: User's ID
@@ -551,7 +551,7 @@ class AnalysisBundleService:
         Delete old analysis bundles, keeping only the most recent N bundles.
         
         Location: /app/services/db/analysis_service.py
-        Method: AnalysisBundleService.delete_old_user_context_bundles()
+        Method: ContextBundleService.delete_old_user_context_bundles()
         
         Args:
             user_id: User's ID

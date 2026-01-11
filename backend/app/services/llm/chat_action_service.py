@@ -170,8 +170,7 @@ class ChatActionService:
                     ]
                 
             return {
-                "actions": actions[:3],  # Ensure max 3
-                "placeholder": "Reply..."
+                "actions": actions[:3]  # Ensure max 3
             }
             
         except Exception as e:
@@ -181,8 +180,7 @@ class ChatActionService:
                     {"label": "Continue workout", "message": "Let's continue with my workout"},
                     {"label": "End session", "message": "I'd like to end this workout session"},
                     {"label": "Ask question", "message": "I have a question about my training"}
-                ],
-                "placeholder": "Reply..."
+                ]
             }
 
 

@@ -20,9 +20,7 @@ interface ChatStore {
   // Quick chat
   greeting: string | null;
   actions: Array<{ label: string; message: string }> | null;
-  placeholder: string | null;
   isLoadingGreeting: boolean;
-  isLoadingPlaceholder: boolean;
   isLoadingActions: boolean;
 
   // Streaming preview
@@ -64,9 +62,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   lastCancelTime: 0,
   greeting: null,
   actions: null,
-  placeholder: null,
   isLoadingGreeting: true,
-  isLoadingPlaceholder: true,
   isLoadingActions: true,
   streamingContent: "",
   _handlerRefs: [],
@@ -210,16 +206,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             },
             { label: "Track workout", message: "I want to track my workout" },
           ],
-          placeholder: "share your fitness goals",
           isLoadingActions: false,
-          isLoadingPlaceholder: false,
         });
         return;
       }
     }
 
     // For existing users OR new users after first message - fetch contextual actions
-    set({ isLoadingActions: true, isLoadingPlaceholder: true });
+    set({ isLoadingActions: true });
 
     try {
       if (!userProfile?.auth_user_uuid) {
@@ -265,9 +259,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                   message: "Help me plan my next workout",
                 },
               ],
-        placeholder: fetchedActions.placeholder || "ask me anything",
         isLoadingActions: false,
-        isLoadingPlaceholder: false,
       });
     } catch (error) {
       console.error("[ChatStore] Failed to fetch actions:", error);
@@ -283,9 +275,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             message: "Help me plan my next workout",
           },
         ],
-        placeholder: "ask me anything",
         isLoadingActions: false,
-        isLoadingPlaceholder: false,
       });
     }
   },
@@ -376,14 +366,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   connect: async () => {
+    console.log("🔌 [ChatStore.connect] START");
     const webSocketService = getWebSocketService();
 
     try {
-      /* 
-         RACE CONDITION FIX:
-         The initialization promise acts as a lock. If we are creating a conversation,
-         other callers (like sendMessage) should wait for this to complete.
-      */
       const { _initializationPromise } = get();
       if (_initializationPromise) {
         await _initializationPromise;
@@ -391,9 +377,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       let activeConversationId =
         useConversationStore.getState().activeConversationId;
-
+      console.log(
+        "🔌 [ChatStore.connect] activeConversationId:",
+        activeConversationId
+      );
       // Create conversation if none exists
       if (!activeConversationId) {
+        console.log(
+          "🔌 [ChatStore.connect] activeConversationId:",
+          activeConversationId
+        );
         // Create a new promise for this initialization
         let resolveInit: (() => void) | undefined;
         const initPromise = new Promise<void>((resolve) => {
@@ -552,6 +545,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     content: string,
     getCurrentHealth?: () => "good" | "poor" | "offline"
   ) => {
+    console.log(
+      "📤 [ChatStore.sendMessage] START - content:",
+      content.substring(0, 50)
+    );
+    console.log(
+      "📤 [ChatStore.sendMessage] activeConversationId:",
+      useConversationStore.getState().activeConversationId
+    );
+
     const webSocketService = getWebSocketService();
     const currentHealth = getCurrentHealth?.() || "good"; // ← Use optional chaining with fallback
     let messageSentToBackend = false;

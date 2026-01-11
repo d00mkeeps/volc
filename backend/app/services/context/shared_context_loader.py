@@ -2,7 +2,7 @@ import logging
 import asyncio
 from typing import Dict, Any, Optional
 from app.services.db.user_profile_service import UserProfileService
-from app.services.db.analysis_service import AnalysisBundleService
+from app.services.db.context_service import ContextBundleService
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ class SharedContextLoader:
 
     def __init__(self):
         self.profile_service = UserProfileService()
-        self.bundle_service = AnalysisBundleService()
+        self.bundle_service = ContextBundleService()
     
     @classmethod
     def invalidate_bundle_cache(cls, user_id: str):

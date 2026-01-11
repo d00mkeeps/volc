@@ -1,15 +1,15 @@
 import { BaseDBService } from "./base";
-import { AnalysisBundle } from "@/types/workout";
+import { ContextBundle } from "@/types/workout";
 import { UserContextBundle } from "@/types";
 import { apiGet, apiPost, apiDelete } from "../api/core/apiClient";
 
 export class AnalysisBundleService extends BaseDBService {
   /**
-   * Save a workout data bundle to the database
+   * Save a context bundle to the database
    */
-  async saveAnalysisBundle(
+  async saveContextBundle(
     userId: string,
-    bundle: AnalysisBundle
+    bundle: ContextBundle
   ): Promise<void> {
     try {
       console.log(
@@ -34,12 +34,12 @@ export class AnalysisBundleService extends BaseDBService {
   async getAnalysisBundlesByConversation(
     userId: string,
     conversationId: string
-  ): Promise<AnalysisBundle[]> {
+  ): Promise<ContextBundle[]> {
     try {
       console.log(
         `[AnalysisBundleService] Getting analysis bundles for conversation: ${conversationId}`
       );
-      const bundles = await apiGet<AnalysisBundle[]>("/db/analysis-bundles", {
+      const bundles = await apiGet<ContextBundle[]>("/db/analysis-bundles", {
         conversation_id: conversationId,
       });
       console.log(
@@ -103,17 +103,23 @@ export class AnalysisBundleService extends BaseDBService {
   /**
    * Get the latest user context bundle
    */
-  async getLatestUserContextBundle(userId: string): Promise<UserContextBundle | null> {
+  async getLatestUserContextBundle(
+    userId: string
+  ): Promise<UserContextBundle | null> {
     try {
       console.log(`[AnalysisBundleService] Getting latest user context bundle`);
-      const bundle = await apiGet<UserContextBundle | null>("/db/user-context/latest");
-      
+      const bundle = await apiGet<UserContextBundle | null>(
+        "/db/user-context/latest"
+      );
+
       if (bundle) {
-        console.log(`[AnalysisBundleService] Retrieved latest user context bundle: ${bundle.id}`);
+        console.log(
+          `[AnalysisBundleService] Retrieved latest user context bundle: ${bundle.id}`
+        );
       } else {
         console.log(`[AnalysisBundleService] No user context bundle found`);
       }
-      
+
       return bundle;
     } catch (error) {
       console.error(

@@ -157,6 +157,7 @@ export interface UserProfile {
   permission_level: string | null;
   height_cm: number | null;
   current_weight_kg: number | null;
+  completed_onboarding_tour?: boolean;
 }
 
 export interface UserContextBundle {

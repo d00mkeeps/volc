@@ -4,7 +4,7 @@ from app.core.supabase.auth import get_current_user, get_jwt_token
 import logging
 from app.core.rate_limit import rate_limit
 
-from app.services.db.analysis_service import AnalysisBundleService
+from app.services.db.context_service import ContextBundleService
 from app.services.db.workout_service import WorkoutService
 from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/db")
 
 conversation_service = ConversationService()
-analysis_bundle_service = AnalysisBundleService()
+context_bundle_service = ContextBundleService()
 workout_service = WorkoutService()
 exercise_definition_service = ExerciseDefinitionService()
 user_profile_service = UserProfileService()
@@ -65,7 +65,7 @@ async def get_latest_user_context(
     """Get the latest completed user context bundle"""
     try:
         logger.info(f"API request to get latest user context for user: {user.id}")
-        result = await analysis_bundle_service.get_latest_analysis_bundle(user.id, jwt_token)
+        result = await context_bundle_service.get_latest_analysis_bundle(user.id, jwt_token)
         
         if result.get("success"):
             return result.get("data")
@@ -80,8 +80,8 @@ async def get_latest_user_context(
             detail=str(e)
         )
 
-@router.get("/analysis-bundles")
-async def get_analysis_bundles(
+@router.get("/context-bundles")
+async def get_context_bundles(
     conversation_id: str, 
     user = Depends(get_current_user),
     jwt_token: str = Depends(get_jwt_token)
@@ -89,7 +89,7 @@ async def get_analysis_bundles(
     """Get all analysis bundles for a conversation"""
     try:
         logger.info(f"API request to get analysis bundles for conversation: {conversation_id}")
-        result = await analysis_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
+        result = await context_bundle_service.get_bundles_by_conversation(conversation_id, jwt_token)
         
         if result.get("success"):
             bundles = result.get("data", [])
@@ -105,7 +105,7 @@ async def get_analysis_bundles(
             detail=str(e)
         )
 
-@router.delete("/analysis-bundles/{bundle_id}")
+@router.delete("/context-bundles/{bundle_id}")
 async def delete_analysis_bundle(
     bundle_id: str,
     user = Depends(get_current_user),
@@ -114,7 +114,7 @@ async def delete_analysis_bundle(
     """Delete analysis bundle"""
     try:
         logger.info(f"API request to delete analysis bundle: {bundle_id}")
-        result = await analysis_bundle_service.delete_analysis_bundle(bundle_id, jwt_token)
+        result = await context_bundle_service.delete_analysis_bundle(bundle_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error deleting analysis bundle: {str(e)}")
@@ -141,7 +141,7 @@ async def delete_conversation(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-@router.delete("/analysis-bundles/conversation/{conversation_id}")
+@router.delete("/context-bundles/conversation/{conversation_id}")
 async def delete_conversation_bundles(
     conversation_id: str,
     user = Depends(get_current_user),
@@ -150,7 +150,7 @@ async def delete_conversation_bundles(
     """Delete all analysis bundles for a conversation"""
     try:
         logger.info(f"API request to delete all analysis bundles for conversation: {conversation_id}")
-        result = await analysis_bundle_service.delete_conversation_bundles(conversation_id, jwt_token)
+        result = await context_bundle_service.delete_conversation_bundles(conversation_id, jwt_token)
         return result
     except Exception as e:
         logger.error(f"Error deleting conversation bundles: {str(e)}")

@@ -471,6 +471,10 @@ export const useConversationStore = create<ConversationStoreState>()(
       },
 
       setActiveConversation: (id) => {
+        console.log(
+          "🔄 [ConversationStore.setActiveConversation] Setting to:",
+          id
+        );
         set({ activeConversationId: id });
       },
 

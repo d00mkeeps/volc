@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { UserProfile, UserContextBundle } from "@/types";
 import { userProfileService } from "@/services/db/userProfile";
 import { authService } from "@/services/db/auth";
-import { analysisBundleService } from "@/services/db/analysis";
+import { analysisBundleService } from "@/services/db/context";
 
 interface UserStoreState {
   userProfile: UserProfile | null;

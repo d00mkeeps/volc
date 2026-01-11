@@ -22,6 +22,7 @@ interface InputAreaProps {
   onPulseComplete?: () => void;
   onFocus?: () => void;
   onCancel?: () => void;
+  onFocusChange?: (isFocused: boolean) => void;
 }
 
 export interface InputAreaRef {
@@ -33,11 +34,12 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
     {
       placeholder = "send message...",
       onSendMessage,
-      isStreaming = false, // Keep for backwards compatibility, but we'll override with store
+      isStreaming = false,
       shouldPulse = false,
       onPulseComplete,
       onFocus: onFocusProp,
       onCancel,
+      onFocusChange,
     },
     ref
   ) => {
@@ -71,13 +73,13 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
         setText: (text: string) => {
           setInput(text);
           setError(undefined);
-          textAreaKey.current += 1; // Force re-render with new value
+          textAreaKey.current += 1;
         },
       }),
       []
     );
 
-    // Opacity animation for loading state (similar to QuickChatActions)
+    // Opacity animation for loading state
     useEffect(() => {
       Animated.timing(loadingOpacity, {
         toValue: isPending ? 0.4 : 1,
@@ -86,7 +88,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
       }).start();
     }, [isPending, loadingOpacity]);
 
-    // Crossfade between Send and Stop buttons (now triggers on pending OR streaming)
+    // Crossfade between Send and Stop buttons
     useEffect(() => {
       Animated.parallel([
         Animated.timing(sendOpacity, {
@@ -224,7 +226,12 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
         onPulseComplete?.();
       }
       onFocusProp?.();
-    }, [isPulsing, pulseAnim, onPulseComplete, onFocusProp]);
+      onFocusChange?.(true);
+    }, [isPulsing, pulseAnim, onPulseComplete, onFocusProp, onFocusChange]);
+
+    const handleBlur = useCallback(() => {
+      onFocusChange?.(false);
+    }, [onFocusChange]);
 
     const handleTextChange = useCallback(
       (text: string) => {
@@ -236,7 +243,6 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
       [error]
     );
 
-    // Internal validation - can send if not busy and input is valid
     const canSend = !isBusy && !!input.trim();
     const length = input.length;
     const showCounter = input.length >= 200;
@@ -264,7 +270,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
               verticalAlign="top"
               onChangeText={handleTextChange}
               placeholder={placeholder}
-              disabled={false} // Always enabled
+              disabled={false}
               borderColor={
                 error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
               }
@@ -273,6 +279,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
               placeholderTextColor="$textMuted"
               onSubmitEditing={handleSend}
               onFocus={handleFocus}
+              onBlur={handleBlur}
               returnKeyType="send"
               maxLength={500}
               numberOfLines={8}
@@ -339,7 +346,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
                 }}
                 disabledStyle={{
                   backgroundColor: "$transparent",
-                  opacity: 1, // Don't apply default disabled opacity
+                  opacity: 1,
                 }}
               />
             </Animated.View>

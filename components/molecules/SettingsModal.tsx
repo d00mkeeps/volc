@@ -7,7 +7,8 @@ import Input from "@/components/atoms/core/Input";
 import Text from "@/components/atoms/core/Text";
 import { userService } from "@/services/api/userService";
 import { useUserStore } from "@/stores/userProfileStore";
-import { calculate1RM } from "@/utils/1rmCalc"; // Add this import
+import { useTour } from "@/context/TourContext";
+import { calculate1RM } from "@/utils/1rmCalc";
 
 interface SettingsModalProps {
   visible: boolean;
@@ -28,6 +29,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [loading, setLoading] = useState(false);
 
   const { userProfile, updateProfile } = useUserStore();
+  const { resetTour } = useTour();
 
   // Track local unit preference
   const [isImperial, setIsImperial] = useState<boolean>(false);
@@ -359,6 +361,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }}
               >
                 Delete Account
+              </Button>
+              <Button
+                backgroundColor="$backgroundMuted"
+                color="$textSoft"
+                alignSelf="stretch"
+                marginTop="$2"
+                onPress={() => {
+                  resetTour();
+                  Alert.alert("Tour Reset", "Onboarding tour has been reset.");
+                }}
+              >
+                Reset Onboarding Tour (Dev)
               </Button>
             </YStack>
           </>

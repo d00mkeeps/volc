@@ -36,7 +36,9 @@ export function useStoreInitializer() {
             setInitialized(true);
           } catch (error) {
             console.error("❌ Store initialization failed:", error);
-            setInitialized(false);
+            // Even if stores fail to load, we should let the app start
+            // The individual stores handle their own error states
+            setInitialized(true);
           }
         };
         initializeStores();

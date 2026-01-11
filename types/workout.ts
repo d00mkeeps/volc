@@ -118,7 +118,7 @@ export type BundleMetadata = {
   exercises_included: string[];
 };
 
-export interface AnalysisBundle {
+export interface ContextBundle {
   bundle_id: string;
   conversationId?: string;
   metadata: {

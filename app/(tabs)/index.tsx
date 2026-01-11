@@ -30,6 +30,7 @@ import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useWindowDimensions } from "react-native";
 import { DisplayMessage } from "@/components/molecules/home/DisplayMessage";
+import { useChatStore } from "@/stores/chat/ChatStore";
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   id: "empty-workout-template",
@@ -241,18 +242,39 @@ export default function HomeScreen() {
       console.log("❌ [HomeScreen] No user profile, cannot start workout");
     }
   }, [sessionActions, userProfile?.user_id]);
-
   const handleNewChat = useCallback(() => {
-    console.log("💬 [HomeScreen] Starting new chat");
+    console.log(
+      "💬 [HomeScreen] Starting new chat - BEFORE clearing conversation"
+    );
+    console.log(
+      "💬 [HomeScreen] Current activeConversationId:",
+      useConversationStore.getState().activeConversationId
+    );
 
-    // Clear active conversation (like timeout/archive)
+    // Clear active conversation
     useConversationStore.getState().setActiveConversation(null);
-
-    // Clear any pending messages
     useConversationStore.getState().setPendingInitialMessage(null);
+    useConversationStore.getState().setPendingGreeting(null); // ← ADD THIS LINE
 
-    // Expand the chat overlay
-    expandChatOverlay?.();
+    // Also refresh the greeting to generate a fresh one
+    useChatStore.getState().computeGreeting(); // ← ADD THIS LINE
+
+    console.log(
+      "💬 [HomeScreen] AFTER clearing - activeConversationId:",
+      useConversationStore.getState().activeConversationId
+    );
+
+    // Wait a tick for state to propagate
+    setTimeout(() => {
+      console.log(
+        "💬 [HomeScreen] Inside setTimeout - about to expand overlay"
+      );
+      console.log(
+        "💬 [HomeScreen] activeConversationId in setTimeout:",
+        useConversationStore.getState().activeConversationId
+      );
+      expandChatOverlay?.();
+    }, 0);
   }, [expandChatOverlay]);
 
   const handleProfilePress = () => {

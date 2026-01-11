@@ -9,6 +9,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
+import { Keyboard, Platform } from "react-native";
 import { YStack, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useSharedValue } from "react-native-reanimated";
@@ -42,6 +43,8 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const bottomSheetRef = useRef<BottomSheet>(null);
     const animatedIndex = useSharedValue(-1);
     const animatedPosition = useSharedValue(0);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
+    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
     const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
 
@@ -94,7 +97,28 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       },
       [isActive, currentWorkout, updateCurrentWorkout]
     );
+    useEffect(() => {
+      const keyboardWillShow = Keyboard.addListener(
+        Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+        (e) => {
+          setKeyboardHeight(e.endCoordinates.height);
+          setIsKeyboardVisible(true);
+        }
+      );
 
+      const keyboardWillHide = Keyboard.addListener(
+        Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+        () => {
+          setKeyboardHeight(0);
+          setIsKeyboardVisible(false);
+        }
+      );
+
+      return () => {
+        keyboardWillShow.remove();
+        keyboardWillHide.remove();
+      };
+    }, []);
     const handleExerciseDelete = useCallback(
       (exerciseId: string) => {
         if (!isActive || !currentWorkout) return;
@@ -422,6 +446,8 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         enablePanDownToClose={false}
         enableHandlePanningGesture={true}
         enableContentPanningGesture={true}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
         animatedIndex={animatedIndex}
         animatedPosition={animatedPosition}
         backgroundStyle={{
@@ -452,7 +478,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           renderItem={renderItem}
           contentContainerStyle={{
             padding: 12,
-            paddingBottom: 120,
+            paddingBottom: isKeyboardVisible ? keyboardHeight : 100,
           }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={renderHeader}

@@ -3,7 +3,6 @@ import { QuickAction } from "@/types";
 
 interface QuickActionsResponse {
   actions: QuickAction[];
-  placeholder: string;
 }
 
 class QuickChatService extends BaseApiService {
@@ -23,13 +22,11 @@ class QuickChatService extends BaseApiService {
 
       return {
         actions: response?.actions || [],
-        placeholder: response?.placeholder || "ask me anything",
       };
     } catch (error) {
       console.error("[QuickChatService] Failed to fetch quick actions:", error);
       return {
         actions: [],
-        placeholder: "ask me anything",
       };
     }
   }

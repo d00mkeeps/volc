@@ -25,9 +25,12 @@ import {
   MINIMUM_APP_VERSION,
   getAppStoreUrl,
 } from "@/utils/versionCheck";
+import { LogBox } from "react-native";
 export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
 import { useStoreInitializer } from "@/hooks/useStoreInitializer";
+import { TourProvider } from "@/context/TourContext";
+LogBox.ignoreLogs(["[CoreUI] CUICatalog: Invalid asset name supplied"]);
 
 Settings.initializeSDK();
 
@@ -102,7 +105,6 @@ function RootLayoutNav() {
       console.error("Failed to open store:", error);
     }
   };
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -116,17 +118,18 @@ function RootLayoutNav() {
                       value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                     >
                       <AuthGate onWelcomeNeeded={setShowWelcome}>
-                        <Stack screenOptions={{ headerShown: false }}>
-                          <Stack.Screen name="(tabs)" />
-                          <Stack.Screen
-                            name="modal"
-                            options={{ presentation: "modal" }}
-                          />
-                        </Stack>
+                        <TourProvider>
+                          <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name="(tabs)" />
+                            <Stack.Screen
+                              name="modal"
+                              options={{ presentation: "modal" }}
+                            />
+                          </Stack>
+                        </TourProvider>
                       </AuthGate>
                     </ThemeProvider>
                   </AuthStoreManager>
-
                   <WelcomeBottomSheet
                     isVisible={showWelcome}
                     onComplete={() => {
@@ -136,7 +139,6 @@ function RootLayoutNav() {
                   />
                 </AuthProvider>
               </BottomSheetModalProvider>
-
               <UpdatePromptModal
                 isVisible={showUpdateModal}
                 currentVersion={getCurrentAppVersion()}
