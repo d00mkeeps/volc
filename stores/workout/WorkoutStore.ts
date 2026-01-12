@@ -5,6 +5,7 @@ import { authService } from "@/services/db/auth";
 import { pendingWorkoutQueue } from "@/utils/pendingWorkoutQueue";
 import { retryWithBackoff } from "@/utils/retryManager";
 import Toast from "react-native-toast-message";
+import { MetaEvents } from "@/services/analytics/metaEvents";
 import { useUserStore } from "../userProfileStore";
 
 interface WorkoutState {
@@ -306,6 +307,15 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => {
             // );
             await pendingWorkoutQueue.remove(workout.id);
             Toast.show({ type: "success", text1: "Workout saved!" });
+
+            // Track only the first workout for Meta ads
+            const currentWorkoutCount = get().workouts.length;
+            if (currentWorkoutCount === 0) {
+              MetaEvents.logWorkoutCreated(
+                workout.name,
+                workout.workout_exercises?.length || 0
+              );
+            }
 
             // Add to store only on success
             set((state) => ({

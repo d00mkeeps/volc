@@ -6,7 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { useColorScheme, Linking } from "react-native";
+import { useColorScheme, Linking, Platform } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthGate } from "@/components/AuthGate";
@@ -29,10 +29,8 @@ import { LogBox } from "react-native";
 export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
 import { useStoreInitializer } from "@/hooks/useStoreInitializer";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { TourProvider } from "@/context/TourContext";
-LogBox.ignoreLogs(["[CoreUI] CUICatalog: Invalid asset name supplied"]);
-
-Settings.initializeSDK();
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -71,6 +69,26 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+
+  // Initialize Facebook SDK with ATT permission handling
+  useEffect(() => {
+    const initializeFacebookSDK = async () => {
+      if (Platform.OS === "ios") {
+        const { status } = await requestTrackingPermissionsAsync();
+        console.log("[Meta SDK] ATT Status:", status);
+
+        if (status === "granted") {
+          Settings.setAdvertiserTrackingEnabled(true);
+        }
+      }
+
+      Settings.initializeSDK();
+      Settings.setAutoLogAppEventsEnabled(true);
+      Settings.setAdvertiserIDCollectionEnabled(true);
+    };
+
+    initializeFacebookSDK();
+  }, []);
 
   useEffect(() => {
     const checkVersion = () => {

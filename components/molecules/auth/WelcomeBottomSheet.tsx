@@ -19,6 +19,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useUserStore } from "@/stores/userProfileStore";
 import { userProfileService } from "@/services/db/userProfile";
 import Toast from "react-native-toast-message";
+import { MetaEvents } from "@/services/analytics/metaEvents";
 
 import Slide1 from "./Slide1";
 import Slide2 from "./Slide2";
@@ -202,6 +203,10 @@ export default function WelcomeBottomSheet({
       await refreshProfile();
 
       console.log("[WelcomeBottomSheet] Profile saved successfully");
+
+      // Track registration completion for Meta ads
+      MetaEvents.logCompleteRegistration();
+
       Toast.show({
         type: "success",
         text1: "Profile setup complete!",

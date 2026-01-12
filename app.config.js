@@ -3,7 +3,7 @@ const config = {
     owner: "d00mkeeps",
     name: "Volc",
     slug: "Volc",
-    version: "1.4.14",
+    version: "1.5.11",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "volc", // ← Change this from "myapp" to "volc"
@@ -23,6 +23,7 @@ const config = {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "Volc needs access to your photo library to let you select profile pictures and workout photos.",
         "NSCameraUsageDescription": "Volc needs access to your camera to let you take profile pictures and workout photos.",
+"NSUserTrackingUsageDescription": "This helps us measure the effectiveness of our advertising.",
         // ADD THIS:
         "NSAppTransportSecurity": {
           "NSExceptionDomains": {
@@ -51,7 +52,9 @@ const config = {
     plugins: [
       "expo-router",
       "expo-font",
-      "expo-web-browser",[
+      "expo-web-browser",
+      "expo-tracking-transparency",
+      [
 "react-native-fbsdk-next", {
 
 "appID": "877598598033367",
