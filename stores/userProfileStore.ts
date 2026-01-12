@@ -36,6 +36,16 @@ export const useUserStore = create<UserStoreState>((set, get) => {
           bundle = await analysisBundleService.getLatestUserContextBundle(
             profile.user_id.toString()
           );
+          // DEBUG: Trace what the API returned
+          console.log("🔍 [userProfileStore] Bundle fetched:", !!bundle);
+          console.log(
+            "🔍 [userProfileStore] Bundle ai_memory:",
+            bundle?.ai_memory
+          );
+          console.log(
+            "🔍 [userProfileStore] Bundle ai_memory.notes:",
+            bundle?.ai_memory?.notes
+          );
         } catch (e) {
           console.warn("Failed to fetch context bundle", e);
         }

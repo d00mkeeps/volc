@@ -18,10 +18,20 @@ export function useStoreInitializer() {
         console.log("[AuthStore] Initializing stores...");
         const initializeStores = async () => {
           try {
+            console.log("🔍 [StoreInit] Starting initializeIfAuthenticated...");
             await useUserStore.getState().initializeIfAuthenticated();
+            console.log(
+              "🔍 [StoreInit] userStore initialized. contextBundle:",
+              useUserStore.getState().contextBundle
+            );
+            console.log(
+              "🔍 [StoreInit] contextBundle.ai_memory:",
+              useUserStore.getState().contextBundle?.ai_memory
+            );
             await useExerciseStore.getState().initializeIfAuthenticated();
             await useConversationStore.getState().initializeIfAuthenticated();
             await useWorkoutStore.getState().initializeIfAuthenticated();
+            console.log("🔍 [StoreInit] About to call refreshQuickChat...");
             useChatStore.getState().refreshQuickChat();
 
             // Subscribe to dashboard realtime updates

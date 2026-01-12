@@ -73,7 +73,8 @@ class AnalysisBundleProcessor:
         bundle_id: str,
         user_id: str,
         raw_workout_data: Dict[str, Any],
-        exercise_definitions: List[Dict[str, Any]] = None
+        exercise_definitions: List[Dict[str, Any]] = None,
+        existing_ai_memory: Optional[Dict[str, Any]] = None
     ) -> UserContextBundle:
         """
         Process raw workout data into a complete analysis bundle.
@@ -83,12 +84,14 @@ class AnalysisBundleProcessor:
             user_id: User this bundle belongs to
             raw_workout_data: Raw workout data from database
             exercise_definitions: List of exercise definition dicts from cache
+            existing_ai_memory: AI memory from previous bundle to preserve (CRITICAL: prevents memory loss)
             
         Returns:
             UserContextBundle with all sections populated
         """
         workouts = raw_workout_data.get('workouts', [])
         logger.info(f"Processing bundle {bundle_id} with {len(workouts)} workouts")
+        logger.info(f"Preserving existing ai_memory: {existing_ai_memory is not None}")
         
         errors = []
         
@@ -118,7 +121,7 @@ class AnalysisBundleProcessor:
 
             # 8. Skip correlation_insights for now (to be implemented later)
             
-            # Assemble final bundle
+            # Assemble final bundle - PRESERVE existing ai_memory!
             bundle = UserContextBundle(
                 id=bundle_id,
                 user_id=user_id,
@@ -131,6 +134,7 @@ class AnalysisBundleProcessor:
                 consistency_data=consistency_data,
                 muscle_group_balance=muscle_group_balance,
                 correlation_insights=None,  # TODO: Implement correlations
+                ai_memory=existing_ai_memory,  # CRITICAL: Preserve AI memory!
             )
             
             logger.info(f"Successfully processed bundle {bundle_id}")

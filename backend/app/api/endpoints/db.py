@@ -65,7 +65,7 @@ async def get_latest_user_context(
     """Get the latest completed user context bundle"""
     try:
         logger.info(f"API request to get latest user context for user: {user.id}")
-        result = await context_bundle_service.get_latest_analysis_bundle(user.id, jwt_token)
+        result = await context_bundle_service.get_latest_context_bundle(user.id, jwt_token)
         
         if result.get("success"):
             return result.get("data")

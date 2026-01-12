@@ -314,10 +314,10 @@ class UserProfileService(BaseDBService):
             logger.info(f"Created location note: {location_note}")
             
             # 3. Append notes to context bundle
-            from app.services.db.analysis_service import AnalysisBundleService
-            analysis_service = AnalysisBundleService()
+            from app.services.db.context_service import ContextBundleService
+            context_bundle_service = ContextBundleService()
             logger.info(f"Appending {len(notes)} notes to context bundle for user {user_id}")
-            await analysis_service.append_onboarding_notes(user_id, notes, jwt_token)
+            await context_bundle_service.append_onboarding_notes(user_id, notes, jwt_token)
             
             logger.info(f"Successfully completed onboarding for user {user_id}")
             return await self.format_response(result.data[0])

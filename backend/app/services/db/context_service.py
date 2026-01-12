@@ -138,7 +138,7 @@ class ContextBundleService:
             user_client = self.get_user_client(jwt_token)
             
             # Fetch latest bundle to copy memory from
-            latest_bundle_result = await self.get_latest_analysis_bundle(user_id, jwt_token)
+            latest_bundle_result = await self.get_latest_context_bundle(user_id, jwt_token)
             initial_memory = {"notes": []}
             
             if latest_bundle_result.get("success") and latest_bundle_result.get("data"):
@@ -244,20 +244,20 @@ class ContextBundleService:
                 'error': str(e)
             }
     
-    async def save_analysis_bundle(
+    async def save_context_bundle(
         self,
         bundle_id: str,
         bundle: Any,  # UserContextBundle
         jwt_token: str
     ) -> Dict[str, Any]:
         """
-        Save the complete analysis bundle to database.
+        Save the complete context bundle to database.
         
         Maps the UserContextBundle schema to the database structure.
         Uses nested structure in 'workouts' and 'top_performers' columns.
         
-        Location: /app/services/db/analysis_service.py
-        Method: ContextBundleService.save_analysis_bundle()
+        Location: /app/services/db/context_service.py
+        Method: ContextBundleService.save_context_bundle()
         
         Args:
             bundle_id: Bundle ID
@@ -335,16 +335,16 @@ class ContextBundleService:
                 'success': False,
                 'error': str(e)
             }
-    async def save_analysis_bundle_admin(
+    async def save_context_bundle_admin(
         self,
         bundle_id: str,
         bundle: Any  # UserContextBundle
     ) -> Dict[str, Any]:
         """
-        Save the complete analysis bundle to database (admin access).
+        Save the complete context bundle to database (admin access).
         
-        Location: /app/services/db/analysis_service.py
-        Method: ContextBundleService.save_analysis_bundle_admin()
+        Location: /app/services/db/context_service.py
+        Method: ContextBundleService.save_context_bundle_admin()
         
         Args:
             bundle_id: Bundle ID
@@ -422,7 +422,7 @@ class ContextBundleService:
                 'error': str(e)
             }
     
-    async def get_latest_analysis_bundle(
+    async def get_latest_context_bundle(
         self,
         user_id: str,
         jwt_token: str
@@ -432,8 +432,8 @@ class ContextBundleService:
         
         Returns a properly deserialized UserContextBundle Pydantic object.
         
-        Location: /app/services/db/analysis_service.py
-        Method: ContextBundleService.get_latest_analysis_bundle()
+        Location: /app/services/db/context_service.py
+        Method: ContextBundleService.get_latest_context_bundle()
         
         Args:
             user_id: User's ID
@@ -481,7 +481,7 @@ class ContextBundleService:
                 'error': str(e)
             }
     
-    async def get_latest_analysis_bundle_admin(
+    async def get_latest_context_bundle_admin(
         self,
         user_id: str
     ) -> Dict[str, Any]:
@@ -494,7 +494,7 @@ class ContextBundleService:
         Returns a properly deserialized UserContextBundle Pydantic object.
         
         Location: /app/services/db/analysis_service.py
-        Method: ContextBundleService.get_latest_analysis_bundle_admin()
+        Method: ContextBundleService.get_latest_context_bundle_admin()
         
         Args:
             user_id: User's ID

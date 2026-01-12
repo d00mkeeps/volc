@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any
 from ..db.conversation_service import ConversationService
 from ..db.message_service import MessageService
-from ..db.analysis_service import AnalysisBundleService
+from ..db.context_service import ContextBundleService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ class ConversationAttachmentsCache:
         self._cache: Dict[str, Dict] = {}
         self.conversation_service = ConversationService()
         self.message_service = MessageService()
-        self.analysis_bundle_service = AnalysisBundleService()
+        self.context_bundle_service = ContextBundleService()
         self.expiry_minutes = 30
     
     async def get_conversation_context(self, conversation_id: str, user_id: str) -> Dict[str, Any]:
@@ -30,7 +30,7 @@ class ConversationAttachmentsCache:
     async def _load_from_database(self, conversation_id: str, user_id: str) -> Dict[str, Any]:
         """Load conversation, messages, and analysis bundles from database"""
         messages = await self.message_service.get_conversation_messages(conversation_id)
-        bundles = await self.analysis_bundle_service.get_bundles_by_conversation(user_id, conversation_id)
+        bundles = await self.context_bundle_service.get_bundles_by_conversation(user_id, conversation_id)
         
         return {
             "messages": messages,

@@ -123,20 +123,37 @@ class AnalysisBundleGenerator:
             exercise_definitions = await exercise_cache.get_all_exercises()
             logger.info(f"✅ Loaded {len(exercise_definitions)} exercise definitions from cache")
             
-            # 5. Process data (pass exercise definitions to processor)
+            # 4b. Fetch existing ai_memory from current bundle (CRITICAL: prevent memory loss)
+            logger.info(f"🧠 Fetching existing ai_memory from bundle {bundle_id}")
+            admin_client = self.analysis_service.get_admin_client()
+            memory_result = admin_client.table('user_context_bundles') \
+                .select('ai_memory') \
+                .eq('id', bundle_id) \
+                .single() \
+                .execute()
+            
+            existing_ai_memory = None
+            if memory_result.data and memory_result.data.get('ai_memory'):
+                existing_ai_memory = memory_result.data['ai_memory']
+                logger.info(f"🧠 Preserving existing ai_memory with {len(existing_ai_memory.get('notes', []))} notes")
+            else:
+                logger.info(f"🧠 No existing ai_memory to preserve")
+            
+            # 5. Process data (pass exercise definitions AND existing ai_memory to processor)
             logger.info(f"🔬 Processing {workout_count} workouts through AnalysisBundleProcessor")
             complete_bundle = self.processor.process(
                 bundle_id=bundle_id,
                 user_id=user_id,
                 raw_workout_data=workout_data,
-                exercise_definitions=exercise_definitions
+                exercise_definitions=exercise_definitions,
+                existing_ai_memory=existing_ai_memory  # CRITICAL: preserve memory!
             )
             
             logger.info(f"✅ Processing complete. Bundle status: {complete_bundle.status}")
             
             # 6. Save complete bundle
             logger.info(f"💾 Saving complete bundle: {bundle_id}")
-            save_result = await self.analysis_service.save_analysis_bundle(
+            save_result = await self.analysis_service.save_context_bundle(
                 bundle_id, complete_bundle, jwt_token
             )
             

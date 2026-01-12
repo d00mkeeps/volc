@@ -264,6 +264,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
             <TextArea
               key={textAreaKey.current}
               flex={1}
+              backgroundColor="$backgroundStrong"
               size="small"
               borderRadius={16}
               value={input}
@@ -275,7 +276,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
                 error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
               }
               color="$color"
-              opacity={1}
+              opacity={0.9}
               placeholderTextColor="$textMuted"
               onSubmitEditing={handleSend}
               onFocus={handleFocus}
@@ -283,6 +284,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
               returnKeyType="send"
               maxLength={500}
               numberOfLines={8}
+              borderWidth={1}
             />
 
             {/* Send Button */}

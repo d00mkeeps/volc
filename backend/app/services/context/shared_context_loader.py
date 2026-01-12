@@ -54,7 +54,7 @@ class SharedContextLoader:
         
         # Run fetches in parallel
         profile_task = self.profile_service.get_user_profile_admin(user_id)
-        bundle_task = self.bundle_service.get_latest_analysis_bundle_admin(user_id)
+        bundle_task = self.bundle_service.get_latest_context_bundle_admin(user_id)
         
         results = await asyncio.gather(profile_task, bundle_task, return_exceptions=True)
         

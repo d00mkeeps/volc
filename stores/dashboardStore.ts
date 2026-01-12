@@ -69,10 +69,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log(
-            "⚡️ [DashboardStore] Realtime bundle update received:",
-            JSON.stringify(payload, null, 2)
-          );
+          console.log("⚡️ [DashboardStore] Realtime bundle update received");
 
           if (payload.errors) {
             console.error(
@@ -83,7 +80,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
           }
 
           console.log("🔄 [DashboardStore] Triggering dashboard refresh...");
-          // Force refresh on next call
           set({ lastUpdated: null });
           get().refreshDashboard();
         }
@@ -117,7 +113,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
 
   // Main refresh method - calls API
   refreshDashboard: async () => {
-    const { shouldRefresh } = get();
+    const { shouldRefresh, allData: existingData } = get();
     // Don't refresh if cache is still valid
     if (!shouldRefresh()) {
       return;
@@ -127,8 +123,28 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
 
     try {
       // Call API - returns all timeframes
-
       const response = await dashboardService.getAllDashboardData();
+
+      // Compare new data to existing data (excluding lastUpdated which changes every call)
+      // Since allData doesn't contain ai_memory, ai_memory-only changes
+      // will result in identical data, so we won't trigger unnecessary re-renders
+      const { lastUpdated: _newLU, ...newDataWithoutTimestamp } =
+        response || {};
+      const { lastUpdated: _existingLU, ...existingDataWithoutTimestamp } =
+        existingData || {};
+
+      const newDataString = JSON.stringify(newDataWithoutTimestamp);
+      const existingDataString = JSON.stringify(existingDataWithoutTimestamp);
+
+      if (newDataString === existingDataString) {
+        console.log(
+          "🔇 [DashboardStore] Data unchanged - skipping state update"
+        );
+        set({ isLoading: false, lastUpdated: new Date() });
+        return;
+      }
+
+      console.log("📊 [DashboardStore] Data changed - updating state");
       set({
         allData: response,
         isLoading: false,

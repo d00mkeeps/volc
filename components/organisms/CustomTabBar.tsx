@@ -47,7 +47,7 @@ export default function CustomTabBar({
         }
       >
         <BlurView
-          intensity={80}
+          intensity={15}
           tint={colorScheme === "dark" ? "dark" : "light"}
           style={{ flex: 1 }}
         />

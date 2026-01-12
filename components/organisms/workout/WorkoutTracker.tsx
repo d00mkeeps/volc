@@ -1,5 +1,3 @@
-// /components/organisms/WorkoutTracker.tsx
-
 import React, {
   useRef,
   forwardRef,
@@ -9,7 +7,8 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Keyboard, Platform } from "react-native";
+import { Keyboard, Platform, useWindowDimensions } from "react-native";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { YStack, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useSharedValue } from "react-native-reanimated";
@@ -48,7 +47,35 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
     const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
 
-    const snapPoints = useMemo(() => ["45%", "92%"], []);
+    // Dynamic snap point: position sheet top at dashboard bottom edge
+    const { height: screenHeight } = useWindowDimensions();
+    const dashboardHeight = useLayoutStore((state) => state.dashboardHeight);
+    const headerHeight = useLayoutStore((state) => state.headerHeight);
+    const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
+    const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
+    const quickActionsHeight = useLayoutStore(
+      (state) => state.quickActionsHeight
+    );
+
+    const snapPoints = useMemo(() => {
+      // Calculate available height below dashboard
+      const peekHeight =
+        10 +
+        screenHeight -
+        dashboardHeight -
+        inputAreaHeight -
+        headerHeight -
+        tabBarHeight -
+        quickActionsHeight;
+      return [peekHeight];
+    }, [
+      screenHeight,
+      dashboardHeight,
+      inputAreaHeight,
+      headerHeight,
+      tabBarHeight,
+      quickActionsHeight,
+    ]);
 
     const handleSheetChanges = (index: number) => {
       console.log("🟡 [WorkoutTracker] handleSheetChanges -", index);
@@ -72,7 +99,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           console.log("🔴 [WorkoutTracker] finishWorkout called");
           bottomSheetRef.current?.close();
         },
-        expandToFull: () => bottomSheetRef.current?.snapToIndex(1),
+        expandToFull: () => bottomSheetRef.current?.expand(),
         snapToPeek: () => bottomSheetRef.current?.snapToIndex(0),
       }),
       []
@@ -462,7 +489,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           paddingVertical: 8,
         }}
       >
-        {/* Header - always visible */}
         <WorkoutTrackerHeader
           workoutName={currentWorkout?.name}
           workoutDescription={currentWorkout?.notes}

@@ -172,13 +172,33 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const activeConversationId =
       useConversationStore.getState().activeConversationId;
 
+    // DEBUG: Trace ai_memory state
+    console.log("🔍 [fetchActions] START");
+    console.log("🔍 [fetchActions] contextBundle exists:", !!contextBundle);
+    console.log(
+      "🔍 [fetchActions] contextBundle.ai_memory:",
+      contextBundle?.ai_memory
+    );
+    console.log(
+      "🔍 [fetchActions] ai_memory.notes:",
+      contextBundle?.ai_memory?.notes
+    );
+    console.log(
+      "🔍 [fetchActions] notes length:",
+      contextBundle?.ai_memory?.notes?.length
+    );
+
     if (!contextBundle) {
+      console.log(
+        "🔍 [fetchActions] No contextBundle - returning null actions"
+      );
       set({ actions: null, isLoadingActions: false });
       return;
     }
 
     const memory = contextBundle.ai_memory;
     const hasAiMemory = memory && memory.notes && memory.notes.length > 0;
+    console.log("🔍 [fetchActions] hasAiMemory:", hasAiMemory);
 
     // For NEW users (no AI memory), check if they've sent a message yet
     if (!hasAiMemory) {
@@ -194,6 +214,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       // Show default actions only if new user hasn't sent a message yet
       if (!hasUserMessages) {
+        console.log(
+          "🔍 [fetchActions] SHOWING DEFAULT NEW USER ACTIONS - hasAiMemory:",
+          hasAiMemory,
+          "hasUserMessages:",
+          hasUserMessages
+        );
         set({
           actions: [
             {

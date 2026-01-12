@@ -25,7 +25,6 @@ import {
   MINIMUM_APP_VERSION,
   getAppStoreUrl,
 } from "@/utils/versionCheck";
-import { LogBox } from "react-native";
 export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
 import { useStoreInitializer } from "@/hooks/useStoreInitializer";

@@ -162,10 +162,10 @@ class MemoryExtractionService:
             
             # 2. Load Latest Analysis Bundle (Admin)
             # We need the latest bundle to get the current memory and to update it.
-            from app.services.db.analysis_service import AnalysisBundleService
-            analysis_service = AnalysisBundleService()
+            from app.services.db.context_service import ContextBundleService
+            context_service = ContextBundleService()
             
-            bundle_result = await analysis_service.get_latest_analysis_bundle_admin(user_id)
+            bundle_result = await context_service.get_latest_context_bundle_admin(user_id)
             
             if not bundle_result.get("success") or not bundle_result.get("data"):
                 logger.warning(f"No analysis bundle found for user {user_id}, cannot update memory.")
@@ -191,7 +191,7 @@ class MemoryExtractionService:
             bundle.ai_memory = result
             
             # Save the updated bundle (Admin)
-            save_result = await analysis_service.save_analysis_bundle_admin(bundle.id, bundle)
+            save_result = await context_service.save_context_bundle_admin(bundle.id, bundle)
             
             if save_result.get("success"):
                 logger.info(f"Successfully updated memory for user {user_id} in bundle {bundle.id}")
