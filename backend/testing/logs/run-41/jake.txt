@@ -1,0 +1,143 @@
+ASSISTANT: Hey Jake, good evening! Want to prep for tomorrow or check your recent progress?
+JAKE: let's prep for tomorrow
+ASSISTANT: I'd love to get you ready for tomorrow. What would you like to train, and are there any injuries or restrictions I should know about?
+JAKE: I just wanna build muscle. Nah, no injuries.
+ASSISTANT: Perfect, let's focus on building muscle. What muscle groups are we hitting tomorrow?
+JAKE: push day. chest, shoulders, triceps.
+ASSISTANT: Sounds like a classic [push movement](glossary://10b2962d-7aa0-4cc3-a8c7-ceab316dcca0) day, I've built a session for you with a mix of [compound exercise](glossary://57ceea4d-5f6a-4897-88fb-ad0348faa889) and [isolation exercise](glossary://603007ea-3cfa-42d8-8199-a77212e14b32) to get you started.
+
+Here's your workout, Jake. Let me know how it goes!
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Push Day - Chest, Shoulders & Triceps",
+    "notes": "Focus on controlling the weight through the full range of motion. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "dea05b40-7211-48f3-b534-2c945aa65a3f",
+        "name": "Barbell Flat Bench Press",
+        "notes": "Keep your feet flat on the floor and your shoulder blades pulled back and down.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 20
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 20
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 20
+          }
+        ]
+      },
+      {
+        "definition_id": "c288e883-c440-42b8-93d6-f5ba98f58a56",
+        "name": "Machine Seated Shoulder Press",
+        "notes": "Press overhead without locking out your elbows at the top.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 20
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 20
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 20
+          }
+        ]
+      },
+      {
+        "definition_id": "e7af3fb2-81d9-4a9c-9c55-bff34b6e709f",
+        "name": "Machine Pec Deck",
+        "notes": "Focus on squeezing your chest muscles to bring the handles together.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 15
+          }
+        ]
+      },
+      {
+        "definition_id": "2a1c3e2f-d7ff-471d-b299-4338c561c1cc",
+        "name": "Cable Lateral Raise",
+        "notes": "Keep a slight bend in your elbow and raise your arms out to the side until they're parallel with the floor.",
+        "order_index": 3,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 5
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 5
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 5
+          }
+        ]
+      },
+      {
+        "definition_id": "7cdb1d78-2093-49a2-9cc8-0d85f894bc01",
+        "name": "Cable Tricep Pushdown",
+        "notes": "Keep your elbows tucked in at your sides and extend your arms fully.",
+        "order_index": 4,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 10
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 10
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 10
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+JAKE: Only 20kg for bench? I can def do more.
+ASSISTANT: Of course! Those weights are just estimates until I learn your strength levels, so you should absolutely adjust them. Aim for a weight that's challenging for the target [reps](glossary://6db20df3-c386-44b6-9dc3-e29455f33819) but leaves you with about 2 reps in reserve ([RIR](glossary://7708f857-f349-470e-9423-d83c328ea542)).
+JAKE: ok got it. so go heavy but not all out.
+ASSISTANT: Exactly! You want to challenge yourself but always maintain good [form](glossary://36449c1d-d521-4b99-a316-c9de0340e69d). Do you have any other questions about the workout?
+JAKE: nah, looks good. i'll try it.
+ASSISTANT: Awesome! Go get after it, and let me know how the session feels once you're done.
+JAKE: APPROVE

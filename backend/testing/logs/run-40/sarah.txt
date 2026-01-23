@@ -1,0 +1,134 @@
+ASSISTANT: Hey Sarah, good evening! Want to prep for tomorrow or check your recent progress?
+SARAH: Let's plan for tomorrow.
+ASSISTANT: Sounds great! What are we thinking of training tomorrow?
+SARAH: I was thinking an upper body day.
+ASSISTANT: Love it, a classic upper body day. Any injuries or restrictions I should work around?
+SARAH: No restrictions now.
+ASSISTANT: Perfect. I've put together a solid upper body session for you, Sarah, with a mix of [compound exercise](glossary://57ceea4d-5f6a-4897-88fb-ad0348faa889) and [isolation exercise](glossary://603007ea-3cfa-42d8-8199-a77212e14b32) work. Let me know what you think.
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Upper Body Day",
+    "notes": "Choose a weight that feels challenging for the target reps. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "dea05b40-7211-48f3-b534-2c945aa65a3f",
+        "name": "Barbell Flat Bench Press",
+        "notes": "Keep your shoulder blades retracted and your feet planted firmly on the floor.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 50
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 50
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 50
+          }
+        ]
+      },
+      {
+        "definition_id": "d3949471-ee88-4bc3-8dd9-5a594cae0cce",
+        "name": "Bodyweight Chin Up",
+        "notes": "Pull your chest towards the bar. If needed, use the assisted machine.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 6,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 6,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 6,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "b434a603-fbd4-4107-9974-3e29a56e8a31",
+        "name": "Dumbbell Seated Shoulder Press",
+        "notes": "Press overhead without arching your lower back. Keep your core tight.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 12
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 12
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 12
+          }
+        ]
+      },
+      {
+        "definition_id": "24deae69-60ab-4ea0-b450-cb37cd295b4b",
+        "name": "Barbell Bicep Curl",
+        "notes": "Avoid swinging your body. Focus on squeezing the biceps at the top.",
+        "order_index": 3,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 15
+          }
+        ]
+      },
+      {
+        "definition_id": "7cdb1d78-2093-49a2-9cc8-0d85f894bc01",
+        "name": "Cable Tricep Pushdown",
+        "notes": "Keep your elbows pinned to your sides throughout the movement.",
+        "order_index": 4,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 15
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+SARAH: QUIT

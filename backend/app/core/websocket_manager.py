@@ -25,8 +25,8 @@ class WebSocketManager:
     Thread-safe singleton for tracking all active connections.
     """
     
-    HEARTBEAT_CHECK_INTERVAL = 5  # Check every 5 seconds
-    HEARTBEAT_TIMEOUT = 30        # Timeout after 30 seconds
+    HEARTBEAT_CHECK_INTERVAL = 15  # Check every 15 seconds
+    HEARTBEAT_TIMEOUT = 60          # Timeout after 60 seconds of no activity
     
     def __init__(self):
         self.connections: Dict[str, ConnectionInfo] = {}

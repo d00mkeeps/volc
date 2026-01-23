@@ -1,6 +1,7 @@
 import React, { useMemo, memo } from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { YStack, Text, useTheme, Card, XStack } from "tamagui";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { CartesianChart, Line, Bar } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import type { SharedValue } from "react-native-reanimated";
@@ -40,7 +41,7 @@ const forwardFillDataset = (data: (number | null)[]): (number | null)[] => {
 };
 
 const normalizeToPercentage = (
-  dataArray: (number | null)[]
+  dataArray: (number | null)[],
 ): (number | null)[] => {
   const firstValue = dataArray.find((v): v is number => v != null);
   if (!firstValue || firstValue === 0) return dataArray;
@@ -53,12 +54,12 @@ const normalizeToPercentage = (
 
 function ChartDataView({ data }: ChartDataViewProps) {
   const theme = useTheme();
-  const screenWidth = Dimensions.get("window").width;
+  const screenWidth = useLayoutStore((state) => state.screenWidth);
   const chartHeight = 300;
 
   const font = useFont(
     require("../../../assets/fonts/SpaceMono-Regular.ttf"),
-    12
+    12,
   );
 
   const shouldNormalizeToPercentage = useMemo(() => {

@@ -1,0 +1,137 @@
+ASSISTANT: Hey Sarah, good evening! Want to prep for tomorrow or check your recent progress?
+SARAH: Prep for tomorrow.
+ASSISTANT: Let's get you ready for tomorrow! What are we thinking of training?
+SARAH: Let's do an upper body day.
+ASSISTANT: Sounds great! Any injuries or restrictions I should be aware of?
+SARAH: Had shoulder surgery 6 months ago, but no restrictions.
+ASSISTANT: Got it. We'll stick to some stable movements to keep that shoulder happy. Does a mix of chest, back, and arm exercises sound good?
+SARAH: Sounds good.
+ASSISTANT: Excellent. Here is a solid upper body session for you, Sarah. We'll start with some bigger [compound exercise](glossary://57ceea4d-5f6a-4897-88fb-ad0348faa889)s and finish with [isolation exercise](glossary://603007ea-3cfa-42d8-8199-a77212e14b32)s.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Upper Body",
+    "notes": "Remember to warm up before starting. Stop if you feel any sharp pain, especially in your shoulder.",
+    "workout_exercises": [
+      {
+        "definition_id": "dea05b40-7211-48f3-b534-2c945aa65a3f",
+        "name": "Barbell Flat Bench Press",
+        "notes": "Keep the movement controlled. Don't let your elbows flare out too wide.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 40
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 40
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 40
+          }
+        ]
+      },
+      {
+        "definition_id": "f91d5bae-be62-4a5f-9bc1-01f7848e854e",
+        "name": "Assisted Machine Chin Up",
+        "notes": "Focus on pulling with your back muscles and squeezing at the top.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 30
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 30
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 30
+          }
+        ]
+      },
+      {
+        "definition_id": "2a1c3e2f-d7ff-471d-b299-4338c561c1cc",
+        "name": "Cable Lateral Raise",
+        "notes": "Use a light weight and focus on smooth, controlled form. Keep a slight bend in your elbow.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 5
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 5
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 5
+          }
+        ]
+      },
+      {
+        "definition_id": "2ad4abd6-fc80-4fc3-908c-1c749d0c27c1",
+        "name": "Cable Bicep Curl",
+        "notes": "Keep your elbows pinned to your sides throughout the movement.",
+        "order_index": 3,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 15
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 15
+          }
+        ]
+      },
+      {
+        "definition_id": "7cdb1d78-2093-49a2-9cc8-0d85f894bc01",
+        "name": "Cable Tricep Pushdown",
+        "notes": "Keep your shoulders down and back, and fully extend your arms at the bottom.",
+        "order_index": 4,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 20
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 20
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 20
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+SARAH: QUIT

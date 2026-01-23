@@ -1,0 +1,548 @@
+
+============================================================
+[2026-01-21T10:28:48.206100] get_exercises_by_muscle_groups
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], movement_patterns=None, equipment=None
+Returned 135 exercises:
+  - Arm Circles (equipment: None)
+  - Arm Openers (equipment: None)
+  - Assisted Machine Chin Up (equipment: assisted_machine)
+  - Assisted Machine Dip (equipment: assisted_machine)
+  - Band Hammer Curl (equipment: band)
+  - Band Lateral Raise (equipment: band)
+  - Band Pull-Aparts (equipment: resistance_band)
+  - Barbell Bicep Curl (equipment: barbell)
+  - Barbell Close Grip Bench Press (equipment: barbell)
+  - Barbell Decline Bench Press (equipment: barbell)
+  - Barbell Flat Bench Press (equipment: barbell)
+  - Barbell Front Raise (equipment: barbell)
+  - Barbell Incline Bench Press (equipment: barbell)
+  - Barbell Incline Skullcrusher (equipment: barbell)
+  - Barbell Overhead Tricep Extension (equipment: barbell)
+  - Barbell Preacher Curl (equipment: barbell)
+  - Barbell Push Press (equipment: barbell)
+  - Barbell Reverse Curl (equipment: barbell)
+  - Barbell Seated Shoulder Press (equipment: barbell)
+  - Barbell Skullcrusher (equipment: barbell)
+  - Barbell Standing Shoulder Press (equipment: barbell)
+  - Barbell Upright Row (equipment: barbell)
+  - Barbell Wide Grip Upright Row (equipment: barbell)
+  - Bear Crawls (equipment: None)
+  - Behind-Back Shoulder Stretch (equipment: None)
+  - Bodyweight Chin Up (equipment: bodyweight)
+  - Bodyweight Decline Pushup (equipment: bodyweight)
+  - Bodyweight Diamond Pushup (equipment: bodyweight)
+  - Bodyweight Dip (equipment: bodyweight)
+  - Bodyweight Incline Pushup (equipment: bodyweight)
+  - Bodyweight Pike Pushup (equipment: bodyweight)
+  - Bodyweight Pushup (equipment: bodyweight)
+  - Bodyweight Wide Pushup (equipment: bodyweight)
+  - Cable Bicep Curl (equipment: cable)
+  - Cable Concentration Curl (equipment: cable)
+  - Cable Decline Chest Fly (equipment: cable)
+  - Cable Flat Chest Fly (equipment: cable)
+  - Cable Front Raise (equipment: cable)
+  - Cable Hammer Curl (equipment: cable)
+  - Cable Incline Chest Fly (equipment: cable)
+  - Cable Lateral Raise (equipment: cable)
+  - Cable Overhead Tricep Extension (equipment: cable)
+  - Cable Preacher Curl (equipment: cable)
+  - Cable Reverse Curl (equipment: cable)
+  - Cable Single Arm Bicep Curl (equipment: cable)
+  - Cable Single Arm Lateral Raise (equipment: cable)
+  - Cable Single Arm Overhead Tricep Extension (equipment: cable)
+  - Cable Single Arm Tricep Pushdown (equipment: cable)
+  - Cable Single Arm Upright Row (equipment: cable)
+  - Cable Tricep Pushdown (equipment: cable)
+  - Cable Upright Row (equipment: cable)
+  - Chest Foam Roll (equipment: foam_roller)
+  - Corner Chest Stretch (equipment: None)
+  - Cross-Body Arm Swings (equipment: None)
+  - Cross-Body Shoulder Stretch (equipment: None)
+  - Doorway Chest Stretch (equipment: None)
+  - Dumbbell Arnold Press (equipment: dumbbell)
+  - Dumbbell Bicep Curl (equipment: dumbbell)
+  - Dumbbell Concentration Curl (equipment: dumbbell)
+  - Dumbbell Decline Bench Press (equipment: dumbbell)
+  - Dumbbell Decline Chest Fly (equipment: dumbbell)
+  - Dumbbell Flat Bench Press (equipment: dumbbell)
+  - Dumbbell Flat Chest Fly (equipment: dumbbell)
+  - Dumbbell Front Raise (equipment: dumbbell)
+  - Dumbbell Hammer Curl (equipment: dumbbell)
+  - Dumbbell Incline Bench Press (equipment: dumbbell)
+  - Dumbbell Incline Chest Fly (equipment: dumbbell)
+  - Dumbbell Incline Curl (equipment: dumbbell)
+  - Dumbbell Incline Skullcrusher (equipment: dumbbell)
+  - Dumbbell Lateral Raise (equipment: dumbbell)
+  - Dumbbell Overhead Tricep Extension (equipment: dumbbell)
+  - Dumbbell Preacher Curl (equipment: dumbbell)
+  - Dumbbell Push Press (equipment: dumbbell)
+  - Dumbbell Reverse Curl (equipment: dumbbell)
+  - Dumbbell Seated Shoulder Press (equipment: dumbbell)
+  - Dumbbell Single Arm Bicep Curl (equipment: dumbbell)
+  - Dumbbell Single Arm Front Raise (equipment: dumbbell)
+  - Dumbbell Single Arm Lateral Raise (equipment: dumbbell)
+  - Dumbbell Single Arm Overhead Tricep Extension (equipment: dumbbell)
+  - Dumbbell Single Arm Upright Row (equipment: dumbbell)
+  - Dumbbell Skullcrusher (equipment: dumbbell)
+  - Dumbbell Standing Shoulder Press (equipment: dumbbell)
+  - Dumbbell Upright Row (equipment: dumbbell)
+  - Eagle Arms Stretch (equipment: None)
+  - EZ Bar Bicep Curl (equipment: ez_bar)
+  - EZ Bar Front Raise (equipment: ez_bar)
+  - EZ Bar Incline Skullcrusher (equipment: ez_bar)
+  - EZ Bar Overhead Tricep Extension (equipment: ez_bar)
+  - EZ Bar Preacher Curl (equipment: ez_bar)
+  - EZ Bar Reverse Curl (equipment: ez_bar)
+  - EZ Bar Skullcrusher (equipment: ez_bar)
+  - EZ Bar Upright Row (equipment: ez_bar)
+  - EZ Bar Wide Grip Upright Row (equipment: ez_bar)
+  - Front-to-Back Arm Swings (equipment: None)
+  - Kettlebell Push Press (equipment: kettlebell)
+  - Kettlebell Standing Shoulder Press (equipment: kettlebell)
+  - Lying Chest Stretch (equipment: None)
+  - Machine Bicep Curl (equipment: machine)
+  - Machine Decline Bench Press (equipment: machine)
+  - Machine Decline Chest Fly (equipment: machine)
+  - Machine Flat Bench Press (equipment: machine)
+  - Machine Flat Chest Fly (equipment: machine)
+  - Machine Incline Bench Press (equipment: machine)
+  - Machine Incline Chest Fly (equipment: machine)
+  - Machine Lateral Raise (equipment: machine)
+  - Machine Overhead Tricep Extension (equipment: machine)
+  - Machine Pec Deck (equipment: machine)
+  - Machine Preacher Curl (equipment: machine)
+  - Machine Seated Shoulder Press (equipment: machine)
+  - Machine Single Arm Bicep Curl (equipment: machine)
+  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Plate Front Raise (equipment: plate)
+  - Puppy Pose (equipment: None)
+  - Rear Shoulder Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Resistance Band Diamond Pushup (equipment: resistance_band)
+  - Resistance Band Pushup (equipment: resistance_band)
+  - Resistance Band Wide Pushup (equipment: resistance_band)
+  - Scapular Push-Ups (equipment: None)
+  - Seated Chest Stretch (equipment: None)
+  - Shoulder Circles (equipment: None)
+  - Sleeper Stretch (equipment: None)
+  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
+  - Smith Machine Decline Bench Press (equipment: smith_machine)
+  - Smith Machine Flat Bench Press (equipment: smith_machine)
+  - Smith Machine Incline Bench Press (equipment: smith_machine)
+  - Smith Machine Seated Shoulder Press (equipment: smith_machine)
+  - Smith Machine Upright Row (equipment: smith_machine)
+  - Standing Chest Stretch with Band (equipment: resistance_band)
+  - Wall Chest Slides (equipment: None)
+  - Weighted Chin Up (equipment: weight_belt)
+  - Weighted Dip (equipment: weight_belt)
+  - Weight Vest Decline Pushup (equipment: weight_vest)
+  - Weight Vest Diamond Pushup (equipment: weight_vest)
+  - Weight Vest Pushup (equipment: weight_vest)
+  - Weight Vest Wide Pushup (equipment: weight_vest)
+
+============================================================
+[2026-01-21T10:38:57.595615] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:39:11.824740] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:39:32.707683] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:39:32.708856] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:44:02.117457] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:44:22.081663] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:44:34.774906] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:58:37.318843] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:58:37.320376] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:58:37.321315] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T10:59:14.493668] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:17:30.576085] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:17:50.085427] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:20:23.665678] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:20:43.657504] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:23:32.896843] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:25:00.893165] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T11:25:45.709245] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T14:55:26.820252] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T15:15:47.387332] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T15:16:08.088210] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T15:17:53.661977] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T15:17:53.663762] get_exercises_by_muscle_groups
+
+============================================================
+[2026-01-21T16:33:46.163083] get_exercises_by_muscle_groups
+Query: muscle_groups=['chest'], equipment=None
+Returned 48 exercises:
+  - Arm Openers (equipment: None)
+  - Assisted Machine Dip (equipment: assisted_machine)
+  - Barbell Close Grip Bench Press (equipment: barbell)
+  - Barbell Decline Bench Press (equipment: barbell)
+  - Barbell Flat Bench Press (equipment: barbell)
+  - Barbell Incline Bench Press (equipment: barbell)
+  - Bodyweight Decline Pushup (equipment: bodyweight)
+  - Bodyweight Diamond Pushup (equipment: bodyweight)
+  - Bodyweight Dip (equipment: bodyweight)
+  - Bodyweight Incline Pushup (equipment: bodyweight)
+  - Bodyweight Pushup (equipment: bodyweight)
+  - Bodyweight Wide Pushup (equipment: bodyweight)
+  - Cable Decline Chest Fly (equipment: cable)
+  - Cable Flat Chest Fly (equipment: cable)
+  - Cable Incline Chest Fly (equipment: cable)
+  - Chest Foam Roll (equipment: foam_roller)
+  - Corner Chest Stretch (equipment: None)
+  - Doorway Chest Stretch (equipment: None)
+  - Dumbbell Decline Bench Press (equipment: dumbbell)
+  - Dumbbell Decline Chest Fly (equipment: dumbbell)
+  - Dumbbell Flat Bench Press (equipment: dumbbell)
+  - Dumbbell Flat Chest Fly (equipment: dumbbell)
+  - Dumbbell Incline Bench Press (equipment: dumbbell)
+  - Dumbbell Incline Chest Fly (equipment: dumbbell)
+  - Lying Chest Stretch (equipment: None)
+  - Machine Decline Bench Press (equipment: machine)
+  - Machine Decline Chest Fly (equipment: machine)
+  - Machine Flat Bench Press (equipment: machine)
+  - Machine Flat Chest Fly (equipment: machine)
+  - Machine Incline Bench Press (equipment: machine)
+  - Machine Incline Chest Fly (equipment: machine)
+  - Machine Pec Deck (equipment: machine)
+  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Resistance Band Diamond Pushup (equipment: resistance_band)
+  - Resistance Band Pushup (equipment: resistance_band)
+  - Resistance Band Wide Pushup (equipment: resistance_band)
+  - Seated Chest Stretch (equipment: None)
+  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
+  - Smith Machine Decline Bench Press (equipment: smith_machine)
+  - Smith Machine Flat Bench Press (equipment: smith_machine)
+  - Smith Machine Incline Bench Press (equipment: smith_machine)
+  - Standing Chest Stretch with Band (equipment: resistance_band)
+  - Wall Chest Slides (equipment: None)
+  - Weighted Dip (equipment: weight_belt)
+  - Weight Vest Decline Pushup (equipment: weight_vest)
+  - Weight Vest Diamond Pushup (equipment: weight_vest)
+  - Weight Vest Pushup (equipment: weight_vest)
+  - Weight Vest Wide Pushup (equipment: weight_vest)
+
+============================================================
+[2026-01-21T16:34:06.236810] get_exercises_by_muscle_groups
+Query: muscle_groups=['chest'], equipment=None
+Returned 48 exercises:
+  - Arm Openers (equipment: None)
+  - Assisted Machine Dip (equipment: assisted_machine)
+  - Barbell Close Grip Bench Press (equipment: barbell)
+  - Barbell Decline Bench Press (equipment: barbell)
+  - Barbell Flat Bench Press (equipment: barbell)
+  - Barbell Incline Bench Press (equipment: barbell)
+  - Bodyweight Decline Pushup (equipment: bodyweight)
+  - Bodyweight Diamond Pushup (equipment: bodyweight)
+  - Bodyweight Dip (equipment: bodyweight)
+  - Bodyweight Incline Pushup (equipment: bodyweight)
+  - Bodyweight Pushup (equipment: bodyweight)
+  - Bodyweight Wide Pushup (equipment: bodyweight)
+  - Cable Decline Chest Fly (equipment: cable)
+  - Cable Flat Chest Fly (equipment: cable)
+  - Cable Incline Chest Fly (equipment: cable)
+  - Chest Foam Roll (equipment: foam_roller)
+  - Corner Chest Stretch (equipment: None)
+  - Doorway Chest Stretch (equipment: None)
+  - Dumbbell Decline Bench Press (equipment: dumbbell)
+  - Dumbbell Decline Chest Fly (equipment: dumbbell)
+  - Dumbbell Flat Bench Press (equipment: dumbbell)
+  - Dumbbell Flat Chest Fly (equipment: dumbbell)
+  - Dumbbell Incline Bench Press (equipment: dumbbell)
+  - Dumbbell Incline Chest Fly (equipment: dumbbell)
+  - Lying Chest Stretch (equipment: None)
+  - Machine Decline Bench Press (equipment: machine)
+  - Machine Decline Chest Fly (equipment: machine)
+  - Machine Flat Bench Press (equipment: machine)
+  - Machine Flat Chest Fly (equipment: machine)
+  - Machine Incline Bench Press (equipment: machine)
+  - Machine Incline Chest Fly (equipment: machine)
+  - Machine Pec Deck (equipment: machine)
+  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Resistance Band Diamond Pushup (equipment: resistance_band)
+  - Resistance Band Pushup (equipment: resistance_band)
+  - Resistance Band Wide Pushup (equipment: resistance_band)
+  - Seated Chest Stretch (equipment: None)
+  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
+  - Smith Machine Decline Bench Press (equipment: smith_machine)
+  - Smith Machine Flat Bench Press (equipment: smith_machine)
+  - Smith Machine Incline Bench Press (equipment: smith_machine)
+  - Standing Chest Stretch with Band (equipment: resistance_band)
+  - Wall Chest Slides (equipment: None)
+  - Weighted Dip (equipment: weight_belt)
+  - Weight Vest Decline Pushup (equipment: weight_vest)
+  - Weight Vest Diamond Pushup (equipment: weight_vest)
+  - Weight Vest Pushup (equipment: weight_vest)
+  - Weight Vest Wide Pushup (equipment: weight_vest)
+
+============================================================
+[2026-01-21T17:39:09.363266] get_exercises_by_muscle_groups
+Query: muscle_groups=['quadriceps', 'glutes'], equipment=None
+Returned 96 exercises:
+  - 90/90 Hip Stretch (equipment: None)
+  - Band Glute Bridge (equipment: band)
+  - Band Hip Thrust (equipment: band)
+  - Band Single Leg Hip Thrust (equipment: band)
+  - Barbell Back Squat (equipment: barbell)
+  - Barbell Block Pull (equipment: barbell)
+  - Barbell Box Squat (equipment: barbell)
+  - Barbell Bulgarian Split Squat (equipment: barbell)
+  - Barbell Conventional Deadlift (equipment: barbell)
+  - Barbell Deficit Deadlift (equipment: barbell)
+  - Barbell Forward Lunge (equipment: barbell)
+  - Barbell Front Squat (equipment: barbell)
+  - Barbell Glute Bridge (equipment: barbell)
+  - Barbell Good Morning (equipment: barbell)
+  - Barbell Hack Squat (equipment: barbell)
+  - Barbell Hip Thrust (equipment: barbell)
+  - Barbell Overhead Squat (equipment: barbell)
+  - Barbell Rack Pull (equipment: barbell)
+  - Barbell Reverse Lunge (equipment: barbell)
+  - Barbell Romanian Deadlift (equipment: barbell)
+  - Barbell Seated Good Morning (equipment: barbell)
+  - Barbell Single Leg Good Morning (equipment: barbell)
+  - Barbell Single Leg Hip Thrust (equipment: barbell)
+  - Barbell Single Leg Romanian Deadlift (equipment: barbell)
+  - Barbell Snatch Grip Deadlift (equipment: barbell)
+  - Barbell Stiff Leg Deadlift (equipment: barbell)
+  - Barbell Sumo Deadlift (equipment: barbell)
+  - Barbell Walking Lunge (equipment: barbell)
+  - Bodyweight Bulgarian Split Squat (equipment: bodyweight)
+  - Bodyweight Forward Lunge (equipment: bodyweight)
+  - Bodyweight Glute Bridge (equipment: bodyweight)
+  - Bodyweight Hip Thrust (equipment: bodyweight)
+  - Bodyweight Lateral Lunge (equipment: bodyweight)
+  - Bodyweight Reverse Lunge (equipment: bodyweight)
+  - Bodyweight Single Leg Hip Thrust (equipment: bodyweight)
+  - Bodyweight Walking Lunge (equipment: bodyweight)
+  - Clamshells (equipment: None)
+  - Dumbbell Bulgarian Split Squat (equipment: dumbbell)
+  - Dumbbell Conventional Deadlift (equipment: dumbbell)
+  - Dumbbell Forward Lunge (equipment: dumbbell)
+  - Dumbbell Glute Bridge (equipment: dumbbell)
+  - Dumbbell Goblet Squat (equipment: dumbbell)
+  - Dumbbell Lateral Lunge (equipment: dumbbell)
+  - Dumbbell Overhead Squat (equipment: dumbbell)
+  - Dumbbell Reverse Lunge (equipment: dumbbell)
+  - Dumbbell Romanian Deadlift (equipment: dumbbell)
+  - Dumbbell Single Leg Hip Thrust (equipment: dumbbell)
+  - Dumbbell Single Leg Romanian Deadlift (equipment: dumbbell)
+  - Dumbbell Stiff Leg Deadlift (equipment: dumbbell)
+  - Dumbbell Walking Lunge (equipment: dumbbell)
+  - Figure-4 Stretch (equipment: None)
+  - Fire Hydrants (equipment: None)
+  - Glute Bridge (equipment: None)
+  - Glute Foam Roll (equipment: foam_roller)
+  - Glute Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Happy Baby Pose (equipment: None)
+  - Kettlebell Forward Lunge (equipment: kettlebell)
+  - Kettlebell Goblet Squat (equipment: kettlebell)
+  - Kettlebell Lateral Lunge (equipment: kettlebell)
+  - Kettlebell Reverse Lunge (equipment: kettlebell)
+  - Kettlebell Single Leg Romanian Deadlift (equipment: kettlebell)
+  - Kettlebell Walking Lunge (equipment: kettlebell)
+  - Kneeling Quad Stretch (equipment: None)
+  - Lying Quad Stretch (equipment: None)
+  - Machine Hack Squat (equipment: machine)
+  - Machine Hip Thrust (equipment: machine)
+  - Machine Leg Extension (equipment: machine)
+  - Machine Leg Press (equipment: machine)
+  - Machine Seated Good Morning (equipment: machine)
+  - Machine Single Leg Extension (equipment: machine)
+  - Machine Single Leg Press (equipment: machine)
+  - Pigeon Pose (equipment: None)
+  - Quad Foam Roll (equipment: foam_roller)
+  - Quad Lacrosse Ball Release (equipment: lacrosse_ball)
+  - Safety Bar Back Squat (equipment: safety_bar)
+  - Safety Bar Box Squat (equipment: safety_bar)
+  - Safety Bar Good Morning (equipment: safety_bar)
+  - Seated Glute Stretch (equipment: None)
+  - Smith Machine Back Squat (equipment: smith_machine)
+  - Smith Machine Box Squat (equipment: smith_machine)
+  - Smith Machine Bulgarian Split Squat (equipment: smith_machine)
+  - Smith Machine Conventional Deadlift (equipment: smith_machine)
+  - Smith Machine Deficit Deadlift (equipment: smith_machine)
+  - Smith Machine Forward Lunge (equipment: smith_machine)
+  - Smith Machine Front Squat (equipment: smith_machine)
+  - Smith Machine Glute Bridge (equipment: smith_machine)
+  - Smith Machine Hip Thrust (equipment: smith_machine)
+  - Smith Machine Reverse Lunge (equipment: smith_machine)
+  - Smith Machine Romanian Deadlift (equipment: smith_machine)
+  - Smith Machine Single Leg Hip Thrust (equipment: smith_machine)
+  - Smith Machine Stiff Leg Deadlift (equipment: smith_machine)
+  - Smith Machine Sumo Deadlift (equipment: smith_machine)
+  - Standing Quad Stretch (equipment: None)
+  - Supine Figure-4 with Knee Hug (equipment: None)
+  - Trap Bar Deadlift (equipment: trap_bar)
+  - Walking Quad Stretch (equipment: None)
+
+============================================================
+[2026-01-21T18:46:21.714756] get_exercises_by_muscle_groups
+Query: muscle_groups=['quadriceps', 'glutes'], equipment=['barbell']
+Returned 24 exercises:
+  - Barbell Back Squat (equipment: barbell)
+  - Barbell Block Pull (equipment: barbell)
+  - Barbell Box Squat (equipment: barbell)
+  - Barbell Bulgarian Split Squat (equipment: barbell)
+  - Barbell Conventional Deadlift (equipment: barbell)
+  - Barbell Deficit Deadlift (equipment: barbell)
+  - Barbell Forward Lunge (equipment: barbell)
+  - Barbell Front Squat (equipment: barbell)
+  - Barbell Glute Bridge (equipment: barbell)
+  - Barbell Good Morning (equipment: barbell)
+  - Barbell Hack Squat (equipment: barbell)
+  - Barbell Hip Thrust (equipment: barbell)
+  - Barbell Overhead Squat (equipment: barbell)
+  - Barbell Rack Pull (equipment: barbell)
+  - Barbell Reverse Lunge (equipment: barbell)
+  - Barbell Romanian Deadlift (equipment: barbell)
+  - Barbell Seated Good Morning (equipment: barbell)
+  - Barbell Single Leg Good Morning (equipment: barbell)
+  - Barbell Single Leg Hip Thrust (equipment: barbell)
+  - Barbell Single Leg Romanian Deadlift (equipment: barbell)
+  - Barbell Snatch Grip Deadlift (equipment: barbell)
+  - Barbell Stiff Leg Deadlift (equipment: barbell)
+  - Barbell Sumo Deadlift (equipment: barbell)
+  - Barbell Walking Lunge (equipment: barbell)
+
+============================================================
+[2026-01-21T19:03:03.671866] get_exercises_by_muscle_groups
+Query: muscle_groups=['abs'], equipment=['bodyweight']
+Returned 8 exercises:
+  - Bodyweight Bicycle Crunch (equipment: bodyweight)
+  - Bodyweight Captain's Chair Leg Raise (equipment: bodyweight)
+  - Bodyweight Crunch (equipment: bodyweight)
+  - Bodyweight Decline Crunch (equipment: bodyweight)
+  - Bodyweight Hanging Leg Raise (equipment: bodyweight)
+  - Bodyweight Lying Leg Raise (equipment: bodyweight)
+  - Bodyweight Russian Twist (equipment: bodyweight)
+  - Bodyweight Single Leg Raise (equipment: bodyweight)
+
+============================================================
+[2026-01-21T19:18:33.204432] get_strength_exercises
+Query: muscle_groups=['glutes', 'quadriceps'], equipment=None
+Returned 79 exercises
+
+============================================================
+[2026-01-21T19:20:24.095290] get_strength_exercises
+Query: muscle_groups=['glutes', 'quadriceps'], equipment=None
+Returned 79 exercises
+
+============================================================
+[2026-01-22T21:41:21.261021] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-22T21:41:34.169421] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-22T21:42:53.122878] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-22T21:43:03.518589] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-22T21:43:58.856097] get_strength_exercises
+Query: muscle_groups=['back'], equipment=None
+Returned 0 exercises
+
+============================================================
+[2026-01-22T21:44:05.595618] get_strength_exercises
+Query: muscle_groups=['back'], equipment=None
+Returned 0 exercises
+
+============================================================
+[2026-01-22T21:44:15.292014] get_strength_exercises
+Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids'], equipment=None
+Returned 91 exercises
+
+============================================================
+[2026-01-22T21:47:10.785374] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-22T21:49:13.047028] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
+Returned 87 exercises
+
+============================================================
+[2026-01-22T21:50:57.773712] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders'], equipment=None
+Returned 72 exercises
+
+============================================================
+[2026-01-22T21:51:17.493348] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-22T21:52:15.375896] get_strength_exercises
+Query: muscle_groups=['back', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 84 exercises
+
+============================================================
+[2026-01-22T21:52:36.126734] get_strength_exercises
+Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 150 exercises
+
+============================================================
+[2026-01-22T21:55:07.018345] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-22T21:55:17.014992] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-22T21:55:38.679403] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises

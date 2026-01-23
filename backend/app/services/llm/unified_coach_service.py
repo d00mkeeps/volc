@@ -11,7 +11,7 @@ from app.services.context.shared_context_loader import SharedContextLoader
 from app.services.llm.tool_selector import ToolSelector
 from app.services.db.message_service import MessageService
 from app.core.prompts.unified_coach import get_unified_coach_prompt
-from app.tools.exercise_tool import get_exercises_by_muscle_groups, get_cardio_exercises
+from app.tools.exercise_tool import get_strength_exercises, get_cardio_exercises, get_mobility_exercises
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +31,9 @@ class UnifiedCoachService:
         
         # Main response model (Gemini 2.5 Flash)
         self.response_model = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-pro",
             streaming=True,
-            temperature=0,
+            temperature=1.0,
             credentials=credentials,
             project=project_id,
             vertexai=True
@@ -46,8 +46,9 @@ class UnifiedCoachService:
         
         # Tool registry
         self.tool_executors = {
-            "get_exercises_by_muscle_groups": get_exercises_by_muscle_groups,
-            "get_cardio_exercises": get_cardio_exercises
+            "get_strength_exercises": get_strength_exercises,
+            "get_cardio_exercises": get_cardio_exercises,
+            "get_mobility_exercises": get_mobility_exercises
         }
         
         # State (initialized per connection)
@@ -340,22 +341,57 @@ class UnifiedCoachService:
             memory_notes = bundle.ai_memory.get('notes', [])
             if memory_notes:
                 memory_lines = []
-                # Group by category
-                categorized = {}
+                # Group by freshness (Recent = Last 14 days)
+                recent_notes = []
+                outdated_notes = []
+                
+                now = datetime.now()
+                from datetime import timedelta
+                
                 for note in memory_notes:
-                    category = note.get('category', 'general')
-                    if category not in categorized:
-                        categorized[category] = []
-                    categorized[category].append(note)
+                    note_date_str = note.get('date', '')
+                    is_recent = False
+                    
+                    if note_date_str:
+                        try:
+                            # Try ISO format (YYYY-MM-DD)
+                            note_date = datetime.strptime(note_date_str.split('T')[0], '%Y-%m-%d')
+                            if now - note_date < timedelta(days=14):
+                                is_recent = True
+                        except (ValueError, IndexError):
+                            # If parsing fails, treat as outdated/unknown
+                            pass
+                    
+                    if is_recent:
+                        recent_notes.append(note)
+                    else:
+                        outdated_notes.append(note)
                 
-                for category, notes in categorized.items():
-                    memory_lines.append(f"**{category.title()}:**")
+                def format_note_group(notes: List[Dict], title: str):
+                    lines = [f"\n### {title}:"]
+                    # Group by category
+                    categorized = {}
                     for note in notes:
-                        text = note.get('text', '')
-                        date = note.get('date', '')
-                        memory_lines.append(f"- {text} (noted: {date})")
+                        category = note.get('category', 'general')
+                        if category not in categorized:
+                            categorized[category] = []
+                        categorized[category].append(note)
+                    
+                    for category, cat_notes in categorized.items():
+                        lines.append(f"**{category.title()}:**")
+                        for note in cat_notes:
+                            text = note.get('text', '')
+                            date_str = note.get('date', '')
+                            lines.append(f"- {text} (noted: {date_str})")
+                    return lines
+
+                if recent_notes:
+                    memory_lines.extend(format_note_group(recent_notes, "RECENT MEMORY (Last 14 Days)"))
                 
-                ai_memory_text = "\n".join(memory_lines)
+                if outdated_notes:
+                    memory_lines.extend(format_note_group(outdated_notes, "POTENTIALLY OUTDATED MEMORY (> 14 Days)"))
+                
+                ai_memory_text = "\n".join(memory_lines).strip()
             else:
                 ai_memory_text = "No memory available"
         else:
@@ -448,11 +484,32 @@ class UnifiedCoachService:
         if not strength_prog_text:
             strength_prog_text = "No strength progression data available"
         
+        # Format glossary terms
+        glossary_terms = shared_context.get("glossary_terms", [])
+        if glossary_terms:
+            glossary_lines = [f"**Available glossary terms ({len(glossary_terms)} total):**"]
+            glossary_lines.append("When mentioning these terms, link them as: [term](glossary://uuid)")
+            glossary_lines.append("")
+            
+            # Group by first letter for readability
+            from itertools import groupby
+            sorted_terms = sorted(glossary_terms, key=lambda t: t['term'].lower())
+            
+            for letter, terms in groupby(sorted_terms, key=lambda t: t['term'][0].upper()):
+                glossary_lines.append(f"**{letter}:**")
+                for term in terms:
+                    glossary_lines.append(f"- [{term['term']}](glossary://{term['id']})")
+            
+            glossary_text = "\n".join(glossary_lines)
+        else:
+            glossary_text = "No glossary terms available"
+        
         return {
             "user_profile": user_profile_text,
             "ai_memory": ai_memory_text,
             "workout_history": workout_history_text,
-            "strength_progression": strength_prog_text
+            "strength_progression": strength_prog_text,
+            "glossary_terms": glossary_text
         }
     
     def _build_prompt(
@@ -476,31 +533,59 @@ class UnifiedCoachService:
         Returns:
             List of LangChain message objects
         """
+        # Determine user state
+        is_new_user = "No workout history available" in formatted_context.get("workout_history", "")
+        
         # Get base prompt
-        system_prompt = get_unified_coach_prompt()
+        system_prompt = get_unified_coach_prompt(is_new_user=is_new_user)
         
         # Get user's unit preference (stored during initialization from profile)
         is_imperial = self.is_imperial
         
-        # Format available exercises
-        if "get_exercises_by_muscle_groups" in tool_results:
-            exercises = tool_results["get_exercises_by_muscle_groups"]
+        # Format available exercises from tool results
+        available_exercises_text = ""
+        
+        # Handle strength exercises
+        if "get_strength_exercises" in tool_results:
+            exercises = tool_results["get_strength_exercises"]
             if exercises:
-                exercise_lines = [f"**{len(exercises)} exercises available:**"]
-                for ex in exercises[:30]:
-                    base_info = f"- {ex['standard_name']} (ID: {ex['id']}, Muscles: {', '.join(ex.get('primary_muscles', []))})"
-                    
-                    # Add last tracked weight if available
-                    if 'last_tracked' in ex:
-                        lt = ex['last_tracked']
-                        weight_str = self._format_weight(lt['weight'], is_imperial)
-                        base_info += f" | Last: {lt['reps']}x{weight_str} ({lt['date']})"
-                    
-                    exercise_lines.append(base_info)
+                # Group by movement_pattern for clarity
+                by_movement = {}
+                for ex in exercises:
+                    movement = ex.get('movement_pattern', 'other')
+                    if movement not in by_movement:
+                        by_movement[movement] = []
+                    by_movement[movement].append(ex)
+                
+                exercise_lines = [f"**{len(exercises)} strength exercises available:**"]
+                for movement, exs in by_movement.items():
+                    exercise_lines.append(f"\n**{movement.replace('_', ' ').title()}:**")
+                    for ex in exs[:10]:  # Limit per movement to reduce context
+                        base_info = f"- {ex['standard_name']} (ID: {ex['id']}, Muscles: {', '.join(ex.get('primary_muscles', []))})"
+                        
+                        # Add last tracked weight if available
+                        if 'last_tracked' in ex:
+                            lt = ex['last_tracked']
+                            weight_str = self._format_weight(lt['weight'], is_imperial)
+                            base_info += f" | Last: {lt['reps']}x{weight_str} ({lt['date']})"
+                        
+                        exercise_lines.append(base_info)
                 
                 available_exercises_text = "\n".join(exercise_lines)
-            else:
-                available_exercises_text = "No exercises available (ask user which muscles to target)"
+        
+        # Handle mobility exercises
+        elif "get_mobility_exercises" in tool_results:
+            exercises = tool_results["get_mobility_exercises"]
+            if exercises:
+                exercise_lines = [f"**{len(exercises)} mobility exercises available:**"]
+                for ex in exercises[:20]:
+                    muscles = ', '.join(ex.get('primary_muscles', [])) or 'general'
+                    exercise_lines.append(
+                        f"- {ex['standard_name']} (ID: {ex['id']}, Targets: {muscles})"
+                    )
+                available_exercises_text = "\n".join(exercise_lines)
+        
+        # Handle cardio exercises
         elif "get_cardio_exercises" in tool_results:
             exercises = tool_results["get_cardio_exercises"]
             if exercises:
@@ -510,9 +595,9 @@ class UnifiedCoachService:
                         f"- {ex['standard_name']} (ID: {ex['id']}, Type: {ex.get('base_movement', 'N/A')})"
                     )
                 available_exercises_text = "\n".join(exercise_lines)
-            else:
-                available_exercises_text = "No cardio exercises available"
-        else:
+        
+        # Default if no exercises fetched
+        if not available_exercises_text:
             available_exercises_text = "No exercises fetched yet. If user wants to plan a workout, ask which muscles to target."
         
         # Inject ALL context into system prompt
@@ -521,7 +606,8 @@ class UnifiedCoachService:
             ai_memory=formatted_context["ai_memory"],
             workout_history=formatted_context["workout_history"],
             strength_progression=formatted_context["strength_progression"],
-            available_exercises=available_exercises_text
+            available_exercises=available_exercises_text,
+            glossary_terms=formatted_context["glossary_terms"]
         )
         
         # Build messages list

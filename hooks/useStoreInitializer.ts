@@ -2,6 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useUserStore } from "@/stores/userProfileStore";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
+import { useGlossaryStore } from "@/stores/glossaryStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useDashboardStore } from "@/stores/dashboardStore";
@@ -29,6 +30,7 @@ export function useStoreInitializer() {
               useUserStore.getState().contextBundle?.ai_memory
             );
             await useExerciseStore.getState().initializeIfAuthenticated();
+            await useGlossaryStore.getState().initializeIfAuthenticated();
             await useConversationStore.getState().initializeIfAuthenticated();
             await useWorkoutStore.getState().initializeIfAuthenticated();
             console.log("🔍 [StoreInit] About to call refreshQuickChat...");
@@ -60,6 +62,7 @@ export function useStoreInitializer() {
 
         useUserStore.getState().clearData();
         useExerciseStore.getState().clearData();
+        useGlossaryStore.getState().clearData();
         useConversationStore.getState().clearData();
         useWorkoutStore.getState().clearData();
         useDashboardStore.getState().clearData();

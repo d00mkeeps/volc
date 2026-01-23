@@ -3,6 +3,7 @@ import asyncio
 from typing import Dict, Any, Optional
 from app.services.db.user_profile_service import UserProfileService
 from app.services.db.context_service import ContextBundleService
+from app.services.cache.glossary_terms import glossary_cache
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ class SharedContextLoader:
                 "user_id": str,
                 "profile": dict | None,
                 "bundle": UserContextBundle | None,
+                "glossary_terms": list,
                 "has_profile": bool,
                 "has_bundle": bool
             }
@@ -55,16 +57,19 @@ class SharedContextLoader:
         # Run fetches in parallel
         profile_task = self.profile_service.get_user_profile_admin(user_id)
         bundle_task = self.bundle_service.get_latest_context_bundle_admin(user_id)
+        glossary_task = glossary_cache.get_all_terms()
         
-        results = await asyncio.gather(profile_task, bundle_task, return_exceptions=True)
+        results = await asyncio.gather(profile_task, bundle_task, glossary_task, return_exceptions=True)
         
         profile_result = results[0]
         bundle_result = results[1]
+        glossary_result = results[2]
         
         context = {
             "user_id": user_id,
             "profile": None,
             "bundle": None,
+            "glossary_terms": [],
             "has_profile": False,
             "has_bundle": False
         }
@@ -88,6 +93,15 @@ class SharedContextLoader:
             logger.info("✅ Analysis bundle loaded")
         else:
             logger.warning(f"⚠️ Bundle load returned success=False or no data: {bundle_result}")
+        
+        # Process Glossary Result
+        if isinstance(glossary_result, Exception):
+            logger.error(f"❌ Failed to load glossary: {str(glossary_result)}")
+        elif isinstance(glossary_result, list):
+            context["glossary_terms"] = glossary_result
+            logger.info(f"✅ Glossary loaded ({len(glossary_result)} terms)")
+        else:
+            logger.warning(f"⚠️ Glossary load returned unexpected format: {type(glossary_result)}")
             
         # Update cache
         self._cache[user_id] = {
@@ -96,3 +110,4 @@ class SharedContextLoader:
         }
             
         return context
+

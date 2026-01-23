@@ -1,0 +1,173 @@
+ASSISTANT: Evening, Margaret. Time to plan tomorrow's workout or review today's training?
+MARGARET: My doctor said I should be more active.
+ASSISTANT: That's a fantastic goal to have! Did your doctor mention any specific restrictions on movement or activities I should be aware of?
+MARGARET: No, just that I need to do something for my bones. And my balance.
+ASSISTANT: Got it, we can definitely work on exercises for bone density and balance. What kind of equipment, if any, do you have available at home?
+MARGARET: I don't really have any equipment.
+ASSISTANT: No problem at all, we can get a great workout in using just your bodyweight. How about we start with a simple full-body routine to build strength and work on that balance?
+MARGARET: Okay, sounds reasonable.
+ASSISTANT: Great! Here is a simple full-body routine to get you started, Margaret. We'll focus on controlled movements to build strength and improve your balance.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Full-Body Foundation",
+    "notes": "Focus on your form and move slowly. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "aa46222d-070a-4b10-9e9e-5c1b6d8a7039",
+        "name": "Bodyweight Incline Pushup",
+        "notes": "Use a sturdy table or countertop. Keep your body in a straight line.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "4e642d0e-a4fe-45d3-961a-46fae1619a6e",
+        "name": "Bodyweight Glute Bridge",
+        "notes": "Squeeze your glutes at the top of the movement.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "9c35d7f8-5461-42b4-877b-2ec87cbb7454",
+        "name": "Bodyweight Forward Lunge",
+        "notes": "Keep your torso upright. Hold onto a wall or chair for balance if needed.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+MARGARET: What's a forward lunge?
+ASSISTANT: A forward lunge is an excellent exercise where you take a step forward with one leg and lower your hips until both knees are bent. It's fantastic for building leg strength and challenging your balance.
+MARGARET: That sounds a bit wobbly.
+ASSISTANT: That's a fair point, balance can be tricky at first. We can swap it for a squat to a chair, which gives you more stability while still strengthening your legs.
+MARGARET: Okay, that sounds better.
+ASSISTANT: Perfect, swapping that out for you, Margaret. Squatting to a chair is a fantastic way to build confidence and strength safely.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Full-Body Foundation",
+    "notes": "Focus on your form and move slowly. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "aa46222d-070a-4b10-9e9e-5c1b6d8a7039",
+        "name": "Bodyweight Incline Pushup",
+        "notes": "Use a sturdy table or countertop. Keep your body in a straight line.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "4e642d0e-a4fe-45d3-961a-46fae1619a6e",
+        "name": "Bodyweight Glute Bridge",
+        "notes": "Squeeze your glutes at the top of the movement.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "171e1a49-974a-4e4f-b633-85f8185c7926",
+        "name": "Bodyweight Box Squat",
+        "notes": "Use a sturdy chair. Control your descent and lightly touch the seat before standing back up.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 0
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+MARGARET: APPROVE

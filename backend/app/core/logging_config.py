@@ -2,9 +2,10 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 def setup_logging():
-    # Configure root logger at INFO level instead of DEBUG
+    # Configure root logger at DEBUG level so that all logs are processed
+    # The handlers will then filter based on their own levels
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
+    root_logger.setLevel(logging.DEBUG)
     
     # Clear existing handlers (prevents duplicate logs)
     if root_logger.handlers:
@@ -12,7 +13,7 @@ def setup_logging():
     
     # Create handlers
     c_handler = logging.StreamHandler()
-    f_handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
+    f_handler = RotatingFileHandler('app.log', maxBytes=1024 * 1024, backupCount=5)  
     
     # Set console to INFO and file to DEBUG (for troubleshooting)
     c_handler.setLevel(logging.INFO)

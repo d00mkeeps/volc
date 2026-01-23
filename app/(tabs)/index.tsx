@@ -28,7 +28,6 @@ import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { useWindowDimensions } from "react-native";
 import { DisplayMessage } from "@/components/molecules/home/DisplayMessage";
 import { useChatStore } from "@/stores/chat/ChatStore";
 
@@ -53,11 +52,11 @@ export default function HomeScreen() {
   const [showChats, setShowChats] = useState(false);
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
   const setDashboardHeight = useLayoutStore(
-    (state) => state.setDashboardHeight
+    (state) => state.setDashboardHeight,
   );
   // Layout selectors for dynamic height calculation
   const expandChatOverlay = useLayoutStore((state) => state.expandChatOverlay);
-  const { height: screenHeight } = useWindowDimensions();
+  const screenHeight = useLayoutStore((state) => state.screenHeight);
 
   // Dashboard state from store
   const {
@@ -70,7 +69,7 @@ export default function HomeScreen() {
   // Granular selectors - only subscribe to what we need
   const isActive = useUserSessionStore((state) => state.isActive);
   const selectedTemplate = useUserSessionStore(
-    (state) => state.selectedTemplate
+    (state) => state.selectedTemplate,
   );
 
   // Stable reference to session actions
@@ -87,7 +86,7 @@ export default function HomeScreen() {
       hasAtLeastOneCompleteSet:
         useUserSessionStore.getState().hasAtLeastOneCompleteSet,
     }),
-    []
+    [],
   );
 
   // Auto-load dashboard data on mount
@@ -125,11 +124,11 @@ export default function HomeScreen() {
         "🏠 [HomeScreen] handleWorkoutDayPress - before:",
         selectedWorkoutIds,
         "after:",
-        workoutIds
+        workoutIds,
       );
       setSelectedWorkoutIds(workoutIds);
     },
-    [selectedWorkoutIds]
+    [selectedWorkoutIds],
   );
 
   const handleToggleWorkout = useCallback(async () => {
@@ -165,10 +164,10 @@ export default function HomeScreen() {
                   console.log("🔵 [HomeScreen] Before finishWorkout");
                   await sessionActions.finishWorkout();
                   console.log(
-                    "🔵 [HomeScreen] After sessionActions.finishWorkout"
+                    "🔵 [HomeScreen] After sessionActions.finishWorkout",
                   );
                   console.log(
-                    "🔵 [HomeScreen] About to call ref.finishWorkout"
+                    "🔵 [HomeScreen] About to call ref.finishWorkout",
                   );
                   workoutTrackerRef.current?.finishWorkout();
                   console.log("🔵 [HomeScreen] After ref.finishWorkout");
@@ -178,7 +177,7 @@ export default function HomeScreen() {
                 }
               },
             },
-          ]
+          ],
         );
       } else {
         setShowCompletionModal(true);
@@ -206,10 +205,10 @@ export default function HomeScreen() {
 
     return state.currentWorkout.workout_exercises.some((exercise) => {
       const definition = exercises.find(
-        (ex) => ex.id === exercise.definition_id
+        (ex) => ex.id === exercise.definition_id,
       );
       return exercise.workout_exercise_sets.some((set) =>
-        isSetComplete(set, definition)
+        isSetComplete(set, definition),
       );
     });
   });
@@ -244,11 +243,11 @@ export default function HomeScreen() {
   }, [sessionActions, userProfile?.user_id]);
   const handleNewChat = useCallback(() => {
     console.log(
-      "💬 [HomeScreen] Starting new chat - BEFORE clearing conversation"
+      "💬 [HomeScreen] Starting new chat - BEFORE clearing conversation",
     );
     console.log(
       "💬 [HomeScreen] Current activeConversationId:",
-      useConversationStore.getState().activeConversationId
+      useConversationStore.getState().activeConversationId,
     );
 
     // Clear active conversation
@@ -261,17 +260,17 @@ export default function HomeScreen() {
 
     console.log(
       "💬 [HomeScreen] AFTER clearing - activeConversationId:",
-      useConversationStore.getState().activeConversationId
+      useConversationStore.getState().activeConversationId,
     );
 
     // Wait a tick for state to propagate
     setTimeout(() => {
       console.log(
-        "💬 [HomeScreen] Inside setTimeout - about to expand overlay"
+        "💬 [HomeScreen] Inside setTimeout - about to expand overlay",
       );
       console.log(
         "💬 [HomeScreen] activeConversationId in setTimeout:",
-        useConversationStore.getState().activeConversationId
+        useConversationStore.getState().activeConversationId,
       );
       expandChatOverlay?.();
     }, 0);

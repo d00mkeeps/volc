@@ -19,6 +19,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 import { MessageList } from "../../molecules/chat/MessageList";
@@ -48,10 +51,10 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const inputAreaRef = useRef<InputAreaRef>(null);
 
   const failedMessageContent = useChatStore(
-    (state) => state.failedMessageContent
+    (state) => state.failedMessageContent,
   );
   const setFailedMessageContent = useChatStore(
-    (state) => state.setFailedMessageContent
+    (state) => state.setFailedMessageContent,
   );
 
   const connectionState = useChatStore((state) => state.connectionState);
@@ -73,7 +76,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     (content: string) => {
       sendMessage(content, () => health);
     },
-    [sendMessage, health]
+    [sendMessage, health],
   );
 
   // Network-based auto-cancel
@@ -89,35 +92,35 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const colorScheme = useColorScheme();
   const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
   const setExpandChatOverlay = useLayoutStore(
-    (state) => state.setExpandChatOverlay
+    (state) => state.setExpandChatOverlay,
   );
   const setInputAreaHeight = useLayoutStore(
-    (state) => state.setInputAreaHeight
+    (state) => state.setInputAreaHeight,
   );
 
   const fadeProgress = useSharedValue(0);
 
   const pendingChatOpen = useConversationStore(
-    (state) => state.pendingChatOpen
+    (state) => state.pendingChatOpen,
   );
   const setPendingChatOpen = useConversationStore(
-    (state) => state.setPendingChatOpen
+    (state) => state.setPendingChatOpen,
   );
   const isWorkoutActive = useUserSessionStore((state) => state.isActive);
   const isWorkoutDetailOpen = useUserSessionStore(
-    (state) => state.isWorkoutDetailOpen
+    (state) => state.isWorkoutDetailOpen,
   );
 
   // Keyboard listeners
   useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
+      () => setIsKeyboardVisible(true),
     );
 
     const keyboardWillHide = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
+      () => setIsKeyboardVisible(false),
     );
 
     return () => {
@@ -135,12 +138,12 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const isHome = currentPage === 0;
   const pageProgress = useSharedValue(isHome ? 1 : 0);
   const activeConversationId = useConversationStore(
-    (state) => state.activeConversationId
+    (state) => state.activeConversationId,
   );
 
   console.log(
     "🎨 [ChatOverlay] RENDER - activeConversationId:",
-    activeConversationId
+    activeConversationId,
   );
   console.log("🎨 [ChatOverlay] RENDER - isExpanded:", isExpanded);
 
@@ -148,7 +151,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     useMessageStore((state) =>
       activeConversationId
         ? state.messages.get(activeConversationId)
-        : undefined
+        : undefined,
     ) || [];
 
   // Computed state
@@ -168,7 +171,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
         useConversationStore.getState().setPendingChatOpen(true);
       }
     },
-    [isExpanded, connectionState, sendMessage, greeting]
+    [isExpanded, connectionState, sendMessage, greeting],
   );
 
   const quickChatStyle = useAnimatedStyle(() => {
@@ -209,7 +212,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     console.log("📂 [ChatOverlay.handleExpand] isExpanded:", isExpanded);
     console.log(
       "📂 [ChatOverlay.handleExpand] activeConversationId:",
-      useConversationStore.getState().activeConversationId
+      useConversationStore.getState().activeConversationId,
     );
 
     if (!isExpanded) {
@@ -240,7 +243,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
         useUserSessionStore.getState().startWorkout(templateData);
       }, 350);
     },
-    [handleCollapse]
+    [handleCollapse],
   );
 
   const handleDismiss = useCallback(() => {
@@ -292,7 +295,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
-      onBackPress
+      onBackPress,
     );
     return () => subscription.remove();
   }, [isExpanded, handleCollapse]);
@@ -347,6 +350,33 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                     onDismiss={handleDismiss}
                     onTemplateApprove={handleTemplateApprove}
                   />
+
+                  {/* Blurred Bottom Transition */}
+                  <YStack
+                    position="absolute"
+                    bottom={0}
+                    left={0}
+                    right={0}
+                    height={160}
+                    pointerEvents="box-none"
+                  >
+                    <MaskedView
+                      style={{ flex: 1 }}
+                      maskElement={
+                        <LinearGradient
+                          colors={["transparent", "black"]}
+                          locations={[0, 0.4]}
+                          style={{ flex: 1 }}
+                        />
+                      }
+                    >
+                      <BlurView
+                        intensity={20}
+                        tint={colorScheme === "dark" ? "dark" : "light"}
+                        style={{ flex: 1 }}
+                      />
+                    </MaskedView>
+                  </YStack>
                 </View>
               </TouchableWithoutFeedback>
             </View>

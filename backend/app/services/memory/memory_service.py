@@ -32,7 +32,7 @@ class MemoryExtractionService:
         self.user_profile_service = UserProfileService()
         
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-3-flash-preview",
+            model="gemini-2.5-flash",
             temperature=0,
             credentials=credentials,
             project=project_id,
@@ -142,6 +142,8 @@ class MemoryExtractionService:
         Extracts memory from a conversation and updates the user's latest analysis bundle.
         This is designed to run as a background task.
         """
+        import asyncio
+        
         try:
             logger.info(f"Starting memory extraction for user {user_id}, conversation {conversation_id}")
             
@@ -174,24 +176,43 @@ class MemoryExtractionService:
             bundle = bundle_result["data"]
             current_memory = bundle.ai_memory or {"notes": []}
             
-            # 3. Run Extraction Chain
+            # 3. Run Extraction Chain with retry logic for 429 errors
             chain = self.prompt | self.llm | self.parser
             
             current_date = datetime.now().isoformat()
             
-            result = await chain.ainvoke({
-                "current_memory": json.dumps(current_memory, indent=2),
-                "conversation_history": conversation_text,
-                "current_date": current_date,
-                "format_instructions": self.parser.get_format_instructions()
-            })
+            max_retries = 3
+            result = None
             
-            # 4. Update Analysis Bundle
-            # Update the memory in the bundle object
-            bundle.ai_memory = result
+            for attempt in range(max_retries):
+                try:
+                    result = await chain.ainvoke({
+                        "current_memory": json.dumps(current_memory, indent=2),
+                        "conversation_history": conversation_text,
+                        "current_date": current_date,
+                        "format_instructions": self.parser.get_format_instructions()
+                    })
+                    break  # Success, exit retry loop
+                    
+                except Exception as e:
+                    error_str = str(e).lower()
+                    if "429" in str(e) or "resource exhausted" in error_str or "too many requests" in error_str:
+                        if attempt < max_retries - 1:
+                            wait_time = 2 ** attempt  # Exponential backoff: 1s, 2s, 4s
+                            logger.warning(f"Rate limited (429), retrying in {wait_time}s (attempt {attempt + 1}/{max_retries})")
+                            await asyncio.sleep(wait_time)
+                        else:
+                            logger.error(f"Rate limit exceeded after {max_retries} retries for user {user_id}")
+                            return
+                    else:
+                        raise  # Re-raise non-429 errors
             
-            # Save the updated bundle (Admin)
-            save_result = await context_service.save_context_bundle_admin(bundle.id, bundle)
+            if result is None:
+                logger.error(f"Memory extraction failed after retries for user {user_id}")
+                return
+            
+            # 4. Update AI Memory only (not the entire bundle)
+            save_result = await context_service.update_ai_memory_admin(bundle.id, result)
             
             if save_result.get("success"):
                 logger.info(f"Successfully updated memory for user {user_id} in bundle {bundle.id}")

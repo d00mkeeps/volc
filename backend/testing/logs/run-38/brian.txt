@@ -1,0 +1,167 @@
+ASSISTANT: Morning, Brian! Want to plan today's session or check how your training's going?
+BRIAN: Plan today.
+ASSISTANT: Sounds good! What muscles are we hitting today, and are there any injuries I should know about?
+BRIAN: Upper body. Back and knees. No restrictions.
+ASSISTANT: Got it. Just to clarify, when you mention your back and knees, is that something you want to strengthen, or an issue I should know about?
+BRIAN: Just something to know.
+ASSISTANT: Thanks for confirming. Are there any specific exercises you like to include for an upper body day, or should I suggest some classics for you?
+BRIAN: Need work on chins.
+ASSISTANT: Excellent, we'll make chin-ups a priority. I'll build out the rest of your upper body session around that, sound good?
+BRIAN: Sounds good.
+ASSISTANT: Alright Brian, here is your upper body workout focused on building those chin-ups.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Upper Body Strength",
+    "notes": "Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "f5b1d585-0684-4835-8134-a21c13d964f6",
+        "name": "Chin Up",
+        "notes": "Focus on a full [range of motion](glossary://7a076731-d5cb-409a-8470-c96c36e6e7d8). Perform each set to 1-2 [reps](glossary://6db20df3-c386-44b6-9dc3-e29455f33819) from [failure](glossary://76295238-6502-4598-8f1a-a51fefdb0167).",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 4,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "1d227593-3392-4f6c-829d-5f49c0082987",
+        "name": "Barbell Bench Press",
+        "notes": "Keep your shoulder blades retracted and your feet planted firmly on the floor.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 80
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 80
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 80
+          }
+        ]
+      },
+      {
+        "definition_id": "8e36780c-7b1f-463d-82c2-8438317d741c",
+        "name": "Seated Cable Row",
+        "notes": "Pull the handle towards your naval, squeezing your shoulder blades together.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 60
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 60
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 60
+          }
+        ]
+      },
+      {
+        "definition_id": "c35a84ba-1941-477b-bf08-0a6046b2a095",
+        "name": "Seated Dumbbell Shoulder Press",
+        "notes": "Press the dumbbells overhead without arching your lower back excessively.",
+        "order_index": 3,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 20
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 20
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 20
+          }
+        ]
+      },
+      {
+        "definition_id": "4b68486f-578d-4f05-8949-ac30b80f135e",
+        "name": "Dumbbell Bicep Curl",
+        "notes": "Keep your elbows pinned to your sides throughout the movement.",
+        "order_index": 4,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 14
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 14
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 14
+          }
+        ]
+      },
+      {
+        "definition_id": "6d34b473-a8d8-46f3-a74e-f5195b058c42",
+        "name": "Triceps Pushdown",
+        "notes": "Focus on squeezing the triceps at the bottom of the movement.",
+        "order_index": 5,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 30
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 30
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+BRIAN: QUIT

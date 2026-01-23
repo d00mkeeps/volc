@@ -24,7 +24,7 @@ export default function WorkoutTemplateView({
   const [expanded, setExpanded] = useState(false);
   const [rejected, setRejected] = useState(false);
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(
-    null
+    null,
   );
 
   const exercises = data.workout_exercises || [];
@@ -43,8 +43,8 @@ export default function WorkoutTemplateView({
         ? reps.length === 1
           ? `${reps[0]} reps`
           : Math.min(...reps) === Math.max(...reps)
-          ? `${Math.min(...reps)} reps`
-          : `${Math.min(...reps)}-${Math.max(...reps)} reps`
+            ? `${Math.min(...reps)} reps`
+            : `${Math.min(...reps)}-${Math.max(...reps)} reps`
         : "No reps";
 
     return (
@@ -135,7 +135,7 @@ export default function WorkoutTemplateView({
           {sets
             .sort(
               (a: WorkoutExerciseSet, b: WorkoutExerciseSet) =>
-                (a.set_number || 0) - (b.set_number || 0)
+                (a.set_number || 0) - (b.set_number || 0),
             )
             .map((set: WorkoutExerciseSet, index: number) => (
               <XStack
@@ -147,12 +147,12 @@ export default function WorkoutTemplateView({
                   Set {set.set_number || index + 1}
                 </Text>
                 <XStack gap="$2">
-                  {set.reps && (
+                  {set.reps != null && (
                     <Text size="small" color="$color">
                       {set.reps} reps
                     </Text>
                   )}
-                  {set.weight && (
+                  {set.weight != null && (
                     <Text size="small" color="$color">
                       {set.weight}kg
                     </Text>
@@ -255,14 +255,14 @@ export default function WorkoutTemplateView({
                   {expanded
                     ? data.notes
                     : data.notes.length > 50
-                    ? (() => {
-                        const truncated = data.notes.substring(0, 50);
-                        const lastSpace = truncated.lastIndexOf(" ");
-                        return lastSpace > 0
-                          ? `${truncated.substring(0, lastSpace)}...`
-                          : `${truncated}...`;
-                      })()
-                    : data.notes}
+                      ? (() => {
+                          const truncated = data.notes.substring(0, 50);
+                          const lastSpace = truncated.lastIndexOf(" ");
+                          return lastSpace > 0
+                            ? `${truncated.substring(0, lastSpace)}...`
+                            : `${truncated}...`;
+                        })()
+                      : data.notes}
                 </Text>
               )}
 
@@ -271,12 +271,12 @@ export default function WorkoutTemplateView({
                   {expanded
                     ? exercises
                         .sort(
-                          (a, b) => (a.order_index || 0) - (b.order_index || 0)
+                          (a, b) => (a.order_index || 0) - (b.order_index || 0),
                         )
                         .map(renderExerciseDetailed)
                     : exercises
                         .sort(
-                          (a, b) => (a.order_index || 0) - (b.order_index || 0)
+                          (a, b) => (a.order_index || 0) - (b.order_index || 0),
                         )
                         .slice(0, 3)
                         .map(renderExercisePreview)}

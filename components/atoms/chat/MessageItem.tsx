@@ -1,9 +1,8 @@
-import React, { memo, useRef } from "react";
+import React, { memo, useRef, useState } from "react";
 import { YStack, XStack, useTheme, getTokens } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import {
   StyleSheet,
-  useWindowDimensions,
   Pressable,
   TouchableOpacity,
   useColorScheme,
@@ -14,6 +13,9 @@ import { BlurView } from "expo-blur";
 import { StreamingMarkdownRenderer } from "@/utils/markdown/streamingMarkdownRenderer";
 import { createCustomRules } from "@/utils/markdown/customRules";
 import { useMessageStore } from "@/stores/chat/MessageStore";
+import { useGlossaryStore } from "@/stores/glossaryStore";
+import { GlossaryModal } from "@/components/molecules/chat/GlossaryModal";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 interface MessageItemProps {
   message: Message;
@@ -34,6 +36,17 @@ const MessageItemComponent = ({
 }: MessageItemProps) => {
   if (!message) return null;
 
+  const [glossaryModalVisible, setGlossaryModalVisible] = useState(false);
+  const [selectedTermId, setSelectedTermId] = useState<string | null>(null);
+
+  // Subscribe to the actual Set so we re-render when it changes
+  const dismissedTermIds = useGlossaryStore((state) => state.dismissedTermIds);
+
+  const handleGlossaryTap = (termId: string) => {
+    setSelectedTermId(termId);
+    setGlossaryModalVisible(true);
+  };
+
   const streamingContent = useMessageStore((state) => {
     if (!isStreaming) return null;
     const streaming = state.streamingMessages.get(message.conversation_id);
@@ -45,16 +58,31 @@ const MessageItemComponent = ({
 
   const theme = useTheme();
   const tokens = getTokens();
-  const { width } = useWindowDimensions();
+  const { screenWidth, isSmallDevice } = useLayoutStore();
   const isUser = message.sender === "user";
-  const isTablet = width >= 768;
+  const isTablet = screenWidth >= 768;
 
   const safeContent =
     typeof displayContent === "string"
       ? displayContent
       : String(displayContent || "");
 
-  const renderContent = safeContent + (actuallyStreaming ? "..." : "");
+  // Strip dismissed glossary links from content before markdown parsing
+  // Converts [text](glossary://id) to just "text" for dismissed terms
+  const stripDismissedGlossaryLinks = (content: string): string => {
+    return content.replace(
+      /\[([^\]]+)\]\(glossary:\/\/([^)]+)\)/g,
+      (match, text, termId) => {
+        if (dismissedTermIds.has(termId)) {
+          return text; // Return just the text, no link
+        }
+        return match; // Keep the original link
+      },
+    );
+  };
+
+  const processedContent = stripDismissedGlossaryLinks(safeContent);
+  const renderContent = processedContent + (actuallyStreaming ? "..." : "");
 
   const bodySize = isTablet ? tokens.fontSize.$4.val : tokens.fontSize.$3.val;
   const h2Size = isTablet ? tokens.fontSize.$6.val : tokens.fontSize.$4.val;
@@ -138,9 +166,14 @@ const MessageItemComponent = ({
       margin: 0,
       padding: 0,
     },
+    link: {
+      color: "#ffffff",
+      textDecorationLine: "underline",
+    },
   });
 
   const customRules = createCustomRules({
+    onGlossaryTap: handleGlossaryTap,
     isStreaming: actuallyStreaming,
     onTemplateApprove,
     onProfileConfirm,
@@ -150,106 +183,97 @@ const MessageItemComponent = ({
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
 
-  // // Only log streaming or old assistant messages
-  // if (isStreaming) {
-  //   const now = new Date();
-  //   const timestamp = `${now.getMinutes()}:${now
-  //     .getSeconds()
-  //     .toString()
-  //     .padStart(2, "0")}.${now.getMilliseconds().toString().padStart(3, "0")}`;
-  //   console.log(
-  //     `[MessageItem:streaming] render #${renderCountRef.current} at ${timestamp}`
-  //   );
-  // } else if (!isStreaming && message.sender === "assistant") {
-  //   console.log(`⚠️ OLD MESSAGE RE-RENDERED: ${message.id.slice(0, 8)}`);
-  // }
-
   return (
-    <Pressable
-      onPress={onDismiss}
-      disabled={actuallyStreaming}
-      style={{ width: "100%" }}
-    >
-      <XStack
-        width="100%"
-        justifyContent={isUser ? "flex-end" : "flex-start"}
-        paddingHorizontal="$4"
-        paddingVertical="$1"
-        pointerEvents="box-none"
+    <>
+      <Pressable
+        onPress={onDismiss}
+        disabled={actuallyStreaming}
+        style={{ width: "100%" }}
       >
-        {isUser ? (
-          <TouchableOpacity
-            disabled
-            style={{
-              maxWidth: "90%",
-              opacity: actuallyStreaming ? 0.7 : 1,
-              overflow: "hidden",
-              backgroundColor: `${theme.primary.get()}80`,
-              borderRadius: 8,
-            }}
-          >
-            <BlurView
-              intensity={60}
-              tint={useColorScheme() === "dark" ? "dark" : "light"}
+        <XStack
+          width="100%"
+          justifyContent={isUser ? "flex-end" : "flex-start"}
+          paddingHorizontal="$4"
+          paddingVertical="$1"
+          pointerEvents="box-none"
+        >
+          {isUser ? (
+            <TouchableOpacity
+              disabled
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 4,
-                borderRadius: 8,
+                maxWidth: "90%",
+                opacity: actuallyStreaming ? 0.7 : 1,
                 overflow: "hidden",
-                borderColor: theme.primary.get(),
-                borderWidth: 0.5,
+                backgroundColor: `${theme.primary.get()}80`,
+                borderRadius: 8,
               }}
             >
-              {enableUserMarkdown ? (
+              <BlurView
+                intensity={60}
+                tint={useColorScheme() === "dark" ? "dark" : "light"}
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 4,
+                  borderRadius: 8,
+                  overflow: "hidden",
+                  borderColor: theme.primary.get(),
+                  borderWidth: 0.5,
+                }}
+              >
+                {enableUserMarkdown ? (
+                  <Markdown style={markdownStyles} rules={customRules}>
+                    {renderContent}
+                  </Markdown>
+                ) : (
+                  <Text
+                    color="white"
+                    fontSize={bodySize}
+                    fontWeight="400"
+                    lineHeight={bodySize * 1.4}
+                  >
+                    {renderContent}
+                  </Text>
+                )}
+              </BlurView>
+            </TouchableOpacity>
+          ) : (
+            <YStack maxWidth={"90%"}>
+              {actuallyStreaming ? (
+                <StreamingMarkdownRenderer
+                  content={processedContent}
+                  styles={markdownStyles}
+                  onTemplateApprove={onTemplateApprove}
+                  onProfileConfirm={onProfileConfirm}
+                  onGlossaryTap={handleGlossaryTap}
+                />
+              ) : (
                 <Markdown style={markdownStyles} rules={customRules}>
                   {renderContent}
                 </Markdown>
-              ) : (
-                <Text
-                  color="white"
-                  fontSize={bodySize}
-                  fontWeight="400"
-                  lineHeight={bodySize * 1.4}
-                >
-                  {renderContent}
-                </Text>
               )}
-            </BlurView>
-          </TouchableOpacity>
-        ) : (
-          <YStack maxWidth={"90%"}>
-            {actuallyStreaming ? (
-              <StreamingMarkdownRenderer
-                content={safeContent}
-                styles={markdownStyles}
-                onTemplateApprove={onTemplateApprove}
-                onProfileConfirm={onProfileConfirm}
-              />
-            ) : (
-              <Markdown style={markdownStyles} rules={customRules}>
-                {renderContent}
-              </Markdown>
-            )}
-          </YStack>
-        )}
-      </XStack>
-    </Pressable>
+            </YStack>
+          )}
+        </XStack>
+      </Pressable>
+
+      <GlossaryModal
+        termId={selectedTermId}
+        visible={glossaryModalVisible}
+        onClose={() => {
+          setGlossaryModalVisible(false);
+          setSelectedTermId(null);
+        }}
+      />
+    </>
   );
 };
 
 export const MessageItem = memo(
   MessageItemComponent,
   (prevProps, nextProps) => {
-    // Re-render if message ID changed
     if (prevProps.message.id !== nextProps.message.id) return false;
-
-    // Re-render if content changed
     if (prevProps.message.content !== nextProps.message.content) return false;
-
-    // Re-render if streaming state changed
     if (prevProps.isStreaming !== nextProps.isStreaming) return false;
-
-    // Don't re-render for callback changes (they're stable now)
     return true;
-  }
+  },
 );

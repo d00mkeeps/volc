@@ -7,6 +7,7 @@ import Input from "@/components/atoms/core/Input";
 import Text from "@/components/atoms/core/Text";
 import { userService } from "@/services/api/userService";
 import { useUserStore } from "@/stores/userProfileStore";
+import { useGlossaryStore } from "@/stores/glossaryStore";
 import { useTour } from "@/context/TourContext";
 import { calculate1RM } from "@/utils/1rmCalc";
 
@@ -352,27 +353,42 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 Danger Zone
               </Text>
               <Button
-                backgroundColor="$red9"
-                color="$white"
-                alignSelf="stretch"
-                onPress={() => {
-                  console.log("🔴 Delete Account button pressed!");
-                  setShowDeleteConfirm(true);
-                }}
-              >
-                Delete Account
-              </Button>
-              <Button
                 backgroundColor="$backgroundMuted"
                 color="$textSoft"
                 alignSelf="stretch"
-                marginTop="$2"
                 onPress={() => {
                   resetTour();
                   Alert.alert("Tour Reset", "Onboarding tour has been reset.");
                 }}
               >
                 Reset Onboarding Tour (Dev)
+              </Button>
+              <Button
+                backgroundColor="$backgroundMuted"
+                color="$textSoft"
+                alignSelf="stretch"
+                marginTop="$2"
+                onPress={async () => {
+                  await useGlossaryStore.getState().resetDismissals();
+                  Alert.alert(
+                    "Glossary Reset",
+                    "All glossary tooltips will show again."
+                  );
+                }}
+              >
+                Reset Glossary Tooltips
+              </Button>
+              <Button
+                backgroundColor="$red9"
+                color="$white"
+                alignSelf="stretch"
+                marginTop="$4"
+                onPress={() => {
+                  console.log("🔴 Delete Account button pressed!");
+                  setShowDeleteConfirm(true);
+                }}
+              >
+                Delete Account
               </Button>
             </YStack>
           </>

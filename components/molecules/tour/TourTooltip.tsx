@@ -1,11 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Modal,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { Modal, TouchableOpacity, View, StyleSheet } from "react-native";
 import { YStack, XStack, useTheme } from "tamagui";
 import { BlurView } from "expo-blur";
 import Animated, {
@@ -17,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { TourStepId } from "@/utils/tourPersistence";
 
 interface TourTooltipProps {
@@ -35,7 +30,6 @@ interface TourTooltipProps {
   showPulse?: boolean;
 }
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
 const TOOLTIP_WIDTH = 280;
 const TOOLTIP_PADDING = 20;
 
@@ -49,6 +43,7 @@ export default function TourTooltip({
   showPulse = true,
 }: TourTooltipProps) {
   const theme = useTheme();
+  const screenWidth = useLayoutStore((state) => state.screenWidth);
   const pulseScale = useSharedValue(1);
 
   useEffect(() => {
@@ -56,7 +51,7 @@ export default function TourTooltip({
       pulseScale.value = withRepeat(
         withTiming(1.15, { duration: 800, easing: Easing.inOut(Easing.ease) }),
         -1,
-        true
+        true,
       );
     } else {
       pulseScale.value = 1;
@@ -75,7 +70,7 @@ export default function TourTooltip({
     targetPosition.x + targetPosition.width / 2 - TOOLTIP_WIDTH / 2;
   const tooltipLeft = Math.max(
     TOOLTIP_PADDING,
-    Math.min(centeredLeft, SCREEN_WIDTH - TOOLTIP_WIDTH - TOOLTIP_PADDING)
+    Math.min(centeredLeft, screenWidth - TOOLTIP_WIDTH - TOOLTIP_PADDING),
   );
 
   return (

@@ -1,20 +1,21 @@
 import React from "react";
 import { YStack } from "tamagui";
+import { Pressable, Linking } from "react-native";
 import Text from "@/components/atoms/core/Text";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
-
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 
 interface __CustomRulesConfig__ {
   isStreaming?: boolean;
   onTemplateApprove?: (templateData: any) => void;
   onProfileConfirm?: () => void;
+  onGlossaryTap?: (termId: string) => void;
+  isTermDismissed?: (termId: string) => boolean;
   styles: any;
 }
 
-// Add partial JSON parser
 export const parsePartialJSON = (
-  content: string
+  content: string,
 ): {
   type?: string;
   data?: any;
@@ -40,11 +41,11 @@ export const parsePartialJSON = (
     }
 
     const exercisesMatch = content.match(
-      /"workout_exercises"\s*:\s*\[([\s\S]*)/
+      /"workout_exercises"\s*:\s*\[([\s\S]*)/,
     );
     if (exercisesMatch && result.data) {
       result.data.workout_exercises = extractPartialExercises(
-        exercisesMatch[1]
+        exercisesMatch[1],
       );
     }
 
@@ -71,7 +72,7 @@ const extractPartialExercises = (exercisesStr: string): any[] => {
     if (notesMatch) exercise.notes = notesMatch[1];
 
     const setsMatch = exerciseBlock.match(
-      /"workout_exercise_sets"\s*:\s*\[([^\]]*)\]/
+      /"workout_exercise_sets"\s*:\s*\[([^\]]*)\]/,
     );
     if (setsMatch) {
       const setsStr = setsMatch[1];
@@ -102,6 +103,8 @@ export const createCustomRules = ({
   isStreaming = false,
   onTemplateApprove,
   onProfileConfirm,
+  onGlossaryTap,
+  isTermDismissed,
   styles,
 }: __CustomRulesConfig__) => ({
   paragraph: (node: any, children: any, parent: any, ruleStyles: any) => (
@@ -109,6 +112,52 @@ export const createCustomRules = ({
       {children}
     </YStack>
   ),
+  link: (node: any, children: any, parent: any, ruleStyles: any) => {
+    const url = node.attributes?.href || "";
+
+    // Handle glossary:// protocol
+    if (url.startsWith("glossary://")) {
+      const termId = url.replace("glossary://", "");
+
+      // If term is dismissed, render as plain text (explicitly remove underline)
+      if (isTermDismissed?.(termId)) {
+        return (
+          <Text key={node.key} style={{ textDecorationLine: "none" }}>
+            {children}
+          </Text>
+        );
+      }
+
+      return (
+        <Text
+          key={node.key}
+          style={[ruleStyles.link, { textDecorationLine: "underline" }]}
+          onPress={() => {
+            if (onGlossaryTap) {
+              onGlossaryTap(termId);
+            }
+          }}
+        >
+          {children}
+        </Text>
+      );
+    }
+
+    // Handle regular links
+    return (
+      <Text
+        key={node.key}
+        style={ruleStyles.link}
+        onPress={() => {
+          if (url.startsWith("http")) {
+            Linking.openURL(url);
+          }
+        }}
+      >
+        {children}
+      </Text>
+    );
+  },
   fence: (node: any, children: any, parent: any, ruleStyles: any) => {
     const content = node.content.trim();
     const looksLikeJSON = content.startsWith("{") || content.startsWith("[");

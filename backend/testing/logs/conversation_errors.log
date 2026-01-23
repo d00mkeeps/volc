@@ -1,0 +1,14 @@
+{"timestamp": "2026-01-22T20:28:39.961307", "persona": "margaret", "error": "Error (attempt 1): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:28:51.967841", "persona": "margaret", "error": "Error (attempt 2): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:29:03.972554", "persona": "margaret", "error": "Error (attempt 3): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:29:15.830319", "persona": "jake", "error": "Error (attempt 1): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:29:27.840127", "persona": "jake", "error": "Error (attempt 2): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:29:39.863257", "persona": "jake", "error": "Error (attempt 3): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:29:51.514482", "persona": "sarah", "error": "Error (attempt 1): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:30:03.527760", "persona": "sarah", "error": "Error (attempt 2): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:30:15.533189", "persona": "sarah", "error": "Error (attempt 3): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:30:27.091871", "persona": "brian", "error": "Error (attempt 1): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:30:39.101567", "persona": "brian", "error": "Error (attempt 2): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:30:51.117265", "persona": "brian", "error": "Error (attempt 3): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:48:48.209539", "persona": "margaret", "error": "Error (attempt 1): timed out during opening handshake", "context": {"type": "TimeoutError"}}
+{"timestamp": "2026-01-22T20:49:00.223261", "persona": "margaret", "error": "Error (attempt 2): timed out during opening handshake", "context": {"type": "TimeoutError"}}

@@ -1,20 +1,31 @@
 import React from "react";
 import { Text as TamaguiText, TextProps as TamaguiTextProps } from "tamagui";
+import { useLayoutStore } from "@/stores/layoutStore";
+
+/**
+ * Responsive Text component that automatically scales font size based on device.
+ *
+ * @usage
+ * ```tsx
+ * // Preferred: Use semantic size props (responsive)
+ * <Text size="small">Caption text</Text>   // 12-14px depending on device
+ * <Text size="medium">Body text</Text>     // 14-16px depending on device
+ * <Text size="large">Heading text</Text>   // 16-20px depending on device
+ * <Text size="xl">Large heading</Text>     // 20-24px depending on device
+ * <Text size="xxl">Hero text</Text>        // 24-32px depending on device
+ *
+ * // Avoid: Hardcoded fontSize (not responsive)
+ * <Text fontSize={16}>Fixed size</Text>    // ❌ Won't scale on SE
+ * ```
+ *
+ * Font sizes by device:
+ * - iPhone SE (small):    xs=10, sm=12, md=14, lg=16, xl=20, xxl=24
+ * - Standard phones:      xs=11, sm=13, md=15, lg=18, xl=22, xxl=28
+ * - Plus/Max phones:      xs=12, sm=14, md=16, lg=20, xl=24, xxl=32
+ */
 
 interface TextProps extends TamaguiTextProps {
-  size?:
-    | "small"
-    | "medium"
-    | "large"
-    | "xl"
-    | "$1"
-    | "$2"
-    | "$3"
-    | "$4"
-    | "$5"
-    | "$6"
-    | "$8"
-    | "$9";
+  size?: "xs" | "small" | "medium" | "large" | "xl" | "xxl";
   variant?: "heading" | "body" | "caption";
 }
 
@@ -27,63 +38,33 @@ export const Text: React.FC<TextProps> = ({
   fontWeight, // Extract fontWeight so we can override it
   ...props
 }) => {
-  // Map old Tamagui tokens to new semantic sizes
-  const mapTokenToSemantic = (
-    size: string
-  ): "small" | "medium" | "large" | "xl" => {
-    if (size.startsWith("$")) {
-      switch (size) {
-        case "$1":
-        case "$2":
-          return "small";
-        case "$3":
-        case "$4":
-          return "medium";
-        case "$5":
-        case "$6":
-          return "large";
-        case "$8":
-        case "$9":
-          return "xl";
-        default:
-          return "medium";
-      }
-    }
-    return size as "small" | "medium" | "large" | "xl";
-  };
+  const tokens = useLayoutStore((state) => state.tokens);
 
-  const semanticSize = mapTokenToSemantic(size);
-
-  //TODO: Update small text mapping
-  const getSizeToken = (size: "small" | "medium" | "large" | "xl") => {
+  // Map semantic size to responsive token value
+  const getResponsiveFontSize = (
+    size: "xs" | "small" | "medium" | "large" | "xl" | "xxl",
+  ): number => {
     switch (size) {
+      case "xs":
+        return tokens.fontSize.xs;
       case "small":
-        return "$3";
+        return tokens.fontSize.sm;
       case "medium":
-        return "$4";
+        return tokens.fontSize.md;
       case "large":
-        return "$5"; // 20px mobile
+        return tokens.fontSize.lg;
       case "xl":
-        return "$8"; // 28px mobile
-    }
-  };
-
-  const getTabletSizeToken = (size: "small" | "medium" | "large" | "xl") => {
-    switch (size) {
-      case "small":
-        return "$3";
-      case "medium":
-        return "$4"; // 20px tablet
-      case "large":
-        return "$6"; // 24px tablet
-      case "xl":
-        return "$9"; // 32px tablet
+        return tokens.fontSize.xl;
+      case "xxl":
+        return tokens.fontSize.xxl;
+      default:
+        return tokens.fontSize.md;
     }
   };
 
   // Set font family based on variant (only if not explicitly provided)
   const getFontFamily = (variant: "heading" | "body" | "caption") => {
-    if (fontFamily) return fontFamily; // Use explicit fontFamily if provided
+    if (fontFamily) return fontFamily;
     switch (variant) {
       case "heading":
         return "$heading";
@@ -95,7 +76,7 @@ export const Text: React.FC<TextProps> = ({
 
   // Set font weight based on variant (only if not explicitly provided)
   const getFontWeight = (variant: "heading" | "body" | "caption") => {
-    if (fontWeight) return fontWeight; // Use explicit fontWeight if provided
+    if (fontWeight) return fontWeight;
     switch (variant) {
       case "heading":
         return "600";
@@ -108,8 +89,7 @@ export const Text: React.FC<TextProps> = ({
 
   return (
     <TamaguiText
-      fontSize={fontSize || getSizeToken(semanticSize)} // Use explicit fontSize or our responsive one
-      $sm={{ fontSize: fontSize || getTabletSizeToken(semanticSize) }}
+      fontSize={fontSize || getResponsiveFontSize(size)}
       fontFamily={getFontFamily(variant)}
       fontWeight={getFontWeight(variant)}
       color={color}

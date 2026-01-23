@@ -27,11 +27,10 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
 
   const [workoutName, setWorkoutName] = useState("");
   const [workoutNotes, setWorkoutNotes] = useState("");
-  const [showNameError, setShowNameError] = useState(false);
 
   // Track which exercises are expanded
   const [expandedExercises, setExpandedExercises] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>(
@@ -41,14 +40,11 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
         initial[ex.id] = ex.notes || "";
       });
       return initial;
-    }
+    },
   );
 
   const handleNameChange = (name: string) => {
     setWorkoutName(name);
-    if (showNameError && name.trim().length > 0) {
-      setShowNameError(false);
-    }
   };
 
   const toggleExercise = (exerciseId: string) => {
@@ -63,8 +59,6 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
     });
   };
 
-  const isNameValid = workoutName.trim().length > 0;
-
   const handleImageUploaded = (imageId: string) => {
     console.log(`[WorkoutSummary] Image uploaded with ID: ${imageId}`);
     setPendingImage(imageId);
@@ -75,12 +69,6 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
   };
 
   const handleSkipChat = async () => {
-    if (!workoutName.trim()) {
-      setShowNameError(true);
-      return;
-    }
-    setShowNameError(false);
-
     console.log("=== SUMMARY SLIDE SKIP ===");
 
     // Sync exercise notes to store
@@ -97,12 +85,18 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
         id: ex.id,
         name: ex.name,
         notes: ex.notes,
-      }))
+      })),
     );
+
+    const finalName =
+      workoutName.trim() ||
+      selectedTemplate?.name ||
+      currentWorkout?.name ||
+      "Quick Workout";
 
     // Don't await - let it run in background
     saveCompletedWorkout({
-      name: workoutName.trim(),
+      name: finalName,
       notes: workoutNotes.trim(),
       imageId: pendingImageId || undefined,
     });
@@ -135,14 +129,9 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
               placeholderTextColor="$textMuted"
               size="$4"
               width="100%"
-              borderColor={showNameError ? "$red9" : "$borderColor"}
+              borderColor="$borderColor"
               backgroundColor="$backgroundMuted"
             />
-            {showNameError && (
-              <Text color="$red9" size="small">
-                please add name
-              </Text>
-            )}
           </YStack>
 
           {/* Photo */}
@@ -288,7 +277,7 @@ export function WorkoutSummarySlide({ onSkip }: WorkoutSummarySlideProps) {
       >
         <Button
           size="$4"
-          backgroundColor={isNameValid ? "$primary" : "$background"}
+          backgroundColor="$primary"
           color="$text"
           onPress={handleSkipChat}
           borderColor="$primary"

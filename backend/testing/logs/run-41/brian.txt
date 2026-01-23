@@ -1,0 +1,156 @@
+ASSISTANT: Evening, Brian. I can help plan your next session or analyze your training.
+BRIAN: Back and knees.
+ASSISTANT: Got it. To make sure I build the best plan, are your back and knees areas you want to train, or are they something I should be cautious about?
+BRIAN: No restrictions.
+ASSISTANT: Perfect. Let's get to work on a session for your back and legs.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Back & Legs",
+    "notes": "Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "deb67b2f-2968-483b-9aec-537bd3997f68",
+        "name": "Barbell Back Squat",
+        "notes": "Focus on bracing your core and keeping your chest up.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 100
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 100
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 100
+          }
+        ]
+      },
+      {
+        "definition_id": "6a655377-8e36-4452-8e60-869b1788acdc",
+        "name": "Barbell Bent Over Row",
+        "notes": "Pull the bar towards your lower chest, squeezing your back.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 80
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 80
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 80
+          }
+        ]
+      },
+      {
+        "definition_id": "b7cf3898-092d-4922-a10d-c4908c78a829",
+        "name": "Barbell Romanian Deadlift",
+        "notes": "Hinge at the hips, keeping a slight bend in your knees to target the hamstrings.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 90
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 90
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 90
+          }
+        ]
+      },
+      {
+        "definition_id": "9b9a811f-ee39-48da-b45c-ee3769e5e391",
+        "name": "Bodyweight Pullup",
+        "notes": "Aim for a full range of motion, all the way down and chin over the bar.",
+        "order_index": 3,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "28d699e4-5300-4a18-ace8-25a0bc92289f",
+        "name": "Machine Leg Extension",
+        "notes": "Control the weight on the way down for a good quad burn.",
+        "order_index": 4,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 50
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 50
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 50
+          }
+        ]
+      },
+      {
+        "definition_id": "d4c78f16-ddf1-49dc-a872-1d54ace60012",
+        "name": "Machine Seated Leg Curl",
+        "notes": "Squeeze your hamstrings at the peak of the curl.",
+        "order_index": 5,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 50
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 50
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 50
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+BRIAN: QUIT

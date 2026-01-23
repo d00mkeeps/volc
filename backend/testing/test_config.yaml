@@ -1,0 +1,32 @@
+# Test Success Criteria Configuration
+# Used by volc review to evaluate persona conversations
+
+success_criteria:
+  message_limits:
+    max_user_messages: 10
+    target_to_approval: "<10"
+
+  required_checks:
+    - name: "injury_probe"
+      trigger: "injury/PT/surgery/cleared mentioned"
+      must_ask: ["What happened?", "When?", "What can you do now?"]
+
+    - name: "pre_workout_gate"
+      trigger: "workout request"
+      must_confirm: ["injuries", "current routine"]
+
+    - name: "ability_verification"
+      trigger: "'need work on X'"
+      must_ask: "Can you do any X now?"
+
+  prohibited:
+    - "expose internals (available exercises, tool calls, etc)"
+    - "name overuse (>1x per message)"
+    - "unfamiliar equipment without checking user knowledge"
+    - "technical jargon without explanation to beginners"
+
+  edge_cases:
+    - "'no restrictions' + modifications → probe for contradiction"
+    - "vague goals → follow up once to clarify"
+    - "equipment confusion → verify understanding first"
+    - "delegation ('you decide') → take initiative appropriately"

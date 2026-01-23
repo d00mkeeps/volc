@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Animated, Dimensions } from "react-native";
+import { Animated } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -16,6 +16,7 @@ import { useTheme } from "tamagui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/context/AuthContext";
+import { useLayoutStore } from "@/stores/layoutStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { userProfileService } from "@/services/db/userProfile";
 import Toast from "react-native-toast-message";
@@ -50,7 +51,7 @@ export default function WelcomeBottomSheet({
 
   // Form Data
   const [isImperial, setIsImperial] = useState<boolean | null>(null);
-  const [dob, setDob] = useState(new Date());
+  const [dob, setDob] = useState(new Date(2000, 0, 1)); // Default: Jan 1, 2000
   const [dobChanged, setDobChanged] = useState(false);
   const [experienceLevel, setExperienceLevel] = useState<string | null>(null);
   const [trainingLocation, setTrainingLocation] = useState<string | null>(null);
@@ -73,10 +74,8 @@ export default function WelcomeBottomSheet({
   ]).current;
   const iconOpacity = useRef(new Animated.Value(0)).current;
 
-  const snapPoints = useMemo(() => {
-    const screenHeight = Dimensions.get("window").height;
-    return [screenHeight * 0.7];
-  }, []);
+  const screenHeight = useLayoutStore((state) => state.screenHeight);
+  const snapPoints = useMemo(() => [screenHeight * 0.7], [screenHeight]);
 
   // Handle visibility changes
   useEffect(() => {
@@ -90,7 +89,7 @@ export default function WelcomeBottomSheet({
       slideOpacity.forEach((anim, i) => anim.setValue(i === 0 ? 1 : 0));
       slideTranslateX.forEach((anim, i) => anim.setValue(i === 0 ? 0 : 50));
       setIsImperial(null);
-      setDob(new Date());
+      setDob(new Date(2000, 0, 1)); // Reset to Jan 1, 2000
       setDobChanged(false);
       setExperienceLevel(null);
       setTrainingLocation(null);
@@ -132,7 +131,7 @@ export default function WelcomeBottomSheet({
         pressBehavior="none"
       />
     ),
-    []
+    [],
   );
 
   const goToSlide = (targetIndex: number) => {
@@ -239,7 +238,7 @@ export default function WelcomeBottomSheet({
     const minAgeDate = new Date(
       today.getFullYear() - 16,
       today.getMonth(),
-      today.getDate()
+      today.getDate(),
     );
     return date <= minAgeDate;
   };

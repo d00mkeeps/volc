@@ -111,10 +111,13 @@ export default function Slide2({
         </Stack>
       </YStack>
 
+      {/* Spacer to push button down */}
+      <Stack flex={1} minHeight="$4" />
+
       <Button
         onPress={() => goToSlide(2)}
         disabled={!canProgressDob}
-        marginTop={100}
+        marginBottom="$4"
         size="large"
         shadowColor="$shadowColor"
         shadowOffset={{ width: 0, height: 2 }}

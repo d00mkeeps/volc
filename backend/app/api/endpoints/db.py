@@ -10,6 +10,7 @@ from app.services.db.conversation_service import ConversationService
 from app.services.db.exercise_definition_service import ExerciseDefinitionService
 from app.services.db.user_profile_service import UserProfileService
 from app.services.db.message_service import MessageService
+from app.services.cache.glossary_terms import glossary_cache
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/db")
@@ -537,3 +538,36 @@ async def complete_onboarding(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
+
+@router.get("/glossary-terms")
+async def get_glossary_terms(
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get all glossary terms (uses cache)"""
+    try:
+        terms = await glossary_cache.get_all_terms()
+        return terms
+    except Exception as e:
+        logger.error(f"Error getting glossary terms: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/glossary-terms/{term_id}")
+async def get_glossary_term(
+    term_id: str,
+    user = Depends(get_current_user),
+    jwt_token: str = Depends(get_jwt_token)
+):
+    """Get single glossary term by UUID"""
+    try:
+        term = await glossary_cache.get_term_by_id(term_id)
+        if not term:
+            raise HTTPException(status_code=404, detail="Term not found")
+        return term
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting glossary term: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

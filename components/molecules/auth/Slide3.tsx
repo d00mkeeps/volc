@@ -32,7 +32,7 @@ export default function Slide3({
   const experienceOptions = [
     { value: "beginner", label: "0-2" },
     { value: "intermediate", label: "2-5" },
-    { value: "advanced", label: "5-10" },
+    { value: "advanced", label: "6-10" },
     { value: "elite", label: "10+" },
   ];
 
@@ -47,8 +47,8 @@ export default function Slide3({
           >
             <AppIcon name="ChevronLeft" size={20} color={theme.color.val} />
           </TouchableOpacity>
-          <Text size="large" fontWeight="700" fontSize={24}>
-            Tell us about you!
+          <Text size="large" fontWeight="700">
+            Tell us about you
           </Text>
         </XStack>
       </YStack>
@@ -57,8 +57,8 @@ export default function Slide3({
       <YStack gap="$6" paddingTop="$4">
         {/* Experience Level */}
         <YStack gap="$3">
-          <Text fontSize={16} fontWeight="600" color="$color">
-            How many years have you been training?
+          <Text fontWeight="600" color="$color">
+            How many years have you been working out?
           </Text>
           <XStack
             backgroundColor="$gray4"
@@ -111,7 +111,7 @@ export default function Slide3({
         {/* Training Location */}
         <YStack gap="$3">
           <Text fontSize={16} fontWeight="600" color="$color">
-            Where do you train?
+            Where do you exercise?
           </Text>
           <XStack
             backgroundColor="$gray4"
@@ -175,7 +175,7 @@ export default function Slide3({
                     {loc.charAt(0).toUpperCase() + loc.slice(1)}
                   </Text>
                 </Button>
-              )
+              ),
             )}
           </XStack>
         </YStack>

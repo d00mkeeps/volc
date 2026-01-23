@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { YStack } from "tamagui";
 import Animated, { FadeIn } from "react-native-reanimated";
 import Markdown from "react-native-markdown-display";
 import {
   createCustomRules,
-  detectComponentType,
   parsePartialJSON,
-} from "./customRules";
+} from "@/utils/markdown/customRules";
 import WorkoutTemplateView from "@/components/molecules/workout/WorkoutTemplateView";
 import ChartDataView from "@/components/molecules/visualization/ChartDataView";
 import Text from "@/components/atoms/core/Text";
@@ -16,6 +15,8 @@ interface StreamingMarkdownProps {
   styles: any;
   onTemplateApprove?: (templateData: any) => void;
   onProfileConfirm?: () => void;
+  onGlossaryTap?: (termId: string) => void;
+  isTermDismissed?: (termId: string) => boolean;
 }
 
 interface ContentSegment {
@@ -34,14 +35,17 @@ export const StreamingMarkdownRenderer = ({
   styles,
   onTemplateApprove,
   onProfileConfirm,
+  onGlossaryTap,
+  isTermDismissed,
 }: StreamingMarkdownProps) => {
   const prevLengthRef = useRef(0);
-  const contentRef = useRef(content);
 
   const customRules = createCustomRules({
     isStreaming: true,
     onTemplateApprove,
     onProfileConfirm,
+    onGlossaryTap,
+    isTermDismissed,
     styles,
   });
 

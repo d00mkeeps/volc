@@ -7,7 +7,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Keyboard, Platform, useWindowDimensions } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { YStack, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
@@ -48,13 +48,13 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const [isAnyExerciseEditing, setIsAnyExerciseEditing] = useState(false);
 
     // Dynamic snap point: position sheet top at dashboard bottom edge
-    const { height: screenHeight } = useWindowDimensions();
+    const screenHeight = useLayoutStore((state) => state.screenHeight);
     const dashboardHeight = useLayoutStore((state) => state.dashboardHeight);
     const headerHeight = useLayoutStore((state) => state.headerHeight);
     const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
     const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
     const quickActionsHeight = useLayoutStore(
-      (state) => state.quickActionsHeight
+      (state) => state.quickActionsHeight,
     );
 
     const snapPoints = useMemo(() => {
@@ -102,7 +102,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         expandToFull: () => bottomSheetRef.current?.expand(),
         snapToPeek: () => bottomSheetRef.current?.snapToIndex(0),
       }),
-      []
+      [],
     );
 
     // Track editing state across all exercises
@@ -117,12 +117,12 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         const updatedWorkout = {
           ...currentWorkout,
           workout_exercises: currentWorkout.workout_exercises.map((exercise) =>
-            exercise.id === updatedExercise.id ? updatedExercise : exercise
+            exercise.id === updatedExercise.id ? updatedExercise : exercise,
           ),
         };
         updateCurrentWorkout(updatedWorkout);
       },
-      [isActive, currentWorkout, updateCurrentWorkout]
+      [isActive, currentWorkout, updateCurrentWorkout],
     );
     useEffect(() => {
       const keyboardWillShow = Keyboard.addListener(
@@ -130,7 +130,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         (e) => {
           setKeyboardHeight(e.endCoordinates.height);
           setIsKeyboardVisible(true);
-        }
+        },
       );
 
       const keyboardWillHide = Keyboard.addListener(
@@ -138,7 +138,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         () => {
           setKeyboardHeight(0);
           setIsKeyboardVisible(false);
-        }
+        },
       );
 
       return () => {
@@ -152,7 +152,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
         // Find the exercise being deleted
         const deletedExercise = currentWorkout.workout_exercises.find(
-          (exercise) => exercise.id === exerciseId
+          (exercise) => exercise.id === exerciseId,
         );
 
         if (!deletedExercise) return;
@@ -161,7 +161,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         const updatedWorkout = {
           ...currentWorkout,
           workout_exercises: currentWorkout.workout_exercises.filter(
-            (exercise) => exercise.id !== exerciseId
+            (exercise) => exercise.id !== exerciseId,
           ),
         };
         updateCurrentWorkout(updatedWorkout);
@@ -185,7 +185,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           });
         }
       },
-      [isActive, currentWorkout, updateCurrentWorkout]
+      [isActive, currentWorkout, updateCurrentWorkout],
     );
 
     const handleAddExercise = useCallback(() => {
@@ -193,7 +193,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
       // Check if there are any unnamed exercises
       const hasUnnamedExercise = currentWorkout.workout_exercises.some(
-        (exercise) => !exercise.name
+        (exercise) => !exercise.name,
       );
 
       if (hasUnnamedExercise) return; // Don't add if there's already an unnamed exercise
@@ -201,7 +201,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       const maxOrderIndex =
         currentWorkout.workout_exercises.length > 0
           ? Math.max(
-              ...currentWorkout.workout_exercises.map((ex) => ex.order_index)
+              ...currentWorkout.workout_exercises.map((ex) => ex.order_index),
             )
           : -1;
 
@@ -259,7 +259,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         if (!currentWorkout) return;
 
         const currentIndex = sortedExercises.findIndex(
-          (ex) => ex.id === exerciseId
+          (ex) => ex.id === exerciseId,
         );
         if (currentIndex <= 0) return; // Already at top
 
@@ -285,7 +285,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         };
         updateCurrentWorkout(updatedWorkout);
       },
-      [currentWorkout, updateCurrentWorkout]
+      [currentWorkout, updateCurrentWorkout],
     );
 
     // Handle moving exercise down
@@ -294,7 +294,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         if (!currentWorkout) return;
 
         const currentIndex = sortedExercises.findIndex(
-          (ex) => ex.id === exerciseId
+          (ex) => ex.id === exerciseId,
         );
         if (currentIndex >= sortedExercises.length - 1) return; // Already at bottom
 
@@ -320,12 +320,12 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         };
         updateCurrentWorkout(updatedWorkout);
       },
-      [currentWorkout, updateCurrentWorkout]
+      [currentWorkout, updateCurrentWorkout],
     );
 
     const sortedExercises = useMemo(() => {
       return (currentWorkout?.workout_exercises || []).sort(
-        (a, b) => a.order_index - b.order_index
+        (a, b) => a.order_index - b.order_index,
       );
     }, [currentWorkout?.workout_exercises]);
 
@@ -334,7 +334,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
 
     // Check if we should disable the add button
     const hasUnnamedExercise = (currentWorkout?.workout_exercises || []).some(
-      (exercise) => !exercise.name
+      (exercise) => !exercise.name,
     );
     const shouldDisableAddButton = isAnyExerciseEditing || hasUnnamedExercise;
 
@@ -461,7 +461,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         sortedExercises.length,
         handleMoveExerciseUp,
         handleMoveExerciseDown,
-      ]
+      ],
     );
 
     return (
@@ -512,7 +512,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         />
       </BottomSheet>
     );
-  }
+  },
 );
 
 export default WorkoutTracker;

@@ -33,13 +33,13 @@ export const MessageList = ({
   const scrollTimeoutRef = useRef<number | null>(null);
 
   const activeConversationId = useConversationStore(
-    (state) => state.activeConversationId
+    (state) => state.activeConversationId,
   );
 
   const hasStreamingMessage = useMessageStore((state) =>
     activeConversationId
       ? state.streamingMessages.has(activeConversationId)
-      : false
+      : false,
   );
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -139,7 +139,7 @@ export const MessageList = ({
         />
       );
     },
-    [statusMessage, onTemplateApprove, onProfileConfirm, onDismiss]
+    [statusMessage, onTemplateApprove, onProfileConfirm, onDismiss],
   );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
@@ -159,14 +159,13 @@ export const MessageList = ({
 
   return (
     <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
-      <YStack
-        flex={1}
-        position="relative"
-        paddingBottom={keyboardVisible ? 130 : 110}
-      >
+      <YStack flex={1} position="relative">
         <FlatList
           ref={listRef}
           style={{ flex: 1 }}
+          contentContainerStyle={{
+            paddingBottom: keyboardVisible ? 130 : 160,
+          }}
           data={allMessages}
           renderItem={renderMessage}
           keyExtractor={keyExtractor}

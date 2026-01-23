@@ -5,92 +5,77 @@ import logging
 logger = logging.getLogger(__name__)
 
 @tool
-async def get_exercises_by_muscle_groups(
+async def get_strength_exercises(
     muscle_groups: List[str],
-    base_movement: Optional[str] = None,
     equipment: Optional[List[str]] = None,
     experience_level: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
-    Fetch exercises targeting specific muscle groups from the exercise database.
+    Fetch resistance training and muscle-building exercises (e.g. weightlifting, calisthenics, powerlifting).
     
-    Use this tool when creating workout plans to get relevant exercise options.
-    Call this once you understand the user's goals and target muscle groups.
-    
-    When modifying workouts, use the exercises already available in your context.
-    Only call the exercise tool again if the user requests muscle groups you haven't 
-    fetched yet (e.g., if they want to add legs to a chest workout).
+    Use this tool as the PRIMARY source for creating the main 'working' part of a workout plan.
+    It returns exercises that target specific muscles with load.
     
     Args:
-        muscle_groups: Target muscle groups (e.g. ['chest', 'triceps', 'shoulders']).
+        muscle_groups: Target muscle groups (e.g. ['chest', 'triceps']).
                       Valid: chest, back, shoulders, biceps, triceps, lats, traps,
                       quadriceps, hamstrings, glutes, abs, obliques, forearms,
                       abductors, adductors, hip_flexors, lower_back
         
-        base_movement: (Optional) Filter by movement type. 
-                      Valid: ab_wheel, back_extension, bench_press, bicep_curl, 
-                      bulgarian_split_squat, calf_raise, chest_fly, crunch, deadlift, 
-                      dip, face_pull, farmers_walk, front_raise, good_morning, hip_thrust, 
-                      lateral_raise, lat_pulldown, leg_curl, leg_extension, leg_press, 
-                      leg_raise, lunge, mobility, nordic_curl, overhead_tricep_extension, 
-                      plank, pullup, pushup, reverse_fly, romanian_deadlift, row, 
-                      russian_twist, shoulder_press, shrug, skullcrusher, squat, 
-                      tricep_pushdown, upright_row
-                      
-                      Use 'mobility' for stretches, mobility work, and warm-up movements.
-        
-        equipment: (Optional) Filter by available equipment
+        equipment: (Optional) Filter by equipment type. Pass as a LIST.
+                  Valid: barbell, dumbbell, cable, machine, bodyweight, kettlebell, band
         
         experience_level: (Optional) Filter by difficulty - 'beginner', 'intermediate', 'advanced'
     
     Returns:
-        List of exercises with: id, standard_name, primary_muscles,
-        secondary_muscles, equipment, movement_pattern, base_movement. 
-        IMPORTANT: Use the 'id' field as 'definition_id' when creating workout templates.
+        List of strength exercises with: id, standard_name, primary_muscles,
+        secondary_muscles, equipment, movement_pattern. 
     
     Examples:
-        - Hip mobility/stretches: get_exercises_by_muscle_groups(['hip_flexors'], base_movement='mobility')
-        - All squat variations: get_exercises_by_muscle_groups(['quadriceps'], base_movement='squat')
-        - All chest exercises: get_exercises_by_muscle_groups(['chest'])
-        - Only bench press variations: get_exercises_by_muscle_groups(['chest'], base_movement='bench_press')
+        # Get all chest and tricep exercises
+        get_strength_exercises(['chest', 'triceps'])
+        
+        # Get dumbbell-only leg exercises
+        get_strength_exercises(['quadriceps', 'glutes'], equipment=['dumbbell'])
+        
+        # Get bodyweight core exercises
+        get_strength_exercises(['abs'], equipment=['bodyweight'])
     """
     from app.services.cache.exercise_definitions import exercise_cache
     
     # Get all cached exercises
     all_exercises = await exercise_cache.get_all_exercises()
     
-    logger.info(f"🔧 Tool called: muscle_groups={muscle_groups}, base_movement={base_movement}, equipment={equipment}")
+    logger.info(f"💪 Strength tool called: muscle_groups={muscle_groups}, equipment={equipment}")
     
-    # Normalize muscle groups for matching
-    normalized_groups = [mg.lower().strip() for mg in muscle_groups]
+    # Exclusivity: Exclude mobility and cardio
+    base_filtered = [
+        ex for ex in all_exercises
+        if ex.get('base_movement') != 'mobility' and 
+        'cardiovascular_system' not in [m.lower().strip() for m in ex.get('primary_muscles', [])]
+    ]
     
     # Filter by muscle groups
     filtered = []
-    for exercise in all_exercises:
+    normalized_groups = [mg.lower().strip() for mg in muscle_groups]
+    for exercise in base_filtered:
         primary_muscles = exercise.get('primary_muscles', [])
         normalized_primary = [m.lower().strip() for m in primary_muscles]
-        
         if any(muscle in normalized_primary for muscle in normalized_groups):
             filtered.append(exercise)
     
-    # Filter by base_movement
-    if base_movement:
-        base_movement_normalized = base_movement.lower().strip()
+    logger.info(f"  └─ Filtered to muscle_groups={muscle_groups}: {len(filtered)} exercises")
+    
+    # Filter by equipment
+    if equipment:
+        normalized_equipment = [eq.lower().strip() for eq in equipment]
         filtered = [
             ex for ex in filtered 
-            if ex.get('base_movement', '').lower().strip() == base_movement_normalized
+            if (ex.get('equipment') or '').lower().strip() in normalized_equipment
         ]
-        logger.info(f"  └─ Filtered to base_movement='{base_movement}': {len(filtered)} exercises")
+        logger.info(f"  └─ Filtered to equipment={equipment}: {len(filtered)} exercises")
     
-    # Optional: Filter by equipment (TEMPORARILY DISABLED)
-    if equipment:
-        logger.info(f"  └─ Equipment filter requested but temporarily disabled: {equipment}")
-    
-    # Optional: Filter by experience level (ready for future use)
-    if experience_level:
-        logger.info(f"  └─ Experience level filter requested but not yet implemented: {experience_level}")
-    
-    # Return condensed version without descriptions to reduce context size
+    # Return condensed version
     condensed = []
     for ex in filtered:
         condensed.append({
@@ -103,7 +88,19 @@ async def get_exercises_by_muscle_groups(
             'base_movement': ex.get('base_movement'),
         })
     
-    logger.info(f"✅ Tool returning {len(condensed)} exercises (condensed, no descriptions)")
+    # Logging for observability
+    import os
+    from datetime import datetime
+    log_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'testing', 'logs', 'tool_calls.log')
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    with open(log_file, 'a') as f:
+        f.write(f"\n{'='*60}\n")
+        f.write(f"[{datetime.now().isoformat()}] get_strength_exercises\n")
+        f.write(f"Query: muscle_groups={muscle_groups}, equipment={equipment}\n")
+        f.write(f"Returned {len(condensed)} exercises\n")
+    
+    logger.info(f"✅ Strength tool returning {len(condensed)} exercises")
     return condensed
 
 
@@ -113,9 +110,9 @@ async def get_cardio_exercises(
     equipment: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     """
-    Fetch cardio exercises from the exercise database.
+    Fetch cardiovascular endurance exercises (e.g. running, cycling, swimming, rowing).
     
-    Use this tool when creating workout plans that include cardiovascular training.
+    Use this tool for heart health, stamina, calorie burning, and endurance goals.
     
     Args:
         base_movement: (Optional) Filter by cardio type.
@@ -126,15 +123,17 @@ async def get_cardio_exercises(
                   Valid: machine, bodyweight
     
     Returns:
-        List of cardio exercises with: id, standard_name, primary_muscles,
-        secondary_muscles, equipment, movement_pattern, base_movement, major_variation.
-        IMPORTANT: Use the 'id' field as 'definition_id' when creating workout templates.
+        List of cardio exercises with: id, standard_name, equipment, base_movement, major_variation.
     
     Examples:
-        - All cardio: get_cardio_exercises()
-        - All running: get_cardio_exercises(base_movement='running')
-        - Machine cardio only: get_cardio_exercises(equipment='machine')
-        - Outdoor running: get_cardio_exercises(base_movement='running', equipment='bodyweight')
+        # Get all cardio options
+        get_cardio_exercises()
+        
+        # Get machine-based cardio (treadmill, rower, etc)
+        get_cardio_exercises(equipment='machine')
+        
+        # Get running variations
+        get_cardio_exercises(base_movement='running')
     """
     from app.services.cache.exercise_definitions import exercise_cache
     
@@ -143,13 +142,11 @@ async def get_cardio_exercises(
     
     logger.info(f"🏃 Cardio tool called: base_movement={base_movement}, equipment={equipment}")
     
-    # Filter for cardiovascular exercises
+    # Filter for cardiovascular exercises (exclusive check)
     filtered = [
         ex for ex in all_exercises
         if 'cardiovascular_system' in [m.lower().strip() for m in ex.get('primary_muscles', [])]
     ]
-    
-    logger.info(f"  └─ Found {len(filtered)} total cardio exercises")
     
     # Filter by base_movement
     if base_movement:
@@ -158,7 +155,6 @@ async def get_cardio_exercises(
             ex for ex in filtered 
             if ex.get('base_movement', '').lower().strip() == base_movement_normalized
         ]
-        logger.info(f"  └─ Filtered to base_movement='{base_movement}': {len(filtered)} exercises")
     
     # Filter by equipment
     if equipment:
@@ -167,9 +163,8 @@ async def get_cardio_exercises(
             ex for ex in filtered 
             if ex.get('equipment', '').lower().strip() == equipment_normalized
         ]
-        logger.info(f"  └─ Filtered to equipment='{equipment}': {len(filtered)} exercises")
     
-    # Return condensed version without descriptions to reduce context size
+    # Return condensed version
     condensed = []
     for ex in filtered:
         condensed.append({
@@ -184,4 +179,79 @@ async def get_cardio_exercises(
         })
     
     logger.info(f"✅ Cardio tool returning {len(condensed)} exercises")
+    return condensed
+
+
+@tool
+async def get_mobility_exercises(
+    muscle_groups: Optional[List[str]] = None,
+    equipment: Optional[List[str]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Fetch stretching, mobility, and recovery exercises (e.g. 90/90 stretch, foam rolling).
+    
+    Use this tool for warm-ups, cool-downs, active recovery, or injury prevention.
+    
+    Args:
+        muscle_groups: (Optional) Target muscle groups for stretching (e.g. ['glutes', 'hips']).
+        
+        equipment: (Optional) Filter by equipment type. Pass as a LIST.
+                  Valid: foam_roller, lacrosse_ball, band, bodyweight
+    
+    Returns:
+        List of mobility exercises with: id, standard_name, primary_muscles, equipment, base_movement.
+    
+    Examples:
+        # Get all stretching/mobility options
+        get_mobility_exercises()
+        
+        # Get hip and glute stretches
+        get_mobility_exercises(muscle_groups=['glutes', 'hips'])
+        
+        # Get foam rolling exercises
+        get_mobility_exercises(equipment=['foam_roller'])
+    """
+    from app.services.cache.exercise_definitions import exercise_cache
+    
+    # Get all cached exercises
+    all_exercises = await exercise_cache.get_all_exercises()
+    
+    logger.info(f"🧘 Mobility tool called: muscle_groups={muscle_groups}, equipment={equipment}")
+    
+    # Filter for mobility exercises (exclusive check)
+    filtered = [
+        ex for ex in all_exercises
+        if ex.get('base_movement') == 'mobility'
+    ]
+    
+    # Filter by muscle groups
+    if muscle_groups:
+        normalized_groups = [mg.lower().strip() for mg in muscle_groups]
+        filtered = [
+            ex for ex in filtered
+            if any(m.lower().strip() in normalized_groups for m in ex.get('primary_muscles', []))
+        ]
+    
+    # Filter by equipment
+    if equipment:
+        normalized_equipment = [eq.lower().strip() for eq in equipment]
+        filtered = [
+            ex for ex in filtered 
+            if (ex.get('equipment') or '').lower().strip() in normalized_equipment
+        ]
+    
+    # Return condensed version
+    condensed = []
+    for ex in filtered:
+        condensed.append({
+            'id': ex['id'],
+            'standard_name': ex['standard_name'],
+            'primary_muscles': ex.get('primary_muscles'),
+            'secondary_muscles': ex.get('secondary_muscles'),
+            'equipment': ex.get('equipment'),
+            'movement_pattern': ex.get('movement_pattern'),
+            'base_movement': ex.get('base_movement'),
+        })
+    
+    logger.info(f"✅ Mobility tool returning {len(condensed)} exercises")
     return condensed

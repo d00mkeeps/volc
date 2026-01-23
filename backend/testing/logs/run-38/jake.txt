@@ -1,0 +1,95 @@
+ASSISTANT: Morning, Jake! Want to plan today's session or check how your training's going?
+JAKE: wanna get bigger
+ASSISTANT: Sounds like a great goal! What muscles are we focusing on today, and do you have any injuries I should know about?
+JAKE: let's hit chest. no injuries.
+ASSISTANT: Perfect. Are there any specific exercises you like for chest, or should I suggest some great options for you?
+JAKE: what do you suggest? wanna get jacked
+ASSISTANT: To get bigger, we'll focus on [progressive overload](glossary://9bb4f220-fc5f-4973-ba2a-129aaa8d04e4) by mixing a heavy [compound exercise](glossary://57ceea4d-5f6a-4897-88fb-ad0348faa889) with a focused [isolation exercise](glossary://603007ea-3cfa-42d8-8199-a77212e14b32). Here is the plan I've built for you, Jake.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Chest Hypertrophy",
+    "notes": "Focus on controlling the weight and feeling your chest muscles work. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "97255d31-294b-4395-94f4-8a4358913b83",
+        "name": "Dumbbell Bench Press",
+        "notes": "Control the weight on the way down, then press up powerfully. Keep your shoulder blades squeezed together.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 10
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 10
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 10
+          }
+        ]
+      },
+      {
+        "definition_id": "c1f2f3e4-d5a6-4b7c-8d9e-0f1a2b3c4d5e",
+        "name": "Incline Dumbbell Press",
+        "notes": "This will target your upper chest. Focus on squeezing at the top of the movement.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 8
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 8
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 8
+          }
+        ]
+      },
+      {
+        "definition_id": "13dad34b-e1b2-475c-a7be-102132fbb802",
+        "name": "Pec Deck",
+        "notes": "Bring the handles together with a strong squeeze in your chest, then control the return.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 15,
+            "weight": 30
+          },
+          {
+            "set_number": 2,
+            "reps": 15,
+            "weight": 30
+          },
+          {
+            "set_number": 3,
+            "reps": 15,
+            "weight": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+JAKE: what's that progressive overload thing?
+ASSISTANT: Progressive overload means gradually making your workouts more challenging over time, which is how your muscles grow. You can always tap the underlined words for more info on terms like that
+JAKE: ok got it. are these weights just a guess?
+ASSISTANT: Yes, they're a safe starting point since this is our first workout. Aim for a weight where the last few [reps](glossary://6db20df3-c386-44b6-9dc3-e29455f33819) are challenging but your [form](glossary://36449c1d-d521-4b99-a316-c9de0340e69d) is solid.
+JAKE: 10kg seems kinda light lol
+ASSISTANT: Haha, you might be stronger than I'm guessing! Feel free to increase it to a weight where the last few reps of a [set](glossary://e0d2db37-5a81-4d28-bc42-c1910310730f) are tough, but you can still keep good form.
+JAKE: APPROVE

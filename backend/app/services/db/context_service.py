@@ -65,6 +65,34 @@ class ContextBundleService:
             'variance': None
         }
     
+    def _normalize_ai_memory(self, ai_memory: Any) -> Optional[Dict[str, Any]]:
+        """
+        Normalize ai_memory to ensure it's always a dict with 'notes' key.
+        
+        Handles corrupted data where ai_memory is a raw list instead of {"notes": [...]}.
+        
+        Args:
+            ai_memory: Raw ai_memory from database (could be None, dict, or list)
+            
+        Returns:
+            Properly structured dict {"notes": [...]} or None
+        """
+        if ai_memory is None:
+            return None
+        
+        # Already properly structured
+        if isinstance(ai_memory, dict):
+            return ai_memory
+        
+        # Corrupted data: raw list instead of {"notes": [...]}
+        if isinstance(ai_memory, list):
+            logger.warning(f"Found corrupted ai_memory (list instead of dict), normalizing")
+            return {"notes": ai_memory}
+        
+        # Unknown format, return None
+        logger.error(f"Unknown ai_memory format: {type(ai_memory)}")
+        return None
+    
     def _deserialize_bundle(self, db_row: Dict[str, Any]) -> 'UserContextBundle':
         """
         Deserialize database row into UserContextBundle Pydantic object.
@@ -109,7 +137,8 @@ class ContextBundleService:
             'muscle_group_balance': db_row.get('muscle_group_balance'),
             'correlation_insights': db_row.get('correlation_data'),
             'chart_urls': db_row.get('chart_urls') or {},
-            'ai_memory': db_row.get('ai_memory')
+            # Handle corrupted ai_memory where it's a list instead of {"notes": [...]}
+            'ai_memory': self._normalize_ai_memory(db_row.get('ai_memory'))
         }
         
         # Deserialize into Pydantic model
@@ -417,6 +446,58 @@ class ContextBundleService:
                 
         except Exception as e:
             logger.error(f"Error saving analysis bundle (admin): {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def update_ai_memory_admin(
+        self,
+        bundle_id: str,
+        ai_memory: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Update only the ai_memory field of a context bundle (admin access).
+        
+        This is more efficient than save_context_bundle_admin when only
+        memory needs to be updated, and avoids potential serialization issues.
+        
+        Location: /app/services/db/context_service.py
+        Method: ContextBundleService.update_ai_memory_admin()
+        
+        Args:
+            bundle_id: Bundle ID
+            ai_memory: New ai_memory dict (typically {"notes": [...]})
+            
+        Returns:
+            {'success': bool, 'error': str}
+        """
+        try:
+            logger.info(f"Updating ai_memory (admin) for bundle: {bundle_id}")
+            
+            admin_client = self.get_admin_client()
+            
+            result = admin_client.table('user_context_bundles') \
+                .update({
+                    'ai_memory': ai_memory,
+                    'updated_at': datetime.utcnow().isoformat()
+                }) \
+                .eq('id', bundle_id) \
+                .execute()
+            
+            if hasattr(result, 'data') and result.data:
+                logger.info(f"ai_memory updated successfully (admin): {bundle_id}")
+                return {'success': True}
+            else:
+                error = f"Failed to update ai_memory (admin): No data returned for bundle {bundle_id}"
+                logger.error(error)
+                return {
+                    'success': False,
+                    'error': error
+                }
+                
+        except Exception as e:
+            logger.error(f"Error updating ai_memory (admin): {str(e)}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e)
