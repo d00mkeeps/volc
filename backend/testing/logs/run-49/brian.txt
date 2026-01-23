@@ -1,0 +1,149 @@
+ASSISTANT: Evening, Brian. Want to plan tomorrow's session or review something?
+BRIAN: plan tomorrow
+ASSISTANT: What are we hitting tomorrow?
+BRIAN: lower body day
+ASSISTANT: Got it. Any injuries or restrictions I should know about?
+BRIAN: disc herniation L4-L5 from years ago. mostly managed now
+ASSISTANT: Thanks for sharing. What movements aggravate it?
+BRIAN: heavy loaded flexion. conventional deadlifts are out
+ASSISTANT: Makes sense. What have you been doing for hip hinge patterns?
+BRIAN: trap bar and RDLs mostly. rack pulls sometimes
+ASSISTANT: Solid choices. What time do you usually train?
+BRIAN: 5am before work. only slot that works
+ASSISTANT: Early bird. How's energy and warmup at that hour?
+BRIAN: takes longer to warm up. need extra mobility work
+ASSISTANT: Got it. What's your current weekly split look like?
+BRIAN: 4 day upper lower. been running it for years
+ASSISTANT: Classic setup. Any specific goals right now?
+BRIAN: masters competition in March. need to peak squat
+ASSISTANT: Exciting! What equipment do you use for heavy squats?
+BRIAN: always belt up for working sets. helps brace with the back
+ASSISTANT: Smart. Any knee considerations?
+BRIAN: bit of wear and tear. wraps help on heavy days
+ASSISTANT: Understood. For tomorrow, squat focus or accessories?
+BRIAN: squat and some leg press. keep it simple
+ASSISTANT: How many working sets do you typically do for squat?
+BRIAN: 4-5 sets. RPE 7-8 range this far out
+ASSISTANT: Makes sense for this phase. What's your target weight for tomorrow?
+BRIAN: probably around 140kg for triples
+ASSISTANT: Perfect. Want me to put together the session?
+BRIAN: actually wait, one question about warmup
+ASSISTANT: Sure, what's on your mind regarding the warmup?
+BRIAN: should I do foam rolling first?
+ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+BRIAN: yeah add that in
+ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+ASSISTANT: Hey Brian! Want to plan a workout, check your progress, or optimize recovery?
+BRIAN: Sleeves go on for squats. Not before.
+ASSISTANT: Got it, sleeves on for squats. I'll build a leg day around that, with some hamstring and quad work after your main sets. Sound good?
+BRIAN: sounds good
+ASSISTANT: Great. I'm thinking we'll start with Barbell Squats, then hit some hamstring work with the [leg curl machine](glossary://2559aa63-75f6-4be1-899e-e2f931a6e3a5), and finish the quads with the [leg extension machine](glossary://25708cf1-d16b-45a8-a0d7-dd4ad42a9d98). How does that sound?
+BRIAN: need work on my walking lunges. add those instead
+ASSISTANT: You got it. We'll swap in the Barbell Walking Lunges for you. Here is your leg day, Brian.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Leg Day",
+    "notes": "Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "deb67b2f-2968-483b-9aec-537bd3997f68",
+        "name": "Barbell Back Squat",
+        "notes": "Foam roll glutes beforehand. Put sleeves on for this exercise. Focus on maintaining a braced core.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 5,
+            "weight": 60
+          },
+          {
+            "set_number": 2,
+            "reps": 3,
+            "weight": 85
+          },
+          {
+            "set_number": 3,
+            "reps": 1,
+            "weight": 110
+          },
+          {
+            "set_number": 4,
+            "reps": 1,
+            "weight": 125
+          },
+          {
+            "set_number": 5,
+            "reps": 3,
+            "weight": 140
+          },
+          {
+            "set_number": 6,
+            "reps": 3,
+            "weight": 140
+          },
+          {
+            "set_number": 7,
+            "reps": 3,
+            "weight": 140
+          },
+          {
+            "set_number": 8,
+            "reps": 3,
+            "weight": 140
+          }
+        ]
+      },
+      {
+        "definition_id": "ba81f45e-e80e-4b61-942b-e6b4d5c637d4",
+        "name": "Machine Lying Leg Curl",
+        "notes": "Control the negative and squeeze at the top. Aim for an RPE of 7-8.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 40
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 40
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 40
+          }
+        ]
+      },
+      {
+        "definition_id": "cd1edf63-8f76-4c9d-aca9-895f489bcdf7",
+        "name": "Barbell Walking Lunge",
+        "notes": "Take long, stable steps and keep your torso upright. That's 10 steps per leg.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 20,
+            "weight": 40
+          },
+          {
+            "set_number": 2,
+            "reps": 20,
+            "weight": 40
+          },
+          {
+            "set_number": 3,
+            "reps": 20,
+            "weight": 40
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+BRIAN: QUIT

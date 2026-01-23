@@ -503,6 +503,90 @@ class ContextBundleService:
                 'error': str(e)
             }
     
+    async def append_ai_memory_admin(
+        self,
+        bundle_id: str,
+        new_notes: list[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Append notes to ai_memory without full LLM merge.
+        
+        Used for mid-conversation session compaction. Fetches current memory,
+        appends new notes, dedupes by text, and saves. Safe for concurrent writes.
+        
+        Location: /app/services/db/context_service.py
+        Method: ContextBundleService.append_ai_memory_admin()
+        
+        Args:
+            bundle_id: Bundle ID
+            new_notes: List of note dicts to append (each with text, date, category)
+            
+        Returns:
+            {'success': bool, 'note_count': int, 'error': str}
+        """
+        try:
+            logger.info(f"Appending {len(new_notes)} notes to bundle: {bundle_id}")
+            
+            admin_client = self.get_admin_client()
+            
+            # Fetch current memory (fresh read for safety)
+            result = admin_client.table('user_context_bundles') \
+                .select('ai_memory') \
+                .eq('id', bundle_id) \
+                .single() \
+                .execute()
+            
+            if not hasattr(result, 'data') or not result.data:
+                return {
+                    'success': False,
+                    'error': f'Bundle not found: {bundle_id}'
+                }
+            
+            # Get existing notes
+            current_memory = result.data.get('ai_memory') or {}
+            existing_notes = current_memory.get('notes', [])
+            
+            # Append new notes
+            combined = existing_notes + new_notes
+            
+            # Dedupe by text (keep first occurrence)
+            seen = set()
+            unique_notes = []
+            for note in combined:
+                text = note.get('text', '')
+                if text and text not in seen:
+                    seen.add(text)
+                    unique_notes.append(note)
+            
+            # Save
+            updated_memory = {'notes': unique_notes}
+            update_result = admin_client.table('user_context_bundles') \
+                .update({
+                    'ai_memory': updated_memory,
+                    'updated_at': datetime.utcnow().isoformat()
+                }) \
+                .eq('id', bundle_id) \
+                .execute()
+            
+            if hasattr(update_result, 'data') and update_result.data:
+                logger.info(f"✅ Appended notes successfully, total: {len(unique_notes)}")
+                return {
+                    'success': True,
+                    'note_count': len(unique_notes)
+                }
+            else:
+                return {
+                    'success': False,
+                    'error': 'Failed to save updated memory'
+                }
+                
+        except Exception as e:
+            logger.error(f"Error appending ai_memory (admin): {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
     async def get_latest_context_bundle(
         self,
         user_id: str,

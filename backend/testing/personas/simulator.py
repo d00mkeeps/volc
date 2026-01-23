@@ -114,7 +114,8 @@ class PersonaSimulator:
         self,
         persona_name: str,
         credentials: Any = None,
-        project_id: Optional[str] = None
+        project_id: Optional[str] = None,
+        max_messages: int = 10
     ):
         """
         Initialize the persona simulator.
@@ -123,7 +124,9 @@ class PersonaSimulator:
             persona_name: 'margaret', 'jake', 'sarah', 'brian'
             credentials: GCP credentials for Gemini (optional, uses default if None)
             project_id: GCP project ID (optional, uses env if None)
+            max_messages: Max user messages before stopping (default 10)
         """
+        self.max_messages = max_messages
         self.persona_name = persona_name.lower()
         self.persona_config = get_persona(self.persona_name)
         
@@ -206,8 +209,8 @@ class PersonaSimulator:
             raise
     
     def should_stop(self) -> bool:
-        """Check if conversation should stop (10 user messages reached)"""
-        return self.user_message_count >= 10
+        """Check if conversation should stop (max_messages reached)"""
+        return self.user_message_count >= self.max_messages
     
     def get_history(self) -> List[Dict[str, str]]:
         """Return conversation history for logging"""
@@ -218,3 +221,17 @@ class PersonaSimulator:
         self.conversation_history = []
         self.user_message_count = 0
         logger.info(f"PersonaSimulator reset for {self.persona_name}")
+
+    def seed_history(self, messages: List[Dict[str, str]]) -> None:
+        """
+        Pre-populate conversation history for testing mid-conversation scenarios.
+        
+        Used to test compaction by seeding 25+ messages before running live.
+        
+        Args:
+            messages: List of {"role": "user"|"assistant", "content": "..."}
+        """
+        self.conversation_history = messages.copy()
+        # Count user messages in seeded history
+        self.user_message_count = sum(1 for m in messages if m["role"] == "user")
+        logger.info(f"Seeded {len(messages)} messages ({self.user_message_count} user)")

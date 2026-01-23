@@ -69,7 +69,13 @@ class MemoryExtractionService:
             - Related preferences: Keep the specific note, DELETE vague duplicates
             - Before adding a note, check: Does this overlap with existing notes? Can multiple notes be expressed as one?
             
-            5. Categories (choose carefully):
+            5. CONVERSATION SUMMARY NOTES:
+            - Notes with category "conversation_summary" are mid-session extractions.
+            - Re-categorize them into the appropriate category (goal, injury, preference, etc.).
+            - If contradicted by recent messages, DELETE them.
+            - Merge with related notes where appropriate.
+            
+            6. Categories (choose carefully):
             - goal: SMART objectives with timeline (e.g., "Squat 200kg by June 2025")
             - injury: Physical limitations, pain, impingements
             - preference: Training style preferences (frequency, program type, exercise selection, current training approach)
@@ -78,7 +84,7 @@ class MemoryExtractionService:
             - recovery: Sleep quality/schedule, stress levels, fatigue sensitivity, PEDs, supplements
             - general: Competition results, significant training milestones, lifestyle context, scheduling constraints, hobbies, training breaks
             
-            6. WHAT TO INCLUDE:
+            7. WHAT TO INCLUDE:
             ✓ Enduring facts (equipment, injuries, long-term preferences)
             ✓ Behavioral snapshots (current training approach - "trains by feel", habits being built - "aims to eat vegetables")
             ✓ Near-term plans (specific intentions for next 1-2 workouts - needed for planning system)
@@ -86,12 +92,12 @@ class MemoryExtractionService:
             ✓ Nutritional phases (bulking, cutting, maintenance)
             ✓ Training breaks or returns ("8-month break from deadlifting")
             
-            7. WHAT TO EXCLUDE:
+            8. WHAT TO EXCLUDE:
             ✗ Current ability estimates or training PRs (e.g., "current squat max is 165kg") - these are tracked in workout analytics
             ✗ DO include competition results and personally significant past achievements (e.g., "hit 185kg at regional meet")
             ✗ Vague duplicates when specific notes exist (e.g., don't keep "prioritizes recovery" if you have "prefers extended recovery periods between intense sessions")
             
-            8. Each note should be:
+            9. Each note should be:
             - Atomic: One clear fact per note
             - Concise: Single sentence maximum
             - Specific: Include relevant context (dates, numbers, specifics)
@@ -221,3 +227,85 @@ class MemoryExtractionService:
                 
         except Exception as e:
             logger.error(f"Error in memory extraction: {str(e)}", exc_info=True)
+
+    async def append_session_memory(
+        self, 
+        user_id: str, 
+        messages: list[dict],
+        bundle_id: str
+    ) -> bool:
+        """
+        Append-only extraction for mid-conversation compaction.
+        
+        Extracts key facts from old messages and appends them as 'conversation_summary'
+        notes. These get re-categorized on conversation close by the main extract_memory.
+        
+        Args:
+            user_id: User's ID
+            messages: List of message dicts with 'role' and 'content'
+            bundle_id: Bundle ID to append notes to
+            
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            logger.info(f"🗜️ Session compaction: extracting from {len(messages)} messages")
+            
+            # Format messages for extraction
+            conversation_text = "\n".join([
+                f"{msg['role']}: {msg['content']}" for msg in messages
+            ])
+            
+            # Simple extraction prompt (no merge logic needed)
+            simple_prompt = ChatPromptTemplate.from_template("""
+You are extracting key facts from a conversation segment for memory storage.
+
+CONVERSATION:
+{conversation}
+
+RULES:
+- Extract only enduring facts (preferences, injuries, goals, context, decisions made)
+- Each note: one clear fact, single sentence
+- Focus on information that would be useful in future conversations
+- Do NOT categorize yet—all notes get category "conversation_summary"
+- If the conversation has no memorable facts, return an empty notes list
+
+OUTPUT FORMAT:
+{format_instructions}
+""")
+            
+            chain = simple_prompt | self.llm | self.parser
+            
+            result = await chain.ainvoke({
+                "conversation": conversation_text,
+                "format_instructions": self.parser.get_format_instructions()
+            })
+            
+            notes = result.get("notes", [])
+            
+            if not notes:
+                logger.info("No session notes extracted")
+                return True
+            
+            # Tag all as conversation_summary with current date
+            current_date = datetime.now().isoformat()
+            for note in notes:
+                note["category"] = "conversation_summary"
+                note["date"] = current_date
+            
+            # Append to DB
+            from app.services.db.context_service import ContextBundleService
+            context_service = ContextBundleService()
+            
+            save_result = await context_service.append_ai_memory_admin(bundle_id, notes)
+            
+            if save_result.get("success"):
+                logger.info(f"✅ Appended {len(notes)} session notes to bundle {bundle_id}")
+                return True
+            else:
+                logger.error(f"Failed to append session notes: {save_result.get('error')}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error in session memory extraction: {str(e)}", exc_info=True)
+            return False

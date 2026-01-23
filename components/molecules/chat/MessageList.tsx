@@ -9,6 +9,7 @@ import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { Keyboard } from "react-native";
+
 interface MessageListProps {
   messages: Message[];
   showLoadingIndicator?: boolean;
@@ -30,7 +31,6 @@ export const MessageList = ({
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
 
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId,
@@ -41,6 +41,7 @@ export const MessageList = ({
       ? state.streamingMessages.has(activeConversationId)
       : false,
   );
+
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
       setKeyboardVisible(true);
@@ -55,8 +56,10 @@ export const MessageList = ({
     };
   }, []);
 
-  const allMessages = useMemo(() => {
+  // Build message list and reverse for inverted FlatList (newest at index 0)
+  const invertedMessages = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
+    let result: Message[] = [...safeMessages];
 
     if (hasStreamingMessage) {
       const tempStreamingMessage: Message = {
@@ -67,12 +70,8 @@ export const MessageList = ({
         conversation_sequence: safeMessages.length + 1,
         timestamp: new Date(),
       };
-      return [...safeMessages, tempStreamingMessage];
-    }
-
-    const shouldShowLoading = showLoadingIndicator;
-
-    if (shouldShowLoading) {
+      result = [...result, tempStreamingMessage];
+    } else if (showLoadingIndicator) {
       const tempLoadingMessage: Message = {
         id: "loading",
         content: "",
@@ -81,43 +80,17 @@ export const MessageList = ({
         conversation_sequence: safeMessages.length + 1,
         timestamp: new Date(),
       };
-      return [...safeMessages, tempLoadingMessage];
+      result = [...result, tempLoadingMessage];
     }
 
-    return safeMessages;
+    // Reverse so newest message is at index 0 for inverted list
+    return result.reverse();
   }, [
     messages,
     hasStreamingMessage,
     showLoadingIndicator,
     activeConversationId,
   ]);
-
-  const scrollToBottom = useCallback((animated = true) => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      listRef.current?.scrollToOffset({
-        offset: Number.MAX_SAFE_INTEGER,
-        animated,
-      });
-    }, 200);
-  }, []);
-
-  useEffect(() => {
-    if (allMessages.length > 0) {
-      scrollToBottom();
-    }
-  }, [allMessages.length, scrollToBottom]);
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
 
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => {
@@ -143,7 +116,8 @@ export const MessageList = ({
   );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
-  if (allMessages.length === 0 && connectionState !== "disconnected") {
+
+  if (invertedMessages.length === 0 && connectionState !== "disconnected") {
     return (
       <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
         <Pressable style={{ flex: 1 }} onPress={onDismiss}>
@@ -164,16 +138,21 @@ export const MessageList = ({
           ref={listRef}
           style={{ flex: 1 }}
           contentContainerStyle={{
-            paddingBottom: keyboardVisible ? 130 : 160,
+            // Inverted list: paddingTop becomes visual bottom, paddingBottom becomes visual top
+            paddingTop: keyboardVisible ? 130 : 160,
+            paddingBottom: 16,
           }}
-          data={allMessages}
+          data={invertedMessages}
           renderItem={renderMessage}
           keyExtractor={keyExtractor}
+          inverted={true}
+          // Virtualization props for 100+ message performance
+          initialNumToRender={15}
+          maxToRenderPerBatch={10}
+          windowSize={5}
           scrollEventThrottle={200}
           removeClippedSubviews={true}
           showsVerticalScrollIndicator={true}
-          onContentSizeChange={() => scrollToBottom()}
-          onLayout={() => scrollToBottom(false)}
         />
       </YStack>
     </ResponsiveKeyboardAvoidingView>

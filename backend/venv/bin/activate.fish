@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /Users/mileshillary/Desktop/learning/projects/volc/supreme-octo-doodle/backend/venv
+set -gx VIRTUAL_ENV /Users/mileshillary/Desktop/museum/learning/projects/volc/supreme-octo-doodle/backend/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

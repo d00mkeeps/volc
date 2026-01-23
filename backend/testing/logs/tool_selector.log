@@ -1239,3 +1239,281 @@ Sounds good.
   → get_strength_exercises({'muscle_groups': ['chest', 'back', 'shoulders', 'biceps', 'triceps']})
 
 ────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T15:32:29.112164] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Workout plan.
+
+## CONVERSATION HISTORY (10 messages):
+  [1] USER: always belt up for working sets. helps brace with the back
+  [2] ASSISTANT: Smart. Any knee considerations?
+  [3] USER: bit of wear and tear. wraps help on heavy days
+  [4] ASSISTANT: Understood. For tomorrow, squat focus or accessories?
+  [5] USER: squat and some leg press. keep it simple
+  [6] ASSISTANT: How many working sets do you typically do for squat?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['quadriceps', 'hamstrings', 'glutes', 'calves']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:07:38.862404] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+3 working sets
+
+## CONVERSATION HISTORY (10 messages):
+  [1] USER: always belt up for working sets. helps brace with the back
+  [2] ASSISTANT: Smart. Any knee considerations?
+  [3] USER: bit of wear and tear. wraps help on heavy days
+  [4] ASSISTANT: Understood. For tomorrow, squat focus or accessories?
+  [5] USER: squat and some leg press. keep it simple
+  [6] ASSISTANT: How many working sets do you typically do for squat?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'equipment': ['barbell', 'machine'], 'muscle_groups': ['quadriceps', 'glutes', 'hamstrings']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:13:06.760333] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Sleeves go on for squats. Not before.
+
+## CONVERSATION HISTORY (10 messages):
+  [1] USER: actually wait, one question about warmup
+  [2] ASSISTANT: Sure, what's on your mind regarding the warmup?
+  [3] USER: should I do foam rolling first?
+  [4] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [5] USER: yeah add that in
+  [6] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:13:22.512736] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+sounds good
+
+## CONVERSATION HISTORY (12 messages):
+  [1] USER: should I do foam rolling first?
+  [2] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [3] USER: yeah add that in
+  [4] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [5] USER: Sleeves go on for squats. Not before.
+  [6] ASSISTANT: Got it, sleeves on for squats. I'll build a leg day around that, with some hamstring and quad work after your main sets. Sound good?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': 'quadriceps,hamstrings,glutes,calves'})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:13:33.785863] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+need work on my walking lunges. add those instead
+
+## CONVERSATION HISTORY (14 messages):
+  [1] USER: yeah add that in
+  [2] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [3] USER: Sleeves go on for squats. Not before.
+  [4] ASSISTANT: Got it, sleeves on for squats. I'll build a leg day around that, with some hamstring and quad work after your main sets. Sound good?
+  [5] USER: sounds good
+  [6] ASSISTANT: Great. I'm thinking we'll start with Barbell Squats, then hit some hamstring work with the [leg curl machine](glossary://2559aa63-75f6-4be1-899e-e2f931a6e3a5), and finish the quads with the [leg exten...
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['quadriceps', 'hamstrings', 'glutes']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:15:41.976710] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Right before my working sets
+
+## CONVERSATION HISTORY (10 messages):
+  [1] USER: actually wait, one question about warmup
+  [2] ASSISTANT: Sure, what's on your mind regarding the warmup?
+  [3] USER: should I do foam rolling first?
+  [4] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [5] USER: yeah add that in
+  [6] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+
+## LLM REASONING:
+Understood. Will add that note. Anything else?
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:15:56.078026] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Yes.
+
+## CONVERSATION HISTORY (12 messages):
+  [1] USER: should I do foam rolling first?
+  [2] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [3] USER: yeah add that in
+  [4] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [5] USER: Right before my working sets
+  [6] ASSISTANT: Sounds good. So we'll have you put sleeves on right before the 140kg sets. Is that 140kg for squats?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_mobility_exercises({'equipment': ['foam_roller'], 'muscle_groups': ['glutes']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:16:30.609381] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Leg press. And I need to work on my good mornings.
+
+## CONVERSATION HISTORY (14 messages):
+  [1] USER: yeah add that in
+  [2] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [3] USER: Right before my working sets
+  [4] ASSISTANT: Sounds good. So we'll have you put sleeves on right before the 140kg sets. Is that 140kg for squats?
+  [5] USER: Yes.
+  [6] ASSISTANT: Okay, I'll build your squat session with the glute rolling and heavy triples. Should we add any [accessory work](glossary://4d6e3ceb-b293-4406-b55a-b3d9e9a9317a) after the main lift?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (2):
+  → get_strength_exercises({'muscle_groups': ['quadriceps', 'glutes', 'hamstrings']})
+  → get_strength_exercises({'muscle_groups': ['hamstrings', 'glutes', 'lower_back']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:17:16.715110] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+before my working sets on squat.
+
+## CONVERSATION HISTORY (10 messages):
+  [1] USER: actually wait, one question about warmup
+  [2] ASSISTANT: Sure, what's on your mind regarding the warmup?
+  [3] USER: should I do foam rolling first?
+  [4] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [5] USER: yeah add that in
+  [6] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+
+## LLM REASONING:
+Understood. Your knee sleeves will be ready before your working sets for squats. Anything else?
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:17:33.724041] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+yes. need to get some work in on my cleans too.
+
+## CONVERSATION HISTORY (12 messages):
+  [1] USER: should I do foam rolling first?
+  [2] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [3] USER: yeah add that in
+  [4] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [5] USER: before my working sets on squat.
+  [6] ASSISTANT: Got it. I'll add a note for glute foam rolling and putting on sleeves before your working sets. Ready to build out the full squat session now?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:20:03.162251] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Right before working sets.
+
+## CONVERSATION HISTORY (35 messages):
+  [1] USER: actually wait, one question about warmup
+  [2] ASSISTANT: Sure, what's on your mind regarding the warmup?
+  [3] USER: should I do foam rolling first?
+  [4] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [5] USER: yeah add that in
+  [6] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-23T16:20:56.041754] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+extensions are no good for the knees
+
+## CONVERSATION HISTORY (37 messages):
+  [1] USER: should I do foam rolling first?
+  [2] ASSISTANT: For your back history, some targeted glute rolling can help. Just avoid rolling the lower back directly. Want me to add that?
+  [3] USER: yeah add that in
+  [4] ASSISTANT: Done. Anything else for the knee sleeves? When do you put them on?
+  [5] USER: Right before working sets.
+  [6] ASSISTANT: Got it, Brian. I've built the session with your warmup and notes in mind.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Lower Body - Squat Focus",
+    "notes": "Start with foam rol...
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────

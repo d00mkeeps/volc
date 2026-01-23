@@ -2,7 +2,7 @@ import logging
 import json
 import re
 import asyncio
-from typing import Dict, Any, List, AsyncGenerator
+from typing import Dict, Any, List, AsyncGenerator, Optional
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from datetime import datetime, date
@@ -60,6 +60,11 @@ class UnifiedCoachService:
         self.is_imperial: bool = False  # User's unit preference
         self.current_response: str = ""
         self.initialized: bool = False
+        
+        # Compaction state (for long conversations)
+        self.compaction_state: str = "idle"  # idle | extracting | ready
+        self.compaction_cutoff: int = 0  # Index to truncate history at
+        self.compaction_task: Optional[asyncio.Task] = None
     
     async def initialize(self, conversation_id: str, user_id: str) -> None:
         """
@@ -99,9 +104,9 @@ class UnifiedCoachService:
                 "content": msg.content
             })
         
-        # Keep only last 10 messages
-        if len(self.message_history) > 10:
-            self.message_history = self.message_history[-10:]
+        # Keep only last 10 messages -> REMOVED to allow compaction testing
+        # if len(self.message_history) > 10:
+        #     self.message_history = self.message_history[-10:]
         
         logger.info(f"✅ Service initialized - {len(self.message_history)} messages loaded")
         self.initialized = True
@@ -119,6 +124,10 @@ class UnifiedCoachService:
         if not self.initialized:
             raise RuntimeError("Service not initialized - call initialize() first")
         
+        # Check for pending compaction swap
+        if self.compaction_state == "ready":
+            await self._apply_compaction()
+        
         logger.info(f"🤖 Processing message: {message[:80]}...")
         
         # Reset current response tracker
@@ -126,10 +135,6 @@ class UnifiedCoachService:
         
         # Add user message to history
         self.message_history.append({"role": "user", "content": message})
-        
-        # Keep history manageable
-        if len(self.message_history) > 10:
-            self.message_history = self.message_history[-10:]
         
         # Select and execute tools
         tool_calls = await self.tool_selector.select_tools(message, self.message_history[:-1])
@@ -180,11 +185,12 @@ class UnifiedCoachService:
         # Add assistant response to history
         self.message_history.append({"role": "assistant", "content": self.current_response})
         
-        # Keep history manageable
-        if len(self.message_history) > 10:
-            self.message_history = self.message_history[-10:]
-        
         logger.info(f"✅ Response complete ({len(self.current_response)} chars)")
+        
+        # Check if compaction needed (after response, async)
+        if len(self.message_history) > 30 and self.compaction_state == "idle":
+            logger.info(f"🗜️ Triggering compaction: {len(self.message_history)} messages")
+            self.compaction_task = asyncio.create_task(self._trigger_session_compaction())
     
     def get_current_response(self) -> str:
         """Get the current partial response (for cancellation handling)"""
@@ -649,3 +655,76 @@ class UnifiedCoachService:
             logger.error(f"Error extracting components: {str(e)}")
         
         return components
+
+    async def _trigger_session_compaction(self) -> None:
+        """
+        Extract session memory from old messages (async background task).
+        
+        This runs in the background after response streaming completes.
+        When done, sets state to 'ready' for the next message to apply.
+        """
+        try:
+            self.compaction_state = "extracting"
+            self.compaction_cutoff = len(self.message_history) - 10  # Keep last 10
+            
+            messages_to_extract = self.message_history[:self.compaction_cutoff]
+            logger.info(f"🗜️ Extracting memory from {len(messages_to_extract)} messages")
+            
+            # Get bundle ID for memory storage
+            if not self.raw_bundle or not hasattr(self.raw_bundle, 'id'):
+                logger.warning("No bundle available for session compaction")
+                self.compaction_state = "idle"
+                return
+            
+            bundle_id = self.raw_bundle.id
+            
+            # Run session memory extraction
+            from app.services.memory.memory_service import MemoryExtractionService
+            memory_service = MemoryExtractionService(
+                credentials=self.credentials,
+                project_id=self.project_id
+            )
+            
+            success = await memory_service.append_session_memory(
+                user_id=self.user_id,
+                messages=messages_to_extract,
+                bundle_id=bundle_id
+            )
+            
+            if success:
+                self.compaction_state = "ready"
+                logger.info("✅ Session compaction ready to apply")
+            else:
+                logger.error("Session compaction failed, resetting state")
+                self.compaction_state = "idle"
+                
+        except Exception as e:
+            logger.error(f"Error in session compaction: {str(e)}", exc_info=True)
+            self.compaction_state = "idle"
+
+    async def _apply_compaction(self) -> None:
+        """
+        Apply pending compaction: truncate history and reload context.
+        
+        Called at the start of process_message when compaction_state is 'ready'.
+        """
+        try:
+            logger.info(f"🗜️ Applying compaction: truncating to last {len(self.message_history) - self.compaction_cutoff} messages")
+            
+            # Truncate message history
+            self.message_history = self.message_history[self.compaction_cutoff:]
+            
+            # Reload context to pick up new session memory
+            shared_context = await self.context_loader.load_all(self.user_id)
+            self.formatted_context = self._format_shared_context(shared_context)
+            self.raw_bundle = shared_context.get("bundle")
+            
+            # Reset compaction state
+            self.compaction_state = "idle"
+            self.compaction_cutoff = 0
+            
+            logger.info(f"✅ Compaction applied, history now {len(self.message_history)} messages")
+            
+        except Exception as e:
+            logger.error(f"Error applying compaction: {str(e)}", exc_info=True)
+            self.compaction_state = "idle"

@@ -156,7 +156,8 @@ async def _run_single_persona(
     credentials,
     project_id: str,
     run_dir: Path,
-    host: str = "localhost:8000"
+    host: str = "localhost:8000",
+    seed_count: int = 0
 ):
     """
     Run a single persona conversation with full lifecycle.
@@ -202,7 +203,8 @@ async def _run_single_persona(
         conversation_id=conversation_id,
         credentials=credentials,
         project_id=project_id,
-        host=host
+        host=host,
+        seed_count=seed_count
     )
     
     # Step 3: Save transcript
@@ -224,7 +226,7 @@ async def _run_single_persona(
     return result
 
 
-async def cmd_test(persona_name: str = None, all_personas: bool = False, host: str = "localhost:8000"):
+async def cmd_test(persona_name: str = None, all_personas: bool = False, host: str = "localhost:8000", seed_count: int = 0):
     """Test persona conversation(s)"""
     
     # Validate args
@@ -263,7 +265,8 @@ async def cmd_test(persona_name: str = None, all_personas: bool = False, host: s
                 credentials=credentials,
                 project_id=project_id,
                 run_dir=run_dir,
-                host=host
+                host=host,
+                seed_count=seed_count
             )
             results.append(result)
         
@@ -347,7 +350,8 @@ Per Persona
             credentials=credentials,
             project_id=project_id,
             run_dir=run_dir,
-            host=host
+            host=host,
+            seed_count=seed_count
         )
         
         # Increment iteration after single run
@@ -517,6 +521,7 @@ def main():
     test_parser.add_argument("persona", nargs="?", help="Specific persona to test (or use --all)")
     test_parser.add_argument("--all", dest="all_personas", action="store_true", help="Test all personas sequentially")
     test_parser.add_argument("--host", default="localhost:8000", help="Backend host:port (default: localhost:8000)")
+    test_parser.add_argument("--seed-messages", type=int, default=0, help="Number of messages to seed (for compaction testing)")
     
     # review command
     review_parser = subparsers.add_parser("review", help="Review test results with Gemini CLI")
@@ -527,7 +532,7 @@ def main():
     if args.command == "list":
         cmd_list()
     elif args.command == "test":
-        asyncio.run(cmd_test(args.persona, args.all_personas, args.host))
+        asyncio.run(cmd_test(args.persona, args.all_personas, args.host, args.seed_messages))
     elif args.command == "review":
         cmd_review(args.run_id)
     else:

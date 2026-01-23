@@ -17,6 +17,8 @@ from websockets.exceptions import ConnectionClosed
 
 from ..personas.simulator import PersonaSimulator
 from ..personas.config import get_persona
+from ..seed_conversations import get_seed_conversation
+from app.services.db.message_service import MessageService
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +100,8 @@ async def run_conversation(
     conversation_id: str,
     credentials,
     project_id: str,
-    host: str = "localhost:8000"
+    host: str = "localhost:8000",
+    seed_count: int = 0
 ) -> Dict[str, Any]:
     """
     Run a complete conversation between a persona and the coach.
@@ -110,6 +113,7 @@ async def run_conversation(
         credentials: GCP credentials for PersonaSimulator
         project_id: GCP project ID
         host: Backend host:port
+        seed_count: Number of messages to seed (history injection)
         
     Returns:
         {
@@ -133,21 +137,71 @@ async def run_conversation(
             "error": f"Unknown persona: {persona_name}"
         }
     
+    # Calculate limits
+    if seed_count > 0:
+        # If seeding (e.g. 25 msgs), allow more user messages
+        # Default 10 user messages + half the seed count
+        simulator_max_user_messages = 10 + (seed_count // 2)
+    else:
+        simulator_max_user_messages = 10
+
     # Initialize simulator
     simulator = PersonaSimulator(
         persona_name=persona_name,
         credentials=credentials,
-        project_id=project_id
+        project_id=project_id,
+        max_messages=simulator_max_user_messages
     )
-    
-    # Build WebSocket URL
-    ws_url = f"ws://{host}/api/llm/coach/{conversation_id}/{user_id}"
     
     # Transcript and latency tracking
     transcript = []
     latencies = []
     message_count = 0
     max_messages = 21  # greeting + 20 exchanges
+    
+    # Message Service for seeding
+    message_service = MessageService()
+    
+    # Seed messages if requested
+    if seed_count > 0:
+        try:
+            logger.info(f"[{persona_name}] Seeding {seed_count} messages...")
+            seed_msgs = get_seed_conversation(persona_name, seed_count)
+            
+            # 1. Insert into DB (using server role to bypass auth nuances in test)
+            sender_map = {"user": "user", "assistant": "assistant"}
+            
+            for msg in seed_msgs:
+                await message_service.save_server_message(
+                    conversation_id=conversation_id,
+                    content=msg["content"],
+                    sender=sender_map.get(msg["role"], "assistant")
+                )
+            
+            # 2. Seed simulator
+            simulator.seed_history(seed_msgs)
+            
+            # 3. Pre-populate transcript
+            transcript.extend(seed_msgs)
+            
+            # Adjust max messages since we're starting mid-conversation
+            # We want to run ~5-10 more messages to trigger compaction
+            max_messages = len(seed_msgs) + 10
+            
+            logger.info(f"[{persona_name}] Seeding complete. History size: {len(seed_msgs)}")
+            
+        except Exception as e:
+            logger.error(f"[{persona_name}] Seeding failed: {e}")
+            return {
+                "persona": persona_name,
+                "status": "error",
+                "message_count": 0,
+                "transcript": [],
+                "error": f"Seeding failed: {e}"
+            }
+    
+    # Build WebSocket URL
+    ws_url = f"ws://{host}/api/llm/coach/{conversation_id}/{user_id}"
     
     # Retry config
     max_retries = 3
