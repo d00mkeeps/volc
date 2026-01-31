@@ -30,7 +30,7 @@
 #             if v is None or v == "not provided":
 #                 return None
 #             return v
-        
+
 #         # For list fields, ensure we always return at least an empty list
 #         if not v or v[0] == "not provided":
 #             return []

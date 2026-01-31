@@ -1,1 +1,0 @@
-# Persona definitions and simulation

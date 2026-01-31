@@ -1,6 +1,7 @@
 from typing import Optional
 import math
 
+
 class OneRMCalculator:
     @staticmethod
     def _epley_formula(weight: float, reps: int) -> float:
@@ -12,7 +13,7 @@ class OneRMCalculator:
 
     @staticmethod
     def _lombardi_formula(weight: float, reps: int) -> float:
-        return weight * (reps ** 0.10)
+        return weight * (reps**0.10)
 
     @staticmethod
     def _mayhew_formula(weight: float, reps: int) -> float:

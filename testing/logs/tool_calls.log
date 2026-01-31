@@ -1,573 +1,525 @@
 
 ============================================================
-[2026-01-21T10:28:48.206100] get_exercises_by_muscle_groups
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], movement_patterns=None, equipment=None
-Returned 135 exercises:
-  - Arm Circles (equipment: None)
-  - Arm Openers (equipment: None)
-  - Assisted Machine Chin Up (equipment: assisted_machine)
-  - Assisted Machine Dip (equipment: assisted_machine)
-  - Band Hammer Curl (equipment: band)
-  - Band Lateral Raise (equipment: band)
-  - Band Pull-Aparts (equipment: resistance_band)
-  - Barbell Bicep Curl (equipment: barbell)
-  - Barbell Close Grip Bench Press (equipment: barbell)
-  - Barbell Decline Bench Press (equipment: barbell)
-  - Barbell Flat Bench Press (equipment: barbell)
-  - Barbell Front Raise (equipment: barbell)
-  - Barbell Incline Bench Press (equipment: barbell)
-  - Barbell Incline Skullcrusher (equipment: barbell)
-  - Barbell Overhead Tricep Extension (equipment: barbell)
-  - Barbell Preacher Curl (equipment: barbell)
-  - Barbell Push Press (equipment: barbell)
-  - Barbell Reverse Curl (equipment: barbell)
-  - Barbell Seated Shoulder Press (equipment: barbell)
-  - Barbell Skullcrusher (equipment: barbell)
-  - Barbell Standing Shoulder Press (equipment: barbell)
-  - Barbell Upright Row (equipment: barbell)
-  - Barbell Wide Grip Upright Row (equipment: barbell)
-  - Bear Crawls (equipment: None)
-  - Behind-Back Shoulder Stretch (equipment: None)
-  - Bodyweight Chin Up (equipment: bodyweight)
-  - Bodyweight Decline Pushup (equipment: bodyweight)
-  - Bodyweight Diamond Pushup (equipment: bodyweight)
-  - Bodyweight Dip (equipment: bodyweight)
-  - Bodyweight Incline Pushup (equipment: bodyweight)
-  - Bodyweight Pike Pushup (equipment: bodyweight)
-  - Bodyweight Pushup (equipment: bodyweight)
-  - Bodyweight Wide Pushup (equipment: bodyweight)
-  - Cable Bicep Curl (equipment: cable)
-  - Cable Concentration Curl (equipment: cable)
-  - Cable Decline Chest Fly (equipment: cable)
-  - Cable Flat Chest Fly (equipment: cable)
-  - Cable Front Raise (equipment: cable)
-  - Cable Hammer Curl (equipment: cable)
-  - Cable Incline Chest Fly (equipment: cable)
-  - Cable Lateral Raise (equipment: cable)
-  - Cable Overhead Tricep Extension (equipment: cable)
-  - Cable Preacher Curl (equipment: cable)
-  - Cable Reverse Curl (equipment: cable)
-  - Cable Single Arm Bicep Curl (equipment: cable)
-  - Cable Single Arm Lateral Raise (equipment: cable)
-  - Cable Single Arm Overhead Tricep Extension (equipment: cable)
-  - Cable Single Arm Tricep Pushdown (equipment: cable)
-  - Cable Single Arm Upright Row (equipment: cable)
-  - Cable Tricep Pushdown (equipment: cable)
-  - Cable Upright Row (equipment: cable)
-  - Chest Foam Roll (equipment: foam_roller)
-  - Corner Chest Stretch (equipment: None)
-  - Cross-Body Arm Swings (equipment: None)
-  - Cross-Body Shoulder Stretch (equipment: None)
-  - Doorway Chest Stretch (equipment: None)
-  - Dumbbell Arnold Press (equipment: dumbbell)
-  - Dumbbell Bicep Curl (equipment: dumbbell)
-  - Dumbbell Concentration Curl (equipment: dumbbell)
-  - Dumbbell Decline Bench Press (equipment: dumbbell)
-  - Dumbbell Decline Chest Fly (equipment: dumbbell)
-  - Dumbbell Flat Bench Press (equipment: dumbbell)
-  - Dumbbell Flat Chest Fly (equipment: dumbbell)
-  - Dumbbell Front Raise (equipment: dumbbell)
-  - Dumbbell Hammer Curl (equipment: dumbbell)
-  - Dumbbell Incline Bench Press (equipment: dumbbell)
-  - Dumbbell Incline Chest Fly (equipment: dumbbell)
-  - Dumbbell Incline Curl (equipment: dumbbell)
-  - Dumbbell Incline Skullcrusher (equipment: dumbbell)
-  - Dumbbell Lateral Raise (equipment: dumbbell)
-  - Dumbbell Overhead Tricep Extension (equipment: dumbbell)
-  - Dumbbell Preacher Curl (equipment: dumbbell)
-  - Dumbbell Push Press (equipment: dumbbell)
-  - Dumbbell Reverse Curl (equipment: dumbbell)
-  - Dumbbell Seated Shoulder Press (equipment: dumbbell)
-  - Dumbbell Single Arm Bicep Curl (equipment: dumbbell)
-  - Dumbbell Single Arm Front Raise (equipment: dumbbell)
-  - Dumbbell Single Arm Lateral Raise (equipment: dumbbell)
-  - Dumbbell Single Arm Overhead Tricep Extension (equipment: dumbbell)
-  - Dumbbell Single Arm Upright Row (equipment: dumbbell)
-  - Dumbbell Skullcrusher (equipment: dumbbell)
-  - Dumbbell Standing Shoulder Press (equipment: dumbbell)
-  - Dumbbell Upright Row (equipment: dumbbell)
-  - Eagle Arms Stretch (equipment: None)
-  - EZ Bar Bicep Curl (equipment: ez_bar)
-  - EZ Bar Front Raise (equipment: ez_bar)
-  - EZ Bar Incline Skullcrusher (equipment: ez_bar)
-  - EZ Bar Overhead Tricep Extension (equipment: ez_bar)
-  - EZ Bar Preacher Curl (equipment: ez_bar)
-  - EZ Bar Reverse Curl (equipment: ez_bar)
-  - EZ Bar Skullcrusher (equipment: ez_bar)
-  - EZ Bar Upright Row (equipment: ez_bar)
-  - EZ Bar Wide Grip Upright Row (equipment: ez_bar)
-  - Front-to-Back Arm Swings (equipment: None)
-  - Kettlebell Push Press (equipment: kettlebell)
-  - Kettlebell Standing Shoulder Press (equipment: kettlebell)
-  - Lying Chest Stretch (equipment: None)
-  - Machine Bicep Curl (equipment: machine)
-  - Machine Decline Bench Press (equipment: machine)
-  - Machine Decline Chest Fly (equipment: machine)
-  - Machine Flat Bench Press (equipment: machine)
-  - Machine Flat Chest Fly (equipment: machine)
-  - Machine Incline Bench Press (equipment: machine)
-  - Machine Incline Chest Fly (equipment: machine)
-  - Machine Lateral Raise (equipment: machine)
-  - Machine Overhead Tricep Extension (equipment: machine)
-  - Machine Pec Deck (equipment: machine)
-  - Machine Preacher Curl (equipment: machine)
-  - Machine Seated Shoulder Press (equipment: machine)
-  - Machine Single Arm Bicep Curl (equipment: machine)
-  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Plate Front Raise (equipment: plate)
-  - Puppy Pose (equipment: None)
-  - Rear Shoulder Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Resistance Band Diamond Pushup (equipment: resistance_band)
-  - Resistance Band Pushup (equipment: resistance_band)
-  - Resistance Band Wide Pushup (equipment: resistance_band)
-  - Scapular Push-Ups (equipment: None)
-  - Seated Chest Stretch (equipment: None)
-  - Shoulder Circles (equipment: None)
-  - Sleeper Stretch (equipment: None)
-  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
-  - Smith Machine Decline Bench Press (equipment: smith_machine)
-  - Smith Machine Flat Bench Press (equipment: smith_machine)
-  - Smith Machine Incline Bench Press (equipment: smith_machine)
-  - Smith Machine Seated Shoulder Press (equipment: smith_machine)
-  - Smith Machine Upright Row (equipment: smith_machine)
-  - Standing Chest Stretch with Band (equipment: resistance_band)
-  - Wall Chest Slides (equipment: None)
-  - Weighted Chin Up (equipment: weight_belt)
-  - Weighted Dip (equipment: weight_belt)
-  - Weight Vest Decline Pushup (equipment: weight_vest)
-  - Weight Vest Diamond Pushup (equipment: weight_vest)
-  - Weight Vest Pushup (equipment: weight_vest)
-  - Weight Vest Wide Pushup (equipment: weight_vest)
+[2026-01-28T00:43:42.021936] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['dumbbell', 'bodyweight']
+Returned 45 exercises
 
 ============================================================
-[2026-01-21T10:38:57.595615] get_exercises_by_muscle_groups
+[2026-01-28T00:44:02.931575] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['dumbbell']
+Returned 29 exercises
 
 ============================================================
-[2026-01-21T10:39:11.824740] get_exercises_by_muscle_groups
+[2026-01-28T00:53:46.641725] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight', 'dumbbell']
+Returned 35 exercises
 
 ============================================================
-[2026-01-21T10:39:32.707683] get_exercises_by_muscle_groups
+[2026-01-28T00:54:14.597758] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'glutes', 'hamstrings', 'abs'], equipment=['bodyweight']
+Returned 17 exercises
 
 ============================================================
-[2026-01-21T10:39:32.708856] get_exercises_by_muscle_groups
+[2026-01-28T01:00:03.026854] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 156 exercises
 
 ============================================================
-[2026-01-21T10:44:02.117457] get_exercises_by_muscle_groups
+[2026-01-28T01:00:52.611773] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
 
 ============================================================
-[2026-01-21T10:44:22.081663] get_exercises_by_muscle_groups
+[2026-01-28T01:01:14.433593] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
 
 ============================================================
-[2026-01-21T10:44:34.774906] get_exercises_by_muscle_groups
+[2026-01-28T01:01:34.557750] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'lower_back'], equipment=['bodyweight']
+Returned 20 exercises
 
 ============================================================
-[2026-01-21T10:58:37.318843] get_exercises_by_muscle_groups
+[2026-01-28T01:10:11.219950] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'glutes', 'calves'], equipment=['bodyweight']
+Returned 10 exercises
 
 ============================================================
-[2026-01-21T10:58:37.320376] get_exercises_by_muscle_groups
+[2026-01-29T14:58:29.045619] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'abs'], equipment=None
+Returned 105 exercises
 
 ============================================================
-[2026-01-21T10:58:37.321315] get_exercises_by_muscle_groups
+[2026-01-29T14:58:46.118568] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'shoulders'], equipment=['dumbbell']
+Returned 26 exercises
 
 ============================================================
-[2026-01-21T10:59:14.493668] get_exercises_by_muscle_groups
+[2026-01-29T14:59:06.709063] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'lower_back'], equipment=['dumbbell']
+Returned 16 exercises
 
 ============================================================
-[2026-01-21T11:17:30.576085] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:17:50.085427] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:20:23.665678] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:20:43.657504] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:23:32.896843] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:25:00.893165] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T11:25:45.709245] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T14:55:26.820252] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T15:15:47.387332] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T15:16:08.088210] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T15:17:53.661977] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T15:17:53.663762] get_exercises_by_muscle_groups
-
-============================================================
-[2026-01-21T16:33:46.163083] get_exercises_by_muscle_groups
-Query: muscle_groups=['chest'], equipment=None
-Returned 48 exercises:
-  - Arm Openers (equipment: None)
-  - Assisted Machine Dip (equipment: assisted_machine)
-  - Barbell Close Grip Bench Press (equipment: barbell)
-  - Barbell Decline Bench Press (equipment: barbell)
-  - Barbell Flat Bench Press (equipment: barbell)
-  - Barbell Incline Bench Press (equipment: barbell)
-  - Bodyweight Decline Pushup (equipment: bodyweight)
-  - Bodyweight Diamond Pushup (equipment: bodyweight)
-  - Bodyweight Dip (equipment: bodyweight)
-  - Bodyweight Incline Pushup (equipment: bodyweight)
-  - Bodyweight Pushup (equipment: bodyweight)
-  - Bodyweight Wide Pushup (equipment: bodyweight)
-  - Cable Decline Chest Fly (equipment: cable)
-  - Cable Flat Chest Fly (equipment: cable)
-  - Cable Incline Chest Fly (equipment: cable)
-  - Chest Foam Roll (equipment: foam_roller)
-  - Corner Chest Stretch (equipment: None)
-  - Doorway Chest Stretch (equipment: None)
-  - Dumbbell Decline Bench Press (equipment: dumbbell)
-  - Dumbbell Decline Chest Fly (equipment: dumbbell)
-  - Dumbbell Flat Bench Press (equipment: dumbbell)
-  - Dumbbell Flat Chest Fly (equipment: dumbbell)
-  - Dumbbell Incline Bench Press (equipment: dumbbell)
-  - Dumbbell Incline Chest Fly (equipment: dumbbell)
-  - Lying Chest Stretch (equipment: None)
-  - Machine Decline Bench Press (equipment: machine)
-  - Machine Decline Chest Fly (equipment: machine)
-  - Machine Flat Bench Press (equipment: machine)
-  - Machine Flat Chest Fly (equipment: machine)
-  - Machine Incline Bench Press (equipment: machine)
-  - Machine Incline Chest Fly (equipment: machine)
-  - Machine Pec Deck (equipment: machine)
-  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Resistance Band Diamond Pushup (equipment: resistance_band)
-  - Resistance Band Pushup (equipment: resistance_band)
-  - Resistance Band Wide Pushup (equipment: resistance_band)
-  - Seated Chest Stretch (equipment: None)
-  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
-  - Smith Machine Decline Bench Press (equipment: smith_machine)
-  - Smith Machine Flat Bench Press (equipment: smith_machine)
-  - Smith Machine Incline Bench Press (equipment: smith_machine)
-  - Standing Chest Stretch with Band (equipment: resistance_band)
-  - Wall Chest Slides (equipment: None)
-  - Weighted Dip (equipment: weight_belt)
-  - Weight Vest Decline Pushup (equipment: weight_vest)
-  - Weight Vest Diamond Pushup (equipment: weight_vest)
-  - Weight Vest Pushup (equipment: weight_vest)
-  - Weight Vest Wide Pushup (equipment: weight_vest)
-
-============================================================
-[2026-01-21T16:34:06.236810] get_exercises_by_muscle_groups
-Query: muscle_groups=['chest'], equipment=None
-Returned 48 exercises:
-  - Arm Openers (equipment: None)
-  - Assisted Machine Dip (equipment: assisted_machine)
-  - Barbell Close Grip Bench Press (equipment: barbell)
-  - Barbell Decline Bench Press (equipment: barbell)
-  - Barbell Flat Bench Press (equipment: barbell)
-  - Barbell Incline Bench Press (equipment: barbell)
-  - Bodyweight Decline Pushup (equipment: bodyweight)
-  - Bodyweight Diamond Pushup (equipment: bodyweight)
-  - Bodyweight Dip (equipment: bodyweight)
-  - Bodyweight Incline Pushup (equipment: bodyweight)
-  - Bodyweight Pushup (equipment: bodyweight)
-  - Bodyweight Wide Pushup (equipment: bodyweight)
-  - Cable Decline Chest Fly (equipment: cable)
-  - Cable Flat Chest Fly (equipment: cable)
-  - Cable Incline Chest Fly (equipment: cable)
-  - Chest Foam Roll (equipment: foam_roller)
-  - Corner Chest Stretch (equipment: None)
-  - Doorway Chest Stretch (equipment: None)
-  - Dumbbell Decline Bench Press (equipment: dumbbell)
-  - Dumbbell Decline Chest Fly (equipment: dumbbell)
-  - Dumbbell Flat Bench Press (equipment: dumbbell)
-  - Dumbbell Flat Chest Fly (equipment: dumbbell)
-  - Dumbbell Incline Bench Press (equipment: dumbbell)
-  - Dumbbell Incline Chest Fly (equipment: dumbbell)
-  - Lying Chest Stretch (equipment: None)
-  - Machine Decline Bench Press (equipment: machine)
-  - Machine Decline Chest Fly (equipment: machine)
-  - Machine Flat Bench Press (equipment: machine)
-  - Machine Flat Chest Fly (equipment: machine)
-  - Machine Incline Bench Press (equipment: machine)
-  - Machine Incline Chest Fly (equipment: machine)
-  - Machine Pec Deck (equipment: machine)
-  - Pec Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Resistance Band Diamond Pushup (equipment: resistance_band)
-  - Resistance Band Pushup (equipment: resistance_band)
-  - Resistance Band Wide Pushup (equipment: resistance_band)
-  - Seated Chest Stretch (equipment: None)
-  - Smith Machine Close Grip Bench Press (equipment: smith_machine)
-  - Smith Machine Decline Bench Press (equipment: smith_machine)
-  - Smith Machine Flat Bench Press (equipment: smith_machine)
-  - Smith Machine Incline Bench Press (equipment: smith_machine)
-  - Standing Chest Stretch with Band (equipment: resistance_band)
-  - Wall Chest Slides (equipment: None)
-  - Weighted Dip (equipment: weight_belt)
-  - Weight Vest Decline Pushup (equipment: weight_vest)
-  - Weight Vest Diamond Pushup (equipment: weight_vest)
-  - Weight Vest Pushup (equipment: weight_vest)
-  - Weight Vest Wide Pushup (equipment: weight_vest)
-
-============================================================
-[2026-01-21T17:39:09.363266] get_exercises_by_muscle_groups
-Query: muscle_groups=['quadriceps', 'glutes'], equipment=None
-Returned 96 exercises:
-  - 90/90 Hip Stretch (equipment: None)
-  - Band Glute Bridge (equipment: band)
-  - Band Hip Thrust (equipment: band)
-  - Band Single Leg Hip Thrust (equipment: band)
-  - Barbell Back Squat (equipment: barbell)
-  - Barbell Block Pull (equipment: barbell)
-  - Barbell Box Squat (equipment: barbell)
-  - Barbell Bulgarian Split Squat (equipment: barbell)
-  - Barbell Conventional Deadlift (equipment: barbell)
-  - Barbell Deficit Deadlift (equipment: barbell)
-  - Barbell Forward Lunge (equipment: barbell)
-  - Barbell Front Squat (equipment: barbell)
-  - Barbell Glute Bridge (equipment: barbell)
-  - Barbell Good Morning (equipment: barbell)
-  - Barbell Hack Squat (equipment: barbell)
-  - Barbell Hip Thrust (equipment: barbell)
-  - Barbell Overhead Squat (equipment: barbell)
-  - Barbell Rack Pull (equipment: barbell)
-  - Barbell Reverse Lunge (equipment: barbell)
-  - Barbell Romanian Deadlift (equipment: barbell)
-  - Barbell Seated Good Morning (equipment: barbell)
-  - Barbell Single Leg Good Morning (equipment: barbell)
-  - Barbell Single Leg Hip Thrust (equipment: barbell)
-  - Barbell Single Leg Romanian Deadlift (equipment: barbell)
-  - Barbell Snatch Grip Deadlift (equipment: barbell)
-  - Barbell Stiff Leg Deadlift (equipment: barbell)
-  - Barbell Sumo Deadlift (equipment: barbell)
-  - Barbell Walking Lunge (equipment: barbell)
-  - Bodyweight Bulgarian Split Squat (equipment: bodyweight)
-  - Bodyweight Forward Lunge (equipment: bodyweight)
-  - Bodyweight Glute Bridge (equipment: bodyweight)
-  - Bodyweight Hip Thrust (equipment: bodyweight)
-  - Bodyweight Lateral Lunge (equipment: bodyweight)
-  - Bodyweight Reverse Lunge (equipment: bodyweight)
-  - Bodyweight Single Leg Hip Thrust (equipment: bodyweight)
-  - Bodyweight Walking Lunge (equipment: bodyweight)
-  - Clamshells (equipment: None)
-  - Dumbbell Bulgarian Split Squat (equipment: dumbbell)
-  - Dumbbell Conventional Deadlift (equipment: dumbbell)
-  - Dumbbell Forward Lunge (equipment: dumbbell)
-  - Dumbbell Glute Bridge (equipment: dumbbell)
-  - Dumbbell Goblet Squat (equipment: dumbbell)
-  - Dumbbell Lateral Lunge (equipment: dumbbell)
-  - Dumbbell Overhead Squat (equipment: dumbbell)
-  - Dumbbell Reverse Lunge (equipment: dumbbell)
-  - Dumbbell Romanian Deadlift (equipment: dumbbell)
-  - Dumbbell Single Leg Hip Thrust (equipment: dumbbell)
-  - Dumbbell Single Leg Romanian Deadlift (equipment: dumbbell)
-  - Dumbbell Stiff Leg Deadlift (equipment: dumbbell)
-  - Dumbbell Walking Lunge (equipment: dumbbell)
-  - Figure-4 Stretch (equipment: None)
-  - Fire Hydrants (equipment: None)
-  - Glute Bridge (equipment: None)
-  - Glute Foam Roll (equipment: foam_roller)
-  - Glute Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Happy Baby Pose (equipment: None)
-  - Kettlebell Forward Lunge (equipment: kettlebell)
-  - Kettlebell Goblet Squat (equipment: kettlebell)
-  - Kettlebell Lateral Lunge (equipment: kettlebell)
-  - Kettlebell Reverse Lunge (equipment: kettlebell)
-  - Kettlebell Single Leg Romanian Deadlift (equipment: kettlebell)
-  - Kettlebell Walking Lunge (equipment: kettlebell)
-  - Kneeling Quad Stretch (equipment: None)
-  - Lying Quad Stretch (equipment: None)
-  - Machine Hack Squat (equipment: machine)
-  - Machine Hip Thrust (equipment: machine)
-  - Machine Leg Extension (equipment: machine)
-  - Machine Leg Press (equipment: machine)
-  - Machine Seated Good Morning (equipment: machine)
-  - Machine Single Leg Extension (equipment: machine)
-  - Machine Single Leg Press (equipment: machine)
-  - Pigeon Pose (equipment: None)
-  - Quad Foam Roll (equipment: foam_roller)
-  - Quad Lacrosse Ball Release (equipment: lacrosse_ball)
-  - Safety Bar Back Squat (equipment: safety_bar)
-  - Safety Bar Box Squat (equipment: safety_bar)
-  - Safety Bar Good Morning (equipment: safety_bar)
-  - Seated Glute Stretch (equipment: None)
-  - Smith Machine Back Squat (equipment: smith_machine)
-  - Smith Machine Box Squat (equipment: smith_machine)
-  - Smith Machine Bulgarian Split Squat (equipment: smith_machine)
-  - Smith Machine Conventional Deadlift (equipment: smith_machine)
-  - Smith Machine Deficit Deadlift (equipment: smith_machine)
-  - Smith Machine Forward Lunge (equipment: smith_machine)
-  - Smith Machine Front Squat (equipment: smith_machine)
-  - Smith Machine Glute Bridge (equipment: smith_machine)
-  - Smith Machine Hip Thrust (equipment: smith_machine)
-  - Smith Machine Reverse Lunge (equipment: smith_machine)
-  - Smith Machine Romanian Deadlift (equipment: smith_machine)
-  - Smith Machine Single Leg Hip Thrust (equipment: smith_machine)
-  - Smith Machine Stiff Leg Deadlift (equipment: smith_machine)
-  - Smith Machine Sumo Deadlift (equipment: smith_machine)
-  - Standing Quad Stretch (equipment: None)
-  - Supine Figure-4 with Knee Hug (equipment: None)
-  - Trap Bar Deadlift (equipment: trap_bar)
-  - Walking Quad Stretch (equipment: None)
-
-============================================================
-[2026-01-21T18:46:21.714756] get_exercises_by_muscle_groups
-Query: muscle_groups=['quadriceps', 'glutes'], equipment=['barbell']
-Returned 24 exercises:
-  - Barbell Back Squat (equipment: barbell)
-  - Barbell Block Pull (equipment: barbell)
-  - Barbell Box Squat (equipment: barbell)
-  - Barbell Bulgarian Split Squat (equipment: barbell)
-  - Barbell Conventional Deadlift (equipment: barbell)
-  - Barbell Deficit Deadlift (equipment: barbell)
-  - Barbell Forward Lunge (equipment: barbell)
-  - Barbell Front Squat (equipment: barbell)
-  - Barbell Glute Bridge (equipment: barbell)
-  - Barbell Good Morning (equipment: barbell)
-  - Barbell Hack Squat (equipment: barbell)
-  - Barbell Hip Thrust (equipment: barbell)
-  - Barbell Overhead Squat (equipment: barbell)
-  - Barbell Rack Pull (equipment: barbell)
-  - Barbell Reverse Lunge (equipment: barbell)
-  - Barbell Romanian Deadlift (equipment: barbell)
-  - Barbell Seated Good Morning (equipment: barbell)
-  - Barbell Single Leg Good Morning (equipment: barbell)
-  - Barbell Single Leg Hip Thrust (equipment: barbell)
-  - Barbell Single Leg Romanian Deadlift (equipment: barbell)
-  - Barbell Snatch Grip Deadlift (equipment: barbell)
-  - Barbell Stiff Leg Deadlift (equipment: barbell)
-  - Barbell Sumo Deadlift (equipment: barbell)
-  - Barbell Walking Lunge (equipment: barbell)
-
-============================================================
-[2026-01-21T19:03:03.671866] get_exercises_by_muscle_groups
-Query: muscle_groups=['abs'], equipment=['bodyweight']
-Returned 8 exercises:
-  - Bodyweight Bicycle Crunch (equipment: bodyweight)
-  - Bodyweight Captain's Chair Leg Raise (equipment: bodyweight)
-  - Bodyweight Crunch (equipment: bodyweight)
-  - Bodyweight Decline Crunch (equipment: bodyweight)
-  - Bodyweight Hanging Leg Raise (equipment: bodyweight)
-  - Bodyweight Lying Leg Raise (equipment: bodyweight)
-  - Bodyweight Russian Twist (equipment: bodyweight)
-  - Bodyweight Single Leg Raise (equipment: bodyweight)
-
-============================================================
-[2026-01-21T19:18:33.204432] get_strength_exercises
-Query: muscle_groups=['glutes', 'quadriceps'], equipment=None
-Returned 79 exercises
-
-============================================================
-[2026-01-21T19:20:24.095290] get_strength_exercises
-Query: muscle_groups=['glutes', 'quadriceps'], equipment=None
-Returned 79 exercises
-
-============================================================
-[2026-01-22T21:41:21.261021] get_strength_exercises
-Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
-Returned 80 exercises
-
-============================================================
-[2026-01-22T21:41:34.169421] get_strength_exercises
-Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
-Returned 80 exercises
-
-============================================================
-[2026-01-22T21:42:53.122878] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
-
-============================================================
-[2026-01-22T21:43:03.518589] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
-
-============================================================
-[2026-01-22T21:43:58.856097] get_strength_exercises
-Query: muscle_groups=['back'], equipment=None
-Returned 0 exercises
-
-============================================================
-[2026-01-22T21:44:05.595618] get_strength_exercises
-Query: muscle_groups=['back'], equipment=None
-Returned 0 exercises
-
-============================================================
-[2026-01-22T21:44:15.292014] get_strength_exercises
-Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids'], equipment=None
-Returned 91 exercises
-
-============================================================
-[2026-01-22T21:47:10.785374] get_strength_exercises
+[2026-01-29T15:16:52.264521] get_strength_exercises
 Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
 Returned 16 exercises
 
 ============================================================
-[2026-01-22T21:49:13.047028] get_strength_exercises
+[2026-01-29T15:17:13.122014] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves'], equipment=['bodyweight']
+Returned 11 exercises
+
+============================================================
+[2026-01-29T15:17:33.605452] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 9 exercises
+
+============================================================
+[2026-01-29T15:18:04.478408] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'lower_back'], equipment=['bodyweight']
+Returned 20 exercises
+
+============================================================
+[2026-01-29T15:19:30.559681] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'glutes'], equipment=['bodyweight']
+Returned 8 exercises
+
+============================================================
+[2026-01-29T15:33:26.417606] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 156 exercises
+
+============================================================
+[2026-01-29T15:33:46.640841] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 26 exercises
+
+============================================================
+[2026-01-29T15:34:05.644880] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-29T15:41:56.166626] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'abs', 'biceps', 'triceps'], equipment=['bodyweight']
+Returned 25 exercises
+
+============================================================
+[2026-01-29T15:53:33.454722] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
+
+============================================================
+[2026-01-29T16:47:00.233823] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 156 exercises
+
+============================================================
+[2026-01-29T16:47:14.774439] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['dumbbell']
+Returned 29 exercises
+
+============================================================
+[2026-01-29T16:47:39.277910] get_strength_exercises
+Query: muscle_groups=[], equipment=None
+Returned 0 exercises
+
+============================================================
+[2026-01-29T17:03:17.160779] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-29T17:03:32.304813] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'biceps', 'triceps', 'lats'], equipment=None
+Returned 117 exercises
+
+============================================================
+[2026-01-29T17:04:16.037534] get_strength_exercises
+Query: muscle_groups=['biceps', 'triceps'], equipment=None
+Returned 47 exercises
+
+============================================================
+[2026-01-29T18:42:39.822634] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-29T18:43:00.254635] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-29T18:43:36.077547] get_strength_exercises
+Query: muscle_groups=['biceps'], equipment=None
+Returned 26 exercises
+
+============================================================
+[2026-01-29T18:56:42.947260] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-29T18:58:36.179874] get_strength_exercises
+Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids'], equipment=None
+Returned 91 exercises
+
+============================================================
+[2026-01-29T18:58:53.237658] get_strength_exercises
+Query: muscle_groups=['back'], equipment=None
+Returned 0 exercises
+
+============================================================
+[2026-01-29T19:01:49.615835] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-29T19:13:13.591814] get_strength_exercises
+Query: muscle_groups=['chest'], equipment=None
+Returned 39 exercises
+
+============================================================
+[2026-01-29T19:13:26.915938] get_strength_exercises
+Query: muscle_groups=['chest'], equipment=None
+Returned 39 exercises
+
+============================================================
+[2026-01-29T19:13:55.093616] get_strength_exercises
 Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
 Returned 87 exercises
 
 ============================================================
-[2026-01-22T21:50:57.773712] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders'], equipment=None
-Returned 72 exercises
+[2026-01-29T19:14:57.687605] get_strength_exercises
+Query: muscle_groups=['chest', 'back'], equipment=None
+Returned 39 exercises
 
 ============================================================
-[2026-01-22T21:51:17.493348] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
+[2026-01-29T19:16:09.788893] get_strength_exercises
+Query: muscle_groups=['chest', 'back'], equipment=None
+Returned 39 exercises
 
 ============================================================
-[2026-01-22T21:52:15.375896] get_strength_exercises
-Query: muscle_groups=['back', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
-Returned 84 exercises
+[2026-01-29T19:18:40.825751] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
+Returned 87 exercises
 
 ============================================================
-[2026-01-22T21:52:36.126734] get_strength_exercises
-Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
-Returned 150 exercises
+[2026-01-29T19:19:05.547678] get_strength_exercises
+Query: muscle_groups=['shoulders'], equipment=None
+Returned 33 exercises
 
 ============================================================
-[2026-01-22T21:55:07.018345] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
+[2026-01-29T19:19:23.366532] get_strength_exercises
+Query: muscle_groups=['shoulders', 'chest', 'triceps'], equipment=None
+Returned 87 exercises
 
 ============================================================
-[2026-01-22T21:55:17.014992] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
+[2026-01-29T20:51:06.512392] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
 
 ============================================================
-[2026-01-22T21:55:38.679403] get_strength_exercises
-Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
-Returned 113 exercises
+[2026-01-29T20:51:21.068162] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'lower_back'], equipment=['bodyweight']
+Returned 20 exercises
 
 ============================================================
-[2026-01-23T15:32:32.911407] get_strength_exercises
+[2026-01-29T20:51:48.280158] get_strength_exercises
+Query: muscle_groups=['glutes', 'hamstrings'], equipment=['bodyweight']
+Returned 9 exercises
+
+============================================================
+[2026-01-29T20:54:45.508251] get_strength_exercises
+Query: muscle_groups=['chest', 'triceps'], equipment=None
+Returned 54 exercises
+
+============================================================
+[2026-01-29T20:56:05.124262] get_strength_exercises
+Query: muscle_groups=['lats', 'biceps'], equipment=None
+Returned 63 exercises
+
+============================================================
+[2026-01-29T20:57:35.692084] get_strength_exercises
+Query: muscle_groups=['back', 'biceps'], equipment=['dumbbell', 'cable', 'bodyweight', 'band']
+Returned 15 exercises
+
+============================================================
+[2026-01-29T20:59:31.394609] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-29T20:59:55.653236] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 9 exercises
+
+============================================================
+[2026-01-29T21:00:38.136400] get_strength_exercises
+Query: muscle_groups=['lats', 'traps', 'lower_back', 'rhomboids', 'biceps'], equipment=None
+Returned 114 exercises
+
+============================================================
+[2026-01-29T21:01:05.129303] get_strength_exercises
+Query: muscle_groups=['lats', 'traps', 'lower_back'], equipment=['barbell']
+Returned 20 exercises
+
+============================================================
+[2026-01-29T21:01:39.019857] get_strength_exercises
+Query: muscle_groups=['back', 'biceps'], equipment=['machine']
+Returned 3 exercises
+
+============================================================
+[2026-01-29T21:02:02.470889] get_strength_exercises
+Query: muscle_groups=['back'], equipment=['machine']
+Returned 0 exercises
+
+============================================================
+[2026-01-29T21:02:41.688792] get_strength_exercises
+Query: muscle_groups=['back', 'biceps'], equipment=['cable']
+Returned 6 exercises
+
+============================================================
+[2026-01-29T21:12:46.580062] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'quadriceps', 'glutes', 'abs'], equipment=['bodyweight']
+Returned 22 exercises
+
+============================================================
+[2026-01-29T21:13:01.293613] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-29T21:13:11.988540] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-29T21:13:59.710099] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 9 exercises
+
+============================================================
+[2026-01-29T21:14:38.021650] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 9 exercises
+
+============================================================
+[2026-01-29T21:17:06.864592] get_strength_exercises
+Query: muscle_groups=['back', 'biceps'], equipment=None
+Returned 26 exercises
+
+============================================================
+[2026-01-29T21:17:35.549765] get_strength_exercises
+Query: muscle_groups=['lats', 'biceps'], equipment=['bodyweight', 'barbell', 'cable', 'machine']
+Returned 33 exercises
+
+============================================================
+[2026-01-29T21:18:03.345724] get_strength_exercises
+Query: muscle_groups=['lats'], equipment=['machine', 'cable']
+Returned 13 exercises
+
+============================================================
+[2026-01-29T23:29:31.880620] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-29T23:30:52.310847] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=['dumbbell']
+Returned 20 exercises
+
+============================================================
+[2026-01-29T23:31:51.627825] get_strength_exercises
 Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves'], equipment=None
 Returned 93 exercises
 
 ============================================================
-[2026-01-23T16:07:39.664919] get_strength_exercises
-Query: muscle_groups=['quadriceps', 'glutes', 'hamstrings'], equipment=['barbell', 'machine']
-Returned 34 exercises
+[2026-01-29T23:32:14.631139] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'lower_back'], equipment=None
+Returned 89 exercises
 
 ============================================================
-[2026-01-23T16:13:41.566362] get_strength_exercises
-Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes'], equipment=None
-Returned 84 exercises
+[2026-01-30T21:14:59.558521] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'lower_back', 'chest', 'back', 'shoulders'], equipment=['bodyweight']
+Returned 27 exercises
 
 ============================================================
-[2026-01-23T16:16:32.132015] get_strength_exercises
-Query: muscle_groups=['quadriceps', 'glutes', 'hamstrings'], equipment=None
-Returned 84 exercises
+[2026-01-30T21:15:11.236788] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'glutes', 'calves'], equipment=['bodyweight']
+Returned 10 exercises
 
 ============================================================
-[2026-01-23T16:16:32.133656] get_strength_exercises
-Query: muscle_groups=['hamstrings', 'glutes', 'lower_back'], equipment=None
+[2026-01-30T21:15:46.869541] get_strength_exercises
+Query: muscle_groups=['calves'], equipment=['bodyweight']
+Returned 2 exercises
+
+============================================================
+[2026-01-30T21:16:14.001325] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
 Returned 87 exercises
+
+============================================================
+[2026-01-30T21:16:34.031573] get_strength_exercises
+Query: muscle_groups=['shoulders'], equipment=None
+Returned 33 exercises
+
+============================================================
+[2026-01-30T21:16:54.150868] get_strength_exercises
+Query: muscle_groups=['shoulders'], equipment=['barbell', 'dumbbell']
+Returned 16 exercises
+
+============================================================
+[2026-01-30T21:32:10.127735] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-30T21:32:57.506724] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['dumbbell', 'bodyweight']
+Returned 45 exercises
+
+============================================================
+[2026-01-30T21:34:39.114142] get_strength_exercises
+Query: muscle_groups=['glutes', 'hamstrings'], equipment=['dumbbell']
+Returned 13 exercises
+
+============================================================
+[2026-01-30T21:34:59.917366] get_strength_exercises
+Query: muscle_groups=['glutes', 'hamstrings'], equipment=['dumbbell', 'bodyweight']
+Returned 22 exercises
+
+============================================================
+[2026-01-30T21:35:37.188782] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'biceps', 'triceps'], equipment=None
+Returned 113 exercises
+
+============================================================
+[2026-01-30T21:37:14.988595] get_strength_exercises
+Query: muscle_groups=['back', 'biceps'], equipment=None
+Returned 26 exercises
+
+============================================================
+[2026-01-30T21:37:41.614040] get_strength_exercises
+Query: muscle_groups=['lats', 'back'], equipment=['machine']
+Returned 7 exercises
+
+============================================================
+[2026-01-30T22:18:54.699049] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'glutes', 'hamstrings', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
+
+============================================================
+[2026-01-30T22:19:16.275748] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-30T22:20:11.531691] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves'], equipment=None
+Returned 93 exercises
+
+============================================================
+[2026-01-31T14:22:48.930176] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=None
+Returned 114 exercises
+
+============================================================
+[2026-01-31T14:22:59.953740] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'shoulders', 'back'], equipment=['bodyweight']
+Returned 20 exercises
+
+============================================================
+[2026-01-31T14:23:18.977067] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'abs', 'lower_back'], equipment=['bodyweight']
+Returned 18 exercises
+
+============================================================
+[2026-01-31T14:24:02.692383] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-31T17:22:29.445489] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=None
+Returned 156 exercises
+
+============================================================
+[2026-01-31T17:22:42.627420] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
+Returned 87 exercises
+
+============================================================
+[2026-01-31T17:24:22.377227] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
+
+============================================================
+[2026-01-31T17:24:37.242804] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=['bodyweight']
+Returned 19 exercises
+
+============================================================
+[2026-01-31T17:24:59.984529] get_strength_exercises
+Query: muscle_groups=['glutes'], equipment=['bodyweight']
+Returned 8 exercises
+
+============================================================
+[2026-01-31T17:25:32.944584] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-31T17:25:41.763580] get_strength_exercises
+Query: muscle_groups=['chest', 'biceps', 'triceps'], equipment=None
+Returned 80 exercises
+
+============================================================
+[2026-01-31T17:27:38.887649] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=None
+Returned 87 exercises
+
+============================================================
+[2026-01-31T17:28:08.713000] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=['barbell', 'dumbbell']
+Returned 33 exercises
+
+============================================================
+[2026-01-31T17:28:27.201651] get_strength_exercises
+Query: muscle_groups=['chest'], equipment=['dumbbell']
+Returned 6 exercises
+
+============================================================
+[2026-01-31T17:59:37.645513] get_strength_exercises
+Query: muscle_groups=['quadriceps', 'hamstrings', 'glutes', 'calves', 'abs', 'back'], equipment=None
+Returned 114 exercises
+
+============================================================
+[2026-01-31T18:00:07.902649] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-31T18:00:27.720141] get_strength_exercises
+Query: muscle_groups=['glutes'], equipment=['bodyweight']
+Returned 8 exercises
+
+============================================================
+[2026-01-31T18:01:06.847506] get_strength_exercises
+Query: muscle_groups=['chest', 'shoulders', 'triceps'], equipment=['bodyweight']
+Returned 7 exercises
+
+============================================================
+[2026-01-31T18:11:57.106974] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-31T18:21:49.888843] get_strength_exercises
+Query: muscle_groups=['chest', 'triceps'], equipment=None
+Returned 54 exercises
+
+============================================================
+[2026-01-31T18:22:18.663645] get_strength_exercises
+Query: muscle_groups=['chest', 'triceps'], equipment=['bodyweight']
+Returned 6 exercises
