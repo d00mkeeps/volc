@@ -28,7 +28,9 @@ MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> blo
 4. STRATEGY: Determine the best next step.
 5. READY CHECK: Perform the <ready_check>.
 
-Even if the response is simple, the <thought> block is REQUIRED.
+CRITICAL: You must CLOSE the </thought> tag BEFORE writing your final response to the user.
+<thought>... reasoning ...</thought>
+[Final user response here]
 </reasoning_protocol>
 """
 

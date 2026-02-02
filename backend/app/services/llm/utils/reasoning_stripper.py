@@ -67,7 +67,35 @@ class StreamingReasoningStripper:
                             self.buffer = self.buffer[safe_yield_len:]
                         break
                 else:
-                    # Currently hidden, look for the closing tag
+                    # Currently hidden
+                    
+                    # First, check for "emergency exit" markers (like "Final Answer:")
+                    # This handles cases where the LLM forgets to close the tag or puts the answer inside it.
+                    found_marker = None
+                    marker_pos = -1
+                    
+                    # Default markers if not configured
+                    exit_markers = ["Final Answer:", "✅ Final Answer:", "Answer:", "Final Action:"]
+                    
+                    for marker in exit_markers:
+                        pos = self.buffer.find(marker)
+                        if pos != -1 and (marker_pos == -1 or pos < marker_pos):
+                            marker_pos = pos
+                            found_marker = marker
+                            
+                    if found_marker:
+                        # Found an exit marker! Escape hidden mode immediately.
+                        # Discard everything before the marker (the thought content)
+                        # Yield the marker and everything after it
+                        to_yield = self.buffer[marker_pos:]
+                        yield to_yield
+                        
+                        self.buffer = ""
+                        self.is_hidden = False
+                        self.active_tag = None
+                        continue
+
+                    # Normal closing tag check
                     close_tag = f"</{self.active_tag}>"
                     pos = self.buffer.find(close_tag)
 
