@@ -16,7 +16,7 @@ from app.tools.exercise_tool import (
     get_cardio_exercises,
     get_mobility_exercises,
 )
-from app.services.llm.utils.reasoning_stripper import StreamingReasoningStripper
+
 from app.core.utils.telemetry import FlightRecorderCallback
 from langchain_core.agents import AgentAction
 
@@ -52,6 +52,8 @@ class UnifiedCoachService(BaseLLMService):
             streaming=True,
             credentials=credentials,
             project_id=project_id,
+            thinking_budget=1024,  # Enable reasoning
+            include_thoughts=True,
         )
 
         # Shared services
@@ -67,9 +69,6 @@ class UnifiedCoachService(BaseLLMService):
             "get_cardio_exercises": get_cardio_exercises,
             "get_mobility_exercises": get_mobility_exercises,
         }
-
-        # Reasoning stripper
-        self.stripper = StreamingReasoningStripper()
 
         # State (initialized per connection)
         self.conversation_id: str = ""
@@ -232,17 +231,38 @@ class UnifiedCoachService(BaseLLMService):
             f.write("ASSISTANT REASONING & RESPONSE:\n")
 
             # Inner generator for stripping
-            async def response_gen():
-                async for chunk in self.stream(prompt):
-                    content = chunk.content
-                    if content:
-                        self.current_response += content
-                        f.write(content)
-                        f.flush()
-                        yield content
-
-            async for stripped_chunk in self.stripper.process(response_gen()):
-                yield stripped_chunk
+      
+            # Native Reasoning Streaming Loop
+            # Note: During streaming, chunks are typically plain strings.
+            # The list structure only appears in the FINAL aggregated message.
+            async for chunk in self.stream(prompt):
+                content = chunk.content
+                
+                # Skip empty chunks
+                if not content:
+                    continue
+                    
+                # During streaming, content is usually a string
+                # We'll handle it as text and log everything
+                if isinstance(content, str):
+                    self.current_response += content
+                    f.write(content)
+                    f.flush()
+                    yield content
+                elif isinstance(content, list):
+                    # Rare: if we get a list during streaming, parse it
+                    for block in content:
+                        if isinstance(block, dict):
+                            if block.get("type") == "thinking":
+                                thought = block.get("thinking", "")
+                                f.write(f"[THOUGHT]: {thought}\n")
+                                f.flush()
+                            elif block.get("type") == "text":
+                                text = block.get("text", "")
+                                self.current_response += text
+                                f.write(text)
+                                f.flush()
+                                yield text
 
             f.write(f"\n{'-'*40}\n")
 

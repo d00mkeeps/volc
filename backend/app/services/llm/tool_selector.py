@@ -45,10 +45,12 @@ class ToolSelector(BaseLLMService):
 
     def __init__(self, credentials=None, project_id=None):
         super().__init__(
-            model_name="gemini-2.5-flash-lite",
+            model_name="gemini-2.5-flash",  # Upgraded from lite to support thinking
             temperature=0,
             credentials=credentials,
             project_id=project_id,
+            thinking_budget=1024,  # Native reasoning budget
+            include_thoughts=True,
         )
 
         self.tools = [
@@ -58,7 +60,7 @@ class ToolSelector(BaseLLMService):
         ]
         self.model_with_tools = self.llm.bind_tools(self.tools)
 
-        self.system_prompt = """You are a SILENT TOOL ROUTER. You do NOT respond to the user. You ONLY decide if exercise data is needed.
+        self.system_prompt = """You are a SILENT TOOL ROUTER. Your goal is to determine if exercise data is needed.
 
 OUTPUT: Either call a tool, or output nothing. Do not write conversational text.
 
@@ -111,7 +113,7 @@ User: "how's my progress?" → no tool
 User: "APPROVE" → no tool
 </examples>
 
-MANDATORY INITIAL STEP: You must think step-by-step inside <thought> tags before deciding. Then call the appropriate tool or output nothing. Do NOT include any conversational text outside the tool call."""
+MANDATORY: Call the appropriate tool or output nothing. Do NOT include any conversational text outside the tool call."""
 
     async def select_tools(
         self, message: str, history: List[Dict]
@@ -170,14 +172,28 @@ MANDATORY INITIAL STEP: You must think step-by-step inside <thought> tags before
                 _log_to_file(f"\n## RESULT: FAILED (no response after retries)\n")
                 return [], ""
 
-            # Log model's reasoning if present
-            raw_reasoning = response.content if response.content else ""
-            if raw_reasoning:
-                logger.info(f"🧠 Reasoning: {raw_reasoning[:300]}...")
-
+            # Parse native reasoning from response content
+            raw_text_content = ""
+            
+            # Handle list content (native reasoning) vs string content
+            if isinstance(response.content, list):
+                for block in response.content:
+                    if isinstance(block, dict):
+                        if block.get("type") == "thinking":
+                            thought_text = block.get("thinking", "")
+                            raw_reasoning += thought_text
+                            logger.info(f"🧠 Native Thought: {thought_text[:100]}...")
+                        elif block.get("type") == "text":
+                            raw_text_content += block.get("text", "")
+            else:
+                # Fallback for models/versions that return string
+                raw_text_content = response.content
+                # If no thoughts returned but thinking was requested, it might be in usage_metadata
+                # or the model simply didn't return them in the expected block format.
+            
             # === FILE LOGGING: REASONING ===
             _log_to_file(
-                f"\n## LLM REASONING:\n{raw_reasoning if raw_reasoning else '(no reasoning provided)'}\n"
+                f"\n## LLM REASONING (Native):\n{raw_reasoning if raw_reasoning else '(no reasoning provided)'}\n"
             )
 
             tool_calls = []

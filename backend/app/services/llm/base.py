@@ -34,12 +34,21 @@ class BaseLLMService:
         streaming: bool = False,
         credentials: Any = None,
         project_id: Optional[str] = None,
+        **kwargs: Any,
     ):
         self.model_name = model_name
         self.temperature = temperature
         self.streaming = streaming
         self.credentials = credentials
         self.project_id = project_id
+
+        # Native Reasoning Parameters
+        # These are passed via extra arguments to handle different SDK versions safely
+        self.model_kwargs = {}
+        if kwargs.get("thinking_budget"):
+            self.model_kwargs["thinking_budget"] = kwargs["thinking_budget"]
+        if kwargs.get("include_thoughts"):
+            self.model_kwargs["include_thoughts"] = kwargs["include_thoughts"]
 
         self.llm = ChatGoogleGenerativeAI(
             model=model_name,
@@ -48,6 +57,7 @@ class BaseLLMService:
             credentials=credentials,
             project=project_id,
             vertexai=True,
+            **self.model_kwargs,
         )
 
     @retry(

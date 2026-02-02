@@ -1336,3 +1336,335 @@ NOTES (5): [
   }
 ]
 ========================================
+
+[2026-02-02T15:57:37.579760] FULL EXTRACTION: User 0524415f-5204-4d51-a9ce-681bb163df7d, Conv 567aec5f-7bb6-4b62-9df0-5607b72d5e8a
+REASONING: The user stated they have no injuries, which is a new and important fact for the 'injury' category. They also specified having 'some small weights', which adds to the 'equipment' category. The existing notes are still valid and were not contradicted. The conversation about hinge movements and RDLs is instructional and does not add enduring facts about the user's profile, preferences, or equipment, so no notes were created for that exchange.
+NOTES (4): [
+  {
+    "date": "2026-02-02T15:55:26.049213",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T15:55:26.049213",
+    "text": "Prefers to train at home.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T15:57:28.676381",
+    "text": "User has no current injuries.",
+    "category": "injury"
+  },
+  {
+    "date": "2026-02-02T15:57:28.676381",
+    "text": "Has some small weights available for training.",
+    "category": "equipment"
+  }
+]
+========================================
+
+[2026-02-02T17:06:32.139949] FULL EXTRACTION: User f327532a-df87-4f37-8ca0-7c568bf90387, Conv 1acfc6ea-8399-4cdb-9b36-183a651b69cd
+REASONING: The user expressed a new goal: to 'get jacked' and 'get big'. This should be added as a 'goal' note. The user also explicitly stated they have no injuries or restrictions, which is a new piece of information for the 'injury' category. The existing notes about being a beginner and preferring a commercial gym were not directly reconfirmed or contradicted, so they remain as is. No other changes are needed for existing memory.
+NOTES (4): [
+  {
+    "date": "2026-02-02T17:03:32.959844",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T17:03:32.959844",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:06:28.116257",
+    "text": "Goal is to build size and get 'jacked'.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:06:28.116257",
+    "text": "Has no current injuries or restrictions.",
+    "category": "injury"
+  }
+]
+========================================
+
+[2026-02-02T17:15:15.892017] FULL EXTRACTION: User c0cc0dab-5886-401f-8b34-805e11ef9739, Conv 0efa1023-4667-4f88-ae34-3105c8bae374
+REASONING: The user stated their goal to "get jacked", which can be captured as a general long-term fitness goal. They also specified training "Chest and bi's" today, which is a specific training preference for this session. They confirmed no injuries, which reconfirms the absence of injuries. The existing memory already covers their beginner status and preference for a commercial gym. The new goal of getting 'jacked' and the current muscle group preference are new facts.
+NOTES (5): [
+  {
+    "date": "2026-02-02T17:13:45.216316",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T17:13:45.216316",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:15:12.412169",
+    "text": "User's long-term fitness goal is to get 'jacked'.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:15:12.412169",
+    "text": "User has no current injuries.",
+    "category": "injury"
+  },
+  {
+    "date": "2026-02-02T17:15:12.412169",
+    "text": "Prefers to train chest and biceps today.",
+    "category": "preference"
+  }
+]
+========================================
+
+[2026-02-02T17:16:16.771914] FULL EXTRACTION: User 87d0a831-6cd2-4a11-b6d3-df5625c037b8, Conv 29b931aa-66c3-4363-beed-cb7441984063
+REASONING: The user explicitly stated a need to 'work on legs' and specifically 'work on Barbell Back Squat'. While the immediate workout focused on machines, these indicate general training preferences and areas for improvement. The user also explicitly requested calf raises when they were initially omitted from the proposed workout, indicating a strong preference for their inclusion in leg sessions. Existing notes about experience level and gym preference remain unchanged as there was no new information.
+NOTES (6): [
+  {
+    "date": "2026-02-02T17:15:14.224589",
+    "text": "User is advanced/elite, with 10+ years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T17:15:14.224589",
+    "text": "Prefers to train at a gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:16:05.291959",
+    "text": "User wants to focus on improving leg development.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:16:05.291959",
+    "text": "User wants to work on improving their Barbell Back Squat.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:16:05.291959",
+    "text": "User is currently open to and approves of machine-focused leg workouts including exercises like Leg Press, Leg Extensions, and Seated Leg Curls.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:16:05.291959",
+    "text": "User prefers to include calf raises in leg workouts.",
+    "category": "preference"
+  }
+]
+========================================
+
+[2026-02-02T17:29:03.132602] FULL EXTRACTION: User e76ae38d-2447-4fba-992a-434cdbb5398c, Conv 728aa3c3-676c-4695-9a93-3d774566758b
+REASONING: The user explicitly stated 'No injuries', which is a new and important piece of information about their physical status. This should be added as an 'injury' note.
+NOTES (3): [
+  {
+    "date": "2026-02-02T17:26:49.888208",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T17:26:49.888208",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:28:59.531123",
+    "text": "User has no current injuries or physical limitations.",
+    "category": "injury"
+  }
+]
+========================================
+
+[2026-02-02T17:31:38.634853] FULL EXTRACTION: User 3f8f89b7-e3e0-47f3-96d5-268f0dd9e4e0, Conv 7aaae0df-c447-4f33-be6d-89df2b956c02
+REASONING: The user explicitly stated 'No restrictions now'. This is new information regarding their physical state and should be added as an 'injury' note, indicating a lack of current injuries.
+NOTES (3): [
+  {
+    "date": "2026-02-02T17:30:07.401026",
+    "text": "User is intermediate, with 2-5 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T17:30:07.401026",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:31:31.976106",
+    "text": "User has no current injuries or physical restrictions.",
+    "category": "injury"
+  }
+]
+========================================
+
+[2026-02-02T17:34:50.877819] FULL EXTRACTION: User 3fb32a8d-65e9-4133-a10e-c006e3a592ae, Conv a7fc850c-958d-4125-ba77-ba318f080d68
+REASONING: The user's previous memory stated they are a beginner and prefer to train at home. The recent conversation confirmed the preference for home training and added new information: their fitness goal is to improve bone density and balance, they have no specific movements to avoid as per their doctor's advice, and they have a sturdy chair and kitchen cans as equipment. I will update the date for the reconfirmed preference, re-categorize the beginner status to 'general', and add new notes for the goal, lack of restrictions, and equipment.
+NOTES (6): [
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "general"
+  },
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "Prefers to train at home.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "Primary fitness goal is to improve bone density and balance.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "Doctor advised to 'just move more' and did not specify movements to avoid for bone density and balance.",
+    "category": "injury"
+  },
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "Available equipment includes a sturdy chair.",
+    "category": "equipment"
+  },
+  {
+    "date": "2026-02-02T17:34:34.920406",
+    "text": "Available equipment includes kitchen cans for light resistance.",
+    "category": "equipment"
+  }
+]
+========================================
+
+[2026-02-02T17:47:47.572606] FULL EXTRACTION: User 3212f3fe-92aa-4997-907e-48b699a79c6c, Conv d5503ec2-4839-4fc9-8739-ce3afd5cf79c
+REASONING: The user provided several new pieces of information. The primary goal is to improve overall health, specifically addressing bone density and balance, as recommended by their doctor. The user also specified a preference for full-body workouts and detailed the equipment available at home: light weights (like soup cans) and a chair. The preference to train at home was reconfirmed by the discussion of home equipment, so its date will be updated. The beginner status remains unchanged as it was not mentioned.
+NOTES (8): [
+  {
+    "date": "2026-02-02T17:44:45.345938",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "general"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "Prefers to train at home.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User's primary goal is to improve overall health, as recommended by their doctor.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User needs to address bone density.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User needs to address balance.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User prefers full body workouts.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User has light weights (e.g., soup cans) available for training.",
+    "category": "equipment"
+  },
+  {
+    "date": "2026-02-02T17:47:33.311226",
+    "text": "User has a chair available for training.",
+    "category": "equipment"
+  }
+]
+========================================
+
+[2026-02-02T18:02:31.252417] FULL EXTRACTION: User be93857e-b4d6-4517-ba8c-033df6b82654, Conv 371b526d-3d9a-4be2-97a3-20ef4d42ec96
+REASONING: The user's name 'Brian' was revealed in the assistant's last message. This is a new piece of general information to add to the memory.
+NOTES (3): [
+  {
+    "date": "2026-02-02T18:00:58.868129",
+    "text": "User is advanced/elite, with 10+ years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T18:00:58.868129",
+    "text": "Prefers to train at a gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T18:02:23.867075",
+    "text": "User's name is Brian.",
+    "category": "general"
+  }
+]
+========================================
+
+[2026-02-02T18:08:40.899379] FULL EXTRACTION: User 43e58fcf-abe2-4ced-b7ef-e11fb2c11063, Conv a0b47916-cd01-40ac-bd2f-11f94af40091
+REASONING: The user requested an upper body workout focusing on pulling movements, which the assistant interpreted as back and biceps. This indicates a preference for this type of upper body training. I will add a new preference note reflecting this.
+NOTES (3): [
+  {
+    "date": "2026-02-02T18:07:10.343748",
+    "text": "User is intermediate, with 2-5 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T18:07:10.343748",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T18:08:35.631730",
+    "text": "Prefers upper body pulling movements (back and biceps).",
+    "category": "preference"
+  }
+]
+========================================
+
+[2026-02-02T18:10:33.783667] FULL EXTRACTION: User 1b082513-fd75-4658-9d6e-2b882ad12de6, Conv 289fbe01-1ad7-4310-97be-df62715d712d
+REASONING: The user explicitly states 'No injuries'. This is new information that should be added to the memory under the 'injury' category.
+NOTES (3): [
+  {
+    "date": "2026-02-02T18:08:37.908803",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T18:08:37.908803",
+    "text": "Prefers to train at a commercial gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T18:10:30.858090",
+    "text": "Has no current injuries or restrictions.",
+    "category": "injury"
+  }
+]
+========================================
+
+[2026-02-02T20:44:44.009977] FULL EXTRACTION: User 74e52ea9-d1be-42fe-a285-88ff45e78515, Conv d2e77140-6bb4-4726-9c17-eb7e0051d753
+REASONING: The user's name 'Brian' was revealed in the conversation, which is a new general fact. The user also stated 'No restrictions' for heavy pressing, confirming their capacity for this type of movement. This reinforces their advanced/elite status and is a useful general note about their physical capabilities. I will add these two new notes. Existing notes remain relevant and unchanged.
+NOTES (4): [
+  {
+    "date": "2026-02-02T20:38:32.078123",
+    "text": "User is advanced/elite, with 10+ years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-02-02T20:38:32.078123",
+    "text": "Prefers to train at a gym.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-02-02T20:43:27.198117",
+    "text": "User's name is Brian.",
+    "category": "general"
+  },
+  {
+    "date": "2026-02-02T20:43:27.198117",
+    "text": "User has no restrictions for heavy pressing.",
+    "category": "general"
+  }
+]
+========================================
