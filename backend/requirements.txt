@@ -17,6 +17,7 @@ PyYAML==6.0.3
 quickchart-io
 scipy==1.17.0
 starlette
+supabase
 websockets==15.0.1
 streamlit
 plotly
