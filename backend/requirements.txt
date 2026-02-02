@@ -1,5 +1,6 @@
 APScheduler==3.11.0
 fastapi
+uvicorn
 fpdf==1.7.2
 httpx==0.28.1
 langchain==1.2.7

@@ -5259,3 +5259,164 @@ Missing calf raises.
 ## TOOL CALLS: None (no tools required)
 
 ────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:32:01.692435] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Plan tomorrow's workout.
+
+## CONVERSATION HISTORY (0 messages):
+
+## LLM REASONING:
+What are your goals for tomorrow's workout? Are you looking for strength training, cardio, or mobility work? Any specific muscle groups you want to focus on, or any equipment you'd like to use?
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:32:10.005392] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Oh, I don't know. Just... get healthier? Feel better?
+
+## CONVERSATION HISTORY (2 messages):
+  [1] USER: Plan tomorrow's workout.
+  [2] ASSISTANT: Of course! What muscles would you like to train tomorrow?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:32:26.355673] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Doctor said bone density, balance.
+
+## CONVERSATION HISTORY (4 messages):
+  [1] USER: Plan tomorrow's workout.
+  [2] ASSISTANT: Of course! What muscles would you like to train tomorrow?
+  [3] USER: Oh, I don't know. Just... get healthier? Feel better?
+  [4] ASSISTANT: I love that goal. A great way to start feeling better is with a simple full-body routine.
+
+Before I build that for you, are there any injuries, pains, or restrictions I should be aware of?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abs']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:32:40.264519] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+Nothing really. Just my living room.
+
+## CONVERSATION HISTORY (6 messages):
+  [1] USER: Plan tomorrow's workout.
+  [2] ASSISTANT: Of course! What muscles would you like to train tomorrow?
+  [3] USER: Oh, I don't know. Just... get healthier? Feel better?
+  [4] ASSISTANT: I love that goal. A great way to start feeling better is with a simple full-body routine.
+
+Before I build that for you, are there any injuries, pains, or restrictions I should be aware of?
+  [5] USER: Doctor said bone density, balance.
+  [6] ASSISTANT: Thank you for sharing that, it's very helpful for planning. To make sure the workout is safe and effective for you, what equipment do you have at home?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], 'equipment': ['bodyweight']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:41:05.201484] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+plan tomorrow's workout please
+
+## CONVERSATION HISTORY (0 messages):
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_mobility_exercises({})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:41:19.278322] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+just want to get healthier. what do you think?
+
+## CONVERSATION HISTORY (2 messages):
+  [1] USER: plan tomorrow's workout please
+  [2] ASSISTANT: Of course! What are we thinking for tomorrow? A full-body session, or would you like to focus on something specific like upper or lower body?
+
+## LLM REASONING:
+To help me plan the best workout for you, can you tell me if you're more interested in cardio (like running or cycling) or strength training (like lifting weights) to get healthier? Or perhaps a mix of both?
+
+## TOOL CALLS: None (no tools required)
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:41:27.231001] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+no equipment really. just my body. doctor mentioned bone density. and balance.
+
+## CONVERSATION HISTORY (4 messages):
+  [1] USER: plan tomorrow's workout please
+  [2] ASSISTANT: Of course! What are we thinking for tomorrow? A full-body session, or would you like to focus on something specific like upper or lower body?
+  [3] USER: just want to get healthier. what do you think?
+  [4] ASSISTANT: Since getting healthier is the goal, a full-body workout is a fantastic way to start. Before I build it, what equipment do you have at home, and are there any injuries I should be aware of?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'abs', 'calves'], 'equipment': ['bodyweight']})
+
+────────────────────────────────────────────────────────────────────────────────
+
+================================================================================
+[2026-01-31T22:41:43.115082] TOOL SELECTOR INVOCATION
+================================================================================
+
+## USER MESSAGE:
+no, not really. just move more.
+
+## CONVERSATION HISTORY (6 messages):
+  [1] USER: plan tomorrow's workout please
+  [2] ASSISTANT: Of course! What are we thinking for tomorrow? A full-body session, or would you like to focus on something specific like upper or lower body?
+  [3] USER: just want to get healthier. what do you think?
+  [4] ASSISTANT: Since getting healthier is the goal, a full-body workout is a fantastic way to start. Before I build it, what equipment do you have at home, and are there any injuries I should be aware of?
+  [5] USER: no equipment really. just my body. doctor mentioned bone density. and balance.
+  [6] ASSISTANT: Thank you for sharing that, it's a great goal to focus on. Did your doctor mention any specific movements to avoid or any restrictions at all?
+
+## LLM REASONING:
+(no reasoning provided)
+
+## TOOL CALLS (1):
+  → get_strength_exercises({'muscle_groups': ['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], 'equipment': ['bodyweight']})
+
+────────────────────────────────────────────────────────────────────────────────

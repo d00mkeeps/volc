@@ -1274,3 +1274,65 @@ NOTES (3): [
   }
 ]
 ========================================
+
+[2026-01-31T22:33:14.373579] FULL EXTRACTION: User 450b26d4-c4d9-4cb9-8433-0352515085ab, Conv 35e12572-9514-477f-bc26-398107b6cace
+REASONING: The user expressed a general goal of 'getting healthier' and 'feeling better'. They also revealed specific health concerns: 'bone density, balance' as advised by their doctor. Finally, they clarified their equipment situation, stating 'Nothing really. Just my living room.', which reconfirms and elaborates on their preference to train at home. I will add notes for the goal, injury, and specific equipment. The existing preference note 'Prefers to train at home' is reconfirmed by the 'living room only' statement, so its date will be updated.
+NOTES (5): [
+  {
+    "date": "2026-01-31T22:31:58.912155",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "profile"
+  },
+  {
+    "date": "2026-01-31T22:33:06.314263",
+    "text": "Prefers to train at home.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-01-31T22:33:06.314263",
+    "text": "User's primary goals are to get healthier and feel better.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-01-31T22:33:06.314263",
+    "text": "User has doctor-advised concerns about bone density and balance.",
+    "category": "injury"
+  },
+  {
+    "date": "2026-01-31T22:33:06.314263",
+    "text": "User has no specific training equipment, using only their living room.",
+    "category": "equipment"
+  }
+]
+========================================
+
+[2026-01-31T22:42:19.104361] FULL EXTRACTION: User ed35ab63-a6f0-420c-be4d-edfc9ad0a2f8, Conv 08e878c6-790f-408d-b9cf-9f108cfb553c
+REASONING: The user confirmed they prefer to train at home and specified they only have bodyweight equipment. They also stated their goal is to get healthier, with a specific focus on bone density and balance as advised by their doctor, and that the doctor gave no specific restrictions other than 'move more'. I will update the 'prefers to train at home' note's date, add a new note about equipment, and combine the health, bone density, and balance goals into a single 'goal' note. I will also add a 'general' note about the doctor's advice on restrictions. The 'beginner' note remains as it was not reconfirmed but is still relevant, and I will recategorize it from 'profile' to 'general'.
+NOTES (5): [
+  {
+    "date": "2026-01-31T22:41:02.843358",
+    "text": "User is a beginner, with less than 2 years training experience.",
+    "category": "general"
+  },
+  {
+    "date": "2026-01-31T22:42:07.713405",
+    "text": "Prefers to train at home.",
+    "category": "preference"
+  },
+  {
+    "date": "2026-01-31T22:42:07.713405",
+    "text": "Available equipment is bodyweight only.",
+    "category": "equipment"
+  },
+  {
+    "date": "2026-01-31T22:42:07.713405",
+    "text": "Primary goal is to improve overall health, specifically bone density and balance, as advised by doctor.",
+    "category": "goal"
+  },
+  {
+    "date": "2026-01-31T22:42:07.713405",
+    "text": "Doctor advised moving more, with no specific restrictions or movements to avoid.",
+    "category": "general"
+  }
+]
+========================================

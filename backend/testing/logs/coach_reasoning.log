@@ -10052,3 +10052,297 @@ USER: Missing calf raises.
 ASSISTANT REASONING & RESPONSE:
 My apologies, you're absolutely right! Be sure to add 3 sets of 15 reps for calf raises right after the leg curls to finish things off.
 ----------------------------------------
+
+[2026-01-31T22:32:04.267581] CONVERSATION: 35e12572-9514-477f-bc26-398107b6cace
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: Plan tomorrow's workout.
+ASSISTANT REASONING & RESPONSE:
+Of course! What muscles would you like to train tomorrow?
+----------------------------------------
+
+[2026-01-31T22:32:17.733804] CONVERSATION: 35e12572-9514-477f-bc26-398107b6cace
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: Oh, I don't know. Just... get healthier? Feel better?
+ASSISTANT REASONING & RESPONSE:
+I love that goal. A great way to start feeling better is with a simple full-body routine.
+
+Before I build that for you, are there any injuries, pains, or restrictions I should be aware of?
+----------------------------------------
+
+[2026-01-31T22:32:32.218997] CONVERSATION: 35e12572-9514-477f-bc26-398107b6cace
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: Doctor said bone density, balance.
+ASSISTANT REASONING & RESPONSE:
+Thank you for sharing that, it's very helpful for planning. To make sure the workout is safe and effective for you, what equipment do you have at home?
+----------------------------------------
+
+[2026-01-31T22:32:43.184123] CONVERSATION: 35e12572-9514-477f-bc26-398107b6cace
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: Nothing really. Just my living room.
+ASSISTANT REASONING & RESPONSE:
+Perfect, your living room is all you need. Here is a simple routine focusing on weight-bearing movements to help with bone density and balance.
+
+Margaret, here is your full-body workout.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Full-Body Foundation",
+    "notes": "Focus on slow, controlled movements. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "1280e6dc-e27a-48b8-986e-58a5508f26cf",
+        "name": "Bodyweight Reverse Lunge",
+        "notes": "Step back and lower your hips until both knees are bent at a 90-degree angle. Keep your chest up. Hold onto a wall or chair for balance if needed.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "aa46222d-070a-4b10-9e9e-5c1b6d8a7039",
+        "name": "Bodyweight Incline Pushup",
+        "notes": "Place your hands on a sturdy chair, sofa arm, or table. The higher the surface, the easier the exercise will be.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 8,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 8,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "4e642d0e-a4fe-45d3-961a-46fae1619a6e",
+        "name": "Bodyweight Glute Bridge",
+        "notes": "Lie on your back with your knees bent and feet flat on the floor. Squeeze your glutes to lift your hips toward the ceiling.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 0
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+----------------------------------------
+
+[2026-01-31T22:41:10.483410] CONVERSATION: 08e878c6-790f-408d-b9cf-9f108cfb553c
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: plan tomorrow's workout please
+ASSISTANT REASONING & RESPONSE:
+Of course! What are we thinking for tomorrow? A full-body session, or would you like to focus on something specific like upper or lower body?
+----------------------------------------
+
+[2026-01-31T22:41:20.904464] CONVERSATION: 08e878c6-790f-408d-b9cf-9f108cfb553c
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: just want to get healthier. what do you think?
+ASSISTANT REASONING & RESPONSE:
+Since getting healthier is the goal, a full-body workout is a fantastic way to start. Before I build it, what equipment do you have at home, and are there any injuries I should be aware of?
+----------------------------------------
+
+[2026-01-31T22:41:31.687412] CONVERSATION: 08e878c6-790f-408d-b9cf-9f108cfb553c
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: no equipment really. just my body. doctor mentioned bone density. and balance.
+ASSISTANT REASONING & RESPONSE:
+Thank you for sharing that, it's a great goal to focus on. Did your doctor mention any specific movements to avoid or any restrictions at all?
+----------------------------------------
+
+[2026-01-31T22:41:47.835214] CONVERSATION: 08e878c6-790f-408d-b9cf-9f108cfb553c
+SYSTEM PROMPT PREVIEW: You are Volc, an expert fitness coach. MANDATORY: You MUST think step-by-step inside <thought> tags before every response. Speak warmly and directly. Keep final user-facing responses to 1-2 sentences.
+
+
+<reasoning_protocol>
+MANDATORY INTERNAL STEP: Before every message, you MUST generate a <thought> block.
+1. ANALYZE: What is the user's intent?
+2. CONTEXT: Review memory, history, and available exercises.
+3. SAFETY: Identify any injury flags.
+4. STRATEGY: Determine the best next step.
+5. READY CH...
+USER: no, not really. just move more.
+ASSISTANT REASONING & RESPONSE:
+Got it, Margaret. Let's build a session focused on those goals. Here's a foundational workout using just your bodyweight to improve balance and bone density.
+
+```json
+{
+  "type": "workout_template",
+  "data": {
+    "name": "Full-Body Health Workout",
+    "notes": "Start with a light warm-up like a few minutes of walking in place. Stop if you feel sharp pain.",
+    "workout_exercises": [
+      {
+        "definition_id": "aa46222d-070a-4b10-9e9e-5c1b6d8a7039",
+        "name": "Bodyweight Incline Pushup",
+        "notes": "Place your hands on a sturdy elevated surface like a countertop. The higher the surface, the easier the exercise.",
+        "order_index": 0,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "9c35d7f8-5461-42b4-877b-2ec87cbb7454",
+        "name": "Bodyweight Forward Lunge",
+        "notes": "Focus on staying balanced and controlled. Step forward and lower your hips until both knees are bent at roughly 90 degrees.",
+        "order_index": 1,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 10,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 10,
+            "weight": 0
+          }
+        ]
+      },
+      {
+        "definition_id": "4e642d0e-a4fe-45d3-961a-46fae1619a6e",
+        "name": "Bodyweight Glute Bridge",
+        "notes": "Lie on your back with knees bent and feet flat on the floor. Squeeze your glutes to lift your hips toward the ceiling.",
+        "order_index": 2,
+        "workout_exercise_sets": [
+          {
+            "set_number": 1,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 2,
+            "reps": 12,
+            "weight": 0
+          },
+          {
+            "set_number": 3,
+            "reps": 12,
+            "weight": 0
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+----------------------------------------

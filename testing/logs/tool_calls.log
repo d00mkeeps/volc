@@ -523,3 +523,23 @@ Returned 54 exercises
 [2026-01-31T18:22:18.663645] get_strength_exercises
 Query: muscle_groups=['chest', 'triceps'], equipment=['bodyweight']
 Returned 6 exercises
+
+============================================================
+[2026-01-31T22:32:32.216248] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'abs'], equipment=None
+Returned 186 exercises
+
+============================================================
+[2026-01-31T22:32:43.180980] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
+
+============================================================
+[2026-01-31T22:41:31.685253] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes', 'abs', 'calves'], equipment=['bodyweight']
+Returned 26 exercises
+
+============================================================
+[2026-01-31T22:41:47.827281] get_strength_exercises
+Query: muscle_groups=['chest', 'back', 'shoulders', 'quadriceps', 'hamstrings', 'glutes'], equipment=['bodyweight']
+Returned 16 exercises
