@@ -50,6 +50,11 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const greeting = useChatStore((state) => state.greeting);
   const inputAreaRef = useRef<InputAreaRef>(null);
 
+  // Thinking state
+  const isThinking = useChatStore((state) => state.isThinking);
+  const thinkingStartTime = useChatStore((state) => state.thinkingStartTime);
+  const currentThought = useChatStore((state) => state.currentThought);
+
   const failedMessageContent = useChatStore(
     (state) => state.failedMessageContent,
   );
@@ -218,10 +223,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     if (!isExpanded) {
       setIsExpanded(true);
       fadeProgress.value = withTiming(1, { duration: 300 });
-      connect();
-      console.log("📂 [ChatOverlay.handleExpand] Called connect()");
+      console.log("📂 [ChatOverlay.handleExpand] Triggered expand");
     }
-  }, [isExpanded, fadeProgress, connect]);
+  }, [isExpanded, fadeProgress]);
 
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
@@ -349,6 +353,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                     statusMessage={statusMessage}
                     onDismiss={handleDismiss}
                     onTemplateApprove={handleTemplateApprove}
+                    isThinking={isThinking}
+                    thinkingStartTime={thinkingStartTime}
+                    currentThought={currentThought}
                   />
 
                   {/* Blurred Bottom Transition */}

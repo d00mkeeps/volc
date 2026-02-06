@@ -60,6 +60,11 @@ class BaseLLMService:
             **self.model_kwargs,
         )
 
+    def bind_tools(self, tools: List[Any]):
+        """Bind tools to the underlying LLM."""
+        self.llm = self.llm.bind_tools(tools)
+        return self
+
     @retry(
         retry=retry_if_exception(is_rate_limit_error),
         wait=wait_exponential(multiplier=1, min=2, max=10),

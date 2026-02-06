@@ -29,8 +29,8 @@ yarn-error.*
 backend/app.log
 backend/app.log.*
 # Log files
-backend/*.log
-backend/*.log.*
+**/*.log
+**/*.log.*
 
 *.ipa
 /.vscode

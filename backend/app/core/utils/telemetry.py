@@ -27,8 +27,13 @@ class FlightRecorderCallback(BaseCallbackHandler):
             "input": None,
             "output": None,
             "final_answer": None,
-            "internal_context": None,  # NEW: Snapshot of what the agent sees
+            "internal_context": None,  # Snapshot of what the agent sees
+            "ttft_ms": None,  # Time to first token in milliseconds
+            "total_time_ms": None,  # Total response time in milliseconds
         }
+        
+        # Timing state
+        self.stream_start_time: Optional[float] = None
 
     def snapshot_context(self, context_dict: Dict[str, str]) -> None:
         """
@@ -51,6 +56,28 @@ class FlightRecorderCallback(BaseCallbackHandler):
         }
         logger.debug(f"Telemetry: Captured context snapshot")
 
+    def start_stream_timer(self) -> None:
+        """Start timing for TTFT measurement."""
+        import time
+        self.stream_start_time = time.time()
+        logger.debug("Telemetry: Started stream timer")
+
+    def record_first_token(self) -> None:
+        """Record time to first token."""
+        if self.stream_start_time is not None:
+            import time
+            ttft = (time.time() - self.stream_start_time) * 1000  # Convert to ms
+            self.current_turn["ttft_ms"] = round(ttft, 2)
+            logger.debug(f"Telemetry: TTFT = {self.current_turn['ttft_ms']}ms")
+
+    def record_stream_complete(self) -> None:
+        """Record total stream completion time."""
+        if self.stream_start_time is not None:
+            import time
+            total_time = (time.time() - self.stream_start_time) * 1000  # Convert to ms
+            self.current_turn["total_time_ms"] = round(total_time, 2)
+            logger.debug(f"Telemetry: Total time = {self.current_turn['total_time_ms']}ms")
+
     def on_agent_action(self, action: AgentAction, **kwargs: Any) -> Any:
         """Capture the reasoning/thought and the tool name/input."""
         self.current_turn["thought"] = action.log
@@ -63,8 +90,10 @@ class FlightRecorderCallback(BaseCallbackHandler):
         self.current_turn["output"] = str(output)
         # Commit the turn to the trace store
         TRACE_STORE[self.session_id].append(self.current_turn.copy())
-        # Reset for next tool call or final answer (preserve context snapshot)
+        # Reset for next tool call or final answer (preserve context snapshot and timing)
         context_snapshot = self.current_turn.get("internal_context")
+        ttft_ms = self.current_turn.get("ttft_ms")
+        total_time_ms = self.current_turn.get("total_time_ms")
         self.current_turn = {
             "thought": None,
             "tool": None,
@@ -72,16 +101,21 @@ class FlightRecorderCallback(BaseCallbackHandler):
             "output": None,
             "final_answer": None,
             "internal_context": context_snapshot,  # Preserve across tool calls
+            "ttft_ms": ttft_ms,  # Preserve timing data
+            "total_time_ms": total_time_ms,  # Preserve timing data
         }
         logger.debug("Telemetry: Captured tool end")
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> Any:
-        """Capture the final output."""
+        """Capture the final output and commit to trace store."""
         if "output" in outputs:
             self.current_turn["final_answer"] = outputs["output"]
-            # If we have a final answer but no tool was called in this turn, commit it
-            if not self.current_turn["tool"] and self.current_turn["final_answer"]:
-                TRACE_STORE[self.session_id].append(self.current_turn.copy())
+        
+        # Always commit the turn if we have timing data or a final answer
+        if self.current_turn.get("ttft_ms") is not None or self.current_turn.get("final_answer"):
+            TRACE_STORE[self.session_id].append(self.current_turn.copy())
+            logger.debug(f"Telemetry: Committed turn with TTFT={self.current_turn.get('ttft_ms')}ms")
+        
         logger.debug("Telemetry: Captured chain end")
 
 

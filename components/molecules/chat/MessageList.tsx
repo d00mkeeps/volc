@@ -4,6 +4,7 @@ import { YStack } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import { MessageItem } from "../../atoms/chat/MessageItem";
 import { LoadingMessage } from "../../atoms/chat/LoadingMessage";
+import { ThinkingIndicator } from "../../atoms/chat/ThinkingIndicator";
 import { Message } from "@/types";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
@@ -18,6 +19,9 @@ interface MessageListProps {
   statusMessage?: string | null;
   onProfileConfirm?: () => void;
   onDismiss?: () => void;
+  isThinking?: boolean;
+  thinkingStartTime?: number | null;
+  currentThought?: string;
 }
 
 export const MessageList = ({
@@ -28,6 +32,9 @@ export const MessageList = ({
   statusMessage,
   onTemplateApprove,
   onDismiss,
+  isThinking = false,
+  thinkingStartTime = null,
+  currentThought = "",
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
@@ -71,34 +78,15 @@ export const MessageList = ({
         timestamp: new Date(),
       };
       result = [...result, tempStreamingMessage];
-    } else if (showLoadingIndicator) {
-      const tempLoadingMessage: Message = {
-        id: "loading",
-        content: "",
-        sender: "assistant",
-        conversation_id: safeMessages[0]?.conversation_id || "",
-        conversation_sequence: safeMessages.length + 1,
-        timestamp: new Date(),
-      };
-      result = [...result, tempLoadingMessage];
     }
 
     // Reverse so newest message is at index 0 for inverted list
     return result.reverse();
-  }, [
-    messages,
-    hasStreamingMessage,
-    showLoadingIndicator,
-    activeConversationId,
-  ]);
+  }, [messages, hasStreamingMessage, activeConversationId]);
 
   const renderMessage = useCallback(
     ({ item }: { item: Message }) => {
       if (!item) return null;
-
-      if (item.id === "loading") {
-        return <LoadingMessage statusMessage={statusMessage} />;
-      }
 
       const isStreamingMessage = item.id === "streaming";
 
@@ -112,7 +100,7 @@ export const MessageList = ({
         />
       );
     },
-    [statusMessage, onTemplateApprove, onProfileConfirm, onDismiss],
+    [onTemplateApprove, onProfileConfirm, onDismiss],
   );
 
   const keyExtractor = useCallback((item: Message) => item.id, []);
@@ -146,6 +134,15 @@ export const MessageList = ({
           renderItem={renderMessage}
           keyExtractor={keyExtractor}
           inverted={true}
+          ListHeaderComponent={
+            <ThinkingIndicator
+              isThinking={isThinking}
+              showLoadingIndicator={showLoadingIndicator}
+              thinkingStartTime={thinkingStartTime}
+              currentThought={currentThought}
+              statusMessage={statusMessage}
+            />
+          }
           // Virtualization props for 100+ message performance
           initialNumToRender={15}
           maxToRenderPerBatch={10}

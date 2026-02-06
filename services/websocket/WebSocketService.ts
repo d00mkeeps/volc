@@ -8,6 +8,7 @@ import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 export type OnboardingCompleteCallback = (data: any) => void;
 export type MessageCallback = (content: string) => void;
+export type ThinkingCallback = (thought: string) => void;
 export type CompletionCallback = () => void;
 export type TerminationCallback = (reason: string) => void;
 export type CancelledCallback = (data: { reason: string }) => void;
@@ -125,7 +126,7 @@ export class WebSocketService {
     // Different endpoint - disconnect and reconnect
     if (this.currentConnectionKey !== connectionKey) {
       console.log(
-        `[WSService] Switching endpoint: ${this.currentConnectionKey} → ${connectionKey}`
+        `[WSService] Switching endpoint: ${this.currentConnectionKey} → ${connectionKey}`,
       );
       this.previousConnectionKey = this.currentConnectionKey;
       this.disconnectReason = "endpoint_switch";
@@ -156,7 +157,7 @@ export class WebSocketService {
     console.log(
       `[WSService] Sent ${
         JSON.stringify(payload).length
-      } characters to endpoint: ${this.currentConnectionKey}`
+      } characters to endpoint: ${this.currentConnectionKey}`,
     );
   }
 
@@ -165,7 +166,7 @@ export class WebSocketService {
    */
   disconnect(): void {
     console.log(
-      `[WSService] Disconnecting from endpoint: ${this.currentConnectionKey} (reason: ${this.disconnectReason})`
+      `[WSService] Disconnecting from endpoint: ${this.currentConnectionKey} (reason: ${this.disconnectReason})`,
     );
 
     this.cleanup();
@@ -309,7 +310,7 @@ export class WebSocketService {
     this.setConnectionState("reconnecting");
 
     console.log(
-      `[WSService] Scheduling reconnect in ${delay}ms (attempt ${this.retryAttempts}/${this.maxRetries})`
+      `[WSService] Scheduling reconnect in ${delay}ms (attempt ${this.retryAttempts}/${this.maxRetries})`,
     );
 
     Toast.show({
@@ -335,12 +336,12 @@ export class WebSocketService {
           } else if (currentConnectionKey.startsWith("workout-analysis-")) {
             const conversationId = currentConnectionKey.replace(
               "workout-analysis-",
-              ""
+              "",
             );
             config = { type: "workout-analysis", conversationId };
           } else {
             throw new Error(
-              `Unable to parse connection key: ${currentConnectionKey}`
+              `Unable to parse connection key: ${currentConnectionKey}`,
             );
           }
 
@@ -368,9 +369,12 @@ export class WebSocketService {
       clearTimeout(this.inactivityTimer);
     }
 
-    this.inactivityTimer = setTimeout(() => {
-      this.handleInactivity();
-    }, 5 * 60 * 1000); // 5 minutes
+    this.inactivityTimer = setTimeout(
+      () => {
+        this.handleInactivity();
+      },
+      5 * 60 * 1000,
+    ); // 5 minutes
   }
 
   /**
@@ -400,6 +404,12 @@ export class WebSocketService {
       const message = JSON.parse(event.data);
 
       switch (message.type) {
+        case "thinking":
+          if (message.data) {
+            this.events.emit("thinking", message.data);
+          }
+          break;
+
         case "content":
           if (message.data) {
             this.events.emit("message", message.data);
@@ -426,7 +436,7 @@ export class WebSocketService {
         case "done": // Keep for backward compatibility
           this.events.emit("complete");
           console.log(
-            "[WSService] deprecated [done] message detected.. fix asap"
+            "[WSService] deprecated [done] message detected.. fix asap",
           );
           break;
 
@@ -508,7 +518,7 @@ export class WebSocketService {
             JSON.stringify({
               type: "heartbeat",
               timestamp: Date.now(),
-            })
+            }),
           );
         } catch (error) {
           console.error("[WSService] Failed to send heartbeat:", error);
@@ -572,11 +582,11 @@ export class WebSocketService {
           wasEndpointSwitch
             ? "Intentional"
             : wasInactivityDisconnect
-            ? "Inactivity"
-            : wasUserInitiated
-            ? "User-initiated" // ✅ ADD to log message
-            : "Normal"
-        } disconnect - not reconnecting`
+              ? "Inactivity"
+              : wasUserInitiated
+                ? "User-initiated" // ✅ ADD to log message
+                : "Normal"
+        } disconnect - not reconnecting`,
       );
 
       // Clear connection key on intentional disconnects
@@ -681,7 +691,7 @@ export class WebSocketService {
   }
 
   onWorkoutTemplateApproved(
-    callback: WorkoutTemplateApprovedCallback
+    callback: WorkoutTemplateApprovedCallback,
   ): () => void {
     this.events.on("workoutTemplateApproved", callback);
     return () => this.events.off("workoutTemplateApproved", callback);
@@ -693,6 +703,14 @@ export class WebSocketService {
   onStatus(callback: StatusCallback): () => void {
     this.events.on("status", callback);
     return () => this.events.off("status", callback);
+  }
+
+  /**
+   * Register thinking handler
+   */
+  onThinking(callback: ThinkingCallback): () => void {
+    this.events.on("thinking", callback);
+    return () => this.events.off("thinking", callback);
   }
 
   onChartData(callback: ChartDataCallback): () => void {

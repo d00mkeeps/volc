@@ -3,12 +3,11 @@ import json
 import re
 import asyncio
 from typing import Dict, Any, List, AsyncGenerator, Optional
-from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 from datetime import datetime, date
 from app.services.llm.base import BaseLLMService
 
 from app.services.context.shared_context_loader import SharedContextLoader
-from app.services.llm.tool_selector import ToolSelector
 from app.services.db.message_service import MessageService
 from app.core.prompts.unified_coach import get_unified_coach_prompt
 from app.tools.exercise_tool import (
@@ -47,20 +46,17 @@ class UnifiedCoachService(BaseLLMService):
 
     def __init__(self, credentials=None, project_id=None):
         super().__init__(
-            model_name="gemini-2.5-pro",
+            model_name="gemini-2.5-flash",
             temperature=1.0,
             streaming=True,
             credentials=credentials,
             project_id=project_id,
-            thinking_budget=1024,  # Enable reasoning
+            thinking_budget=4096,
             include_thoughts=True,
         )
 
         # Shared services
         self.context_loader = SharedContextLoader()
-        self.tool_selector = ToolSelector(
-            credentials=credentials, project_id=project_id
-        )
         self.message_service = MessageService()
 
         # Tool registry
@@ -69,6 +65,9 @@ class UnifiedCoachService(BaseLLMService):
             "get_cardio_exercises": get_cardio_exercises,
             "get_mobility_exercises": get_mobility_exercises,
         }
+
+        # Bind tools directly to the coach model
+        self.bind_tools(list(self.tool_executors.values()))
 
         # State (initialized per connection)
         self.conversation_id: str = ""
@@ -168,96 +167,163 @@ class UnifiedCoachService(BaseLLMService):
         # Add user message to history
         self.message_history.append({"role": "user", "content": message})
 
-        # Select and execute tools
-        tool_calls, tool_reasoning = await self.tool_selector.select_tools(
-            message, self.message_history[:-1]
-        )
-        tool_results = {}
-
-        if tool_calls:
-            logger.info(f"🔧 Executing {len(tool_calls)} tools")
-            tool_tasks = [
-                self._execute_tool(tc["name"], tc["args"]) for tc in tool_calls
-            ]
-            results = await asyncio.gather(*tool_tasks, return_exceptions=True)
-
-            for tc, result in zip(tool_calls, results):
-                if not isinstance(result, Exception):
-                    tool_results[tc["name"]] = result
-
-                    # Log to telemetry
-                    action = AgentAction(
-                        tool=tc["name"], tool_input=tc["args"], log=tool_reasoning
-                    )
-                    telemetry.on_agent_action(action)
-                    telemetry.on_tool_end(str(result))
-        else:
-            logger.info("✨ No tools needed")
-
-        # Enrich exercises with last weights
-        if "get_exercises_by_muscle_groups" in tool_results:
-            exercises = tool_results["get_exercises_by_muscle_groups"]
-            if exercises:
-                exercise_ids = [ex["id"] for ex in exercises]
-                last_weights = self._get_last_weights_for_exercises(exercise_ids)
-
-                # Add weight data to each exercise
-                for ex in exercises:
-                    if ex["id"] in last_weights:
-                        ex["last_tracked"] = last_weights[ex["id"]]
-
-                logger.info(
-                    f"💪 Enriched {len(last_weights)} exercises with weight history"
-                )
-
-        # Build prompt
+        # Initial prompt build (no tool results yet)
         prompt = self._build_prompt(
             message=message,
             message_history=self.message_history[:-1],
             formatted_context=self.formatted_context,
-            tool_results=tool_results,
+            tool_results={},
         )
 
         # Stream response
         logger.info("📤 Streaming LLM response...")
+        telemetry.start_stream_timer()
+        first_token_received = False
+        tool_calls = []
 
-        # Log to reasoning file (unfiltered)
+        # Log to reasoning file
         with open(COACH_REASONING_LOG, "a") as f:
-            f.write(
-                f"\n[{datetime.now().isoformat()}] CONVERSATION: {self.conversation_id}\n"
-            )
+            f.write(f"\n[{datetime.now().isoformat()}] CONVERSATION: {self.conversation_id}\n")
             f.write(f"SYSTEM PROMPT PREVIEW: {prompt[0].content[:500]}...\n")
             f.write(f"USER: {message}\n")
             f.write("ASSISTANT REASONING & RESPONSE:\n")
 
-            # Inner generator for stripping
-      
-            # Native Reasoning Streaming Loop
-            # Note: During streaming, chunks are typically plain strings.
-            # The list structure only appears in the FINAL aggregated message.
+            # Pass 1: Streaming loop (Buffering text if tools are called)
+            pass1_text_buffer = ""
             async for chunk in self.stream(prompt):
+                if not first_token_received:
+                    telemetry.record_first_token()
+                    first_token_received = True
+
+                # Collect tool calls if model decides to use tools
+                if hasattr(chunk, "tool_calls") and chunk.tool_calls:
+                    for tc in chunk.tool_calls:
+                        tool_calls.append(tc)
+
                 content = chunk.content
-                
-                # Skip empty chunks
                 if not content:
                     continue
-                    
-                # During streaming, content is usually a string
-                # We'll handle it as text and log everything
+
                 if isinstance(content, str):
-                    self.current_response += content
-                    f.write(content)
-                    f.flush()
-                    yield content
+                    pass1_text_buffer += content
+                    # If we haven't seen tool calls yet, we can't be sure if we should stream
+                    # But if we stream AND then see tools, we get repetition.
+                    # CRITICAL: We only yield text in Pass 1 IF the model hasn't called tools yet.
+                    if not tool_calls:
+                        self.current_response += content
+                        f.write(content)
+                        f.flush()
+                        yield content
                 elif isinstance(content, list):
-                    # Rare: if we get a list during streaming, parse it
                     for block in content:
                         if isinstance(block, dict):
                             if block.get("type") == "thinking":
                                 thought = block.get("thinking", "")
                                 f.write(f"[THOUGHT]: {thought}\n")
                                 f.flush()
+                                # Thinking is always safe to stream to the client as it's separate from final text
+                                yield json.dumps({"_type": "thinking", "content": thought})
                             elif block.get("type") == "text":
+                                text = block.get("text", "")
+                                pass1_text_buffer += text
+                                if not tool_calls:
+                                    self.current_response += text
+                                    f.write(text)
+                                    f.flush()
+                                    yield text
+
+            # Handle Tool Execution & Re-invocation
+            if tool_calls:
+                logger.info(f"🔧 Model called {len(tool_calls)} tool(s). Aggregating results.")
+                
+                # If Pass 1 already yielded text, we reset current_response so Pass 2 is the source of truth.
+                self.current_response = "" 
+                
+                # Dictionary of tool_name -> list of results to handle multiple calls
+                tool_results = {}
+                
+                # Build re-invocation history
+                model_msg = AIMessage(content=pass1_text_buffer, tool_calls=tool_calls)
+                re_invocation_messages = prompt + [model_msg]
+
+                # Execute tools in parallel
+                tool_tasks = []
+                for tc in tool_calls:
+                    tool_name = tc["name"]
+                    tool_args = tc["args"]
+                    if tool_name in self.tool_executors:
+                        logger.info(f"   └─ Executing {tool_name} with args: {tool_args}")
+                        tool_tasks.append(self.tool_executors[tool_name].ainvoke(tool_args))
+                    else:
+                        logger.warning(f"   └─ Unknown tool: {tool_name}")
+
+                if tool_tasks:
+                    results = await asyncio.gather(*tool_tasks, return_exceptions=True)
+                    for tc, result in zip(tool_calls, results):
+                        tool_name = tc["name"]
+                        if not isinstance(result, Exception):
+                            # Aggregate results into lists
+                            if tool_name not in tool_results:
+                                tool_results[tool_name] = []
+                            tool_results[tool_name].append(result)
+                            
+                            content_str = json.dumps(result) if not isinstance(result, str) else result
+                            re_invocation_messages.append(ToolMessage(content=content_str, tool_call_id=tc["id"]))
+
+                            # Telemetry
+                            from app.core.utils.telemetry import AgentAction
+                            action = AgentAction(tool=tool_name, tool_input=tc["args"], log="Direct pass")
+                            telemetry.on_agent_action(action)
+                            telemetry.on_tool_end(str(result))
+                        else:
+                            logger.error(f"Error in tool {tool_name}: {str(result)}")
+                            re_invocation_messages.append(ToolMessage(content=f"Error: {str(result)}", tool_call_id=tc["id"]))
+
+                # Enrich strength exercises with last weights
+                if "get_strength_exercises" in tool_results:
+                    # Flatten all batches of exercises
+                    all_exercises = [ex for batch in tool_results["get_strength_exercises"] for ex in batch]
+                    if all_exercises:
+                        exercise_ids = [ex["id"] for ex in all_exercises]
+                        last_weights = self._get_last_weights_for_exercises(exercise_ids)
+                        for batch in tool_results["get_strength_exercises"]:
+                            for ex in batch:
+                                if ex["id"] in last_weights:
+                                    ex["last_tracked"] = last_weights[ex["id"]]
+
+                # Re-build "final" system prompt with high-quality data injection
+                final_prompt_list = self._build_prompt(
+                    message=message,
+                    message_history=self.message_history[:-1],
+                    formatted_context=self.formatted_context,
+                    tool_results=tool_results,
+                )
+                
+                # REINFORCEMENT message to ensure complete delivery
+                reinforcement = SystemMessage(content="Tool execution complete. Now provide the FINAL response to the user. "
+                                                      "You MUST include any requested details (like a workout_template JSON) "
+                                                      "immediately in this turn based on the tool results provided above.")
+                
+                re_invocation_messages = [final_prompt_list[0]] + final_prompt_list[1:] + [model_msg] + \
+                                         [msg for msg in re_invocation_messages if isinstance(msg, ToolMessage)] + \
+                                         [reinforcement]
+                
+                f.write("\n[RE-INVOKING MODEL WITH DATA...]\n")
+                logger.info("📤 Pass 2: Finalizing response with data...")
+                
+                async for chunk in self.stream(re_invocation_messages):
+                    content = chunk.content
+                    if not content:
+                        continue
+
+                    if isinstance(content, str):
+                        self.current_response += content
+                        f.write(content)
+                        f.flush()
+                        yield content
+                    elif isinstance(content, list):
+                        for block in content:
+                            if block.get("type") == "text":
                                 text = block.get("text", "")
                                 self.current_response += text
                                 f.write(text)
@@ -265,6 +331,9 @@ class UnifiedCoachService(BaseLLMService):
                                 yield text
 
             f.write(f"\n{'-'*40}\n")
+
+        # Record total stream time
+        telemetry.record_stream_complete()
 
         # Log final answer to telemetry
         telemetry.on_chain_end({"output": self.current_response})
@@ -360,28 +429,6 @@ class UnifiedCoachService(BaseLLMService):
 
         return last_weights
 
-    async def _execute_tool(self, tool_name: str, args: Dict) -> Any:
-        """
-        Execute a specific tool with the given arguments.
-
-        Args:
-            tool_name: Name of the tool to execute
-            args: Tool arguments
-
-        Returns:
-            Tool execution result
-        """
-        if tool_name not in self.tool_executors:
-            logger.error(f"Unknown tool: {tool_name}")
-            return []
-
-        try:
-            tool_func = self.tool_executors[tool_name]
-            result = await tool_func.ainvoke(args)
-            return result
-        except Exception as e:
-            logger.error(f"Tool {tool_name} execution failed: {str(e)}")
-            return []
 
     def _format_weight(self, weight_kg: float, is_imperial: bool) -> str:
         """
@@ -599,7 +646,7 @@ class UnifiedCoachService(BaseLLMService):
                 if exercises_with_best:
                     top_exercises = sorted(
                         exercises_with_best, key=lambda x: x["best_e1rm"], reverse=True
-                    )[:5]
+                    )[:20]
                     strength_lines = ["**Top Exercise Strength Progression (e1RM):**"]
 
                     for ex_data in top_exercises:
@@ -715,60 +762,89 @@ class UnifiedCoachService(BaseLLMService):
         # Format available exercises from tool results
         available_exercises_text = ""
 
-        # Handle strength exercises
+        # Parallel exercise type formatting
+        exercise_sections = []
+
+        # Handle strength exercises (aggregated lists)
         if "get_strength_exercises" in tool_results:
-            exercises = tool_results["get_strength_exercises"]
-            if exercises:
+            results = tool_results["get_strength_exercises"]
+            # Flatten results if it's a list of lists or just a list
+            all_strength = []
+            for r in results:
+                if isinstance(r, list):
+                    all_strength.extend(r)
+                else:
+                    all_strength.append(r)
+            
+            if all_strength:
+                # Deduplicate by ID
+                seen_ids = set()
+                unique_strength = []
+                for ex in all_strength:
+                    if ex["id"] not in seen_ids:
+                        unique_strength.append(ex)
+                        seen_ids.add(ex["id"])
+
                 # Group by movement_pattern for clarity
                 by_movement = {}
-                for ex in exercises:
+                for ex in unique_strength:
                     movement = ex.get("movement_pattern", "other")
                     if movement not in by_movement:
                         by_movement[movement] = []
                     by_movement[movement].append(ex)
 
-                exercise_lines = [f"**{len(exercises)} strength exercises available:**"]
+                section_lines = [f"**{len(unique_strength)} strength exercises available:**"]
                 for movement, exs in by_movement.items():
-                    exercise_lines.append(
-                        f"\n**{movement.replace('_', ' ').title()}:**"
-                    )
-                    for ex in exs[:10]:  # Limit per movement to reduce context
+                    section_lines.append(f"\n**{movement.replace('_', ' ').title()}:**")
+                    for ex in exs[:15]:  # Slightly more per movement
                         base_info = f"- {ex['standard_name']} (ID: {ex['id']}, Muscles: {', '.join(ex.get('primary_muscles', []))})"
-
-                        # Add last tracked weight if available
                         if "last_tracked" in ex:
                             lt = ex["last_tracked"]
                             weight_str = self._format_weight(lt["weight"], is_imperial)
-                            base_info += (
-                                f" | Last: {lt['reps']}x{weight_str} ({lt['date']})"
-                            )
-
-                        exercise_lines.append(base_info)
-
-                available_exercises_text = "\n".join(exercise_lines)
+                            base_info += f" | Last: {lt['reps']}x{weight_str} ({lt['date']})"
+                        section_lines.append(base_info)
+                exercise_sections.append("\n".join(section_lines))
 
         # Handle mobility exercises
-        elif "get_mobility_exercises" in tool_results:
-            exercises = tool_results["get_mobility_exercises"]
-            if exercises:
-                exercise_lines = [f"**{len(exercises)} mobility exercises available:**"]
-                for ex in exercises[:20]:
-                    muscles = ", ".join(ex.get("primary_muscles", [])) or "general"
-                    exercise_lines.append(
-                        f"- {ex['standard_name']} (ID: {ex['id']}, Targets: {muscles})"
-                    )
-                available_exercises_text = "\n".join(exercise_lines)
+        if "get_mobility_exercises" in tool_results:
+            results = tool_results["get_mobility_exercises"]
+            all_mobility = []
+            for r in results:
+                if isinstance(r, list):
+                    all_mobility.extend(r)
+                else:
+                    all_mobility.append(r)
+            
+            if all_mobility:
+                seen_ids = set()
+                section_lines = [f"**{len(all_mobility)} mobility exercises available:**"]
+                for ex in all_mobility:
+                    if ex["id"] not in seen_ids:
+                        muscles = ", ".join(ex.get("primary_muscles", [])) or "general"
+                        section_lines.append(f"- {ex['standard_name']} (ID: {ex['id']}, Targets: {muscles})")
+                        seen_ids.add(ex["id"])
+                exercise_sections.append("\n".join(section_lines))
 
         # Handle cardio exercises
-        elif "get_cardio_exercises" in tool_results:
-            exercises = tool_results["get_cardio_exercises"]
-            if exercises:
-                exercise_lines = [f"**{len(exercises)} cardio exercises available:**"]
-                for ex in exercises[:20]:
-                    exercise_lines.append(
-                        f"- {ex['standard_name']} (ID: {ex['id']}, Type: {ex.get('base_movement', 'N/A')})"
-                    )
-                available_exercises_text = "\n".join(exercise_lines)
+        if "get_cardio_exercises" in tool_results:
+            results = tool_results["get_cardio_exercises"]
+            all_cardio = []
+            for r in results:
+                if isinstance(r, list):
+                    all_cardio.extend(r)
+                else:
+                    all_cardio.append(r)
+            
+            if all_cardio:
+                seen_ids = set()
+                section_lines = [f"**{len(all_cardio)} cardio exercises available:**"]
+                for ex in all_cardio:
+                    if ex["id"] not in seen_ids:
+                        section_lines.append(f"- {ex['standard_name']} (ID: {ex['id']}, Type: {ex.get('base_movement', 'N/A')})")
+                        seen_ids.add(ex["id"])
+                exercise_sections.append("\n".join(section_lines))
+
+        available_exercises_text = "\n\n---\n\n".join(exercise_sections)
 
         # Default if no exercises fetched
         if not available_exercises_text:

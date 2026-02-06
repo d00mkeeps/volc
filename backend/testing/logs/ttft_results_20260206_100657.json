@@ -1,0 +1,210 @@
+{
+  "Gemini 2.5 Flash - Thinking Enabled": {
+    "config": {
+      "name": "Gemini 2.5 Flash - Thinking Enabled",
+      "model": "gemini-2.5-flash",
+      "thinking_budget": 10000,
+      "include_thoughts": true
+    },
+    "runs": [
+      {
+        "run": 1,
+        "ttft_ms": 1619.54,
+        "total_time_ms": 5762.25,
+        "total_tokens": 8,
+        "success": true
+      },
+      {
+        "run": 2,
+        "ttft_ms": 3590.74,
+        "total_time_ms": 8944.78,
+        "total_tokens": 8,
+        "success": true
+      },
+      {
+        "run": 3,
+        "ttft_ms": 1807.43,
+        "total_time_ms": 7107.67,
+        "total_tokens": 9,
+        "success": true
+      },
+      {
+        "run": 4,
+        "ttft_ms": 2756.12,
+        "total_time_ms": 6980.57,
+        "total_tokens": 8,
+        "success": true
+      },
+      {
+        "run": 5,
+        "ttft_ms": 1886.48,
+        "total_time_ms": 2760.84,
+        "total_tokens": 6,
+        "success": true
+      }
+    ],
+    "statistics": {
+      "success_rate": 1.0,
+      "avg_ttft_ms": 2332.06,
+      "min_ttft_ms": 1619.54,
+      "max_ttft_ms": 3590.74,
+      "std_dev_ms": 741.02
+    }
+  },
+  "Gemini 2.5 Flash - Thinking Disabled": {
+    "config": {
+      "name": "Gemini 2.5 Flash - Thinking Disabled",
+      "model": "gemini-2.5-flash",
+      "thinking_budget": null,
+      "include_thoughts": false
+    },
+    "runs": [
+      {
+        "run": 1,
+        "ttft_ms": 4308.88,
+        "total_time_ms": 4787.91,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 2,
+        "ttft_ms": 4786.18,
+        "total_time_ms": 5165.35,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 3,
+        "ttft_ms": 4265.8,
+        "total_time_ms": 4592.26,
+        "total_tokens": 3,
+        "success": true
+      },
+      {
+        "run": 4,
+        "ttft_ms": 5256.9,
+        "total_time_ms": 5794.39,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 5,
+        "ttft_ms": 6452.36,
+        "total_time_ms": 6891.91,
+        "total_tokens": 4,
+        "success": true
+      }
+    ],
+    "statistics": {
+      "success_rate": 1.0,
+      "avg_ttft_ms": 5014.02,
+      "min_ttft_ms": 4265.8,
+      "max_ttft_ms": 6452.36,
+      "std_dev_ms": 804.58
+    }
+  },
+  "Gemini 2.5 Pro - Thinking Enabled": {
+    "config": {
+      "name": "Gemini 2.5 Pro - Thinking Enabled",
+      "model": "gemini-2.5-pro",
+      "thinking_budget": 10000,
+      "include_thoughts": true
+    },
+    "runs": [
+      {
+        "run": 1,
+        "ttft_ms": 2792.1,
+        "total_time_ms": 39292.96,
+        "total_tokens": 11,
+        "success": true
+      },
+      {
+        "run": 2,
+        "ttft_ms": 16601.41,
+        "total_time_ms": 17615.12,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 3,
+        "ttft_ms": 11450.25,
+        "total_time_ms": 12592.83,
+        "total_tokens": 5,
+        "success": true
+      },
+      {
+        "run": 4,
+        "ttft_ms": 2888.42,
+        "total_time_ms": 28149.51,
+        "total_tokens": 10,
+        "success": true
+      },
+      {
+        "run": 5,
+        "ttft_ms": 6541.46,
+        "total_time_ms": 57032.48,
+        "total_tokens": 10,
+        "success": true
+      }
+    ],
+    "statistics": {
+      "success_rate": 1.0,
+      "avg_ttft_ms": 8054.73,
+      "min_ttft_ms": 2792.1,
+      "max_ttft_ms": 16601.41,
+      "std_dev_ms": 5315.1
+    }
+  },
+  "Gemini 2.5 Pro - Thinking Disabled": {
+    "config": {
+      "name": "Gemini 2.5 Pro - Thinking Disabled",
+      "model": "gemini-2.5-pro",
+      "thinking_budget": null,
+      "include_thoughts": false
+    },
+    "runs": [
+      {
+        "run": 1,
+        "ttft_ms": 12126.14,
+        "total_time_ms": 13258.2,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 2,
+        "ttft_ms": 10414.18,
+        "total_time_ms": 11609.76,
+        "total_tokens": 5,
+        "success": true
+      },
+      {
+        "run": 3,
+        "ttft_ms": 13319.34,
+        "total_time_ms": 14596.48,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 4,
+        "ttft_ms": 12229.95,
+        "total_time_ms": 12908.74,
+        "total_tokens": 4,
+        "success": true
+      },
+      {
+        "run": 5,
+        "ttft_ms": 11925.17,
+        "total_time_ms": 13054.68,
+        "total_tokens": 5,
+        "success": true
+      }
+    ],
+    "statistics": {
+      "success_rate": 1.0,
+      "avg_ttft_ms": 12002.96,
+      "min_ttft_ms": 10414.18,
+      "max_ttft_ms": 13319.34,
+      "std_dev_ms": 930.57
+    }
+  }
+}

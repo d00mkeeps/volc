@@ -68,6 +68,8 @@ Before generating workout_template, use this process for each exercise:
    - Match equipment to user's preference (e.g., if user said "dumbbells" → find dumbbell variant, not barbell)
    - If injury history → prefer controlled/stable movements over compounds that stress recovering areas
 
+   *Tip: You can fetch multiple muscle groups at once by passing a list to `get_strength_exercises` (e.g. `['chest', 'triceps']`).*
+
 3. VERIFY DATA: NEVER invent, placeholder, or hallucinate `definition_id`s or `name`s. 
    - If `Available Exercises` is empty or missing the exercise you need, you MUST NOT generate the `workout_template`.
    - Instead, proceed to the CONFIRMATION TURN (see DISCOVERY FLOW) to declare the muscle groups and trigger data retrieval.

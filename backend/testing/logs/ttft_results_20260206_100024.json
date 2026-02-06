@@ -1,0 +1,170 @@
+{
+  "Gemini 2.0 Flash - Thinking Enabled": {
+    "config": {
+      "name": "Gemini 2.0 Flash - Thinking Enabled",
+      "model": "gemini-2.0-flash-001",
+      "thinking_budget": 10000,
+      "include_thoughts": true
+    },
+    "runs": [
+      {
+        "run": 1,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 2,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 3,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 4,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 5,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      }
+    ],
+    "statistics": {
+      "success_rate": 0,
+      "avg_ttft_ms": null,
+      "min_ttft_ms": null,
+      "max_ttft_ms": null,
+      "std_dev_ms": null
+    }
+  },
+  "Gemini 2.0 Flash - Thinking Disabled": {
+    "config": {
+      "name": "Gemini 2.0 Flash - Thinking Disabled",
+      "model": "gemini-2.0-flash-001",
+      "thinking_budget": null,
+      "include_thoughts": false
+    },
+    "runs": [
+      {
+        "run": 1,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 2,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 3,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 4,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 5,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      }
+    ],
+    "statistics": {
+      "success_rate": 0,
+      "avg_ttft_ms": null,
+      "min_ttft_ms": null,
+      "max_ttft_ms": null,
+      "std_dev_ms": null
+    }
+  },
+  "Gemini 1.5 Pro - Thinking Enabled": {
+    "config": {
+      "name": "Gemini 1.5 Pro - Thinking Enabled",
+      "model": "gemini-1.5-pro-002",
+      "thinking_budget": 10000,
+      "include_thoughts": true
+    },
+    "runs": [
+      {
+        "run": 1,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 2,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 3,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 4,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 5,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      }
+    ],
+    "statistics": {
+      "success_rate": 0,
+      "avg_ttft_ms": null,
+      "min_ttft_ms": null,
+      "max_ttft_ms": null,
+      "std_dev_ms": null
+    }
+  },
+  "Gemini 1.5 Pro - Thinking Disabled": {
+    "config": {
+      "name": "Gemini 1.5 Pro - Thinking Disabled",
+      "model": "gemini-1.5-pro-002",
+      "thinking_budget": null,
+      "include_thoughts": false
+    },
+    "runs": [
+      {
+        "run": 1,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 2,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 3,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 4,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      },
+      {
+        "run": 5,
+        "error": "Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.",
+        "success": false
+      }
+    ],
+    "statistics": {
+      "success_rate": 0,
+      "avg_ttft_ms": null,
+      "min_ttft_ms": null,
+      "max_ttft_ms": null,
+      "std_dev_ms": null
+    }
+  }
+}

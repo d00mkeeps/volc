@@ -26,18 +26,24 @@ interface ChatStore {
   // Streaming preview
   streamingContent: string;
 
+  // Thinking state
+  isThinking: boolean;
+  thinkingStartTime: number | null;
+  currentThought: string;
+
   // Failed message recovery
   failedMessageContent: string | null;
 
   _handlerRefs: (() => void)[];
   _initializationPromise: Promise<void> | null;
+  _connectionPromise: Promise<void> | null;
 
   // Methods
   connect: () => Promise<void>;
   disconnect: () => void;
   sendMessage: (
     content: string,
-    getCurrentHealth?: () => "good" | "poor" | "offline"
+    getCurrentHealth?: () => "good" | "poor" | "offline",
   ) => Promise<void>;
   cancelStreaming: (reason: "user_requested" | "network_failure") => void;
   computeGreeting: () => void;
@@ -53,6 +59,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   // Initial state
   failedMessageContent: null,
   _initializationPromise: null,
+  _connectionPromise: null,
 
   setFailedMessageContent: (content) => set({ failedMessageContent: content }),
 
@@ -65,6 +72,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isLoadingGreeting: true,
   isLoadingActions: true,
   streamingContent: "",
+  isThinking: false,
+  thinkingStartTime: null,
+  currentThought: "",
   _handlerRefs: [],
 
   setLoadingState: (loadingState) => {
@@ -72,12 +82,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     // Side effects on state changes
     if (loadingState === "complete") {
+      // Clear thinking state
+      set({ isThinking: false, thinkingStartTime: null, currentThought: "" });
       // Refresh greeting and actions when message completes
       get().refreshQuickChat();
       // Reset to idle after side effects
       setTimeout(
         () => set({ loadingState: "idle", streamingContent: "" }),
-        100
+        100,
       );
     }
   },
@@ -177,20 +189,20 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     console.log("🔍 [fetchActions] contextBundle exists:", !!contextBundle);
     console.log(
       "🔍 [fetchActions] contextBundle.ai_memory:",
-      contextBundle?.ai_memory
+      contextBundle?.ai_memory,
     );
     console.log(
       "🔍 [fetchActions] ai_memory.notes:",
-      contextBundle?.ai_memory?.notes
+      contextBundle?.ai_memory?.notes,
     );
     console.log(
       "🔍 [fetchActions] notes length:",
-      contextBundle?.ai_memory?.notes?.length
+      contextBundle?.ai_memory?.notes?.length,
     );
 
     if (!contextBundle) {
       console.log(
-        "🔍 [fetchActions] No contextBundle - returning null actions"
+        "🔍 [fetchActions] No contextBundle - returning null actions",
       );
       set({ actions: null, isLoadingActions: false });
       return;
@@ -218,7 +230,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           "🔍 [fetchActions] SHOWING DEFAULT NEW USER ACTIONS - hasAiMemory:",
           hasAiMemory,
           "hasUserMessages:",
-          hasUserMessages
+          hasUserMessages,
         );
         set({
           actions: [
@@ -264,7 +276,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
       const fetchedActions = await quickChatService.fetchQuickActions(
         userProfile.auth_user_uuid,
-        recentMessages
+        recentMessages,
       );
 
       set({
@@ -320,7 +332,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     // Check for active streams before nuclear cleanup
     const activeStreams = Array.from(
-      useMessageStore.getState().streamingMessages.entries()
+      useMessageStore.getState().streamingMessages.entries(),
     ).filter(([_, msg]) => msg && !msg.isComplete);
 
     if (activeStreams.length === 0) {
@@ -332,11 +344,30 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       set({ statusMessage: statusText });
     });
 
+    const unsubscribeThinking = webSocketService.onThinking((thought) => {
+      const { isThinking } = get();
+
+      // Start thinking on first chunk
+      if (!isThinking) {
+        set({
+          isThinking: true,
+          thinkingStartTime: Date.now(),
+          currentThought: thought,
+        });
+      } else {
+        // Update with most recent thought
+        set({ currentThought: thought });
+      }
+    });
+
     const unsubscribeContent = webSocketService.onMessage((chunk) => {
       const { loadingState } = get();
       if (loadingState !== "streaming" && loadingState !== "pending") {
         return; // ← Ignore chunks when not actively streaming
       }
+
+      // Clear thinking when first content arrives
+      set({ isThinking: false });
 
       useMessageStore.getState().updateStreamingMessage(conversationId, chunk);
       // Update loading state to streaming on first chunk
@@ -353,7 +384,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     const unsubscribeTerminated = webSocketService.onTerminated((reason) => {
       useMessageStore.getState().clearStreamingMessage(conversationId);
-      set({ statusMessage: null, loadingState: "idle", streamingContent: "" });
+      set({
+        statusMessage: null,
+        loadingState: "idle",
+        streamingContent: "",
+        isThinking: false,
+        thinkingStartTime: null,
+        currentThought: "",
+      });
       Toast.show({
         type: "info",
         text1: "Message Cut Off",
@@ -365,13 +403,25 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       console.log(`[ChatStore] Backend confirmed cancel: ${data.reason}`);
       // Complete whatever we have (don't clear)
       useMessageStore.getState().completeStreamingMessage(conversationId);
-      set({ statusMessage: null });
+      set({
+        statusMessage: null,
+        isThinking: false,
+        thinkingStartTime: null,
+        currentThought: "",
+      });
     });
 
     const unsubscribeError = webSocketService.onError((error) => {
       useMessageStore.getState().clearStreamingMessage(conversationId);
       useMessageStore.getState().setError(error);
-      set({ statusMessage: null, loadingState: "idle", streamingContent: "" });
+      set({
+        statusMessage: null,
+        loadingState: "idle",
+        streamingContent: "",
+        isThinking: false,
+        thinkingStartTime: null,
+        currentThought: "",
+      });
       Toast.show({
         type: "error",
         text1: "Connection Error",
@@ -382,6 +432,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     set({
       _handlerRefs: [
         unsubscribeStatus,
+        unsubscribeThinking,
         unsubscribeContent,
         unsubscribeComplete,
         unsubscribeCancelled,
@@ -392,119 +443,137 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   connect: async () => {
-    console.log("🔌 [ChatStore.connect] START");
     const webSocketService = getWebSocketService();
+    const { _connectionPromise } = get();
 
-    try {
-      const { _initializationPromise } = get();
-      if (_initializationPromise) {
-        await _initializationPromise;
-      }
-
-      let activeConversationId =
-        useConversationStore.getState().activeConversationId;
+    if (_connectionPromise) {
       console.log(
-        "🔌 [ChatStore.connect] activeConversationId:",
-        activeConversationId
+        "🔌 [ChatStore.connect] Connection already in progress, waiting...",
       );
-      // Create conversation if none exists
-      if (!activeConversationId) {
+      return _connectionPromise;
+    }
+
+    const connectionPromise = (async () => {
+      try {
+        const { _initializationPromise } = get();
+        if (_initializationPromise) {
+          await _initializationPromise;
+        }
+
+        let activeConversationId =
+          useConversationStore.getState().activeConversationId;
         console.log(
           "🔌 [ChatStore.connect] activeConversationId:",
-          activeConversationId
+          activeConversationId,
         );
-        // Create a new promise for this initialization
-        let resolveInit: (() => void) | undefined;
-        const initPromise = new Promise<void>((resolve) => {
-          resolveInit = resolve;
-        });
-        set({ _initializationPromise: initPromise });
+        // Create conversation if none exists
+        if (!activeConversationId) {
+          console.log(
+            "🔌 [ChatStore.connect] activeConversationId:",
+            activeConversationId,
+          );
+          // Create a new promise for this initialization
+          let resolveInit: (() => void) | undefined;
+          const initPromise = new Promise<void>((resolve) => {
+            resolveInit = resolve;
+          });
+          set({ _initializationPromise: initPromise });
 
-        try {
-          const {
-            pendingGreeting,
-            pendingInitialMessage,
-            setPendingInitialMessage,
-            setPendingGreeting,
-            createConversationWithMessages,
-          } = useConversationStore.getState();
+          try {
+            const {
+              pendingGreeting,
+              pendingInitialMessage,
+              setPendingInitialMessage,
+              setPendingGreeting,
+              createConversationWithMessages,
+            } = useConversationStore.getState();
 
-          const messagesToCreate: {
-            content: string;
-            sender: "user" | "assistant";
-          }[] = [];
+            const messagesToCreate: {
+              content: string;
+              sender: "user" | "assistant";
+            }[] = [];
 
-          const greetingToUse = pendingGreeting || get().greeting;
+            const greetingToUse = pendingGreeting || get().greeting;
 
-          if (greetingToUse) {
-            messagesToCreate.push({
-              content: greetingToUse,
-              sender: "assistant",
-            });
+            if (greetingToUse) {
+              messagesToCreate.push({
+                content: greetingToUse,
+                sender: "assistant",
+              });
+            }
+
+            if (pendingInitialMessage) {
+              messagesToCreate.push({
+                content: pendingInitialMessage,
+                sender: "user",
+              });
+              setPendingInitialMessage(null);
+            }
+
+            // Only use hardcoded fallback if we have nothing else
+            if (messagesToCreate.length === 0) {
+              messagesToCreate.push({
+                content: "Hello! Ready to workout?",
+                sender: "assistant",
+              });
+            }
+
+            if (messagesToCreate.length > 0) {
+              const result =
+                await createConversationWithMessages(messagesToCreate);
+              activeConversationId = result.conversationId;
+              setPendingGreeting(null);
+            }
+          } finally {
+            // Always clear the promise, even if creation failed
+            set({ _initializationPromise: null });
+            resolveInit?.();
           }
-
-          if (pendingInitialMessage) {
-            messagesToCreate.push({
-              content: pendingInitialMessage,
-              sender: "user",
-            });
-            setPendingInitialMessage(null);
-          }
-
-          // Only use hardcoded fallback if we have nothing else
-          if (messagesToCreate.length === 0) {
-            messagesToCreate.push({
-              content: "Hello! Ready to workout?",
-              sender: "assistant",
-            });
-          }
-
-          if (messagesToCreate.length > 0) {
-            const result = await createConversationWithMessages(
-              messagesToCreate
-            );
-            activeConversationId = result.conversationId;
-            setPendingGreeting(null);
-          }
-        } finally {
-          // Always clear the promise, even if creation failed
-          set({ _initializationPromise: null });
-          resolveInit?.();
         }
+
+        if (!activeConversationId) {
+          throw new Error("Failed to establish conversation ID");
+        }
+
+        // Register handlers
+        get()._registerHandlers(activeConversationId);
+
+        // Connect websocket
+        await webSocketService.ensureConnection({
+          type: "coach",
+          conversationId: activeConversationId,
+        });
+
+        // Update connection state
+        get()._updateConnectionState();
+
+        // Handle pending message for existing conversation
+        const { pendingInitialMessage, setPendingInitialMessage } =
+          useConversationStore.getState();
+        if (pendingInitialMessage) {
+          console.log(
+            "🔌 [ChatStore.connect] Processing pending initial message:",
+            pendingInitialMessage,
+          );
+          setPendingInitialMessage(null);
+          await get().sendMessage(pendingInitialMessage);
+        }
+      } catch (error) {
+        console.error("[ChatStore] Failed to connect:", error);
+        const { _handlerRefs } = get();
+        _handlerRefs.forEach((unsubscribe) => unsubscribe());
+        set({ _handlerRefs: [] });
+        useMessageStore
+          .getState()
+          .setError(error instanceof Error ? error : new Error(String(error)));
+        throw error; // Re-throw for promise tracker
+      } finally {
+        set({ _connectionPromise: null });
       }
+    })();
 
-      if (!activeConversationId) {
-        throw new Error("Failed to establish conversation ID");
-      }
-
-      // Register handlers
-      get()._registerHandlers(activeConversationId);
-
-      // Connect websocket
-      await webSocketService.ensureConnection({
-        type: "coach",
-        conversationId: activeConversationId,
-      });
-
-      // Update connection state
-      get()._updateConnectionState();
-
-      // Handle pending message for existing conversation
-      const { pendingInitialMessage, setPendingInitialMessage } =
-        useConversationStore.getState();
-      if (pendingInitialMessage) {
-        setPendingInitialMessage(null);
-        await get().sendMessage(pendingInitialMessage);
-      }
-    } catch (error) {
-      console.error("[ChatStore] Failed to connect:", error);
-      const { _handlerRefs } = get();
-      _handlerRefs.forEach((unsubscribe) => unsubscribe());
-      set({ _handlerRefs: [] });
-      useMessageStore
-        .getState()
-        .setError(error instanceof Error ? error : new Error(String(error)));
-    }
+    set({ _connectionPromise: connectionPromise });
+    return connectionPromise;
   },
 
   disconnect: () => {
@@ -514,7 +583,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // Don't disconnect if actively loading or streaming
     if (loadingState === "pending" || loadingState === "streaming") {
       console.log(
-        "[ChatStore] Skipping disconnect - active operation in progress"
+        "[ChatStore] Skipping disconnect - active operation in progress",
       );
       return;
     }
@@ -558,6 +627,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       loadingState: "idle", // Guard in onMessage will ignore new chunks
       streamingContent: "",
       lastCancelTime: now,
+      isThinking: false,
+      thinkingStartTime: null,
+      currentThought: "",
     });
 
     Toast.show({
@@ -569,15 +641,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   sendMessage: async (
     content: string,
-    getCurrentHealth?: () => "good" | "poor" | "offline"
+    getCurrentHealth?: () => "good" | "poor" | "offline",
   ) => {
     console.log(
       "📤 [ChatStore.sendMessage] START - content:",
-      content.substring(0, 50)
+      content.substring(0, 50),
     );
     console.log(
       "📤 [ChatStore.sendMessage] activeConversationId:",
-      useConversationStore.getState().activeConversationId
+      useConversationStore.getState().activeConversationId,
     );
 
     const webSocketService = getWebSocketService();
@@ -585,12 +657,19 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     let messageSentToBackend = false;
     try {
       // WAIT FOR INITIALIZATION IF IN PROGRESS
-      const { _initializationPromise } = get();
+      const { _initializationPromise, _connectionPromise } = get();
       if (_initializationPromise) {
         console.log(
-          "[ChatStore] Initialization in progress, waiting before sending..."
+          "[ChatStore] Initialization in progress, waiting before sending...",
         );
         await _initializationPromise;
+      }
+
+      if (_connectionPromise && !webSocketService.isConnected()) {
+        console.log(
+          "[ChatStore] Connection in progress and socket not open, waiting before sending...",
+        );
+        await _connectionPromise;
       }
 
       // Get or create conversation
@@ -636,10 +715,22 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       // Set loading state
       set({ loadingState: "pending", streamingContent: "" });
 
+      // Start thinking timer when UI appears (after 1.5s delay)
+      setTimeout(() => {
+        // Only show thinking if still pending/streaming (not complete)
+        const currentState = get().loadingState;
+        if (currentState === "pending" || currentState === "streaming") {
+          set({
+            isThinking: true,
+            thinkingStartTime: Date.now(), // Timer starts NOW (when UI appears)
+            currentThought: "",
+          });
+        }
+      }, 1500);
       // If offline, wait up to 5s for network to improve
       if (currentHealth === "offline") {
         console.log(
-          "[ChatStore] Offline detected - waiting for network improvement"
+          "[ChatStore] Offline detected - waiting for network improvement",
         );
 
         const startTime = Date.now();
@@ -654,7 +745,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             console.log(
               `[ChatStore] Network improved to ${healthNow} after ${
                 Date.now() - startTime
-              }ms`
+              }ms`,
             );
             break;
           }
@@ -664,7 +755,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         const finalHealth = getCurrentHealth?.() || "good";
         if (finalHealth === "offline") {
           console.log(
-            "[ChatStore] Still offline after 5s - rolling back message"
+            "[ChatStore] Still offline after 5s - rolling back message",
           );
 
           // Remove optimistic message

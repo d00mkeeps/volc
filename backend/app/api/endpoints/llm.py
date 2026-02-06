@@ -148,10 +148,21 @@ async def unified_coach(
                     full_response = ""
                     try:
                         async for chunk in coach_service.process_message(message):
-                            full_response += chunk
-                            await websocket.send_json(
-                                {"type": "content", "data": chunk}
-                            )
+                            # Check if this is a thinking chunk (JSON string with _type: "thinking")
+                            if chunk.startswith('{"_type": "thinking"'):
+                                # Parse and send as thinking message
+                                import json
+                                thinking_data = json.loads(chunk)
+                                await websocket.send_json({
+                                    "type": "thinking",
+                                    "data": thinking_data["content"]
+                                })
+                            else:
+                                # Regular content chunk
+                                full_response += chunk
+                                await websocket.send_json(
+                                    {"type": "content", "data": chunk}
+                                )
                             await ws_manager.update_heartbeat(connection_id)
 
                         await websocket.send_json(
