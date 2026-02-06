@@ -11,6 +11,41 @@ Glossary: {glossary_terms}
 </context>
 """
 
+ANALYSIS_INSTRUCTIONS = """
+<analysis>
+If the user asks about progress ("How's my squat?", "Am I getting stronger?"):
+- Scan Strength Progression for the exercise in question.
+- Cite specific numbers: "Your squat best e1RM is up 15kg (10%) in the last few months."
+- Use the 'Raw data' block under the exercise to generate a chart.
+- Generate a chart ONLY if it adds visual value (shows a trend or significant change).
+</analysis>
+"""
+
+CHART_GENERATION = """
+<chart_generation>
+To visualize data, output a JSON block with `type: "chart_data"`.
+Use "line" for progress over time, "bar" for categorical comparisons.
+
+```json
+{{
+  "type": "chart_data",
+  "data": {{
+    "title": "Squat e1RM Progress",
+    "chart_type": "line",
+    "labels": ["2024-01-01", "2024-01-15", "2024-02-01"],
+    "datasets": [
+      {{
+        "label": "Squat e1RM (kg)",
+        "data": [100.0, 105.5, 110.0],
+        "color": "#3b82f6"
+      }}
+    ]
+  }}
+}}
+```
+</chart_generation>
+"""
+
 UNIVERSAL_INSTRUCTIONS = """
 <instructions>
 
@@ -103,6 +138,24 @@ WORKOUT TEMPLATE:
         ]
       }}
     ]
+  }}
+}}
+```
+
+CHART DATA:
+- title: clear description of data
+- chart_type: "line" or "bar"
+- labels: array of strings (dates or categories)
+- datasets: array of objects with label, data (numbers), and color
+
+```json
+{{
+  "type": "chart_data",
+  "data": {{
+    "title": "Bench Press Progress",
+    "chart_type": "line",
+    "labels": ["Feb 01", "Feb 08"],
+    "datasets": [{{"label": "e1RM (kg)", "data": [80, 85], "color": "#3b82f6"}}]
   }}
 }}
 ```
@@ -297,8 +350,8 @@ def get_unified_coach_prompt(is_new_user: bool = True) -> str:
         sections.append(ONBOARDING_EXAMPLES)
     else:
         # Returning users focus on progression and history
-        # We can add RETURNING_EXAMPLES here in v10.2
-        pass
+        sections.append(ANALYSIS_INSTRUCTIONS)
+        sections.append(CHART_GENERATION)
 
     sections.append(EXERCISE_SELECTION)
     sections.append(OUTPUT_FORMAT)

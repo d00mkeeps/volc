@@ -80,10 +80,10 @@ class AnalysisBundleGenerator:
             )
             logger.info(f"📊 Bundle {bundle_id} marked as processing")
 
-            # 3. Fetch last 30 days of workouts using admin method
-            logger.info(f"📥 Fetching last 30 days of workouts for user: {user_id}")
+            # 3. Fetch last 90 days of workouts using admin method
+            logger.info(f"📥 Fetching last 90 days of workouts for user: {user_id}")
             raw_result = await self.workout_service.get_user_workouts_admin(
-                user_id=user_id, days_back=30
+                user_id=user_id, days_back=90
             )
 
             # Check if we have data
@@ -106,7 +106,7 @@ class AnalysisBundleGenerator:
             logger.info(f"📥 Fetched {workout_count} workouts")
 
             if workout_count == 0:
-                error = "No workouts found in last 30 days"
+                error = "No workouts found in last 90 days"
                 logger.warning(f"⚠️  {error}")
                 await self.analysis_service.update_bundle_status(
                     bundle_id, "failed", jwt_token, error_msg=error

@@ -650,7 +650,7 @@ class UnifiedCoachService(BaseLLMService):
                     strength_lines = ["**Top Exercise Strength Progression (e1RM):**"]
 
                     for ex_data in top_exercises:
-                        if len(ex_data["time_series"]) > 1:
+                        if ex_data["time_series"]:
                             first = ex_data["time_series"][0]
                             last = ex_data["time_series"][-1]
                             change_kg = last.estimated_1rm - first.estimated_1rm
@@ -669,21 +669,23 @@ class UnifiedCoachService(BaseLLMService):
                                 else f"-{change_formatted} ({change_pct:.1f}%)"
                             )
 
-                            recent_points = ex_data["time_series"][-3:]
-                            points_str = ", ".join(
-                                [
-                                    f"{p.date.strftime('%b %d') if hasattr(p.date, 'strftime') else str(p.date)}: {self._format_weight(p.estimated_1rm, is_imperial)}"
-                                    for p in recent_points
-                                ]
-                            )
-
-                            strength_lines.append(
-                                f"- {ex_data['exercise']}: Best {self._format_weight(ex_data['best_e1rm'], is_imperial)} | Change: {change_str} | Recent: {points_str}"
-                            )
-                        else:
-                            strength_lines.append(
-                                f"- {ex_data['exercise']}: {self._format_weight(ex_data['best_e1rm'], is_imperial)} (single data point)"
-                            )
+                            # Provide more points for better charts (up to 30)
+                            recent_points = ex_data["time_series"][-30:]
+                            
+                            # Summary line for quick reading
+                            summary_str = f"- {ex_data['exercise']}: Best {self._format_weight(ex_data['best_e1rm'], is_imperial)} | Change: {change_str} | Data Points: {len(recent_points)}"
+                            strength_lines.append(summary_str)
+                            
+                            # RAW DATA BLOCK for chart extraction (hidden from user but visible to LLM)
+                            # Format: [Date: e1RM]
+                            data_points = []
+                            for p in recent_points:
+                                date_str = p.date.strftime('%Y-%m-%d') if hasattr(p.date, 'strftime') else str(p.date)
+                                weight_val = round(p.estimated_1rm, 1)
+                                data_points.append(f"{date_str}: {weight_val}")
+                            
+                            raw_data_str = f"  Raw data (kg): [{', '.join(data_points)}]"
+                            strength_lines.append(raw_data_str)
 
                     strength_prog_text = "\n".join(strength_lines)
 
