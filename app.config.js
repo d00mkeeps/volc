@@ -3,7 +3,7 @@ const config = {
     owner: "d00mkeeps",
     name: "Volc",
     slug: "Volc",
-    version: "1.5.11",
+    version: "1.6.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "volc", // ← Change this from "myapp" to "volc"

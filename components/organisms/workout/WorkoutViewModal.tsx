@@ -21,6 +21,7 @@ export default function WorkoutViewModal({
 }: WorkoutViewModalProps) {
   const { currentWorkout, loading, getPublicWorkout, clearError } =
     useWorkoutStore();
+  const { userProfile } = useUserStore();
 
   useEffect(() => {
     if (isVisible && workoutId) {
@@ -61,7 +62,6 @@ export default function WorkoutViewModal({
 
   const renderExerciseSets = (exercise: any) => {
     const sets = exercise.workout_exercise_sets || [];
-    const { userProfile } = useUserStore();
     const isImperial = userProfile?.is_imperial ?? false;
     const weightUnit = isImperial ? "lbs" : "kg";
     const distanceUnit = isImperial ? "mi" : "km";
@@ -81,19 +81,19 @@ export default function WorkoutViewModal({
 
     // Determine which columns to show based on available data
     const hasWeight = sets.some(
-      (set: any) => set.weight !== null && set.weight !== undefined
+      (set: any) => set.weight !== null && set.weight !== undefined,
     );
     const hasReps = sets.some(
-      (set: any) => set.reps !== null && set.reps !== undefined
+      (set: any) => set.reps !== null && set.reps !== undefined,
     );
     const hasDistance = sets.some(
-      (set: any) => set.distance !== null && set.distance !== undefined
+      (set: any) => set.distance !== null && set.distance !== undefined,
     );
     const hasDuration = sets.some(
-      (set: any) => set.duration !== null && set.duration !== undefined
+      (set: any) => set.duration !== null && set.duration !== undefined,
     );
     const hasRpe = sets.some(
-      (set: any) => set.rpe !== null && set.rpe !== undefined
+      (set: any) => set.rpe !== null && set.rpe !== undefined,
     );
 
     const columns: { key: string; label: string }[] = [];
@@ -174,7 +174,7 @@ export default function WorkoutViewModal({
           <YStack gap="$2">
             {sets
               .sort(
-                (a: any, b: any) => (a.set_number || 0) - (b.set_number || 0)
+                (a: any, b: any) => (a.set_number || 0) - (b.set_number || 0),
               )
               .map((set: any, index: number) => (
                 <XStack
@@ -316,7 +316,7 @@ export default function WorkoutViewModal({
                       />
                     )}
                   </YStack>
-                )
+                ),
               )
             ) : (
               <Text size="medium" color="$textSoft" fontStyle="italic">
