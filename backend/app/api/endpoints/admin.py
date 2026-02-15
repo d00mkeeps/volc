@@ -7,6 +7,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
 from collections import defaultdict
 from app.services.test_account_service import test_account_service
+from app.schemas.workout_seed_schema import WorkoutSeedRequest
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -334,3 +335,62 @@ async def teardown_test_user(
         raise HTTPException(status_code=500, detail=result.get("error", "Teardown failed"))
     
     return {"status": "success", "message": f"User {email} deleted"}
+
+
+@router.post("/api/admin/seed/workout")
+async def seed_workout(
+    request: WorkoutSeedRequest,
+    _=Depends(verify_admin_test_key)
+):
+    """
+    Seed a workout with backdated timestamp for test users.
+    Allows Crucible to populate historical workout data.
+    
+    Security:
+    - Requires X-Admin-Key header matching ADMIN_TEST_KEY
+    - Only enabled in non-production environments
+    - Validates user exists before creating workout
+    """
+    try:
+        # Verify user exists
+        admin_client = get_admin_client()
+        user_check = (
+            admin_client.table("user_profiles")
+            .select("auth_user_uuid")
+            .eq("auth_user_uuid", request.user_id)
+            .execute()
+        )
+        
+        if not user_check.data:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Create workout using admin privileges
+        from app.services.db.workout_service import WorkoutService
+        workout_service = WorkoutService()
+        
+        result = await workout_service.seed_workout_admin(
+            workout_id=request.id,
+            user_id=request.user_id,
+            name=request.name,
+            notes=request.notes,
+            created_at=request.created_at,
+            exercises=request.exercises
+        )
+        
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=500,
+                detail=result.get("error", "Failed to seed workout")
+            )
+        
+        return {
+            "status": "success",
+            "workout_id": request.id,
+            "message": "Workout seeded successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Workout seeding error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

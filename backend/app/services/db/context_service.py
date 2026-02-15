@@ -146,18 +146,19 @@ class ContextBundleService:
         return UserContextBundle.model_validate(flat_bundle)
 
     async def create_analysis_bundle(
-        self, user_id: str, jwt_token: str
+        self, user_id: str, jwt_token: str, is_admin: bool = False
     ) -> Dict[str, Any]:
         """
         Create an empty analysis bundle with 'pending' status.
-
+        
         Location: /app/services/db/analysis_service.py
         Method: ContextBundleService.create_analysis_bundle()
-
+        
         Args:
             user_id: User's ID
             jwt_token: JWT for authentication
-
+            is_admin: Whether to use admin client (bypasses RLS)
+        
         Returns:
             {'success': bool, 'data': {'bundle_id': str}, 'error': str}
         """
@@ -168,11 +169,14 @@ class ContextBundleService:
 
             logger.info(f"Creating analysis bundle: {bundle_id} for user: {user_id}")
 
-            user_client = self.get_user_client(jwt_token)
+            if is_admin:
+                client = self.get_admin_client()
+            else:
+                client = self.get_user_client(jwt_token)
 
             # Fetch latest bundle to copy memory from
             latest_bundle_result = await self.get_latest_context_bundle(
-                user_id, jwt_token
+                user_id, jwt_token, is_admin=is_admin
             )
             initial_memory = {"notes": []}
 
@@ -185,7 +189,7 @@ class ContextBundleService:
                     )
 
             result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .insert(
                     {
                         "id": bundle_id,
@@ -225,26 +229,31 @@ class ContextBundleService:
         status: str,
         jwt_token: str,
         error_msg: Optional[str] = None,
+        is_admin: bool = False,
     ) -> Dict[str, Any]:
         """
         Update bundle status (pending/processing/complete/failed).
-
+        
         Location: /app/services/db/analysis_service.py
         Method: ContextBundleService.update_bundle_status()
-
+        
         Args:
             bundle_id: Bundle ID to update
             status: New status
             jwt_token: JWT for authentication
             error_msg: Optional error message if status is 'failed'
-
+            is_admin: Whether to use admin client (bypasses RLS)
+        
         Returns:
             {'success': bool, 'error': str}
         """
         try:
             logger.info(f"Updating bundle {bundle_id} status to: {status}")
-
-            user_client = self.get_user_client(jwt_token)
+            
+            if is_admin:
+                client = self.get_admin_client()
+            else:
+                client = self.get_user_client(jwt_token)
 
             update_data = {
                 "status": status,
@@ -256,7 +265,7 @@ class ContextBundleService:
                 update_data["metadata"] = {"errors": [error_msg]}
 
             result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .update(update_data)
                 .eq("id", bundle_id)
                 .execute()
@@ -277,29 +286,33 @@ class ContextBundleService:
             return {"success": False, "error": str(e)}
 
     async def save_context_bundle(
-        self, bundle_id: str, bundle: Any, jwt_token: str  # UserContextBundle
+        self, bundle_id: str, bundle: Any, jwt_token: str, is_admin: bool = False  # UserContextBundle
     ) -> Dict[str, Any]:
         """
         Save the complete context bundle to database.
-
+        
         Maps the UserContextBundle schema to the database structure.
         Uses nested structure in 'workouts' and 'top_performers' columns.
-
+        
         Location: /app/services/db/context_service.py
         Method: ContextBundleService.save_context_bundle()
-
+        
         Args:
             bundle_id: Bundle ID
             bundle: UserContextBundle object
             jwt_token: JWT for authentication
-
+            is_admin: Whether to use admin client (bypasses RLS)
+        
         Returns:
             {'success': bool, 'error': str}
         """
         try:
             logger.info(f"Saving analysis bundle: {bundle_id}")
-
-            user_client = self.get_user_client(jwt_token)
+            
+            if is_admin:
+                client = self.get_admin_client()
+            else:
+                client = self.get_user_client(jwt_token)
 
             # Convert bundle to dict for database storage
             bundle_dict = bundle.model_dump(mode="json")
@@ -343,7 +356,7 @@ class ContextBundleService:
             }
 
             result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .update(update_data)
                 .eq("id", bundle_id)
                 .execute()
@@ -571,30 +584,34 @@ class ContextBundleService:
             return {"success": False, "error": str(e)}
 
     async def get_latest_context_bundle(
-        self, user_id: str, jwt_token: str
+        self, user_id: str, jwt_token: str, is_admin: bool = False
     ) -> Dict[str, Any]:
         """
         Get the most recent completed analysis bundle for a user.
-
+        
         Returns a properly deserialized UserContextBundle Pydantic object.
-
+        
         Location: /app/services/db/context_service.py
         Method: ContextBundleService.get_latest_context_bundle()
-
+        
         Args:
             user_id: User's ID
             jwt_token: JWT for authentication
-
+            is_admin: Whether to use admin client (bypasses RLS)
+        
         Returns:
             {'success': bool, 'data': UserContextBundle, 'error': str}
         """
         try:
             logger.info(f"Fetching latest analysis bundle for user: {user_id}")
 
-            user_client = self.get_user_client(jwt_token)
+            if is_admin:
+                client = self.get_admin_client()
+            else:
+                client = self.get_user_client(jwt_token)
 
             result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .select("*")
                 .eq("user_id", user_id)
                 .eq("status", "complete")
@@ -679,19 +696,20 @@ class ContextBundleService:
             return {"success": False, "error": str(e)}
 
     async def delete_old_user_context_bundles(
-        self, user_id: str, jwt_token: str, keep_latest: int = 1
+        self, user_id: str, jwt_token: str, keep_latest: int = 1, is_admin: bool = False
     ) -> Dict[str, Any]:
         """
         Delete old analysis bundles, keeping only the most recent N bundles.
-
+        
         Location: /app/services/db/analysis_service.py
         Method: ContextBundleService.delete_old_user_context_bundles()
-
+        
         Args:
             user_id: User's ID
             jwt_token: JWT for authentication
             keep_latest: Number of recent bundles to keep
-
+            is_admin: Whether to use admin client (bypasses RLS)
+        
         Returns:
             {'success': bool, 'data': {'deleted_count': int}, 'error': str}
         """
@@ -700,11 +718,14 @@ class ContextBundleService:
                 f"Cleaning up old analysis bundles for user: {user_id}, keeping latest {keep_latest}"
             )
 
-            user_client = self.get_user_client(jwt_token)
+            if is_admin:
+                client = self.get_admin_client()
+            else:
+                client = self.get_user_client(jwt_token)
 
             # Get all bundles for this user (not attached to conversations)
             result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .select("id, created_at")
                 .eq("user_id", user_id)
                 .is_("conversation_id", "null")
@@ -728,7 +749,7 @@ class ContextBundleService:
 
             # Delete old bundles
             delete_result = (
-                user_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .delete()
                 .in_("id", bundles_to_delete)
                 .execute()

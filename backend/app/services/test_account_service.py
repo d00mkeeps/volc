@@ -370,10 +370,48 @@ class TestAccountService:
             except Exception as e:
                 logger.debug(f"Rate limits delete (may not exist): {e}")
 
-            # 6. Delete workouts
+            # 6. Delete workouts (and their children: exercises, sets)
             try:
-                admin_client.table("workouts").delete().eq("user_id", user_id).execute()
-                logger.debug(f"Deleted workouts for user {user_id}")
+                # Get all workouts for user
+                workouts_result = (
+                    admin_client.table("workouts")
+                    .select("id")
+                    .eq("user_id", user_id)
+                    .execute()
+                )
+                
+                if workouts_result.data:
+                    workout_ids = [w["id"] for w in workouts_result.data]
+                    
+                    # Get all exercises for these workouts
+                    exercises_result = (
+                        admin_client.table("workout_exercises")
+                        .select("id")
+                        .in_("workout_id", workout_ids)
+                        .execute()
+                    )
+                    
+                    if exercises_result.data:
+                        exercise_ids = [e["id"] for e in exercises_result.data]
+                        
+                        # A. Delete sets
+                        admin_client.table("workout_exercise_sets").delete().in_(
+                            "exercise_id", exercise_ids
+                        ).execute()
+                        logger.debug(f"Deleted sets for {len(exercise_ids)} exercises")
+                        
+                        # B. Delete exercises
+                        admin_client.table("workout_exercises").delete().in_(
+                            "id", exercise_ids
+                        ).execute()
+                        logger.debug(f"Deleted exercises for {len(workout_ids)} workouts")
+                    
+                    # C. Delete workouts
+                    admin_client.table("workouts").delete().in_(
+                        "id", workout_ids
+                    ).execute()
+                    logger.debug(f"Deleted {len(workout_ids)} workouts for user {user_id}")
+                
             except Exception as e:
                 logger.debug(f"Workouts delete (may not exist): {e}")
 

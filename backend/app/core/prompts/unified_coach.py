@@ -332,7 +332,7 @@ def get_unified_coach_prompt(is_new_user: bool = True) -> str:
     Assemble the unified coach prompt based on user state.
 
     Args:
-        is_new_user: If True, include onboarding discovery flow.
+        is_new_user: If True, include onboarding discovery flow. 
                      If False, assume returning user (context-aware flow).
 
     Returns:

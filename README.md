@@ -1,28 +1,52 @@
-# Volc
+# Volc 🌋
 
-Volc is an AI-powered fitness coach that helps you optimize your training through intelligent guidance and seamless workout logging.
+AI-Native Hyper-Personalized Fitness Coaching.
 
-## 🚀 Get Started
+Volc is an intelligent fitness platform that replaces static workout plans with a dynamic **Coaching Loop**. It uses generative AI to analyze your performance in real-time, adapt your upcoming sets, and provide "forensic" insights into your physical progress.
 
-The fastest way to start training is to download the app from the iOS App Store:
+## 🚀 Getting Started
 
-**[Download Volc on the App Store](https://apps.apple.com/gb/app/volc/id6751469055)**
+### For Users
 
-## 📖 Documentation
+Experience Volc today via our hosted platforms:
 
-Documentation follows the Diátaxis framework:
+- **Mobile**: [Download the iOS App (Beta)](https://apps.apple.com/gb/app/volc/id6751469055)
+- **Web**: Access the Admin Dashboard
 
-- **[Tutorials](docs/tutorials/getting-started.md)**: Quick start guide.
-- **[How-to Guides](docs/how-to/setup-local-backend.md)**: Task-oriented guides (e.g., local setup).
-- **[Explanation](docs/explanation/architecture.md)**: System architecture and design.
-- **[Reference](docs/reference/stores.md)**: API and store documentation.
+### For Developers
 
-For a full overview, see the **[Documentation Index](docs/index.md)**.
+Want to run the full stack (React Native + FastAPI + Supabase) locally? We have a "rails-only" guide to get you to your first local workout in under 10 minutes.
 
-## 🛠️ Development
+👉 **[Start the Tutorial: Developer Quickstart](docs/tutorials/getting-started.md)**
 
-If you're a developer looking to contribute or run the project locally, please refer to our **[How-to Guides](docs/how-to/setup-local-backend.md)**.
+## 📚 Documentation Map
 
----
+We organize our documentation using the [Diátaxis](https://diataxis.fr/) framework to help you find exactly what you need based on your current goal.
 
-_Built with ❤️ by the Volc Team._
+| I want to...            | Quadrant       | Link                                                                 |
+| :---------------------- | :------------- | :------------------------------------------------------------------- |
+| Get the app running     | 🎓 Tutorial    | **[Getting Started](docs/tutorials/getting-started.md)**             |
+| Setup the local backend | 🛠️ How-To      | **[Backend Setup](docs/how-to/setup-local-backend.md)**              |
+| Understand the AI logic | 🧠 Explanation | **[Architecture & Coaching Loop](docs/explanation/architecture.md)** |
+| Explore the State Model | 📖 Reference   | **[Zustand Stores](docs/reference/stores.md)**                       |
+| Explore the Services    | 📖 Reference   | **[Backend Services](docs/reference/services.md)**                   |
+
+## 🧠 The "Coaching Loop" Architecture
+
+Unlike traditional fitness apps, Volc doesn't just log data; it **observes** it.
+
+1.  **Input**: User logs a set (Weight/Reps/RPE).
+2.  **Observation**: The AI Engine compares performance against historical trends.
+3.  **Adaptation**: The Unified Coach adjusts the next exercise or set intensity immediately.
+4.  **Telemetry**: Performance data is streamed via WebSockets to provide instant feedback.
+
+## 🛠️ Technical Stack
+
+- **Frontend**: React Native (Expo), Tamagui, Zustand.
+- **Backend**: FastAPI (Python), LangChain, PostgreSQL (Supabase).
+- **Real-time**: WebSockets for streaming AI reasoning and workout updates.
+- **Infrastructure**: Dockerized local development environment.
+
+## 📄 License
+
+Copyright © 2026 Volc. All rights reserved. For licensing inquiries or commercial use, please contact the maintainers.

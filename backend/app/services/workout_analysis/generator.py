@@ -39,7 +39,7 @@ class AnalysisBundleGenerator:
     ) -> Dict[str, Any]:
         """
         Generate a complete analysis bundle for a user.
-
+        
         Flow:
         1. Create empty bundle (status='pending')
         2. Update to 'processing'
@@ -48,22 +48,25 @@ class AnalysisBundleGenerator:
         5. Process data through AnalysisBundleProcessor
         6. Save complete bundle (status='complete')
         7. Cleanup old bundles
-
+        
         Args:
             user_id: User's ID
             jwt_token: JWT for authentication
-
+        
         Returns:
             {'success': bool, 'bundle_id': str, 'error': str}
         """
         bundle_id = None
+        
+        # Check if running in admin mode (e.g. from seeding)
+        is_admin = jwt_token == "admin-seeded"
 
         try:
             logger.info(f"🚀 Starting analysis bundle generation for user: {user_id}")
 
             # 1. Create empty bundle
             bundle_result = await self.analysis_service.create_analysis_bundle(
-                user_id, jwt_token
+                user_id, jwt_token, is_admin=is_admin
             )
 
             if not bundle_result.get("success"):
@@ -76,7 +79,7 @@ class AnalysisBundleGenerator:
 
             # 2. Update to processing
             await self.analysis_service.update_bundle_status(
-                bundle_id, "processing", jwt_token
+                bundle_id, "processing", jwt_token, is_admin=is_admin
             )
             logger.info(f"📊 Bundle {bundle_id} marked as processing")
 
@@ -97,7 +100,7 @@ class AnalysisBundleGenerator:
                     f"⚠️  Failed to fetch workouts for user {user_id}: {error}"
                 )
                 await self.analysis_service.update_bundle_status(
-                    bundle_id, "failed", jwt_token, error_msg=error
+                    bundle_id, "failed", jwt_token, error_msg=error, is_admin=is_admin
                 )
                 return {"success": False, "error": error, "bundle_id": bundle_id}
 
@@ -109,7 +112,7 @@ class AnalysisBundleGenerator:
                 error = "No workouts found in last 90 days"
                 logger.warning(f"⚠️  {error}")
                 await self.analysis_service.update_bundle_status(
-                    bundle_id, "failed", jwt_token, error_msg=error
+                    bundle_id, "failed", jwt_token, error_msg=error, is_admin=is_admin
                 )
                 return {"success": False, "error": error, "bundle_id": bundle_id}
 
@@ -128,9 +131,14 @@ class AnalysisBundleGenerator:
 
             # 4b. Fetch existing ai_memory from current bundle (CRITICAL: prevent memory loss)
             logger.info(f"🧠 Fetching existing ai_memory from bundle {bundle_id}")
-            admin_client = self.analysis_service.get_admin_client()
+            
+            if is_admin:
+                client = self.analysis_service.get_admin_client()
+            else:
+                client = self.analysis_service.get_user_client(jwt_token)
+                
             memory_result = (
-                admin_client.table("user_context_bundles")
+                client.table("user_context_bundles")
                 .select("ai_memory")
                 .eq("id", bundle_id)
                 .single()
@@ -165,7 +173,7 @@ class AnalysisBundleGenerator:
             # 6. Save complete bundle
             logger.info(f"💾 Saving complete bundle: {bundle_id}")
             save_result = await self.analysis_service.save_context_bundle(
-                bundle_id, complete_bundle, jwt_token
+                bundle_id, complete_bundle, jwt_token, is_admin=is_admin
             )
 
             if not save_result.get("success"):
@@ -183,7 +191,7 @@ class AnalysisBundleGenerator:
             logger.info(f"🧹 Cleaning up old bundles for user: {user_id}")
             cleanup_result = (
                 await self.analysis_service.delete_old_user_context_bundles(
-                    user_id, jwt_token, keep_latest=1
+                    user_id, jwt_token, keep_latest=1, is_admin=is_admin
                 )
             )
 
