@@ -79,7 +79,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 
   const handleSendMessage = useCallback(
     (content: string) => {
-      sendMessage(content, () => health);
+      sendMessage(content, () => health).catch((err) => {
+        console.warn("[ChatOverlay] Send message caught:", err?.message || err);
+      });
     },
     [sendMessage, health],
   );
@@ -181,8 +183,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 
   const quickChatStyle = useAnimatedStyle(() => {
     const shouldHide =
-      fadeProgress.value < 0.5 &&
-      (isWorkoutDetailOpen || pageProgress.value < 0.9 || isWorkoutActive);
+      isUnreliable ||
+      (fadeProgress.value < 0.5 &&
+        (isWorkoutDetailOpen || pageProgress.value < 0.9 || isWorkoutActive));
 
     return {
       opacity: withTiming(shouldHide ? 0 : pageProgress.value, {
@@ -191,7 +194,13 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
       transform: [{ translateY: 0 }],
       pointerEvents: shouldHide ? "none" : "auto",
     };
-  }, [pageProgress, isWorkoutDetailOpen, isWorkoutActive, fadeProgress]);
+  }, [
+    pageProgress,
+    isWorkoutDetailOpen,
+    isWorkoutActive,
+    fadeProgress,
+    isUnreliable,
+  ]);
 
   const globalVisibilityStyle = useAnimatedStyle(() => {
     // Hide if workout detail is open
@@ -220,12 +229,19 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
       useConversationStore.getState().activeConversationId,
     );
 
+    if (isUnreliable) {
+      console.log(
+        "📂 [ChatOverlay.handleExpand] Blocked: Network is unreliable.",
+      );
+      return;
+    }
+
     if (!isExpanded) {
       setIsExpanded(true);
       fadeProgress.value = withTiming(1, { duration: 300 });
       console.log("📂 [ChatOverlay.handleExpand] Triggered expand");
     }
-  }, [isExpanded, fadeProgress]);
+  }, [isExpanded, fadeProgress, isUnreliable]);
 
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
@@ -280,7 +296,12 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 
   useEffect(() => {
     if (isExpanded) {
-      connect();
+      connect().catch((err) => {
+        console.warn(
+          "[ChatOverlay] connect safely caught:",
+          err?.message || err,
+        );
+      });
     } else {
       if (!isStreaming && loadingState !== "pending") {
         disconnect();
@@ -420,6 +441,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                 onFocus={handleExpand}
                 onCancel={() => cancelStreaming("user_requested")}
                 onFocusChange={setIsInputAreaFocused}
+                isNetworkUnreliable={isUnreliable}
               />
             </YStack>
           </Animated.View>

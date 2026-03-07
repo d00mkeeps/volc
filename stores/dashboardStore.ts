@@ -1,8 +1,12 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dashboardService } from "@/services/api/dashboard";
 import { AllTimeframeData } from "@/types/workout";
 import { supabase } from "@/lib/supabaseClient";
 import { RealtimeChannel } from "@supabase/supabase-js";
+import { isGloballyOffline } from "@/hooks/useNetworkQuality";
+import { isOfflineError } from "@/services/api/core/apiClient";
 
 interface DashboardStore {
   // Data - complete object from API
@@ -22,192 +26,236 @@ interface DashboardStore {
   unsubscribe: () => void;
 }
 
-export const useDashboardStore = create<DashboardStore>((set, get) => ({
-  // Initial state
-  allData: null,
-  isLoading: false,
-  lastUpdated: null,
-  error: null,
-
-  cacheValidForHours: 1, // 1 hour cache
-  subscription: null,
-
-  // Check if we should refresh (cache expired)
-  shouldRefresh: () => {
-    const { lastUpdated, cacheValidForHours } = get();
-    if (!lastUpdated) return true;
-    const hoursSinceUpdate =
-      (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60);
-    return hoursSinceUpdate >= cacheValidForHours;
-  },
-
-  clearData: () => {
-    set({
+export const useDashboardStore = create<DashboardStore>()(
+  persist(
+    (set, get) => ({
+      // Initial state
       allData: null,
       isLoading: false,
       lastUpdated: null,
       error: null,
-    });
-  },
 
-  subscribeToUpdates: (userId: string) => {
-    const { subscription } = get();
-    if (subscription) return; // Prevent duplicates
+      cacheValidForHours: 1, // 1 hour cache
+      subscription: null,
 
-    console.log(
-      `🔌 [DashboardStore] Subscribing to realtime updates for user: ${userId}`
-    );
+      // Check if we should refresh (cache expired)
+      shouldRefresh: () => {
+        const { lastUpdated, cacheValidForHours } = get();
+        if (!lastUpdated) return true;
 
-    const channel = supabase
-      .channel("dashboard_updates")
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "user_context_bundles",
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          console.log("⚡️ [DashboardStore] Realtime bundle update received");
+        // Handle serialized strings from AsyncStorage
+        const dateObj =
+          lastUpdated instanceof Date ? lastUpdated : new Date(lastUpdated);
+        if (isNaN(dateObj.getTime())) return true;
 
-          if (payload.errors) {
-            console.error(
-              "❌ [DashboardStore] Realtime payload contains errors:",
-              payload.errors
+        const hoursSinceUpdate =
+          (Date.now() - dateObj.getTime()) / (1000 * 60 * 60);
+        return hoursSinceUpdate >= cacheValidForHours;
+      },
+
+      clearData: () => {
+        set({
+          allData: null,
+          isLoading: false,
+          lastUpdated: null,
+          error: null,
+        });
+      },
+
+      subscribeToUpdates: (userId: string) => {
+        const { subscription } = get();
+        if (subscription) return; // Prevent duplicates
+
+        console.log(
+          `🔌 [DashboardStore] Subscribing to realtime updates for user: ${userId}`,
+        );
+
+        const channel = supabase
+          .channel("dashboard_updates")
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "user_context_bundles",
+              filter: `user_id=eq.${userId}`,
+            },
+            (payload) => {
+              console.log(
+                "⚡️ [DashboardStore] Realtime bundle update received",
+              );
+
+              if (payload.errors) {
+                console.error(
+                  "❌ [DashboardStore] Realtime payload contains errors:",
+                  payload.errors,
+                );
+                return;
+              }
+
+              console.log(
+                "🔄 [DashboardStore] Triggering dashboard refresh...",
+              );
+              set({ lastUpdated: null });
+              get().refreshDashboard();
+            },
+          )
+          .subscribe((status, err) => {
+            console.log(`📡 [DashboardStore] Subscription status: ${status}`);
+            if (status === "SUBSCRIBED") {
+              console.log(
+                "✅ [DashboardStore] Successfully subscribed to changes!",
+              );
+            }
+            if (status === "CHANNEL_ERROR") {
+              if (!isGloballyOffline()) {
+                console.warn(
+                  "⚠️ [DashboardStore] Channel error (network drop?):",
+                  err,
+                );
+              }
+            }
+            if (status === "TIMED_OUT") {
+              if (!isGloballyOffline()) {
+                console.warn(
+                  "⚠️ [DashboardStore] Subscription timed out (network drop?)",
+                );
+              }
+            }
+          });
+
+        set({ subscription: channel });
+      },
+
+      unsubscribe: () => {
+        const { subscription } = get();
+        if (subscription) {
+          console.log(
+            "🔌 [DashboardStore] Unsubscribing from realtime updates",
+          );
+          supabase.removeChannel(subscription);
+          set({ subscription: null });
+        }
+      },
+
+      // Main refresh method - calls API
+      refreshDashboard: async () => {
+        const { shouldRefresh, allData: existingData } = get();
+        // Don't refresh if cache is still valid
+        if (!shouldRefresh()) {
+          return;
+        }
+
+        set({ isLoading: true, error: null });
+
+        try {
+          // Call API - returns all timeframes
+          const response = await dashboardService.getAllDashboardData();
+
+          // Compare new data to existing data (excluding lastUpdated which changes every call)
+          // Since allData doesn't contain ai_memory, ai_memory-only changes
+          // will result in identical data, so we won't trigger unnecessary re-renders
+          const { lastUpdated: _newLU, ...newDataWithoutTimestamp } =
+            response || {};
+          const { lastUpdated: _existingLU, ...existingDataWithoutTimestamp } =
+            existingData || {};
+
+          const newDataString = JSON.stringify(newDataWithoutTimestamp);
+          const existingDataString = JSON.stringify(
+            existingDataWithoutTimestamp,
+          );
+
+          if (newDataString === existingDataString) {
+            console.log(
+              "🔇 [DashboardStore] Data unchanged - skipping state update",
             );
+            set({ isLoading: false, lastUpdated: new Date() });
             return;
           }
 
-          console.log("🔄 [DashboardStore] Triggering dashboard refresh...");
-          set({ lastUpdated: null });
-          get().refreshDashboard();
-        }
-      )
-      .subscribe((status, err) => {
-        console.log(`📡 [DashboardStore] Subscription status: ${status}`);
-        if (status === "SUBSCRIBED") {
-          console.log(
-            "✅ [DashboardStore] Successfully subscribed to changes!"
-          );
-        }
-        if (status === "CHANNEL_ERROR") {
-          console.error("❌ [DashboardStore] Channel error:", err);
-        }
-        if (status === "TIMED_OUT") {
-          console.error("⚠️ [DashboardStore] Subscription timed out");
-        }
-      });
+          console.log("📊 [DashboardStore] Data changed - updating state");
+          set({
+            allData: response,
+            isLoading: false,
+            lastUpdated: new Date(),
+            error: null,
+          });
 
-    set({ subscription: channel });
-  },
+          // ✅ Log data shape
+          const { allData } = get();
+          if (allData) {
+            // console.log("📊 [DashboardStore] Dashboard data received:");
 
-  unsubscribe: () => {
-    const { subscription } = get();
-    if (subscription) {
-      console.log("🔌 [DashboardStore] Unsubscribing from realtime updates");
-      supabase.removeChannel(subscription);
-      set({ subscription: null });
-    }
-  },
+            (["1week", "2weeks", "1month", "2months"] as const).forEach(
+              (timeframe) => {
+                const data = allData[timeframe];
+                const workouts = data.consistency.workouts || [];
 
-  // Main refresh method - calls API
-  refreshDashboard: async () => {
-    const { shouldRefresh, allData: existingData } = get();
-    // Don't refresh if cache is still valid
-    if (!shouldRefresh()) {
-      return;
-    }
+                // console.log(`\n  ${timeframe}:`);
+                // console.log(
+                //   `    ✓ ${workouts.length} workouts received with fields: ${
+                //     workouts.length > 0
+                //       ? Object.keys(workouts[0]).join(", ")
+                //       : "N/A"
+                //   }`
+                // );
 
-    set({ isLoading: true, error: null });
-
-    try {
-      // Call API - returns all timeframes
-      const response = await dashboardService.getAllDashboardData();
-
-      // Compare new data to existing data (excluding lastUpdated which changes every call)
-      // Since allData doesn't contain ai_memory, ai_memory-only changes
-      // will result in identical data, so we won't trigger unnecessary re-renders
-      const { lastUpdated: _newLU, ...newDataWithoutTimestamp } =
-        response || {};
-      const { lastUpdated: _existingLU, ...existingDataWithoutTimestamp } =
-        existingData || {};
-
-      const newDataString = JSON.stringify(newDataWithoutTimestamp);
-      const existingDataString = JSON.stringify(existingDataWithoutTimestamp);
-
-      if (newDataString === existingDataString) {
-        console.log(
-          "🔇 [DashboardStore] Data unchanged - skipping state update"
-        );
-        set({ isLoading: false, lastUpdated: new Date() });
-        return;
-      }
-
-      console.log("📊 [DashboardStore] Data changed - updating state");
-      set({
-        allData: response,
-        isLoading: false,
-        lastUpdated: new Date(),
-        error: null,
-      });
-
-      // ✅ Log data shape
-      const { allData } = get();
-      if (allData) {
-        // console.log("📊 [DashboardStore] Dashboard data received:");
-
-        (["1week", "2weeks", "1month", "2months"] as const).forEach(
-          (timeframe) => {
-            const data = allData[timeframe];
-            const workouts = data.consistency.workouts || [];
-
-            // console.log(`\n  ${timeframe}:`);
-            // console.log(
-            //   `    ✓ ${workouts.length} workouts received with fields: ${
-            //     workouts.length > 0
-            //       ? Object.keys(workouts[0]).join(", ")
-            //       : "N/A"
-            //   }`
-            // );
-
-            if (workouts.length > 0) {
-              // console.log(`    Sample:`, workouts[0]);
-            }
+                if (workouts.length > 0) {
+                  // console.log(`    Sample:`, workouts[0]);
+                }
+              },
+            );
           }
-        );
-      }
-    } catch (error) {
-      console.error("❌ [DashboardStore] Failed to refresh dashboard:", error);
-      console.error("🚨 [DashboardStore] Error details:", {
-        name: error instanceof Error ? error.name : "Unknown",
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : "No stack",
-      });
+        } catch (error) {
+          if (isOfflineError(error)) {
+            console.warn(
+              "🔇 [DashboardStore] Offline: Skipping background refresh.",
+            );
+          } else {
+            console.error(
+              "❌ [DashboardStore] Failed to refresh dashboard:",
+              error,
+            );
+            console.error("🚨 [DashboardStore] Error details:", {
+              name: error instanceof Error ? error.name : "Unknown",
+              message: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : "No stack",
+            });
+          }
 
-      set({
-        isLoading: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to load dashboard data",
-      });
-    }
-  },
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to load dashboard data",
+          });
+        }
+      },
 
-  // Force refresh after workout completion
-  invalidateAfterWorkout: () => {
-    set({
-      lastUpdated: null, // Force refresh on next call
-      error: null,
-    });
-    // Trigger immediate refresh logic is now handled by realtime subscription mostly,
-    // but we can still force check if needed, or just let the next mount/update handle it.
-    // The original code called get().refreshDashboard() here.
-    // Given the new pattern, we primarily just want to invalidate the cache.
-    // If the user is on the dashboard, the realtime event would have triggered a refresh.
-    // If they are navigating back to it, the mount effect might trigger it if cache is invalid.
-    // Let's keep the immediate refresh for now to be safe, as realtime might have distinct timing.
-    // Actually, per user request: "Now just invalidates cache, lets realtime handle refresh"
-  },
-}));
+      // Force refresh after workout completion
+      invalidateAfterWorkout: () => {
+        set({
+          lastUpdated: null, // Force refresh on next call
+          error: null,
+        });
+        // Trigger immediate refresh logic is now handled by realtime subscription mostly,
+        // but we can still force check if needed, or just let the next mount/update handle it.
+        // The original code called get().refreshDashboard() here.
+        // Given the new pattern, we primarily just want to invalidate the cache.
+        // If the user is on the dashboard, the realtime event would have triggered a refresh.
+        // If they are navigating back to it, the mount effect might trigger it if cache is invalid.
+        // Let's keep the immediate refresh for now to be safe, as realtime might have distinct timing.
+        // Actually, per user request: "Now just invalidates cache, lets realtime handle refresh"
+      },
+    }),
+    {
+      name: "dashboard-store",
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        allData: state.allData,
+        lastUpdated: state.lastUpdated,
+      }),
+    },
+  ),
+);

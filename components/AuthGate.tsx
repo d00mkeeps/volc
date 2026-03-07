@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { AuthScreen } from "./screens/AuthScreen";
-import { supabase } from "@/lib/supabaseClient";
 import { useAuthStore } from "@/stores/authStore";
+import { useUserStore } from "@/stores/userProfileStore";
 
 interface AuthGateProps {
   children: React.ReactNode;
@@ -12,52 +12,30 @@ interface AuthGateProps {
 
 export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
   const { user, loading } = useAuth();
-  const [checkingProfile, setCheckingProfile] = useState(false);
   const storesInitialized = useAuthStore((state) => state.initialized);
+  const userProfile = useUserStore((state) => state.userProfile);
 
   useEffect(() => {
-    const checkProfile = async () => {
+    if (!loading && storesInitialized) {
       if (!user) {
         onWelcomeNeeded(false);
         return;
       }
 
-      setCheckingProfile(true);
-      try {
-        const { data, error } = await supabase
-          .from("user_profiles")
-          .select("first_name, dob")
-          .eq("auth_user_uuid", user.id)
-          .single();
+      console.log("[AuthGate] Profile check from store:", userProfile);
 
-        if (!error && data) {
-          console.log("[AuthGate] Profile check:", data);
-
-          if (!data.dob) {
-            console.log("[AuthGate] Missing DOB -> Showing Welcome Sheet");
-            onWelcomeNeeded(true);
-          } else {
-            console.log("[AuthGate] DOB exists -> Hiding Welcome Sheet");
-            onWelcomeNeeded(false);
-          }
-        } else {
-          console.log(
-            "[AuthGate] Profile fetch error or no data:",
-            error,
-            data
-          );
-        }
-      } catch (err) {
-        console.error("Error checking profile:", err);
-      } finally {
-        setCheckingProfile(false);
+      // If userProfile exists but missing dob, user needs onboarding
+      if (userProfile && !userProfile.dob) {
+        console.log("[AuthGate] Missing DOB -> Showing Welcome Sheet");
+        onWelcomeNeeded(true);
+      } else {
+        console.log(
+          "[AuthGate] DOB exists (or no profile data) -> Hiding Welcome Sheet",
+        );
+        onWelcomeNeeded(false);
       }
-    };
-
-    if (!loading && storesInitialized) {
-      checkProfile();
     }
-  }, [user, loading, storesInitialized, onWelcomeNeeded]);
+  }, [user, loading, storesInitialized, userProfile, onWelcomeNeeded]);
 
   console.log(
     "AuthGate render - user:",
@@ -65,10 +43,10 @@ export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
     "loading:",
     loading,
     "storesInitialized:",
-    storesInitialized
+    storesInitialized,
   );
 
-  if (loading || checkingProfile || !storesInitialized) {
+  if (loading || !storesInitialized) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />

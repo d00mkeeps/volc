@@ -1,5 +1,14 @@
 import { getLocalIpAddress } from "@/utils/network";
 import { supabase } from "@/lib/supabaseClient";
+import { isGloballyOffline } from "@/hooks/useNetworkQuality";
+
+export const isOfflineError = (error: any) => {
+  return (
+    error?.message === "NETWORK_OFFLINE" ||
+    error?.name === "AbortError" ||
+    error?.message === "Network request failed"
+  );
+};
 
 // State variables for base URLs
 let API_BASE_URL: string | null = null;
@@ -17,12 +26,12 @@ export async function initializeApiClient(): Promise<void> {
         API_BASE_URL = `http://${ipAddress}:8000`;
         WS_BASE_URL = `ws://${ipAddress}:8000/api/llm`;
         console.log(
-          `[apiClient] 🟢 Development mode - Local backend: ${API_BASE_URL}`
+          `[apiClient] 🟢 Development mode - Local backend: ${API_BASE_URL}`,
         );
       } catch (error) {
         console.error(
           "[apiClient] Failed to get local IP, falling back to production:",
-          error
+          error,
         );
         // Fallback to production if local fails
         API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
@@ -35,7 +44,7 @@ export async function initializeApiClient(): Promise<void> {
       WS_BASE_URL =
         "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
       console.log(
-        `[apiClient] 🔴 Production mode - Railway backend: ${API_BASE_URL}`
+        `[apiClient] 🔴 Production mode - Railway backend: ${API_BASE_URL}`,
       );
     }
   }
@@ -67,7 +76,7 @@ const PUBLIC_ENDPOINTS = ["/health", "/status"];
  */
 function requiresAuth(endpoint: string): boolean {
   return !PUBLIC_ENDPOINTS.some((publicEndpoint) =>
-    endpoint.startsWith(publicEndpoint)
+    endpoint.startsWith(publicEndpoint),
   );
 }
 
@@ -128,8 +137,12 @@ async function getFreshToken(): Promise<string | null> {
  */
 export async function apiRequest<T = any>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit & { timeout?: number } = {},
 ): Promise<T> {
+  if (isGloballyOffline()) {
+    throw new Error("NETWORK_OFFLINE");
+  }
+
   await initializeApiClient();
 
   const normalizedEndpoint = endpoint.startsWith("/")
@@ -163,19 +176,25 @@ export async function apiRequest<T = any>(
       headers["Authorization"] = `Bearer ${token}`;
     } else {
       console.warn(
-        "[apiClient] No valid token available for authenticated endpoint"
+        "[apiClient] No valid token available for authenticated endpoint",
       );
       // You might want to redirect to login here
       throw new Error("Authentication required");
     }
   }
 
+  const timeoutMs = options.timeout || 5000; // 5s default
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
     // Make the request
     const response = await fetch(url, {
       ...options,
       headers,
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     // Handle response
     if (!response.ok) {
@@ -188,15 +207,22 @@ export async function apiRequest<T = any>(
 
         if (!refreshError && refreshData.session?.access_token) {
           console.log("[apiClient] Token refreshed, retrying request");
-          headers[
-            "Authorization"
-          ] = `Bearer ${refreshData.session.access_token}`;
+          headers["Authorization"] =
+            `Bearer ${refreshData.session.access_token}`;
 
           // Retry once with fresh token
+          const retryController = new AbortController();
+          const retryTimeoutId = setTimeout(
+            () => retryController.abort(),
+            timeoutMs,
+          );
+
           const retryResponse = await fetch(url, {
             ...options,
             headers,
+            signal: retryController.signal,
           });
+          clearTimeout(retryTimeoutId);
 
           if (retryResponse.ok) {
             const contentType = retryResponse.headers.get("content-type");
@@ -209,7 +235,7 @@ export async function apiRequest<T = any>(
 
         // If refresh failed or retry still got 401, redirect to login
         console.error(
-          "[apiClient] Authentication failed, redirecting to login"
+          "[apiClient] Authentication failed, redirecting to login",
         );
         // Handle auth failure (redirect to login, clear storage, etc.)
         await supabase.auth.signOut();
@@ -238,7 +264,11 @@ export async function apiRequest<T = any>(
     }
 
     return { success: true } as unknown as T;
-  } catch (error) {
+  } catch (error: any) {
+    if (isOfflineError(error)) {
+      console.warn(`[apiClient] Offline/Timeout request failed: ${endpoint}`);
+      throw error;
+    }
     console.error(`[apiClient] Request failed: ${endpoint}`, error);
     throw error;
   }
@@ -247,7 +277,7 @@ export async function apiRequest<T = any>(
 // Helper methods (unchanged)
 export const apiGet = <T = any>(
   endpoint: string,
-  params: Record<string, any> = {}
+  params: Record<string, any> = {},
 ) => {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {

@@ -4,6 +4,7 @@ import { YStack, XStack, ScrollView } from "tamagui";
 import Text from "@/components/atoms/core/Text";
 import Button from "@/components/atoms/core/Button";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import { LeaderboardEntry, FormattedLeaderboardEntry } from "@/types";
 import { useRouter } from "expo-router";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
@@ -47,6 +48,7 @@ export const LeaderboardScreen = ({
   isActive = true,
 }: LeaderboardScreenProps) => {
   const router = useRouter();
+  const { isUnreliable } = useNetworkQuality();
   const { formattedEntries, loading, error, refresh, clearError, hasEntries } =
     useLeaderboard();
   const { getPublicWorkout } = useWorkoutStore();
@@ -54,11 +56,26 @@ export const LeaderboardScreen = ({
   // Sheet state
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
   const [showUnderConstruction, setShowUnderConstruction] = useState(false);
+
+  const handleRefresh = async () => {
+    clearError();
+    await refresh();
+  };
+
   useEffect(() => {
     if (isActive) {
       setShowUnderConstruction(true);
     }
   }, [isActive]);
+
+  const previousIsUnreliable = React.useRef(isUnreliable);
+  useEffect(() => {
+    if (previousIsUnreliable.current && !isUnreliable && isActive) {
+      // We just became reliable again, refresh!
+      handleRefresh();
+    }
+    previousIsUnreliable.current = isUnreliable;
+  }, [isUnreliable, isActive]);
 
   const handleEntryTap = (entry: FormattedLeaderboardEntry) => {
     if (entry.workout_id) {
@@ -71,10 +88,15 @@ export const LeaderboardScreen = ({
     setSelectedWorkoutIds([]);
   };
 
-  const handleRefresh = async () => {
-    clearError();
-    await refresh();
-  };
+  if (isUnreliable) {
+    return (
+      <YStack flex={1} justifyContent="center" alignItems="center" padding="$8">
+        <Text size="medium" color="$red10" textAlign="center" marginBottom="$4">
+          Please reconnect to view leaderboard
+        </Text>
+      </YStack>
+    );
+  }
 
   if (error) {
     return <ErrorState error={error} onRetry={handleRefresh} />;

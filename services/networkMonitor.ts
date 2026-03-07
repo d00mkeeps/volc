@@ -1,5 +1,6 @@
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import EventEmitter from "eventemitter3";
+import { getApiBaseUrl } from "@/services/api/core/apiClient";
 
 const CONFIG = {
   PING_URL: "https://www.cloudflare.com/cdn-cgi/trace",
@@ -52,12 +53,26 @@ class __NetworkMonitor__ extends EventEmitter {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
 
-      await fetch(CONFIG.PING_URL, {
-        method: "HEAD",
+      const baseUrl = await getApiBaseUrl();
+      // Add timestamp to bypass iOS aggressive fetch caching
+      const pingUrl = `${baseUrl}/health?t=${Date.now()}`;
+
+      const res = await fetch(pingUrl, {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`Health check failed: ${res.status}`);
+      }
+
       const latency = Date.now() - start;
       const result = { latency, success: true, timestamp: Date.now() };
 

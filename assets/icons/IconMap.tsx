@@ -121,10 +121,6 @@ const sfSymbolsMapping: Partial<Record<AppIconName, string>> = {
   Lock: "lock",
   Clock: "clock",
   Wrench: "wrench",
-  NetworkExcellent: "wifi",
-  NetworkGood: "wifi",
-  NetworkPoor: "wifi.exclamationmark",
-  NetworkOffline: "wifi.slash",
   GripVertical: "line.3.horizontal",
   Dumbbell: "dumbbell.fill",
 };
@@ -133,7 +129,7 @@ const sfSymbolsMapping: Partial<Record<AppIconName, string>> = {
 const resolveColor = (
   color: string | OpaqueColorValue | undefined,
   theme: any,
-  colorScheme: string | null | undefined
+  colorScheme: string | null | undefined,
 ): string | OpaqueColorValue => {
   if (!color || color === "currentColor") {
     // Default to white in dark mode, black in light mode

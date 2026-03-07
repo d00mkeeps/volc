@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { YStack } from "tamagui";
+import Text from "@/components/atoms/core/Text";
 import { ScrollView } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,6 +25,7 @@ import {
   WorkoutExerciseSet,
 } from "@/types/workout";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 const EMPTY_ARRAY: Message[] = [];
 
@@ -42,10 +44,11 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   // Selectors
   const isLoading = useConversationStore((state) => state.isLoading);
   const greeting = useChatStore((state) => state.greeting);
+  const { isUnreliable } = useNetworkQuality();
   const loadingState = useChatStore((state) => state.loadingState);
   const isStreaming = loadingState === "streaming";
   const activeConversationId = useConversationStore(
-    (state) => state.activeConversationId
+    (state) => state.activeConversationId,
   );
 
   const recentMessages = useMessageStore((state) => {
@@ -56,7 +59,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   const streamingState = useMessageStore((state) =>
     activeConversationId
       ? state.streamingMessages.get(activeConversationId)
-      : null
+      : null,
   );
 
   const handleTemplateApprove = React.useCallback((templateData: any) => {
@@ -85,9 +88,9 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
               id: `set-${Date.now()}-${index}-${setIndex}`,
               exercise_id: `exercise-${Date.now()}-${index}`,
               is_completed: false,
-            })
+            }),
           ),
-        })
+        }),
       ),
     };
 
@@ -112,20 +115,6 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   }));
 
   const displayMessage: Message | null = React.useMemo(() => {
-    if (isLoading || !greeting) return null;
-
-    // Show streaming message with stable reference
-    if (isStreaming && streamingState) {
-      return {
-        id: "streaming",
-        conversation_id: activeConversationId!,
-        content: "", // MessageItem fetches from store
-        sender: "assistant",
-        timestamp: new Date(),
-        conversation_sequence: 0,
-      } as Message;
-    }
-
     // Show last AI message if active conversation
     if (activeConversationId && recentMessages.length > 0) {
       const lastAiMsg = [...recentMessages]
@@ -155,7 +144,13 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
       position="relative"
       flex={1}
     >
-      {isLoading || !displayMessage ? (
+      {isUnreliable ? (
+        <YStack flex={1} alignItems="center" justifyContent="center">
+          <Text color="$red10" size="large" fontWeight="600">
+            Offline
+          </Text>
+        </YStack>
+      ) : isLoading || !displayMessage ? (
         <GreetingSkeleton />
       ) : (
         <>

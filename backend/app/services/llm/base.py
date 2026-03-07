@@ -92,8 +92,12 @@ class BaseLLMService:
         for attempt in range(max_retries):
             try:
                 # Test the connection or just try to start the stream
+                logger.info(f"Attempting to stream from LLM (attempt {attempt + 1})")
                 async for chunk in self.llm.astream(input_data, **kwargs):
+                    # Log chunk structure for debugging empty responses
+                    logger.info(f"DEBUG CHUNK: content_type={type(chunk.content)} content='{str(chunk.content)[:100]}...' metadata={chunk.response_metadata}")
                     yield chunk
+                logger.info("Stream finished successfully")
                 return  # Success
             except Exception as e:
                 if is_rate_limit_error(e) and attempt < max_retries - 1:

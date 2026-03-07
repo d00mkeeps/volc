@@ -22,8 +22,10 @@ export default function ProfileAvatar({
   pendingAvatarId = null,
   onAvatarSelected,
 }: ProfileAvatarProps) {
-  const { userProfile } = useUserStore();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const { userProfile, cachedAvatarUrl, setCachedAvatarUrl } = useUserStore();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    cachedAvatarUrl || null,
+  );
   const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -31,7 +33,7 @@ export default function ProfileAvatar({
   useEffect(() => {
     console.log(
       "[ProfileAvatar] Component mounted, profile avatar_image_id:",
-      userProfile?.avatar_image_id
+      userProfile?.avatar_image_id,
     );
   }, []);
 
@@ -43,30 +45,38 @@ export default function ProfileAvatar({
   useEffect(() => {
     const loadAvatarUrl = async () => {
       if (userProfile?.avatar_image_id) {
+        // Optimistically use cached URL if available
+        if (cachedAvatarUrl && !avatarUrl) {
+          setAvatarUrl(cachedAvatarUrl);
+        }
+
         try {
-          setLoadingImage(true);
+          if (!cachedAvatarUrl) setLoadingImage(true);
           console.log(
             `[ProfileAvatar] Loading image id ${userProfile.avatar_image_id.slice(
               0,
-              5
-            )}`
+              5,
+            )}`,
           );
           const urlResponse = await imageService.getImageUrl(
-            userProfile.avatar_image_id
+            userProfile.avatar_image_id,
           );
           console.log(`[ProfileAvatar] Full response:`, urlResponse);
           if (urlResponse.success && urlResponse.data.url) {
             console.log(`[ProfileAvatar] Got URL: ${urlResponse.data.url}`);
             setAvatarUrl(urlResponse.data.url);
+            setCachedAvatarUrl(urlResponse.data.url);
           }
         } catch (error) {
           console.error("[ProfileAvatar] Error loading avatar URL:", error);
-          setAvatarUrl(null);
+          // Keep cached URL if network fails
+          if (!cachedAvatarUrl) setAvatarUrl(null);
         } finally {
           setLoadingImage(false);
         }
       } else {
         setAvatarUrl(null);
+        setCachedAvatarUrl(null);
         setLoadingImage(false);
       }
     };
@@ -81,20 +91,20 @@ export default function ProfileAvatar({
           console.log(
             `[ProfileAvatar] Loading pending image id ${pendingAvatarId.slice(
               0,
-              5
-            )}`
+              5,
+            )}`,
           );
           const urlResponse = await imageService.getImageUrl(pendingAvatarId);
           if (urlResponse.success && urlResponse.data.url) {
             console.log(
-              `[ProfileAvatar] Got pending URL: ${urlResponse.data.url}`
+              `[ProfileAvatar] Got pending URL: ${urlResponse.data.url}`,
             );
             setPendingAvatarUrl(urlResponse.data.url);
           }
         } catch (error) {
           console.error(
             "[ProfileAvatar] Error loading pending avatar URL:",
-            error
+            error,
           );
           setPendingAvatarUrl(null);
         }

@@ -10,6 +10,7 @@ import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { Keyboard } from "react-native";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 interface MessageListProps {
   messages: Message[];
@@ -38,6 +39,7 @@ export const MessageList = ({
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+  const { isUnreliable } = useNetworkQuality();
 
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId,
@@ -111,7 +113,9 @@ export const MessageList = ({
         <Pressable style={{ flex: 1 }} onPress={onDismiss}>
           <YStack flex={1} justifyContent="center" alignItems="center">
             <Text color="$textMuted" size="medium">
-              Start a conversation about your workout
+              {isUnreliable
+                ? "You're offline. Please reconnect to chat."
+                : "Start a conversation about your workout"}
             </Text>
           </YStack>
         </Pressable>

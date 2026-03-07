@@ -18,6 +18,12 @@ If the user asks about progress ("How's my squat?", "Am I getting stronger?"):
 - Cite specific numbers: "Your squat best e1RM is up 15kg (10%) in the last few months."
 - Use the 'Raw data' block under the exercise to generate a chart.
 - Generate a chart ONLY if it adds visual value (shows a trend or significant change).
+
+CRITICAL:
+- Strength data is ALREADY in the context below.
+- DO NOT call any tools to fetch progress or history.
+- DO NOT call `get_strength_exercises` for analysis.
+- Just output the text and JSON chart data.
 </analysis>
 """
 

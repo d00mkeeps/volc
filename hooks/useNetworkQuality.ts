@@ -4,6 +4,10 @@ import { networkMonitor } from "../services/networkMonitor";
 
 export type __NetworkHealth__ = "good" | "poor" | "offline";
 
+export let globalNetworkHealth: __NetworkHealth__ = "good";
+export const isGloballyOffline = () =>
+  globalNetworkHealth === "poor" || globalNetworkHealth === "offline";
+
 interface __PingResult__ {
   latency: number;
   success: boolean;
@@ -11,7 +15,7 @@ interface __PingResult__ {
 }
 
 export function useNetworkQuality() {
-  const [health, setHealth] = useState<__NetworkHealth__>("good");
+  const [health, setHealth] = useState<__NetworkHealth__>(globalNetworkHealth);
   const recentPingsRef = useRef<__PingResult__[]>([]);
   const previousHealthRef = useRef<__NetworkHealth__>("good");
 
@@ -28,6 +32,7 @@ export function useNetworkQuality() {
       // );
 
       previousHealthRef.current = newHealth;
+      globalNetworkHealth = newHealth;
       setHealth(newHealth);
     }
   };

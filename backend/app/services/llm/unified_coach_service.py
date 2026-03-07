@@ -312,6 +312,13 @@ class UnifiedCoachService(BaseLLMService):
                 logger.info("📤 Pass 2: Finalizing response with data...")
                 
                 async for chunk in self.stream(re_invocation_messages):
+                    # Check for unhandled tool calls in Pass 2
+                    if hasattr(chunk, "tool_calls") and chunk.tool_calls:
+                        logger.warning(
+                            f"⚠️ Model attempted tool call in Pass 2 (not supported): {chunk.tool_calls}"
+                        )
+                        f.write(f"\n[WARNING: Model attempted tool call in Pass 2: {chunk.tool_calls}]\n")
+
                     content = chunk.content
                     if not content:
                         continue

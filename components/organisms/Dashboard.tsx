@@ -25,7 +25,7 @@ export default function Dashboard({
     return <DashboardSkeleton />;
   }
 
-  if (error) {
+  if (error && !allData) {
     return (
       <Stack
         backgroundColor="$backgroundSoft"
@@ -34,7 +34,7 @@ export default function Dashboard({
         alignItems="center"
         gap="$3"
       >
-        <Text color="$red10" size="medium">
+        <Text color="$red10" size="medium" textAlign="center">
           Failed to load dashboard: {error}
         </Text>
       </Stack>

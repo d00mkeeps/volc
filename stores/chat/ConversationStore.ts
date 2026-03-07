@@ -6,7 +6,7 @@ import { Conversation, ChatConfigName, QuickAction } from "@/types";
 import { authService } from "@/services/db/auth";
 import { useMessageStore } from "./MessageStore";
 import { useUserStore } from "../userProfileStore";
-import { apiGet, apiPost } from "@/services/api/core/apiClient";
+import { apiGet, apiPost, isOfflineError } from "@/services/api/core/apiClient";
 
 interface ConversationStoreState {
   // State
@@ -19,7 +19,7 @@ interface ConversationStoreState {
 
   // Updated return type
   createConversationWithMessages: (
-    messages: { content: string; sender: "user" | "assistant" }[]
+    messages: { content: string; sender: "user" | "assistant" }[],
   ) => Promise<{
     conversationId: string;
   }>;
@@ -88,7 +88,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         const userProfile = useUserStore.getState().userProfile;
         if (!userProfile?.auth_user_uuid) {
           console.log(
-            "[ConversationStore] Cannot fetch actions: No auth user ID"
+            "[ConversationStore] Cannot fetch actions: No auth user ID",
           );
           return;
         }
@@ -112,7 +112,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         }
 
         console.log(
-          `[ConversationStore] 🚀 Fetching suggested actions for user (UUID): ${userProfile.auth_user_uuid} with ${recentMessages.length} msgs`
+          `[ConversationStore] 🚀 Fetching suggested actions for user (UUID): ${userProfile.auth_user_uuid} with ${recentMessages.length} msgs`,
         );
 
         set({ isLoadingActions: true }); // NEW
@@ -121,7 +121,7 @@ export const useConversationStore = create<ConversationStoreState>()(
           // Changed to POST to send message context in body
           const response = await apiPost<{ actions: QuickAction[] }>(
             `/api/v1/chat/quick-actions/${userProfile.auth_user_uuid}`,
-            recentMessages.length > 0 ? recentMessages : undefined
+            recentMessages.length > 0 ? recentMessages : undefined,
           );
 
           if (response && response.actions) {
@@ -139,15 +139,21 @@ export const useConversationStore = create<ConversationStoreState>()(
           } else {
             console.warn(
               "[ConversationStore] ⚠️ Received empty or invalid actions response:",
-              response
+              response,
             );
             set({ isLoadingActions: false });
           }
         } catch (error) {
-          console.error(
-            "[ConversationStore] ❌ Failed to fetch suggested actions:",
-            error
-          );
+          if (isOfflineError(error)) {
+            console.warn(
+              "[ConversationStore] ⚠️ Offline: Could not fetch suggested actions.",
+            );
+          } else {
+            console.error(
+              "[ConversationStore] ❌ Failed to fetch suggested actions:",
+              error,
+            );
+          }
           set({ isLoadingActions: false });
         }
       },
@@ -178,10 +184,10 @@ export const useConversationStore = create<ConversationStoreState>()(
 
           const result =
             await conversationService.getConversationsWithRecentMessages(
-              userProfile.auth_user_uuid
+              userProfile.auth_user_uuid,
             );
           const conversationsMap = new Map(
-            result.conversations.map((conv) => [conv.id, conv])
+            result.conversations.map((conv) => [conv.id, conv]),
           );
 
           useMessageStore.getState().setBulkMessages(result.messages);
@@ -192,10 +198,26 @@ export const useConversationStore = create<ConversationStoreState>()(
             initialized: true,
           });
 
-          // Fetch suggested actions after initialization
-          await get().fetchSuggestedActions();
+          // Fetch suggested actions after initialization, but don't fail if it bombs (e.g., offline)
+          try {
+            await get().fetchSuggestedActions();
+          } catch (e) {
+            console.warn(
+              "⚠️ [ConversationStore] Non-fatal error fetching actions during init:",
+              e,
+            );
+          }
         } catch (error) {
-          console.error("❌ ConversationStore: Initialization failed:", error);
+          if (isOfflineError(error)) {
+            console.warn(
+              "⚠️ ConversationStore: Initialization skipped or failed due to offline mode.",
+            );
+          } else {
+            console.error(
+              "❌ ConversationStore: Initialization failed:",
+              error,
+            );
+          }
           set({
             isLoading: false,
             initialized: true,
@@ -265,7 +287,7 @@ export const useConversationStore = create<ConversationStoreState>()(
 
           console.log(
             "✅ Conversation created with messages:",
-            result.conversation.id
+            result.conversation.id,
           );
 
           // Add created messages to MessageStore
@@ -304,10 +326,17 @@ export const useConversationStore = create<ConversationStoreState>()(
             conversationId: result.conversation.id,
           };
         } catch (error) {
-          console.error(
-            "[ConversationStore] Error creating conversation with messages:",
-            error
-          );
+          if (isOfflineError(error)) {
+            console.warn(
+              "[ConversationStore] ⚠️ Offline: Could not create conversation with messages",
+              error,
+            );
+          } else {
+            console.error(
+              "[ConversationStore] Error creating conversation with messages:",
+              error,
+            );
+          }
           set({
             isLoading: false,
             error: error instanceof Error ? error : new Error(String(error)),
@@ -349,10 +378,17 @@ export const useConversationStore = create<ConversationStoreState>()(
 
           return conversation.id;
         } catch (error) {
-          console.error(
-            "[ConversationStore] Error creating conversation:",
-            error
-          );
+          if (isOfflineError(error)) {
+            console.warn(
+              "[ConversationStore] ⚠️ Offline: Could not create conversation",
+              error,
+            );
+          } else {
+            console.error(
+              "[ConversationStore] Error creating conversation:",
+              error,
+            );
+          }
           set({
             isLoading: false,
             error: error instanceof Error ? error : new Error(String(error)),
@@ -376,7 +412,7 @@ export const useConversationStore = create<ConversationStoreState>()(
               const newConfigs = new Map(state.conversationConfigs);
               newConfigs.set(
                 conversation.id,
-                conversation.config_name as ChatConfigName
+                conversation.config_name as ChatConfigName,
               );
               return {
                 conversations: newConversations,
@@ -391,10 +427,17 @@ export const useConversationStore = create<ConversationStoreState>()(
           });
           return conversation;
         } catch (error) {
-          console.error(
-            "[ConversationStore] Error getting conversation:",
-            error
-          );
+          if (isOfflineError(error)) {
+            console.warn(
+              "[ConversationStore] ⚠️ Offline: Could not get conversation",
+              error,
+            );
+          } else {
+            console.error(
+              "[ConversationStore] Error getting conversation:",
+              error,
+            );
+          }
           set({
             isLoading: false,
             error: error instanceof Error ? error : new Error(String(error)),
@@ -444,7 +487,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         } catch (error) {
           console.error(
             "[ConversationStore] Error deleting conversation:",
-            error
+            error,
           );
           if (conversationToDelete) {
             set((state) => {
@@ -473,7 +516,7 @@ export const useConversationStore = create<ConversationStoreState>()(
       setActiveConversation: (id) => {
         console.log(
           "🔄 [ConversationStore.setActiveConversation] Setting to:",
-          id
+          id,
         );
         set({ activeConversationId: id });
       },
@@ -492,7 +535,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         if (diffMins >= 120) {
           console.log(
             "⏳ Conversation timed out, archiving:",
-            activeConversationId
+            activeConversationId,
           );
           set((state) => {
             const newConversations = new Map(state.conversations);
@@ -571,7 +614,7 @@ export const useConversationStore = create<ConversationStoreState>()(
             ...value.state,
             conversations: Array.from(value.state.conversations.entries()),
             conversationConfigs: Array.from(
-              value.state.conversationConfigs.entries()
+              value.state.conversationConfigs.entries(),
             ),
           };
           return AsyncStorage.setItem(name, JSON.stringify({ state }));
@@ -586,6 +629,6 @@ export const useConversationStore = create<ConversationStoreState>()(
         // pendingChatOpen is transient
         // pendingChatOpen is transient
       }),
-    }
-  )
+    },
+  ),
 );

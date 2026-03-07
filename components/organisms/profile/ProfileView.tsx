@@ -54,7 +54,7 @@ export default function ProfileView() {
   };
 
   // Only show error screen for critical errors, not missing data
-  if (error) {
+  if (error && !userProfile) {
     return (
       <YStack
         flex={1}

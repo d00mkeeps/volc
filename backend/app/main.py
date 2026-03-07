@@ -112,6 +112,11 @@ from app.api.endpoints.admin import router as admin_router
 app.include_router(admin_router, tags=["admin"])
 
 
+@app.get("/")
+async def root():
+    return {"message": "Supreme Octo Doodle API is running"}
+
+
 @app.get("/health")
 async def health_check():
     """

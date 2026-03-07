@@ -4,6 +4,7 @@ import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useUserStore } from "@/stores/userProfileStore";
 import { quickChatService } from "@/services/api/quickChatService";
+import { isOfflineError } from "@/services/api/core/apiClient";
 import type { ConnectionState } from "@/services/websocket/WebSocketService";
 import { Message } from "@/types";
 import Toast from "react-native-toast-message";
@@ -300,7 +301,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         isLoadingActions: false,
       });
     } catch (error) {
-      console.error("[ChatStore] Failed to fetch actions:", error);
+      if (isOfflineError(error)) {
+        console.warn("[ChatStore] Offline: Failed to fetch actions");
+      } else {
+        console.error("[ChatStore] Failed to fetch actions:", error);
+      }
       set({
         actions: [
           { label: "Track workout", message: "I want to track my workout" },
@@ -559,7 +564,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           await get().sendMessage(pendingInitialMessage);
         }
       } catch (error) {
-        console.error("[ChatStore] Failed to connect:", error);
+        if (isOfflineError(error)) {
+          console.warn("[ChatStore] Offline: Failed to connect");
+        } else {
+          console.error("[ChatStore] Failed to connect:", error);
+        }
         const { _handlerRefs } = get();
         _handlerRefs.forEach((unsubscribe) => unsubscribe());
         set({ _handlerRefs: [] });

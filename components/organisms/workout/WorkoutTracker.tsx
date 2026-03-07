@@ -13,6 +13,7 @@ import { YStack, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useSharedValue } from "react-native-reanimated";
 import { useUserSessionStore } from "@/stores/userSessionStore";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "tamagui";
 import WorkoutTrackerHeader from "@/components/molecules/headers/WorkoutTrackerHeader";
 import ExerciseTracker from "@/components/molecules/workout/ExerciseTracker";
@@ -40,6 +41,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const { currentWorkout, isActive, updateCurrentWorkout } =
       useUserSessionStore();
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const insets = useSafeAreaInsets();
     const animatedIndex = useSharedValue(-1);
     const animatedPosition = useSharedValue(0);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -67,9 +69,29 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
         headerHeight -
         tabBarHeight -
         quickActionsHeight;
-      return [peekHeight];
+
+      // Since peekHeight docks perfectly below the Dashboard, and the Dashboard
+      // sits directly below the Header, we can just add the dashboard's height
+      // to peekHeight to dock the sheet perfectly at the top of the Dashboard
+      // (which is exactly just below the header).
+      const fullHeight = peekHeight + dashboardHeight + 10;
+
+      console.log("📐 [WorkoutTracker.snapPoints] Heights:", {
+        screenHeight,
+        insetsTop: insets.top,
+        dashboardHeight,
+        inputAreaHeight,
+        headerHeight,
+        tabBarHeight,
+        quickActionsHeight,
+        peekHeight,
+        fullHeight,
+      });
+
+      return [peekHeight, fullHeight];
     }, [
       screenHeight,
+      insets.top,
       dashboardHeight,
       inputAreaHeight,
       headerHeight,
@@ -338,41 +360,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     );
     const shouldDisableAddButton = isAnyExerciseEditing || hasUnnamedExercise;
 
-    const renderHeader = () => (
-      <YStack gap="$3">
-        {(!currentWorkout?.workout_exercises ||
-          currentWorkout.workout_exercises.length === 0) && (
-          <YStack
-            padding="$6"
-            alignItems="center"
-            gap="$4"
-            backgroundColor="$backgroundSoft"
-            borderRadius="$4"
-            marginTop="$4"
-          >
-            <Text size="medium">💪</Text>
-            <YStack alignItems="center" gap="$2">
-              <Text
-                size="medium"
-                color="$color"
-                textAlign="center"
-                fontWeight="600"
-              >
-                Are you ready?
-              </Text>
-              <Text
-                size="medium"
-                color="$textMuted"
-                textAlign="center"
-                lineHeight={18}
-              >
-                Press start below or add an exercise
-              </Text>
-            </YStack>
-          </YStack>
-        )}
-      </YStack>
-    );
+    const renderHeader = () => null;
 
     const renderFooter = () => (
       <YStack gap="$3" marginTop="$3">

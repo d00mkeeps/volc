@@ -23,6 +23,7 @@ interface InputAreaProps {
   onFocus?: () => void;
   onCancel?: () => void;
   onFocusChange?: (isFocused: boolean) => void;
+  isNetworkUnreliable?: boolean;
 }
 
 export interface InputAreaRef {
@@ -40,8 +41,9 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
       onFocus: onFocusProp,
       onCancel,
       onFocusChange,
+      isNetworkUnreliable = false,
     },
-    ref
+    ref,
   ) => {
     const [isPressed, setIsPressed] = useState(false);
     const [input, setInput] = useState("");
@@ -76,7 +78,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
           textAreaKey.current += 1;
         },
       }),
-      []
+      [],
     );
 
     // Opacity animation for loading state
@@ -121,7 +123,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
               duration: 1000,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         );
         pulse.start();
 
@@ -240,12 +242,16 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
           setError(undefined);
         }
       },
-      [error]
+      [error],
     );
 
-    const canSend = !isBusy && !!input.trim();
+    const canSend = !isBusy && !!input.trim() && !isNetworkUnreliable;
     const length = input.length;
     const showCounter = input.length >= 200;
+
+    const displayPlaceholder = isNetworkUnreliable
+      ? "You're offline. Please reconnect to chat."
+      : placeholder;
 
     return (
       <Animated.View
@@ -270,8 +276,8 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
               value={input}
               verticalAlign="top"
               onChangeText={handleTextChange}
-              placeholder={placeholder}
-              disabled={false}
+              placeholder={displayPlaceholder}
+              disabled={isNetworkUnreliable}
               borderColor={
                 error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
               }
@@ -337,7 +343,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
                   isPressed && !stopCooldown ? "$primary" : "$borderSoft"
                 }
                 borderWidth={isPressed && !stopCooldown ? 2 : 0}
-                disabled={stopCooldown}
+                disabled={stopCooldown || isNetworkUnreliable}
                 onPress={handleCancel}
                 onPressIn={() => !stopCooldown && setIsPressed(true)}
                 onPressOut={() => setIsPressed(false)}
@@ -368,7 +374,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
         </YStack>
       </Animated.View>
     );
-  }
+  },
 );
 
 InputArea.displayName = "InputArea";
