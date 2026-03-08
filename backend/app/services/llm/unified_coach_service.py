@@ -219,13 +219,19 @@ class UnifiedCoachService(BaseLLMService):
 
                 # 3. Add reinforcement if we just got tool results but haven't finished
                 if iterations > 1:
-                    messages.append(SystemMessage(content="Tool results received. Continue the response without repeating your previous preamble. "
-                                                          "Finish the task and provide the requested data/workout. "
-                                                          "DO NOT repeat greetings like 'Sure' or 'Let me check'."))
+                    messages.append(SystemMessage(content="You now have the tool results. Provide the COMPLETE answer to the user's request. "
+                                                          "Include ALL relevant data — the full workout with exercises, sets, reps, and JSON block if applicable. "
+                                                          "Do NOT repeat any greeting or preamble you may have already said. "
+                                                          "Do NOT use the user's name again. Start directly with the workout content or answer."))
 
                 turn_text_buffer = ""
                 turn_tool_calls = []
                 
+                # Turn-level streaming state
+                turn_lookahead_buffer = []
+                turn_is_thinking = False
+                turn_content_committed = False
+
                 async for chunk in self.stream(messages):
                     if not first_token_received:
                         telemetry.record_first_token()
@@ -235,6 +241,8 @@ class UnifiedCoachService(BaseLLMService):
                     if hasattr(chunk, "tool_calls") and chunk.tool_calls:
                         for tc in chunk.tool_calls:
                             turn_tool_calls.append(tc)
+                        if iterations == 1:
+                            turn_is_thinking = True
 
                     content = chunk.content
                     if not content:
@@ -245,7 +253,27 @@ class UnifiedCoachService(BaseLLMService):
                         self.current_response += content
                         f.write(content)
                         f.flush()
-                        yield content
+                        
+                        if iterations > 1:
+                            # Turn 2+ always streams immediately
+                            yield content
+                        else:
+                            # Turn 1: 2-chunk lookahead to check for early tool calls
+                            if turn_is_thinking:
+                                # We already saw a tool call in this turn (perhaps in this chunk)
+                                yield json.dumps({"_type": "thinking", "content": content})
+                            elif turn_content_committed:
+                                # We already decided this is a content turn
+                                yield content
+                            else:
+                                turn_lookahead_buffer.append(content)
+                                # After 2 chunks of text-only, we commit to content for snappiness
+                                if len(turn_lookahead_buffer) >= 2:
+                                    turn_content_committed = True
+                                    for buffered_text in turn_lookahead_buffer:
+                                        yield buffered_text
+                                    turn_lookahead_buffer = []
+                            
                     elif isinstance(content, list):
                         for block in content:
                             if isinstance(block, dict):
@@ -260,9 +288,32 @@ class UnifiedCoachService(BaseLLMService):
                                     self.current_response += text
                                     f.write(text)
                                     f.flush()
-                                    yield text
+                                    if iterations > 1:
+                                        yield text
+                                    else:
+                                        # Standard buffering logic for Turn 1
+                                        if turn_is_thinking:
+                                            yield json.dumps({"_type": "thinking", "content": text})
+                                        elif turn_content_committed:
+                                            yield text
+                                        else:
+                                            turn_lookahead_buffer.append(text)
+                                            if len(turn_lookahead_buffer) >= 2:
+                                                turn_content_committed = True
+                                                for buffered_text in turn_lookahead_buffer:
+                                                    yield buffered_text
+                                                turn_lookahead_buffer = []
 
-                # If no tool calls, we are done
+                # Turn complete. Flush any remaining lookahead buffer.
+                if iterations == 1 and not turn_content_committed and turn_lookahead_buffer:
+                    if turn_is_thinking:
+                        for buffered_text in turn_lookahead_buffer:
+                            yield json.dumps({"_type": "thinking", "content": buffered_text})
+                    else:
+                        for buffered_text in turn_lookahead_buffer:
+                            yield buffered_text
+
+                # If no tool calls, we are done — text was already streamed
                 if not turn_tool_calls:
                     break
 
@@ -854,7 +905,7 @@ class UnifiedCoachService(BaseLLMService):
             ai_memory=formatted_context["ai_memory"],
             workout_history=formatted_context["workout_history"],
             strength_progression=formatted_context["strength_progression"],
-            available_exercises=available_exercises_text,
+            available_exercises="Tools are available to fetch exercises. Use them if you need more data to plan the workout.",
             glossary_terms=formatted_context["glossary_terms"],
         )
 

@@ -50,7 +50,7 @@ class SharedContextLoader:
         if user_id in self._cache:
             cache_entry = self._cache[user_id]
             if time.time() - cache_entry["timestamp"] < self._CACHE_TTL:
-                logger.info(f"✅ Served shared context from cache for user: {user_id}")
+                logger.debug(f"✅ Served shared context from cache for user: {user_id}")
                 return cache_entry["data"]
 
         logger.info(f"🔄 Loading shared context for user: {user_id}")

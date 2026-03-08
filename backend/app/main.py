@@ -72,10 +72,13 @@ app.add_middleware(TelemetryMiddleware)
 # Debug middleware to log all requests
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    logger.info(f"Request: {request.method} {request.url.path}")
+    is_health = request.url.path == "/health"
+    if not is_health:
+        logger.info(f"Request: {request.method} {request.url.path}")
     try:
         response = await call_next(request)
-        logger.info(f"Response status: {response.status_code}")
+        if not is_health:
+            logger.info(f"Response status: {response.status_code}")
         return response
     except Exception as e:
         logger.error(f"Request failed: {str(e)}")

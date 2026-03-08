@@ -2,6 +2,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 
+class _HealthCheckFilter(logging.Filter):
+    """Drop uvicorn access log entries for the /health polling endpoint."""
+    def filter(self, record: logging.LogRecord) -> bool:
+        return "/health" not in record.getMessage()
+
+
 def setup_logging():
     # Configure root logger at DEBUG level so that all logs are processed
     # The handlers will then filter based on their own levels
@@ -29,6 +35,9 @@ def setup_logging():
     root_logger.addHandler(c_handler)
     root_logger.addHandler(f_handler)
 
+    # Suppress /health polling from uvicorn's access log (fires before our middleware)
+    logging.getLogger("uvicorn.access").addFilter(_HealthCheckFilter())
+
     # Reduce verbosity for noisy third-party libraries
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
@@ -42,3 +51,4 @@ def setup_logging():
 
     # Test log message
     app_logger.info("Logging has been set up")
+

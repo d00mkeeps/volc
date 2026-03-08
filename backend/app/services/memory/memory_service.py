@@ -264,7 +264,7 @@ class MemoryExtractionService(BaseLLMService):
             )
 
             if save_result.get("success"):
-                logger.info(
+                logger.debug(
                     f"Successfully updated memory for user {user_id} in bundle {bundle.id}"
                 )
             else:

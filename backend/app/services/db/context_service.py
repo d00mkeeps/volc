@@ -477,7 +477,7 @@ class ContextBundleService:
             {'success': bool, 'error': str}
         """
         try:
-            logger.info(f"Updating ai_memory (admin) for bundle: {bundle_id}")
+            logger.debug(f"Updating ai_memory (admin) for bundle: {bundle_id}")
 
             admin_client = self.get_admin_client()
 
@@ -494,7 +494,7 @@ class ContextBundleService:
             )
 
             if hasattr(result, "data") and result.data:
-                logger.info(f"ai_memory updated successfully (admin): {bundle_id}")
+                logger.debug(f"ai_memory updated successfully (admin): {bundle_id}")
                 return {"success": True}
             else:
                 error = f"Failed to update ai_memory (admin): No data returned for bundle {bundle_id}"
