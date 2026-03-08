@@ -58,6 +58,8 @@ export default function WorkoutTrackerHeader({
       paddingHorizontal="$3"
       paddingVertical="$2"
       backgroundColor="transparent"
+      borderTopWidth={1}
+      borderTopColor="$borderColor"
     >
       <XStack justifyContent="space-between" alignItems="center">
         {/* Left: Cancel button */}

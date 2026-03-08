@@ -163,7 +163,7 @@ function RootLayoutNav() {
             />
           </Theme>
         </TamaguiProvider>
-        <Toast />
+        <Toast topOffset={60} />
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

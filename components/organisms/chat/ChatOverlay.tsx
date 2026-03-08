@@ -354,7 +354,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
       pointerEvents="box-none"
     >
       <ResponsiveKeyboardAvoidingView
-        additionalOffset={tabBarHeight}
+        additionalOffset={0}
         style={StyleSheet.absoluteFill}
         pointerEvents="box-none"
       >
@@ -417,8 +417,22 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
           pointerEvents="box-none"
           justifyContent="flex-end"
           flex={1}
-          paddingBottom={tabBarHeight + 8}
+          paddingBottom={
+            isKeyboardVisible ? 8 : (tabBarHeight || insets.bottom) + 8
+          }
           style={styles.inputContainer}
+          onLayout={(e) => {
+            console.log("🎨 [ChatOverlay.inputContainer] Layout:", {
+              height: e.nativeEvent.layout.height,
+              y: e.nativeEvent.layout.y,
+              isKeyboardVisible,
+              insetsBottom: insets.bottom,
+              tabBarHeight,
+              paddingBottom: isKeyboardVisible
+                ? 8
+                : (tabBarHeight || insets.bottom) + 8,
+            });
+          }}
         >
           <Animated.View style={[globalVisibilityStyle, { width: "100%" }]}>
             <Animated.View style={[quickChatStyle, { marginBottom: 0 }]}>

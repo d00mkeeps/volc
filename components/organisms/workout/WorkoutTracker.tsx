@@ -52,7 +52,6 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
       elapsedSeconds,
     } = useUserSessionStore();
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const insets = useSafeAreaInsets();
     const animatedIndex = useSharedValue(-1);
     const animatedPosition = useSharedValue(0);
     const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -64,51 +63,25 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
     const screenHeight = useLayoutStore((state) => state.screenHeight);
     const dashboardHeight = useLayoutStore((state) => state.dashboardHeight);
     const headerHeight = useLayoutStore((state) => state.headerHeight);
-    const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
-    const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
-    const quickActionsHeight = useLayoutStore(
-      (state) => state.quickActionsHeight,
-    );
 
     const snapPoints = useMemo(() => {
-      // Calculate available height below dashboard
-      const peekHeight =
-        10 +
-        screenHeight -
-        dashboardHeight -
-        inputAreaHeight -
-        headerHeight -
-        tabBarHeight -
-        quickActionsHeight;
+      // The height of the sheet from the bottom to reach the bottom of the dashboard
+      // We subtract the headerHeight and dashboardHeight from the total screenHeight
+      const peekHeight = screenHeight - headerHeight - dashboardHeight - 20;
 
-      // Since peekHeight docks perfectly below the Dashboard, and the Dashboard
-      // sits directly below the Header, we can just add the dashboard's height
-      // to peekHeight to dock the sheet perfectly at the top of the Dashboard
-      // (which is exactly just below the header).
-      const fullHeight = peekHeight + dashboardHeight + 10;
+      // The height of the sheet from the bottom to reach the bottom of the header
+      const fullHeight = screenHeight - headerHeight - 8;
 
-      console.log("📐 [WorkoutTracker.snapPoints] Heights:", {
+      console.log("📐 [WorkoutTracker.snapPoints] DETAIL:", {
         screenHeight,
-        insetsTop: insets.top,
-        dashboardHeight,
-        inputAreaHeight,
         headerHeight,
-        tabBarHeight,
-        quickActionsHeight,
+        dashboardHeight,
         peekHeight,
         fullHeight,
       });
 
       return [peekHeight, fullHeight];
-    }, [
-      screenHeight,
-      insets.top,
-      dashboardHeight,
-      inputAreaHeight,
-      headerHeight,
-      tabBarHeight,
-      quickActionsHeight,
-    ]);
+    }, [screenHeight, headerHeight, dashboardHeight]);
 
     const handleSheetChanges = (index: number) => {
       console.log("🟡 [WorkoutTracker] handleSheetChanges -", index);
@@ -531,7 +504,7 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
                   flex: 1,
                   justifyContent: "flex-start",
                   alignItems: "center",
-                  paddingTop: "30%",
+                  paddingTop: "15%",
                 }}
               >
                 <Stack
