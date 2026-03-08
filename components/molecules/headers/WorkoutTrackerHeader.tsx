@@ -99,9 +99,7 @@ export default function WorkoutTrackerHeader({
             onPress={isActive ? togglePause : undefined}
             opacity={isActive ? 1 : 0.4}
           >
-            {isPaused ? (
-              <AppIcon name="Play" size={22} color="#f84f3e" />
-            ) : (
+            {isPaused ? null : (
               <AppIcon name="Pause" size={22} color="#f84f3e" />
             )}
           </Circle>

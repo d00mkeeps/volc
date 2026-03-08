@@ -6,6 +6,7 @@ import { AppIcon } from "@/assets/icons/IconMap";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import { HomeScreenHeaderMenu } from "./HomeScreenHeaderMenu";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HeaderProps {
   greeting?: string;
@@ -26,12 +27,15 @@ export default function Header({
 }: HeaderProps) {
   const setHeaderHeight = useLayoutStore((state) => state.setHeaderHeight);
   const { health, isUnreliable } = useNetworkQuality();
+  const insets = useSafeAreaInsets();
 
   return (
     <Stack
       flexDirection="row"
       justifyContent="space-between"
       alignItems="center"
+      paddingTop={Math.max(4, insets.top - 12)}
+      paddingHorizontal="$4"
       marginBottom="$3"
       onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
     >
@@ -51,8 +55,8 @@ export default function Header({
                 health === "good"
                   ? "NetworkGood"
                   : health === "poor"
-                  ? "NetworkPoor"
-                  : "NetworkOffline"
+                    ? "NetworkPoor"
+                    : "NetworkOffline"
               }
               size={20}
               color="$text"

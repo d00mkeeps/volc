@@ -35,6 +35,7 @@ import { useUserSessionStore } from "@/stores/userSessionStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useColorScheme } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface ChatOverlayProps {
   currentPage?: number;
@@ -97,6 +98,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   }, [loadingState, isUnreliable, cancelStreaming]);
 
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
   const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
   const setExpandChatOverlay = useLayoutStore(
     (state) => state.setExpandChatOverlay,
@@ -415,7 +417,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
           pointerEvents="box-none"
           justifyContent="flex-end"
           flex={1}
-          paddingBottom={tabBarHeight - 15}
+          paddingBottom={tabBarHeight + 8}
           style={styles.inputContainer}
         >
           <Animated.View style={[globalVisibilityStyle, { width: "100%" }]}>
@@ -454,7 +456,6 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 const styles = StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFillObject,
-    paddingBottom: 16,
   },
   expandedContent: {
     ...StyleSheet.absoluteFillObject,
@@ -464,6 +465,5 @@ const styles = StyleSheet.create({
   inputContainer: {
     zIndex: 2,
     elevation: 2,
-    paddingBottom: 24,
   },
 });

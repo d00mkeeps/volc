@@ -8,6 +8,7 @@ import WorkoutScreen from "./workouts";
 import CustomTabBar from "@/components/organisms/CustomTabBar";
 import { ChatOverlay } from "@/components/organisms/chat/ChatOverlay";
 import { useLayoutStore } from "@/stores/layoutStore";
+import SafeAreaBlurGuard from "@/components/atoms/core/SafeAreaBlurGuard";
 
 export default function TabLayout() {
   const pagerRef = useRef<PagerView>(null);
@@ -26,7 +27,7 @@ export default function TabLayout() {
     const targetPage = routeToPage[pathname];
     if (targetPage !== undefined && targetPage !== currentPage) {
       console.log(
-        `📱 Route changed: ${pathname} -> switching to page ${targetPage}`
+        `📱 Route changed: ${pathname} -> switching to page ${targetPage}`,
       );
       pagerRef.current?.setPage(targetPage);
     }
@@ -57,13 +58,23 @@ export default function TabLayout() {
           </View>
         </PagerView>
         <ChatOverlay currentPage={currentPage} />
-        <View style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 100,
+          }}
+          pointerEvents="box-none"
+        >
           <CustomTabBar
             activeIndex={currentPage}
             onTabPress={handleTabPress}
             onLayout={setTabBarHeight}
           />
         </View>
+        <SafeAreaBlurGuard position="top" />
       </View>
     </YStack>
   );

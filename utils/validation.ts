@@ -9,16 +9,15 @@ export const WorkoutValidation = {
   weight: (value: number | undefined, isMetric: boolean) => {
     if (value === undefined || value < 0)
       return { isValid: false, error: "Invalid weight" };
-    const maxKg = 500;
-    const max = isMetric ? maxKg : maxKg * 2.205; // ~1102 lbs
-    if (value > max)
-      return { isValid: false, error: `Max ${max}${isMetric ? "kg" : "lbs"}` };
+    const maxKg = 999;
+    const max = isMetric ? maxKg : maxKg * 2.205; // ~2202 lbs
+    if (value > max) return { isValid: true, value: max };
     return { isValid: true };
   },
   reps: (value: number | undefined) => {
     if (value === undefined || value < 0)
       return { isValid: false, error: "Invalid reps" };
-    if (value > 100) return { isValid: false, error: "Max 100 reps" };
+    if (value > 99) return { isValid: true, value: 99 };
     return { isValid: true };
   },
   distance: (value: number | undefined, isMetric: boolean) => {

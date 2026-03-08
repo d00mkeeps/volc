@@ -41,27 +41,13 @@ export default function Dashboard({
     );
   }
 
-  if (!allData) {
-    return (
-      <Stack
-        backgroundColor="$backgroundSoft"
-        borderRadius="$3"
-        padding="$5"
-        alignItems="center"
-        gap="$3"
-      >
-        <Text color="$textSoft" size="medium">
-          No dashboard data available
-        </Text>
-      </Stack>
-    );
-  }
+  const workouts = allData ? allData["2months"].consistency.workouts : [];
 
   return (
     <Stack gap="$3">
       <MuscleGroupSpider />
       <ConsistencyCalendar
-        workouts={allData["2months"].consistency.workouts} // ✅ Pass workouts array
+        workouts={workouts} // ✅ Pass workouts array (empty if no data)
         onDayPress={onWorkoutDayPress} // ✅ Pass callback
       />
     </Stack>

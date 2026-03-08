@@ -324,6 +324,7 @@ OUTPUT FORMAT:
             )
 
             # Use base class retry-wrapped invocation
+            chain = simple_prompt | self.llm | self.parser
             result = await self._call_with_retry(
                 chain.ainvoke,
                 {

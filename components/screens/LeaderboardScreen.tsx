@@ -9,7 +9,8 @@ import { LeaderboardEntry, FormattedLeaderboardEntry } from "@/types";
 import { useRouter } from "expo-router";
 import LeaderboardItem from "@/components/atoms/LeaderboardItem";
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
-import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet"; // Import PreviewSheet
+import WorkoutPreviewSheet from "@/components/molecules/workout/WorkoutPreviewSheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface LeaderboardScreenProps {
   isActive?: boolean;
@@ -52,6 +53,7 @@ export const LeaderboardScreen = ({
   const { formattedEntries, loading, error, refresh, clearError, hasEntries } =
     useLeaderboard();
   const { getPublicWorkout } = useWorkoutStore();
+  const insets = useSafeAreaInsets();
 
   // Sheet state
   const [selectedWorkoutIds, setSelectedWorkoutIds] = useState<string[]>([]);
@@ -105,7 +107,13 @@ export const LeaderboardScreen = ({
   return (
     <YStack flex={1} backgroundColor="$background">
       {/* Header */}
-      <XStack padding="$4" alignItems="center" justifyContent="space-between">
+      <XStack
+        paddingTop={insets.top}
+        paddingHorizontal="$4"
+        paddingBottom="$2"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <Text size="medium" fontWeight="700">
           Bicep Leaderboard
         </Text>
@@ -125,7 +133,7 @@ export const LeaderboardScreen = ({
         {!hasEntries ? (
           <EmptyState />
         ) : (
-          <YStack paddingBottom="$4">
+          <YStack paddingBottom={insets.bottom + 60}>
             {formattedEntries.map((entry) => (
               <LeaderboardItem
                 key={`${entry.user_id}-${entry.workout_id}-${entry.exercise_id}`}

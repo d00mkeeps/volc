@@ -239,8 +239,8 @@ class UnifiedCoachService(BaseLLMService):
                 # Yield a signal to the frontend that we are fetching data
                 yield json.dumps({"_type": "tool_call", "count": len(tool_calls)})
                 
-                # If Pass 1 already yielded text, we reset current_response so Pass 2 is the source of truth.
-                self.current_response = "" 
+                # If Pass 1 already yielded text, we DO NOT reset current_response. 
+                # Instead, we ensure Pass 2 continues naturally from where Pass 1 left off.
                 
                 # Dictionary of tool_name -> list of results to handle multiple calls
                 tool_results = {}
@@ -304,8 +304,11 @@ class UnifiedCoachService(BaseLLMService):
                 
                 # REINFORCEMENT message to ensure complete delivery
                 reinforcement = SystemMessage(content="Tool execution complete. Now provide the FINAL response to the user. "
-                                                      "You MUST include any requested details (like a workout_template JSON) "
-                                                      "immediately in this turn based on the tool results provided above.")
+                                                      "You already sent an initial response (the text before the Thinking block). "
+                                                      "DO NOT repeat greetings, apologies, or preambles. "
+                                                      "DO NOT say 'Sure' or 'Let me' again. "
+                                                      "Immediately provide the requested data (e.g., workout_template) or the final direct answer "
+                                                      "to complete the response you already started. Stay in character.")
                 
                 re_invocation_messages = [final_prompt_list[0]] + final_prompt_list[1:] + [model_msg] + \
                                          [msg for msg in re_invocation_messages if isinstance(msg, ToolMessage)] + \

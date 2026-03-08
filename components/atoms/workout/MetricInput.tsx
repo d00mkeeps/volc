@@ -44,7 +44,9 @@ export default function MetricInput({
       return;
     }
 
-    let validation: { isValid: boolean; error?: string } = { isValid: true };
+    let validation: { isValid: boolean; error?: string; value?: number } = {
+      isValid: true,
+    };
 
     switch (type) {
       case "weight":
@@ -59,11 +61,20 @@ export default function MetricInput({
     }
 
     setError(validation.error);
-    onChange(validation.isValid ? numValue : undefined);
+    const finalValue =
+      validation.value !== undefined ? validation.value : numValue;
+    onChange(validation.isValid ? finalValue : undefined);
+
+    if (validation.value !== undefined) {
+      setLocalValue(validation.value.toString());
+    }
   };
 
-  const isEmpty = value === undefined || value === null || value === 0;
-  const shouldShowError = showError && isEmpty;
+  const isEmpty = (val: string | number | null | undefined) => {
+    return val === undefined || val === null || val === "" || val === 0;
+  };
+
+  const shouldShowError = showError && isEmpty(value);
 
   const getMetricLabel = () => {
     switch (type) {

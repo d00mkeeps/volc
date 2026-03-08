@@ -237,7 +237,16 @@ export class WebSocketService {
         this.currentConnectionKey = connectionKey;
         this.previousConnectionKey = null; // Clear the previous key
 
-        this.setConnectionState("connected");
+        // Show success toast if we were reconnecting
+        if (this.retryAttempts > 0) {
+          Toast.show({
+            type: "success",
+            text1: "Connected!",
+            text2: "successfully connected to server",
+            visibilityTime: 3000,
+          });
+        }
+
         this.retryAttempts = 0; // Reset retry counter on successful connection
         this.resetInactivityTimer();
 
@@ -614,6 +623,7 @@ export class WebSocketService {
     if (this.connectionState !== state) {
       this.connectionState = state;
       console.log(`[WSService] State changed: ${state}`);
+      this.events.emit("stateChange", state);
     }
   }
 
@@ -728,6 +738,14 @@ export class WebSocketService {
   onToolCall(callback: ToolCallCallback): () => void {
     this.events.on("toolCall", callback);
     return () => this.events.off("toolCall", callback);
+  }
+
+  /**
+   * Register state change handler
+   */
+  onStateChange(callback: (state: ConnectionState) => void): () => void {
+    this.events.on("stateChange", callback);
+    return () => this.events.off("stateChange", callback);
   }
 
   /**

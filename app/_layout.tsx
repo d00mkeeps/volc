@@ -124,49 +124,47 @@ function RootLayoutNav() {
   };
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <TamaguiProvider config={config}>
-            <Theme name={colorScheme === "dark" ? "dark" : "light"}>
-              <BottomSheetModalProvider>
-                <AuthProvider>
-                  <AuthStoreManager>
-                    <ThemeProvider
-                      value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                    >
-                      <AuthGate onWelcomeNeeded={setShowWelcome}>
-                        <TourProvider>
-                          <Stack screenOptions={{ headerShown: false }}>
-                            <Stack.Screen name="(tabs)" />
-                            <Stack.Screen
-                              name="modal"
-                              options={{ presentation: "modal" }}
-                            />
-                          </Stack>
-                        </TourProvider>
-                      </AuthGate>
-                    </ThemeProvider>
-                  </AuthStoreManager>
-                  <WelcomeBottomSheet
-                    isVisible={showWelcome}
-                    onComplete={() => {
-                      console.log("[_layout] onComplete called");
-                      setShowWelcome(false);
-                    }}
-                  />
-                </AuthProvider>
-              </BottomSheetModalProvider>
-              <UpdatePromptModal
-                isVisible={showUpdateModal}
-                currentVersion={getCurrentAppVersion()}
-                minimumVersion={MINIMUM_APP_VERSION}
-                onUpdate={handleUpdate}
-              />
-            </Theme>
-          </TamaguiProvider>
-          <Toast />
-        </GestureHandlerRootView>
-      </SafeAreaView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <TamaguiProvider config={config}>
+          <Theme name={colorScheme === "dark" ? "dark" : "light"}>
+            <BottomSheetModalProvider>
+              <AuthProvider>
+                <AuthStoreManager>
+                  <ThemeProvider
+                    value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                  >
+                    <AuthGate onWelcomeNeeded={setShowWelcome}>
+                      <TourProvider>
+                        <Stack screenOptions={{ headerShown: false }}>
+                          <Stack.Screen name="(tabs)" />
+                          <Stack.Screen
+                            name="modal"
+                            options={{ presentation: "modal" }}
+                          />
+                        </Stack>
+                      </TourProvider>
+                    </AuthGate>
+                  </ThemeProvider>
+                </AuthStoreManager>
+                <WelcomeBottomSheet
+                  isVisible={showWelcome}
+                  onComplete={() => {
+                    console.log("[_layout] onComplete called");
+                    setShowWelcome(false);
+                  }}
+                />
+              </AuthProvider>
+            </BottomSheetModalProvider>
+            <UpdatePromptModal
+              isVisible={showUpdateModal}
+              currentVersion={getCurrentAppVersion()}
+              minimumVersion={MINIMUM_APP_VERSION}
+              onUpdate={handleUpdate}
+            />
+          </Theme>
+        </TamaguiProvider>
+        <Toast />
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

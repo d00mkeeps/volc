@@ -90,7 +90,6 @@ export default function WorkoutTemplateView({
             >
               {exercise.name}
             </Text>
-            <AppIcon name="Info" size={16} color="$textSoft" />
           </TouchableOpacity>
           {exercise.notes && (
             <Text size="medium" color="$textSoft" fontStyle="italic">
@@ -119,7 +118,6 @@ export default function WorkoutTemplateView({
           >
             {exercise.name}
           </Text>
-          <AppIcon name="Info" size={16} color="$textSoft" />
         </TouchableOpacity>
         {exercise.notes && (
           <Text size="small" color="$textSoft">

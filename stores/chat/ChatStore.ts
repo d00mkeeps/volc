@@ -64,7 +64,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   setFailedMessageContent: (content) => set({ failedMessageContent: content }),
 
-  connectionState: "disconnected",
+  connectionState: getWebSocketService().getConnectionState(),
   loadingState: "idle",
   statusMessage: null,
   lastCancelTime: 0,
@@ -864,7 +864,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 }));
 
-// Poll connection state
-setInterval(() => {
-  useChatStore.getState()._updateConnectionState();
-}, 500);
+// Global subscription to sync connection state
+getWebSocketService().onStateChange((newState) => {
+  console.log("🔄 [ChatStore] WebSocket state change detected:", newState);
+  useChatStore.setState({ connectionState: newState });
+});
