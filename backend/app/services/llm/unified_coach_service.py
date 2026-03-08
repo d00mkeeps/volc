@@ -198,11 +198,31 @@ class UnifiedCoachService(BaseLLMService):
             iterations = 0
             max_iterations = 5
             tool_results = {}
+            # Track all turns (AI and Tool messages) generated DURING this process_message call
+            current_exchange_turns = []
 
             while iterations < max_iterations:
                 iterations += 1
                 logger.info(f"Loop iteration {iterations}...")
                 
+                # 1. Start with fresh prompt (contains injected data from tool_results)
+                # _build_prompt handles the SystemPrompt formatting with tools
+                messages = self._build_prompt(
+                    message=message,
+                    message_history=self.message_history[:-1],
+                    formatted_context=self.formatted_context,
+                    tool_results=tool_results,
+                )
+                
+                # 2. Append all turns from this current multi-turn exchange
+                messages.extend(current_exchange_turns)
+
+                # 3. Add reinforcement if we just got tool results but haven't finished
+                if iterations > 1:
+                    messages.append(SystemMessage(content="Tool results received. Continue the response without repeating your previous preamble. "
+                                                          "Finish the task and provide the requested data/workout. "
+                                                          "DO NOT repeat greetings like 'Sure' or 'Let me check'."))
+
                 turn_text_buffer = ""
                 turn_tool_calls = []
                 
@@ -246,6 +266,9 @@ class UnifiedCoachService(BaseLLMService):
                 if not turn_tool_calls:
                     break
 
+                # Record this AI turn in the exchange history
+                current_exchange_turns.append(AIMessage(content=turn_text_buffer, tool_calls=turn_tool_calls))
+
                 # Execute Tools
                 logger.info(f"🔧 Model called {len(turn_tool_calls)} tool(s).")
                 yield json.dumps({"_type": "tool_call", "count": len(turn_tool_calls)})
@@ -262,19 +285,20 @@ class UnifiedCoachService(BaseLLMService):
                         logger.warning(f"   └─ Unknown tool: {tool_name}")
 
                 # Collect results
-                iter_tool_messages = []
                 if tool_tasks:
                     results = await asyncio.gather(*tool_tasks, return_exceptions=True)
                     for tc, result in zip(turn_tool_calls, results):
                         tool_name = tc["name"]
                         if not isinstance(result, Exception):
-                            # Store in aggregate tool_results (for prompt-level injection if needed)
+                            # Store in aggregate tool_results (for prompt-level injection)
                             if tool_name not in tool_results:
                                 tool_results[tool_name] = []
                             tool_results[tool_name].append(result)
                             
                             content_str = json.dumps(result) if not isinstance(result, str) else result
-                            iter_tool_messages.append(ToolMessage(content=content_str, tool_call_id=tc["id"]))
+                            
+                            # Record this Tool message in the exchange history
+                            current_exchange_turns.append(ToolMessage(content=content_str, tool_call_id=tc["id"]))
 
                             # Telemetry
                             from app.core.utils.telemetry import AgentAction
@@ -283,7 +307,7 @@ class UnifiedCoachService(BaseLLMService):
                             telemetry.on_tool_end(str(result))
                         else:
                             logger.error(f"Error in tool {tool_name}: {str(result)}")
-                            iter_tool_messages.append(ToolMessage(content=f"Error: {str(result)}", tool_call_id=tc["id"]))
+                            current_exchange_turns.append(ToolMessage(content=f"Error: {str(result)}", tool_call_id=tc["id"]))
 
                 # Special handling for exercise lists: enrich with weights
                 if "get_strength_exercises" in tool_results:
@@ -291,23 +315,14 @@ class UnifiedCoachService(BaseLLMService):
                     exercise_ids = [ex["id"] for ex in all_exercises if isinstance(ex, dict) and "id" in ex]
                     if exercise_ids:
                         last_weights = self._get_last_weights_for_exercises(exercise_ids)
-                        # We don't modify the ToolMessages already added, but _build_prompt will use tool_results
-                
-                # Update messages for next iteration
-                # 1. Start with fresh prompt (contains injected data from tool_results)
-                messages = self._build_prompt(
-                    message=message,
-                    message_history=self.message_history[:-1],
-                    formatted_context=self.formatted_context,
-                    tool_results=tool_results,
-                )
-                
-                # 2. Add the AIMessage representing the text we've already yielded
-                # This is CRITICAL to prevent repetition.
-                messages.append(AIMessage(content=turn_text_buffer, tool_calls=turn_tool_calls))
-                
-                # 3. Add the ToolMessages from this turn
-                messages.extend(iter_tool_messages)
+                        # Apply to tool_results so _build_prompt sees the enriched data
+                        for batch in tool_results["get_strength_exercises"]:
+                            if isinstance(batch, list):
+                                for ex in batch:
+                                    if isinstance(ex, dict) and ex.get("id") in last_weights:
+                                        ex["last_tracked"] = last_weights[ex["id"]]
+                            elif isinstance(batch, dict) and batch.get("id") in last_weights:
+                                batch["last_tracked"] = last_weights[batch["id"]]
 
                 f.write(f"\n[RE-INVOKING MODEL (Iteration {iterations+1})...]\n")
 
