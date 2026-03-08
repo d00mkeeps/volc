@@ -14,6 +14,7 @@ export type TerminationCallback = (reason: string) => void;
 export type CancelledCallback = (data: { reason: string }) => void;
 export type ErrorCallback = (error: Error) => void;
 export type StatusCallback = (statusText: string) => void;
+export type ToolCallCallback = (data: any) => void;
 
 export type ConnectionState =
   | "disconnected"
@@ -424,6 +425,12 @@ export class WebSocketService {
           console.log("[WSService] Chart data received:", message.data);
           this.events.emit("chartData", message.data);
           break;
+
+        case "tool_call":
+          console.log("[WSService] Tool call received:", message.data);
+          this.events.emit("toolCall", message.data);
+          break;
+
         case "complete":
           this.events.emit("complete");
           break;
@@ -716,6 +723,11 @@ export class WebSocketService {
   onChartData(callback: ChartDataCallback): () => void {
     this.events.on("chartData", callback);
     return () => this.events.off("chartData", callback);
+  }
+
+  onToolCall(callback: ToolCallCallback): () => void {
+    this.events.on("toolCall", callback);
+    return () => this.events.off("toolCall", callback);
   }
 
   /**

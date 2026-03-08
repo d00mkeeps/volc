@@ -236,6 +236,9 @@ class UnifiedCoachService(BaseLLMService):
             if tool_calls:
                 logger.info(f"🔧 Model called {len(tool_calls)} tool(s). Aggregating results.")
                 
+                # Yield a signal to the frontend that we are fetching data
+                yield json.dumps({"_type": "tool_call", "count": len(tool_calls)})
+                
                 # If Pass 1 already yielded text, we reset current_response so Pass 2 is the source of truth.
                 self.current_response = "" 
                 

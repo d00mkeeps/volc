@@ -157,6 +157,12 @@ async def unified_coach(
                                     "type": "thinking",
                                     "data": thinking_data["content"]
                                 })
+                            elif chunk.startswith('{"_type": "tool_call"'):
+                                tool_data = json.loads(chunk)
+                                await websocket.send_json({
+                                    "type": "tool_call",
+                                    "data": tool_data
+                                })
                             else:
                                 # Regular content chunk
                                 full_response += chunk

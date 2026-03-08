@@ -381,6 +381,21 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }
     });
 
+    const unsubscribeToolCall = webSocketService.onToolCall((data) => {
+      const { isThinking, currentThought } = get();
+      if (!isThinking) {
+        set({
+          isThinking: true,
+          thinkingStartTime: Date.now(),
+          currentThought: "**Planning workout...**",
+        });
+      } else {
+        set({
+          currentThought: currentThought + "\n\n**Planning workout...**",
+        });
+      }
+    });
+
     const unsubscribeComplete = webSocketService.onComplete(() => {
       useMessageStore.getState().completeStreamingMessage(conversationId);
       set({ statusMessage: null });
@@ -439,6 +454,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         unsubscribeStatus,
         unsubscribeThinking,
         unsubscribeContent,
+        unsubscribeToolCall,
         unsubscribeComplete,
         unsubscribeCancelled,
         unsubscribeTerminated,
