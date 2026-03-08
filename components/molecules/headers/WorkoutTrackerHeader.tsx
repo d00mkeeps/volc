@@ -39,7 +39,7 @@ export default function WorkoutTrackerHeader({
           style: "destructive",
           onPress: () => cancelWorkout(),
         },
-      ]
+      ],
     );
   };
 
@@ -57,9 +57,7 @@ export default function WorkoutTrackerHeader({
     <YStack
       paddingHorizontal="$3"
       paddingVertical="$2"
-      backgroundColor="$backgroundSoft"
-      borderBottomWidth={1}
-      borderBottomColor="$borderSoft"
+      backgroundColor="transparent"
     >
       <XStack justifyContent="space-between" alignItems="center">
         {/* Left: Cancel button */}

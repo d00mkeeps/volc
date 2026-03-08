@@ -12,12 +12,15 @@ class QuickChatService extends BaseApiService {
 
   async fetchQuickActions(
     authUserUuid: string,
-    recentMessages?: Array<{ sender: "user" | "assistant"; content: string }>
+    recentMessages?: Array<{ sender: "user" | "assistant"; content: string }>,
   ): Promise<QuickActionsResponse> {
     try {
       const response = await this.post<QuickActionsResponse>(
         `/quick-actions/${authUserUuid}`,
-        recentMessages && recentMessages.length > 0 ? recentMessages : undefined
+        recentMessages && recentMessages.length > 0
+          ? recentMessages
+          : undefined,
+        { timeout: 15000 },
       );
 
       return {

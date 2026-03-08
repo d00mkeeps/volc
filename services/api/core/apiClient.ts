@@ -278,6 +278,7 @@ export async function apiRequest<T = any>(
 export const apiGet = <T = any>(
   endpoint: string,
   params: Record<string, any> = {},
+  options: RequestInit & { timeout?: number } = {},
 ) => {
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
@@ -289,30 +290,48 @@ export const apiGet = <T = any>(
   const queryString = searchParams.toString();
   const url = queryString ? `${endpoint}?${queryString}` : endpoint;
 
-  return apiRequest<T>(url, { method: "GET" });
+  return apiRequest<T>(url, { method: "GET", ...options });
 };
 
-export const apiPost = <T = any>(endpoint: string, data: any) => {
+export const apiPost = <T = any>(
+  endpoint: string,
+  data: any,
+  options: RequestInit & { timeout?: number } = {},
+) => {
   return apiRequest<T>(endpoint, {
     method: "POST",
     body: JSON.stringify(data),
+    ...options,
   });
 };
 
-export const apiPut = <T = any>(endpoint: string, data: any) => {
+export const apiPut = <T = any>(
+  endpoint: string,
+  data: any,
+  options: RequestInit & { timeout?: number } = {},
+) => {
   return apiRequest<T>(endpoint, {
     method: "PUT",
     body: JSON.stringify(data),
+    ...options,
   });
 };
 
-export const apiPatch = <T = any>(endpoint: string, data: any) => {
+export const apiPatch = <T = any>(
+  endpoint: string,
+  data: any,
+  options: RequestInit & { timeout?: number } = {},
+) => {
   return apiRequest<T>(endpoint, {
     method: "PATCH",
     body: JSON.stringify(data),
+    ...options,
   });
 };
 
-export const apiDelete = <T = any>(endpoint: string) => {
-  return apiRequest<T>(endpoint, { method: "DELETE" });
+export const apiDelete = <T = any>(
+  endpoint: string,
+  options: RequestInit & { timeout?: number } = {},
+) => {
+  return apiRequest<T>(endpoint, { method: "DELETE", ...options });
 };

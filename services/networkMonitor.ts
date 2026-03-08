@@ -47,6 +47,38 @@ class __NetworkMonitor__ extends EventEmitter {
     console.log("[NetworkMonitor] Stopped network monitoring");
   }
 
+  public waitForSuccessfulPings(
+    requiredCount: number,
+    timeoutMs: number,
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      let successCount = 0;
+      let checkTimeout: ReturnType<typeof setTimeout>;
+
+      const onPing = (result: { success: boolean }) => {
+        if (result.success) {
+          successCount++;
+          if (successCount >= requiredCount) {
+            cleanup();
+            resolve(true);
+          }
+        }
+      };
+
+      const cleanup = () => {
+        clearTimeout(checkTimeout);
+        this.off("ping", onPing);
+      };
+
+      this.on("ping", onPing);
+
+      checkTimeout = setTimeout(() => {
+        cleanup();
+        resolve(false);
+      }, timeoutMs);
+    });
+  }
+
   private async performPing(): Promise<void> {
     const start = Date.now();
     try {

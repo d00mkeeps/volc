@@ -1,53 +1,68 @@
-import { apiGet, apiPost, apiDelete, apiPatch } from './core/apiClient';
+import { apiGet, apiPost, apiDelete, apiPatch } from "./core/apiClient";
 
 /**
  * Base API service to be extended by specific domain services
  */
 export class BaseApiService {
   protected basePath: string;
-  
+
   constructor(basePath: string) {
     // Remove trailing slash if present
-    this.basePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
+    this.basePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
   }
-  
+
   /**
    * Build endpoint URL
    */
-  protected buildEndpoint(path: string = ''): string {
+  protected buildEndpoint(path: string = ""): string {
     // Handle paths with or without leading slash
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    const normalizedPath = path.startsWith("/") ? path : `/${path}`;
     return `${this.basePath}${normalizedPath}`;
   }
-  
+
   /**
    * Generic GET request
    */
-  protected async get<T = any>(path: string = '', params: Record<string, any> = {}): Promise<T> {
-    return apiGet<T>(this.buildEndpoint(path), params);
+  protected async get<T = any>(
+    path: string = "",
+    params: Record<string, any> = {},
+    options: RequestInit & { timeout?: number } = {},
+  ): Promise<T> {
+    return apiGet<T>(this.buildEndpoint(path), params, options);
   }
-  
+
   /**
    * Generic POST request
    */
-  protected async post<T = any>(path: string = '', data: any): Promise<T> {
-    return apiPost<T>(this.buildEndpoint(path), data);
+  protected async post<T = any>(
+    path: string = "",
+    data: any,
+    options: RequestInit & { timeout?: number } = {},
+  ): Promise<T> {
+    return apiPost<T>(this.buildEndpoint(path), data, options);
   }
-  
+
   /**
    * Generic DELETE request
    */
-  protected async delete<T = any>(path: string = ''): Promise<T> {
-    return apiDelete<T>(this.buildEndpoint(path));
+  protected async delete<T = any>(
+    path: string = "",
+    options: RequestInit & { timeout?: number } = {},
+  ): Promise<T> {
+    return apiDelete<T>(this.buildEndpoint(path), options);
   }
-  
+
   /**
    * Generic PATCH request
    */
-  protected async patch<T = any>(path: string = '', data: any): Promise<T> {
-    return apiPatch<T>(this.buildEndpoint(path), data);
+  protected async patch<T = any>(
+    path: string = "",
+    data: any,
+    options: RequestInit & { timeout?: number } = {},
+  ): Promise<T> {
+    return apiPatch<T>(this.buildEndpoint(path), data, options);
   }
-  
+
   /**
    * Standard error handler
    */

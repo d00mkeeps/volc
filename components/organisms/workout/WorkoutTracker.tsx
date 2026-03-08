@@ -11,7 +11,12 @@ import { Keyboard, Platform } from "react-native";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { YStack, XStack, Stack } from "tamagui";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { useSharedValue } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
+import Animated, {
+  useSharedValue,
+  FadeIn,
+  FadeOut,
+} from "react-native-reanimated";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "tamagui";
@@ -38,8 +43,14 @@ export interface WorkoutTrackerRef {
 const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
   ({ currentTemplateName, onFinishPress, hasAtLeastOneCompleteSet }, ref) => {
     const theme = useTheme();
-    const { currentWorkout, isActive, updateCurrentWorkout } =
-      useUserSessionStore();
+    const {
+      currentWorkout,
+      isActive,
+      updateCurrentWorkout,
+      isPaused,
+      togglePause,
+      elapsedSeconds,
+    } = useUserSessionStore();
     const bottomSheetRef = useRef<BottomSheet>(null);
     const insets = useSafeAreaInsets();
     const animatedIndex = useSharedValue(-1);
@@ -486,18 +497,76 @@ const WorkoutTracker = forwardRef<WorkoutTrackerRef, WorkoutTrackerProps>(
           currentTemplateName={currentTemplateName || currentWorkout?.name}
         />
 
-        <BottomSheetFlatList
-          data={sortedExercises}
-          keyExtractor={(item: WorkoutExercise) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            padding: 12,
-            paddingBottom: isKeyboardVisible ? keyboardHeight : 100,
-          }}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={renderHeader}
-          ListFooterComponent={renderFooter}
-        />
+        <Stack flex={1}>
+          <BottomSheetFlatList
+            data={sortedExercises}
+            keyExtractor={(item: WorkoutExercise) => item.id}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              padding: 12,
+              paddingBottom: isKeyboardVisible ? keyboardHeight : 100,
+            }}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+          />
+
+          {isActive && isPaused && (
+            <Animated.View
+              entering={FadeIn.duration(400)}
+              exiting={FadeOut.duration(400)}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: snapPoints[1],
+                zIndex: 1000,
+              }}
+            >
+              <BlurView
+                intensity={80}
+                tint="dark"
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Stack
+                  width="80%"
+                  backgroundColor="transparent"
+                  borderRadius="$4"
+                  padding="$6"
+                  alignItems="center"
+                  justifyContent="center"
+                  zIndex={200}
+                  pressStyle={{ scale: 0.95, opacity: 0.8 }}
+                  onPress={togglePause}
+                  shadowColor="black"
+                  shadowRadius={30}
+                  shadowOpacity={0.4}
+                  shadowOffset={{ width: 0, height: 15 }}
+                >
+                  <Text
+                    color="$text"
+                    fontSize={24}
+                    fontWeight="800"
+                    fontFamily="$heading"
+                    marginBottom="$6"
+                    textAlign="center"
+                  >
+                    {elapsedSeconds === 0 &&
+                    currentWorkout?.created_at === currentWorkout?.updated_at
+                      ? "Start Workout"
+                      : "Resume Workout"}
+                  </Text>
+                  <AppIcon name="Play" size={32} color="#f84f3e" />
+                </Stack>
+              </BlurView>
+            </Animated.View>
+          )}
+        </Stack>
       </BottomSheet>
     );
   },

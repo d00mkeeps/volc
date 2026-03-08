@@ -8,6 +8,7 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useDashboardStore } from "@/stores/dashboardStore";
 import { useChatStore } from "@/stores/chat/ChatStore";
 import { useAuthStore } from "@/stores/authStore";
+import { networkMonitor } from "@/services/networkMonitor";
 
 export function useStoreInitializer() {
   const { user, loading } = useAuth();
@@ -20,44 +21,68 @@ export function useStoreInitializer() {
         const initializeStores = async () => {
           try {
             console.log("🔍 [StoreInit] Starting background initialization...");
-            // Initialize user profile first, as others depend on it
-            const initUserPromise = useUserStore
-              .getState()
-              .initializeIfAuthenticated();
-
             // Allow a brief moment (100ms) for AsyncStorage to hydrate Zustand.
             await new Promise((resolve) => setTimeout(resolve, 100));
 
-            if (!useUserStore.getState().userProfile) {
-              console.log(
-                "🔍 [StoreInit] No cached profile found. Blocking until network fetch completes...",
-              );
-              await initUserPromise;
-            } else {
-              console.log(
-                "🔍 [StoreInit] Cached profile available. Fetching updates smoothly in the background.",
-              );
-            }
+            const hasCachedProfile = !!useUserStore.getState().userProfile;
 
             console.log(
-              "🔍 [StoreInit] contextBundle.ai_memory:",
-              useUserStore.getState().contextBundle?.ai_memory,
+              "🔍 [StoreInit] Waiting for up to 3 successful pings to check network...",
+            );
+            const isOnline = await networkMonitor.waitForSuccessfulPings(
+              3,
+              3500,
             );
 
-            // Initialize remaining stores in parallel in the background
-            const initOthersPromise = Promise.allSettled([
-              useExerciseStore.getState().initializeIfAuthenticated(),
-              useGlossaryStore.getState().initializeIfAuthenticated(),
-              useConversationStore.getState().initializeIfAuthenticated(),
-              useWorkoutStore.getState().initializeIfAuthenticated(),
-            ]);
+            if (isOnline) {
+              console.log(
+                "🔍 [StoreInit] Network stable, fetching init data...",
+              );
+              const initUserPromise = useUserStore
+                .getState()
+                .initializeIfAuthenticated();
 
-            // Wait up to 500ms for other stores to fetch fresh data.
-            // If network is slow, this aborts the wait and proceeds with the cached offline data.
-            await Promise.race([
-              initOthersPromise,
-              new Promise((resolve) => setTimeout(resolve, 500)),
-            ]);
+              if (!hasCachedProfile) {
+                console.log(
+                  "🔍 [StoreInit] No cached profile found. Blocking until network fetch completes...",
+                );
+                await initUserPromise;
+              }
+
+              // Initialize remaining stores in parallel
+              await Promise.allSettled([
+                useExerciseStore.getState().initializeIfAuthenticated(),
+                useGlossaryStore.getState().initializeIfAuthenticated(),
+                useConversationStore.getState().initializeIfAuthenticated(),
+                useWorkoutStore.getState().initializeIfAuthenticated(),
+              ]);
+            } else {
+              console.log(
+                "🔍 [StoreInit] Network unstable, initializing in offline mode...",
+              );
+
+              // Proceed with standard reconnect/offline logic without awaiting
+              useUserStore
+                .getState()
+                .initializeIfAuthenticated()
+                .catch(() => {});
+              useExerciseStore
+                .getState()
+                .initializeIfAuthenticated()
+                .catch(() => {});
+              useGlossaryStore
+                .getState()
+                .initializeIfAuthenticated()
+                .catch(() => {});
+              useConversationStore
+                .getState()
+                .initializeIfAuthenticated()
+                .catch(() => {});
+              useWorkoutStore
+                .getState()
+                .initializeIfAuthenticated()
+                .catch(() => {});
+            }
 
             console.log("🔍 [StoreInit] About to call refreshQuickChat...");
             // Non-blocking
