@@ -175,173 +175,141 @@ class UnifiedCoachService(BaseLLMService):
             tool_results={},
         )
 
+        # Initial prompt build (no tool results yet)
+        messages = self._build_prompt(
+            message=message,
+            message_history=self.message_history[:-1],
+            formatted_context=self.formatted_context,
+            tool_results={},
+        )
+
         # Stream response
         logger.info("📤 Streaming LLM response...")
         telemetry.start_stream_timer()
         first_token_received = False
-        tool_calls = []
-
+        
         # Log to reasoning file
         with open(COACH_REASONING_LOG, "a") as f:
             f.write(f"\n[{datetime.now().isoformat()}] CONVERSATION: {self.conversation_id}\n")
-            f.write(f"SYSTEM PROMPT PREVIEW: {prompt[0].content[:500]}...\n")
+            f.write(f"SYSTEM PROMPT PREVIEW: {messages[0].content[:500]}...\n")
             f.write(f"USER: {message}\n")
             f.write("ASSISTANT REASONING & RESPONSE:\n")
 
-            # Pass 1: Streaming loop (Buffering text if tools are called)
-            pass1_text_buffer = ""
-            async for chunk in self.stream(prompt):
-                if not first_token_received:
-                    telemetry.record_first_token()
-                    first_token_received = True
+            iterations = 0
+            max_iterations = 5
+            tool_results = {}
 
-                # Collect tool calls if model decides to use tools
-                if hasattr(chunk, "tool_calls") and chunk.tool_calls:
-                    for tc in chunk.tool_calls:
-                        tool_calls.append(tc)
-
-                content = chunk.content
-                if not content:
-                    continue
-
-                if isinstance(content, str):
-                    pass1_text_buffer += content
-                    # If we haven't seen tool calls yet, we can't be sure if we should stream
-                    # But if we stream AND then see tools, we get repetition.
-                    # CRITICAL: We only yield text in Pass 1 IF the model hasn't called tools yet.
-                    if not tool_calls:
-                        self.current_response += content
-                        f.write(content)
-                        f.flush()
-                        yield content
-                elif isinstance(content, list):
-                    for block in content:
-                        if isinstance(block, dict):
-                            if block.get("type") == "thinking":
-                                thought = block.get("thinking", "")
-                                f.write(f"[THOUGHT]: {thought}\n")
-                                f.flush()
-                                # Thinking is always safe to stream to the client as it's separate from final text
-                                yield json.dumps({"_type": "thinking", "content": thought})
-                            elif block.get("type") == "text":
-                                text = block.get("text", "")
-                                pass1_text_buffer += text
-                                if not tool_calls:
-                                    self.current_response += text
-                                    f.write(text)
-                                    f.flush()
-                                    yield text
-
-            # Handle Tool Execution & Re-invocation
-            if tool_calls:
-                logger.info(f"🔧 Model called {len(tool_calls)} tool(s). Aggregating results.")
+            while iterations < max_iterations:
+                iterations += 1
+                logger.info(f"Loop iteration {iterations}...")
                 
-                # Yield a signal to the frontend that we are fetching data
-                yield json.dumps({"_type": "tool_call", "count": len(tool_calls)})
+                turn_text_buffer = ""
+                turn_tool_calls = []
                 
-                # If Pass 1 already yielded text, we DO NOT reset current_response. 
-                # Instead, we ensure Pass 2 continues naturally from where Pass 1 left off.
-                
-                # Dictionary of tool_name -> list of results to handle multiple calls
-                tool_results = {}
-                
-                # Build re-invocation history
-                model_msg = AIMessage(content=pass1_text_buffer, tool_calls=tool_calls)
-                re_invocation_messages = prompt + [model_msg]
+                async for chunk in self.stream(messages):
+                    if not first_token_received:
+                        telemetry.record_first_token()
+                        first_token_received = True
 
-                # Execute tools in parallel
-                tool_tasks = []
-                for tc in tool_calls:
-                    tool_name = tc["name"]
-                    tool_args = tc["args"]
-                    if tool_name in self.tool_executors:
-                        logger.info(f"   └─ Executing {tool_name} with args: {tool_args}")
-                        tool_tasks.append(self.tool_executors[tool_name].ainvoke(tool_args))
-                    else:
-                        logger.warning(f"   └─ Unknown tool: {tool_name}")
-
-                if tool_tasks:
-                    results = await asyncio.gather(*tool_tasks, return_exceptions=True)
-                    for tc, result in zip(tool_calls, results):
-                        tool_name = tc["name"]
-                        if not isinstance(result, Exception):
-                            # Aggregate results into lists
-                            if tool_name not in tool_results:
-                                tool_results[tool_name] = []
-                            tool_results[tool_name].append(result)
-                            
-                            content_str = json.dumps(result) if not isinstance(result, str) else result
-                            re_invocation_messages.append(ToolMessage(content=content_str, tool_call_id=tc["id"]))
-
-                            # Telemetry
-                            from app.core.utils.telemetry import AgentAction
-                            action = AgentAction(tool=tool_name, tool_input=tc["args"], log="Direct pass")
-                            telemetry.on_agent_action(action)
-                            telemetry.on_tool_end(str(result))
-                        else:
-                            logger.error(f"Error in tool {tool_name}: {str(result)}")
-                            re_invocation_messages.append(ToolMessage(content=f"Error: {str(result)}", tool_call_id=tc["id"]))
-
-                # Enrich strength exercises with last weights
-                if "get_strength_exercises" in tool_results:
-                    # Flatten all batches of exercises
-                    all_exercises = [ex for batch in tool_results["get_strength_exercises"] for ex in batch]
-                    if all_exercises:
-                        exercise_ids = [ex["id"] for ex in all_exercises]
-                        last_weights = self._get_last_weights_for_exercises(exercise_ids)
-                        for batch in tool_results["get_strength_exercises"]:
-                            for ex in batch:
-                                if ex["id"] in last_weights:
-                                    ex["last_tracked"] = last_weights[ex["id"]]
-
-                # Re-build "final" system prompt with high-quality data injection
-                final_prompt_list = self._build_prompt(
-                    message=message,
-                    message_history=self.message_history[:-1],
-                    formatted_context=self.formatted_context,
-                    tool_results=tool_results,
-                )
-                
-                # REINFORCEMENT message to ensure complete delivery
-                reinforcement = SystemMessage(content="Tool execution complete. Now provide the FINAL response to the user. "
-                                                      "You already sent an initial response (the text before the Thinking block). "
-                                                      "DO NOT repeat greetings, apologies, or preambles. "
-                                                      "DO NOT say 'Sure' or 'Let me' again. "
-                                                      "Immediately provide the requested data (e.g., workout_template) or the final direct answer "
-                                                      "to complete the response you already started. Stay in character.")
-                
-                re_invocation_messages = [final_prompt_list[0]] + final_prompt_list[1:] + [model_msg] + \
-                                         [msg for msg in re_invocation_messages if isinstance(msg, ToolMessage)] + \
-                                         [reinforcement]
-                
-                f.write("\n[RE-INVOKING MODEL WITH DATA...]\n")
-                logger.info("📤 Pass 2: Finalizing response with data...")
-                
-                async for chunk in self.stream(re_invocation_messages):
-                    # Check for unhandled tool calls in Pass 2
+                    # Collect tool calls if model decides to use tools
                     if hasattr(chunk, "tool_calls") and chunk.tool_calls:
-                        logger.warning(
-                            f"⚠️ Model attempted tool call in Pass 2 (not supported): {chunk.tool_calls}"
-                        )
-                        f.write(f"\n[WARNING: Model attempted tool call in Pass 2: {chunk.tool_calls}]\n")
+                        for tc in chunk.tool_calls:
+                            turn_tool_calls.append(tc)
 
                     content = chunk.content
                     if not content:
                         continue
 
                     if isinstance(content, str):
+                        turn_text_buffer += content
                         self.current_response += content
                         f.write(content)
                         f.flush()
                         yield content
                     elif isinstance(content, list):
                         for block in content:
-                            if block.get("type") == "text":
-                                text = block.get("text", "")
-                                self.current_response += text
-                                f.write(text)
-                                f.flush()
-                                yield text
+                            if isinstance(block, dict):
+                                if block.get("type") == "thinking":
+                                    thought = block.get("thinking", "")
+                                    f.write(f"[THOUGHT]: {thought}\n")
+                                    f.flush()
+                                    yield json.dumps({"_type": "thinking", "content": thought})
+                                elif block.get("type") == "text":
+                                    text = block.get("text", "")
+                                    turn_text_buffer += text
+                                    self.current_response += text
+                                    f.write(text)
+                                    f.flush()
+                                    yield text
+
+                # If no tool calls, we are done
+                if not turn_tool_calls:
+                    break
+
+                # Execute Tools
+                logger.info(f"🔧 Model called {len(turn_tool_calls)} tool(s).")
+                yield json.dumps({"_type": "tool_call", "count": len(turn_tool_calls)})
+
+                # Execute tools in parallel
+                tool_tasks = []
+                for tc in turn_tool_calls:
+                    tool_name = tc["name"]
+                    tool_args = tc["args"]
+                    if tool_name in self.tool_executors:
+                        logger.info(f"   └─ Executing {tool_name}")
+                        tool_tasks.append(self.tool_executors[tool_name].ainvoke(tool_args))
+                    else:
+                        logger.warning(f"   └─ Unknown tool: {tool_name}")
+
+                # Collect results
+                iter_tool_messages = []
+                if tool_tasks:
+                    results = await asyncio.gather(*tool_tasks, return_exceptions=True)
+                    for tc, result in zip(turn_tool_calls, results):
+                        tool_name = tc["name"]
+                        if not isinstance(result, Exception):
+                            # Store in aggregate tool_results (for prompt-level injection if needed)
+                            if tool_name not in tool_results:
+                                tool_results[tool_name] = []
+                            tool_results[tool_name].append(result)
+                            
+                            content_str = json.dumps(result) if not isinstance(result, str) else result
+                            iter_tool_messages.append(ToolMessage(content=content_str, tool_call_id=tc["id"]))
+
+                            # Telemetry
+                            from app.core.utils.telemetry import AgentAction
+                            action = AgentAction(tool=tool_name, tool_input=tc["args"], log=f"Iteration {iterations}")
+                            telemetry.on_agent_action(action)
+                            telemetry.on_tool_end(str(result))
+                        else:
+                            logger.error(f"Error in tool {tool_name}: {str(result)}")
+                            iter_tool_messages.append(ToolMessage(content=f"Error: {str(result)}", tool_call_id=tc["id"]))
+
+                # Special handling for exercise lists: enrich with weights
+                if "get_strength_exercises" in tool_results:
+                    all_exercises = [ex for batch in tool_results["get_strength_exercises"] for ex in (batch if isinstance(batch, list) else [batch])]
+                    exercise_ids = [ex["id"] for ex in all_exercises if isinstance(ex, dict) and "id" in ex]
+                    if exercise_ids:
+                        last_weights = self._get_last_weights_for_exercises(exercise_ids)
+                        # We don't modify the ToolMessages already added, but _build_prompt will use tool_results
+                
+                # Update messages for next iteration
+                # 1. Start with fresh prompt (contains injected data from tool_results)
+                messages = self._build_prompt(
+                    message=message,
+                    message_history=self.message_history[:-1],
+                    formatted_context=self.formatted_context,
+                    tool_results=tool_results,
+                )
+                
+                # 2. Add the AIMessage representing the text we've already yielded
+                # This is CRITICAL to prevent repetition.
+                messages.append(AIMessage(content=turn_text_buffer, tool_calls=turn_tool_calls))
+                
+                # 3. Add the ToolMessages from this turn
+                messages.extend(iter_tool_messages)
+
+                f.write(f"\n[RE-INVOKING MODEL (Iteration {iterations+1})...]\n")
 
             f.write(f"\n{'-'*40}\n")
 
