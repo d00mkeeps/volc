@@ -8,7 +8,8 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { XStack, YStack, Text } from "tamagui";
-import { Animated } from "react-native";
+import { Animated, useColorScheme } from "react-native";
+import { BlurView } from "expo-blur";
 import TextArea from "@/components/atoms/core/TextArea";
 import Button from "@/components/atoms/core/Button";
 import { AppIcon } from "@/assets/icons/IconMap";
@@ -50,6 +51,7 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
     const [error, setError] = useState<string | undefined>();
     const [isPulsing, setIsPulsing] = useState(false);
     const [stopCooldown, setStopCooldown] = useState(false);
+    const colorScheme = useColorScheme();
 
     // Get loading state from ChatStore
     const loadingState = useChatStore((state) => state.loadingState);
@@ -261,104 +263,113 @@ export const InputArea = forwardRef<InputAreaRef, InputAreaProps>(
         }}
       >
         <YStack gap="$1">
-          <XStack
-            paddingHorizontal="$2"
-            gap="$2"
-            backgroundColor="$transparent"
-            alignItems="flex-end"
+          <BlurView
+            intensity={40}
+            tint={colorScheme === "dark" ? "dark" : "light"}
+            style={{
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
           >
-            <TextArea
-              key={textAreaKey.current}
-              flex={1}
-              backgroundColor="$backgroundStrong"
-              size="small"
-              borderRadius={16}
-              value={input}
-              verticalAlign="top"
-              onChangeText={handleTextChange}
-              placeholder={displayPlaceholder}
-              disabled={isNetworkUnreliable}
-              borderColor={
-                error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
-              }
-              color="$color"
-              opacity={0.9}
-              placeholderTextColor="$textMuted"
-              onSubmitEditing={handleSend}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              returnKeyType="send"
-              maxLength={500}
-              numberOfLines={8}
-              borderWidth={1}
-            />
-
-            {/* Send Button */}
-            <Animated.View
-              style={{
-                opacity: sendOpacity,
-                position: isBusy ? "absolute" : "relative",
-                right: isBusy ? 8 : undefined,
-                bottom: isBusy ? 8 : undefined,
-              }}
-              pointerEvents={isBusy ? "none" : "auto"}
+            <XStack
+              paddingHorizontal="$2"
+              gap="$2"
+              backgroundColor="$transparent"
+              alignItems="flex-end"
             >
-              <Button
-                size="$3"
-                alignSelf="auto"
+              <TextArea
+                key={textAreaKey.current}
+                flex={1}
                 backgroundColor="$transparent"
-                borderColor={isPressed ? "$primary" : "$borderSoft"}
-                borderWidth={isPressed ? 2 : 0}
-                disabled={!canSend}
-                onPress={handleSend}
-                onPressIn={() => setIsPressed(true)}
-                onPressOut={() => setIsPressed(false)}
-                circular
-                icon={<AppIcon name="Send" color="#f84f3e" size={22} />}
-                pressStyle={{
-                  backgroundColor: "$transparent",
-                }}
-                disabledStyle={{
-                  backgroundColor: "$transparent",
-                  opacity: 0.7,
-                }}
-              />
-            </Animated.View>
-
-            {/* Stop Button */}
-            <Animated.View
-              style={{
-                opacity: Animated.multiply(stopOpacity, stopCooldownOpacity),
-                position: !isBusy ? "absolute" : "relative",
-                right: !isBusy ? 8 : undefined,
-                bottom: !isBusy ? 8 : undefined,
-              }}
-              pointerEvents={!isBusy ? "none" : "auto"}
-            >
-              <Button
-                size="$3"
-                alignSelf="auto"
-                backgroundColor="$transparent"
+                size="small"
+                borderRadius={16}
+                value={input}
+                verticalAlign="top"
+                onChangeText={handleTextChange}
+                placeholder={displayPlaceholder}
+                disabled={isNetworkUnreliable}
                 borderColor={
-                  isPressed && !stopCooldown ? "$primary" : "$borderSoft"
+                  error ? "$error" : isPulsing ? "$primary" : "$borderSoft"
                 }
-                borderWidth={isPressed && !stopCooldown ? 2 : 0}
-                disabled={stopCooldown || isNetworkUnreliable}
-                onPress={handleCancel}
-                onPressIn={() => !stopCooldown && setIsPressed(true)}
-                onPressOut={() => setIsPressed(false)}
-                circular
-                icon={<AppIcon name="Stop" color="#f84f3e" size={22} />}
-                pressStyle={{
-                  backgroundColor: "$transparent",
-                }}
-                disabledStyle={{
-                  backgroundColor: "$transparent",
-                  opacity: 1,
-                }}
+                color="$color"
+                opacity={0.9}
+                placeholderTextColor="$textMuted"
+                onSubmitEditing={handleSend}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                returnKeyType="send"
+                maxLength={500}
+                numberOfLines={8}
+                borderWidth={1}
               />
-            </Animated.View>
-          </XStack>
+
+              {/* Send Button */}
+              <Animated.View
+                style={{
+                  opacity: sendOpacity,
+                  position: isBusy ? "absolute" : "relative",
+                  right: isBusy ? 8 : undefined,
+                  bottom: isBusy ? 8 : undefined,
+                }}
+                pointerEvents={isBusy ? "none" : "auto"}
+              >
+                <Button
+                  size="$3"
+                  alignSelf="auto"
+                  backgroundColor="$transparent"
+                  borderColor={isPressed ? "$primary" : "$borderSoft"}
+                  borderWidth={isPressed ? 2 : 0}
+                  disabled={!canSend}
+                  onPress={handleSend}
+                  onPressIn={() => setIsPressed(true)}
+                  onPressOut={() => setIsPressed(false)}
+                  circular
+                  icon={<AppIcon name="Send" color="#f84f3e" size={22} />}
+                  pressStyle={{
+                    backgroundColor: "$transparent",
+                  }}
+                  disabledStyle={{
+                    backgroundColor: "$transparent",
+                    opacity: 0.7,
+                  }}
+                />
+              </Animated.View>
+
+              {/* Stop Button */}
+              <Animated.View
+                style={{
+                  opacity: Animated.multiply(stopOpacity, stopCooldownOpacity),
+                  position: !isBusy ? "absolute" : "relative",
+                  right: !isBusy ? 8 : undefined,
+                  bottom: !isBusy ? 8 : undefined,
+                }}
+                pointerEvents={!isBusy ? "none" : "auto"}
+              >
+                <Button
+                  size="$3"
+                  alignSelf="auto"
+                  backgroundColor="$transparent"
+                  borderColor={
+                    isPressed && !stopCooldown ? "$primary" : "$borderSoft"
+                  }
+                  borderWidth={isPressed && !stopCooldown ? 2 : 0}
+                  disabled={stopCooldown || isNetworkUnreliable}
+                  onPress={handleCancel}
+                  onPressIn={() => !stopCooldown && setIsPressed(true)}
+                  onPressOut={() => setIsPressed(false)}
+                  circular
+                  icon={<AppIcon name="Stop" color="#f84f3e" size={22} />}
+                  pressStyle={{
+                    backgroundColor: "$transparent",
+                  }}
+                  disabledStyle={{
+                    backgroundColor: "$transparent",
+                    opacity: 1,
+                  }}
+                />
+              </Animated.View>
+            </XStack>
+          </BlurView>
 
           {showCounter && (
             <XStack justifyContent="flex-end" paddingHorizontal="$2">

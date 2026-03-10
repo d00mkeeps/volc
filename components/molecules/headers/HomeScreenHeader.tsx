@@ -35,14 +35,14 @@ export default function Header({
       justifyContent="space-between"
       alignItems="center"
       paddingTop={Math.max(4, insets.top - 12)}
-      paddingHorizontal="$4"
+      paddingHorizontal={0}
       marginBottom="$3"
       onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
     >
       <Text size="large" fontWeight="700" color="$text">
         {greeting}
       </Text>
-      <XStack gap="$2">
+      <XStack gap="$2" flex={1} justifyContent="flex-end">
         {/* Network Status - only show if not healthy */}
         {isUnreliable && (
           <Stack

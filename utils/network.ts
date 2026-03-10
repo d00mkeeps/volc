@@ -4,5 +4,5 @@
  * Note: If your network IP changes, update this value.
  */
 export const getLocalIpAddress = async (): Promise<string> => {
-  return "192.168.1.67";
+  return "172.20.10.14";
 };

@@ -914,10 +914,17 @@ class UnifiedCoachService(BaseLLMService):
 
         # Add message history
         for msg in message_history:
-            if msg["role"] == "user":
-                messages.append(HumanMessage(content=msg["content"]))
+            if not isinstance(msg, dict):
+                logger.warning(f"Unexpected non-dict message in history: {type(msg)}")
+                continue
+            
+            role = msg.get("role")
+            content = msg.get("content", "")
+            
+            if role == "user":
+                messages.append(HumanMessage(content=content))
             else:
-                messages.append(AIMessage(content=msg["content"]))
+                messages.append(AIMessage(content=content))
 
         # Add current message
         messages.append(HumanMessage(content=message))

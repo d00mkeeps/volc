@@ -117,88 +117,143 @@ async def unified_coach(
         # Initialize service (loads context once)
         await coach_service.initialize(conversation_id, user_id)
 
+        # variables for safe sending
+        ws_lock = asyncio.Lock()
+
+        async def safe_send_json(data: dict):
+            """Send JSON safely with a lock to prevent concurrent frame corruption."""
+            async with ws_lock:
+                try:
+                    await websocket.send_json(data)
+                except Exception as e:
+                    logger.error(f"Error sending WebSocket message: {e}")
+                    raise
+
         # Main message loop
-        while True:
+        async def handle_messages():
+            nonlocal current_stream_task, should_extract_memory
             try:
-                # Wait for message
-                data = await websocket.receive_json()
+                while True:
+                    data = await websocket.receive_json()
+                    
+                    # Update heartbeat
+                    await ws_manager.update_heartbeat(connection_id)
 
-                # Update heartbeat
-                await ws_manager.update_heartbeat(connection_id)
+                    # Handle heartbeat
+                    if data.get("type") == "heartbeat":
+                        await safe_send_json(
+                            {"type": "heartbeat_ack", "timestamp": data.get("timestamp")}
+                        )
+                        continue
 
-                # Handle heartbeat
-                if data.get("type") == "heartbeat":
-                    await websocket.send_json(
-                        {"type": "heartbeat_ack", "timestamp": data.get("timestamp")}
+                    # Handle regular message
+                    message = data.get("message", "")
+                    if not message:
+                        continue
+
+                    # Cancel existing stream if any
+                    if current_stream_task and not current_stream_task.done():
+                        logger.info(f"🚫 Cancelling active stream for new message: {connection_id}")
+                        current_stream_task.cancel()
+                        try:
+                            await current_stream_task
+                        except asyncio.CancelledError:
+                            pass
+
+                    # Save user message to DB
+                    await message_service.save_server_message(
+                        conversation_id=conversation_id, content=message, sender="user"
                     )
-                    continue
 
-                # Handle regular message
-                message = data.get("message", "")
-                if not message:
-                    continue
+                    # Stream response from service
+                    async def stream_response(msg_text: str):
+                        full_response = ""
+                        last_activity_time = asyncio.get_event_loop().time()
 
-                # Save user message to DB
-                await message_service.save_server_message(
-                    conversation_id=conversation_id, content=message, sender="user"
-                )
+                        async def keep_alive():
+                            """Background task to send periodic updates and keep connection alive."""
+                            try:
+                                while True:
+                                    await asyncio.sleep(15)
+                                    # If no activity for 15s, send a small 'thinking' update to keep connection hot
+                                    if asyncio.get_event_loop().time() - last_activity_time >= 15:
+                                        await safe_send_json({"type": "thinking", "data": " "})
+                                        await ws_manager.update_heartbeat(connection_id)
+                            except asyncio.CancelledError:
+                                pass
+                            except Exception as e:
+                                logger.error(f"Error in keep-alive task: {e}")
 
-                # Stream response from service
-                async def stream_response():
-                    full_response = ""
-                    try:
-                        async for chunk in coach_service.process_message(message):
-                            # Check if this is a thinking chunk (JSON string with _type: "thinking")
-                            if chunk.startswith('{"_type": "thinking"'):
-                                # Parse and send as thinking message
-                                import json
-                                thinking_data = json.loads(chunk)
-                                await websocket.send_json({
-                                    "type": "thinking",
-                                    "data": thinking_data["content"]
-                                })
-                            elif chunk.startswith('{"_type": "tool_call"'):
-                                tool_data = json.loads(chunk)
-                                await websocket.send_json({
-                                    "type": "tool_call",
-                                    "data": tool_data
-                                })
-                            else:
-                                # Regular content chunk
-                                full_response += chunk
-                                await websocket.send_json(
-                                    {"type": "content", "data": chunk}
-                                )
-                            await ws_manager.update_heartbeat(connection_id)
+                        ka_task = asyncio.create_task(keep_alive())
 
-                        await websocket.send_json(
-                            {"type": "complete", "data": {"length": len(full_response)}}
-                        )
+                        try:
+                            async for chunk in coach_service.process_message(msg_text):
+                                last_activity_time = asyncio.get_event_loop().time()
+                                # Update heartbeat on every chunk to prevent timeout during slow streams
+                                await ws_manager.update_heartbeat(connection_id)
 
-                        if full_response:
-                            await message_service.save_server_message(
-                                conversation_id=conversation_id,
-                                content=full_response,
-                                sender="assistant",
+                                if chunk.startswith('{"_type": "thinking"'):
+                                    thinking_data = json.loads(chunk)
+                                    await safe_send_json({
+                                        "type": "thinking",
+                                        "data": thinking_data["content"]
+                                    })
+                                elif chunk.startswith('{"_type": "tool_call"'):
+                                    tool_data = json.loads(chunk)
+                                    await safe_send_json({
+                                        "type": "tool_call",
+                                        "data": tool_data
+                                    })
+                                else:
+                                    full_response += chunk
+                                    await safe_send_json(
+                                        {"type": "content", "data": chunk}
+                                    )
+                                # Also update heartbeat after sending JSON to be safe
+                                await ws_manager.update_heartbeat(connection_id)
+
+                            await safe_send_json(
+                                {"type": "complete", "data": {"length": len(full_response)}}
                             )
-                    except asyncio.CancelledError:
-                        raise
-                    except Exception as e:
-                        logger.error(f"Error streaming response: {e}")
-                        await websocket.send_json(
-                            {"type": "error", "data": {"message": str(e)}}
-                        )
 
-                current_stream_task = asyncio.create_task(stream_response())
-                await current_stream_task
-                current_stream_task = None
+                            if full_response:
+                                await message_service.save_server_message(
+                                    conversation_id=conversation_id,
+                                    content=full_response,
+                                    sender="assistant",
+                                )
+                        except asyncio.CancelledError:
+                            logger.info(f"⏹️ Stream cancelled: {connection_id}")
+                            # Optionally add partial response to history if useful
+                            raise
+                        except Exception as e:
+                            logger.error(f"Error streaming response: {e}", exc_info=True)
+                            try:
+                                await safe_send_json(
+                                    {"type": "error", "data": {"message": str(e)}}
+                                )
+                            except:
+                                pass
+                        finally:
+                            ka_task.cancel()
+                            try:
+                                await ka_task
+                            except asyncio.CancelledError:
+                                pass
+
+                    current_stream_task = asyncio.create_task(stream_response(message))
 
             except WebSocketDisconnect:
                 should_extract_memory = True
-                raise
+                if current_stream_task:
+                    current_stream_task.cancel()
             except Exception as e:
+                logger.error(f"Error in message handler: {e}", exc_info=True)
                 should_extract_memory = True
-                raise
+                if current_stream_task:
+                    current_stream_task.cancel()
+
+        await handle_messages()
 
     except WebSocketDisconnect:
         logger.info(f"Unified coach WebSocket disconnected: {conversation_id}")

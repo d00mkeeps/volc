@@ -10,7 +10,9 @@ import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { Keyboard } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
+import { useLayoutStore } from "@/stores/layoutStore";
 
 interface MessageListProps {
   messages: Message[];
@@ -40,6 +42,14 @@ export const MessageList = ({
   const listRef = useRef<FlatList>(null);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
   const { isUnreliable } = useNetworkQuality();
+  const insets = useSafeAreaInsets();
+
+  // Layout store values for dynamic padding
+  const tabBarHeight = useLayoutStore((state) => state.tabBarHeight);
+  const quickActionsHeight = useLayoutStore(
+    (state) => state.quickActionsHeight,
+  );
+  const inputAreaHeight = useLayoutStore((state) => state.inputAreaHeight);
 
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId,
@@ -131,8 +141,18 @@ export const MessageList = ({
           style={{ flex: 1 }}
           contentContainerStyle={{
             // Inverted list: paddingTop becomes visual bottom, paddingBottom becomes visual top
-            paddingTop: keyboardVisible ? 130 : 160,
-            paddingBottom: 16,
+            // Calculation: InputArea + QCA + Bottom Offset (TabBar/Insets) + Buffer
+            paddingTop: (() => {
+              const bottomOffset = keyboardVisible
+                ? 8 // Smaller buffer when keyboard is up
+                : (tabBarHeight || insets.bottom) + 8;
+
+              // We add InputArea height (dynamic)
+              // We add QuickActions height (dynamic) - assuming it's visible if it has height
+              // Plus a buffer for the ThinkingIndicator itself to clear the QCA
+              return inputAreaHeight + quickActionsHeight + bottomOffset + 20;
+            })(),
+            paddingBottom: 20, // Visual top padding
           }}
           data={invertedMessages}
           renderItem={renderMessage}

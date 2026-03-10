@@ -48,7 +48,7 @@ export default function ConsistencyCalendar({
 
     const today = new Date();
     const oldestWorkout = new Date(
-      Math.min(...workoutDateObjects.map((d) => d.getTime()))
+      Math.min(...workoutDateObjects.map((d) => d.getTime())),
     );
 
     const diffInMs = today.getTime() - oldestWorkout.getTime();
@@ -135,18 +135,18 @@ export default function ConsistencyCalendar({
     if (dayData.workoutIds.length > 0) {
       console.log(
         `🗓️ [ConsistencyCalendar] Pressed day ${dayData.day} (${dayData.dayOfWeek})`,
-        `- Workout IDs: [${dayData.workoutIds.join(", ")}]`
+        `- Workout IDs: [${dayData.workoutIds.join(", ")}]`,
       );
       // ✅ Call the callback instead of managing state
       if (onDayPress) {
         console.log(
           "📞 [ConsistencyCalendar] Calling onDayPress callback with:",
-          dayData.workoutIds
+          dayData.workoutIds,
         );
         onDayPress(dayData.workoutIds);
       } else {
         console.warn(
-          "⚠️ [ConsistencyCalendar] No onDayPress callback provided!"
+          "⚠️ [ConsistencyCalendar] No onDayPress callback provided!",
         );
       }
     } else {
@@ -168,8 +168,8 @@ export default function ConsistencyCalendar({
           dayData.isToday
             ? "$primary"
             : dayData.hasWorkout
-            ? "white"
-            : "$backgroundPress"
+              ? "white"
+              : "$backgroundPress"
         }
         justifyContent="center"
         alignItems="center"
@@ -192,8 +192,8 @@ export default function ConsistencyCalendar({
               dayData.isToday
                 ? "white"
                 : dayData.hasWorkout
-                ? "#f84f3e"
-                : "$colorPress"
+                  ? "#f84f3e"
+                  : "$colorPress"
             }
             fontWeight={
               dayData.isToday ? "700" : dayData.hasWorkout ? "600" : "400"
@@ -207,8 +207,8 @@ export default function ConsistencyCalendar({
               dayData.isToday
                 ? "white"
                 : dayData.hasWorkout
-                ? "#f84f3e"
-                : "$colorPress"
+                  ? "#f84f3e"
+                  : "$colorPress"
             }
             fontWeight="500"
             opacity={0.8}
@@ -235,23 +235,69 @@ export default function ConsistencyCalendar({
       paddingVertical="$2"
       gap="$3"
     >
-      {/* Header */}
-      <XStack justifyContent="space-between" alignItems="center">
-        <Text size="medium" fontWeight="600" color="$color">
-          Recent Workouts
-        </Text>
-
-        {currentWeek > 0 && (
-          <Text size="medium" color="$textSoft">
-            {currentWeek === 1 ? "Previous week" : `${currentWeek} weeks ago`}
+      {/* Header with Indicators */}
+      <Stack
+        height={24}
+        justifyContent="center"
+        onLayout={(e) => {
+          const { width } = e.nativeEvent.layout;
+          console.log(`[CalendarHeader] Total Width: ${width}`);
+        }}
+      >
+        {/* Labels Layer */}
+        <XStack justifyContent="space-between" alignItems="center">
+          <Text size="medium" fontWeight="600" color="$color">
+            Recent Workouts
           </Text>
-        )}
-      </XStack>
+
+          {currentWeek > 0 && (
+            <Text size="medium" color="$textSoft" textAlign="right">
+              {currentWeek === 1 ? "Previous week" : `${currentWeek} weeks ago`}
+            </Text>
+          )}
+        </XStack>
+
+        {/* Indicators Layer - Absolute Centered */}
+        <XStack
+          position="absolute"
+          left={0}
+          right={0}
+          top={0}
+          bottom={0}
+          justifyContent="center"
+          alignItems="center"
+          pointerEvents="none"
+          onLayout={(e) => {
+            const { x, width } = e.nativeEvent.layout;
+            console.log(
+              `[CalendarDots] X: ${x}, Width: ${width}, CenterX: ${x + width / 2}`,
+            );
+          }}
+        >
+          <XStack gap="$1">
+            {weeks.map((_, index) => {
+              const weekOffset = weeks[index].weekOffset;
+              const isActive = currentWeek === weekOffset;
+              return (
+                <Stack
+                  key={index}
+                  width={6}
+                  height={6}
+                  borderRadius={3}
+                  backgroundColor={isActive ? "white" : "#999"}
+                  opacity={isActive ? 1 : 0.4}
+                />
+              );
+            })}
+          </XStack>
+        </XStack>
+      </Stack>
 
       {/* Scrollable weeks */}
       <Stack
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
+          console.log(`[CalendarContainer] Width: ${width}`);
           setContainerWidth(width);
         }}
       >

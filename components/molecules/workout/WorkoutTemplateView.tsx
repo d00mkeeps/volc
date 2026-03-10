@@ -5,6 +5,7 @@ import Text from "@/components/atoms/core/Text";
 import ExerciseDefinitionView from "@/components/molecules/workout/ExerciseDefinitionView";
 import { WorkoutExercise, WorkoutExerciseSet } from "@/types/workout";
 import { AppIcon } from "@/assets/icons/IconMap";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface WorkoutTemplateViewProps {
   data: {
@@ -294,13 +295,13 @@ export default function WorkoutTemplateView({
             <XStack gap="$3" justifyContent="center" paddingBottom="$2">
               <Stack
                 width={80}
-                height={40}
-                borderRadius="$3"
-                backgroundColor="$red9"
+                height={32}
+                borderRadius={16}
                 borderWidth={1}
                 borderColor="$borderColor"
                 justifyContent="center"
                 alignItems="center"
+                overflow="hidden"
                 pressStyle={{
                   backgroundColor: "$backgroundPress",
                   scale: 0.95,
@@ -311,18 +312,30 @@ export default function WorkoutTemplateView({
                 }}
                 cursor="pointer"
               >
+                <LinearGradient
+                  colors={["#dc2626", "#601616ff"]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                  }}
+                />
                 <AppIcon name="X" size={24} color="white" />
               </Stack>
 
               <Stack
                 width={80}
-                height={40}
-                borderRadius="$3"
-                backgroundColor="$green8"
+                height={32}
+                borderRadius={16}
                 borderWidth={1}
                 borderColor="$borderColor"
                 justifyContent="center"
                 alignItems="center"
+                overflow="hidden"
                 pressStyle={{
                   backgroundColor: "$backgroundPress",
                   scale: 0.95,
@@ -333,6 +346,18 @@ export default function WorkoutTemplateView({
                 }}
                 cursor="pointer"
               >
+                <LinearGradient
+                  colors={["#16a34a", "#042e23ff"]}
+                  start={{ x: 0, y: 0.5 }}
+                  end={{ x: 1, y: 0.5 }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                  }}
+                />
                 <AppIcon name="Check" size={24} color="white" />
               </Stack>
             </XStack>

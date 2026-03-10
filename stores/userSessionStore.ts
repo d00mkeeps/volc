@@ -51,7 +51,7 @@ interface UserSessionState {
   updateCurrentWorkout: (workout: CompleteWorkout) => void;
   updateExercise: (
     exerciseId: string,
-    updatedFields: Partial<WorkoutExercise>
+    updatedFields: Partial<WorkoutExercise>,
   ) => void;
   resetSession: () => void;
 
@@ -86,7 +86,7 @@ export function createEmptyWorkout(userId: string): CompleteWorkout {
  */
 function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
   return (...args: Parameters<T>) => {
@@ -147,9 +147,9 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
                 id: `set-${Date.now()}-${index}-${setIndex}`,
                 exercise_id: `exercise-${Date.now()}-${index}`,
                 is_completed: false,
-              })
+              }),
             ),
-          })
+          }),
         ),
       };
     } else {
@@ -239,7 +239,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
   updateExercise: (
     exerciseId: string,
-    updatedFields: Partial<WorkoutExercise>
+    updatedFields: Partial<WorkoutExercise>,
   ) => {
     console.log("🏪 Store.updateExercise called:", {
       exerciseId,
@@ -253,7 +253,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       workout_exercises: currentWorkout.workout_exercises.map((exercise) =>
         exercise.id === exerciseId
           ? { ...exercise, ...updatedFields }
-          : exercise
+          : exercise,
       ),
       updated_at: new Date().toISOString(),
     };
@@ -383,7 +383,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     const exercisesWithData = currentWorkout.workout_exercises.filter(
       (exercise) => {
         return exercise.workout_exercise_sets.some((set) => setHasData(set));
-      }
+      },
     );
 
     // Update the workout with only exercises that have data
@@ -415,10 +415,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
     return currentWorkout.workout_exercises.some((exercise) => {
       const definition = exercises.find(
-        (ex) => ex.id === exercise.definition_id
+        (ex) => ex.id === exercise.definition_id,
       );
       return exercise.workout_exercise_sets.some((set) =>
-        isSetComplete(set, definition)
+        isSetComplete(set, definition),
       );
     });
   },
@@ -481,7 +481,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
 
       const secondsUntil = Math.max(
         0,
-        Math.floor((scheduled.getTime() - now.getTime()) / 1000)
+        Math.floor((scheduled.getTime() - now.getTime()) / 1000),
       );
       return formatTime(secondsUntil);
     }
@@ -496,7 +496,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     const totalSets =
       currentWorkout.workout_exercises?.reduce(
         (sum, exercise) => sum + (exercise.workout_exercise_sets?.length || 0),
-        0
+        0,
       ) || 0;
 
     const completedSets =
@@ -505,7 +505,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
           sum +
           (exercise.workout_exercise_sets?.filter((set) => set.is_completed)
             .length || 0),
-        0
+        0,
       ) || 0;
 
     return { completed: completedSets, total: totalSets };

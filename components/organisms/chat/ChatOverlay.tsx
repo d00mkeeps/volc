@@ -364,6 +364,33 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
         >
           {isExpanded ? (
             <View style={{ flex: 1 }}>
+              {/* Top Blur Guard */}
+              <YStack
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                height={insets.top + 20}
+                zIndex={100}
+                pointerEvents="none"
+              >
+                <MaskedView
+                  style={{ flex: 1 }}
+                  maskElement={
+                    <LinearGradient
+                      colors={["black", "transparent"]}
+                      locations={[0.7, 1]}
+                      style={{ flex: 1 }}
+                    />
+                  }
+                >
+                  <BlurView
+                    intensity={40}
+                    tint={colorScheme === "dark" ? "dark" : "light"}
+                    style={{ flex: 1 }}
+                  />
+                </MaskedView>
+              </YStack>
               <TouchableWithoutFeedback onPress={handleDismiss}>
                 <View
                   style={{ flex: 1, paddingBottom: 10 }}
@@ -380,45 +407,55 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                     thinkingStartTime={thinkingStartTime}
                     currentThought={currentThought}
                   />
-
-                  {/* Blurred Bottom Transition */}
-                  <YStack
-                    position="absolute"
-                    bottom={0}
-                    left={0}
-                    right={0}
-                    height={160}
-                    pointerEvents="box-none"
-                  >
-                    <MaskedView
-                      style={{ flex: 1 }}
-                      maskElement={
-                        <LinearGradient
-                          colors={["transparent", "black"]}
-                          locations={[0, 0.4]}
-                          style={{ flex: 1 }}
-                        />
-                      }
-                    >
-                      <BlurView
-                        intensity={20}
-                        tint={colorScheme === "dark" ? "dark" : "light"}
-                        style={{ flex: 1 }}
-                      />
-                    </MaskedView>
-                  </YStack>
                 </View>
               </TouchableWithoutFeedback>
             </View>
           ) : null}
         </Animated.View>
 
+        {/* Blurred Bottom Transition - Moved outside MessageList to be part of the keyboard avoidance flow */}
+        {isExpanded && (
+          <Animated.View
+            style={[
+              overlayStyle,
+              {
+                position: "absolute",
+                bottom: isKeyboardVisible
+                  ? 0
+                  : (tabBarHeight || insets.bottom) + 0,
+                left: 0,
+                right: 0,
+                height: 120, // Reduced from 160
+                zIndex: 1,
+                pointerEvents: "none",
+              },
+            ]}
+          >
+            <MaskedView
+              style={{ flex: 1 }}
+              maskElement={
+                <LinearGradient
+                  colors={["transparent", "black"]}
+                  locations={[0, 0.5]}
+                  style={{ flex: 1 }}
+                />
+              }
+            >
+              <BlurView
+                intensity={30}
+                tint={colorScheme === "dark" ? "dark" : "light"}
+                style={{ flex: 1 }}
+              />
+            </MaskedView>
+          </Animated.View>
+        )}
+
         <YStack
           pointerEvents="box-none"
           justifyContent="flex-end"
           flex={1}
           paddingBottom={
-            isKeyboardVisible ? 8 : (tabBarHeight || insets.bottom) + 8
+            isKeyboardVisible ? 4 : (tabBarHeight || insets.bottom) + 4
           }
           style={styles.inputContainer}
           onLayout={(e) => {

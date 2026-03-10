@@ -30,7 +30,7 @@ class WebSocketManager:
     """
 
     HEARTBEAT_CHECK_INTERVAL = 15  # Check every 15 seconds
-    HEARTBEAT_TIMEOUT = 60  # Timeout after 60 seconds of no activity
+    HEARTBEAT_TIMEOUT = 120  # Timeout after 120 seconds of no activity (increased from 60)
 
     def __init__(self):
         self.connections: Dict[str, ConnectionInfo] = {}
