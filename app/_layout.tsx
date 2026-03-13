@@ -29,7 +29,6 @@ export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
 import { useStoreInitializer } from "@/hooks/useStoreInitializer";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
-import { TourProvider } from "@/context/TourContext";
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
@@ -51,11 +50,7 @@ export default function RootLayout() {
     if (error) throw error;
   }, [error]);
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  // SplashScreen.hideAsync() is now handled inside AuthGate once caching is complete
 
   if (!loaded) {
     return null;
@@ -134,15 +129,13 @@ function RootLayoutNav() {
                     value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                   >
                     <AuthGate onWelcomeNeeded={setShowWelcome}>
-                      <TourProvider>
-                        <Stack screenOptions={{ headerShown: false }}>
-                          <Stack.Screen name="(tabs)" />
-                          <Stack.Screen
-                            name="modal"
-                            options={{ presentation: "modal" }}
-                          />
-                        </Stack>
-                      </TourProvider>
+                      <Stack screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="(tabs)" />
+                        <Stack.Screen
+                          name="modal"
+                          options={{ presentation: "modal" }}
+                        />
+                      </Stack>
                     </AuthGate>
                   </ThemeProvider>
                 </AuthStoreManager>

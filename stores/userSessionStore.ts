@@ -224,6 +224,16 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   cancelWorkout: () => {
     const { currentWorkout } = get();
     if (!currentWorkout) return;
+
+    // Trigger abandoned workout message
+    const conversationStore = useConversationStore.getState();
+    if (!conversationStore.activeConversationId) {
+        // Fallback greeting if no conversation exists
+        conversationStore.setPendingGreeting("Hi!");
+    }
+    conversationStore.setPendingInitialMessage("I saw you cancelled your workout. All good? I'm here if you need me.");
+    conversationStore.setPendingChatOpen(true);
+
     workoutPersistence.clear();
     set({
       pausedAt: null,

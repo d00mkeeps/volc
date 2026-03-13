@@ -9,6 +9,7 @@ import { useDashboardStore } from "@/stores/dashboardStore";
 import { useChatStore } from "@/stores/chat/ChatStore";
 import { useAuthStore } from "@/stores/authStore";
 import { networkMonitor } from "@/services/networkMonitor";
+import { useUserSessionStore } from "@/stores/userSessionStore";
 
 export function useStoreInitializer() {
   const { user, loading } = useAuth();
@@ -20,23 +21,45 @@ export function useStoreInitializer() {
         console.log("[AuthStore] Initializing stores...");
         const initializeStores = async () => {
           try {
-            console.log("🔍 [StoreInit] Starting background initialization...");
+            const startTime = Date.now();
+            console.log(`⏱️ [StoreInit] [0ms] Starting background initialization...`);
             // Allow a brief moment (100ms) for AsyncStorage to hydrate Zustand.
             await new Promise((resolve) => setTimeout(resolve, 100));
+            console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] AsyncStorage hydration wait finished.`);
 
+            // We need to import useUserSessionStore at the top or access it dynamically if not imported.
+            // Ensure we handle dynamic import correctly to avoid circular deps if any.
+            // We already did this via useUserSessionStore.getState()
             const hasCachedProfile = !!useUserStore.getState().userProfile;
+            const hasCachedWorkouts = useWorkoutStore.getState().workouts.length > 0;
+            const hasActiveWorkout = !!useUserSessionStore.getState().currentWorkout;
 
             console.log(
-              "🔍 [StoreInit] Waiting for up to 3 successful pings to check network...",
+              `⏱️ [StoreInit] Cache status: Profile=${hasCachedProfile}, Workouts=${hasCachedWorkouts}, ActiveWorkout=${hasActiveWorkout}`
+            );
+
+            // Onboarding condition: no workout history and not currently in a workout
+            if (!hasCachedWorkouts && !hasActiveWorkout) {
+              console.log(
+                `⏱️ [StoreInit] No cached workouts and no active workout. Triggering onboarding chat open.`
+              );
+              // Wait a bit ensuring ChatOverlay has mounted
+              setTimeout(() => {
+                useConversationStore.getState().setPendingChatOpen(true);
+              }, 500);
+            }
+            console.log(
+              `⏱️ [StoreInit] [${Date.now() - startTime}ms] Waiting for up to 1 successful ping to check network...`,
             );
             const isOnline = await networkMonitor.waitForSuccessfulPings(
-              3,
+              1,
               3500,
             );
+            console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] Network check finished. isOnline: ${isOnline}`);
 
             if (isOnline) {
               console.log(
-                "🔍 [StoreInit] Network stable, fetching init data...",
+                `⏱️ [StoreInit] [${Date.now() - startTime}ms] Network stable, fetching init data...`,
               );
               const initUserPromise = useUserStore
                 .getState()
@@ -44,13 +67,15 @@ export function useStoreInitializer() {
 
               if (!hasCachedProfile) {
                 console.log(
-                  "🔍 [StoreInit] No cached profile found. Blocking until network fetch completes...",
+                  `⏱️ [StoreInit] [${Date.now() - startTime}ms] No cached profile found. Blocking until network fetch completes...`,
                 );
                 await initUserPromise;
+                console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] initUserPromise resolved.`);
               }
 
-              // Initialize remaining stores in parallel
-              await Promise.allSettled([
+              console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] Triggering background store fetches in parallel...`);
+              // Initialize remaining stores in parallel (DO NOT AWAIT - Let AuthGate render via cached data)
+              Promise.allSettled([
                 useExerciseStore.getState().initializeIfAuthenticated(),
                 useGlossaryStore.getState().initializeIfAuthenticated(),
                 useConversationStore.getState().initializeIfAuthenticated(),
@@ -84,7 +109,7 @@ export function useStoreInitializer() {
                 .catch(() => {});
             }
 
-            console.log("🔍 [StoreInit] About to call refreshQuickChat...");
+            console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] About to call refreshQuickChat...`);
             // Non-blocking
             useChatStore.getState().refreshQuickChat();
 
@@ -96,7 +121,7 @@ export function useStoreInitializer() {
                 .subscribeToUpdates(userProfile.auth_user_uuid);
             }
 
-            console.log("[AuthStore] All stores initialized");
+            console.log(`⏱️ [StoreInit] [${Date.now() - startTime}ms] All stores initialized (background fetches may be ongoing)`);
             setInitialized(true);
           } catch (error) {
             console.error("❌ Store initialization failed:", error);

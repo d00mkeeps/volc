@@ -1,6 +1,6 @@
 import { Message } from "@/types";
 import { StyleProp, ViewStyle } from "react-native";
-import { UserOnboarding } from "./onboarding";
+import { OnboardingFormData } from "./onboarding";
 
 export type ChatConfigName =
   | "onboarding"
@@ -68,5 +68,5 @@ export interface ConversationListProps {
 }
 
 export interface OnboardingChatProps {
-  onComplete?: (onboardingData: UserOnboarding) => void;
+  onComplete?: (onboardingData: OnboardingFormData) => void;
 }

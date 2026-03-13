@@ -59,6 +59,8 @@ interface ConversationStoreState {
   // UI Coordination
   pendingChatOpen: boolean;
   setPendingChatOpen: (open: boolean) => void;
+  hasUnreadCoachMessage: boolean;
+  setHasUnreadCoachMessage: (hasUnread: boolean) => void;
 
   // Utility methods
   clearError: () => void;
@@ -77,10 +79,12 @@ export const useConversationStore = create<ConversationStoreState>()(
       pendingInitialMessage: null,
       pendingGreeting: null,
       pendingChatOpen: false,
+      hasUnreadCoachMessage: false,
       suggestedActions: [], // Added suggestedActions to initial state
       isLoadingActions: false, // NEW
 
       setPendingChatOpen: (open) => set({ pendingChatOpen: open }),
+      setHasUnreadCoachMessage: (hasUnread) => set({ hasUnreadCoachMessage: hasUnread }),
       setPendingGreeting: (greeting) => set({ pendingGreeting: greeting }),
       setSuggestedActions: (actions) => set({ suggestedActions: actions }), // Added setSuggestedActions implementation
 
@@ -186,11 +190,12 @@ export const useConversationStore = create<ConversationStoreState>()(
             await conversationService.getConversationsWithRecentMessages(
               userProfile.auth_user_uuid,
             );
+          const convos = Array.isArray(result?.conversations) ? result.conversations : [];
           const conversationsMap = new Map(
-            result.conversations.map((conv) => [conv.id, conv]),
+            convos.map((conv) => [conv.id, conv]),
           );
 
-          useMessageStore.getState().setBulkMessages(result.messages);
+          useMessageStore.getState().setBulkMessages(result?.messages || {});
 
           set({
             conversations: conversationsMap,
@@ -207,7 +212,7 @@ export const useConversationStore = create<ConversationStoreState>()(
               e,
             );
           }
-        } catch (error) {
+        } catch (error: any) {
           if (isOfflineError(error)) {
             console.warn(
               "⚠️ ConversationStore: Initialization skipped or failed due to offline mode.",
@@ -215,13 +220,14 @@ export const useConversationStore = create<ConversationStoreState>()(
           } else {
             console.error(
               "❌ ConversationStore: Initialization failed:",
-              error,
+              error?.message || error,
+              error?.details || ""
             );
           }
           set({
             isLoading: false,
             initialized: true,
-            error: error instanceof Error ? error : new Error(String(error)),
+            error: error instanceof Error ? error : new Error(String(error?.message || error)),
           });
         }
       },
@@ -626,7 +632,7 @@ export const useConversationStore = create<ConversationStoreState>()(
         conversationConfigs: state.conversationConfigs,
         activeConversationId: state.activeConversationId,
         suggestedActions: state.suggestedActions,
-        // pendingChatOpen is transient
+        hasUnreadCoachMessage: state.hasUnreadCoachMessage,
         // pendingChatOpen is transient
       }),
     },

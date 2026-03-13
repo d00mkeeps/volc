@@ -24,8 +24,10 @@ import { MetaEvents } from "@/services/analytics/metaEvents";
 
 import Slide1 from "./Slide1";
 import Slide2 from "./Slide2";
-import Slide3 from "./Slide3";
 import Slide4 from "./Slide4";
+
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { useConversationStore } from "@/stores/chat/ConversationStore";
 
 interface WelcomeBottomSheetProps {
   isVisible: boolean;
@@ -53,22 +55,17 @@ export default function WelcomeBottomSheet({
   const [isImperial, setIsImperial] = useState<boolean | null>(null);
   const [dob, setDob] = useState(new Date(2000, 0, 1)); // Default: Jan 1, 2000
   const [dobChanged, setDobChanged] = useState(false);
-  const [experienceLevel, setExperienceLevel] = useState<string | null>(null);
-  const [trainingLocation, setTrainingLocation] = useState<string | null>(null);
-  const [locationOther, setLocationOther] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
 
-  // Animation refs for 4 slides
+  // Animation refs for 3 slides
   const slideOpacity = useRef([
     new Animated.Value(1), // Slide 0 starts visible
-    new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
   ]).current;
   const slideTranslateX = useRef([
     new Animated.Value(0), // Slide 0 starts at position
-    new Animated.Value(50),
     new Animated.Value(50),
     new Animated.Value(50),
   ]).current;
@@ -91,9 +88,6 @@ export default function WelcomeBottomSheet({
       setIsImperial(null);
       setDob(new Date(2000, 0, 1)); // Reset to Jan 1, 2000
       setDobChanged(false);
-      setExperienceLevel(null);
-      setTrainingLocation(null);
-      setLocationOther("");
       setHeight("");
       setWeight("");
       iconOpacity.setValue(0);
@@ -168,33 +162,24 @@ export default function WelcomeBottomSheet({
   const handleComplete = async () => {
     console.log("[WelcomeBottomSheet] handleComplete called");
 
-    if (!user || isImperial === null || !trainingLocation || !experienceLevel) {
+    if (!user || isImperial === null) {
       console.log("[WelcomeBottomSheet] Missing required data:", {
         hasUser: !!user,
         isImperial,
-        trainingLocation,
-        experienceLevel,
       });
       return;
     }
 
     setLoading(true);
     try {
-      const finalLocation =
-        trainingLocation === "other" ? locationOther : trainingLocation;
-
       console.log("[WelcomeBottomSheet] Saving profile data:", {
         isImperial,
         dob: dob.toISOString().split("T")[0],
-        experienceLevel,
-        trainingLocation: finalLocation,
       });
 
       await userProfileService.completeOnboarding({
         isImperial,
         dob,
-        experienceLevel,
-        trainingLocation: finalLocation,
         height: height || undefined,
         weight: weight || undefined,
       });
@@ -210,6 +195,14 @@ export default function WelcomeBottomSheet({
         type: "success",
         text1: "Profile setup complete!",
       });
+
+      const workoutCount = useWorkoutStore.getState().workouts.length;
+      if (workoutCount === 0) {
+        setTimeout(() => {
+          useConversationStore.getState().setPendingInitialMessage("Hi! I see you're new here. Have you tracked workouts before or are we starting fresh?");
+          useConversationStore.getState().setPendingChatOpen(true);
+        }, 500);
+      }
 
       if (onComplete) onComplete();
       bottomSheetRef.current?.dismiss();
@@ -244,9 +237,6 @@ export default function WelcomeBottomSheet({
   };
 
   const canProgressDob = dobChanged && isAgeValid(dob);
-  const canProgressExperience =
-    trainingLocation !== null &&
-    (trainingLocation !== "other" || locationOther.trim() !== "");
 
   return (
     <BottomSheetModal
@@ -325,7 +315,6 @@ export default function WelcomeBottomSheet({
           />
         </Animated.View>
 
-        {/* Slide 3: Experience & Location */}
         <Animated.View
           style={{
             position: "absolute",
@@ -337,31 +326,6 @@ export default function WelcomeBottomSheet({
             transform: [{ translateX: slideTranslateX[2] }],
           }}
           pointerEvents={currentSlide === 2 ? "auto" : "none"}
-        >
-          <Slide3
-            theme={theme}
-            experienceLevel={experienceLevel}
-            setExperienceLevel={setExperienceLevel}
-            trainingLocation={trainingLocation}
-            setTrainingLocation={setTrainingLocation}
-            locationOther={locationOther}
-            setLocationOther={setLocationOther}
-            canProgressExperience={canProgressExperience}
-            goToSlide={goToSlide}
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: slideOpacity[3],
-            transform: [{ translateX: slideTranslateX[3] }],
-          }}
-          pointerEvents={currentSlide === 3 ? "auto" : "none"}
         >
           <Slide4
             theme={theme}

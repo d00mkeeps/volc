@@ -7,11 +7,11 @@ export const authService = {
     try {
       console.log("🚀 Starting signup process for:", email);
       console.log("📧 Email length:", email.length);
-      console.log("🔐 Password length:", password.length);
+      console.log("🔐 Password length:", password?.length);
 
       const { data, error } = await supabase.auth.signUp({
         email,
-        password,
+        password: password || "",
       });
 
       console.log(

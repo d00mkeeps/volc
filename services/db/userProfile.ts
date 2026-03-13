@@ -70,8 +70,8 @@ export class UserProfileService extends BaseDBService {
       const payload = {
         is_imperial: data.isImperial,
         dob: data.dob.toISOString().split("T")[0],
-        experience_level: data.experienceLevel,
-        training_location: data.trainingLocation,
+        ...(data.experienceLevel && { experience_level: data.experienceLevel }),
+        ...(data.trainingLocation && { training_location: data.trainingLocation }),
         ...(data.height && { height: data.height }),
         ...(data.weight && { weight: data.weight }),
       };

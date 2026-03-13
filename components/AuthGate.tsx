@@ -1,9 +1,10 @@
-import { useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { AuthScreen } from "./screens/AuthScreen";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userProfileStore";
+import { SplashScreen } from "expo-router";
 
 interface AuthGateProps {
   children: React.ReactNode;
@@ -14,11 +15,14 @@ export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
   const { user, loading } = useAuth();
   const storesInitialized = useAuthStore((state) => state.initialized);
   const userProfile = useUserStore((state) => state.userProfile);
+  const [isProfileChecked, setIsProfileChecked] = useState(false);
 
   useEffect(() => {
     if (!loading && storesInitialized) {
       if (!user) {
         onWelcomeNeeded(false);
+        setIsProfileChecked(true);
+        setTimeout(() => SplashScreen.hideAsync(), 50);
         return;
       }
 
@@ -28,11 +32,16 @@ export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
       if (userProfile && !userProfile.dob) {
         console.log("[AuthGate] Missing DOB -> Showing Welcome Sheet");
         onWelcomeNeeded(true);
+        setIsProfileChecked(true);
+        // Delay hiding splash screen longer to cover the modal's slide-up animation
+        setTimeout(() => SplashScreen.hideAsync(), 400);
       } else {
         console.log(
           "[AuthGate] DOB exists (or no profile data) -> Hiding Welcome Sheet",
         );
         onWelcomeNeeded(false);
+        setIsProfileChecked(true);
+        setTimeout(() => SplashScreen.hideAsync(), 50);
       }
     }
   }, [user, loading, storesInitialized, userProfile, onWelcomeNeeded]);
@@ -44,14 +53,13 @@ export function AuthGate({ children, onWelcomeNeeded }: AuthGateProps) {
     loading,
     "storesInitialized:",
     storesInitialized,
+    "isProfileChecked:",
+    isProfileChecked
   );
 
-  if (loading || !storesInitialized) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+  // Return null instead of ActivityIndicator so Splash Screen remains visible
+  if (loading || !storesInitialized || !isProfileChecked) {
+    return null;
   }
 
   if (!user) {

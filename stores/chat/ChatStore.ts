@@ -398,6 +398,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     const unsubscribeComplete = webSocketService.onComplete(() => {
       useMessageStore.getState().completeStreamingMessage(conversationId);
+      useConversationStore.getState().setHasUnreadCoachMessage(true);
       set({ statusMessage: null });
       get().setLoadingState("complete");
     });

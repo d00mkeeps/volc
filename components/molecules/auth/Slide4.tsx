@@ -84,7 +84,7 @@ export default function Slide4({
           >
             <XStack alignItems="center" gap="$2">
               <TouchableOpacity
-                onPress={() => goToSlide(2)}
+                onPress={() => goToSlide(1)}
                 style={{ padding: 4, marginLeft: -4 }}
               >
                 <AppIcon name="ChevronLeft" size={20} color={theme.color.val} />

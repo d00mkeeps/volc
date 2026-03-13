@@ -204,12 +204,6 @@ export default function ExerciseTrackerHeader({
                 </Button>
               )
             ) : (
-              // <TourStep
-              //   stepId="exercise_change"
-              //   title="Change Exercise"
-              //   message="Tap here to swap this exercise for a different one from the library."
-              //   triggerCondition={isActive && !!exerciseName}
-              // >
               <Button
                 size="small"
                 backgroundColor="$backgroundStrong"
@@ -227,19 +221,12 @@ export default function ExerciseTrackerHeader({
                   Change
                 </Text>
               </Button>
-              // </TourStep>
             )}
           </XStack>
         )}
       </XStack>
 
       {!isEditing && (
-        // <TourStep
-        //   stepId="exercise_notes"
-        //   title="Exercise Notes"
-        //   message="Long-press here to add notes about form, RPE targets, or reminders for this exercise."
-        //   triggerCondition={isActive && !!exerciseName}
-        // >
         <LongPressToEdit
           onLongPress={() => onNotesLongPress?.()}
           disabled={!isActive}
@@ -252,7 +239,6 @@ export default function ExerciseTrackerHeader({
             {exerciseNotes || "tap and hold to add notes"}
           </Text>
         </LongPressToEdit>
-        // </TourStep>
       )}
     </YStack>
   );

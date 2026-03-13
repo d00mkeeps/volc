@@ -36,6 +36,8 @@ import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/Responsi
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
+import { ExitCheckpointModal } from "@/components/molecules/chat/ExitCheckpointModal";
 
 interface ChatOverlayProps {
   currentPage?: number;
@@ -45,7 +47,11 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isInputAreaFocused, setIsInputAreaFocused] = useState(false);
+  const [hasShownExitCheckpoint, setHasShownExitCheckpoint] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const workoutCount = useWorkoutStore((state) => state.workouts.length);
 
+  // ... (keeping existing selectors and hooks) ...
   // ChatStore selectors
   const loadingState = useChatStore((state) => state.loadingState);
   const greeting = useChatStore((state) => state.greeting);
@@ -115,6 +121,19 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   const setPendingChatOpen = useConversationStore(
     (state) => state.setPendingChatOpen,
   );
+  const hasUnreadCoachMessage = useConversationStore(
+    (state) => state.hasUnreadCoachMessage,
+  );
+  const setHasUnreadCoachMessage = useConversationStore(
+    (state) => state.setHasUnreadCoachMessage,
+  );
+
+  useEffect(() => {
+    if (isExpanded && hasUnreadCoachMessage) {
+      setHasUnreadCoachMessage(false);
+    }
+  }, [isExpanded, hasUnreadCoachMessage, setHasUnreadCoachMessage]);
+
   const isWorkoutActive = useUserSessionStore((state) => state.isActive);
   const isWorkoutDetailOpen = useUserSessionStore(
     (state) => state.isWorkoutDetailOpen,
@@ -245,17 +264,25 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     }
   }, [isExpanded, fadeProgress, isUnreliable]);
 
+  const reallyCollapse = useCallback(() => {
+    Keyboard.dismiss();
+
+    fadeProgress.value = withTiming(0, { duration: 300 }, (finished) => {
+      if (finished) {
+        scheduleOnRN(setIsExpanded, false);
+      }
+    });
+  }, [fadeProgress]);
+
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
-      Keyboard.dismiss();
-
-      fadeProgress.value = withTiming(0, { duration: 300 }, (finished) => {
-        if (finished) {
-          scheduleOnRN(setIsExpanded, false);
-        }
-      });
+      if (workoutCount === 0 && !hasShownExitCheckpoint) {
+        setShowExitModal(true);
+        return;
+      }
+      reallyCollapse();
     }
-  }, [isExpanded, fadeProgress]);
+  }, [isExpanded, workoutCount, hasShownExitCheckpoint, reallyCollapse]);
 
   const handleTemplateApprove = useCallback(
     (templateData: any) => {
@@ -290,7 +317,9 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   }, [isHome, pageProgress]);
 
   useEffect(() => {
+    console.log("📂 [ChatOverlay.pendingChatOpen effect] Value:", pendingChatOpen);
     if (pendingChatOpen) {
+      console.log("📂 [ChatOverlay.pendingChatOpen effect] Handling expand!");
       handleExpand();
       setPendingChatOpen(false);
     }
@@ -500,6 +529,20 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
           </Animated.View>
         </YStack>
       </ResponsiveKeyboardAvoidingView>
+
+      <ExitCheckpointModal
+        isVisible={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        onConfirmExit={() => {
+          setShowExitModal(false);
+          reallyCollapse();
+        }}
+        onStay={() => {
+          setShowExitModal(false);
+          // They chose to stay, so if chat isn't expanded, we could expand it,
+          // but they're already in the expanded chat when they try to leave.
+        }}
+      />
     </View>
   );
 };

@@ -50,6 +50,7 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
   const activeConversationId = useConversationStore(
     (state) => state.activeConversationId,
   );
+  const hasUnread = useConversationStore((state) => state.hasUnreadCoachMessage);
 
   const recentMessages = useMessageStore((state) => {
     if (!activeConversationId) return EMPTY_ARRAY;
@@ -144,6 +145,18 @@ export const DisplayMessage: React.FC<__DisplayMessageProps__> = ({
       position="relative"
       flex={1}
     >
+      {hasUnread && (
+        <YStack
+          position="absolute"
+          top={8}
+          right={12}
+          width={8}
+          height={8}
+          borderRadius={4}
+          backgroundColor="$red10"
+          zIndex={101}
+        />
+      )}
       {isUnreliable ? (
         <YStack flex={1} alignItems="center" justifyContent="center">
           <Text color="$red10" size="large" fontWeight="600">

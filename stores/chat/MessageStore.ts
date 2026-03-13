@@ -48,12 +48,14 @@ export const useMessageStore = create<MessageStoreState>()(
       setBulkMessages: (messagesByConversation) => {
         set((state) => {
           const newMessages = new Map(state.messages);
-          Object.entries(messagesByConversation).forEach(
+          Object.entries(messagesByConversation || {}).forEach(
             ([conversationId, msgs]) => {
-              const sortedMessages = msgs.sort(
-                (a, b) => a.conversation_sequence - b.conversation_sequence
-              );
-              newMessages.set(conversationId, sortedMessages);
+              if (Array.isArray(msgs)) {
+                const sortedMessages = msgs.sort(
+                  (a, b) => (a?.conversation_sequence || 0) - (b?.conversation_sequence || 0)
+                );
+                newMessages.set(conversationId, sortedMessages);
+              }
             }
           );
           return { messages: newMessages };

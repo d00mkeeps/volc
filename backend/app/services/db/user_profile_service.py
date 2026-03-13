@@ -295,27 +295,30 @@ class UserProfileService(BaseDBService):
             notes = []
 
             # Experience note
-            exp_level = onboarding_data["experience_level"]
-            exp_text_map = {
-                "beginner": "User is a beginner, with less than 2 years training experience.",
-                "intermediate": "User is intermediate, with 2-5 years training experience.",
-                "advanced": "User is advanced, with 5-10 years training experience.",
-                "elite": "User is elite, with 10+ years training experience.",
-            }
-            exp_text = exp_text_map.get(exp_level, f"Has {exp_level} level experience.")
-            notes.append(
-                {"text": exp_text, "date": current_date, "category": "profile"}
-            )
-            logger.info(f"Created experience note: {exp_text}")
+            exp_level = onboarding_data.get("experience_level")
+            if exp_level:
+                exp_text_map = {
+                    "beginner": "User is a beginner, with less than 2 years training experience.",
+                    "intermediate": "User is intermediate, with 2-5 years training experience.",
+                    "advanced": "User is advanced, with 5-10 years training experience.",
+                    "elite": "User is elite, with 10+ years training experience.",
+                }
+                exp_text = exp_text_map.get(exp_level, f"Has {exp_level} level experience.")
+                notes.append(
+                    {"text": exp_text, "date": current_date, "category": "profile"}
+                )
+                logger.info(f"Created experience note: {exp_text}")
 
             # Location note
-            location_note = (
-                f"Prefers to train at {onboarding_data['training_location']}."
-            )
-            notes.append(
-                {"text": location_note, "date": current_date, "category": "preference"}
-            )
-            logger.info(f"Created location note: {location_note}")
+            training_location = onboarding_data.get("training_location")
+            if training_location:
+                location_note = (
+                    f"Prefers to train at {training_location}."
+                )
+                notes.append(
+                    {"text": location_note, "date": current_date, "category": "preference"}
+                )
+                logger.info(f"Created location note: {location_note}")
 
             # 3. Append notes to context bundle
             from app.services.db.context_service import ContextBundleService

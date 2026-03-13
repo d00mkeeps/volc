@@ -3,10 +3,13 @@ import { supabase } from "@/lib/supabaseClient";
 import { isGloballyOffline } from "@/hooks/useNetworkQuality";
 
 export const isOfflineError = (error: any) => {
+  const msg = error?.message?.toLowerCase() || String(error).toLowerCase();
   return (
-    error?.message === "NETWORK_OFFLINE" ||
-    error?.name === "AbortError" ||
-    error?.message === "Network request failed"
+    msg.includes("network_offline") ||
+    msg.includes("abort") ||
+    msg.includes("network request failed") ||
+    msg.includes("fetch failed") ||
+    msg.includes("offline")
   );
 };
 

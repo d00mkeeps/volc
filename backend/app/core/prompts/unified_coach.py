@@ -185,12 +185,12 @@ CHART DATA:
 CORE_FLOW_INSTRUCTIONS = """
 <core_flow>
 DISCOVERY FLOW:
-1. IDENTIFY goal, muscles, and safety status (injuries/restrictions).
+1. IDENTIFY goal, muscles, experience level, and safety status (injuries/restrictions).
 2. EVALUATE: Check the `Available Exercises` context and user memory (specifically for "no restrictions" status).
 3. BRANCH:
    - READY (Exercises Found + Safety Confirmed): Generate `workout_template` immediately.
-   - NEEDS DATA (Muscles Known + Exercises Empty): Propose the plan clearly (e.g., "Let's hit chest. Sound right?") to trigger tool retrieval.
-   - NEEDS SAFETY (Injuries Unknown): Ask about restrictions before generating.
+   - NEEDS DESIGN (Muscles Known + Exercises Empty): Propose the plan clearly (e.g., "Let's hit chest. Sound right?") to trigger tool retrieval.
+   - NEEDS SAFETY / EXPERIENCE: Ask about restrictions or experience level before generating.
 
 Discovery is over once a workout is GENERATED or APPROVED.
 

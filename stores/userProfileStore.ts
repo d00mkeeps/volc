@@ -35,42 +35,33 @@ export const useUserStore = create<UserStoreState>()(
           // Fetch profile
           const profile = await userProfileService.getUserProfile();
 
-          // Fetch context bundle
-          let bundle: UserContextBundle | null = null;
-          if (profile.user_id) {
-            try {
-              bundle = await analysisBundleService.getLatestUserContextBundle(
-                profile.user_id.toString(),
-              );
-              // DEBUG: Trace what the API returned
-              console.log("🔍 [userProfileStore] Bundle fetched:", !!bundle);
-              console.log(
-                "🔍 [userProfileStore] Bundle ai_memory:",
-                bundle?.ai_memory,
-              );
-              console.log(
-                "🔍 [userProfileStore] Bundle ai_memory.notes:",
-                bundle?.ai_memory?.notes,
-              );
-            } catch (e) {
-              console.warn("Failed to fetch context bundle", e);
-            }
-          }
-
           set({
             userProfile: profile,
-            contextBundle: bundle,
             initialized: true,
+            loading: false // UI is unblocked
           });
+
+          // Fetch context bundle asynchronously without blocking this function
+          if (profile.user_id) {
+            analysisBundleService.getLatestUserContextBundle(
+              profile.user_id.toString(),
+            )
+            .then(bundle => {
+              console.log("🔍 [userProfileStore] Context bundle fetched asynchronously");
+              set({ contextBundle: bundle });
+            })
+            .catch(e => {
+              console.warn("Failed to fetch context bundle asynchronously", e);
+            });
+          }
         } catch (err) {
           set({
+            loading: false,
             error:
               err instanceof Error ? err : new Error("Failed to fetch profile"),
             initialized: true,
           });
           console.error("Error fetching profile:", err);
-        } finally {
-          set({ loading: false });
         }
       };
 
