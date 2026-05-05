@@ -62,7 +62,7 @@ export default function Slide2({
             >
               {formatDate(dob)}
             </Text>
-            <Animated.View style={{ opacity: iconOpacity }}>
+            <Animated.View style={{ opacity: iconOpacity, minWidth: 20 }}>
               {isAgeValid(dob) ? (
                 <AppIcon name="Check" size={20} color="$green8" />
               ) : (

@@ -3,6 +3,7 @@ import { getWebSocketService } from "@/services/websocket/WebSocketService";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { useUserStore } from "@/stores/userProfileStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { quickChatService } from "@/services/api/quickChatService";
 import { isOfflineError } from "@/services/api/core/apiClient";
 import type { ConnectionState } from "@/services/websocket/WebSocketService";
@@ -108,15 +109,24 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     const contextBundle = useUserStore.getState().contextBundle;
     const activeConversationId =
       useConversationStore.getState().activeConversationId;
+    const workouts = useWorkoutStore.getState().workouts;
 
-    if (!userProfile || !contextBundle) {
+    if (!userProfile) {
       set({ greeting: null, isLoadingGreeting: false });
       return;
     }
 
-    const firstName = userProfile.first_name || "";
-    const memory = contextBundle.ai_memory;
-    const isNewUser = !memory || !memory.notes || memory.notes.length === 0;
+    // Determine if it's a new user using BOTH signals for robustness
+    const memory = contextBundle?.ai_memory;
+    const isNewUserByMemory = !memory || !memory.notes || memory.notes.length === 0;
+    const isNewUserByWorkouts = workouts.length === 0;
+    const isActuallyNewUser = isNewUserByMemory && isNewUserByWorkouts;
+
+    // If not a new user AND we're missing context bundle, wait for it
+    if (!isActuallyNewUser && !contextBundle) {
+      set({ greeting: null, isLoadingGreeting: false });
+      return;
+    }
 
     // If active conversation, get last AI message
     if (activeConversationId) {
@@ -145,8 +155,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       return Math.abs(hash) % max;
     };
 
+    const firstName = userProfile.first_name || "";
     let greeting: string;
-    if (!isNewUser) {
+
+    if (!isActuallyNewUser) {
       const hour = new Date().getHours();
       let options: string[];
 
@@ -172,8 +184,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       greeting = options[stableRandom(options.length)];
     } else {
       greeting = firstName
-        ? `Welcome to Volc, ${firstName}! I'm excited to work with you. To start, what's one of your main fitness goals?`
-        : "Welcome to Volc! I'm excited to work with you. To start, what's one of your main fitness goals?";
+        ? `Welcome to Volc, ${firstName}! I'm excited to work with you. To start, what're you doing for exercise right now? How's your training look at the moment?`
+        : "Welcome to Volc! I'm excited to work with you. To start, what're you doing for exercise right now? How's your training look at the moment?";
+
+      // Forcefully remove any lingering [v2] tags
+      greeting = greeting.replace(/\[v2\]\s/g, "");
     }
 
     set({ greeting, isLoadingGreeting: false });
@@ -236,14 +251,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         set({
           actions: [
             {
-              label: "Set goals",
-              message: "I'd like to set some fitness goals",
+              label: "Lift weights",
+              message: "I lift weights at the gym",
             },
             {
-              label: "Learn about Volc",
-              message: "What can you help me with?",
+              label: "Run or cycle",
+              message: "I run or cycle regularly",
             },
-            { label: "Track workout", message: "I want to track my workout" },
+            { label: "Just starting", message: "I'm just starting out" },
           ],
           isLoadingActions: false,
         });
@@ -532,12 +547,23 @@ export const useChatStore = create<ChatStore>((set, get) => ({
               setPendingInitialMessage(null);
             }
 
-            // Only use hardcoded fallback if we have nothing else
+            // Fallback if we still have nothing
             if (messagesToCreate.length === 0) {
-              messagesToCreate.push({
-                content: "Hello! Ready to workout?",
-                sender: "assistant",
-              });
+              const profile = useUserStore.getState().userProfile;
+              const name = profile?.first_name ? `, ${profile.first_name}` : "";
+              const workoutCount = useWorkoutStore.getState().workouts.length;
+              
+              if (workoutCount === 0) {
+                messagesToCreate.push({
+                  content: `Welcome to Volc${name}! I'm excited to work with you. To start, what're you doing for exercise right now?`,
+                  sender: "assistant",
+                });
+              } else {
+                messagesToCreate.push({
+                  content: `Hi${name}! Ready for your next session or want to review your progress?`,
+                  sender: "assistant",
+                });
+              }
             }
 
             if (messagesToCreate.length > 0) {

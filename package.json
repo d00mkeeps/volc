@@ -8,7 +8,8 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "run:ios-device": "./node_modules/.bin/expo run:ios --device"
+    "run:ios-device": "./node_modules/.bin/expo run:ios --device",
+    "postinstall": "patch-package"
   },
   "jest": {
     "preset": "jest-expo"

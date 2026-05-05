@@ -28,6 +28,7 @@ import Slide4 from "./Slide4";
 
 import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
+import { useChatStore } from "@/stores/chat/ChatStore";
 
 interface WelcomeBottomSheetProps {
   isVisible: boolean;
@@ -55,10 +56,12 @@ export default function WelcomeBottomSheet({
   const [isImperial, setIsImperial] = useState<boolean | null>(null);
   const [dob, setDob] = useState(new Date(2000, 0, 1)); // Default: Jan 1, 2000
   const [dobChanged, setDobChanged] = useState(false);
+  const [experienceLevel, setExperienceLevel] = useState("");
+  const [trainingLocation, setTrainingLocation] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
 
-  // Animation refs for 3 slides
+  // Animation refs for 4 slides
   const slideOpacity = useRef([
     new Animated.Value(1), // Slide 0 starts visible
     new Animated.Value(0),
@@ -88,6 +91,8 @@ export default function WelcomeBottomSheet({
       setIsImperial(null);
       setDob(new Date(2000, 0, 1)); // Reset to Jan 1, 2000
       setDobChanged(false);
+      setExperienceLevel("");
+      setTrainingLocation("");
       setHeight("");
       setWeight("");
       iconOpacity.setValue(0);
@@ -170,52 +175,57 @@ export default function WelcomeBottomSheet({
       return;
     }
 
-    setLoading(true);
-    try {
-      console.log("[WelcomeBottomSheet] Saving profile data:", {
-        isImperial,
-        dob: dob.toISOString().split("T")[0],
-      });
+    // Dismiss modal and show success toast immediately (Optimistic)
+    if (onComplete) onComplete();
+    bottomSheetRef.current?.dismiss();
 
-      await userProfileService.completeOnboarding({
-        isImperial,
-        dob,
-        height: height || undefined,
-        weight: weight || undefined,
-      });
+    Toast.show({
+      type: "success",
+      text1: "Profile setup complete!",
+    });
 
-      await refreshProfile();
+    // Perform save in background
+    (async () => {
+      try {
+        console.log("[WelcomeBottomSheet] Saving profile data (background):", {
+          isImperial,
+          dob: dob.toISOString().split("T")[0],
+        });
 
-      console.log("[WelcomeBottomSheet] Profile saved successfully");
+        await userProfileService.completeOnboarding({
+          isImperial,
+          dob,
+          experienceLevel: experienceLevel || undefined,
+          trainingLocation: trainingLocation || undefined,
+          height: height || undefined,
+          weight: weight || undefined,
+        });
 
-      // Track registration completion for Meta ads
-      MetaEvents.logCompleteRegistration();
+        await refreshProfile();
 
-      Toast.show({
-        type: "success",
-        text1: "Profile setup complete!",
-      });
+        console.log("[WelcomeBottomSheet] Profile saved successfully in background");
 
-      const workoutCount = useWorkoutStore.getState().workouts.length;
-      if (workoutCount === 0) {
-        setTimeout(() => {
-          useConversationStore.getState().setPendingInitialMessage("Hi! I see you're new here. Have you tracked workouts before or are we starting fresh?");
-          useConversationStore.getState().setPendingChatOpen(true);
-        }, 500);
+        // Track registration completion for Meta ads
+        MetaEvents.logCompleteRegistration();
+
+        const workoutCount = useWorkoutStore.getState().workouts.length;
+        if (workoutCount === 0) {
+          // Ensure correct v2 greeting is computed
+          useChatStore.getState().computeGreeting();
+          
+          setTimeout(() => {
+            useConversationStore.getState().setPendingChatOpen(true);
+          }, 500);
+        }
+      } catch (error) {
+        console.error(
+          "[WelcomeBottomSheet] Background error saving profile:",
+          error,
+        );
+        // We could show an error toast here, but since the user is already past the modal,
+        // it might be confusing. For now, we'll just log it.
       }
-
-      if (onComplete) onComplete();
-      bottomSheetRef.current?.dismiss();
-    } catch (error) {
-      console.error("[WelcomeBottomSheet] Error saving profile:", error);
-      Toast.show({
-        type: "error",
-        text1: "Failed to save profile",
-        text2: "Please try again",
-      });
-    } finally {
-      setLoading(false);
-    }
+    })();
   };
 
   const formatDate = (date: Date) => {
@@ -244,6 +254,8 @@ export default function WelcomeBottomSheet({
       index={1}
       enablePanDownToClose={false}
       enableContentPanningGesture={false}
+      enableHandlePanningGesture={false}
+      enableOverDrag={false}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       onChange={(index) =>
@@ -315,6 +327,7 @@ export default function WelcomeBottomSheet({
           />
         </Animated.View>
 
+        {/* Slide 3: Height & Weight (Successive to DOB) */}
         <Animated.View
           style={{
             position: "absolute",

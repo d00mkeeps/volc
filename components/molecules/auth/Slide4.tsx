@@ -112,13 +112,13 @@ export default function Slide4({
           </Text>
         </YStack>
 
-        <XStack gap="$6" paddingTop="$4" justifyContent="flex-start">
+        <XStack gap="$6" paddingTop="$4" justifyContent="center">
           {/* Height Input */}
-          <YStack gap="$2">
+          <YStack gap="$2" alignItems="center">
             <Text size="medium" fontWeight="600" color="$color">
               Height ({isImperial ? "inches" : "cm"})
             </Text>
-            <YStack>
+            <YStack alignItems="center">
               <Input
                 placeholder="0"
                 value={height}
@@ -129,8 +129,8 @@ export default function Slide4({
                 keyboardType="decimal-pad"
                 inputMode="decimal"
                 size="medium"
-                minWidth={80}
-                alignSelf="flex-start"
+                minWidth={100}
+                textAlign="center"
                 borderColor={heightError ? "$red8" : "$borderColor"}
               />
               {heightError && (
@@ -142,14 +142,13 @@ export default function Slide4({
           </YStack>
 
           {/* Weight Input */}
-          <YStack gap="$2">
+          <YStack gap="$2" alignItems="center">
             <Text size="medium" fontWeight="600" color="$color">
               Weight ({isImperial ? "lbs" : "kg"})
             </Text>
-            <YStack>
+            <YStack alignItems="center">
               <Input
                 placeholder="0"
-                alignSelf="flex-start"
                 value={weight}
                 onChangeText={(val) => {
                   if (/^\d*\.?\d*$/.test(val)) setWeight(val);
@@ -157,7 +156,8 @@ export default function Slide4({
                 keyboardType="decimal-pad"
                 inputMode="decimal"
                 size="medium"
-                minWidth={80}
+                minWidth={100}
+                textAlign="center"
                 borderColor={weightError ? "$red8" : "$borderColor"}
               />
               {weightError && (

@@ -27,9 +27,10 @@ import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import { countIncompleteSets, isSetComplete } from "@/utils/setValidation";
 import { useExerciseStore } from "@/stores/workout/exerciseStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
+import { useMessageStore } from "@/stores/chat/MessageStore";
+import { useChatStore } from "@/stores/chat/ChatStore";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { DisplayMessage } from "@/components/molecules/home/DisplayMessage";
-import { useChatStore } from "@/stores/chat/ChatStore";
 
 export const EMPTY_WORKOUT_TEMPLATE: CompleteWorkout = {
   id: "empty-workout-template",
@@ -71,6 +72,9 @@ export default function HomeScreen() {
   const selectedTemplate = useUserSessionStore(
     (state) => state.selectedTemplate,
   );
+  const workoutCount = useWorkoutStore((state) => state.workouts.length);
+  const hasDismissedExitModal = useUserSessionStore((state) => state.hasDismissedExitModal);
+  const isOnboarding = workoutCount === 0 && !hasDismissedExitModal;
 
   // Stable reference to session actions
   const sessionActions = useMemo(
@@ -89,11 +93,12 @@ export default function HomeScreen() {
     [],
   );
 
-  // Auto-load dashboard data on mount
+  // Auto-load dashboard data on mount (only if not onboarding)
   useEffect(() => {
-    // console.log("⚡️ [HomeScreen] MOUNT EFFECT (Dashboard)");
-    refreshDashboard();
-  }, []);
+    if (!isOnboarding) {
+       refreshDashboard();
+    }
+  }, [isOnboarding]);
 
   // Fetch suggested actions only when user profile is available
   useEffect(() => {
@@ -251,12 +256,16 @@ export default function HomeScreen() {
     );
 
     // Clear active conversation
+    const activeId = useConversationStore.getState().activeConversationId;
+    if (activeId) {
+      useMessageStore.getState().clearMessages(activeId);
+    }
     useConversationStore.getState().setActiveConversation(null);
     useConversationStore.getState().setPendingInitialMessage(null);
-    useConversationStore.getState().setPendingGreeting(null); // ← ADD THIS LINE
+    useConversationStore.getState().setPendingGreeting(null);
 
     // Also refresh the greeting to generate a fresh one
-    useChatStore.getState().computeGreeting(); // ← ADD THIS LINE
+    useChatStore.getState().computeGreeting();
 
     console.log(
       "💬 [HomeScreen] AFTER clearing - activeConversationId:",
@@ -289,31 +298,34 @@ export default function HomeScreen() {
       {/* Main Content */}
       <Stack flex={1} backgroundColor="$background">
         <Stack flex={1} padding="$2">
-          <Header
-            greeting="Welcome to Volc!"
-            onProfilePress={handleProfilePress}
-            onRecentsPress={handleRecentsPress}
-            onSettingsPress={() => setShowSettingsModal(true)}
-            onNewChat={handleNewChat}
-            onNewWorkout={handleLogManually}
-          />
-          <Stack
-            onLayout={(e) => setDashboardHeight(e.nativeEvent.layout.height)}
-            position="relative"
-            // zIndex={10}  // Remove or comment this out
-          >
-            <Dashboard
-              allData={dashboardAllData}
-              isLoading={dashboardLoading}
-              error={dashboardError}
-              onWorkoutDayPress={handleWorkoutDayPress}
-            />
-          </Stack>
+          {isOnboarding && !isActive ? null : (
+            <>
+              <Header
+                greeting="Welcome to Volc!"
+                onProfilePress={handleProfilePress}
+                onRecentsPress={handleRecentsPress}
+                onSettingsPress={() => setShowSettingsModal(true)}
+                onNewChat={handleNewChat}
+                onNewWorkout={handleLogManually}
+              />
+              <Stack
+                onLayout={(e) => setDashboardHeight(e.nativeEvent.layout.height)}
+                position="relative"
+              >
+                <Dashboard
+                  allData={dashboardAllData}
+                  isLoading={dashboardLoading}
+                  error={dashboardError}
+                  onWorkoutDayPress={handleWorkoutDayPress}
+                />
+              </Stack>
 
-          <DisplayMessage
-            maxHeight={screenHeight + 100}
-            onPress={() => expandChatOverlay?.()}
-          />
+              <DisplayMessage
+                maxHeight={screenHeight + 100}
+                onPress={() => expandChatOverlay?.()}
+              />
+            </>
+          )}
         </Stack>
 
         <Stack

@@ -1,4 +1,3 @@
-// components/atoms/GradientBlur.tsx - Remove animation wrapper
 import React from "react";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";

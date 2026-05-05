@@ -30,6 +30,7 @@ import { useChatStore } from "@/stores/chat/ChatStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
 import { QuickChatActions } from "@/components/molecules/home/QuickChatActions";
 import { useMessageStore } from "@/stores/chat/MessageStore";
+import { useUserStore } from "@/stores/userProfileStore";
 import { scheduleOnRN } from "react-native-worklets";
 import { useUserSessionStore } from "@/stores/userSessionStore";
 import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
@@ -44,12 +45,49 @@ interface ChatOverlayProps {
 }
 
 export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(() => {
+    const isNewUser = useWorkoutStore.getState().workouts.length === 0;
+    const dismissed = useUserSessionStore.getState().hasDismissedExitModal;
+    // Auto-expand if they are a new user and haven't intentionally dismissed the chat/exit modal
+    return isNewUser && !dismissed;
+  });
+  const [hasAutoExpanded, setHasAutoExpanded] = useState(isExpanded);
+
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isInputAreaFocused, setIsInputAreaFocused] = useState(false);
-  const [hasShownExitCheckpoint, setHasShownExitCheckpoint] = useState(false);
+  
+  const hasDismissedExitModal = useUserSessionStore((state) => state.hasDismissedExitModal);
+  const setHasDismissedExitModal = useUserSessionStore((state) => state.setHasDismissedExitModal);
+  
   const [showExitModal, setShowExitModal] = useState(false);
   const workoutCount = useWorkoutStore((state) => state.workouts.length);
+  const isOnboarding = workoutCount === 0 && !hasDismissedExitModal;
+
+  console.log("🔍 [ChatOverlay] State Check:", {
+    workoutCount,
+    hasDismissedExitModal,
+    isOnboarding,
+    hasAutoExpanded,
+    isExpanded
+  });
+
+  // Auto-expand reactively once onboarding state is confirmed
+  useEffect(() => {
+    console.log("📂 [ChatOverlay] Reactive Effect Run:", { 
+      isOnboarding, 
+      hasAutoExpanded, 
+      hasDismissedExitModal 
+    });
+    
+    // If we're onboarding and haven't auto-expanded yet, do it.
+    // We check both the LOCAL hasAutoExpanded and the STORE's hasDismissedExitModal
+    // to be absolutely sure we're in the right state.
+    if (isOnboarding && !hasAutoExpanded && !hasDismissedExitModal) {
+      console.log("📂 [ChatOverlay] Reactive auto-expand triggering!");
+      setIsExpanded(true);
+      setHasAutoExpanded(true);
+    }
+  }, [isOnboarding, hasAutoExpanded, hasDismissedExitModal]);
 
   // ... (keeping existing selectors and hooks) ...
   // ChatStore selectors
@@ -114,6 +152,15 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   );
 
   const fadeProgress = useSharedValue(0);
+
+  useEffect(() => {
+    console.log("🎨 [ChatOverlay] isExpanded changed to:", isExpanded);
+    if (isExpanded) {
+      fadeProgress.value = withTiming(1, { duration: 400 });
+    } else {
+      fadeProgress.value = withTiming(0, { duration: 400 });
+    }
+  }, [isExpanded]);
 
   const pendingChatOpen = useConversationStore(
     (state) => state.pendingChatOpen,
@@ -243,31 +290,33 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   }, [isWorkoutDetailOpen, isKeyboardVisible, isInputAreaFocused, isExpanded]);
 
   const handleExpand = useCallback(() => {
-    console.log("📂 [ChatOverlay.handleExpand] Called");
-    console.log("📂 [ChatOverlay.handleExpand] isExpanded:", isExpanded);
+    console.log("📂 [ChatOverlay.handleExpand] Called. isExpanded:", isExpanded, "isUnreliable:", isUnreliable);
     console.log(
       "📂 [ChatOverlay.handleExpand] activeConversationId:",
       useConversationStore.getState().activeConversationId,
     );
 
     if (isUnreliable) {
-      console.log(
-        "📂 [ChatOverlay.handleExpand] Blocked: Network is unreliable.",
+      console.warn(
+        "📂 [ChatOverlay.handleExpand] WARNING: Expansion might be blocked or hindered by unreliable network.",
       );
-      return;
+      // return; // Let's keep it commented out or remove it to test if this is the cause
     }
 
     if (!isExpanded) {
       setIsExpanded(true);
-      fadeProgress.value = withTiming(1, { duration: 300 });
-      console.log("📂 [ChatOverlay.handleExpand] Triggered expand");
+      fadeProgress.value = withTiming(1, { duration: 400 });
+      console.log("📂 [ChatOverlay.handleExpand] Triggered setIsExpanded(true)");
+    } else {
+      console.log("📂 [ChatOverlay.handleExpand] Already expanded, ensuring fadeProgress is 1");
+      fadeProgress.value = withTiming(1, { duration: 400 });
     }
   }, [isExpanded, fadeProgress, isUnreliable]);
 
   const reallyCollapse = useCallback(() => {
     Keyboard.dismiss();
 
-    fadeProgress.value = withTiming(0, { duration: 300 }, (finished) => {
+    fadeProgress.value = withTiming(0, { duration: 400 }, (finished) => {
       if (finished) {
         scheduleOnRN(setIsExpanded, false);
       }
@@ -276,13 +325,13 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
 
   const handleCollapse = useCallback(() => {
     if (isExpanded) {
-      if (workoutCount === 0 && !hasShownExitCheckpoint) {
+      if (workoutCount === 0 && !hasDismissedExitModal) {
         setShowExitModal(true);
         return;
       }
       reallyCollapse();
     }
-  }, [isExpanded, workoutCount, hasShownExitCheckpoint, reallyCollapse]);
+  }, [isExpanded, workoutCount, hasDismissedExitModal, reallyCollapse]);
 
   const handleTemplateApprove = useCallback(
     (templateData: any) => {
@@ -361,8 +410,13 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
     pointerEvents: fadeProgress.value > 0.1 ? "auto" : "none",
   }));
 
-  const backgroundColor =
-    colorScheme === "dark" ? "rgba(0, 0, 0, .95)" : "rgba(255,255,255,.95)";
+  const backgroundColor = isOnboarding
+    ? colorScheme === "dark" 
+      ? "rgba(0, 0, 0, 1)" 
+      : "rgba(255, 255, 255, 1)"
+    : colorScheme === "dark" 
+      ? "rgba(0, 0, 0, .95)" 
+      : "rgba(255, 255, 255, .95)";
 
   const getConnectionState = ():
     | "ready"
@@ -427,6 +481,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                 >
                   <MessageList
                     messages={messages}
+                    greeting={greeting}
                     showLoadingIndicator={showLoading}
                     connectionState={getConnectionState()}
                     statusMessage={statusMessage}
@@ -534,6 +589,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
         isVisible={showExitModal}
         onClose={() => setShowExitModal(false)}
         onConfirmExit={() => {
+          setHasDismissedExitModal(true);
           setShowExitModal(false);
           reallyCollapse();
         }}

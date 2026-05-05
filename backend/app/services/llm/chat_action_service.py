@@ -119,14 +119,13 @@ class ChatActionService:
                 {recent_chat_context}
                 
                 Generate exactly 3 short, punchy "suggested action" buttons that guide the user to share:
-                - Their fitness goals
+                - Their current exercise habits (lifting, running, etc.)
                 - Their current abilities/fitness level
-                - Their preferences (workout style, equipment, time availability)
                 - Any injury history or limitations
                 
                 ONBOARDING EXAMPLES:
-                - [{{"label": "Set goals", "message": "I'd like to set some fitness goals"}}, {{"label": "Share abilities", "message": "Let me tell you about my current fitness level"}}, {{"label": "Any injuries?", "message": "I have some injury history to share"}}]
-                - [{{"label": "What's my level?", "message": "Help me figure out my fitness level"}}, {{"label": "Equipment access", "message": "Here's what equipment I have access to"}}, {{"label": "Time available", "message": "I want to discuss how much time I have for training"}}]
+                - [{{"label": "Lift weights", "message": "I lift weights at the gym"}}, {{"label": "Run or cycle", "message": "I run or cycle regularly"}}, {{"label": "Just starting", "message": "I'm just starting out"}}]
+                - [{{"label": "Current level", "message": "Let me tell you about my current fitness level"}}, {{"label": "Equipment", "message": "Here's what equipment I have access to"}}, {{"label": "Injuries?", "message": "I have some injury history to share"}}]
                 
                 Make the actions feel natural based on the conversation, but keep the focus on collecting information we need to coach them effectively.
                 
@@ -183,16 +182,16 @@ class ChatActionService:
                 if is_early_user:
                     actions = [
                         {
-                            "label": "Set goals",
-                            "message": "I'd like to set some fitness goals",
+                            "label": "Lift weights",
+                            "message": "I lift weights at the gym",
                         },
                         {
-                            "label": "Share abilities",
-                            "message": "Let me tell you about my current fitness level",
+                            "label": "Run or cycle",
+                            "message": "I run or cycle regularly",
                         },
                         {
-                            "label": "Any limitations?",
-                            "message": "I have some injury history or limitations to share",
+                            "label": "Just starting",
+                            "message": "I'm just starting out",
                         },
                     ]
                 else:

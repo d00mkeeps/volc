@@ -1,0 +1,23 @@
+services:
+  supreme-octo-doodle-api:
+    build: .
+    container_name: supreme-octo-doodle-api
+    restart: unless-stopped
+    ports:
+      - "8002:8000" # Mapped to 8002 on host to avoid conflicts
+    
+    # Automatically loads non-sensitive environment variables
+    env_file:
+      - .env
+      
+    # Ensures the application is actually ready to receive traffic
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ] # Healthcheck matches /health endpoint in main.py
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+networks:
+  default:
+    name: supreme-octo-doodle-network

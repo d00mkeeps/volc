@@ -41,12 +41,8 @@ export function useStoreInitializer() {
             // Onboarding condition: no workout history and not currently in a workout
             if (!hasCachedWorkouts && !hasActiveWorkout) {
               console.log(
-                `⏱️ [StoreInit] No cached workouts and no active workout. Triggering onboarding chat open.`
+                `⏱️ [StoreInit] No cached workouts and no active workout. ChatOverlay will mount expanded automatically.`
               );
-              // Wait a bit ensuring ChatOverlay has mounted
-              setTimeout(() => {
-                useConversationStore.getState().setPendingChatOpen(true);
-              }, 500);
             }
             console.log(
               `⏱️ [StoreInit] [${Date.now() - startTime}ms] Waiting for up to 1 successful ping to check network...`,
@@ -143,6 +139,7 @@ export function useStoreInitializer() {
         useConversationStore.getState().clearData();
         useWorkoutStore.getState().clearData();
         useDashboardStore.getState().clearData();
+        useUserSessionStore.getState().resetSession();
         useChatStore.setState({
           greeting: null,
           actions: null,

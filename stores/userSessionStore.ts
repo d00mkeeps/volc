@@ -62,6 +62,9 @@ interface UserSessionState {
 
   setPendingImage: (imageId: string | null) => void;
 
+  hasDismissedExitModal: boolean;
+  setHasDismissedExitModal: (dismissed: boolean) => void;
+
   getTimeString: () => string;
   getProgress: () => { completed: number; total: number };
 }
@@ -110,6 +113,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
   showTemplateSelector: false,
   isWorkoutDetailOpen: false,
   pendingImageId: null,
+  hasDismissedExitModal: false,
 
   startWorkout: (templateOrWorkout) => {
     const userProfile = useUserStore.getState().userProfile;
@@ -417,6 +421,10 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
     set({ pendingImageId: imageId });
   },
 
+  setHasDismissedExitModal: (dismissed) => {
+    set({ hasDismissedExitModal: dismissed });
+  },
+
   hasAtLeastOneCompleteSet: () => {
     const { currentWorkout } = get();
     if (!currentWorkout) return false;
@@ -445,6 +453,7 @@ export const useUserSessionStore = create<UserSessionState>((set, get) => ({
       scheduledTime: undefined,
       selectedTemplate: null,
       pendingImageId: null,
+      hasDismissedExitModal: false,
     });
   },
 

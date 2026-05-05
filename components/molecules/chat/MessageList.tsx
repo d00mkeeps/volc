@@ -25,6 +25,7 @@ interface MessageListProps {
   isThinking?: boolean;
   thinkingStartTime?: number | null;
   currentThought?: string;
+  greeting?: string | null;
 }
 
 export const MessageList = ({
@@ -38,6 +39,7 @@ export const MessageList = ({
   isThinking = false,
   thinkingStartTime = null,
   currentThought = "",
+  greeting = null,
 }: MessageListProps) => {
   const listRef = useRef<FlatList>(null);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
@@ -118,6 +120,49 @@ export const MessageList = ({
   const keyExtractor = useCallback((item: Message) => item.id, []);
 
   if (invertedMessages.length === 0 && connectionState !== "disconnected") {
+    if (greeting && !isUnreliable) {
+      const greetingMessage: Message = {
+        id: "greeting",
+        content: greeting,
+        sender: "assistant",
+        conversation_id: activeConversationId || "temp",
+        conversation_sequence: 1,
+        timestamp: new Date(),
+      };
+      // For new users with no messages, show the greeting
+      return (
+        <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
+          <YStack flex={1} position="relative">
+            <FlatList
+              ref={listRef}
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                paddingTop:
+                  (tabBarHeight || insets.bottom) +
+                  inputAreaHeight +
+                  quickActionsHeight +
+                  28,
+                paddingBottom: 20,
+              }}
+              data={[greetingMessage]}
+              renderItem={renderMessage}
+              keyExtractor={keyExtractor}
+              inverted={true}
+              ListHeaderComponent={
+                <ThinkingIndicator
+                  isThinking={isThinking}
+                  showLoadingIndicator={showLoadingIndicator}
+                  thinkingStartTime={thinkingStartTime}
+                  currentThought={currentThought}
+                  statusMessage={statusMessage}
+                />
+              }
+            />
+          </YStack>
+        </ResponsiveKeyboardAvoidingView>
+      );
+    }
+
     return (
       <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
         <Pressable style={{ flex: 1 }} onPress={onDismiss}>

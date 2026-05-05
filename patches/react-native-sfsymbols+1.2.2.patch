@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-native-sfsymbols/ios/UISFSymbolImageView.m b/node_modules/react-native-sfsymbols/ios/UISFSymbolImageView.m
+index 9033f80..5a773c1 100644
+--- a/node_modules/react-native-sfsymbols/ios/UISFSymbolImageView.m
++++ b/node_modules/react-native-sfsymbols/ios/UISFSymbolImageView.m
+@@ -2,7 +2,12 @@
+ 
+ @implementation UISFSymbolImageView
+ 
+-- (void) updateImage {
++- (void)updateImage {
++  if (_systemName == nil || [_systemName isEqualToString:@""]) {
++    self.image = nil;
++    return;
++  }
++
+   if (@available(iOS 13.0, *)) {
+     UIImageSymbolWeight weight = UIImageSymbolWeightUnspecified;
+     UIImageSymbolScale scale = UIImageSymbolScaleDefault;
