@@ -37,17 +37,15 @@ export async function initializeApiClient(): Promise<void> {
           error,
         );
         // Fallback to production if local fails
-        API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
-        WS_BASE_URL =
-          "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
+        API_BASE_URL = "https://served.mileshillary.com";
+        WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
       }
     } else {
-      // Production mode - use Railway
-      API_BASE_URL = "https://supreme-octo-doodle-production.up.railway.app";
-      WS_BASE_URL =
-        "wss://supreme-octo-doodle-production.up.railway.app/api/llm";
+      // Production mode
+      API_BASE_URL = "https://served.mileshillary.com";
+      WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
       console.log(
-        `[apiClient] 🔴 Production mode - Railway backend: ${API_BASE_URL}`,
+        `[apiClient] 🔴 Production mode - Production backend: ${API_BASE_URL}`,
       );
     }
   }
