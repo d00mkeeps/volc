@@ -1,0 +1,44 @@
+services:
+  volc-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: supreme-octo-doodle-api
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    env_file:
+      - path: ./backend/.env
+        required: false
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - volc-network
+
+  volc-website:
+    build:
+      context: ./website
+      dockerfile: Dockerfile
+    container_name: volc-website
+    restart: unless-stopped
+    ports:
+      - "3004:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL:-https://sfniyudipwsaqwuhsdcq.supabase.co}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmbml5dWRpcHdzYXF3dWhzZGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjAyNDc5MDcsImV4cCI6MjAzNTgyMzkwN30.JZnzWXjTRSSvSiN4iK__QUY2DmXF2_wB27zjSG3THLs}
+      - INTERNAL_API_URL=http://volc-backend:8000
+    depends_on:
+      volc-backend:
+        condition: service_healthy
+    networks:
+      - volc-network
+
+networks:
+  volc-network:
+    name: volc-network

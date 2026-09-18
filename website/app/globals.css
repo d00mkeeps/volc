@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Volc Custom */
+  --color-primary-light: var(--primary-light);
+  --color-primary-muted: var(--primary-muted);
+  --color-primary-tint: var(--primary-tint);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #231f20;
+
+  --card: #ffffff;
+  --card-foreground: #231f20;
+
+  --popover: #ffffff;
+  --popover-foreground: #231f20;
+
+  --primary: #f84f3e;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f5f4f4;
+  --secondary-foreground: #231f20;
+
+  --muted: #ebebeb;
+  --muted-foreground: #999999;
+
+  --accent: #f5f4f4;
+  --accent-foreground: #231f20;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #f84f3e;
+
+  --radius: 0.5rem;
+
+  /* Volc Custom */
+  --primary-light: #f86b5c;
+  --primary-muted: #d4412f;
+  --primary-tint: #fef7f6;
+
+  /* Charts - keeping default for now or matching palette if needed */
+  --chart-1: #f84f3e;
+  --chart-2: #231f20;
+  --chart-3: #999999;
+  --chart-4: #f86b5c;
+  --chart-5: #d4412f;
+}
+
+.dark {
+  --background: #231f20;
+  --foreground: #ffffff;
+
+  --card: #2a2629;
+  --card-foreground: #ffffff;
+
+  --popover: #2a2629;
+  --popover-foreground: #ffffff;
+
+  --primary: #f84f3e;
+  --primary-foreground: #ffffff;
+
+  --secondary: #2a2629;
+  --secondary-foreground: #ffffff;
+
+  --muted: #1a1718;
+  --muted-foreground: #6b6466;
+
+  --accent: #2a2629;
+  --accent-foreground: #ffffff;
+
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #d4412f;
+
+  /* Volc Custom */
+  --primary-light: #f86b5c;
+  --primary-muted: #d4412f;
+  --primary-tint: #2b1f1e;
+
+  --chart-1: #f84f3e;
+  --chart-2: #ffffff;
+  --chart-3: #999999;
+  --chart-4: #f86b5c;
+  --chart-5: #d4412f;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+  }
+}
+
+@utility scrollbar-hide {
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* Safari and Chrome */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
