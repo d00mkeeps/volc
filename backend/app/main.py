@@ -52,6 +52,7 @@ async def startup_event():
             "⚠️ Exercise cache failed to initialize - will retry on first request"
         )
 
+    start_scheduler_jobs()
     logger.info("🎉 Application startup complete")
 
 
@@ -111,8 +112,11 @@ app.include_router(workout_analysis_router, tags=["workout-analysis"])
 app.include_router(dashboard_router, tags=["dashboard"])
 app.include_router(chat_router, tags=["chat"])
 from app.api.endpoints.admin import router as admin_router
+from app.api.endpoints.admin_dashboard import router as admin_dashboard_router
+from app.core.scheduler import start_scheduler_jobs
 
 app.include_router(admin_router, tags=["admin"])
+app.include_router(admin_dashboard_router, tags=["admin-dashboard"])
 
 
 @app.get("/")
