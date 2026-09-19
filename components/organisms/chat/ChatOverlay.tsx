@@ -135,11 +135,11 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
   useEffect(() => {
     const isActuallyStreaming = loadingState === "streaming";
 
-    if (isActuallyStreaming && isUnreliable) {
-      console.log("[ChatOverlay] Auto-cancelling due to poor network");
+    if (isActuallyStreaming && health === "offline") {
+      console.log("[ChatOverlay] Auto-cancelling due to offline network");
       cancelStreaming("network_failure");
     }
-  }, [loadingState, isUnreliable, cancelStreaming]);
+  }, [loadingState, health, cancelStreaming]);
 
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
@@ -578,7 +578,7 @@ export const ChatOverlay = ({ currentPage = 0 }: ChatOverlayProps) => {
                 onFocus={handleExpand}
                 onCancel={() => cancelStreaming("user_requested")}
                 onFocusChange={setIsInputAreaFocused}
-                isNetworkUnreliable={isUnreliable}
+                isNetworkUnreliable={health === "offline"}
               />
             </YStack>
           </Animated.View>

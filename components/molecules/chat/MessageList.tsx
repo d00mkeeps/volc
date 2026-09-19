@@ -8,7 +8,6 @@ import { ThinkingIndicator } from "../../atoms/chat/ThinkingIndicator";
 import { Message } from "@/types";
 import { useMessageStore } from "@/stores/chat/MessageStore";
 import { useConversationStore } from "@/stores/chat/ConversationStore";
-import { ResponsiveKeyboardAvoidingView } from "@/components/atoms/core/ResponsiveKeyboardAvoidingView";
 import { Keyboard } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
@@ -131,96 +130,86 @@ export const MessageList = ({
       };
       // For new users with no messages, show the greeting
       return (
-        <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
-          <YStack flex={1} position="relative">
-            <FlatList
-              ref={listRef}
-              style={{ flex: 1 }}
-              contentContainerStyle={{
-                paddingTop:
-                  (tabBarHeight || insets.bottom) +
-                  inputAreaHeight +
-                  quickActionsHeight +
-                  28,
-                paddingBottom: 20,
-              }}
-              data={[greetingMessage]}
-              renderItem={renderMessage}
-              keyExtractor={keyExtractor}
-              inverted={true}
-              ListHeaderComponent={
-                <ThinkingIndicator
-                  isThinking={isThinking}
-                  showLoadingIndicator={showLoadingIndicator}
-                  thinkingStartTime={thinkingStartTime}
-                  currentThought={currentThought}
-                  statusMessage={statusMessage}
-                />
-              }
-            />
-          </YStack>
-        </ResponsiveKeyboardAvoidingView>
+        <YStack flex={1} position="relative">
+          <FlatList
+            ref={listRef}
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+              paddingTop:
+                (tabBarHeight || insets.bottom) +
+                inputAreaHeight +
+                quickActionsHeight +
+                28,
+              paddingBottom: Math.max(insets.top + 28, 50),
+            }}
+            data={[greetingMessage]}
+            renderItem={renderMessage}
+            keyExtractor={keyExtractor}
+            inverted={true}
+            ListHeaderComponent={
+              <ThinkingIndicator
+                isThinking={isThinking}
+                showLoadingIndicator={showLoadingIndicator}
+                thinkingStartTime={thinkingStartTime}
+                currentThought={currentThought}
+                statusMessage={statusMessage}
+              />
+            }
+          />
+        </YStack>
       );
     }
 
     return (
-      <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
-        <Pressable style={{ flex: 1 }} onPress={onDismiss}>
-          <YStack flex={1} justifyContent="center" alignItems="center">
-            <Text color="$textMuted" size="medium">
-              {isUnreliable
-                ? "You're offline. Please reconnect to chat."
-                : "Start a conversation about your workout"}
-            </Text>
-          </YStack>
-        </Pressable>
-      </ResponsiveKeyboardAvoidingView>
+      <Pressable style={{ flex: 1 }} onPress={onDismiss}>
+        <YStack flex={1} justifyContent="center" alignItems="center">
+          <Text color="$textMuted" size="medium">
+            {isUnreliable
+              ? "You're offline. Please reconnect to chat."
+              : "Start a conversation about your workout"}
+          </Text>
+        </YStack>
+      </Pressable>
     );
   }
 
   return (
-    <ResponsiveKeyboardAvoidingView style={{ flex: 1 }}>
-      <YStack flex={1} position="relative">
-        <FlatList
-          ref={listRef}
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            // Inverted list: paddingTop becomes visual bottom, paddingBottom becomes visual top
-            // Calculation: InputArea + QCA + Bottom Offset (TabBar/Insets) + Buffer
-            paddingTop: (() => {
-              const bottomOffset = keyboardVisible
-                ? 8 // Smaller buffer when keyboard is up
-                : (tabBarHeight || insets.bottom) + 8;
+    <YStack flex={1} position="relative">
+      <FlatList
+        ref={listRef}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          // Inverted list: paddingTop becomes visual bottom, paddingBottom becomes visual top
+          paddingTop: (() => {
+            const bottomOffset = keyboardVisible
+              ? 8 // Smaller buffer when keyboard is up
+              : (tabBarHeight || insets.bottom) + 8;
 
-              // We add InputArea height (dynamic)
-              // We add QuickActions height (dynamic) - assuming it's visible if it has height
-              // Plus a buffer for the ThinkingIndicator itself to clear the QCA
-              return inputAreaHeight + quickActionsHeight + bottomOffset + 20;
-            })(),
-            paddingBottom: 20, // Visual top padding
-          }}
-          data={invertedMessages}
-          renderItem={renderMessage}
-          keyExtractor={keyExtractor}
-          inverted={true}
-          ListHeaderComponent={
-            <ThinkingIndicator
-              isThinking={isThinking}
-              showLoadingIndicator={showLoadingIndicator}
-              thinkingStartTime={thinkingStartTime}
-              currentThought={currentThought}
-              statusMessage={statusMessage}
-            />
-          }
-          // Virtualization props for 100+ message performance
-          initialNumToRender={15}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          scrollEventThrottle={200}
-          removeClippedSubviews={true}
-          showsVerticalScrollIndicator={true}
-        />
-      </YStack>
-    </ResponsiveKeyboardAvoidingView>
+            return inputAreaHeight + quickActionsHeight + bottomOffset + 16;
+          })(),
+          paddingBottom: Math.max(insets.top + 28, 50), // Visual top padding to comfortably clear notch/header
+        }}
+        data={invertedMessages}
+        renderItem={renderMessage}
+        keyExtractor={keyExtractor}
+        inverted={true}
+        ListHeaderComponent={
+          <ThinkingIndicator
+            isThinking={isThinking}
+            showLoadingIndicator={showLoadingIndicator}
+            thinkingStartTime={thinkingStartTime}
+            currentThought={currentThought}
+            statusMessage={statusMessage}
+          />
+        }
+        // Virtualization props for 100+ message performance
+        initialNumToRender={15}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        scrollEventThrottle={200}
+        removeClippedSubviews={true}
+        showsVerticalScrollIndicator={true}
+      />
+    </YStack>
   );
 };

@@ -123,6 +123,10 @@ const sfSymbolsMapping: Partial<Record<AppIconName, string>> = {
   Wrench: "wrench",
   GripVertical: "line.3.horizontal",
   Dumbbell: "dumbbell.fill",
+  NetworkExcellent: "wifi",
+  NetworkGood: "wifi",
+  NetworkPoor: "wifi.exclamationmark",
+  NetworkOffline: "wifi.slash",
 };
 
 // /assets/icons/IconMap.resolveColor

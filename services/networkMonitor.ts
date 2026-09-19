@@ -4,7 +4,7 @@ import { getApiBaseUrl } from "@/services/api/core/apiClient";
 
 const CONFIG = {
   PING_URL: "https://www.cloudflare.com/cdn-cgi/trace",
-  PING_INTERVAL: 1000,
+  PING_INTERVAL: 15000,
   TIMEOUT: 5000,
 };
 

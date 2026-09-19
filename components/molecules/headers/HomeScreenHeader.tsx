@@ -42,24 +42,18 @@ export default function Header({
       <Text size="large" fontWeight="700" color="$text">
         {greeting}
       </Text>
-      <XStack gap="$2" flex={1} justifyContent="flex-end">
-        {/* Network Status - only show if not healthy */}
+      <XStack gap="$2" flex={1} justifyContent="flex-end" alignItems="center">
+        {/* Network Status - pinned next to the icon list, sized to match header button icons */}
         {isUnreliable && (
           <Stack
             justifyContent="center"
             alignItems="center"
-            paddingHorizontal="$2"
+            paddingHorizontal="$1"
           >
             <AppIcon
-              name={
-                health === "good"
-                  ? "NetworkGood"
-                  : health === "poor"
-                    ? "NetworkPoor"
-                    : "NetworkOffline"
-              }
+              name={health === "poor" ? "NetworkPoor" : "NetworkOffline"}
               size={20}
-              color="$text"
+              color={health === "poor" ? "#ffd60a" : "#ff453a"}
             />
           </Stack>
         )}
