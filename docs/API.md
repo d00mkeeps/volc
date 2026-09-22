@@ -1,14 +1,14 @@
 # Volc AI Gym Coach API Reference
 
 > *Auto-generated on every push via GitHub Actions. Do not edit manually.*  
-> **Last Generated:** 2026-09-22 10:45:45 UTC  
+> **Last Generated:** 2026-09-22 09:46:13 UTC  
 > **Total Endpoints:** 47
 
 ## Endpoints Summary
 
 | Method | Endpoint | Handler | Source File | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `GET` | [`/`](#-get) | `root()` | `backend/app/main.py:129` | No description provided. |
+| `GET` | [`/`](#-get) | `root()` | `backend/app/main.py:123` | No description provided. |
 | `POST` | [`/account/delete`](#accountdelete-post) | `delete_user_account()` | `backend/app/api/endpoints/db.py:182` | Delete the current user's account permanently |
 | `GET` | [`/api/admin/dashboard/metrics`](#apiadmindashboardmetrics-get) | `get_dashboard_metrics()` | `backend/app/api/endpoints/admin_dashboard.py:30` | Retrieve current cached admin analytics metrics for the 3 dashboard tabs. |
 | `POST` | [`/api/admin/dashboard/refresh`](#apiadmindashboardrefresh-post) | `refresh_dashboard_metrics()` | `backend/app/api/endpoints/admin_dashboard.py:42` | Force an immediate recalculation of all analytics metrics. |
@@ -36,7 +36,7 @@
 | `GET` | [`/exercise-definitions`](#exercise-definitions-get) | `get_exercise_definitions()` | `backend/app/api/endpoints/db.py:33` | Get all exercise definitions |
 | `GET` | [`/glossary-terms`](#glossary-terms-get) | `get_glossary_terms()` | `backend/app/api/endpoints/db.py:551` | Get all glossary terms (uses cache) |
 | `GET` | [`/glossary-terms/{term_id}`](#glossary-terms{term_id}-get) | `get_glossary_term()` | `backend/app/api/endpoints/db.py:564` | Get single glossary term by UUID |
-| `GET` | [`/health`](#health-get) | `health_check()` | `backend/app/main.py:134` | Basic health check endpoint to verify the API is running |
+| `GET` | [`/health`](#health-get) | `health_check()` | `backend/app/main.py:128` | Basic health check endpoint to verify the API is running |
 | `GET` | [`/me`](#me-get) | `get_current_user_info()` | `backend/app/api/endpoints/auth.py:18` | Get the current user's information |
 | `POST` | [`/temp-upload`](#temp-upload-post) | `create_temp_image()` | `backend/app/api/endpoints/images.py:14` | No description provided. |
 | `POST` | [`/upload-url`](#upload-url-post) | `get_image_upload_url()` | `backend/app/api/endpoints/images.py:97` | Get a signed upload URL for image storage |
@@ -61,7 +61,7 @@
 ## Endpoint Details
 
 ### `GET /`
-**Handler:** `root()` (`backend/app/main.py:129`)  
+**Handler:** `root()` (`backend/app/main.py:123`)  
 **Description:** No description provided.  
 
 ```bash
@@ -366,7 +366,7 @@ curl -s http://127.0.0.1:8000/glossary-terms/{term_id}
 ```
 
 ### `GET /health`
-**Handler:** `health_check()` (`backend/app/main.py:134`)  
+**Handler:** `health_check()` (`backend/app/main.py:128`)  
 **Description:** Basic health check endpoint to verify the API is running  
 
 ```bash
