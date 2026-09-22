@@ -50,3 +50,14 @@ Unlike traditional fitness apps, Volc doesn't just log data; it **observes** it.
 ## 📄 License
 
 Copyright © 2026 Volc. All rights reserved. For licensing inquiries or commercial use, please contact the maintainers.
+
+---
+
+<!-- AUTO-DOCS-START -->
+## 📚 Living Documentation
+
+*Auto-generated on every push to `main`:*
+
+* 📘 **[API Reference](docs/API.md)**: Route catalog with 47 registered endpoints.
+* 🏗️ **[Architecture & Topology](docs/ARCHITECTURE.md)**: Interactive Mermaid service mesh and container specifications.
+<!-- AUTO-DOCS-END -->
