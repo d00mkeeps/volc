@@ -1,7 +1,7 @@
 # Volc AI Gym Coach API Reference
 
 > *Auto-generated on every push via GitHub Actions. Do not edit manually.*  
-> **Last Generated:** 2026-09-22 09:46:13 UTC  
+> **Last Generated:** 2026-09-22 11:33:36 UTC  
 > **Total Endpoints:** 47
 
 ## Endpoints Summary
