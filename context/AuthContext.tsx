@@ -1,4 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserStore } from "@/stores/userProfileStore";
+import { useWorkoutStore } from "@/stores/workout/WorkoutStore";
 import {
   AuthState,
   AuthError,
@@ -16,6 +19,7 @@ interface AuthContextType extends AuthState {
   resetPassword: typeof authService.resetPassword;
   error: AuthError | null;
   clearError: () => void;
+  devLogin: (isNewProfile?: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

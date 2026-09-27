@@ -1,0 +1,126 @@
+diff --git a/node_modules/@expo/cli/build/src/start/doctor/apple/SimulatorAppPrerequisite.js b/node_modules/@expo/cli/build/src/start/doctor/apple/SimulatorAppPrerequisite.js
+index 886f915..4be55f7 100644
+--- a/node_modules/@expo/cli/build/src/start/doctor/apple/SimulatorAppPrerequisite.js
++++ b/node_modules/@expo/cli/build/src/start/doctor/apple/SimulatorAppPrerequisite.js
+@@ -90,6 +90,10 @@ const debug = require('debug')('expo:doctor:apple:simulatorApp');
+     // Xcode, or when Simulator.app is not registered in LaunchServices (e.g. Xcode on an
+     // external or renamed volume).
+     }
++    try {
++        return (await (0, _osascript().execAsync)('id of app "DeviceHub"')).trim();
++    } catch {
++    }
+     return null;
+ }
+ /**
+@@ -111,6 +115,20 @@ const debug = require('debug')('expo:doctor:apple:simulatorApp');
+     } catch  {
+     // Simulator.app not found at the expected path or xcode-select is unavailable.
+     }
++    try {
++        const { stdout: developerDir } = await (0, _spawnasync().default)('xcode-select', [
++            '--print-path'
++        ]);
++        const xcodeContents = _path().default.dirname(developerDir.trim());
++        const deviceHubInfoPlist = _path().default.join(xcodeContents, 'Applications', 'DeviceHub.app', 'Contents', 'Info.plist');
++        const { stdout: bundleId } = await (0, _spawnasync().default)('defaults', [
++            'read',
++            deviceHubInfoPlist,
++            'CFBundleIdentifier'
++        ]);
++        return bundleId.trim() || null;
++    } catch {
++    }
+     return null;
+ }
+ async function getSimulatorAppIdAsync() {
+@@ -124,7 +142,7 @@ class SimulatorAppPrerequisite extends _Prerequisite.Prerequisite {
+             // This error may occur in CI where the users intends to install just the simulators but no Xcode.
+             throw new _Prerequisite.PrerequisiteCommandError('SIMULATOR_APP', "Can't determine id of Simulator app; the Simulator is most likely not installed on this machine. Run `sudo xcode-select -s /Applications/Xcode.app`");
+         }
+-        if (result !== 'com.apple.iphonesimulator' && result !== 'com.apple.CoreSimulator.SimulatorTrampoline') {
++        if (result !== 'com.apple.iphonesimulator' && result !== 'com.apple.CoreSimulator.SimulatorTrampoline' && result !== 'com.apple.dt.Devices') {
+             throw new _Prerequisite.PrerequisiteCommandError('SIMULATOR_APP', "Simulator is installed but is identified as '" + result + "'; don't know what that is.");
+         }
+         debug(`Simulator app id: ${result}`);
+diff --git a/node_modules/@expo/cli/build/src/start/platforms/ios/AppleDeviceManager.js b/node_modules/@expo/cli/build/src/start/platforms/ios/AppleDeviceManager.js
+index 725db8a..ddbd643 100644
+--- a/node_modules/@expo/cli/build/src/start/platforms/ios/AppleDeviceManager.js
++++ b/node_modules/@expo/cli/build/src/start/platforms/ios/AppleDeviceManager.js
+@@ -269,7 +269,13 @@ class AppleDeviceManager extends _DeviceManager.DeviceManager {
+     async activateWindowAsync() {
+         await (0, _ensureSimulatorAppRunning.ensureSimulatorAppRunningAsync)(this.device);
+         // TODO: Focus the individual window
+-        await _osascript().execAsync(`tell application "Simulator" to activate`);
++        try {
++            await _osascript().execAsync(`tell application "Simulator" to activate`);
++        } catch {
++            try {
++                await _osascript().execAsync(`tell application "DeviceHub" to activate`);
++            } catch {}
++        }
+     }
+     getExpoGoAppId() {
+         return EXPO_GO_BUNDLE_IDENTIFIER;
+diff --git a/node_modules/@expo/cli/build/src/start/platforms/ios/ensureSimulatorAppRunning.js b/node_modules/@expo/cli/build/src/start/platforms/ios/ensureSimulatorAppRunning.js
+index 31296bc..493121a 100644
+--- a/node_modules/@expo/cli/build/src/start/platforms/ios/ensureSimulatorAppRunning.js
++++ b/node_modules/@expo/cli/build/src/start/platforms/ios/ensureSimulatorAppRunning.js
+@@ -95,7 +95,7 @@ async function waitForSimulatorAppToStart({ maxWaitTime } = {}) {
+ // I think the app can be open while no simulators are booted.
+ async function isSimulatorAppRunningAsync() {
+     try {
+-        const zeroMeansNo = (await _osascript().execAsync('tell app "System Events" to count processes whose name is "Simulator"')).trim();
++        const zeroMeansNo = (await _osascript().execAsync('tell app "System Events" to count (processes whose name is "Simulator" or name is "DeviceHub")')).trim();
+         if (zeroMeansNo === '0') {
+             return false;
+         }
+@@ -108,9 +108,15 @@ async function isSimulatorAppRunningAsync() {
+     return true;
+ }
+ async function openSimulatorAppAsync(device) {
++    let appName = 'Simulator';
++    try {
++        await (0, _spawnasync().default)('open', ['-Ra', 'Simulator']);
++    } catch {
++        appName = 'DeviceHub';
++    }
+     const args = [
+         '-a',
+-        'Simulator'
++        appName
+     ];
+     if (device.udid) {
+         // This has no effect if the app is already running.
+diff --git a/node_modules/@expo/cli/build/src/start/platforms/ios/promptAppleDevice.js b/node_modules/@expo/cli/build/src/start/platforms/ios/promptAppleDevice.js
+index db2d851..e19d710 100644
+--- a/node_modules/@expo/cli/build/src/start/platforms/ios/promptAppleDevice.js
++++ b/node_modules/@expo/cli/build/src/start/platforms/ios/promptAppleDevice.js
+@@ -31,15 +31,19 @@ function _interop_require_default(obj) {
+     };
+ }
+ async function sortDefaultDeviceToBeginningAsync(devices, osType) {
+-    const defaultId = await (0, _getBestSimulator.getBestSimulatorAsync)({
+-        osType
+-    });
+-    if (defaultId) {
+-        let iterations = 0;
+-        while(devices[0].udid !== defaultId && iterations < devices.length){
+-            devices.push(devices.shift());
+-            iterations++;
++    try {
++        const defaultId = await (0, _getBestSimulator.getBestSimulatorAsync)({
++            osType
++        });
++        if (defaultId) {
++            let iterations = 0;
++            while(devices[0].udid !== defaultId && iterations < devices.length){
++                devices.push(devices.shift());
++                iterations++;
++            }
+         }
++    } catch {
++        // Fallback gracefully if no simulators are installed
+     }
+     return devices;
+ }

@@ -27,8 +27,14 @@ load_dotenv(dotenv_path=env_path)
 logger.info(f"Loading .env from: {env_path} (exists: {os.path.exists(str(env_path))})")
 
 # Log Supabase environment variables presence
-logger.info(f"SUPABASE_URL present: {os.environ.get('SUPABASE_URL') is not None}")
-logger.info(f"SUPABASE_KEY present: {os.environ.get('SUPABASE_KEY') is not None}")
+supabase_url_present = bool(os.environ.get('SUPABASE_URL') or os.environ.get('NEXT_PUBLIC_SUPABASE_URL'))
+supabase_key_present = bool(
+    os.environ.get('SUPABASE_KEY')
+    or os.environ.get('SUPABASE_ANON_KEY')
+    or os.environ.get('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+)
+logger.info(f"SUPABASE_URL present: {supabase_url_present}")
+logger.info(f"SUPABASE_KEY present: {supabase_key_present}")
 
 app = FastAPI()
 
@@ -130,9 +136,13 @@ async def health_check():
     Basic health check endpoint to verify the API is running
     """
     # Also check Supabase connection if possible
-    supabase_env_ok = (
-        os.environ.get("SUPABASE_URL") is not None
-        and os.environ.get("SUPABASE_KEY") is not None
+    supabase_env_ok = bool(
+        (os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL"))
+        and (
+            os.environ.get("SUPABASE_KEY")
+            or os.environ.get("SUPABASE_ANON_KEY")
+            or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+        )
     )
 
     return {

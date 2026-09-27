@@ -10,6 +10,15 @@ services:
     env_file:
       - path: ./backend/.env
         required: false
+    environment:
+      - PORT=8000
+      - SUPABASE_URL=${SUPABASE_URL:-https://sfniyudipwsaqwuhsdcq.supabase.co}
+      - SUPABASE_KEY=${SUPABASE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmbml5dWRpcHdzYXF3dWhzZGNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjAyNDc5MDcsImV4cCI6MjAzNTgyMzkwN30.JZnzWXjTRSSvSiN4iK__QUY2DmXF2_wB27zjSG3THLs}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY:-}
+      - ADMIN_DASHBOARD_KEY=${ADMIN_DASHBOARD_KEY:-supreme-octo-doodle-secret-key-123}
+      - ADMIN_TEST_KEY=${ADMIN_TEST_KEY:-supreme-octo-doodle-secret-key-123}
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-}
+      - GOOGLE_APPLICATION_CREDENTIALS_JSON=${GOOGLE_APPLICATION_CREDENTIALS_JSON:-}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
       interval: 30s

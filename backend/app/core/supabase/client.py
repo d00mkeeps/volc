@@ -16,8 +16,12 @@ class SupabaseClientFactory:
     """Simple factory for creating Supabase clients with proper context"""
 
     def __init__(self):
-        self.url = os.environ.get("SUPABASE_URL")
-        self.anon_key = os.environ.get("SUPABASE_KEY")  # Changed from SUPABASE_ANON_KEY
+        self.url = os.environ.get("SUPABASE_URL") or os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
+        self.anon_key = (
+            os.environ.get("SUPABASE_KEY")
+            or os.environ.get("SUPABASE_ANON_KEY")
+            or os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+        )
         self.service_key = os.environ.get("SUPABASE_SERVICE_KEY")
 
         if not all([self.url, self.anon_key]):
