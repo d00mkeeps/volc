@@ -30,9 +30,11 @@ export async function initializeApiClient(): Promise<void> {
       API_BASE_URL = configuredApiUrl;
       WS_BASE_URL =
         configuredWsUrl ||
-        configuredApiUrl.replace(/^http/, "ws") + "/api/llm";
+        (configuredApiUrl.includes("/dev")
+          ? "wss://api.mileshillary.com/volc/dev/llm"
+          : "wss://api.mileshillary.com/volc/llm");
       console.log(
-        `[apiClient] 🔵 Using configured backend: ${API_BASE_URL}`,
+        `[apiClient] 🔵 Using configured backend: ${API_BASE_URL} (WS: ${WS_BASE_URL})`,
       );
     } else if (__DEV__ && useLocalBackend) {
       // Development mode with explicit local backend requested
@@ -45,19 +47,25 @@ export async function initializeApiClient(): Promise<void> {
         );
       } catch (error) {
         console.error(
-          "[apiClient] Failed to get local IP, falling back to production:",
+          "[apiClient] Failed to get local IP, falling back to cloud dev:",
           error,
         );
-        // Fallback to production if local fails
-        API_BASE_URL = "https://served.mileshillary.com";
-        WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
+        API_BASE_URL = "https://api.mileshillary.com/volc/dev";
+        WS_BASE_URL = "wss://api.mileshillary.com/volc/dev/llm";
       }
-    } else {
-      // Default / production backend
-      API_BASE_URL = "https://served.mileshillary.com";
-      WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
+    } else if (__DEV__) {
+      // Cloud development backend
+      API_BASE_URL = "https://api.mileshillary.com/volc/dev";
+      WS_BASE_URL = "wss://api.mileshillary.com/volc/dev/llm";
       console.log(
-        `[apiClient] 🔴 Active backend: ${API_BASE_URL}`,
+        `[apiClient] 🟡 Cloud Dev backend: ${API_BASE_URL}`,
+      );
+    } else {
+      // Production backend
+      API_BASE_URL = "https://api.mileshillary.com/volc";
+      WS_BASE_URL = "wss://api.mileshillary.com/volc/llm";
+      console.log(
+        `[apiClient] 🔴 Production backend: ${API_BASE_URL}`,
       );
     }
   }
