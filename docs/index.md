@@ -20,3 +20,4 @@ Welcome to the Volc documentation. This project follows the [Diátaxis](https://
 
 - [Stores Reference](reference/stores.md)
 - [Services Reference](reference/services.md)
+- [Universal Workout Intake & Staging Pipeline](reference/universal-workout-intake-spec.md)

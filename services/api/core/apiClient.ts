@@ -22,8 +22,20 @@ let WS_BASE_URL: string | null = null;
  */
 export async function initializeApiClient(): Promise<void> {
   if (!API_BASE_URL) {
-    if (__DEV__) {
-      // Development mode - use local IP
+    const configuredApiUrl = process.env.EXPO_PUBLIC_API_URL;
+    const configuredWsUrl = process.env.EXPO_PUBLIC_WS_URL;
+    const useLocalBackend = process.env.EXPO_PUBLIC_USE_LOCAL_BACKEND === "true";
+
+    if (configuredApiUrl) {
+      API_BASE_URL = configuredApiUrl;
+      WS_BASE_URL =
+        configuredWsUrl ||
+        configuredApiUrl.replace(/^http/, "ws") + "/api/llm";
+      console.log(
+        `[apiClient] 🔵 Using configured backend: ${API_BASE_URL}`,
+      );
+    } else if (__DEV__ && useLocalBackend) {
+      // Development mode with explicit local backend requested
       try {
         const ipAddress = await getLocalIpAddress();
         API_BASE_URL = `http://${ipAddress}:8000`;
@@ -41,11 +53,11 @@ export async function initializeApiClient(): Promise<void> {
         WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
       }
     } else {
-      // Production mode
+      // Default / production backend
       API_BASE_URL = "https://served.mileshillary.com";
       WS_BASE_URL = "wss://served.mileshillary.com/api/llm";
       console.log(
-        `[apiClient] 🔴 Production mode - Production backend: ${API_BASE_URL}`,
+        `[apiClient] 🔴 Active backend: ${API_BASE_URL}`,
       );
     }
   }

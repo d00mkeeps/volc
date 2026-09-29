@@ -72,7 +72,7 @@ const config = {
       eas: {
         "projectId": "a637c490-51f0-41e3-8208-37ed1ea09d97"
       },
-      apiUrl: process.env.API_URL || "https://localhost:8000",
+      apiUrl: process.env.API_URL || process.env.EXPO_PUBLIC_API_URL || "https://served.mileshillary.com",
 
             "metaAppId": process.env.META_APP_ID
     },
