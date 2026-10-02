@@ -58,5 +58,6 @@ Copyright © 2026 Volc. All rights reserved. For licensing inquiries or commerci
 
 *Auto-generated on every push to `main`:*
 
+* 📘 **[API Reference](docs/API.md)**: Route catalog with 47 registered endpoints.
 * 🏗️ **[Architecture & Topology](docs/ARCHITECTURE.md)**: Interactive Mermaid service mesh and container specifications.
 <!-- AUTO-DOCS-END -->
