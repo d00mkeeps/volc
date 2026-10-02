@@ -1,19 +1,19 @@
 # Volc AI Gym Coach Architecture & Topology
 
 > *Auto-generated on every push via GitHub Actions. Do not edit manually.*  
-> **Last Generated:** 2026-09-29 16:58:24 UTC
+> **Last Generated:** 2026-10-02 15:20:01 UTC
 
 ## Service Mesh Overview
 
 ```mermaid
 graph TD
-    subgraph Volcano_Host["Volcano Server (Docker Mesh)"]
+    subgraph Cano_Host["Cano Server (Docker Mesh)"]
         volc-backend["<b>supreme-octo-doodle-api</b><br/>Ports: 8002:8000"]
         volc-website["<b>volc-website</b><br/>Ports: 3004:3000"]
         volc-network["<b>volc-network</b><br/>Internal only"]
     end
 
-    External[Client / Ingress] --> Volcano_Host
+    External[Client / Ingress] --> Cano_Host
 ```
 
 ---
