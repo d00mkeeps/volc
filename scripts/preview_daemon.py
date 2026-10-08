@@ -34,8 +34,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 HOST_PORT = 8007
 METRO_PORT = 8081
 DEV_BACKEND_URL = "http://127.0.0.1:8102/health"
-OBSERVER_NOTIFY_URL = "http://127.0.0.1:8006/preview/notify"
-OBSERVER_STOP_URL = "http://127.0.0.1:8006/preview/stop"
 
 class PreviewManager:
     def __init__(self):
@@ -178,26 +176,7 @@ class PreviewManager:
             self.expires_at = now + timedelta(minutes=timeout_minutes)
             self.is_running = True
 
-            # 3. Dispatch to Observer Operator
-            try:
-                payload = json.dumps({
-                    "project": "volc",
-                    "tunnel_url": self.deep_link,
-                    "timeout_minutes": timeout_minutes,
-                    "pid": self.metro_proc.pid,
-                }).encode("utf-8")
-                req = urllib.request.Request(
-                    OBSERVER_NOTIFY_URL,
-                    data=payload,
-                    headers={"Content-Type": "application/json", "User-Agent": "PreviewDaemon/1.0"},
-                    method="POST",
-                )
-                with urllib.request.urlopen(req, timeout=5) as resp:
-                    log.info("Dispatched preview to Observer Operator (HTTP %d)", resp.status)
-            except Exception as e:
-                log.warning("Could not notify Observer Operator: %s", e)
-
-            # 4. Schedule Watchdog
+            # Schedule Watchdog
             if self.watchdog_timer:
                 self.watchdog_timer.cancel()
             self.watchdog_timer = Timer(timeout_minutes * 60, self._auto_expire)
@@ -228,20 +207,6 @@ class PreviewManager:
                 self.watchdog_timer = None
 
             self._cleanup_processes()
-
-            # Notify Observer
-            try:
-                payload = json.dumps({"project": "volc", "reason": reason}).encode("utf-8")
-                req = urllib.request.Request(
-                    OBSERVER_STOP_URL,
-                    data=payload,
-                    headers={"Content-Type": "application/json", "User-Agent": "PreviewDaemon/1.0"},
-                    method="POST",
-                )
-                with urllib.request.urlopen(req, timeout=5) as resp:
-                    log.info("Notified Observer Operator of teardown (HTTP %d)", resp.status)
-            except Exception as e:
-                log.warning("Could not notify Observer Operator of stop: %s", e)
 
             self.is_running = False
             self.cf_url = None

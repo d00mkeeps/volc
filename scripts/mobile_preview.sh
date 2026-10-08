@@ -32,17 +32,7 @@ else
     fi
 fi
 
-# 2. Check Observer Operator notification service
-echo "🔍 Checking Observer Operator preview service (port 8006)..."
-OBSERVER_ONLINE=0
-if curl -sf http://127.0.0.1:8006/health > /dev/null 2>&1; then
-    echo "✅ Observer Operator is online (Telegram notifications active)"
-    OBSERVER_ONLINE=1
-else
-    echo "⚠️ Observer Operator not detected on port 8006. Push notifications will be skipped."
-fi
-
-# 3. Set up log and process trapping
+# 2. Set up log and process trapping
 CF_LOG=$(mktemp /tmp/volc-cf-XXXXXX.log)
 METRO_LOG=$(mktemp /tmp/volc-metro-XXXXXX.log)
 CF_PID=""
@@ -57,14 +47,10 @@ cleanup() {
     if [ -n "${CF_PID}" ]; then
         kill -TERM "${CF_PID}" 2>/dev/null || true
     fi
-    # Also clean up any orphan cloudflared processes on 8081
+    # Clean up any orphan processes on 8081
     pkill -f "cloudflared.*8081" 2>/dev/null || true
+    fuser -k 8081/tcp >/dev/null 2>&1 || true
 
-    if [ "${OBSERVER_ONLINE}" -eq 1 ]; then
-        curl -s -X POST http://127.0.0.1:8006/preview/stop \
-            -H "Content-Type: application/json" \
-            -d '{"project": "volc", "reason": "Mobile preview process was terminated."}' > /dev/null 2>&1 || true
-    fi
     rm -f "${CF_LOG}" "${METRO_LOG}"
     echo "✅ Preview tunnel closed and session cleaned up."
 }
@@ -121,22 +107,10 @@ echo "   Custom Scheme: ${DEEP_LINK}"
 echo "   Public Trampoline: ${TRAMPOLINE_URL}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-if [ "${OBSERVER_ONLINE}" -eq 1 ]; then
-    echo "📲 Sending interactive card to your iPhone via Telegram (@Airwavbot)..."
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://127.0.0.1:8006/preview/notify \
-        -H "Content-Type: application/json" \
-        -d "{\"project\": \"volc\", \"tunnel_url\": \"${DEEP_LINK}\", \"timeout_minutes\": 30, \"pid\": ${METRO_PID}}" || echo "000")
-
-    if [ "${HTTP_CODE}" = "200" ]; then
-        echo "✅ Notification dispatched to iPhone!"
-        echo "👉 Tap '[ 📱 Open in Volc ]' in Telegram to launch immediately."
-        echo "👉 Or open in Safari: ${TRAMPOLINE_URL}"
-        echo "🛑 Watchdog: 30-minute auto-teardown active."
-    else
-        echo "⚠️ Failed to dispatch Telegram notification (HTTP ${HTTP_CODE})."
-    fi
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-fi
+echo "👉 Tap to open in Safari: ${TRAMPOLINE_URL}"
+echo "👉 Or custom scheme: ${DEEP_LINK}"
+echo "🛑 Press Ctrl+C to stop preview and close tunnel."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Keep script running and wait on Metro
 wait "${METRO_PID}" 2>/dev/null || true
