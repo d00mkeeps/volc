@@ -7,6 +7,19 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "node": "22.14.0",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.mileshillary.com/volc/dev",
+        "EXPO_PUBLIC_WS_URL": "wss://api.mileshillary.com/volc/dev/llm"
+      }
+    },
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "node": "22.14.0",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.mileshillary.com/volc/dev",
         "EXPO_PUBLIC_WS_URL": "wss://api.mileshillary.com/volc/dev/llm"
