@@ -21,33 +21,35 @@ Welcome to the **Volc** codebase. This document outlines critical rules, convent
 
 ## 📱 Mobile Preview & In-App Testing Protocol
 
-Whenever the user asks to preview changes on their iPhone, test a new UI flow, or verify updates:
+> [!IMPORTANT]
+> **ZERO MANUAL USER WORK MANDATE**:
+> **NEVER ask, prompt, or expect the user to start servers, run terminal commands, manage tunnels, or launch Metro manually.**
+> You are an autonomous agent. When mobile changes need testing or the user asks to preview:
+> 1. You automatically trigger the cloud preview service via API.
+> 2. You notify the user with the direct links (a Telegram card also automatically pops up on their phone).
+> 3. You tear down the preview service via API when testing is complete.
 
-1. **Activate Skill**: Use the **`mobile-dev-preview`** skill.
-2. **Launch Preview Session (Cloud Service or Script)**:
-   - **Option A (Instant Cloud Service - Recommended)**:
-     ```bash
-     curl -s -X POST http://127.0.0.1:8006/preview/start | jq .
-     ```
-     *This triggers the background `volc-preview.service` systemd daemon on Cano, binds Metro with Cloudflare Quick Tunnel, dispatches the Telegram card to the user's phone, and sets a 30-minute auto-expiry watchdog.*
-   - **Option B (Interactive Script)**:
-     ```bash
-     ./scripts/mobile_preview.sh
-     ```
-     *(Run as a background task with `WaitMsBeforeAsync: 10000`).*
-3. **Capture & Provide Handoff**:
-   - The launcher dispatches an interactive card directly to the user's iPhone via Telegram (`@Airwavbot`) with:
-     - `[ 📱 Open in Volc ]` (Safari trampoline: `https://volc.mileshillary.com/preview?url=...`)
-     - `[ 🛑 Stop Preview ]` (One-tap instant session teardown)
-   - Present the deep link (`exp+volc://...`) and trampoline URL in chat.
-   - Explain that all code edits made by the agent will **hot-reload in sub-second real-time** on their phone.
-4. **Clean Teardown**:
-   - The tunnel is strictly ephemeral and guarded by a 30-minute auto-teardown watchdog.
-   - To stop manually:
-     ```bash
-     curl -s -X POST http://127.0.0.1:8006/preview/stop
-     ```
-     Or the user can tap `[ 🛑 Stop Preview ]` in Telegram or type `/preview stop`.
+### Autonomous Agent Workflow:
+
+1. **Trigger Preview Service**:
+   Run:
+   ```bash
+   curl -s -X POST http://127.0.0.1:8006/preview/start | jq .
+   ```
+   *This contacts the persistent `volc-preview.service` daemon on Cano, binds Metro with Cloudflare Quick Tunnel, dispatches the Telegram card with action buttons to the user's iPhone (`@Airwavbot`), and activates the 30-minute watchdog.*
+
+2. **Present Handoff to User**:
+   Deliver a clean handoff message with the clickable URLs:
+   - **Safari Trampoline**: `https://volc.mileshillary.com/preview?url=<CF_TUNNEL_URL>`
+   - **Deep Link**: `exp+volc://expo-development-client/?url=<CF_TUNNEL_URL>`
+   - Inform the user: *"An interactive card was dispatched to your iPhone in Telegram (@Airwavbot). Tap **[ 📱 Open in Volc ]** to view live with sub-second hot reloading."*
+
+3. **Autonomous Teardown**:
+   When testing is complete or the user signals they are done:
+   ```bash
+   curl -s -X POST http://127.0.0.1:8006/preview/stop
+   ```
+   *(The user can also tap `[ 🛑 Stop Preview ]` in Telegram or type `/preview stop` at any time).*
 
 ---
 
