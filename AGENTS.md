@@ -23,20 +23,31 @@ Welcome to the **Volc** codebase. This document outlines critical rules, convent
 
 Whenever the user asks to preview changes on their iPhone, test a new UI flow, or verify updates:
 
-1. **Activate Skill**: Use the **`mobile-preview`** skill.
-2. **Launch Preview Tunnel**:
-   Execute the background launcher:
-   ```bash
-   ./scripts/mobile_preview.sh
-   ```
-   *(Run as a background task with `WaitMsBeforeAsync: 10000`).*
+1. **Activate Skill**: Use the **`mobile-dev-preview`** skill.
+2. **Launch Preview Session (Cloud Service or Script)**:
+   - **Option A (Instant Cloud Service - Recommended)**:
+     ```bash
+     curl -s -X POST http://127.0.0.1:8006/preview/start | jq .
+     ```
+     *This triggers the background `volc-preview.service` systemd daemon on Cano, binds Metro with Cloudflare Quick Tunnel, dispatches the Telegram card to the user's phone, and sets a 30-minute auto-expiry watchdog.*
+   - **Option B (Interactive Script)**:
+     ```bash
+     ./scripts/mobile_preview.sh
+     ```
+     *(Run as a background task with `WaitMsBeforeAsync: 10000`).*
 3. **Capture & Provide Handoff**:
-   - Extract the generated **`exp://...`** URL and QR code from the command output.
-   - Present the deep link directly to the user so they can tap or paste it into the **Volc Dev Build** app on their iPhone.
+   - The launcher dispatches an interactive card directly to the user's iPhone via Telegram (`@Airwavbot`) with:
+     - `[ 📱 Open in Volc ]` (Safari trampoline: `https://volc.mileshillary.com/preview?url=...`)
+     - `[ 🛑 Stop Preview ]` (One-tap instant session teardown)
+   - Present the deep link (`exp+volc://...`) and trampoline URL in chat.
    - Explain that all code edits made by the agent will **hot-reload in sub-second real-time** on their phone.
 4. **Clean Teardown**:
-   - The tunnel is strictly ephemeral.
-   - Once testing/handoff is complete, use `manage_task` to kill the background task so no dangling processes remain on the host.
+   - The tunnel is strictly ephemeral and guarded by a 30-minute auto-teardown watchdog.
+   - To stop manually:
+     ```bash
+     curl -s -X POST http://127.0.0.1:8006/preview/stop
+     ```
+     Or the user can tap `[ 🛑 Stop Preview ]` in Telegram or type `/preview stop`.
 
 ---
 
