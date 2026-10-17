@@ -29,12 +29,36 @@ export { ErrorBoundary } from "expo-router";
 import { Settings } from "react-native-fbsdk-next";
 import { useStoreInitializer } from "@/hooks/useStoreInitializer";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import { useShareIntentListener } from "@/hooks/useShareIntentListener";
 
 export const unstable_settings = {
   initialRouteName: "(drawer)",
 };
 
 SplashScreen.preventAutoHideAsync();
+
+// Register global error telemetry for Cano Agent Inbox in development builds
+if (__DEV__) {
+  const globalAny = global as any;
+  const defaultHandler = globalAny.ErrorUtils?.getGlobalHandler?.();
+  if (globalAny.ErrorUtils?.setGlobalHandler) {
+    globalAny.ErrorUtils.setGlobalHandler((error: any, isFatal?: boolean) => {
+      try {
+        const errorTitle = error?.name ? `${error.name}: ${error.message}` : String(error);
+        console.error("🚨 [Client Error]", errorTitle, error?.stack || "");
+      } catch {}
+
+      if (defaultHandler) {
+        defaultHandler(error, isFatal);
+      }
+    });
+  }
+}
+
+function ShareIntentHandler() {
+  useShareIntentListener();
+  return null;
+}
 
 function AuthStoreManager({ children }: { children: React.ReactNode }) {
   useStoreInitializer();
@@ -129,10 +153,19 @@ function RootLayoutNav() {
                     value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                   >
                     <AuthGate onWelcomeNeeded={setShowWelcome}>
+                      <ShareIntentHandler />
                       <Stack screenOptions={{ headerShown: false }}>
                         <Stack.Screen name="(tabs)" />
                         <Stack.Screen
                           name="modal"
+                          options={{ presentation: "modal" }}
+                        />
+                        <Stack.Screen
+                          name="stage"
+                          options={{ presentation: "modal" }}
+                        />
+                        <Stack.Screen
+                          name="stage-review"
                           options={{ presentation: "modal" }}
                         />
                       </Stack>
