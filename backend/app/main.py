@@ -119,10 +119,14 @@ app.include_router(dashboard_router, tags=["dashboard"])
 app.include_router(chat_router, tags=["chat"])
 from app.api.endpoints.admin import router as admin_router
 from app.api.endpoints.admin_dashboard import router as admin_dashboard_router
+from app.api.endpoints.staging import router as staging_router
+from app.api.endpoints.telemetry import router as telemetry_router
 from app.core.scheduler import start_scheduler_jobs
 
 app.include_router(admin_router, tags=["admin"])
 app.include_router(admin_dashboard_router, tags=["admin-dashboard"])
+app.include_router(staging_router, tags=["staging"])
+app.include_router(telemetry_router, tags=["telemetry"])
 
 
 @app.get("/")
