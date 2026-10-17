@@ -1,7 +1,7 @@
 # Volc AI Gym Coach Architecture & Topology
 
 > *Auto-generated on every push via GitHub Actions. Do not edit manually.*  
-> **Last Generated:** 2026-10-17 18:33:24 UTC
+> **Last Generated:** 2026-10-17 18:37:28 UTC
 
 ## Service Mesh Overview
 

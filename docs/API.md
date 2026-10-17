@@ -1,14 +1,14 @@
 # Volc AI Gym Coach API Reference
 
 > *Auto-generated on every push via GitHub Actions. Do not edit manually.*  
-> **Last Generated:** 2026-10-17 18:33:24 UTC  
-> **Total Endpoints:** 47
+> **Last Generated:** 2026-10-17 18:37:28 UTC  
+> **Total Endpoints:** 58
 
 ## Endpoints Summary
 
 | Method | Endpoint | Handler | Source File | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| `GET` | [`/`](#-get) | `root()` | `backend/app/main.py:129` | No description provided. |
+| `GET` | [`/`](#-get) | `root()` | `backend/app/main.py:133` | No description provided. |
 | `POST` | [`/account/delete`](#accountdelete-post) | `delete_user_account()` | `backend/app/api/endpoints/db.py:182` | Delete the current user's account permanently |
 | `GET` | [`/api/admin/dashboard/metrics`](#apiadmindashboardmetrics-get) | `get_dashboard_metrics()` | `backend/app/api/endpoints/admin_dashboard.py:30` | Retrieve current cached admin analytics metrics for the 3 dashboard tabs. |
 | `POST` | [`/api/admin/dashboard/refresh`](#apiadmindashboardrefresh-post) | `refresh_dashboard_metrics()` | `backend/app/api/endpoints/admin_dashboard.py:42` | Force an immediate recalculation of all analytics metrics. |
@@ -21,6 +21,10 @@
 | `GET` | [`/api/dashboard`](#apidashboard-get) | `get_dashboard_data()` | `backend/app/api/endpoints/dashboard.py:53` | Get dashboard analytics data for all timeframes |
 | `POST` | [`/api/v1/chat/quick-actions/{user_id}`](#apiv1chatquick-actions{user_id}-post) | `get_quick_chat_actions()` | `backend/app/api/endpoints/chat.py:19` | Get dynamic, contextual chat actions for the user based on their active context. |
 | `POST` | [`/api/workout-analysis`](#apiworkout-analysis-post) | `create_workout_analysis()` | `backend/app/api/endpoints/workout_analysis.py:16` | Initiate a workout analysis and conversation. |
+| `GET` | [`/api/workouts/stage`](#apiworkoutsstage-get) | `list_staged_workouts()` | `backend/app/api/endpoints/staging.py:143` | No description provided. |
+| `POST` | [`/api/workouts/stage`](#apiworkoutsstage-post) | `stage_workout()` | `backend/app/api/endpoints/staging.py:35` | Accepts raw workout text (e.g. from Apple Notes or Scratchpad), |
+| `GET` | [`/api/workouts/stage/{stage_id}`](#apiworkoutsstage{stage_id}-get) | `get_staged_workout()` | `backend/app/api/endpoints/staging.py:89` | No description provided. |
+| `PATCH` | [`/api/workouts/stage/{stage_id}`](#apiworkoutsstage{stage_id}-patch) | `update_staged_workout()` | `backend/app/api/endpoints/staging.py:113` | No description provided. |
 | `GET` | [`/biceps`](#biceps-get) | `get_bicep_leaderboard()` | `backend/app/api/endpoints/leaderboard.py:35` | Get bicep leaderboard rankings |
 | `GET` | [`/context-bundles`](#context-bundles-get) | `get_context_bundles()` | `backend/app/api/endpoints/db.py:88` | Get all analysis bundles for a conversation |
 | `DELETE` | [`/context-bundles/conversation/{conversation_id}`](#context-bundlesconversation{conversation_id}-delete) | `delete_conversation_bundles()` | `backend/app/api/endpoints/db.py:160` | Delete all analysis bundles for a conversation |
@@ -33,10 +37,13 @@
 | `POST` | [`/conversations/{conversation_id}/messages`](#conversations{conversation_id}messages-post) | `save_message()` | `backend/app/api/endpoints/db.py:469` | Save a message to a conversation |
 | `DELETE` | [`/debug/trace/{session_id}`](#debugtrace{session_id}-delete) | `clear_session_trace()` | `backend/app/api/endpoints/llm.py:283` | Clear recorded trace for a session. |
 | `GET` | [`/debug/trace/{session_id}`](#debugtrace{session_id}-get) | `get_session_trace()` | `backend/app/api/endpoints/llm.py:274` | Expose recorded trace for a session. |
+| `POST` | [`/errors`](#errors-post) | `report_client_telemetry_error()` | `backend/app/api/endpoints/telemetry.py:28` | Ingest a client-side telemetry error and forward it to Cano Agent Inbox. |
 | `GET` | [`/exercise-definitions`](#exercise-definitions-get) | `get_exercise_definitions()` | `backend/app/api/endpoints/db.py:33` | Get all exercise definitions |
 | `GET` | [`/glossary-terms`](#glossary-terms-get) | `get_glossary_terms()` | `backend/app/api/endpoints/db.py:551` | Get all glossary terms (uses cache) |
 | `GET` | [`/glossary-terms/{term_id}`](#glossary-terms{term_id}-get) | `get_glossary_term()` | `backend/app/api/endpoints/db.py:564` | Get single glossary term by UUID |
-| `GET` | [`/health`](#health-get) | `health_check()` | `backend/app/main.py:134` | Basic health check endpoint to verify the API is running |
+| `GET` | [`/health`](#health-get) | `health_check()` | `backend/app/main.py:138` | Basic health check endpoint to verify the API is running |
+| `GET` | [`/keepalive`](#keepalive-get) | `get_keepalive_status()` | `backend/app/api/endpoints/telemetry.py:16` | Retrieve Supabase keep-alive status, last ping timestamp, and latency metrics. |
+| `POST` | [`/keepalive/ping`](#keepaliveping-post) | `trigger_keepalive_ping()` | `backend/app/api/endpoints/telemetry.py:22` | Trigger an immediate read/write keep-alive ping against Supabase. |
 | `GET` | [`/me`](#me-get) | `get_current_user_info()` | `backend/app/api/endpoints/auth.py:18` | Get the current user's information |
 | `POST` | [`/temp-upload`](#temp-upload-post) | `create_temp_image()` | `backend/app/api/endpoints/images.py:14` | No description provided. |
 | `POST` | [`/upload-url`](#upload-url-post) | `get_image_upload_url()` | `backend/app/api/endpoints/images.py:97` | Get a signed upload URL for image storage |
@@ -46,6 +53,10 @@
 | `POST` | [`/user-profile/onboarding`](#user-profileonboarding-post) | `complete_onboarding()` | `backend/app/api/endpoints/db.py:531` | Complete user onboarding |
 | `POST` | [`/workouts`](#workouts-post) | `create_workout()` | `backend/app/api/endpoints/db.py:226` | Create a new workout |
 | `GET` | [`/workouts/public/{workout_id}`](#workoutspublic{workout_id}-get) | `get_public_workout()` | `backend/app/api/endpoints/db.py:336` | Get a workout by ID with admin privileges (for leaderboard viewing) |
+| `GET` | [`/workouts/stage`](#workoutsstage-get) | `list_staged_workouts()` | `backend/app/api/endpoints/staging.py:143` | No description provided. |
+| `POST` | [`/workouts/stage`](#workoutsstage-post) | `stage_workout()` | `backend/app/api/endpoints/staging.py:35` | Accepts raw workout text (e.g. from Apple Notes or Scratchpad), |
+| `GET` | [`/workouts/stage/{stage_id}`](#workoutsstage{stage_id}-get) | `get_staged_workout()` | `backend/app/api/endpoints/staging.py:89` | No description provided. |
+| `PATCH` | [`/workouts/stage/{stage_id}`](#workoutsstage{stage_id}-patch) | `update_staged_workout()` | `backend/app/api/endpoints/staging.py:113` | No description provided. |
 | `PUT` | [`/workouts/template/{template_id}`](#workoutstemplate{template_id}-put) | `update_template_usage()` | `backend/app/api/endpoints/db.py:354` | Update the used_as_template timestamp for a workout |
 | `GET` | [`/workouts/templates`](#workoutstemplates-get) | `get_templates()` | `backend/app/api/endpoints/db.py:48` | Get all workout templates for a user |
 | `GET` | [`/workouts/user`](#workoutsuser-get) | `get_user_workouts()` | `backend/app/api/endpoints/db.py:250` | Get all workouts for a user (not filtered by conversation) |
@@ -61,7 +72,7 @@
 ## Endpoint Details
 
 ### `GET /`
-**Handler:** `root()` (`backend/app/main.py:129`)  
+**Handler:** `root()` (`backend/app/main.py:133`)  
 **Description:** No description provided.  
 
 ```bash
@@ -216,6 +227,48 @@ curl -s -X POST http://127.0.0.1:8000/api/workout-analysis \
   -d '{}'
 ```
 
+### `GET /api/workouts/stage`
+**Handler:** `list_staged_workouts()` (`backend/app/api/endpoints/staging.py:143`)  
+**Description:** No description provided.  
+**Parameters:** `status, user, jwt_token`  
+
+```bash
+curl -s http://127.0.0.1:8000/api/workouts/stage
+```
+
+### `POST /api/workouts/stage`
+**Handler:** `stage_workout()` (`backend/app/api/endpoints/staging.py:35`)  
+**Description:** Accepts raw workout text (e.g. from Apple Notes or Scratchpad),
+resolves dates, extracts exercises and sets via LLM, matches canonical
+exercises, and persists into staged_workouts.  
+**Parameters:** `user, jwt_token`  
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/api/workouts/stage \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+### `GET /api/workouts/stage/{stage_id}`
+**Handler:** `get_staged_workout()` (`backend/app/api/endpoints/staging.py:89`)  
+**Description:** No description provided.  
+**Parameters:** `stage_id, user, jwt_token`  
+
+```bash
+curl -s http://127.0.0.1:8000/api/workouts/stage/{stage_id}
+```
+
+### `PATCH /api/workouts/stage/{stage_id}`
+**Handler:** `update_staged_workout()` (`backend/app/api/endpoints/staging.py:113`)  
+**Description:** No description provided.  
+**Parameters:** `stage_id, user, jwt_token`  
+
+```bash
+curl -s -X PATCH http://127.0.0.1:8000/api/workouts/stage/{stage_id} \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
 ### `GET /biceps`
 **Handler:** `get_bicep_leaderboard()` (`backend/app/api/endpoints/leaderboard.py:35`)  
 **Description:** Get bicep leaderboard rankings  
@@ -338,6 +391,16 @@ curl -s -X DELETE http://127.0.0.1:8000/debug/trace/{session_id} \
 curl -s http://127.0.0.1:8000/debug/trace/{session_id}
 ```
 
+### `POST /errors`
+**Handler:** `report_client_telemetry_error()` (`backend/app/api/endpoints/telemetry.py:28`)  
+**Description:** Ingest a client-side telemetry error and forward it to Cano Agent Inbox.  
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/errors \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
 ### `GET /exercise-definitions`
 **Handler:** `get_exercise_definitions()` (`backend/app/api/endpoints/db.py:33`)  
 **Description:** Get all exercise definitions  
@@ -366,11 +429,29 @@ curl -s http://127.0.0.1:8000/glossary-terms/{term_id}
 ```
 
 ### `GET /health`
-**Handler:** `health_check()` (`backend/app/main.py:134`)  
+**Handler:** `health_check()` (`backend/app/main.py:138`)  
 **Description:** Basic health check endpoint to verify the API is running  
 
 ```bash
 curl -s http://127.0.0.1:8000/health
+```
+
+### `GET /keepalive`
+**Handler:** `get_keepalive_status()` (`backend/app/api/endpoints/telemetry.py:16`)  
+**Description:** Retrieve Supabase keep-alive status, last ping timestamp, and latency metrics.  
+
+```bash
+curl -s http://127.0.0.1:8000/keepalive
+```
+
+### `POST /keepalive/ping`
+**Handler:** `trigger_keepalive_ping()` (`backend/app/api/endpoints/telemetry.py:22`)  
+**Description:** Trigger an immediate read/write keep-alive ping against Supabase.  
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/keepalive/ping \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 ### `GET /me`
@@ -464,6 +545,48 @@ curl -s -X POST http://127.0.0.1:8000/workouts \
 
 ```bash
 curl -s http://127.0.0.1:8000/workouts/public/{workout_id}
+```
+
+### `GET /workouts/stage`
+**Handler:** `list_staged_workouts()` (`backend/app/api/endpoints/staging.py:143`)  
+**Description:** No description provided.  
+**Parameters:** `status, user, jwt_token`  
+
+```bash
+curl -s http://127.0.0.1:8000/workouts/stage
+```
+
+### `POST /workouts/stage`
+**Handler:** `stage_workout()` (`backend/app/api/endpoints/staging.py:35`)  
+**Description:** Accepts raw workout text (e.g. from Apple Notes or Scratchpad),
+resolves dates, extracts exercises and sets via LLM, matches canonical
+exercises, and persists into staged_workouts.  
+**Parameters:** `user, jwt_token`  
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/workouts/stage \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+### `GET /workouts/stage/{stage_id}`
+**Handler:** `get_staged_workout()` (`backend/app/api/endpoints/staging.py:89`)  
+**Description:** No description provided.  
+**Parameters:** `stage_id, user, jwt_token`  
+
+```bash
+curl -s http://127.0.0.1:8000/workouts/stage/{stage_id}
+```
+
+### `PATCH /workouts/stage/{stage_id}`
+**Handler:** `update_staged_workout()` (`backend/app/api/endpoints/staging.py:113`)  
+**Description:** No description provided.  
+**Parameters:** `stage_id, user, jwt_token`  
+
+```bash
+curl -s -X PATCH http://127.0.0.1:8000/workouts/stage/{stage_id} \
+  -H "Content-Type: application/json" \
+  -d '{}'
 ```
 
 ### `PUT /workouts/template/{template_id}`
