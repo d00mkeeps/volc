@@ -19,7 +19,7 @@ interface AuthContextType extends AuthState {
   resetPassword: typeof authService.resetPassword;
   error: AuthError | null;
   clearError: () => void;
-  devLogin: (isNewProfile?: boolean) => Promise<void>;
+  devLogin?: (isNewProfile?: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

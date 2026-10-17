@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack, Spinner } from "tamagui";
 import { useAuth } from "../../../context/AuthContext";
 import Button from "@/components/atoms/core/Button";
@@ -9,6 +9,8 @@ import React from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 import { supabase } from "@/lib/supabaseClient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DEV_CONFIG } from "@/constants/devCredentials";
 
 const isDev = typeof __DEV__ !== "undefined" && __DEV__;
 const VOLC_LOGO = isDev
@@ -27,9 +29,116 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
   const [open, setOpen] = useState(false); // For Android/iOS picker visibility
   const [userId, setUserId] = useState<string | null>(null);
   const [showEmailAuth, setShowEmailAuth] = useState(false); // For dev email login
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(DEV_CONFIG.defaultCredentials.email);
+  const [password, setPassword] = useState(DEV_CONFIG.defaultCredentials.password);
   const [isSignUp, setIsSignUp] = useState(false); // Toggle between signin/signup
+
+  // Pre-load last created/used dev credentials on mount & trigger auto-login if enabled
+  useEffect(() => {
+    if (!isDev) return;
+
+    let isMounted = true;
+    const initDevCredentials = async () => {
+      try {
+        const stored = await AsyncStorage.getItem("@volc_last_dev_credentials");
+        let creds = DEV_CONFIG.defaultCredentials;
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            if (parsed.email && parsed.password) {
+              creds = parsed;
+            }
+          } catch {}
+        }
+        if (isMounted) {
+          setEmail(creds.email);
+          setPassword(creds.password);
+        }
+
+        if (DEV_CONFIG.autoLogin && creds.email && creds.password) {
+          console.log("⚡ [DevLogin] Attempting auto-login with:", creds.email);
+          setLoading(true);
+          let { error } = await supabase.auth.signInWithPassword({
+            email: creds.email,
+            password: creds.password,
+          });
+          if (error && creds.email !== DEV_CONFIG.defaultCredentials.email) {
+            console.log("⚡ [DevLogin] Fallback to default credentials:", DEV_CONFIG.defaultCredentials.email);
+            creds = DEV_CONFIG.defaultCredentials;
+            if (isMounted) {
+              setEmail(creds.email);
+              setPassword(creds.password);
+            }
+            const retryRes = await supabase.auth.signInWithPassword({
+              email: creds.email,
+              password: creds.password,
+            });
+            error = retryRes.error;
+          }
+          if (error) {
+            console.warn("⚠️ [DevLogin] Auto-login failed:", error.message);
+          } else {
+            console.log("✅ [DevLogin] Auto-login successful!");
+            await AsyncStorage.setItem(
+              "@volc_last_dev_credentials",
+              JSON.stringify(creds)
+            );
+          }
+          if (isMounted) {
+            setLoading(false);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load dev credentials:", err);
+      }
+    };
+
+    initDevCredentials();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleQuickDevLogin = async () => {
+    let targetEmail = email;
+    let targetPass = password;
+    if (!targetEmail || !targetPass) {
+      targetEmail = DEV_CONFIG.defaultCredentials.email;
+      targetPass = DEV_CONFIG.defaultCredentials.password;
+      setEmail(targetEmail);
+      setPassword(targetPass);
+    }
+    try {
+      setLoading(true);
+      console.log("⚡ [QuickDevLogin] Signing in with:", targetEmail);
+      let { error } = await supabase.auth.signInWithPassword({
+        email: targetEmail,
+        password: targetPass,
+      });
+      if (error && targetEmail !== DEV_CONFIG.defaultCredentials.email) {
+        console.log("⚡ [QuickDevLogin] Retrying with default dev account:", DEV_CONFIG.defaultCredentials.email);
+        targetEmail = DEV_CONFIG.defaultCredentials.email;
+        targetPass = DEV_CONFIG.defaultCredentials.password;
+        setEmail(targetEmail);
+        setPassword(targetPass);
+        const retry = await supabase.auth.signInWithPassword({
+          email: targetEmail,
+          password: targetPass,
+        });
+        error = retry.error;
+      }
+      if (error) throw error;
+      await AsyncStorage.setItem(
+        "@volc_last_dev_credentials",
+        JSON.stringify({ email: targetEmail, password: targetPass })
+      );
+    } catch (e: any) {
+      console.error("Quick Dev Login Error:", e);
+      Alert.alert("Dev Login Failed", e.message || "Please check credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAppleSignIn = async () => {
     try {
@@ -168,6 +277,12 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
 
         // Check if email confirmation is disabled (user is auto-confirmed)
         if (data.user && data.session) {
+          if (isDev && email && password) {
+            await AsyncStorage.setItem(
+              "@volc_last_dev_credentials",
+              JSON.stringify({ email, password })
+            );
+          }
           // User is auto-confirmed and signed in
           setUserId(data.user.id);
           // Check if user has DOB
@@ -212,6 +327,13 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
         });
 
         if (error) throw error;
+
+        if (isDev && email && password) {
+          await AsyncStorage.setItem(
+            "@volc_last_dev_credentials",
+            JSON.stringify({ email, password })
+          );
+        }
 
         if (data.user) {
           setUserId(data.user.id);
@@ -267,19 +389,35 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
           onPress={handleAppleSignIn}
         />
 
-        {/* Dev Login - Email Auth Forms - Only in Development */}
+        {/* Dev Quick Login / Config - Only in Development */}
         {isDev && !showEmailAuth && (
-          <Button
-            onPress={() => setShowEmailAuth(true)}
-            disabled={loading}
-            backgroundColor="$orange9"
-            borderRadius="$2"
-            marginTop="$2"
-          >
-            <Text color="white" fontWeight="600">
-              🔧 Dev Login (Email)
-            </Text>
-          </Button>
+          <Stack gap="$2" width="60%" marginTop="$2" alignItems="center">
+            <Button
+              onPress={handleQuickDevLogin}
+              disabled={loading}
+              backgroundColor="$orange9"
+              borderRadius="$2"
+              width="100%"
+            >
+              {loading ? (
+                <Spinner color="white" />
+              ) : (
+                <Text color="white" fontWeight="600" numberOfLines={1}>
+                  ⚡ Dev Login ({email || "Default"})
+                </Text>
+              )}
+            </Button>
+            <Button
+              onPress={() => setShowEmailAuth(true)}
+              disabled={loading}
+              backgroundColor="transparent"
+              size="$2"
+            >
+              <Text size="small" color="$textMuted">
+                Change Dev Credentials
+              </Text>
+            </Button>
+          </Stack>
         )}
 
         {/* Email Auth Forms */}
@@ -331,13 +469,11 @@ export function SignUpForm({ onSwitchToSignIn }: SignUpFormProps) {
             <Button
               onPress={() => {
                 setShowEmailAuth(false);
-                setEmail("");
-                setPassword("");
               }}
               backgroundColor="$backgroundStrong"
               disabled={loading}
             >
-              <Text fontWeight="600">← Back to Apple Sign In</Text>
+              <Text fontWeight="600">← Back</Text>
             </Button>
           </Stack>
         )}
