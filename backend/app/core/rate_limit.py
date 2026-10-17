@@ -51,11 +51,11 @@ def rate_limit(action_type: str):
                 )
 
                 if not result.get("success", False):
-                    logger.error(f"Rate limiter error: {result.get('error')}")
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Rate limiting error",
+                    logger.warning(
+                        f"Rate limiter check failed, failing open: {result.get('error')}"
                     )
+                    # Don't block requests due to rate limiter DB/infrastructure errors - fail open
+                    return await func(*args, **kwargs)
 
                 rate_limit_data = result["data"]
 
