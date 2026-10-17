@@ -44,10 +44,13 @@ class SupabaseClientFactory:
         client.auth.set_session(access_token=jwt_token, refresh_token="")
         return client
 
-    def get_admin_client(self) -> Client:  # Add this method
+    def get_admin_client(self) -> Client:
         """Get client with service role for backend operations"""
         if not self.service_key:
-            raise ValueError("SUPABASE_SERVICE_KEY not configured")
+            logger.warning(
+                "SUPABASE_SERVICE_KEY not configured - falling back to public anon_key client"
+            )
+            return create_client(self.url, self.anon_key)
         return create_client(self.url, self.service_key)
 
 

@@ -42,9 +42,16 @@ class ExerciseDefinitionService(BaseDBService):
     async def get_all_exercise_definitions_admin(self) -> Dict[str, Any]:
         """Get all exercise definitions using admin client (no auth required)"""
         try:
+            try:
+                client = self.get_admin_client()
+            except Exception as client_err:
+                logger.info(f"Admin client unavailable ({client_err}), falling back to anon client for exercise definitions")
+                from app.core.supabase.client import supabase_factory
+                from supabase import create_client
+                client = create_client(supabase_factory.url, supabase_factory.anon_key)
+
             response = (
-                self.get_admin_client()
-                .table("exercise_definitions")
+                client.table("exercise_definitions")
                 .select(
                     "id, base_movement, major_variation, standard_name, aliases, equipment, "
                     "movement_pattern, primary_muscles, secondary_muscles, uses_weight, "
