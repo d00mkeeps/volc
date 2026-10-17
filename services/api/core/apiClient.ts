@@ -31,8 +31,8 @@ export async function initializeApiClient(): Promise<void> {
       WS_BASE_URL =
         configuredWsUrl ||
         (configuredApiUrl.includes("/dev")
-          ? "wss://api.mileshillary.com/volc/dev/llm"
-          : "wss://api.mileshillary.com/volc/llm");
+          ? "wss://volc-api.mileshillary.com/dev/llm"
+          : "wss://volc-api.mileshillary.com/llm");
       console.log(
         `[apiClient] 🔵 Using configured backend: ${API_BASE_URL} (WS: ${WS_BASE_URL})`,
       );
@@ -50,20 +50,20 @@ export async function initializeApiClient(): Promise<void> {
           "[apiClient] Failed to get local IP, falling back to cloud dev:",
           error,
         );
-        API_BASE_URL = "https://api.mileshillary.com/volc/dev";
-        WS_BASE_URL = "wss://api.mileshillary.com/volc/dev/llm";
+        API_BASE_URL = "https://volc-api.mileshillary.com/dev";
+        WS_BASE_URL = "wss://volc-api.mileshillary.com/dev/llm";
       }
     } else if (__DEV__) {
       // Cloud development backend
-      API_BASE_URL = "https://api.mileshillary.com/volc/dev";
-      WS_BASE_URL = "wss://api.mileshillary.com/volc/dev/llm";
+      API_BASE_URL = "https://volc-api.mileshillary.com/dev";
+      WS_BASE_URL = "wss://volc-api.mileshillary.com/dev/llm";
       console.log(
         `[apiClient] 🟡 Cloud Dev backend: ${API_BASE_URL}`,
       );
     } else {
       // Production backend
-      API_BASE_URL = "https://api.mileshillary.com/volc";
-      WS_BASE_URL = "wss://api.mileshillary.com/volc/llm";
+      API_BASE_URL = "https://volc-api.mileshillary.com";
+      WS_BASE_URL = "wss://volc-api.mileshillary.com/llm";
       console.log(
         `[apiClient] 🔴 Production backend: ${API_BASE_URL}`,
       );

@@ -22,5 +22,9 @@
     "components/conversation/mockData.js",
     "app.config.js",
     "tamagui.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "website"
   ]
 }

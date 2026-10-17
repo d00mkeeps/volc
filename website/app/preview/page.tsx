@@ -25,28 +25,43 @@ function PreviewContent() {
   const [showGuide, setShowGuide] = useState(false);
   const [launched, setLaunched] = useState(false);
 
+  // Construct custom scheme deep links
+  const cleanHttpUrl = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
+  const deepLink = rawUrl.startsWith("exp+") || rawUrl.startsWith("volc://")
+    ? rawUrl
+    : `exp+${project}://expo-development-client/?url=${encodeURIComponent(cleanHttpUrl)}`;
+  const directSchemeLink = rawUrl.startsWith("volc://")
+    ? rawUrl
+    : `${project}://expo-development-client/?url=${encodeURIComponent(cleanHttpUrl)}`;
+
   // Attempt auto-launch on initial mount if URL is present
   useEffect(() => {
     if (rawUrl) {
       setLaunched(true);
       // Short delay to ensure DOM rendered
       const timer = setTimeout(() => {
-        window.location.href = rawUrl;
-      }, 100);
+        window.location.href = deepLink;
+      }, 150);
       return () => clearTimeout(timer);
     }
-  }, [rawUrl]);
+  }, [rawUrl, deepLink]);
 
   const handleCopy = () => {
-    if (!rawUrl) return;
-    navigator.clipboard.writeText(rawUrl);
+    if (!cleanHttpUrl) return;
+    navigator.clipboard.writeText(cleanHttpUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleManualLaunch = () => {
-    if (rawUrl) {
-      window.location.href = rawUrl;
+    if (deepLink) {
+      window.location.href = deepLink;
+    }
+  };
+
+  const handleAltLaunch = () => {
+    if (directSchemeLink) {
+      window.location.href = directSchemeLink;
     }
   };
 
@@ -83,7 +98,7 @@ function PreviewContent() {
                 Launching Dev Client...
               </h1>
               <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
-                Safari is handing off your ephemeral Metro tunnel to the physical Volc iOS Dev Build.
+                Safari is handing off your ephemeral Metro tunnel to the Volc iOS Dev Client.
               </p>
             </div>
 
@@ -96,13 +111,22 @@ function PreviewContent() {
                 Tap to Open in Volc
               </button>
 
-              <button
-                onClick={handleCopy}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium border border-slate-700/60 transition-colors cursor-pointer"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                {copied ? "Copied Metro URL!" : "Copy Metro Tunnel URL"}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAltLaunch}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium border border-slate-700/60 transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Try volc:// Scheme
+                </button>
+                <button
+                  onClick={handleCopy}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-medium border border-slate-700/60 transition-colors cursor-pointer"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? "Copied!" : "Copy Tunnel URL"}
+                </button>
+              </div>
             </div>
           </>
         ) : (
