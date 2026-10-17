@@ -5,7 +5,6 @@ import Button from "@/components/atoms/core/Button";
 import { AppIcon } from "@/assets/icons/IconMap";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
-import { HomeScreenHeaderMenu } from "./HomeScreenHeaderMenu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface HeaderProps {
@@ -13,8 +12,8 @@ interface HeaderProps {
   onProfilePress?: () => void;
   onRecentsPress?: () => void;
   onSettingsPress?: () => void;
-  onNewChat?: () => void;
   onNewWorkout?: () => void;
+  onOpenScratchpad?: () => void;
 }
 
 export default function Header({
@@ -22,12 +21,14 @@ export default function Header({
   onProfilePress,
   onRecentsPress,
   onSettingsPress,
-  onNewChat,
   onNewWorkout,
+  onOpenScratchpad,
 }: HeaderProps) {
   const setHeaderHeight = useLayoutStore((state) => state.setHeaderHeight);
   const { health, isUnreliable } = useNetworkQuality();
   const insets = useSafeAreaInsets();
+
+  const handleWorkoutPress = onNewWorkout || onOpenScratchpad;
 
   return (
     <Stack
@@ -58,11 +59,15 @@ export default function Header({
           </Stack>
         )}
 
-        {onNewChat && onNewWorkout && (
-          <HomeScreenHeaderMenu
-            onNewChat={onNewChat}
-            onNewWorkout={onNewWorkout}
-          />
+        {handleWorkoutPress && (
+          <Button
+            size="$3"
+            circular
+            onPress={handleWorkoutPress}
+            backgroundColor="$backgroundHover"
+          >
+            <Text size="large">+</Text>
+          </Button>
         )}
 
         <Button

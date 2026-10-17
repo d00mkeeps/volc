@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Stack, YStack, Separator, XStack } from "tamagui";
+import { Stack, YStack, XStack } from "tamagui";
 import Button from "@/components/atoms/core/Button";
 import Text from "@/components/atoms/core/Text";
 import { AppIcon } from "@/assets/icons/IconMap";
@@ -13,27 +13,22 @@ import {
   Dimensions,
 } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
   useAnimatedStyle,
   withTiming,
   useSharedValue,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNetworkQuality } from "@/hooks/useNetworkQuality";
-import { useChatStore } from "@/stores/chat/ChatStore";
 import { BlurView } from "expo-blur";
 
 interface ____HomeScreenHeaderMenuProps____ {
-  onNewChat: () => void;
   onNewWorkout: () => void;
+  onOpenScratchpad?: () => void;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const HomeScreenHeaderMenu = ({
-  onNewChat,
   onNewWorkout,
+  onOpenScratchpad,
 }: ____HomeScreenHeaderMenuProps____) => {
   const [isOpen, setIsOpen] = useState(false);
   const [buttonPos, setButtonPos] = useState({
@@ -43,23 +38,6 @@ export const HomeScreenHeaderMenu = ({
     height: 0,
   });
 
-  // Reactive connection state from ChatStore
-  const connectionState = useChatStore((state) => state.connectionState);
-  const { health } = useNetworkQuality();
-
-  // Use general network health for button availability
-  const isConnected = health !== "offline";
-
-  console.log(
-    "🔘 [HomeScreenHeaderMenu] health:",
-    health,
-    "wsState:",
-    connectionState,
-    "isConnected:",
-    isConnected,
-  );
-
-  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const buttonRef = useRef<any>(null);
 
@@ -97,11 +75,6 @@ export const HomeScreenHeaderMenu = ({
     }, 150);
   };
 
-  const handleNewChat = () => {
-    handleClose();
-    setTimeout(onNewChat, 200);
-  };
-
   const handleNewWorkout = () => {
     handleClose();
     setTimeout(onNewWorkout, 200);
@@ -116,10 +89,8 @@ export const HomeScreenHeaderMenu = ({
     opacity: backdropOpacity.value,
   }));
 
-  // Calculate centered position
-  const MENU_WIDTH = 200;
+  const MENU_WIDTH = 180;
   const menuLeft = buttonPos.x + buttonPos.width / 2 - MENU_WIDTH / 2;
-  // Keep within screen bounds
   const constrainedLeft = Math.max(
     16,
     Math.min(SCREEN_WIDTH - MENU_WIDTH - 16, menuLeft),
@@ -131,7 +102,7 @@ export const HomeScreenHeaderMenu = ({
         <Button
           size="$3"
           circular
-          onPress={handleOpen}
+          onPress={onNewWorkout || handleOpen}
           backgroundColor="$backgroundHover"
         >
           <Text size="large">+</Text>
@@ -182,44 +153,6 @@ export const HomeScreenHeaderMenu = ({
                 borderRadius={16}
                 overflow="hidden"
               >
-                <TouchableOpacity
-                  onPress={isConnected ? handleNewChat : undefined}
-                  disabled={!isConnected}
-                >
-                  <XStack
-                    alignItems="center"
-                    gap="$3"
-                    paddingHorizontal="$4"
-                    paddingVertical="$3"
-                    style={{ opacity: isConnected ? 1 : 0.4 }}
-                  >
-                    <Stack
-                      backgroundColor={
-                        colorScheme === "dark"
-                          ? "rgba(255,255,255,0.12)"
-                          : "rgba(0,0,0,0.06)"
-                      }
-                      padding="$2"
-                      borderRadius="$3"
-                    >
-                      <AppIcon
-                        name="MessageCircle"
-                        size={20}
-                        color={isConnected ? "$text" : "$textMuted"}
-                      />
-                    </Stack>
-                    <Text
-                      size="medium"
-                      fontWeight="600"
-                      color={isConnected ? "$text" : "$textMuted"}
-                    >
-                      New Chat {!isConnected && " (Offline)"}
-                    </Text>
-                  </XStack>
-                </TouchableOpacity>
-
-                <Separator marginHorizontal="$4" opacity={0.3} />
-
                 <TouchableOpacity onPress={handleNewWorkout}>
                   <XStack
                     alignItems="center"
